@@ -4,26 +4,36 @@ import { addTodo, toggleTodo, setVisibilityFilter, VisibilityFilters } from '../
 import AddTodo from '../components/addTodo';
 import TodoList from '../components/todoList';
 import Footer from '../components/footer';
+import { BackBtn } from '../utilities/navigation';
 
 const {
   StyleSheet,
   View,
   PropTypes,
+  TouchableHighlight,
+  Text,
 } = React;
 
 class StationView extends React.Component {
+  constructor(props) {
+    super(props)
+  }
   render() {
     // Injected by connect() call:
     const { dispatch, visibleTodos, visibilityFilter } = this.props;
 
     return (
       <View style={styles.container}>
+        <BackBtn 
+          navigator={this.props.navigator}
+        />
         <AddTodo
           onAddClick={text =>
             dispatch(addTodo(text))
           } />
           <TodoList
             todos={visibleTodos}
+            navigator={this.props.navigator}
             onTodoClick={index =>
               dispatch(toggleTodo(index))
           } />

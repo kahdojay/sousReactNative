@@ -5,20 +5,30 @@ let {
   PropTypes,
   Text,
   StyleSheet,
+  View,
 } = React;
 
 export default class Todo extends React.Component {
   render() {
 
     return (
-      <TouchableHighlight
-        onPress={this.props.onPress}
-        >
-        <Text
-          style={[styles.todo, 
-            this.props.completed && styles.completed
-          ]}>{this.props.text}</Text>
-      </TouchableHighlight>
+      <View>
+        <TouchableHighlight
+          onPress={this.props.onPress}
+          >
+          <Text
+            style={[styles.todo, 
+              this.props.completed && styles.completed
+            ]}>{this.props.text}</Text>
+        </TouchableHighlight>
+        <TouchableHighlight
+          onPress={() => this.props.navigator.push({
+            name: 'TaskView'
+          })}
+          >
+          <Text>ShowTask</Text>
+        </TouchableHighlight>
+      </View>
     );
   }
 }

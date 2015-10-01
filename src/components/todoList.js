@@ -12,6 +12,7 @@ export default class TodoList extends React.Component {
       <View>
         {this.props.todos.map((todo, index) =>
           <Todo {...todo}
+            navigator={this.props.navigator}
             key={index}
             onPress={() => this.props.onTodoClick(index)} />
         )}
