@@ -1,6 +1,6 @@
 import React from 'react-native';
 import { connect } from 'react-redux/native';
-import { addTodo, completeTodo, setVisibilityFilter, VisibilityFilters } from '../actions';
+import { addTodo, toggleTodo, setVisibilityFilter, VisibilityFilters } from '../actions';
 import AddTodo from '../components/addTodo';
 import TodoList from '../components/todoList';
 import Footer from '../components/footer';
@@ -25,7 +25,7 @@ class App extends React.Component {
           <TodoList
             todos={visibleTodos}
             onTodoClick={index =>
-              dispatch(completeTodo(index))
+              dispatch(toggleTodo(index))
           } />
           <Footer
             filter={visibilityFilter}
