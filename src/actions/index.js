@@ -28,6 +28,10 @@ export function completeTodo(index) {
   return { type: COMPLETE_TODO, index };
 }
 
+export function revertTodo(index) {
+  return { type: REVERT_TODO, index};
+}
+
 export function setVisibilityFilter(filter) {
   return { type: SET_VISIBILITY_FILTER, filter };
 }

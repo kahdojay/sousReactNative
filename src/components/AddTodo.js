@@ -1,31 +1,54 @@
-import React, { findDOMNode, Component, PropTypes } from 'react';
 import React from 'react-native';
 
 let {
   View,
   Text,
-  T
-}
+  TextInput,
+  PropTypes,  
+  TouchableHighlight,
+  StyleSheet,
+} = React;
 
-export default class AddTodo extends Component {
+export default class AddTodo extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      text: ''
+    }
+  }
   render() {
     return (
-      <div>
-        <input type='text' ref='input' />
-        <button onClick={(e) => this.handleClick(e)}>
-          Add
-        </button>
-      </div>
+      <View
+        style={styles.container}>
+        <TextInput
+          style={styles.input} 
+          value={this.state.text}
+          onChangeText={(text) => {this.setState({text})}}
+          />
+        <TouchableHighlight onPress={() => this.handleClick()}>
+          <Text>Add</Text>
+        </TouchableHighlight>
+      </View>
     );
   }
 
-  handleClick(e) {
-    const node = findDOMNode(this.refs.input);
-    const text = node.value.trim();
-    this.props.onAddClick(text);
-    node.value = '';
+  handleClick() {
+    if (this.state.text !== '') {
+      this.props.onAddClick(this.state.text);
+      this.setState({text: ''})
+    }
   }
 }
+
+let styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'blue'
+  },
+  input: {
+    flex: 1
+  }
+})
 
 AddTodo.propTypes = {
   onAddClick: PropTypes.func.isRequired

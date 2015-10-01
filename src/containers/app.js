@@ -1,14 +1,15 @@
 import React from 'react-native';
 import { connect } from 'react-redux/native';
 import { addTodo, completeTodo, setVisibilityFilter, VisibilityFilters } from '../actions';
-// import AddTodo from '../components/AddTodo';
-// import TodoList from '../components/TodoList';
-// import Footer from '../components/Footer';
+import AddTodo from '../components/addTodo';
+import TodoList from '../components/todoList';
+import Footer from '../components/footer';
 
 let {
   PropTypes,
   View,
   Text,
+  StyleSheet,
 } = React;
 
 class App extends React.Component {
@@ -16,26 +17,32 @@ class App extends React.Component {
     // Injected by connect() call:
     const { dispatch, visibleTodos, visibilityFilter } = this.props;
     return (
-      <View>
-        {/*}<AddTodo
+      <View style={styles.container}>
+        <AddTodo
           onAddClick={text =>
             dispatch(addTodo(text))
           } />
-        <TodoList
-          todos={visibleTodos}
-          onTodoClick={index =>
-            dispatch(completeTodo(index))
+          <TodoList
+            todos={visibleTodos}
+            onTodoClick={index =>
+              dispatch(completeTodo(index))
           } />
-        <Footer
-          filter={visibilityFilter}
-          onFilterChange={nextFilter =>
-            dispatch(setVisibilityFilter(nextFilter))
-          } />*/}
-        <Text> Hello, world! </Text>
+          <Footer
+            filter={visibilityFilter}
+            onFilterChange={nextFilter =>
+              dispatch(setVisibilityFilter(nextFilter))
+          } />
       </View>
     );
   }
 }
+
+let styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginTop: 80
+  }
+})
 
 App.propTypes = {
   visibleTodos: PropTypes.arrayOf(PropTypes.shape({
@@ -48,6 +55,7 @@ App.propTypes = {
     'SHOW_ACTIVE'
   ]).isRequired
 };
+
 
 function selectTodos(todos, filter) {
   switch (filter) {
