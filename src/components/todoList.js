@@ -3,19 +3,21 @@ import Todo from './todo';
 
 let {
   View,
-  PropTypes, 
+  PropTypes,
 } = React;
 
 export default class TodoList extends React.Component {
   render() {
+    let todoKeys = Object.keys(this.props.todos);
     return (
       <View>
-        {this.props.todos.map((todo, index) =>
-          <Todo {...todo}
+        {todoKeys.map((todoKey, index) => {
+          let todo = this.props.todos[todoKey]
+          return <Todo {...todo}
             navigator={this.props.navigator}
             key={index}
             onPress={() => this.props.onTodoClick(index)} />
-        )}
+        })}
       </View>
     );
   }

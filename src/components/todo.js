@@ -17,9 +17,9 @@ export default class Todo extends React.Component {
           onPress={this.props.onPress}
           >
           <Text
-            style={[styles.todo, 
+            style={[styles.todo,
               this.props.completed && styles.completed
-            ]}>{this.props.text}</Text>
+            ]}>{this.props.description}</Text>
         </TouchableHighlight>
         <TouchableHighlight
           onPress={() => this.props.navigator.push({
@@ -36,10 +36,10 @@ export default class Todo extends React.Component {
 let styles = StyleSheet.create({
   todo: {
     flex: 1,
-    backgroundColor: 'red' 
+    backgroundColor: 'red'
   },
   completed: {
-    backgroundColor: 'green' 
+    backgroundColor: 'green'
   }
 });
 

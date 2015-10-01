@@ -9,6 +9,17 @@ const {
 
 class StationIndex extends React.Component {
   render() {
+    const { stations } = this.props;
+    let stationsList = [];
+    let stationKeys = Object.keys(stations);
+    stationKeys.forEach((stationKey) => {
+      let station = stations[stationKey];
+      stationsList.push(
+        <View>
+          <Text> {station.name} </Text>
+        </View>
+      )
+    })
     return (
       <View style={styles.container}>
         <Text>StationIndex View</Text>
@@ -19,6 +30,7 @@ class StationIndex extends React.Component {
           >
           <Text>StationView Button</Text>
         </TouchableHighlight>
+        {stationsList}
       </View>
     );
   }

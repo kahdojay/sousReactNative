@@ -18,21 +18,23 @@ class App extends React.Component {
       navigator.pop();
     }
   }}
-  
+
   renderScene(route, nav) {
     switch (route.name) {
       case 'StationIndex':
-        return <StationIndex 
+        const { stations } = this.props;
+        return <StationIndex
                   navigator={nav}
+                  stations={stations}
                   onBack={() => this._back.bind(this)}
                 />;
       case 'StationView':
-        return <StationView 
+        return <StationView
                   navigator={nav}
                   onBack={() => this._back.bind(this)}
                 />;
       case 'TaskView':
-        return <TaskView 
+        return <TaskView
                   navigator={nav}
                   onBack={() => this._back.bind(this)}
                 />;
@@ -41,7 +43,6 @@ class App extends React.Component {
     }
   }
   render() {
-    const { stations } = this.props;
     return (
       <Navigator
         sceneStyle={styles.nav}
@@ -49,7 +50,7 @@ class App extends React.Component {
           name: 'StationIndex',
           index: 0,
         }}
-        renderScene={this.renderScene}
+        renderScene={this.renderScene.bind(this)}
         configureScene={(route) => {
           if (route.sceneConfig) {
             return route.sceneConfig;
