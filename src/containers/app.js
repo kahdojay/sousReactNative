@@ -2,7 +2,7 @@ import React from 'react-native';
 import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
 import TaskView from '../components/taskView';
-
+import { connect } from 'react-redux/native';
 
 let {
   PropTypes,
@@ -41,6 +41,7 @@ class App extends React.Component {
     }
   }
   render() {
+    const { stations } = this.props;
     return (
       <Navigator
         sceneStyle={styles.nav}
@@ -54,8 +55,7 @@ class App extends React.Component {
             return route.sceneConfig;
           }
           return Navigator.SceneConfigs.FloatFromRight;
-        }}
-      />
+        }} />
     )
   }
 }
@@ -67,4 +67,8 @@ let styles = StyleSheet.create({
   }
 })
 
-module.exports = App
+function select(state) {
+  return {stations: state.stations}
+}
+
+export default connect(select)(App);

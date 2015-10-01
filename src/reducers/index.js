@@ -1,9 +1,8 @@
-'use strict'
-
+import MockData from '../resources/mockData';
 import { combineReducers } from 'redux';
 import { ADD_TODO, TOGGLE_TODO, SET_VISIBILITY_FILTER, VisibilityFilters } from '../actions';
 const { SHOW_ALL } = VisibilityFilters;
-
+const initialState = MockData
 function visibilityFilter(state = SHOW_ALL, action) {
   switch (action.type) {
   case SET_VISIBILITY_FILTER:
@@ -13,7 +12,7 @@ function visibilityFilter(state = SHOW_ALL, action) {
   }
 }
 
-function todos(state = [], action) {
+function todos(state = initialState.tasks, action) {
   switch (action.type) {
   case ADD_TODO:
     return [...state, {
@@ -34,9 +33,14 @@ function todos(state = [], action) {
   }
 }
 
+function stations (state = initialState.stations) {
+  return state
+}
+
 const todoApp = combineReducers({
   visibilityFilter,
-  todos
+  todos,
+  stations
 });
 
 export default todoApp;
