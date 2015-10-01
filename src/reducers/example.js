@@ -1,16 +1,16 @@
-'use strict'
+// 'use strict'
 
-import { combineReducers } from 'redux'
-import { TEST } from '../actions/example'
+// import { combineReducers } from 'redux'
+// import { TEST } from '../actions/example'
 
-export function foo(state='Click me to test Redux setup.', action) {
-  switch (action.type) {
-  case TEST:
-    return action.text
-  default:
-    return state
-  }
-}
+// export function foo(state='Click me to test Redux setup.', action) {
+//   switch (action.type) {
+//   case TEST:
+//     return action.text
+//   default:
+//     return state
+//   }
+// }
 
 // const exampleApp = combineReducers({
 //   foo
