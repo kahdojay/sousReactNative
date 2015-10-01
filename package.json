@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "./node_modules/.bin/react-native-webpack-server start",
-    "hot": "HOT=1 ./node_modules/.bin/react-native-webpack-server start --hot",
+    "start_cold": "./node_modules/.bin/react-native-webpack-server start",
+    "start": "HOT=1 ./node_modules/.bin/react-native-webpack-server start --hot",
     "bundle": "./node_modules/.bin/react-native-webpack-server bundle"
   },
   "dependencies": {
