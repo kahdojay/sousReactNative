@@ -1,5 +1,5 @@
 import React from 'react-native';
-import AddTask from '../components/addTask';
+import AddTaskForm from '../components/addTaskForm';
 import TaskList from '../components/taskList';
 import { BackBtn } from '../utilities/navigation';
 
@@ -26,7 +26,7 @@ class StationView extends React.Component {
         <BackBtn
           navigator={this.props.navigator}
           />
-        <AddTask
+        <AddTaskForm
           onAddClick={text =>
             this.props.addNewTask(text, station.id)
           } />

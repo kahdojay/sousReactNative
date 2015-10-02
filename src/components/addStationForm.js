@@ -30,7 +30,7 @@ export default class AddStationForm extends React.Component {
           />
         <TouchableHighlight
           onPress={this.handleSubmit.bind(this)}
-          style={styles.buttonContainer}>
+          style={styles.button}>
           <Text>Add</Text>
         </TouchableHighlight>
       </View>
@@ -58,7 +58,7 @@ let styles = StyleSheet.create({
     flex: 10,
     backgroundColor: '#cde'
   },
-  buttonContainer: {
+  button: {
     flex: 1,
     padding: 8,
     justifyContent: 'center'
