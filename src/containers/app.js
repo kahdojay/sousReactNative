@@ -1,5 +1,5 @@
 import React from 'react-native';
-import { addStation } from '../actions';
+import { addStation, updateTask } from '../actions';
 import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
 import TaskView from '../components/taskView';
@@ -21,9 +21,9 @@ class App extends React.Component {
   }}
 
   renderScene(route, nav) {
+    const { stations, tasks, dispatch } = this.props;
     switch (route.name) {
       case 'StationIndex':
-        const { stations, dispatch } = this.props;
         return <StationIndex
                   navigator={nav}
                   stations={stations}
@@ -40,9 +40,15 @@ class App extends React.Component {
                 />;
       case 'TaskView':
         return <TaskView
+                  task={tasks[route.taskId]}
                   description={route.description}
                   navigator={nav}
-                  onBack={() => this._back.bind(this)}
+                  onBack={() => {
+                    this._back.bind(this)
+                  }}
+                  saveTaskDescription={(newTask) =>
+                    dispatch(updateTask(newTask))
+                  }
                 />;
       default:
         return <View />;
@@ -75,7 +81,10 @@ let styles = StyleSheet.create({
 })
 
 function select(state) {
-  return {stations: state.stations}
+  return {
+    stations: state.stations,
+    tasks: state.tasks
+  }
 }
 
 export default connect(select)(App);
