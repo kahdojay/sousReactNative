@@ -22,7 +22,9 @@ function tasks(state = initialState.tasks, action) {
       id: newTaskId + '',
       stationId: action.stationId,
       name: action.name,
-      completed: false
+      description: '',
+      completed: false,
+      quantity: 1
     }
     return newState
   case TOGGLE_TASK:
