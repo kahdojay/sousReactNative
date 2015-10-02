@@ -25,9 +25,9 @@ export default class TaskList extends React.Component {
 }
 
 TaskList.propTypes = {
-  onTaskClick: PropTypes.func.isRequired,
-  tasks: PropTypes.arrayOf(PropTypes.shape({
-    text: PropTypes.string.isRequired,
-    completed: PropTypes.bool.isRequired
-  }).isRequired).isRequired
+  // onTaskClick: PropTypes.func.isRequired,
+  // tasks: PropTypes.arrayOf(PropTypes.shape({
+    // text: PropTypes.string.isRequired,
+    // completed: PropTypes.bool.isRequired
+  // }).isRequired).isRequired
 };

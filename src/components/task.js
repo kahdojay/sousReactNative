@@ -45,6 +45,5 @@ let styles = StyleSheet.create({
 
 Task.propTypes = {
   // onPress: PropTypes.func.isRequired,
-  text: PropTypes.string.isRequired,
   completed: PropTypes.bool.isRequired
 };
