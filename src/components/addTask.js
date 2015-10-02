@@ -4,12 +4,12 @@ let {
   View,
   Text,
   TextInput,
-  PropTypes,  
+  PropTypes,
   TouchableHighlight,
   StyleSheet,
 } = React;
 
-export default class AddTodo extends React.Component {
+export default class AddTask extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -21,7 +21,7 @@ export default class AddTodo extends React.Component {
       <View
         style={styles.container}>
         <TextInput
-          style={styles.input} 
+          style={styles.input}
           value={this.state.text}
           onChangeText={(text) => {this.setState({text})}}
           />
@@ -50,6 +50,6 @@ let styles = StyleSheet.create({
   }
 })
 
-AddTodo.propTypes = {
+AddTask.propTypes = {
   onAddClick: PropTypes.func.isRequired
 };

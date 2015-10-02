@@ -1,8 +1,8 @@
 const React = require('react-native');
 import { connect } from 'react-redux/native';
-import { addTodo, toggleTodo, setVisibilityFilter, VisibilityFilters } from '../actions';
-import AddTodo from '../components/addTodo';
-import TodoList from '../components/todoList';
+import { addTask, toggleTask, setVisibilityFilter, TaskVisibility } from '../actions';
+import AddTask from '../components/addTask';
+import TaskList from '../components/taskList';
 import Footer from '../components/footer';
 import { BackBtn } from '../utilities/navigation';
 
@@ -20,27 +20,27 @@ class StationView extends React.Component {
   }
   render() {
     // Injected by connect() call:
-    const { dispatch, visibleTodos, visibilityFilter } = this.props;
-
+    const { stationId, dispatch, filteredTasks, taskVisibility } = this.props;
+    let tasks = filteredTasks(stationId);
     return (
       <View style={styles.container}>
-        <BackBtn 
+        <BackBtn
           navigator={this.props.navigator}
-        />
-        <AddTodo
+          />
+        <AddTask
           onAddClick={text =>
-            dispatch(addTodo(text))
+            dispatch(addTask(text, stationId))
           } />
-          <TodoList
-            todos={visibleTodos}
-            navigator={this.props.navigator}
-            onTodoClick={index =>
-              dispatch(toggleTodo(index))
+        <TaskList
+          tasks={tasks}
+          navigator={this.props.navigator}  
+          onTaskClick={taskId =>
+            dispatch(toggleTask(taskId))
           } />
-          <Footer
-            filter={visibilityFilter}
-            onFilterChange={nextFilter =>
-              dispatch(setVisibilityFilter(nextFilter))
+        <Footer
+          filter={taskVisibility}
+          onFilterChange={nextFilter =>
+            dispatch(setVisibilityFilter(nextFilter))
           } />
       </View>
     );
@@ -55,14 +55,24 @@ const styles = StyleSheet.create({
   }
 });
 
-function selectTodos(todos, filter) {
-  switch (filter) {
-  case VisibilityFilters.SHOW_ALL:
-    return todos;
-  case VisibilityFilters.SHOW_COMPLETED:
-    return todos.filter(todo => todo.completed);
-  case VisibilityFilters.SHOW_ACTIVE:
-    return todos.filter(todo => !todo.completed);
+function getTaskFilter(state, filter) {
+  return function filteredTasks(stationId){
+    let taskList = Object.keys(state.tasks);
+    let stationTasks = taskList.filter((taskKey) => {
+      if (state.tasks[taskKey].stationId === stationId)
+        return taskKey
+    })
+    stationTasks = stationTasks.map((taskKey) => {
+      return state.tasks[taskKey]
+    })
+    switch (filter) {
+    case TaskVisibility.SHOW_ALL:
+      return stationTasks;
+    case TaskVisibility.SHOW_COMPLETED:
+      return stationTasks.filter(task => task.completed);
+    case TaskVisibility.SHOW_ACTIVE:
+      return stationTasks.filter(task => !task.completed);
+    }
   }
 }
 
@@ -70,17 +80,19 @@ function selectTodos(todos, filter) {
 // Note: use https://github.com/faassen/reselect for better performance.
 function select(state) {
   return {
-    visibleTodos: selectTodos(state.todos, state.visibilityFilter),
-    visibilityFilter: state.visibilityFilter
+    filteredTasks: getTaskFilter(state, state.taskVisibility),
+    taskVisibility: state.taskVisibility
   };
 }
 
 StationView.propTypes = {
-  visibleTodos: PropTypes.arrayOf(PropTypes.shape({
-    text: PropTypes.string.isRequired,
-    completed: PropTypes.bool.isRequired
-  })),
-  visibilityFilter: PropTypes.oneOf([
+  stationId: PropTypes.string.isRequired,
+  // filteredTasks: PropTypes.shape({
+  //   text: PropTypes.string.isRequired,
+  //   completed: PropTypes.bool.isRequired
+  // }),
+  filteredTasks: PropTypes.func.isRequired,
+  taskVisibility: PropTypes.oneOf([
     'SHOW_ALL',
     'SHOW_COMPLETED',
     'SHOW_ACTIVE'

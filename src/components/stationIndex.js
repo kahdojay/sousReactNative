@@ -1,27 +1,47 @@
 const React = require('react-native');
+const AddStationForm = require('./addStationForm');
 
 const {
   StyleSheet,
   View,
   Text,
+  TextInput,
   TouchableHighlight,
+  PropTypes,
 } = React;
 
 class StationIndex extends React.Component {
   render() {
+    const { stations } = this.props;
+    let stationsList = [];
+    let stationKeys = Object.keys(stations);
+    stationKeys.forEach((stationKey) => {
+      let station = stations[stationKey];
+      stationsList.push(
+        <TouchableHighlight
+          key={stationKey}
+          onPress={() => this.props.navigator.push({
+            name: 'StationView',
+            stationId: station.id
+          })}
+          >
+          <Text> {station.name} </Text>
+        </TouchableHighlight>
+      )
+    })
     return (
       <View style={styles.container}>
         <Text>StationIndex View</Text>
-        <TouchableHighlight
-          onPress={() => this.props.navigator.push({
-            name: 'StationView'
-          })}
-          >
-          <Text>StationView Button</Text>
-        </TouchableHighlight>
+        <AddStationForm
+          onSubmit={this.props.onAddStation.bind(this)}/>
+        {stationsList}
       </View>
     );
   }
+};
+
+StationIndex.propTypes = {
+  onAddStation: PropTypes.func.isRequired,
 };
 
 

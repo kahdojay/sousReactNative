@@ -8,7 +8,7 @@ let {
   View,
 } = React;
 
-export default class Todo extends React.Component {
+export default class TaskListItem extends React.Component {
   render() {
 
     return (
@@ -17,13 +17,14 @@ export default class Todo extends React.Component {
           onPress={this.props.onPress}
           >
           <Text
-            style={[styles.todo, 
+            style={[styles.task,
               this.props.completed && styles.completed
-            ]}>{this.props.text}</Text>
+            ]}>{this.props.name}</Text>
         </TouchableHighlight>
         <TouchableHighlight
           onPress={() => this.props.navigator.push({
-            name: 'TaskView'
+            name: 'TaskView',
+            description: this.props.description
           })}
           >
           <Text>ShowTask</Text>
@@ -34,17 +35,16 @@ export default class Todo extends React.Component {
 }
 
 let styles = StyleSheet.create({
-  todo: {
+  task: {
     flex: 1,
-    backgroundColor: 'red' 
+    backgroundColor: 'red'
   },
   completed: {
-    backgroundColor: 'green' 
+    backgroundColor: 'green'
   }
 });
 
-Todo.propTypes = {
+TaskListItem.propTypes = {
   // onPress: PropTypes.func.isRequired,
-  text: PropTypes.string.isRequired,
   completed: PropTypes.bool.isRequired
 };
