@@ -1,9 +1,10 @@
 import { ADD_TASK, TOGGLE_TASK, SET_TASK_VISIBILITY, TaskVisibility } from './actionTypes'
 
-function addTask(text) {
+function addTask(text, stationId) {
   return {
     type: ADD_TASK,
-    text: text
+    text: text,
+    stationId: stationId,
   };
 }
 

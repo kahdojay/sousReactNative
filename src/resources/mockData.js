@@ -5,8 +5,8 @@ var MockData = {
 
 function addTasks(stationId){
   MockData.tasks[stationId] = {
-    id: stationId + '',
-    stationId: stationId + '',
+    id: stationId,
+    stationId: stationId,
     description: 'task_' + stationId,
     completed: false
   }
@@ -14,12 +14,13 @@ function addTasks(stationId){
 }
 
 for (var i = 0; i < 5; i++) {
-  MockData.stations[i] = {
-    id: i + '',
+  var id = i + '';
+  MockData.stations[id] = {
+    id: id,
     name: 'station_' + i,
     taskList: []
   }
-  addTasks(i);
+  addTasks(id);
 };
 
 module.exports = MockData

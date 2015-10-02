@@ -29,13 +29,13 @@ class StationView extends React.Component {
           />
         <AddTask
           onAddClick={text =>
-            dispatch(addTask(text))
+            dispatch(addTask(text, stationId))
           } />
         <TaskList
           tasks={tasks}
           navigator={this.props.navigator}
-          onTaskClick={index =>
-            dispatch(toggleTask(index))
+          onTaskClick={taskId =>
+            dispatch(toggleTask(taskId))
           } />
         <Footer
           filter={taskVisibility}
@@ -57,8 +57,11 @@ const styles = StyleSheet.create({
 
 function getTaskFilter(stations, tasks, filter) {
   return function filteredTasks(stationId){
+    console.log(stationId, typeof stationId)
     let taskList = stations[stationId].taskList;
+    console.log(stations, taskList)
     let stationTasks = taskList.map((taskKey) => tasks[taskKey])
+    console.log(tasks, stationTasks)
     switch (filter) {
     case TaskVisibility.SHOW_ALL:
       return stationTasks;
@@ -72,7 +75,8 @@ function getTaskFilter(stations, tasks, filter) {
 
 // Which props do we want to inject, given the global state?
 // Note: use https://github.com/faassen/reselect for better performance.
-function getTasks(state) {
+function select(state) {
+  console.log('StationView: ', state);
   return {
     filteredTasks: getTaskFilter(state.stations, state.tasks, state.taskVisibility),
     taskVisibility: state.taskVisibility
@@ -81,10 +85,11 @@ function getTasks(state) {
 
 StationView.propTypes = {
   stationId: PropTypes.string.isRequired,
-  filteredTasks: PropTypes.arrayOf(PropTypes.shape({
-    text: PropTypes.string.isRequired,
-    completed: PropTypes.bool.isRequired
-  })),
+  // filteredTasks: PropTypes.shape({
+  //   text: PropTypes.string.isRequired,
+  //   completed: PropTypes.bool.isRequired
+  // }),
+  filteredTasks: PropTypes.func.isRequired,
   taskVisibility: PropTypes.oneOf([
     'SHOW_ALL',
     'SHOW_COMPLETED',
@@ -93,4 +98,4 @@ StationView.propTypes = {
 };
 
 // Wrap the component to inject dispatch and state into it
-export default connect(getTasks)(StationView);
+export default connect(select)(StationView);

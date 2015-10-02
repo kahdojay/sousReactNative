@@ -10,7 +10,7 @@ function stations(state = initialState.stations, action) {
     if(action.name === ''){
       return state;
     }
-    let id = Object.keys(state).length;
+    let id = Object.keys(state).length + '';
     let newStation = {}
     newStation[id] = {
       id: id,

@@ -13,22 +13,27 @@ function taskVisibility(state = SHOW_ALL, action) {
   }
 }
 
-function tasks(state = initialState.tasks, action) {
+function tasks(state = initialState, action) {
   switch (action.type) {
   case ADD_TASK:
-    return [...state, {
-      text: action.text,
+    // kick back if station name is empty
+    if(action.text === ''){
+      return state;
+    }
+    let newState = Object.assign({}, state)
+    let newTaskId = Object.keys(newState.tasks).length;
+    newState.tasks[newTaskId] = {
+      id: newTaskId + '',
+      stationId: action.stationId,
+      description: action.text,
       completed: false
-    }];
+    }
+    newState.stations[action.stationId].taskList.push(newTaskId)
+    return newState
   case TOGGLE_TASK:
-    let targetTask = state[action.index]
-    return [
-      ...state.slice(0, action.index),
-      Object.assign({}, targetTask, {
-        completed: !targetTask.completed
-      }),
-      ...state.slice(action.index + 1)
-    ];
+    let newStateToggle = Object.assign({}, state)
+    newStateToggle.tasks[action.index].completed = !newStateToggle.tasks[action.index].completed
+    return newStateToggle;
   default:
     return state;
   }

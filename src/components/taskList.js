@@ -13,10 +13,11 @@ export default class TaskList extends React.Component {
       <View>
         {taskKeys.map((taskKey, index) => {
           let task = this.props.tasks[taskKey]
+          console.log(task);
           return <Task {...task}
             navigator={this.props.navigator}
-            key={index}
-            onPress={() => this.props.onTaskClick(index)} />
+            key={task.id}
+            onPress={() => this.props.onTaskClick(task.id)} />
         })}
       </View>
     );

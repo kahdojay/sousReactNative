@@ -22,7 +22,7 @@ class StationIndex extends React.Component {
           key={stationKey}
           onPress={() => this.props.navigator.push({
             name: 'StationView',
-            stationId: stationKey
+            stationId: station.id
           })}
           >
           <Text> {station.name} </Text>
