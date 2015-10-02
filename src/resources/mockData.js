@@ -7,7 +7,8 @@ function addTasks(stationId){
   MockData.tasks[stationId] = {
     id: stationId,
     stationId: stationId,
-    description: 'task_' + stationId,
+    name: 'task_' + stationId,
+    description: 'task_' + stationId + ' description',
     completed: false
   }
   MockData.stations[stationId].taskList.push(stationId)
