@@ -1,5 +1,5 @@
 const React = require('react-native');
-const AddStationForm = require('./addStationForm');
+const AddForm = require('./addForm');
 
 const {
   StyleSheet,
@@ -32,7 +32,8 @@ class StationIndex extends React.Component {
     return (
       <View style={styles.container}>
         <Text>StationIndex View</Text>
-        <AddStationForm
+        <AddForm
+          placeholder="Add a Station..."
           onSubmit={this.props.onAddStation.bind(this)}/>
         {stationsList}
       </View>

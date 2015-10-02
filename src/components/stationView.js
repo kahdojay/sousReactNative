@@ -2,8 +2,10 @@ import React from 'react-native';
 import AddTask from '../components/addTask';
 import TaskList from '../components/taskList';
 import { BackBtn } from '../utilities/navigation';
+const AddForm = require('./addForm');
 
 const {
+  ActionSheet,
   StyleSheet,
   View,
   PropTypes,
@@ -26,12 +28,13 @@ class StationView extends React.Component {
         <BackBtn
           navigator={this.props.navigator}
           />
-        <AddTask
-          onAddClick={text =>
+        <AddForm
+          placeholder="Add a Task..."
+          onSubmit={text =>
             this.props.addNewTask(text, station.id)
-          } />
+          }/>
         <TaskList
-          navigator={this.props.navigator}  
+          navigator={this.props.navigator}
           tasks={tasks}
           onTaskClick={taskId =>
             this.props.toggle(taskId)

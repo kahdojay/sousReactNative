@@ -9,7 +9,7 @@ let {
   StyleSheet,
 } = React;
 
-export default class AddStationForm extends React.Component {
+export default class AddForm extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -24,7 +24,7 @@ export default class AddStationForm extends React.Component {
         <TextInput
           style={styles.input}
           value={this.state.text}
-          placeholder={'Add a Station...'}
+          placeholder={this.props.placeholder}
           onChangeText={this.handleChangeText.bind(this)}
           onSubmitEditing={this.handleSubmit.bind(this)}
           />
@@ -65,6 +65,7 @@ let styles = StyleSheet.create({
   }
 })
 
-AddStationForm.propTypes = {
+AddForm.propTypes = {
+  placeholder: PropTypes.string.isRequired,
   onSubmit: PropTypes.func.isRequired
 };
