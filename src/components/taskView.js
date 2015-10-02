@@ -14,7 +14,7 @@ class TaskView extends React.Component {
         <BackBtn 
           navigator={this.props.navigator}
         />
-        <Text>Recipe TaskView</Text>
+        <Text>{this.props.description}</Text>
       </View>
     );
   }

@@ -40,6 +40,7 @@ class App extends React.Component {
                 />;
       case 'TaskView':
         return <TaskView
+                  description={route.description}
                   navigator={nav}
                   onBack={() => this._back.bind(this)}
                 />;
