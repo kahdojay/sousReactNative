@@ -13,7 +13,7 @@ class TaskView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      textInputValue: this.props.description
+      textInputValue: this.props.task.description
     }
   }
   saveTask() {
@@ -33,19 +33,7 @@ class TaskView extends React.Component {
           placeholder={'hello'}
           value={this.state.textInputValue}
           onChangeText={(text) => this.setState({textInputValue: text})}
-          onEndEditing={() => this.saveTask.bind(this)}
-        >
-        </TextInput>
-        <TouchableHighlight>
-          <Text>Hi</Text>
-        </TouchableHighlight>
-        <TextInput
-          style={styles.input}
-          multiline={true}
-          placeholder={'hello'}
-          value={this.state.textInputValue}
-          onChangeText={(text) => this.setState({textInputValue: text})}
-          onEndEditing={(text) => this.props.saveTaskDescription(text)}
+          onEndEditing={() => this.saveTask()}
         >
         </TextInput>
       </View>

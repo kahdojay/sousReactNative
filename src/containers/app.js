@@ -1,5 +1,5 @@
 import React from 'react-native';
-import { addStation, updateTask } from '../actions';
+import { addStation, updateTask, addTask, toggleTask } from '../actions';
 import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
 import TaskView from '../components/taskView';
@@ -33,15 +33,31 @@ class App extends React.Component {
                   onBack={() => this._back.bind(this)}
                 />;
       case 'StationView':
+        let station = stations[route.stationId]
+        let taskList = Object.keys(tasks);
+        let stationTasks = taskList.filter((taskKey) => {
+          if (tasks[taskKey].stationId === route.stationId)
+            return taskKey
+        })
+        stationTasks = stationTasks.map((taskKey) => {
+          return tasks[taskKey]
+        })
         return <StationView
                   navigator={nav}
+                  station={station}
+                  tasks={stationTasks}
                   stationId={route.stationId}
                   onBack={() => this._back.bind(this)}
+                  addNewTask={(text, stationId) => 
+                    dispatch(addTask(text, stationId))
+                  }
+                  toggle={(taskId) => 
+                    dispatch(toggleTask(taskId))
+                  }
                 />;
       case 'TaskView':
         return <TaskView
                   task={tasks[route.taskId]}
-                  description={route.description}
                   navigator={nav}
                   onBack={() => {
                     this._back.bind(this)

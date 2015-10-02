@@ -3,7 +3,7 @@ import { ADD_TASK, UPDATE_TASK, TOGGLE_TASK, SET_TASK_VISIBILITY, TaskVisibility
 function addTask(text, stationId) {
   return {
     type: ADD_TASK,
-    text: text,
+    name: text,
     stationId: stationId,
   };
 }
@@ -11,7 +11,6 @@ function addTask(text, stationId) {
 function updateTask(task) {
   return {
     type: UPDATE_TASK,
-    // ...task
     task: task
   };
 }

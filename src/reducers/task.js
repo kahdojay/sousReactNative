@@ -21,7 +21,7 @@ function tasks(state = initialState.tasks, action) {
     newState[newTaskId] = {
       id: newTaskId + '',
       stationId: action.stationId,
-      description: action.text,
+      name: action.name,
       completed: false
     }
     return newState

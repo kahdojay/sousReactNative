@@ -10,7 +10,6 @@ let {
 
 export default class TaskListItem extends React.Component {
   render() {
-
     return (
       <View>
         <TouchableHighlight
