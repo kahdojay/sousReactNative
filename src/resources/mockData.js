@@ -9,7 +9,8 @@ function addTasks(stationId){
     stationId: stationId,
     name: 'task_' + stationId,
     description: 'task_' + stationId + ' description',
-    completed: false
+    completed: false,
+    quantity: 1
   }
   MockData.stations[stationId].taskList.push(stationId)
 }

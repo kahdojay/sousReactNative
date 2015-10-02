@@ -26,6 +26,7 @@ export default class TaskList extends React.Component {
         {tasksCompleted.map((task) => {
           return <TaskListItem
             name={task.name}
+            quantity={task.quantity}
             completed={task.completed}
             taskId={task.id}
             navigator={this.props.navigator}
@@ -35,6 +36,7 @@ export default class TaskList extends React.Component {
         {tasksIncomplete.map((task) => {
           return <TaskListItem
             name={task.name}
+            quantity={task.quantity}
             completed={task.completed}
             taskId={task.id}
             navigator={this.props.navigator}

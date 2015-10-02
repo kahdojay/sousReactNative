@@ -10,6 +10,7 @@ let {
 
 export default class TaskListItem extends React.Component {
   render() {
+    let quantity = this.props.quantity > 1 ? this.props.quantity : ''
     return (
       <View style={[styles.task,
               this.props.completed && styles.completed
@@ -29,14 +30,15 @@ export default class TaskListItem extends React.Component {
           >
           <Text>{this.props.name}</Text>
         </TouchableHighlight>
-          <TouchableHighlight
-            style={styles.quantityButton}>
-            <Text>-</Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            style={styles.quantityButton}>
-            <Text>+</Text>
-          </TouchableHighlight>
+        <Text>{quantity}</Text>
+        <TouchableHighlight
+          style={styles.quantityButton}>
+          <Text>-</Text>
+        </TouchableHighlight>
+        <TouchableHighlight
+          style={styles.quantityButton}>
+          <Text>+</Text>
+        </TouchableHighlight>
 
       </View>
     );
@@ -52,7 +54,7 @@ let styles = StyleSheet.create({
   },
   task: {
     flexDirection: 'row',
-    backgroundColor: 'red'
+    backgroundColor: 'lightblue'
   },
   completed: {
     backgroundColor: 'green'
@@ -69,7 +71,7 @@ let styles = StyleSheet.create({
   },
   quantityButton: {
     flex: 1,
-    
+
   }
 });
 
