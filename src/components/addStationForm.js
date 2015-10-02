@@ -28,7 +28,9 @@ export default class AddStationForm extends React.Component {
           onChangeText={this.handleChangeText.bind(this)}
           onSubmitEditing={this.handleSubmit.bind(this)}
           />
-        <TouchableHighlight onPress={this.handleSubmit.bind(this)}>
+        <TouchableHighlight
+          onPress={this.handleSubmit.bind(this)}
+          style={styles.buttonContainer}>
           <Text>Add</Text>
         </TouchableHighlight>
       </View>
@@ -49,11 +51,17 @@ export default class AddStationForm extends React.Component {
 
 let styles = StyleSheet.create({
   container: {
-    height: 44,
+    height: 32,
+    flexDirection: 'row'
   },
   input: {
-    flex: 1,
+    flex: 10,
     backgroundColor: '#cde'
+  },
+  buttonContainer: {
+    flex: 1,
+    padding: 8,
+    justifyContent: 'center'
   }
 })
 
