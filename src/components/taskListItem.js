@@ -11,16 +11,17 @@ let {
 export default class TaskListItem extends React.Component {
   render() {
     return (
-      <View style={styles.container}>
+      <View style={[styles.task,
+              this.props.completed && styles.completed
+            ]}>
         <TouchableHighlight
+          style={styles.checkBox}
           onPress={this.props.onPress}
           >
-          <Text
-            style={[styles.task,
-              this.props.completed && styles.completed
-            ]}>{'<checkbox>'}</Text>
+          <Text>{'<checkbox>'}</Text>
         </TouchableHighlight>
         <TouchableHighlight
+          style={styles.taskName}
           onPress={() => this.props.navigator.push({
             name: 'TaskView',
             taskId: this.props.taskId
@@ -28,6 +29,15 @@ export default class TaskListItem extends React.Component {
           >
           <Text>{this.props.name}</Text>
         </TouchableHighlight>
+          <TouchableHighlight
+            style={styles.quantityButton}>
+            <Text>-</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            style={styles.quantityButton}>
+            <Text>+</Text>
+          </TouchableHighlight>
+
       </View>
     );
   }
@@ -37,12 +47,29 @@ let styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
   },
-  task: {
+  checkBox: {
     flex: 1,
+  },
+  task: {
+    flexDirection: 'row',
     backgroundColor: 'red'
   },
   completed: {
     backgroundColor: 'green'
+  },
+  taskName: {
+    flex: 1,
+    backgroundColor: 'green'
+  },
+  quantityButtons: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: 'blue',
+    justifyContent: 'space-around'
+  },
+  quantityButton: {
+    flex: 1,
+    
   }
 });
 
