@@ -58,14 +58,14 @@ const styles = StyleSheet.create({
 function getTaskFilter(stations, tasks, filter) {
   return function filteredTasks(stationId){
     let taskList = stations[stationId].taskList;
-    let stationTodos = taskList.map((taskKey) => tasks[taskKey])
+    let stationTasks = taskList.map((taskKey) => tasks[taskKey])
     switch (filter) {
     case TaskVisibility.SHOW_ALL:
-      return stationTodos;
+      return stationTasks;
     case TaskVisibility.SHOW_COMPLETED:
-      return stationTodos.filter(task => task.completed);
+      return stationTasks.filter(task => task.completed);
     case TaskVisibility.SHOW_ACTIVE:
-      return stationTodos.filter(task => !task.completed);
+      return stationTasks.filter(task => !task.completed);
     }
   }
 }

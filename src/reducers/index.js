@@ -20,11 +20,11 @@ function tasks(state = initialState.tasks, action) {
       completed: false
     }];
   case TOGGLE_TASK:
-    let targetTodo = state[action.index]
+    let targetTask = state[action.index]
     return [
       ...state.slice(0, action.index),
-      Object.assign({}, targetTodo, {
-        completed: !targetTodo.completed
+      Object.assign({}, targetTask, {
+        completed: !targetTask.completed
       }),
       ...state.slice(action.index + 1)
     ];
@@ -37,10 +37,10 @@ function stations (state = initialState.stations) {
   return state
 }
 
-const todoApp = combineReducers({
+const taskApp = combineReducers({
   taskVisibility,
   tasks,
   stations
 });
 
-export default todoApp;
+export default taskApp;

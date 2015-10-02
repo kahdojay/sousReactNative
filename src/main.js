@@ -2,13 +2,13 @@ import React from 'react-native'
 import { createStore } from 'redux';
 import { Provider } from 'react-redux/native';
 import App from './containers/app'
-import todoApp from './reducers';
+import taskApp from './reducers';
 
 var {
   AppRegistry
 } = React
 
-let store = createStore(todoApp);
+let store = createStore(taskApp);
 
 class SousApp extends React.Component {
   render() {
