@@ -1,5 +1,5 @@
 import MockData from '../resources/mockData';
-import { ADD_STATION } from '../actions';
+import { ADD_STATION, DELETE_STATION } from '../actions';
 
 const initialState = MockData;
 // const initialState = {
@@ -21,6 +21,11 @@ function stations(state = initialState.stations, action) {
       taskList: []
     }
     return Object.assign({}, state, newStation);
+  case DELETE_STATION:
+    console.log(action);
+    let newStationState = Object.assign({}, state);
+    newStationState[action.stationId].deleted = true;
+    return newStationState;
   default:
     return state;
   }

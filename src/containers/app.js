@@ -1,5 +1,5 @@
 import React from 'react-native';
-import { addStation, updateTask, addTask, toggleTask } from '../actions';
+import { addStation, deleteStation, updateTask, addTask, toggleTask } from '../actions';
 import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
 import TaskView from '../components/taskView';
@@ -48,10 +48,13 @@ class App extends React.Component {
                   tasks={stationTasks}
                   stationId={route.stationId}
                   onBack={() => this._back.bind(this)}
-                  addNewTask={(text, stationId) => 
+                  onAddNewTask={(text, stationId) =>
                     dispatch(addTask(text, stationId))
                   }
-                  toggle={(taskId) => 
+                  onDeleteStation={(stationId) =>
+                    dispatch(deleteStation(stationId))
+                  }
+                  toggle={(taskId) =>
                     dispatch(toggleTask(taskId))
                   }
                 />;
