@@ -33,7 +33,7 @@ class StationView extends React.Component {
           } />
         <TaskList
           tasks={tasks}
-          navigator={this.props.navigator}
+          navigator={this.props.navigator}  
           onTaskClick={taskId =>
             dispatch(toggleTask(taskId))
           } />
@@ -55,13 +55,16 @@ const styles = StyleSheet.create({
   }
 });
 
-function getTaskFilter(stations, tasks, filter) {
+function getTaskFilter(state, filter) {
   return function filteredTasks(stationId){
-    console.log(stationId, typeof stationId)
-    let taskList = stations[stationId].taskList;
-    console.log(stations, taskList)
-    let stationTasks = taskList.map((taskKey) => tasks[taskKey])
-    console.log(tasks, stationTasks)
+    let taskList = Object.keys(state.tasks);
+    let stationTasks = taskList.filter((taskKey) => {
+      if (state.tasks[taskKey].stationId === stationId)
+        return taskKey
+    })
+    stationTasks = stationTasks.map((taskKey) => {
+      return state.tasks[taskKey]
+    })
     switch (filter) {
     case TaskVisibility.SHOW_ALL:
       return stationTasks;
@@ -76,9 +79,8 @@ function getTaskFilter(stations, tasks, filter) {
 // Which props do we want to inject, given the global state?
 // Note: use https://github.com/faassen/reselect for better performance.
 function select(state) {
-  console.log('StationView: ', state);
   return {
-    filteredTasks: getTaskFilter(state.stations, state.tasks, state.taskVisibility),
+    filteredTasks: getTaskFilter(state, state.taskVisibility),
     taskVisibility: state.taskVisibility
   };
 }
