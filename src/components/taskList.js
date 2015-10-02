@@ -20,21 +20,20 @@ export default class TaskList extends React.Component {
         tasksIncomplete.push(tasks[taskKey])
       }
     })
-    console.log('taskList', tasksCompleted, tasksIncomplete)
     return (
       <View>
         {tasksCompleted.map((task) => {
           return <TaskListItem
-            name={task.name}
-            quantity={task.quantity}
-            completed={task.completed}
-            taskId={task.id}
+            task={task}
+            updateTaskQuantity={this.props.updateTaskQuantity}
             navigator={this.props.navigator}
             onPress={() => this.props.onTaskClick(task.id)} />
         })}
         <Text>Divider</Text>
         {tasksIncomplete.map((task) => {
           return <TaskListItem
+            task={task}
+            updateTaskQuantity={this.props.updateTaskQuantity}
             name={task.name}
             quantity={task.quantity}
             completed={task.completed}

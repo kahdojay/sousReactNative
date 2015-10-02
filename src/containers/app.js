@@ -57,6 +57,9 @@ class App extends React.Component {
                   toggle={(taskId) =>
                     dispatch(toggleTask(taskId))
                   }
+                  updateTaskQuantity={(newTask) => {
+                    dispatch(updateTask(newTask))
+                  }}
                 />;
       case 'TaskView':
         return <TaskView

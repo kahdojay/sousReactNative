@@ -9,11 +9,23 @@ let {
 } = React;
 
 export default class TaskListItem extends React.Component {
+  increment() {
+    let newTask = this.props.task
+    newTask.quantity += 1
+    this.props.updateTaskQuantity(newTask)
+  }
+  decrement() {
+    let newTask = this.props.task
+    if (newTask.quantity >= 1)
+      newTask.quantity -= 1
+    this.props.updateTaskQuantity(newTask)
+  }
   render() {
-    let quantity = this.props.quantity > 1 ? this.props.quantity : ''
+    let task = this.props.task
+    // let quantity = this.props.quantity > 1 ? this.props.quantity : ''
     return (
       <View style={[styles.task,
-              this.props.completed && styles.completed
+              task.completed && styles.completed
             ]}>
         <TouchableHighlight
           style={styles.checkBox}
@@ -25,18 +37,22 @@ export default class TaskListItem extends React.Component {
           style={styles.taskName}
           onPress={() => this.props.navigator.push({
             name: 'TaskView',
-            taskId: this.props.taskId
+            taskId: task.id
           })}
           >
-          <Text>{this.props.name}</Text>
+          <Text>{task.name}</Text>
         </TouchableHighlight>
-        <Text>{quantity}</Text>
+        <Text>{task.quantity}</Text>
         <TouchableHighlight
-          style={styles.quantityButton}>
+          style={styles.quantityButton}
+          onPress={() => this.decrement()}
+          >
           <Text>-</Text>
         </TouchableHighlight>
         <TouchableHighlight
-          style={styles.quantityButton}>
+          style={styles.quantityButton}
+          onPress={() => this.increment()}
+          >
           <Text>+</Text>
         </TouchableHighlight>
 
