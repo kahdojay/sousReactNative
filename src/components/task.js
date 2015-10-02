@@ -8,7 +8,7 @@ let {
   View,
 } = React;
 
-export default class Todo extends React.Component {
+export default class Task extends React.Component {
   render() {
 
     return (
@@ -17,7 +17,7 @@ export default class Todo extends React.Component {
           onPress={this.props.onPress}
           >
           <Text
-            style={[styles.todo,
+            style={[styles.task,
               this.props.completed && styles.completed
             ]}>{this.props.description}</Text>
         </TouchableHighlight>
@@ -34,7 +34,7 @@ export default class Todo extends React.Component {
 }
 
 let styles = StyleSheet.create({
-  todo: {
+  task: {
     flex: 1,
     backgroundColor: 'red'
   },
@@ -43,7 +43,7 @@ let styles = StyleSheet.create({
   }
 });
 
-Todo.propTypes = {
+Task.propTypes = {
   // onPress: PropTypes.func.isRequired,
   text: PropTypes.string.isRequired,
   completed: PropTypes.bool.isRequired

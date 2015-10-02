@@ -1,25 +1,25 @@
 import MockData from '../resources/mockData';
 import { combineReducers } from 'redux';
-import { ADD_TODO, TOGGLE_TODO, SET_VISIBILITY_FILTER, VisibilityFilters } from '../actions';
-const { SHOW_ALL } = VisibilityFilters;
+import { ADD_TASK, TOGGLE_TASK, SET_TASK_VISIBILITY, TaskVisibility } from '../actions';
+const { SHOW_ALL } = TaskVisibility;
 const initialState = MockData
-function visibilityFilter(state = SHOW_ALL, action) {
+function taskVisibility(state = SHOW_ALL, action) {
   switch (action.type) {
-  case SET_VISIBILITY_FILTER:
+  case SET_TASK_VISIBILITY:
     return action.filter;
   default:
     return state;
   }
 }
 
-function todos(state = initialState.tasks, action) {
+function tasks(state = initialState.tasks, action) {
   switch (action.type) {
-  case ADD_TODO:
+  case ADD_TASK:
     return [...state, {
       text: action.text,
       completed: false
     }];
-  case TOGGLE_TODO:
+  case TOGGLE_TASK:
     let targetTodo = state[action.index]
     return [
       ...state.slice(0, action.index),
@@ -38,8 +38,8 @@ function stations (state = initialState.stations) {
 }
 
 const todoApp = combineReducers({
-  visibilityFilter,
-  todos,
+  taskVisibility,
+  tasks,
   stations
 });
 

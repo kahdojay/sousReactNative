@@ -2,15 +2,15 @@
  * action types
  */
 
-export const ADD_TODO = 'ADD_TODO';
-export const TOGGLE_TODO = 'TOGGLE_TODO';
-export const SET_VISIBILITY_FILTER = 'SET_VISIBILITY_FILTER';
+export const ADD_TASK = 'ADD_TASK';
+export const TOGGLE_TASK = 'TOGGLE_TASK';
+export const SET_TASK_VISIBILITY = 'SET_TASK_VISIBILITY';
 
 /*
  * other constants
  */
 
-export const VisibilityFilters = {
+export const TaskVisibility = {
   SHOW_ALL: 'SHOW_ALL',
   SHOW_COMPLETED: 'SHOW_COMPLETED',
   SHOW_ACTIVE: 'SHOW_ACTIVE'
@@ -20,14 +20,23 @@ export const VisibilityFilters = {
  * action creators
  */
 
-export function addTodo(text) {
-  return { type: ADD_TODO, text };
+export function addTask(text) {
+  return {
+    type: ADD_TASK,
+    text: text
+  };
 }
 
-export function toggleTodo(index) {
-  return { type: TOGGLE_TODO, index };
+export function toggleTask(index) {
+  return {
+    type: TOGGLE_TASK,
+    index: index
+  };
 }
 
 export function setVisibilityFilter(filter) {
-  return { type: SET_VISIBILITY_FILTER, filter };
+  return {
+    type: SET_TASK_VISIBILITY,
+    filter: filter
+  };
 }

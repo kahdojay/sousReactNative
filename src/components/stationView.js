@@ -1,8 +1,8 @@
 const React = require('react-native');
 import { connect } from 'react-redux/native';
-import { addTodo, toggleTodo, setVisibilityFilter, VisibilityFilters } from '../actions';
-import AddTodo from '../components/addTodo';
-import TodoList from '../components/todoList';
+import { addTask, toggleTask, setVisibilityFilter, TaskVisibility } from '../actions';
+import AddTask from '../components/addTask';
+import TaskList from '../components/taskList';
 import Footer from '../components/footer';
 import { BackBtn } from '../utilities/navigation';
 
@@ -20,27 +20,27 @@ class StationView extends React.Component {
   }
   render() {
     // Injected by connect() call:
-    const { stationId, dispatch, visibleTodos, visibilityFilter } = this.props;
-    let todos = visibleTodos(stationId);
+    const { stationId, dispatch, filteredTasks, taskVisibility } = this.props;
+    let tasks = filteredTasks(stationId);
     return (
       <View style={styles.container}>
         <BackBtn
           navigator={this.props.navigator}
-        />
-        <AddTodo
+          />
+        <AddTask
           onAddClick={text =>
-            dispatch(addTodo(text))
+            dispatch(addTask(text))
           } />
-          <TodoList
-            todos={todos}
-            navigator={this.props.navigator}
-            onTodoClick={index =>
-              dispatch(toggleTodo(index))
+        <TaskList
+          tasks={tasks}
+          navigator={this.props.navigator}
+          onTaskClick={index =>
+            dispatch(toggleTask(index))
           } />
-          <Footer
-            filter={visibilityFilter}
-            onFilterChange={nextFilter =>
-              dispatch(setVisibilityFilter(nextFilter))
+        <Footer
+          filter={taskVisibility}
+          onFilterChange={nextFilter =>
+            dispatch(setVisibilityFilter(nextFilter))
           } />
       </View>
     );
@@ -55,37 +55,37 @@ const styles = StyleSheet.create({
   }
 });
 
-function selectTodos(stations, todos, filter) {
-  return function(stationId){
+function getTaskFilter(stations, tasks, filter) {
+  return function filteredTasks(stationId){
     let taskList = stations[stationId].taskList;
-    let stationTodos = taskList.map((todoKey) => todos[todoKey])
+    let stationTodos = taskList.map((taskKey) => tasks[taskKey])
     switch (filter) {
-    case VisibilityFilters.SHOW_ALL:
+    case TaskVisibility.SHOW_ALL:
       return stationTodos;
-    case VisibilityFilters.SHOW_COMPLETED:
-      return stationTodos.filter(todo => todo.completed);
-    case VisibilityFilters.SHOW_ACTIVE:
-      return stationTodos.filter(todo => !todo.completed);
+    case TaskVisibility.SHOW_COMPLETED:
+      return stationTodos.filter(task => task.completed);
+    case TaskVisibility.SHOW_ACTIVE:
+      return stationTodos.filter(task => !task.completed);
     }
   }
 }
 
 // Which props do we want to inject, given the global state?
 // Note: use https://github.com/faassen/reselect for better performance.
-function select(state) {
+function getTasks(state) {
   return {
-    visibleTodos: selectTodos(state.stations, state.todos, state.visibilityFilter),
-    visibilityFilter: state.visibilityFilter
+    filteredTasks: getTaskFilter(state.stations, state.tasks, state.taskVisibility),
+    taskVisibility: state.taskVisibility
   };
 }
 
 StationView.propTypes = {
   stationId: PropTypes.string.isRequired,
-  visibleTodos: PropTypes.arrayOf(PropTypes.shape({
+  filteredTasks: PropTypes.arrayOf(PropTypes.shape({
     text: PropTypes.string.isRequired,
     completed: PropTypes.bool.isRequired
   })),
-  visibilityFilter: PropTypes.oneOf([
+  taskVisibility: PropTypes.oneOf([
     'SHOW_ALL',
     'SHOW_COMPLETED',
     'SHOW_ACTIVE'
@@ -93,4 +93,4 @@ StationView.propTypes = {
 };
 
 // Wrap the component to inject dispatch and state into it
-export default connect(select)(StationView);
+export default connect(getTasks)(StationView);
