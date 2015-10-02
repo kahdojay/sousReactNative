@@ -1,4 +1,5 @@
 import React from 'react-native';
+import { addStation } from '../actions';
 import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
 import TaskView from '../components/taskView';
@@ -22,10 +23,13 @@ class App extends React.Component {
   renderScene(route, nav) {
     switch (route.name) {
       case 'StationIndex':
-        const { stations } = this.props;
+        const { stations, dispatch } = this.props;
         return <StationIndex
                   navigator={nav}
                   stations={stations}
+                  onAddStation={name =>
+                    dispatch(addStation(name))
+                  }
                   onBack={() => this._back.bind(this)}
                 />;
       case 'StationView':

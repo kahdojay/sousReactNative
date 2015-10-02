@@ -1,9 +1,11 @@
 const React = require('react-native');
+const AddStationForm = require('./addStationForm');
 
 const {
   StyleSheet,
   View,
   Text,
+  TextInput,
   TouchableHighlight,
 } = React;
 
@@ -29,6 +31,8 @@ class StationIndex extends React.Component {
     return (
       <View style={styles.container}>
         <Text>StationIndex View</Text>
+        <AddStationForm
+          onSubmit={(text) => {console.log(text)}}/>
         {stationsList}
       </View>
     );
