@@ -1,5 +1,5 @@
 import MockData from '../resources/mockData';
-import { ADD_TASK, TOGGLE_TASK, SET_TASK_VISIBILITY, TaskVisibility } from '../actions';
+import { ADD_TASK, UPDATE_TASK, TOGGLE_TASK, SET_TASK_VISIBILITY, TaskVisibility } from '../actions';
 const { SHOW_ALL } = TaskVisibility;
 
 const initialState = MockData;
@@ -29,9 +29,13 @@ function tasks(state = initialState.tasks, action) {
     let newStateToggle = Object.assign({}, state)
     newStateToggle[action.index].completed = !newStateToggle[action.index].completed
     return newStateToggle;
+  case UPDATE_TASK:
+    let newTasksState = Object.assign({}, state)
+    newTasksState[action.task.id] = action.task
+    return newTasksState
   default:
     return state;
-  }
+  }  
 }
 
 const task = {
