@@ -20,11 +20,11 @@ class StationView extends React.Component {
   }
   render() {
     // Injected by connect() call:
-    const { dispatch, visibleTodos, visibilityFilter } = this.props;
-
+    const { stationId, dispatch, visibleTodos, visibilityFilter } = this.props;
+    let todos = visibleTodos(stationId);
     return (
       <View style={styles.container}>
-        <BackBtn 
+        <BackBtn
           navigator={this.props.navigator}
         />
         <AddTodo
@@ -32,7 +32,7 @@ class StationView extends React.Component {
             dispatch(addTodo(text))
           } />
           <TodoList
-            todos={visibleTodos}
+            todos={todos}
             navigator={this.props.navigator}
             onTodoClick={index =>
               dispatch(toggleTodo(index))
@@ -55,14 +55,18 @@ const styles = StyleSheet.create({
   }
 });
 
-function selectTodos(todos, filter) {
-  switch (filter) {
-  case VisibilityFilters.SHOW_ALL:
-    return todos;
-  case VisibilityFilters.SHOW_COMPLETED:
-    return todos.filter(todo => todo.completed);
-  case VisibilityFilters.SHOW_ACTIVE:
-    return todos.filter(todo => !todo.completed);
+function selectTodos(stations, todos, filter) {
+  return function(stationId){
+    let taskList = stations[stationId].taskList;
+    let stationTodos = taskList.map((todoKey) => todos[todoKey])
+    switch (filter) {
+    case VisibilityFilters.SHOW_ALL:
+      return stationTodos;
+    case VisibilityFilters.SHOW_COMPLETED:
+      return stationTodos.filter(todo => todo.completed);
+    case VisibilityFilters.SHOW_ACTIVE:
+      return stationTodos.filter(todo => !todo.completed);
+    }
   }
 }
 
@@ -70,12 +74,13 @@ function selectTodos(todos, filter) {
 // Note: use https://github.com/faassen/reselect for better performance.
 function select(state) {
   return {
-    visibleTodos: selectTodos(state.todos, state.visibilityFilter),
+    visibleTodos: selectTodos(state.stations, state.todos, state.visibilityFilter),
     visibilityFilter: state.visibilityFilter
   };
 }
 
 StationView.propTypes = {
+  stationId: PropTypes.string.isRequired,
   visibleTodos: PropTypes.arrayOf(PropTypes.shape({
     text: PropTypes.string.isRequired,
     completed: PropTypes.bool.isRequired

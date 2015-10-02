@@ -31,6 +31,7 @@ class App extends React.Component {
       case 'StationView':
         return <StationView
                   navigator={nav}
+                  stationId={route.stationId}
                   onBack={() => this._back.bind(this)}
                 />;
       case 'TaskView':

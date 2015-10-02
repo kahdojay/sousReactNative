@@ -15,21 +15,20 @@ class StationIndex extends React.Component {
     stationKeys.forEach((stationKey) => {
       let station = stations[stationKey];
       stationsList.push(
-        <View>
+        <TouchableHighlight
+          key={stationKey}
+          onPress={() => this.props.navigator.push({
+            name: 'StationView',
+            stationId: stationKey
+          })}
+          >
           <Text> {station.name} </Text>
-        </View>
+        </TouchableHighlight>
       )
     })
     return (
       <View style={styles.container}>
         <Text>StationIndex View</Text>
-        <TouchableHighlight
-          onPress={() => this.props.navigator.push({
-            name: 'StationView'
-          })}
-          >
-          <Text>StationView Button</Text>
-        </TouchableHighlight>
         {stationsList}
       </View>
     );
