@@ -6,10 +6,17 @@ const initialState = MockData;
 function stations(state = initialState.stations, action) {
   switch (action.type) {
   case ADD_STATION:
-    return [...state, {
-      text: action.text,
-      completed: false
-    }];
+    let id = Object.keys(state).length;
+    let newStation = {}
+    newStation[id] = {
+      id: id,
+      name: action.name,
+      taskList: []
+    }
+    return {
+      ...state,
+      newStation
+    };
   default:
     return state;
   }

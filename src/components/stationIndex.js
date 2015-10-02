@@ -7,6 +7,7 @@ const {
   Text,
   TextInput,
   TouchableHighlight,
+  PropTypes,
 } = React;
 
 class StationIndex extends React.Component {
@@ -32,11 +33,15 @@ class StationIndex extends React.Component {
       <View style={styles.container}>
         <Text>StationIndex View</Text>
         <AddStationForm
-          onSubmit={(text) => {console.log(text)}}/>
+          onSubmit={this.props.onAddStation.bind(this)}/>
         {stationsList}
       </View>
     );
   }
+};
+
+StationIndex.propTypes = {
+  onAddStation: PropTypes.func.isRequired,
 };
 
 
