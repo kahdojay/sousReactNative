@@ -1,5 +1,5 @@
 import React from 'react-native';
-import Task from './task';
+import TaskListItem from './taskListItem';
 
 let {
   View,
@@ -14,7 +14,8 @@ export default class TaskList extends React.Component {
         {taskKeys.map((taskKey, index) => {
           let task = this.props.tasks[taskKey]
           console.log(task);
-          return <Task {...task}
+          return <TaskListItem 
+            {...task}
             navigator={this.props.navigator}
             key={task.id}
             onPress={() => this.props.onTaskClick(task.id)} />

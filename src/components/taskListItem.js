@@ -8,7 +8,7 @@ let {
   View,
 } = React;
 
-export default class Task extends React.Component {
+export default class TaskListItem extends React.Component {
   render() {
 
     return (
@@ -19,11 +19,12 @@ export default class Task extends React.Component {
           <Text
             style={[styles.task,
               this.props.completed && styles.completed
-            ]}>{this.props.description}</Text>
+            ]}>{this.props.name}</Text>
         </TouchableHighlight>
         <TouchableHighlight
           onPress={() => this.props.navigator.push({
-            name: 'TaskView'
+            name: 'TaskView',
+            description: this.props.description
           })}
           >
           <Text>ShowTask</Text>
@@ -43,7 +44,7 @@ let styles = StyleSheet.create({
   }
 });
 
-Task.propTypes = {
+TaskListItem.propTypes = {
   // onPress: PropTypes.func.isRequired,
   completed: PropTypes.bool.isRequired
 };
