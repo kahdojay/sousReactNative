@@ -2,6 +2,9 @@ import MockData from '../resources/mockData';
 import { ADD_STATION } from '../actions';
 
 const initialState = MockData;
+// const initialState = {
+//   stations:{}
+// };
 
 function stations(state = initialState.stations, action) {
   switch (action.type) {

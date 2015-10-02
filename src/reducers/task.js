@@ -3,6 +3,9 @@ import { ADD_TASK, UPDATE_TASK, TOGGLE_TASK, SET_TASK_VISIBILITY, TaskVisibility
 const { SHOW_ALL } = TaskVisibility;
 
 const initialState = MockData;
+// const initialState = {
+//   tasks:{}
+// };
 
 function taskVisibility(state = SHOW_ALL, action) {
   switch (action.type) {
@@ -35,7 +38,7 @@ function tasks(state = initialState.tasks, action) {
     return newTasksState
   default:
     return state;
-  }  
+  }
 }
 
 const task = {
