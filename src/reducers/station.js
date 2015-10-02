@@ -7,7 +7,7 @@ function stations(state = initialState.stations, action) {
   switch (action.type) {
   case ADD_STATION:
     let id = Object.keys(state).length;
-    let newStation = state
+    let newStation = Object.assign({}, state)
     newStation[id] = {
       id: id,
       name: action.name,
