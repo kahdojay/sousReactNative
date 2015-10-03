@@ -28,7 +28,9 @@ export default class Divider extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <View style={styles.roundedCorners}>
           <Text style={styles.text}>25 Completed Items</Text>
+        </View>
       </View>
     );
   }
@@ -39,15 +41,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 5,
   },
+  roundedCorners: {
+    backgroundColor: '#ddd',
+    width: 150,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
   text: {
     textAlign: 'center',
     backgroundColor: '#ddd',
     fontWeight: 'bold',
     color: greyText,
-    borderRadius: 5,
     paddingTop: 5,
     paddingBottom: 3,
-    width: 150,
+    width: 140,
   },
 })
 
