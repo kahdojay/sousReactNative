@@ -13,14 +13,11 @@ export default class TaskListItem extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <TouchableHighlight
-          onPress={this.props.onPress}
-          >
-          <Text
-            style={[styles.task,
-              this.props.completed && styles.completed
-            ]}>{'<checkbox>'}</Text>
-        </TouchableHighlight>
+        <CheckBox
+          label=''
+          onChange={this.props.onPress}
+          checked={this.props.completed}
+        />
         <TouchableHighlight
           onPress={() => this.props.navigator.push({
             name: 'TaskView',
@@ -29,7 +26,6 @@ export default class TaskListItem extends React.Component {
           >
           <Text>{this.props.name}</Text>
         </TouchableHighlight>
-        <CheckBox label='Label' checked={true} />
       </View>
     );
   }
@@ -38,10 +34,6 @@ export default class TaskListItem extends React.Component {
 let styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-  },
-  task: {
-    flex: 1,
-    backgroundColor: 'red'
   },
   completed: {
     backgroundColor: 'green'
