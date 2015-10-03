@@ -71,7 +71,7 @@ class StationView extends React.Component {
           }/>
         <TaskList
           navigator={this.props.navigator}
-          updateTaskQuantity={this.props.updateTaskQuantity.bind(this)}
+          updateTaskQuantity={this.props.updateTaskQuantity}
           tasks={tasks}
           onTaskClick={taskId =>
             this.props.toggle(taskId)
