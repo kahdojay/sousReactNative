@@ -23,8 +23,9 @@ export default class TaskList extends React.Component {
     console.log('taskList', tasksCompleted, tasksIncomplete)
     return (
       <View>
-        {tasksCompleted.map((task) => {
+        {tasksCompleted.map((task, index) => {
           return <TaskListItem
+            key={index}
             name={task.name}
             completed={task.completed}
             taskId={task.id}
@@ -32,8 +33,9 @@ export default class TaskList extends React.Component {
             onPress={() => this.props.onTaskClick(task.id)} />
         })}
         <Text>Divider</Text>
-        {tasksIncomplete.map((task) => {
+        {tasksIncomplete.map((task, index) => {
           return <TaskListItem
+            key={index}
             name={task.name}
             completed={task.completed}
             taskId={task.id}
