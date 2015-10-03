@@ -3,6 +3,7 @@
  */
 
 export const ADD_STATION = 'ADD_STATION';
+export const DELETE_STATION = 'DELETE_STATION';
 
 export const ADD_TASK = 'ADD_TASK';
 export const UPDATE_TASK = 'UPDATE_TASK';

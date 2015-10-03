@@ -11,7 +11,7 @@ class BackBtn extends React.Component {
   render() {
     return (
       <TouchableHighlight
-        style={styles.button}
+        style={[styles.button, this.props.style]}
         underlayColor="#B5B5B5"
         onPress={() => {
           this.props.navigator.jumpBack();
@@ -22,9 +22,14 @@ class BackBtn extends React.Component {
   }
 };
 
+BackBtn.propTypes = {
+
+};
 
 const styles = StyleSheet.create({
-
+  buttonText: {
+    color: '#fff'
+  }
 });
 
 

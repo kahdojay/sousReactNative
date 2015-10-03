@@ -1,14 +1,18 @@
 import React from 'react-native'
-import { createStore } from 'redux';
+import { createStore, compose } from 'redux';
 import { Provider } from 'react-redux/native';
+import { persistStore, autoRehydrate } from 'redux-persist'
 import App from './containers/app'
 import reducers from './reducers';
 
 var {
-  AppRegistry
+  AppRegistry,
+  AsyncStorage
 } = React
 
-let store = createStore(reducers);
+let store = compose(autoRehydrate())(createStore)(reducers);
+
+persistStore(store, {storage: AsyncStorage}, () => {})
 
 class SousApp extends React.Component {
   render() {

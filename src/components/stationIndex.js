@@ -1,5 +1,5 @@
 const React = require('react-native');
-const AddStationForm = require('./addStationForm');
+const AddForm = require('./addForm');
 
 const {
   StyleSheet,
@@ -17,6 +17,9 @@ class StationIndex extends React.Component {
     let stationKeys = Object.keys(stations);
     stationKeys.forEach((stationKey) => {
       let station = stations[stationKey];
+      // exclude deleted stations
+      if(station.hasOwnProperty('deleted') && station.deleted === true)
+        return;
       stationsList.push(
         <TouchableHighlight
           key={stationKey}
@@ -32,7 +35,8 @@ class StationIndex extends React.Component {
     return (
       <View style={styles.container}>
         <Text>StationIndex View</Text>
-        <AddStationForm
+        <AddForm
+          placeholder="Add a Station..."
           onSubmit={this.props.onAddStation.bind(this)}/>
         {stationsList}
       </View>

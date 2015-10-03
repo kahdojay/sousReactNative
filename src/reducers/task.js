@@ -35,7 +35,7 @@ function tasks(state = initialState.tasks, action) {
     return newTasksState
   default:
     return state;
-  }  
+  }
 }
 
 const task = {

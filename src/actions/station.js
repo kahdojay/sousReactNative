@@ -1,4 +1,4 @@
-import { ADD_STATION } from './actionTypes'
+import { ADD_STATION, DELETE_STATION } from './actionTypes'
 
 function addStation(name) {
   return {
@@ -7,7 +7,16 @@ function addStation(name) {
   };
 }
 
+function deleteStation(stationId) {
+  return {
+    type: DELETE_STATION,
+    stationId: stationId
+  }
+}
+
 export default {
   ADD_STATION,
-  addStation
+  DELETE_STATION,
+  addStation,
+  deleteStation
 }

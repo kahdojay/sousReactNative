@@ -8,10 +8,4 @@ const reducers = combineReducers(Object.assign(
   station
 ));
 
-// const reducers = combineReducers({
-//   taskVisibility: task.taskVisibility,
-//   tasks: task.tasks,
-//   stations: station.stations
-// })
-
 export default reducers;
