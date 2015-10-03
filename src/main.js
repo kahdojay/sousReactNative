@@ -18,8 +18,6 @@ let store = compose(
   autoRehydrate()
   )(createStore)(reducers);
 
-
-
 class SousApp extends React.Component {
   constructor(props) {
     super(props)
@@ -30,8 +28,8 @@ class SousApp extends React.Component {
 
   componentWillMount(){
     persistStore(
-      store, 
-      {storage: AsyncStorage}, 
+      store,
+      {storage: AsyncStorage},
       () => {
         this.setState({ rehydrated: true })
       }

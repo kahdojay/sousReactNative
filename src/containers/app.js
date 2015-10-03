@@ -27,9 +27,14 @@ class App extends React.Component {
 
   renderScene(route, nav) {
     const { session, stations, tasks, dispatch } = this.props;
-    // if token is not valid, override route name to 'Login'
-    // if (dispatch(validateSession()) === false)
-    //   route.name = 'Login'
+
+    if (this.props.session.isAuthenticated){ // redirect to stationIndex
+      if(route.name === 'Login') {
+        route.name = 'StationIndex'
+      }
+    } else { // redirect to login
+      route.name = 'Login'
+    }
     switch (route.name) {
       case 'Login':
         return <Login
@@ -39,9 +44,6 @@ class App extends React.Component {
                   }}
                   onLogin={(sessionParams) => {
                     dispatch(createSession(sessionParams))
-                  }}
-                  onSuccessfulLogin={() => {
-                    nav.replace({name: 'StationIndex'})
                   }}
                 />
       case 'StationIndex':
@@ -55,7 +57,6 @@ class App extends React.Component {
                   onBack={() => this._back.bind(this)}
                   onLogout={() => {
                     dispatch(resetSession())
-                    nav.replace({name: 'Login'})
                   }}
                 />;
       case 'StationView':
@@ -103,6 +104,7 @@ class App extends React.Component {
     }
   }
   render() {
+
     return (
       <Navigator
         sceneStyle={styles.nav}

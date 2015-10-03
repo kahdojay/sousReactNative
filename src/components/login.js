@@ -17,18 +17,7 @@ class Login extends React.Component {
       password: ''
     }
   }
-  componentWillMount() {
-    if (this.props.session.isAuthenticated) {
-      this.props.onSuccessfulLogin()
-    } else {
-      this.props.onResetSession()
-    }
-  }
   render() {
-    if (this.props.session.isAuthenticated) {
-      this.props.onSuccessfulLogin()
-    }
-
     let fetching =  <ActivityIndicatorIOS
                         animating={true}
                         color={'#808080'}
@@ -44,15 +33,17 @@ class Login extends React.Component {
           style={styles.input}
           value={this.state.email}
           placeholder='Email'
-          onChangeText={(text) => this.setState({email: text, password: this.state.password})}
-          />
+          onChangeText={(text) => {
+            this.setState({email: text, password: this.state.password})
+          }}/>
         <TextInput
           secureTextEntry={true}
           style={styles.input}
           value={this.state.password}
           placeholder='Password'
-          onChangeText={(text) => this.setState({password: text, email: this.state.email})}
-          />
+          onChangeText={(text) => {
+            this.setState({password: text, email: this.state.email})
+          }}/>
         <TouchableHighlight
           onPress={() => this.props.onLogin(this.state)}
           style={styles.button}>
