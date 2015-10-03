@@ -1,5 +1,6 @@
 import React from 'react-native';
 import TaskListItem from './taskListItem';
+import Divider from './divider';
 
 let {
   View,
@@ -32,7 +33,7 @@ export default class TaskList extends React.Component {
             navigator={this.props.navigator}
             onPress={() => this.props.onTaskClick(task.id)} />
         })}
-        <Text>Divider</Text>
+        <Divider />
         {tasksIncomplete.map((task, index) => {
           return <TaskListItem
             key={index}
