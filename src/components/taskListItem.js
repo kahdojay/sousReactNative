@@ -1,4 +1,9 @@
-import React from 'react-native';
+import React from 'react-native'
+import CheckBox from 'react-native-checkbox'
+import {
+  greyText,
+  taskCompletedBackgroundColor
+} from '../resources/colors';
 
 let {
   TouchableHighlight,
@@ -24,71 +29,69 @@ export default class TaskListItem extends React.Component {
     let task = this.props.task
     // let quantity = this.props.quantity > 1 ? this.props.quantity : ''
     return (
-      <View style={[styles.task,
-              task.completed && styles.completed
+      <View style={styles.container}>
+        <View style={[
+          styles.row,
+          this.props.completed && styles.rowCompleted
+        ]}>
+          <View style={styles.checkboxContainer}>
+            <CheckBox
+              label=''
+              onChange={this.props.onPress}
+              checked={!this.props.completed}
+            />
+          </View>
+          <TouchableHighlight
+            onPress={() => this.props.navigator.push({
+              name: 'TaskView',
+              taskId: this.props.taskId
+            })}
+            style={styles.main}
+            >
+            <Text style={[
+              styles.text,
+              this.props.completed && styles.textCompleted
             ]}>
-        <TouchableHighlight
-          style={styles.checkBox}
-          onPress={this.props.onPress}
-          >
-          <Text>{'<checkbox>'}</Text>
-        </TouchableHighlight>
-        <TouchableHighlight
-          style={styles.taskName}
-          onPress={() => this.props.navigator.push({
-            name: 'TaskView',
-            taskId: task.id
-          })}
-          >
-          <Text>{task.name}</Text>
-        </TouchableHighlight>
-        <Text>{task.quantity}</Text>
-        <TouchableHighlight
-          style={styles.quantityButton}
-          onPress={() => this.decrement()}
-          >
-          <Text>-</Text>
-        </TouchableHighlight>
-        <TouchableHighlight
-          style={styles.quantityButton}
-          onPress={() => this.increment()}
-          >
-          <Text>+</Text>
-        </TouchableHighlight>
-
+              {this.props.name}
+            </Text>
+          </TouchableHighlight>
+        </View>
       </View>
-    );
+    )
   }
 }
 
 let styles = StyleSheet.create({
   container: {
+    paddingTop: 3,
+    paddingBottom: 3,
+    paddingRight: 5,
+    paddingLeft: 5,
+  },
+  row: {
+    borderRadius: 10,
     flexDirection: 'row',
+    backgroundColor: taskCompletedBackgroundColor,
+    padding: 5,
+    alignItems: 'center',
   },
-  checkBox: {
+  rowCompleted: {
+    backgroundColor: 'white',
+  },
+  checkboxContainer: {
     flex: 1,
+    alignItems: 'center',
   },
-  task: {
-    flexDirection: 'row',
-    backgroundColor: 'lightblue'
+  main: {
+    flex: 4,
   },
-  completed: {
-    backgroundColor: 'green'
+  text: {
+    fontWeight: 'bold',
+    color: greyText,
   },
-  taskName: {
-    flex: 1,
-    backgroundColor: 'green'
+  textCompleted: {
+    color: 'black',
   },
-  quantityButtons: {
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: 'blue',
-    justifyContent: 'space-around'
-  },
-  quantityButton: {
-    flex: 1,
-
-  }
 });
 
 TaskListItem.propTypes = {

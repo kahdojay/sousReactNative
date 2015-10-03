@@ -1,4 +1,5 @@
 var fs = require('fs')
+
 var path = require('path')
 var webpack = require('webpack')
 
@@ -22,6 +23,7 @@ var config = {
       test: /\.js$/,
       include: [
         path.resolve(__dirname, 'src'),
+        path.resolve(__dirname, 'node_modules/react-native-checkbox'),
         // path.resolve(__dirname, 'node_modules/react-native-navbar'),
         // Note: add any other js or node modules that need babel processing
       ],
@@ -47,11 +49,13 @@ if (process.env.HOT) {
   config.plugins.unshift(new webpack.HotModuleReplacementPlugin())
   config.module.loaders[0].query.plugins.push('react-transform')
   config.module.loaders[0].query.extra = {
-    'react-transform': [{
-      target: 'react-transform-hmr',
-      imports: ['react-native'],
-      locals: ['module']
-    }]
+    'react-transform': {
+      transforms: [{
+        transform: 'react-transform-hmr',
+        imports: ['react-native'],
+        locals: ['module']
+      }]
+    }
   }
 }
 

@@ -1,11 +1,11 @@
 import React from 'react-native';
 import TaskListItem from './taskListItem';
+import Divider from './divider';
 
 let {
   View,
   PropTypes,
   Text,
-  TouchableHighlight
 } = React;
 
 export default class TaskList extends React.Component {
@@ -21,43 +21,37 @@ export default class TaskList extends React.Component {
   render() {
     const tasks = this.props.tasks
     let taskKeys = Object.keys(tasks);
-    let completeKeys = []
-    let incompleteKeys = [];
+    let tasksCompleted = []
+    let tasksIncomplete = [];
     taskKeys.forEach(function(taskKey){
       if (tasks[taskKey].completed) {
-        completeKeys.push(tasks[taskKey])
+        tasksCompleted.push(tasks[taskKey])
       } else {
-        incompleteKeys.push(tasks[taskKey])
+        tasksIncomplete.push(tasks[taskKey])
       }
     })
-
-    let completeTasks = completeKeys.map((task) => {
+    return (
+      <View>
+        {tasksCompleted.map((task, index) => {
           return <TaskListItem
-            task={task}
-            updateTaskQuantity={this.props.updateTaskQuantity}
+            key={index}
+            name={task.name}
+            completed={task.completed}
+            taskId={task.id}
             navigator={this.props.navigator}
             onPress={() => this.props.onTaskClick(task.id)} />
-        })
-    let incompleteTasks = incompleteKeys.map((task) => {
+        })}
+        <Divider />
+        {tasksIncomplete.map((task, index) => {
           return <TaskListItem
-            task={task}
-            updateTaskQuantity={this.props.updateTaskQuantity}
+            key={index}
             name={task.name}
             quantity={task.quantity}
             completed={task.completed}
             taskId={task.id}
             navigator={this.props.navigator}
             onPress={() => this.props.onTaskClick(task.id)} />
-        })
-    return (
-      <View>
-        {incompleteTasks}
-        <TouchableHighlight
-          onPress={this.handlePress.bind(this)}
-        >
-          <Text>{completeTasks.count} Show Completed</Text>
-        </TouchableHighlight>
-        {this.state.showCompleted ? completeTasks : <View/>}
+        })}
       </View>
     );
   }

@@ -1,9 +1,9 @@
 import React from 'react-native';
-// import AddTaskForm from '../components/addTaskForm';
 import TaskList from '../components/taskList';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
 const AddForm = require('./addForm');
+import { mainBackgroundColor } from '../resources/colors';
 
 const {
   ActionSheetIOS,
@@ -59,7 +59,10 @@ class StationView extends React.Component {
               <View
                 style={[NavigationBarStyles.navBarRightButton, {marginVertical: 0}]}>
                 <Text
-                  style={[NavigationBarStyles.navBarText, { marginVertical: 10, color: 'white' }]}> ... </Text>
+                  style={[
+                    NavigationBarStyles.navBarText,
+                    { marginVertical: 10, color: 'white' }
+                  ]}> ... </Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -83,7 +86,9 @@ class StationView extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    marginTop: 80,
+    backgroundColor: mainBackgroundColor,
   }
 });
 
