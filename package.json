@@ -23,6 +23,7 @@
     "babel-plugin-react-transform": "^1.0.5",
     "react-native-webpack-server": "^0.4.0",
     "react-transform-hmr": "^0.1.6",
+    "redux-devtools": "^2.1.5",
     "webpack": "^1.8.4",
     "webpack-dev-server": "^1.8.0"
   }
