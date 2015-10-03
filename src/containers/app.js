@@ -27,6 +27,7 @@ class App extends React.Component {
         return <StationIndex
                   navigator={nav}
                   stations={stations}
+                  tasks={tasks}
                   onAddStation={name =>
                     dispatch(addStation(name))
                   }

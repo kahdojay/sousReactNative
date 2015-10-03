@@ -1,6 +1,7 @@
 const React = require('react-native');
 const AddForm = require('./addForm');
 import { mainBackgroundColor } from '../utilities/colors';
+import StationIndexRow from './stationIndexRow';
 
 const {
   StyleSheet,
@@ -13,7 +14,7 @@ const {
 
 class StationIndex extends React.Component {
   render() {
-    const { stations } = this.props;
+    const { stations, tasks } = this.props;
     let stationsList = [];
     let stationKeys = Object.keys(stations);
     stationKeys.forEach((stationKey) => {
@@ -22,15 +23,15 @@ class StationIndex extends React.Component {
       if(station.hasOwnProperty('deleted') && station.deleted === true)
         return;
       stationsList.push(
-        <TouchableHighlight
+        <StationIndexRow
           key={stationKey}
           onPress={() => this.props.navigator.push({
             name: 'StationView',
             stationId: station.id
           })}
-          >
-          <Text> {station.name} </Text>
-        </TouchableHighlight>
+          station={station}
+          tasks={tasks}
+        />
       )
     })
     return (
@@ -49,7 +50,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 20,
-    backgroundColor: 'pink',
+    backgroundColor: mainBackgroundColor,
   }
 });
 
