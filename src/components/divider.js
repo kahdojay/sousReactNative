@@ -2,7 +2,7 @@ import React from 'react-native';
 import {
   greyText,
   taskCompletedBackgroundColor
-} from '../resources/colors';
+} from '../utilities/colors';
 
 let {
   View,

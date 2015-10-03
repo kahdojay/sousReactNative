@@ -1,5 +1,6 @@
 const React = require('react-native');
 const AddForm = require('./addForm');
+import { mainBackgroundColor } from '../utilities/colors';
 
 const {
   StyleSheet,
@@ -44,17 +45,16 @@ class StationIndex extends React.Component {
   }
 };
 
-StationIndex.propTypes = {
-  onAddStation: PropTypes.func.isRequired,
-};
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 30
+    marginTop: 20,
+    backgroundColor: 'pink',
   }
 });
 
+StationIndex.propTypes = {
+  onAddStation: PropTypes.func.isRequired,
+};
 
 module.exports = StationIndex;

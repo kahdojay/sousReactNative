@@ -3,7 +3,10 @@ import TaskList from '../components/taskList';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
 const AddForm = require('./addForm');
-import { mainBackgroundColor } from '../resources/colors';
+import {
+  mainBackgroundColor,
+  navbarColor
+} from '../utilities/colors';
 
 const {
   ActionSheetIOS,
@@ -47,8 +50,14 @@ class StationView extends React.Component {
 
     return (
       <View style={styles.container}>
-        <View style={[NavigationBarStyles.navBarContainer, {backgroundColor: '#1E00B1'}]}>
-          <View style={[NavigationBarStyles.navBar, {paddingVertical: 20}]}>
+        <View style={[
+          NavigationBarStyles.navBarContainer,
+          {backgroundColor: navbarColor}
+        ]}>
+          <View style={[
+            NavigationBarStyles.navBar,
+            {paddingVertical: 20}
+          ]}>
             <BackBtn
               navigator={this.props.navigator}
               style={NavigationBarStyles.navBarText}
@@ -57,7 +66,10 @@ class StationView extends React.Component {
               onPress={this.showActionSheet.bind(this)}
               style={{position: 'absolute', right: 25}}>
               <View
-                style={[NavigationBarStyles.navBarRightButton, {marginVertical: 0}]}>
+                style={[
+                  NavigationBarStyles.navBarRightButton,
+                  {marginVertical: 0}
+                ]}>
                 <Text
                   style={[
                     NavigationBarStyles.navBarText,
@@ -87,7 +99,7 @@ class StationView extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 80,
+    marginTop: 20,
     backgroundColor: mainBackgroundColor,
   }
 });

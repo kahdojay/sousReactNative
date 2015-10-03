@@ -3,7 +3,7 @@ import CheckBox from 'react-native-checkbox'
 import {
   greyText,
   taskCompletedBackgroundColor
-} from '../resources/colors';
+} from '../utilities/colors';
 
 let {
   TouchableHighlight,
