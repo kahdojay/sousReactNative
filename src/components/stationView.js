@@ -2,6 +2,7 @@ import React from 'react-native';
 import AddTaskForm from '../components/addTaskForm';
 import TaskList from '../components/taskList';
 import { BackBtn } from '../utilities/navigation';
+import { mainBackgroundColor } from '../resources/colors';
 
 const {
   StyleSheet,
@@ -44,7 +45,8 @@ class StationView extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 80
+    marginTop: 80,
+    backgroundColor: mainBackgroundColor,
   }
 });
 

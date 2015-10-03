@@ -1,5 +1,8 @@
 import React from 'react-native';
-import {greyText} from '../resources/colors';
+import {
+  greyText,
+  taskCompletedBackgroundColor
+} from '../resources/colors';
 
 let {
   View,
@@ -42,14 +45,14 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   roundedCorners: {
-    backgroundColor: '#ddd',
+    backgroundColor: taskCompletedBackgroundColor,
     width: 150,
     borderRadius: 10,
     alignItems: 'center',
   },
   text: {
     textAlign: 'center',
-    backgroundColor: '#ddd',
+    backgroundColor: taskCompletedBackgroundColor,
     fontWeight: 'bold',
     color: greyText,
     paddingTop: 5,
