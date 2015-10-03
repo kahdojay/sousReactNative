@@ -27,7 +27,6 @@ const NavigationBarStyles = React.StyleSheet.create({
   navBarText: {
     marginVertical: 10,
     flex: 2,
-    textAlign: 'center',
   },
   navBarTitleText: {
     color: '#373e4d',
