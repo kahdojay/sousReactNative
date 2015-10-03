@@ -1,4 +1,4 @@
-const React = require('react-native');
+import React from 'react-native'
 
 const {
   StyleSheet,
@@ -23,7 +23,7 @@ class Login extends React.Component {
     } else {
       this.props.onResetSession()
     }
-  } 
+  }
   render() {
     if (this.props.session.isAuthenticated) {
       this.props.onSuccessfulLogin()
@@ -37,6 +37,9 @@ class Login extends React.Component {
     return (
       <View style={styles.container}>
         { this.props.session.errors ? errorMessage : <View /> }
+        <View style={styles.nav}>
+          <Text style={styles.header}>Welcome Back</Text>
+        </View>
         <TextInput
           style={styles.input}
           value={this.state.email}
@@ -63,8 +66,18 @@ class Login extends React.Component {
 
 let styles = StyleSheet.create({
   container: {
-    marginTop: 40,
+    marginTop: 20,
     flex: 1,
+  },
+  nav: {
+    height: 50,
+    backgroundColor: 'blue',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  header: {
+    color: 'white',
+    fontWeight: 'bold',
   },
   input: {
     margin: 2,
