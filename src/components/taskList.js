@@ -4,33 +4,41 @@ import TaskListItem from './taskListItem';
 let {
   View,
   PropTypes,
-  Text
+  Text,
+  TouchableHighlight
 } = React;
 
 export default class TaskList extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      showCompleted: false
+    }
+  }
+  handlePress() {
+    this.setState({showCompleted: !this.state.showCompleted})
+  }
   render() {
     const tasks = this.props.tasks
     let taskKeys = Object.keys(tasks);
-    let tasksCompleted = []
-    let tasksIncomplete = [];
+    let completeKeys = []
+    let incompleteKeys = [];
     taskKeys.forEach(function(taskKey){
       if (tasks[taskKey].completed) {
-        tasksCompleted.push(tasks[taskKey])
+        completeKeys.push(tasks[taskKey])
       } else {
-        tasksIncomplete.push(tasks[taskKey])
+        incompleteKeys.push(tasks[taskKey])
       }
     })
-    return (
-      <View>
-        {tasksCompleted.map((task) => {
+
+    let completeTasks = completeKeys.map((task) => {
           return <TaskListItem
             task={task}
             updateTaskQuantity={this.props.updateTaskQuantity}
             navigator={this.props.navigator}
             onPress={() => this.props.onTaskClick(task.id)} />
-        })}
-        <Text>Divider</Text>
-        {tasksIncomplete.map((task) => {
+        })
+    let incompleteTasks = incompleteKeys.map((task) => {
           return <TaskListItem
             task={task}
             updateTaskQuantity={this.props.updateTaskQuantity}
@@ -40,7 +48,16 @@ export default class TaskList extends React.Component {
             taskId={task.id}
             navigator={this.props.navigator}
             onPress={() => this.props.onTaskClick(task.id)} />
-        })}
+        })
+    return (
+      <View>
+        {incompleteTasks}
+        <TouchableHighlight
+          onPress={this.handlePress.bind(this)}
+        >
+          <Text>{completeTasks.count} Show Completed</Text>
+        </TouchableHighlight>
+        {this.state.showCompleted ? completeTasks : <View/>}
       </View>
     );
   }
