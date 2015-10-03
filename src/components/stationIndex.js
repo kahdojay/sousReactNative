@@ -36,11 +36,21 @@ class StationIndex extends React.Component {
     })
     return (
       <View style={styles.container}>
-        <Text>StationIndex View</Text>
-        <AddForm
-          placeholder="Add a Station..."
-          onSubmit={this.props.onAddStation.bind(this)}/>
-        {stationsList}
+        <View style={styles.stationContainer}>
+          <Text>StationIndex View</Text>
+          <AddForm
+            placeholder="Add a Station..."
+            onSubmit={this.props.onAddStation.bind(this)}/>
+          {stationsList}
+        </View>
+        <View style={styles.logoutContainer}>
+          <TouchableHighlight
+            onPress={() => this.props.onLogout()}
+            style={styles.logoutButton}
+            >
+            <Text style={styles.logoutButtonText}> Logout </Text>
+          </TouchableHighlight>
+        </View>
       </View>
     );
   }
@@ -51,6 +61,20 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 20,
     backgroundColor: mainBackgroundColor,
+  },
+  stationContainer: {
+    flex: 14
+  },
+  logoutContainer: {
+    flex: 1
+  },
+  logoutButton: {
+    backgroundColor: '#222',
+    padding: 5
+  },
+  logoutButtonText: {
+    alignSelf: 'center',
+    color: '#fff'
   }
 });
 

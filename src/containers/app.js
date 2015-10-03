@@ -32,7 +32,7 @@ class App extends React.Component {
     //   route.name = 'Login'
     switch (route.name) {
       case 'Login':
-        return <Login 
+        return <Login
                   session={session}
                   onResetSession={() => {
                     dispatch(resetSession())
@@ -53,6 +53,10 @@ class App extends React.Component {
                     dispatch(addStation(name))
                   }
                   onBack={() => this._back.bind(this)}
+                  onLogout={() => {
+                    dispatch(resetSession())
+                    nav.replace({name: 'Login'})
+                  }}
                 />;
       case 'StationView':
         let station = stations[route.stationId]
@@ -112,7 +116,7 @@ class App extends React.Component {
             return route.sceneConfig;
           }
           return Navigator.SceneConfigs.FloatFromRight;
-        }} 
+        }}
       />
     )
   }
