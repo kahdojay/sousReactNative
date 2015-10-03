@@ -1,4 +1,5 @@
-import React from 'react-native';
+import React from 'react-native'
+import CheckBox from 'react-native-checkbox'
 
 let {
   TouchableHighlight,
@@ -28,6 +29,7 @@ export default class TaskListItem extends React.Component {
           >
           <Text>{this.props.name}</Text>
         </TouchableHighlight>
+        <CheckBox label='Label' checked={true} />
       </View>
     );
   }

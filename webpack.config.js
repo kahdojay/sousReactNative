@@ -1,4 +1,5 @@
 var fs = require('fs')
+
 var path = require('path')
 var webpack = require('webpack')
 
@@ -20,7 +21,10 @@ var config = {
   module: {
     loaders: [{
       test: /\.js$/,
-      exclude: /node_modules/,
+      include: [
+        path.resolve(__dirname, 'src'),
+        path.resolve(__dirname, 'node_modules/react-native-checkbox'),
+      ],
       loader: 'babel',
       query: {
         stage: 0,
