@@ -1,26 +1,57 @@
 import React from 'react-native'
-import { createStore, compose } from 'redux';
+import { createStore, compose, applyMiddleware } from 'redux';
+import thunkMiddleware from 'redux-thunk';
 import { Provider } from 'react-redux/native';
 import { persistStore, autoRehydrate } from 'redux-persist'
 import App from './containers/app'
 import reducers from './reducers';
 
-var {
+const {
   AppRegistry,
-  AsyncStorage
+  AsyncStorage,
+  View,
+  Text,
 } = React
 
-let store = compose(autoRehydrate())(createStore)(reducers);
+let store = compose(
+  applyMiddleware(thunkMiddleware), 
+  autoRehydrate()
+  )(createStore)(reducers);
 
-persistStore(store, {storage: AsyncStorage}, () => {})
+
 
 class SousApp extends React.Component {
-  render() {
-    return (
-      <Provider store={store} >
-        {() => <App />}
-      </Provider>
+  constructor(props) {
+    super(props)
+    this.state = {
+      rehydrated: false
+    }
+  }
+
+  componentWillMount(){
+    persistStore(
+      store, 
+      {storage: AsyncStorage}, 
+      () => {
+        this.setState({ rehydrated: true })
+      }
     )
+  }
+
+  render() {
+    if (this.state.rehydrated === false) {
+      return (
+        <View>
+          <Text>LOADING</Text>
+        </View>
+      )
+    } else {
+      return (
+        <Provider store={store} >
+          {() => <App />}
+        </Provider>
+      )
+    }
   }
 }
 

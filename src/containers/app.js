@@ -1,5 +1,6 @@
 import React from 'react-native';
-import { addStation, deleteStation, updateTask, addTask, toggleTask } from '../actions';
+import { createSession, resetSession, addStation, deleteStation, updateTask, addTask, toggleTask } from '../actions';
+import Login from '../components/login';
 import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
 import TaskView from '../components/taskView';
@@ -14,6 +15,10 @@ let {
 } = React;
 
 class App extends React.Component {
+  constructor(props) {
+    super(props)
+    this.initialRoute = 'Login'
+  }
   _back() {() => {
     if (route.index > 0) {
       navigator.pop();
@@ -21,8 +26,24 @@ class App extends React.Component {
   }}
 
   renderScene(route, nav) {
-    const { stations, tasks, dispatch } = this.props;
+    const { session, stations, tasks, dispatch } = this.props;
+    // if token is not valid, override route name to 'Login'
+    // if (dispatch(validateSession()) === false)
+    //   route.name = 'Login'
     switch (route.name) {
+      case 'Login':
+        return <Login 
+                  session={session}
+                  onResetSession={() => {
+                    dispatch(resetSession())
+                  }}
+                  onLogin={(sessionParams) => {
+                    dispatch(createSession(sessionParams))
+                  }}
+                  onSuccessfulLogin={() => {
+                    nav.replace({name: 'StationIndex'})
+                  }}
+                />
       case 'StationIndex':
         return <StationIndex
                   navigator={nav}
@@ -82,7 +103,7 @@ class App extends React.Component {
       <Navigator
         sceneStyle={styles.nav}
         initialRoute={{
-          name: 'StationIndex',
+          name: this.initialRoute,
           index: 0,
         }}
         renderScene={this.renderScene.bind(this)}
@@ -91,7 +112,8 @@ class App extends React.Component {
             return route.sceneConfig;
           }
           return Navigator.SceneConfigs.FloatFromRight;
-        }} />
+        }} 
+      />
     )
   }
 }
@@ -105,6 +127,7 @@ let styles = StyleSheet.create({
 
 function select(state) {
   return {
+    session: state.session,
     stations: state.stations,
     tasks: state.tasks
   }
