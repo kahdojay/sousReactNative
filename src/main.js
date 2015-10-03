@@ -10,12 +10,9 @@ var {
   AsyncStorage
 } = React
 
-// let store = createStore(reducers);
 let store = compose(autoRehydrate())(createStore)(reducers);
 
-persistStore(store, {storage: AsyncStorage}, () => {
-  // console.log('restored')
-})
+persistStore(store, {storage: AsyncStorage}, () => {})
 
 class SousApp extends React.Component {
   render() {

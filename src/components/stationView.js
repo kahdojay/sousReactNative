@@ -33,7 +33,6 @@ class StationView extends React.Component {
       destructiveButtonIndex: deleteAction,
     },
     (buttonIndex) => {
-      // console.log('clicked: ',  buttons[buttonIndex]);
       if( deleteAction === buttonIndex ){
         // process the delete
         this.props.onDeleteStation(this.props.station.id);
@@ -43,8 +42,6 @@ class StationView extends React.Component {
     });
   }
   render() {
-    // const { stationId, dispatch, filteredTasks, taskVisibility } = this.props;
-    // let tasks = filteredTasks(stationId);
     let tasks = this.props.tasks
     let station = this.props.station
 
