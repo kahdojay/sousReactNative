@@ -17,7 +17,7 @@ class ApiEndpoint {
     }
 
     // set the token
-    if(state.session.token != ''){
+    if(state.session.token){
       this.params.headers.Authorization = state.session.token;
     }
   }
@@ -38,6 +38,7 @@ class ApiEndpoint {
 
   _post(params) {
     params.method = 'POST';
+    console.log(this.url, this.params);
     return this._api(params);
   }
 
