@@ -11,6 +11,7 @@ const {
   AsyncStorage,
   View,
   Text,
+  ActivityIndicatorIOS,
 } = React
 
 let store = compose(
@@ -40,7 +41,10 @@ class SousApp extends React.Component {
     if (this.state.rehydrated === false) {
       return (
         <View>
-          <Text>LOADING</Text>
+          <ActivityIndicatorIOS
+            animating={true}
+            color={'#808080'}
+            size={'small'} />
         </View>
       )
     } else {
