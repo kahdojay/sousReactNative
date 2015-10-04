@@ -4,6 +4,7 @@ import { mainBackgroundColor } from '../utilities/colors';
 import StationIndexRow from './stationIndexRow';
 
 const {
+  ActivityIndicatorIOS,
   StyleSheet,
   View,
   Text,
@@ -15,10 +16,16 @@ const {
 class StationIndex extends React.Component {
   render() {
     const { stations, tasks } = this.props;
+    let fetching =  <ActivityIndicatorIOS
+                        animating={true}
+                        color={'#808080'}
+                        size={'small'} />
+
+    // add the stations for listing
     let stationsList = [];
-    let stationKeys = Object.keys(stations);
+    let stationKeys = Object.keys(stations.data);
     stationKeys.forEach((stationKey) => {
-      let station = stations[stationKey];
+      let station = stations.data[stationKey];
       // exclude deleted stations
       if(station.hasOwnProperty('deleted') && station.deleted === true)
         return;
@@ -34,6 +41,7 @@ class StationIndex extends React.Component {
         />
       )
     })
+
     return (
       <View style={styles.container}>
         <View style={styles.stationContainer}>
@@ -41,7 +49,8 @@ class StationIndex extends React.Component {
           <AddForm
             placeholder="Add a Station..."
             onSubmit={this.props.onAddStation.bind(this)}/>
-          {stationsList}
+        { stations.isFetching ? fetching : <View/> }
+        { stationsList }
         </View>
         <View style={styles.logoutContainer}>
           <TouchableHighlight

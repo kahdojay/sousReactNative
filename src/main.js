@@ -14,7 +14,7 @@ const {
 } = React
 
 let store = compose(
-  applyMiddleware(thunkMiddleware), 
+  applyMiddleware(thunkMiddleware),
   autoRehydrate()
   )(createStore)(reducers);
 

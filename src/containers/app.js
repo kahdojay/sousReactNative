@@ -1,10 +1,19 @@
 import React from 'react-native';
-import { createSession, resetSession, addStation, deleteStation, updateTask, addTask, toggleTask } from '../actions';
 import Login from '../components/login';
 import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
 import TaskView from '../components/taskView';
 import { connect } from 'react-redux/native';
+import {
+  createSession,
+  resetSession,
+  addStation,
+  deleteStation,
+  getStations,
+  updateTask,
+  addTask,
+  toggleTask
+} from '../actions';
 
 let {
   PropTypes,
@@ -54,10 +63,12 @@ class App extends React.Component {
                   onAddStation={name =>
                     dispatch(addStation(name))
                   }
-                  onBack={() => this._back.bind(this)}
-                  onLogout={() => {
+                  onBack={() =>
+                    this._back.bind(this)
+                  }
+                  onLogout={() =>
                     dispatch(resetSession())
-                  }}
+                  }
                 />;
       case 'StationView':
         let station = stations[route.stationId]
@@ -84,17 +95,17 @@ class App extends React.Component {
                   toggle={(taskId) =>
                     dispatch(toggleTask(taskId))
                   }
-                  updateTaskQuantity={(newTask) => {
+                  updateTaskQuantity={(newTask) =>
                     dispatch(updateTask(newTask))
-                  }}
+                  }
                 />;
       case 'TaskView':
         return <TaskView
                   task={tasks[route.taskId]}
                   navigator={nav}
-                  onBack={() => {
+                  onBack={() =>
                     this._back.bind(this)
-                  }}
+                  }
                   saveTaskDescription={(newTask) =>
                     dispatch(updateTask(newTask))
                   }

@@ -17,39 +17,53 @@ class Login extends React.Component {
       password: ''
     }
   }
+
+  componentWillMount(){
+    this.props.onResetSession();
+    if(this.props.session.login !== ''){
+      this.setState({
+        email: this.props.session.login,
+        password: ''
+      })
+    }
+  }
+
   render() {
     let fetching =  <ActivityIndicatorIOS
                         animating={true}
                         color={'#808080'}
                         size={'small'} />
-    let errorMessage = <Text>Invalid Login</Text>
+    let errorMessage = <Text style={styles.errorText}>Invalid Login</Text>
     return (
       <View style={styles.container}>
-        { this.props.session.errors ? errorMessage : <View /> }
         <View style={styles.nav}>
+          <Text style={styles.logo}>Sous</Text>
           <Text style={styles.header}>Welcome Back</Text>
         </View>
-        <TextInput
-          style={styles.input}
-          value={this.state.email}
-          placeholder='Email'
-          onChangeText={(text) => {
-            this.setState({email: text, password: this.state.password})
-          }}/>
-        <TextInput
-          secureTextEntry={true}
-          style={styles.input}
-          value={this.state.password}
-          placeholder='Password'
-          onChangeText={(text) => {
-            this.setState({password: text, email: this.state.email})
-          }}/>
-        <TouchableHighlight
-          onPress={() => this.props.onLogin(this.state)}
-          style={styles.button}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableHighlight>
-        { this.props.session.isFetching ? fetching : <View /> }
+        <View style={styles.login}>
+          { this.props.session.errors ? errorMessage : <Text>{' '}</Text> }
+          <TextInput
+            style={styles.input}
+            value={this.state.email}
+            placeholder='Email'
+            onChangeText={(text) => {
+              this.setState({email: text, password: this.state.password})
+            }}/>
+          <TextInput
+            secureTextEntry={true}
+            style={styles.input}
+            value={this.state.password}
+            placeholder='Password'
+            onChangeText={(text) => {
+              this.setState({password: text, email: this.state.email})
+            }}/>
+          <TouchableHighlight
+            onPress={() => this.props.onLogin(this.state)}
+            style={styles.button}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableHighlight>
+          { this.props.session.isFetching ? fetching : <View /> }
+        </View>
       </View>
     );
   }
@@ -59,21 +73,34 @@ let styles = StyleSheet.create({
   container: {
     marginTop: 20,
     flex: 1,
+    paddingTop: 80,
   },
   nav: {
-    height: 50,
     backgroundColor: 'blue',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 40,
+    padding: 15
+  },
+  logo: {
+    color: 'white',
+    fontSize: 20,
+    marginBottom: 10
   },
   header: {
     color: 'white',
     fontWeight: 'bold',
   },
+  login: {
+    justifyContent: 'center',
+    paddingLeft: 25,
+    paddingRight: 25
+  },
   input: {
     margin: 2,
     height: 32,
-    backgroundColor: '#cde'
+    backgroundColor: '#cde',
+    paddingLeft: 4,
   },
   button: {
     margin: 2,
@@ -85,6 +112,9 @@ let styles = StyleSheet.create({
   },
   buttonText: {
     alignSelf: 'center',
+  },
+  errorText: {
+    color: '#d00'
   }
 })
 

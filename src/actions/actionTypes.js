@@ -9,6 +9,9 @@ export const ERROR_SESSION = 'ERROR_SESSION';
 
 export const ADD_STATION = 'ADD_STATION';
 export const DELETE_STATION = 'DELETE_STATION';
+export const REQUEST_STATIONS = 'REQUEST_STATIONS';
+export const RECEIVE_STATIONS = 'RECEIVE_STATIONS';
+export const ERROR_STATIONS = 'ERROR_STATIONS';
 
 export const ADD_TASK = 'ADD_TASK';
 export const UPDATE_TASK = 'UPDATE_TASK';

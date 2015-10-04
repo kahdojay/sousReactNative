@@ -5,6 +5,7 @@ const initialState = {
   isFetching: false,
   login: null,
   token: null,
+  userId: null,
   errors: null
 };
 
@@ -17,18 +18,17 @@ function session(state = initialState, action) {
       errors: null
     })
   case REQUEST_SESSION:
-    console.log('request', action)
     return Object.assign({}, state, {
       isFetching: true,
       errors: null
     })
   case RECEIVE_SESSION:
-    console.log('receive', action)
     return Object.assign({}, state, {
       isAuthenticated: true,
       isFetching: false,
-      token: action.token,
       login: action.login,
+      token: action.token,
+      userId: action.userId,
       errors: null,
       lastUpdated: action.receivedAt
     })
@@ -36,6 +36,7 @@ function session(state = initialState, action) {
     return Object.assign({}, state, {
       isFetching: false,
       login: action.login,
+      userId: null,
       errors: action.errors
     })
   default:

@@ -1,4 +1,8 @@
 import { RESET_SESSION, REQUEST_SESSION, RECEIVE_SESSION, ERROR_SESSION } from './actionTypes'
+import { getStations } from './station'
+import Fetcher from '../utilities/fetcher';
+
+let SousFetcher = null;
 
 // function validateSession() {
 //   return (dispatch, getState) => {
@@ -6,30 +10,32 @@ import { RESET_SESSION, REQUEST_SESSION, RECEIVE_SESSION, ERROR_SESSION } from '
 //     return dispatch(fetchSession(sessionParams))
 //   }
 // }
+
+function retrieveSessionInfo(){
+  return (dispatch) => {
+    dispatch(getStations())
+  }
+}
+
 function resetSession() {
   return {
     type: RESET_SESSION
   }
 }
+
 function fetchSession(sessionParams) {
   return (dispatch) => {
     dispatch(requestSession())
-    const url = 'http://localhost:3000/api/1/sessions'
-    return fetch(url, {
-        method: 'POST',
-        headers: {
-         'Accept': 'application/json',
-         'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(sessionParams)
-      })
-      .then(res => res.json())
+    return SousFetcher.session.create(sessionParams)
       .then(res => {
-        console.log('server response', res)
         if (res.success === false)
           dispatch(errorSession(sessionParams.email, res.errors))
         else
-          dispatch(receiveSession(sessionParams.email, res.token))
+          // retrieve this session's information
+          dispatch(retrieveSessionInfo())
+
+          // dispatch receive session action
+          dispatch(receiveSession(sessionParams.email, res.token, res.user_id))
       })
   }
 }
@@ -40,11 +46,12 @@ function requestSession() {
   };
 }
 
-function receiveSession(login, token) {
+function receiveSession(login, token, userId) {
   return {
     type: RECEIVE_SESSION,
     token: token,
     login: login,
+    userId: userId,
     receivedAt: (new Date).getTime()
   };
 }
@@ -59,6 +66,7 @@ function errorSession(login, errors) {
 
 function createSession(sessionParams) {
   return (dispatch, getState) => {
+    SousFetcher = new Fetcher(getState())
     return dispatch(fetchSession(sessionParams))
   }
 }
@@ -66,7 +74,7 @@ function createSession(sessionParams) {
 // note: expose other action creators for testing
 export default {
   RESET_SESSION,
-  REQUEST_SESSION, 
+  REQUEST_SESSION,
   RECEIVE_SESSION,
   ERROR_SESSION,
   // validateSession,
