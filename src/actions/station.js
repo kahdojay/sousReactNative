@@ -1,15 +1,7 @@
 import { REQUEST_STATIONS, RECEIVE_STATIONS, ERROR_STATIONS, ADD_STATION, DELETE_STATION } from './actionTypes'
 import Fetcher from '../utilities/fetcher';
-// import { normalize, Schema, arrayOf } from 'normalizr';
 
 let SousFetcher = null;
-
-// // normalize the data
-// const stationsSchema = new Schema('stations', { idAttribute: 'id' });
-// const teamSchema = new Schema('team', { idAttribute: 'team_id' });
-// stationsSchema.define({
-//   team: teamSchema
-// });
 
 function addStation(name) {
   return {
@@ -55,14 +47,7 @@ function fetchStations(userId){
       if (res.success === false) {
         dispatch(errorStations(res.errors))
       } else {
-        // console.log('before: ', JSON.stringify(res));
-        // let normalizedStations = normalize(res, stationsSchema);
-        // console.log('after: ', normalizedStations);
-        let normalizedStations = {};
-        res.forEach(function(station){
-          normalizedStations[station.id] = station;
-        });
-        dispatch(receiveStations(normalizedStations))
+        dispatch(receiveStations(res))
       }
     })
   }
