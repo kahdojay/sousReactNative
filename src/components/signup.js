@@ -9,7 +9,7 @@ const {
   ActivityIndicatorIOS,
 } = React;
 
-class Login extends React.Component {
+class Signup extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -20,12 +20,6 @@ class Login extends React.Component {
 
   componentWillMount(){
     this.props.onResetSession();
-    if(this.props.session.login !== ''){
-      this.setState({
-        email: this.props.session.login,
-        password: ''
-      })
-    }
   }
 
   render() {
@@ -33,12 +27,12 @@ class Login extends React.Component {
                         animating={true}
                         color={'#808080'}
                         size={'small'} />
-    let errorMessage = <Text style={styles.errorText}>Invalid Login</Text>
+    let errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
     return (
       <View style={styles.container}>
         <View style={styles.nav}>
           <Text style={styles.logo}>Sous</Text>
-          <Text style={styles.header}>Welcome Back</Text>
+          <Text style={styles.header}>Signup</Text>
         </View>
         <View style={styles.login}>
           { this.props.session.errors ? errorMessage : <Text>{' '}</Text> }
@@ -60,15 +54,15 @@ class Login extends React.Component {
           <View style={styles.buttonContainer}>
             <TouchableHighlight
               onPress={() => this.props.navigator.replace({
-                name: 'Signup'
+                name: 'Login'
               })}
               style={[styles.button, styles.buttonSecondary]}>
-              <Text style={styles.buttonText}>Signup</Text>
+              <Text style={styles.buttonText}>Login</Text>
             </TouchableHighlight>
             <TouchableHighlight
-              onPress={() => this.props.onLogin(this.state)}
+              onPress={() => this.props.onSignup(this.state)}
               style={[styles.button, styles.buttonPrimary]}>
-              <Text style={styles.buttonText}>Login</Text>
+              <Text style={styles.buttonText}>Signup</Text>
             </TouchableHighlight>
           </View>
           { this.props.session.isFetching ? fetching : <View /> }
@@ -137,4 +131,4 @@ let styles = StyleSheet.create({
   }
 })
 
-module.exports = Login;
+module.exports = Signup;
