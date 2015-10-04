@@ -1,4 +1,4 @@
-import { RESET_SESSION, REQUEST_SESSION, RECEIVE_SESSION, ERROR_SESSION } from './actionTypes'
+import { RESET_SESSION, REGISTER_SESSION, REQUEST_SESSION, RECEIVE_SESSION, ERROR_SESSION } from './actionTypes'
 import { getStations } from './station'
 import Fetcher from '../utilities/fetcher';
 
@@ -20,6 +20,12 @@ function retrieveSessionInfo(){
 function resetSession() {
   return {
     type: RESET_SESSION
+  }
+}
+
+function registerSession(sessionParams) {
+  return {
+    type: REGISTER_SESSION
   }
 }
 
@@ -74,10 +80,12 @@ function createSession(sessionParams) {
 // note: expose other action creators for testing
 export default {
   RESET_SESSION,
+  REGISTER_SESSION,
   REQUEST_SESSION,
   RECEIVE_SESSION,
   ERROR_SESSION,
   // validateSession,
   createSession,
-  resetSession
+  resetSession,
+  registerSession
 }

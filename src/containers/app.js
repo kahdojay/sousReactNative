@@ -1,11 +1,13 @@
 import React from 'react-native';
 import Login from '../components/login';
+import Signup from '../components/signup';
 import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
 import TaskView from '../components/taskView';
 import { connect } from 'react-redux/native';
 import {
   createSession,
+  registerSession,
   resetSession,
   addStation,
   deleteStation,
@@ -37,22 +39,38 @@ class App extends React.Component {
   renderScene(route, nav) {
     const { session, stations, tasks, dispatch } = this.props;
 
-    if (this.props.session.isAuthenticated){ // redirect to stationIndex
+    // redirect to initial view
+    if (this.props.session.isAuthenticated){
       if(route.name === 'Login') {
-        route.name = 'StationIndex'
+        route.name = 'StationIndex';
       }
-    } else { // redirect to login
+    }
+    // redirect to login if requested view requires authentication
+    else if(route.name !== 'Login' && route.name !== 'Signup') {
       route.name = 'Login'
     }
+
     switch (route.name) {
       case 'Login':
         return <Login
+                  navigator={nav}
                   session={session}
                   onResetSession={() => {
                     dispatch(resetSession())
                   }}
                   onLogin={(sessionParams) => {
                     dispatch(createSession(sessionParams))
+                  }}
+                />
+      case 'Signup':
+        return <Signup
+                  navigator={nav}
+                  session={session}
+                  onResetSession={() => {
+                    dispatch(resetSession())
+                  }}
+                  onSignup={(sessionParams) => {
+                    dispatch(registerSession(sessionParams))
                   }}
                 />
       case 'StationIndex':
