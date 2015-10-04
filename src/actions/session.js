@@ -13,7 +13,10 @@ let SousFetcher = null;
 
 function retrieveSessionInfo(){
   return (dispatch) => {
+    // get the stations
     dispatch(getStations())
+    // get the tasks
+    // ...
   }
 }
 
@@ -27,8 +30,7 @@ function fetchSession(sessionParams) {
   return (dispatch) => {
     dispatch(requestSession())
     return SousFetcher.session.create(sessionParams)
-      .then(res => {
-        console.log(res);
+      .then((res) => {
         if (res.success === true){
           // retrieve this session's information
           dispatch(retrieveSessionInfo())
