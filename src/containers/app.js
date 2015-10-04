@@ -1,5 +1,7 @@
 const React = require('react-native');
 const PrepTab = require('./prepTab');
+const FeedTab = require('./feedTab');
+const OrderTab = require('./orderTab');
 
 const {
     StyleSheet,
@@ -37,14 +39,14 @@ class App extends React.Component {
           title="Feed"
           selected={this.state.selectedTab === 'tabTwo'}
           onPress={() => this.setTab('tabTwo') }>
-          <View />
+          <FeedTab />
         </TabBarIOS.Item>
 
         <TabBarIOS.Item
           title="Order"
           selected={this.state.selectedTab === 'tabThree'}
           onPress={() => this.setTab('tabThree') }>
-          <View />
+          <OrderTab />
         </TabBarIOS.Item>
       </TabBarIOS>
 
