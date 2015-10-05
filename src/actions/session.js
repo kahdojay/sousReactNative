@@ -1,6 +1,12 @@
-import { RESET_SESSION, REGISTER_SESSION, REQUEST_SESSION, RECEIVE_SESSION, ERROR_SESSION } from './actionTypes'
-import { getStations } from './station'
 import Fetcher from '../utilities/fetcher';
+import { getStations, resetStations } from './station'
+import {
+  RESET_SESSION,
+  REGISTER_SESSION,
+  REQUEST_SESSION,
+  RECEIVE_SESSION,
+  ERROR_SESSION
+} from './actionTypes'
 
 let SousFetcher = null;
 
@@ -10,6 +16,15 @@ let SousFetcher = null;
 //     return dispatch(fetchSession(sessionParams))
 //   }
 // }
+
+function resetSessionInfo(){
+  return (dispatch) => {
+    // reset the stations
+    dispatch(resetStations())
+    // reset the tasks
+    // ...
+  }
+}
 
 function retrieveSessionInfo(){
   return (dispatch) => {
@@ -27,8 +42,29 @@ function resetSession() {
 }
 
 function registerSession(sessionParams) {
-  return {
-    type: REGISTER_SESSION
+  return (dispatch, getState) => {
+    if(SousFetcher == null){
+      SousFetcher = new Fetcher(getState())
+    }
+    dispatch(requestSession())
+    return SousFetcher.user.create({
+        user: {
+          email: sessionParams.email,
+          password: sessionParams.password,
+          restaurant: sessionParams.team_name,
+          team_id: sessionParams.team_id
+        }
+      })
+      .then((res) => {
+        if (res.success === true){
+          // retrieve this session's information
+          dispatch(retrieveSessionInfo())
+          // dispatch receive session action
+          dispatch(receiveSession(sessionParams.email, res.token, res.user_id))
+        } else {
+          dispatch(errorSession(sessionParams.email, res.errors))
+        }
+      })
   }
 }
 
@@ -55,12 +91,12 @@ function requestSession() {
   };
 }
 
-function receiveSession(login, token, userId) {
+function receiveSession(login, token, user_id) {
   return {
     type: RECEIVE_SESSION,
     token: token,
     login: login,
-    userId: userId,
+    user_id: user_id,
     receivedAt: (new Date).getTime()
   };
 }
@@ -90,5 +126,6 @@ export default {
   // validateSession,
   createSession,
   resetSession,
+  resetSessionInfo,
   registerSession
 }

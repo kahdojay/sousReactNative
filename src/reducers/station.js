@@ -1,5 +1,6 @@
-// import MockData from '../resources/mockData';
 import {
+  RESET_STATIONS,
+  GET_STATIONS,
   REQUEST_STATIONS,
   RECEIVE_STATIONS,
   ERROR_STATIONS,
@@ -18,6 +19,8 @@ const initialState = {
 
 function stations(state = initialState.stations, action) {
   switch (action.type) {
+  case RESET_STATIONS:
+    return Object.assign({}, initialState.stations);
   case REQUEST_STATIONS:
     return Object.assign({}, state, {
       isFetching: true,
@@ -31,31 +34,21 @@ function stations(state = initialState.stations, action) {
       lastUpdated: (new Date()).getTime()
     });
   case ADD_STATION:
-    // kick back if station name is empty
-    if(action.name === ''){
-      return state;
-    }
-    let id = Object.keys(state).length + '';
-    let newStation = {}
-    newStation[id] = {
-      id: id,
-      name: action.name,
-      taskList: []
-    }
     return Object.assign({}, state, {
-      data: Object.assign({}, state.data, newStation)
+      data: Object.assign({}, state.data, action.station)
     });
   case DELETE_STATION:
     let newStationState = Object.assign({}, state);
     newStationState.data[action.stationId].deleted = true;
     return newStationState;
+  case GET_STATIONS:
   default:
     return state;
   }
 }
 
-const station = {
+const stationReducers = {
   'stations': stations
 }
 
-export default station
+export default stationReducers

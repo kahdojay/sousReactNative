@@ -1,5 +1,11 @@
 import MockData from '../resources/mockData';
-import { ADD_TASK, UPDATE_TASK, TOGGLE_TASK, SET_TASK_VISIBILITY, TaskVisibility } from '../actions';
+import {
+  ADD_TASK,
+  UPDATE_TASK,
+  TOGGLE_TASK,
+  SET_TASK_VISIBILITY,
+  TaskVisibility
+} from '../actions';
 const { SHOW_ALL } = TaskVisibility;
 
 const initialState = MockData;
