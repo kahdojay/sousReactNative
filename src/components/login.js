@@ -110,12 +110,12 @@ let styles = StyleSheet.create({
   logo: {
     color: 'white',
     fontSize: 20,
+    fontFamily: 'OpenSans'
   },
   header: {
     color: 'white',
     fontWeight: 'bold',
     fontSize: 27,
-    letterSpacing: .1,
     fontFamily: 'OpenSans'
   },
   login: {
@@ -131,7 +131,8 @@ let styles = StyleSheet.create({
     borderColor: 'white',
     borderRadius: 8,
     color: '#333',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans'
   },
   buttonContainer: {
     flexDirection: 'row'
@@ -143,7 +144,7 @@ let styles = StyleSheet.create({
     width: 150,
     marginTop: 30,
     justifyContent: 'center',
-    borderRadius: 3
+    borderRadius: 3,
   },
   buttonPrimary: {
     backgroundColor: '#89a',
@@ -156,7 +157,7 @@ let styles = StyleSheet.create({
     fontSize: 22,
     color: 'white',
     fontWeight: 'bold',
-    letterSpacing: .1
+    fontFamily: 'OpenSans'
   },
   errorText: {
     color: '#d00'
