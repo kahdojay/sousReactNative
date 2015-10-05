@@ -49,13 +49,13 @@ class StationIndex extends React.Component {
         <View style={styles.stationContainer}>
           <View style={styles.nav}>
             <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-            <Icon name='material|face' size={30} color='#aaa' style={styles.iconFace}/>
+            <Icon name='material|account-circle' size={50} color='#aaa' style={styles.iconFace}/>
           </View>
-          <AddForm
-            placeholder="Add a Station..."
+
+          <AddForm placeholder="Add a Station..."
             onSubmit={this.props.onAddStation.bind(this)}/>
-        { stations.isFetching ? fetching : <View/> }
-        { stationsList }
+            { stations.isFetching ? fetching : <View/> }
+            { stationsList }
         </View>
         {/*<View style={styles.logoutContainer}>
           <TouchableHighlight
@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 5
   },
+
   logoutContainer: {
     flex: 1
   },
