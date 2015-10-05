@@ -38,7 +38,8 @@ class Login extends React.Component {
     let fetching =  <ActivityIndicatorIOS
                         animating={true}
                         color={'#808080'}
-                        size={'small'} />
+                        style={styles.activity}
+                        size={'large'} />
     let errorMessage = <Text style={styles.errorText}>Invalid Login</Text>
     return (
       <View style={styles.container}>
@@ -51,9 +52,10 @@ class Login extends React.Component {
             style={[styles.button, styles.buttonSecondary]}>
             <Text style={styles.buttonText}>Signup</Text>
           </TouchableHighlight>
+          <Icon name='material|face' size={30} color='#aaa' style={styles.iconFace}/>
         </View>
-        <View style={styles.login}>
 
+        <View style={styles.login}>
           <View style={styles.inputContainer}>
             <Icon name='material|face' size={30} color='#aaa' style={styles.iconFace}/>
             <TextInput style={styles.input} value={this.state.email} placeholder='E-mail Address'
@@ -78,7 +80,9 @@ class Login extends React.Component {
             style={this.props.session.errors ? styles.buttonWithErrors : styles.button}>
             <Text style={styles.buttonText}>Login</Text>
           </TouchableHighlight>
-          { this.props.session.isFetching ? fetching : <View /> }
+          <View style={styles.activityContainer}>
+            { this.props.session.isFetching ? fetching : <View /> }
+          </View>
         </View>
       </View>
     );
@@ -90,8 +94,9 @@ let styles = StyleSheet.create({
     backgroundColor: '#1825AD',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 15,
-    margin: 0
+    padding: 5,
+    margin: 0,
+    flexDirection: 'row',
   },
   logo: {
     color: 'white',
@@ -186,6 +191,16 @@ let styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     fontFamily: 'OpenSans'
+  },
+  activity: {
+    textAlign: 'center'
+  },
+  activityContainer: {
+    paddingTop: 50,
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 })
 
