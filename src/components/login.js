@@ -1,3 +1,4 @@
+var { Icon, } = require('react-native-icons');
 import React from 'react-native'
 
 const {
@@ -53,6 +54,7 @@ class Login extends React.Component {
         </View>
         <View style={styles.login}>
           { this.props.session.errors ? errorMessage : <Text style={styles.errorPlaceholder}>{' '}</Text> }
+          
           <TextInput
             style={styles.input}
             value={this.state.email}
