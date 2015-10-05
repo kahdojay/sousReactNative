@@ -38,7 +38,7 @@ export default class TaskListItem extends React.Component {
             <CheckBox
               label=''
               onChange={this.props.onPress}
-              checked={!this.props.completed}
+              checked={this.props.completed}
             />
           </View>
           <TouchableHighlight
@@ -71,12 +71,12 @@ let styles = StyleSheet.create({
   row: {
     borderRadius: 10,
     flexDirection: 'row',
-    backgroundColor: taskCompletedBackgroundColor,
+    backgroundColor: 'white',
     padding: 5,
     alignItems: 'center',
   },
   rowCompleted: {
-    backgroundColor: 'white',
+    backgroundColor: taskCompletedBackgroundColor,
   },
   checkboxContainer: {
     flex: 1,

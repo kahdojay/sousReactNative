@@ -57,11 +57,20 @@ class Login extends React.Component {
             onChangeText={(text) => {
               this.setState({password: text, email: this.state.email})
             }}/>
-          <TouchableHighlight
-            onPress={() => this.props.onLogin(this.state)}
-            style={styles.button}>
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableHighlight>
+          <View style={styles.buttonContainer}>
+            <TouchableHighlight
+              onPress={() => this.props.navigator.replace({
+                name: 'Signup'
+              })}
+              style={[styles.button, styles.buttonSecondary]}>
+              <Text style={styles.buttonText}>Signup</Text>
+            </TouchableHighlight>
+            <TouchableHighlight
+              onPress={() => this.props.onLogin(this.state)}
+              style={[styles.button, styles.buttonPrimary]}>
+              <Text style={styles.buttonText}>Login</Text>
+            </TouchableHighlight>
+          </View>
           { this.props.session.isFetching ? fetching : <View /> }
         </View>
       </View>
@@ -99,16 +108,26 @@ let styles = StyleSheet.create({
   input: {
     margin: 2,
     height: 32,
-    backgroundColor: '#cde',
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#ccc',
     paddingLeft: 4,
   },
+  buttonContainer: {
+    flexDirection: 'row'
+  },
   button: {
+    flex: 1,
     margin: 2,
-    alignSelf: 'center',
-    width: 80,
-    backgroundColor: 'gray',
+    backgroundColor: '#ccc',
     height: 32,
     padding: 8,
+  },
+  buttonPrimary: {
+    backgroundColor: '#89a',
+  },
+  buttonSecondary: {
+    backgroundColor: '#eee',
   },
   buttonText: {
     alignSelf: 'center',

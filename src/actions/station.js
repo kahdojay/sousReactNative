@@ -1,27 +1,43 @@
-import { REQUEST_STATIONS, RECEIVE_STATIONS, ERROR_STATIONS, ADD_STATION, DELETE_STATION } from './actionTypes'
-import Fetcher from '../utilities/fetcher';
-// import { normalize, Schema, arrayOf } from 'normalizr';
+import murmurhash from 'murmurhash'
+import Fetcher from '../utilities/fetcher'
+import {
+  RESET_STATIONS,
+  GET_STATIONS,
+  REQUEST_STATIONS,
+  RECEIVE_STATIONS,
+  ERROR_STATIONS,
+  ADD_STATION,
+  DELETE_STATION
+} from './actionTypes'
 
 let SousFetcher = null;
 
-// // normalize the data
-// const stationsSchema = new Schema('stations', { idAttribute: 'id' });
-// const teamSchema = new Schema('team', { idAttribute: 'team_id' });
-// stationsSchema.define({
-//   team: teamSchema
-// });
+function resetStations(){
+  return {
+    type: RESET_STATIONS
+  }
+}
 
-function addStation(name) {
+function addStation(name, teamId) {
+  let newStation = {}
+  let newKey = murmurhash.v3(name+''+teamId).toString(16);
+  newStation[newKey] = {
+    key: newKey,
+    name: name,
+    teamId: teamId,
+    created_at: (new Date).toISOString(),
+    update_at: (new Date).toISOString()
+  }
   return {
     type: ADD_STATION,
-    name: name
+    station: newStation
   };
 }
 
-function deleteStation(stationId) {
+function deleteStation(stationKey) {
   return {
     type: DELETE_STATION,
-    stationId: stationId
+    stationKey: stationKey
   }
 }
 
@@ -45,24 +61,17 @@ function errorStations(errors){
   }
 }
 
-function fetchStations(userId){
+function fetchStations(user_id){
   return (dispatch) => {
     dispatch(requestStations())
     return SousFetcher.station.find({
-      user_id: userId || '',
+      user_id: user_id,
       requestedAt: (new Date).getTime()
     }).then(res => {
       if (res.success === false) {
         dispatch(errorStations(res.errors))
       } else {
-        // console.log('before: ', JSON.stringify(res));
-        // let normalizedStations = normalize(res, stationsSchema);
-        // console.log('after: ', normalizedStations);
-        let normalizedStations = {};
-        res.forEach(function(station){
-          normalizedStations[station.id] = station;
-        });
-        dispatch(receiveStations(normalizedStations))
+        dispatch(receiveStations(res))
       }
     })
   }
@@ -72,11 +81,13 @@ function getStations(){
   return (dispatch, getState) => {
     let state = getState()
     SousFetcher = new Fetcher(state)
-    return dispatch(fetchStations(state.session.userId));
+    return dispatch(fetchStations(state.session.user_id));
   }
 }
 
 export default {
+  RESET_STATIONS,
+  GET_STATIONS,
   REQUEST_STATIONS,
   RECEIVE_STATIONS,
   ERROR_STATIONS,
@@ -84,5 +95,6 @@ export default {
   DELETE_STATION,
   addStation,
   deleteStation,
-  getStations
+  getStations,
+  resetStations,
 }

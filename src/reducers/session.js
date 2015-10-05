@@ -1,11 +1,17 @@
-import { RESET_SESSION, REQUEST_SESSION, RECEIVE_SESSION, ERROR_SESSION } from '../actions';
+import {
+  RESET_SESSION,
+  REQUEST_SESSION,
+  RECEIVE_SESSION,
+  ERROR_SESSION
+} from '../actions';
 
 const initialState = {
   isAuthenticated: false,
   isFetching: false,
   login: null,
   token: null,
-  userId: null,
+  user_id: null,
+  team_id: null,
   errors: null
 };
 
@@ -15,6 +21,7 @@ function session(state = initialState, action) {
     return Object.assign({}, state, {
       isAuthenticated: false,
       isFetching: false,
+      // user_id: null,
       errors: null
     })
   case REQUEST_SESSION:
@@ -28,7 +35,8 @@ function session(state = initialState, action) {
       isFetching: false,
       login: action.login,
       token: action.token,
-      userId: action.userId,
+      user_id: action.user_id,
+      team_id: action.team_id,
       errors: null,
       lastUpdated: action.receivedAt
     })
@@ -36,7 +44,8 @@ function session(state = initialState, action) {
     return Object.assign({}, state, {
       isFetching: false,
       login: action.login,
-      userId: null,
+      user_id: null,
+      team_id: null,
       errors: action.errors
     })
   default:

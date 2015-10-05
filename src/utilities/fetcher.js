@@ -1,8 +1,10 @@
 import serialize from './serialize';
 import { API_ENDPOINT, endpoints } from '../resources/apiConfig';
 const {
-  SESSION,
-  STATION,
+  ENDPOINT_SESSION,
+  ENDPOINT_STATION,
+  ENDPOINT_TEAM,
+  ENDPOINT_USER
 } = endpoints;
 
 class ApiEndpoint {
@@ -23,6 +25,7 @@ class ApiEndpoint {
   }
 
   _api(params) {
+    console.log(this.url, params);
     return fetch(this.url, params)
       .then(res => res.json())
       .then(res => {
@@ -38,22 +41,21 @@ class ApiEndpoint {
 
   _post(params) {
     params.method = 'POST';
-    console.log(this.url, this.params);
     return this._api(params);
   }
 
   // find all
   find(query) {
-    this.url = `${this.url}?${serialize(query)}`
-    console.log(this.url, this.params);
+    if( query )
+      this.url = `${this.url}?${serialize(query)}`
     return this._get(Object.assign({}, this.params));
   }
 
   // find one
   findOne(query) {
-    return this._get(Object.assign({}, this.params, {
-      body: JSON.stringify(query)
-    }));
+    if( query )
+      this.url = `${this.url}?${serialize(query)}`
+    return this._get(Object.assign({}, this.params));
   }
 
   // create a new resource
@@ -72,14 +74,25 @@ class ApiEndpoint {
 // setup the session endpoint
 class Session extends ApiEndpoint {
   constructor(state) {
-    super(SESSION, state)
+    super(ENDPOINT_SESSION, state)
   }
 }
-
+// setup the session endpoint
+class User extends ApiEndpoint {
+  constructor(state) {
+    super(ENDPOINT_USER, state)
+  }
+}
+// setup the team endpoint
+class Team extends ApiEndpoint {
+  constructor(state) {
+    super(ENDPOINT_TEAM, state)
+  }
+}
 // setup the station endpoint
 class Station extends ApiEndpoint {
   constructor(state) {
-    super(STATION, state)
+    super(ENDPOINT_STATION, state)
   }
 }
 // TODO: es6 version of this?
@@ -88,7 +101,9 @@ class Station extends ApiEndpoint {
 class Fetcher {
   constructor(state) {
     this.session = new Session(state);
+    this.team = new Team(state);
     this.station = new Station(state);
+    this.user = new User(state);
   }
 }
 

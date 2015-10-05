@@ -1,5 +1,11 @@
 import MockData from '../resources/mockData';
-import { ADD_TASK, UPDATE_TASK, TOGGLE_TASK, SET_TASK_VISIBILITY, TaskVisibility } from '../actions';
+import {
+  ADD_TASK,
+  UPDATE_TASK,
+  TOGGLE_TASK,
+  SET_TASK_VISIBILITY,
+  TaskVisibility
+} from '../actions';
 const { SHOW_ALL } = TaskVisibility;
 
 const initialState = MockData;
@@ -20,7 +26,7 @@ function tasks(state = initialState.tasks, action) {
     let newTaskId = Object.keys(newState).length;
     newState[newTaskId] = {
       id: newTaskId + '',
-      stationId: action.stationId,
+      stationKey: action.stationKey,
       name: action.name,
       description: '',
       completed: false,

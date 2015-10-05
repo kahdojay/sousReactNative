@@ -19,34 +19,26 @@ export default class TaskList extends React.Component {
     this.setState({showCompleted: !this.state.showCompleted})
   }
   render() {
-    const tasks = this.props.tasks
-    let taskKeys = Object.keys(tasks);
-    let tasksCompleted = []
-    let tasksIncomplete = [];
-    taskKeys.forEach(function(taskKey){
-      if (tasks[taskKey].completed) {
-        tasksCompleted.push(tasks[taskKey])
-      } else {
-        tasksIncomplete.push(tasks[taskKey])
-      }
-    })
+    let tasks = this.props.tasks
+    let tasksCompleted = _.filter(tasks, { completed: true });
+    let tasksIncomplete = _.filter(tasks, { completed: false });
     return (
       <View>
-        {tasksCompleted.map((task, index) => {
+        {tasksIncomplete.map((task, index) => {
           return <TaskListItem
             key={index}
             name={task.name}
+            quantity={task.quantity}
             completed={task.completed}
             taskId={task.id}
             navigator={this.props.navigator}
             onPress={() => this.props.onTaskClick(task.id)} />
         })}
         <Divider />
-        {tasksIncomplete.map((task, index) => {
+        {tasksCompleted.map((task, index) => {
           return <TaskListItem
             key={index}
             name={task.name}
-            quantity={task.quantity}
             completed={task.completed}
             taskId={task.id}
             navigator={this.props.navigator}

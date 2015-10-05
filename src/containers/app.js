@@ -1,12 +1,17 @@
 import React from 'react-native';
 import Login from '../components/login';
+import Signup from '../components/signup';
 import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
 import TaskView from '../components/taskView';
+import _ from 'lodash';
 import { connect } from 'react-redux/native';
 import {
   createSession,
+  registerSession,
   resetSession,
+  resetSessionInfo,
+  getTeams,
   addStation,
   deleteStation,
   getStations,
@@ -34,19 +39,28 @@ class App extends React.Component {
     }
   }}
 
-  renderScene(route, nav) {
-    const { session, stations, tasks, dispatch } = this.props;
+  componentWillMount(){
+    this.props.dispatch(getTeams());
+  }
 
-    if (this.props.session.isAuthenticated){ // redirect to stationIndex
-      if(route.name === 'Login') {
-        route.name = 'StationIndex'
+  renderScene(route, nav) {
+    const { session, teams, stations, tasks, dispatch } = this.props;
+
+    // redirect to initial view
+    if (this.props.session.isAuthenticated){
+      if(route.name === 'Login' || route.name === 'Signup') {
+        route.name = 'StationIndex';
       }
-    } else { // redirect to login
+    }
+    // redirect to login if requested view requires authentication
+    else if(route.name !== 'Login' && route.name !== 'Signup') {
       route.name = 'Login'
     }
+
     switch (route.name) {
       case 'Login':
         return <Login
+                  navigator={nav}
                   session={session}
                   onResetSession={() => {
                     dispatch(resetSession())
@@ -55,13 +69,29 @@ class App extends React.Component {
                     dispatch(createSession(sessionParams))
                   }}
                 />
+      case 'Signup':
+        return <Signup
+                  navigator={nav}
+                  session={session}
+                  teams={teams}
+                  onResetSessionInfo={() => {
+                    dispatch(resetSessionInfo())
+                  }}
+                  onResetSession={() => {
+                    dispatch(resetSession())
+                  }}
+                  onSignup={(sessionParams) => {
+                    dispatch(registerSession(sessionParams))
+                  }}
+                />
       case 'StationIndex':
+        let teamId = session.team_id;
         return <StationIndex
                   navigator={nav}
                   stations={stations}
                   tasks={tasks}
                   onAddStation={name =>
-                    dispatch(addStation(name))
+                    dispatch(addStation(name, teamId))
                   }
                   onBack={() =>
                     this._back.bind(this)
@@ -71,28 +101,21 @@ class App extends React.Component {
                   }
                 />;
       case 'StationView':
-        let station = stations[route.stationId]
-        let taskList = Object.keys(tasks);
-        let stationTasks = taskList.filter((taskKey) => {
-          if (tasks[taskKey].stationId === route.stationId)
-            return taskKey
-        })
-        stationTasks = stationTasks.map((taskKey) => {
-          return tasks[taskKey]
-        })
+        let station = _.filter(stations.data, { key: route.stationKey })[0]
+        let stationTasks = _.filter(tasks, { stationKey: route.stationKey })
         return <StationView
                   navigator={nav}
                   station={station}
                   tasks={stationTasks}
-                  stationId={route.stationId}
+                  stationId={route.stationKey}
                   onBack={() => this._back.bind(this)}
-                  onAddNewTask={(text, stationId) =>
-                    dispatch(addTask(text, stationId))
+                  onAddNewTask={(text, stationKey) =>
+                    dispatch(addTask(text, stationKey))
                   }
-                  onDeleteStation={(stationId) =>
-                    dispatch(deleteStation(stationId))
+                  onDeleteStation={(stationKey) =>
+                    dispatch(deleteStation(stationKey))
                   }
-                  toggle={(taskId) =>
+                  onToggleTask={(taskId) =>
                     dispatch(toggleTask(taskId))
                   }
                   updateTaskQuantity={(newTask) =>
@@ -145,6 +168,7 @@ let styles = StyleSheet.create({
 function select(state) {
   return {
     session: state.session,
+    teams: state.teams,
     stations: state.stations,
     tasks: state.tasks
   }

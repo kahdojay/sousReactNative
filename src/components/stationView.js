@@ -38,7 +38,7 @@ class StationView extends React.Component {
     (buttonIndex) => {
       if( deleteAction === buttonIndex ){
         // process the delete
-        this.props.onDeleteStation(this.props.station.id);
+        this.props.onDeleteStation(this.props.station.key);
         // pop the view
         this.props.navigator.pop();
       }
@@ -81,15 +81,15 @@ class StationView extends React.Component {
         </View>
         <AddForm
           placeholder="Add a Task..."
-          onSubmit={text =>
-            this.props.onAddNewTask(text, station.id)
-          }/>
+          onSubmit={text => {
+            this.props.onAddNewTask(text, station.key)
+          }}/>
         <TaskList
           navigator={this.props.navigator}
           updateTaskQuantity={this.props.updateTaskQuantity}
           tasks={tasks}
           onTaskClick={taskId =>
-            this.props.toggle(taskId)
+            this.props.onToggleTask(taskId)
           } />
       </View>
     );
