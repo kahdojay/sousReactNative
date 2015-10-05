@@ -6,6 +6,7 @@ let {
   View,
   PropTypes,
   Text,
+  TouchableHighlight,
 } = React;
 
 export default class TaskList extends React.Component {
@@ -20,11 +21,18 @@ export default class TaskList extends React.Component {
   }
   render() {
     let tasks = this.props.tasks
-    let tasksCompleted = _.filter(tasks, { completed: true });
-    let tasksIncomplete = _.filter(tasks, { completed: false });
-    return (
-      <View>
-        {tasksIncomplete.map((task, index) => {
+    let tasksCompleted = _.filter(tasks, { completed: true })
+      .map((task, index) => {
+           return <TaskListItem
+            key={index}
+            name={task.name}
+            completed={task.completed}
+            taskId={task.id}
+            navigator={this.props.navigator}
+            onPress={() => this.props.onTaskClick(task.id)} />
+        })
+    let tasksIncomplete = _.filter(tasks, { completed: false })
+      .map((task, index) => {
           return <TaskListItem
             key={index}
             name={task.name}
@@ -33,17 +41,16 @@ export default class TaskList extends React.Component {
             taskId={task.id}
             navigator={this.props.navigator}
             onPress={() => this.props.onTaskClick(task.id)} />
-        })}
-        <Divider />
-        {tasksCompleted.map((task, index) => {
-          return <TaskListItem
-            key={index}
-            name={task.name}
-            completed={task.completed}
-            taskId={task.id}
-            navigator={this.props.navigator}
-            onPress={() => this.props.onTaskClick(task.id)} />
-        })}
+        })
+    return (
+      <View>
+        {tasksIncomplete}
+        <TouchableHighlight   
+          onPress={this.handlePress.bind(this)}    
+        >    
+          <Text>{tasksCompleted.count} Complete Tasks</Text>    
+        </TouchableHighlight>
+        {this.state.showCompleted ? tasksCompleted : <View />}
       </View>
     );
   }
