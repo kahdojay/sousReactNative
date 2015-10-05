@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React from 'react-native'
 
 const {
@@ -13,13 +14,44 @@ class Signup extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      invalid: false,
       email: '',
-      password: ''
+      password: '',
+      teamFound: false,
+      lookingForTeam: false,
+      team_name: '',
+      team_id: null
     }
+    this.teams = {}
   }
 
-  componentWillMount(){
+  componentWillMount() {
     this.props.onResetSession();
+    // setup the teams object to lowercase the name attribute
+    this.teams = _(this.props.teams.data).chain()
+      .thru((item) => {
+        let key = Object.keys(item)[0]
+        let newItem = Object.assign({}, item)
+        newItem[key].name_tolower = newItem[key].name.toLowerCase()
+        return newItem;
+      }).value();
+  }
+
+  onSignup() {
+    if(this.state.email == '' || this.state.password == '' || this.state.team_name == ''){
+      this.setState({invalid: true});
+    } else {
+      // first reset all the stations and tasks and ... ?
+      this.props.onResetSessionInfo();
+      // send the signup request
+      this.props.onSignup(Object.assign({}, {
+        email: this.state.email,
+        password: this.state.password,
+        team_name: this.state.team_name,
+        team_id: this.state.team_id
+      }));
+      this.setState({ password: '' })
+    }
   }
 
   render() {
@@ -28,6 +60,8 @@ class Signup extends React.Component {
                         color={'#808080'}
                         size={'small'} />
     let errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
+    let teamLookupStatus = (this.state.teamFound) ? <Text style={[styles.teamLookup, styles.teamFound]}>Team Found</Text> : <Text style={[styles.teamLookup, styles.teamNew]}>New Team</Text>
+    let teamLookup = (this.state.lookingForTeam) ? <View style={styles.teamLookupContainer}>{teamLookupStatus}</View> : <View/>
     return (
       <View style={styles.container}>
         <View style={styles.nav}>
@@ -35,13 +69,13 @@ class Signup extends React.Component {
           <Text style={styles.header}>Signup</Text>
         </View>
         <View style={styles.login}>
-          { this.props.session.errors ? errorMessage : <Text>{' '}</Text> }
+          { this.props.session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
           <TextInput
             style={styles.input}
             value={this.state.email}
             placeholder='Email'
             onChangeText={(text) => {
-              this.setState({email: text, password: this.state.password})
+              this.setState({email: text, invalid: false})
             }}/>
           <TextInput
             secureTextEntry={true}
@@ -49,8 +83,33 @@ class Signup extends React.Component {
             value={this.state.password}
             placeholder='Password'
             onChangeText={(text) => {
-              this.setState({password: text, email: this.state.email})
+              this.setState({password: text, invalid: false})
             }}/>
+          <View>
+            <TextInput
+              style={styles.input}
+              value={this.state.team_name}
+              placeholder='Team'
+              onChangeText={(text) => {
+                let updateState = {
+                  invalid: false,
+                  team_name: text,
+                  team_id: null,
+                  teamFound: false,
+                  lookingForTeam: true,
+                }
+                if(text == ''){
+                  updateState.lookingForTeam = false;
+                }
+                let foundTeams = _.filter(this.teams, { name_tolower: text.toLowerCase() })
+                if( foundTeams.length > 0 ){
+                  updateState.team_id = foundTeams[0].id;
+                  updateState.teamFound = true;
+                }
+                this.setState(updateState)
+              }}/>
+            {teamLookup}
+          </View>
           <View style={styles.buttonContainer}>
             <TouchableHighlight
               onPress={() => this.props.navigator.replace({
@@ -60,7 +119,9 @@ class Signup extends React.Component {
               <Text style={styles.buttonText}>Login</Text>
             </TouchableHighlight>
             <TouchableHighlight
-              onPress={() => this.props.onSignup(this.state)}
+              onPress={() => {
+                this.onSignup()
+              }}
               style={[styles.button, styles.buttonPrimary]}>
               <Text style={styles.buttonText}>Signup</Text>
             </TouchableHighlight>
@@ -128,6 +189,24 @@ let styles = StyleSheet.create({
   },
   errorText: {
     color: '#d00'
+  },
+  teamLookupContainer: {
+    position: 'absolute',
+    right: 7,
+    top: 7,
+    padding: 2,
+    width: 100,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    backgroundColor: '#eee',
+  },
+  teamLookup: {
+    alignSelf: 'center',
+    color: '#ccc'
+  },
+  teamFound: {
+  },
+  teamNew: {
   }
 })
 

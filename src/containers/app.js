@@ -9,6 +9,8 @@ import {
   createSession,
   registerSession,
   resetSession,
+  resetSessionInfo,
+  getTeams,
   addStation,
   deleteStation,
   getStations,
@@ -36,12 +38,16 @@ class App extends React.Component {
     }
   }}
 
+  componentWillMount(){
+    this.props.dispatch(getTeams());
+  }
+
   renderScene(route, nav) {
-    const { session, stations, tasks, dispatch } = this.props;
+    const { session, teams, stations, tasks, dispatch } = this.props;
 
     // redirect to initial view
     if (this.props.session.isAuthenticated){
-      if(route.name === 'Login') {
+      if(route.name === 'Login' || route.name === 'Signup') {
         route.name = 'StationIndex';
       }
     }
@@ -66,6 +72,10 @@ class App extends React.Component {
         return <Signup
                   navigator={nav}
                   session={session}
+                  teams={teams}
+                  onResetSessionInfo={() => {
+                    dispatch(resetSessionInfo())
+                  }}
                   onResetSession={() => {
                     dispatch(resetSession())
                   }}
@@ -163,6 +173,7 @@ let styles = StyleSheet.create({
 function select(state) {
   return {
     session: state.session,
+    teams: state.teams,
     stations: state.stations,
     tasks: state.tasks
   }
