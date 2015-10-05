@@ -26,13 +26,17 @@ class Signup extends React.Component {
   }
 
   componentWillMount() {
+    console.log("PROPS", this.props);
     this.props.onResetSession();
     // setup the teams object to lowercase the name attribute
     this.teams = _(this.props.teams.data).chain()
+
       .thru((item) => {
         let key = Object.keys(item)[0]
         let newItem = Object.assign({}, item)
-        newItem[key].name_tolower = newItem[key].name.toLowerCase()
+        if (newItem[key] != undefined) {
+          newItem[key].name_tolower = newItem[key].name.toLowerCase()
+        }
         return newItem;
       }).value();
   }
