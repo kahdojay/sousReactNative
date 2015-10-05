@@ -18,12 +18,6 @@ function resetStations(){
   }
 }
 
-function getStations(){
-  return {
-    type: GET_STATIONS
-  }
-}
-
 function addStation(name) {
   return (dispatch, getState) => {
     // kick back if team name is empty

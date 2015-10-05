@@ -74,10 +74,10 @@ function fetchSession(sessionParams) {
     return SousFetcher.session.create(sessionParams)
       .then((res) => {
         if (res.success === true){
-          // retrieve this session's information
-          dispatch(retrieveSessionInfo())
           // dispatch receive session action
           dispatch(receiveSession(sessionParams.email, res.token, res.user_id))
+          // retrieve this session's information
+          dispatch(retrieveSessionInfo())
         } else {
           dispatch(errorSession(sessionParams.email, res.errors))
         }
