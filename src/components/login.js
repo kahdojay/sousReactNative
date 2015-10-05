@@ -18,6 +18,11 @@ class Login extends React.Component {
     }
   }
 
+  handleChange(e) {
+    var text = e.nativeEvent.text;
+    this.setState({email: text})
+  }
+
   componentWillMount(){
     this.props.onResetSession();
     if(this.props.session.login !== ''){
@@ -37,18 +42,25 @@ class Login extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.nav}>
-          <Text style={styles.logo}>Sous</Text>
           <Text style={styles.header}>Welcome Back</Text>
+          <TouchableHighlight
+            onPress={() => this.props.navigator.replace({
+              name: 'Signup'
+            })}
+            style={[styles.button, styles.buttonSecondary]}>
+            <Text style={styles.buttonText}>Signup</Text>
+          </TouchableHighlight>
         </View>
         <View style={styles.login}>
-          { this.props.session.errors ? errorMessage : <Text>{' '}</Text> }
+          { this.props.session.errors ? errorMessage : <Text style={styles.errorPlaceholder}>{' '}</Text> }
           <TextInput
             style={styles.input}
             value={this.state.email}
-            placeholder='Email'
+            placeholder='E-mail Address'
             onChangeText={(text) => {
               this.setState({email: text, password: this.state.password})
             }}/>
+          <View style={styles.underline}></View>
           <TextInput
             secureTextEntry={true}
             style={styles.input}
@@ -57,20 +69,13 @@ class Login extends React.Component {
             onChangeText={(text) => {
               this.setState({password: text, email: this.state.email})
             }}/>
-          <View style={styles.buttonContainer}>
-            <TouchableHighlight
-              onPress={() => this.props.navigator.replace({
-                name: 'Signup'
-              })}
-              style={[styles.button, styles.buttonSecondary]}>
-              <Text style={styles.buttonText}>Signup</Text>
-            </TouchableHighlight>
-            <TouchableHighlight
-              onPress={() => this.props.onLogin(this.state)}
-              style={[styles.button, styles.buttonPrimary]}>
-              <Text style={styles.buttonText}>Login</Text>
-            </TouchableHighlight>
-          </View>
+          
+          <View style={styles.underline}></View>
+          <TouchableHighlight
+            onPress={() => this.props.onLogin(this.state)}
+            style={styles.button}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableHighlight>
           { this.props.session.isFetching ? fetching : <View /> }
         </View>
       </View>
@@ -79,49 +84,65 @@ class Login extends React.Component {
 };
 
 let styles = StyleSheet.create({
-  container: {
-    marginTop: 20,
-    flex: 1,
-    paddingTop: 80,
+  errorPlaceholder: {
+    height: 0
   },
-  nav: {
-    backgroundColor: 'blue',
+  container: {
+    flex: 1,
+    marginTop: 20,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+  },
+  underline: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 40,
-    padding: 15
+    borderBottomWidth: 2,
+    borderBottomColor: '#e6e6e6',
+    marginLeft: 10
+  },
+  nav: {
+    backgroundColor: '#1825AD',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 15,
+    margin: 0
   },
   logo: {
     color: 'white',
     fontSize: 20,
-    marginBottom: 10
   },
   header: {
     color: 'white',
     fontWeight: 'bold',
+    fontSize: 27,
+    letterSpacing: .1
   },
   login: {
-    justifyContent: 'center',
-    paddingLeft: 25,
-    paddingRight: 25
+    paddingLeft: 5,
+    paddingRight: 5
   },
   input: {
-    margin: 2,
-    height: 32,
-    backgroundColor: 'white',
+    height: 50,
+    padding: 4,
+    marginRight: 5,
+    fontSize: 23,
     borderWidth: 1,
-    borderColor: '#ccc',
-    paddingLeft: 4,
+    borderColor: 'white',
+    borderRadius: 8,
+    color: '#333',
+    fontWeight: 'bold'
   },
   buttonContainer: {
     flexDirection: 'row'
   },
   button: {
-    flex: 1,
-    margin: 2,
-    backgroundColor: '#ccc',
-    height: 32,
-    padding: 8,
+    height: 56,
+    backgroundColor: '#F5A623',
+    alignSelf: 'center',
+    width: 150,
+    marginTop: 30,
+    justifyContent: 'center',
+    borderRadius: 3
   },
   buttonPrimary: {
     backgroundColor: '#89a',
@@ -131,6 +152,10 @@ let styles = StyleSheet.create({
   },
   buttonText: {
     alignSelf: 'center',
+    fontSize: 22,
+    color: 'white',
+    fontWeight: 'bold',
+    letterSpacing: .1
   },
   errorText: {
     color: '#d00'
