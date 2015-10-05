@@ -18,36 +18,26 @@ function resetStations(){
   }
 }
 
-function addStation(name) {
-  return (dispatch, getState) => {
-    // kick back if team name is empty
-    if(name === ''){
-      return dispatch(getTeams())
-    }
-    let state = getState()
-    let team_id = state.session.team_id
-    let newStation = {}
-    let newKey = murmurhash.v3(name+''+team_id).toString(16);
-    newStation[newKey] = {
-      id: null,
-      key: newKey,
-      name: name,
-      team_id: team_id,
-      created_at: (new Date).toISOString(),
-      update_at: (new Date).toISOString()
-    }
-    SousFetcher.station.create(newStation)
-    return {
-      type: ADD_STATION,
-      station: newStation
-    };
+function addStation(name, teamId) {
+  let newStation = {}
+  let newKey = murmurhash.v3(name+''+teamId).toString(16);
+  newStation[newKey] = {
+    key: newKey,
+    name: name,
+    teamId: teamId,
+    created_at: (new Date).toISOString(),
+    update_at: (new Date).toISOString()
   }
+  return {
+    type: ADD_STATION,
+    station: newStation
+  };
 }
 
-function deleteStation(stationId) {
+function deleteStation(stationKey) {
   return {
     type: DELETE_STATION,
-    stationId: stationId
+    stationKey: stationKey
   }
 }
 

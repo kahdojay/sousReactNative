@@ -36,6 +36,7 @@ function session(state = initialState, action) {
       login: action.login,
       token: action.token,
       user_id: action.user_id,
+      team_id: action.team_id,
       errors: null,
       lastUpdated: action.receivedAt
     })

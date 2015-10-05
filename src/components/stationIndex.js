@@ -34,7 +34,7 @@ class StationIndex extends React.Component {
           key={stationKey}
           onPress={() => this.props.navigator.push({
             name: 'StationView',
-            stationId: station.id
+            stationKey: station.key
           })}
           station={station}
           tasks={tasks}
@@ -52,14 +52,14 @@ class StationIndex extends React.Component {
         { stations.isFetching ? fetching : <View/> }
         { stationsList }
         </View>
-        <View style={styles.logoutContainer}>
+        {/*<View style={styles.logoutContainer}>
           <TouchableHighlight
             onPress={() => this.props.onLogout()}
             style={styles.logoutButton}
             >
             <Text style={styles.logoutButtonText}> Logout </Text>
           </TouchableHighlight>
-        </View>
+        </View>*/}
       </View>
     );
   }

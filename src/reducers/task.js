@@ -26,7 +26,7 @@ function tasks(state = initialState.tasks, action) {
     let newTaskId = Object.keys(newState).length;
     newState[newTaskId] = {
       id: newTaskId + '',
-      stationId: action.stationId,
+      stationKey: action.stationKey,
       name: action.name,
       description: '',
       completed: false,

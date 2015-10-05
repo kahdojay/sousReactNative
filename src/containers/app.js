@@ -4,6 +4,7 @@ import Signup from '../components/signup';
 import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
 import TaskView from '../components/taskView';
+import _ from 'lodash';
 import { connect } from 'react-redux/native';
 import {
   createSession,
@@ -84,12 +85,13 @@ class App extends React.Component {
                   }}
                 />
       case 'StationIndex':
+        let teamId = session.team_id;
         return <StationIndex
                   navigator={nav}
                   stations={stations}
                   tasks={tasks}
                   onAddStation={name =>
-                    dispatch(addStation(name))
+                    dispatch(addStation(name, teamId))
                   }
                   onBack={() =>
                     this._back.bind(this)
@@ -99,28 +101,21 @@ class App extends React.Component {
                   }
                 />;
       case 'StationView':
-        let station = stations[route.stationId]
-        let taskList = Object.keys(tasks);
-        let stationTasks = taskList.filter((taskKey) => {
-          if (tasks[taskKey].stationId === route.stationId)
-            return taskKey
-        })
-        stationTasks = stationTasks.map((taskKey) => {
-          return tasks[taskKey]
-        })
+        let station = _.filter(stations.data, { key: route.stationKey })[0]
+        let stationTasks = _.filter(tasks, { stationKey: route.stationKey })
         return <StationView
                   navigator={nav}
                   station={station}
                   tasks={stationTasks}
-                  stationId={route.stationId}
+                  stationId={route.stationKey}
                   onBack={() => this._back.bind(this)}
-                  onAddNewTask={(text, stationId) =>
-                    dispatch(addTask(text, stationId))
+                  onAddNewTask={(text, stationKey) =>
+                    dispatch(addTask(text, stationKey))
                   }
-                  onDeleteStation={(stationId) =>
-                    dispatch(deleteStation(stationId))
+                  onDeleteStation={(stationKey) =>
+                    dispatch(deleteStation(stationKey))
                   }
-                  toggle={(taskId) =>
+                  onToggleTask={(taskId) =>
                     dispatch(toggleTask(taskId))
                   }
                   updateTaskQuantity={(newTask) =>
