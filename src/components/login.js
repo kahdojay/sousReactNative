@@ -6,6 +6,7 @@ const {
   View,
   Text,
   TextInput,
+  Image,
   TouchableHighlight,
   ActivityIndicatorIOS,
 } = React;
@@ -53,6 +54,8 @@ class Login extends React.Component {
             <Text style={styles.buttonText}>Signup</Text>
           </TouchableHighlight>
           <Icon name='material|face' size={30} color='#aaa' style={styles.iconFace}/>
+          <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+          <Text style={styles.signup}>Sign Up</Text>
         </View>
 
         <View style={styles.login}>
@@ -102,6 +105,18 @@ let styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     fontFamily: 'OpenSans'
+  },
+  logoImage: {
+    width: 70,
+    height: 70,
+    marginLeft: 160
+  },
+  signup: {
+    color: 'white',
+    fontSize: 22,
+    textAlign: 'right',
+    flex: 1,
+    marginRight: 5
   },
   header: {
     color: 'white',
