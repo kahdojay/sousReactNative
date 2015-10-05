@@ -1,3 +1,4 @@
+var { Icon, } = require('react-native-icons');
 const React = require('react-native');
 const AddForm = require('./addForm');
 import { mainBackgroundColor } from '../utilities/colors';
@@ -9,6 +10,7 @@ const {
   View,
   Text,
   TextInput,
+  Image,
   TouchableHighlight,
   PropTypes,
 } = React;
@@ -45,7 +47,10 @@ class StationIndex extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.stationContainer}>
-          <Text>StationIndex View</Text>
+          <View style={styles.nav}>
+            <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+            <Icon name='material|face' size={30} color='#aaa' style={styles.iconFace}/>
+          </View>
           <AddForm
             placeholder="Add a Station..."
             onSubmit={this.props.onAddStation.bind(this)}/>
@@ -73,6 +78,32 @@ const styles = StyleSheet.create({
   },
   stationContainer: {
     flex: 14
+  },
+  nav: {
+    backgroundColor: '#1825AD',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 5,
+    margin: 0,
+    flexDirection: 'row',
+  },
+  logoImage: {
+    width: 70,
+    height: 70,
+    alignItems: 'center'
+  },
+  iconFace: {
+    width: 70,
+    height: 70,
+    position: 'absolute',
+    right: 0,
+  },
+  signup: {
+    color: 'white',
+    fontSize: 22,
+    textAlign: 'right',
+    flex: 1,
+    marginRight: 5
   },
   logoutContainer: {
     flex: 1

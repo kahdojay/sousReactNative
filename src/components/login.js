@@ -109,14 +109,14 @@ let styles = StyleSheet.create({
   logoImage: {
     width: 70,
     height: 70,
-    marginLeft: 160
   },
   signup: {
     color: 'white',
     fontSize: 22,
-    textAlign: 'right',
-    flex: 1,
-    marginRight: 5
+    marginRight: 5,
+    right: 10,
+    position: 'absolute',
+    top: 27
   },
   header: {
     color: 'white',
