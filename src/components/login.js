@@ -115,7 +115,8 @@ let styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 27,
-    letterSpacing: .1
+    letterSpacing: .1,
+    fontFamily: 'OpenSans'
   },
   login: {
     paddingLeft: 5,
