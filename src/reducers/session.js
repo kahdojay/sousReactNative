@@ -21,6 +21,7 @@ function session(state = initialState, action) {
     return Object.assign({}, state, {
       isAuthenticated: false,
       isFetching: false,
+      // user_id: null,
       errors: null
     })
   case REQUEST_SESSION:
