@@ -45,17 +45,14 @@ class Login extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.nav}>
-          <Text style={styles.header}>Welcome Back</Text>
+          <Image source={require('image!Logo')} style={styles.logoImage}></Image>
           <TouchableHighlight
             onPress={() => this.props.navigator.replace({
               name: 'Signup'
             })}
-            style={[styles.button, styles.buttonSecondary]}>
+            style={styles.signup}>
             <Text style={styles.buttonText}>Signup</Text>
           </TouchableHighlight>
-          <Icon name='material|face' size={30} color='#aaa' style={styles.iconFace}/>
-          <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-          <Text style={styles.signup}>Sign Up</Text>
         </View>
 
         <View style={styles.login}>
