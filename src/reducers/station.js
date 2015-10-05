@@ -41,6 +41,7 @@ function stations(state = initialState.stations, action) {
     let newStationState = Object.assign({}, state);
     newStationState.data[action.stationKey].deleted = true;
     return newStationState;
+  case GET_STATIONS:
   default:
     return state;
   }
