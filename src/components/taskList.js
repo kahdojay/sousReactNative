@@ -28,23 +28,27 @@ export default class TaskList extends React.Component {
     let tasksCompleted = _.filter(tasks, { completed: true })
       .map((task, index) => {
            return <TaskListItem
+            task={task}
             key={index}
             name={task.name}
             completed={task.completed}
             taskId={task.id}
             navigator={this.props.navigator}
-            onPress={() => this.props.onTaskClick(task.id)} />
+            onPress={() => this.props.onTaskClick(task.id)}
+            onChangeQuantity={this.props.updateTaskQuantity} />
         })
     let tasksIncomplete = _.filter(tasks, { completed: false })
       .map((task, index) => {
           return <TaskListItem
+            task={task}
             key={index}
             name={task.name}
             quantity={task.quantity}
             completed={task.completed}
             taskId={task.id}
             navigator={this.props.navigator}
-            onPress={() => this.props.onTaskClick(task.id)} />
+            onPress={() => this.props.onTaskClick(task.id)}
+            onChangeQuantity={this.props.updateTaskQuantity} />
         })
     return (
       <View>
