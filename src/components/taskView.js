@@ -18,9 +18,8 @@ class TaskView extends React.Component {
     }
   }
   saveTask() {
-    console.log('savetask')
     let newTask = this.props.task
-    newTask.description = this.state.textInputDescriptioon
+    newTask.description = this.state.textInputDescription
     newTask.name = this.state.textInputName
     this.props.saveTaskDescription(newTask)
   }
