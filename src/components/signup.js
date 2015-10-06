@@ -29,8 +29,8 @@ class Signup extends React.Component {
     console.log("PROPS", this.props);
     this.props.onResetSession();
     // setup the teams object to lowercase the name attribute
-    this.teams = _(this.props.teams.data).chain()
-
+    this.teams = _(this.props.teams.data)
+      .chain()
       .thru((item) => {
         let key = Object.keys(item)[0]
         let newItem = Object.assign({}, item)
@@ -58,14 +58,36 @@ class Signup extends React.Component {
     }
   }
 
+  searchTeam(text) {
+    let teamNames = _.pluck(this.teams, 'name')
+    if (_.includes(teamNames, text)) {
+      this.setState({
+        team_name: text,
+        lookingForTeam: false,
+        teamFound: true
+      })
+    } else {
+      this.setState({
+        team_name: text,
+        lookingForTeam: true,
+        teamFound: false
+      })
+    }
+  }
+
   render() {
     let fetching =  <ActivityIndicatorIOS
                         animating={true}
                         color={'#808080'}
                         size={'small'} />
     let errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
-    let teamLookupStatus = (this.state.teamFound) ? <Text style={[styles.teamLookup, styles.teamFound]}>Team Found</Text> : <Text style={[styles.teamLookup, styles.teamNew]}>New Team</Text>
-    let teamLookup = (this.state.lookingForTeam) ? <View style={styles.teamLookupContainer}>{teamLookupStatus}</View> : <View/>
+    let teamLookupStatus = (this.state.teamFound) ?
+      <Text style={[styles.teamLookup, styles.teamFound]}>Team Found</Text> : 
+      <Text style={[styles.teamLookup, styles.teamNew]}>New Team</Text>
+
+    let teamLookup = (this.state.lookingForTeam) ? 
+      <View style={styles.teamLookupContainer}>{teamLookupStatus}</View> : 
+      <View style={styles.teamLookupContainer}>{teamLookupStatus}</View>
     return (
       <View style={styles.container}>
         <View style={styles.login}>
@@ -90,24 +112,7 @@ class Signup extends React.Component {
               style={styles.input}
               value={this.state.team_name}
               placeholder='Team'
-              onChangeText={(text) => {
-                let updateState = {
-                  invalid: false,
-                  team_name: text,
-                  team_id: null,
-                  teamFound: false,
-                  lookingForTeam: true,
-                }
-                if(text == ''){
-                  updateState.lookingForTeam = false;
-                }
-                let foundTeams = _.filter(this.teams, { name_tolower: text.toLowerCase() })
-                if( foundTeams.length > 0 ){
-                  updateState.team_id = foundTeams[0].id;
-                  updateState.teamFound = true;
-                }
-                this.setState(updateState)
-              }}/>
+              onChangeText={this.searchTeam.bind(this)}/>
             {teamLookup}
           </View>
           <View style={styles.buttonContainer}>
