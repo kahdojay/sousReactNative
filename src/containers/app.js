@@ -6,6 +6,7 @@ import StationView from '../components/stationView';
 import TaskView from '../components/taskView';
 import _ from 'lodash';
 import { connect } from 'react-redux/native';
+var { Icon, } = require('react-native-icons');
 import {
   createSession,
   registerSession,
@@ -24,15 +25,23 @@ let {
   PropTypes,
   View,
   Text,
+  Image,
   StyleSheet,
-  Navigator
+  Navigator,
+  TouchableHighlight,
 } = React;
 
 class App extends React.Component {
+
   constructor(props) {
     super(props)
     this.initialRoute = 'Login'
+    this.unauthenticatedRoutes = {
+      'Login': {},
+      'Signup': {}
+    }
   }
+
   _back() {() => {
     if (route.index > 0) {
       navigator.pop();
@@ -43,19 +52,16 @@ class App extends React.Component {
     this.props.dispatch(getTeams());
   }
 
-  renderScene(route, nav) {
-    const { session, teams, stations, tasks, dispatch } = this.props;
+  authenticatedRoute(route){
+    let isAuthenticated = false;
+    if(this.unauthenticatedRoutes.hasOwnProperty(route.name) === false){
+      isAuthenticated = true;
+    }
+    return isAuthenticated;
+  }
 
-    // redirect to initial view
-    if (this.props.session.isAuthenticated){
-      if(route.name === 'Login' || route.name === 'Signup') {
-        route.name = 'StationIndex';
-      }
-    }
-    // redirect to login if requested view requires authentication
-    else if(route.name !== 'Login' && route.name !== 'Signup') {
-      route.name = 'Login'
-    }
+  getScene(route, nav) {
+    const { session, teams, stations, tasks, dispatch } = this.props;
 
     switch (route.name) {
       case 'Login':
@@ -96,9 +102,6 @@ class App extends React.Component {
                   onBack={() =>
                     this._back.bind(this)
                   }
-                  onLogout={() =>
-                    dispatch(resetSession())
-                  }
                 />;
       case 'StationView':
         let station = _.filter(stations.data, { key: route.stationKey })[0]
@@ -137,11 +140,110 @@ class App extends React.Component {
         return <View />;
     }
   }
+
+  renderScene(route, nav) {
+    const { dispatch } = this.props;
+    // redirect to initial view
+    if (this.props.session.isAuthenticated){
+      if(route.name === 'Login' || route.name === 'Signup') {
+        route.name = 'StationIndex';
+      }
+    }
+    // redirect to login if requested view requires authentication
+    else if(route.name !== 'Login' && route.name !== 'Signup') {
+      route.name = 'Login'
+    }
+
+    let header = <View />;
+    let scene = this.getScene(route, nav);
+    let footer = <View />;
+
+    // setup the header for unauthenticated routes
+    if(this.authenticatedRoute(route) === false){
+      let nextButton = <View />;
+      switch (route.name) {
+        case 'Login':
+          nextButton = <TouchableHighlight
+            onPress={() => nav.replace({
+              name: 'Signup'
+            })}
+            style={styles.signup}>
+            <Text style={styles.buttonText}>Signup</Text>
+          </TouchableHighlight>;
+          break;
+        case 'Signup':
+          nextButton = <TouchableHighlight
+            onPress={() => nav.replace({
+              name: 'Login'
+            })}
+            style={styles.signup}>
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableHighlight>;
+          break;
+        default:
+          break;
+      }
+      header = <View style={styles.nav}>
+        <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+        {nextButton}
+      </View>;
+    }
+    // setup the header for authenticated routes
+    else {
+      header =  <View style={styles.nav}>
+        <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+        <Icon name='material|account-circle' size={50} color='#aaa' style={styles.iconFace}/>
+      </View>;
+      footer = <View style={styles.footerContainer}>
+        <View style={styles.footerItem}>
+          <TouchableHighlight
+            onPress={() => nav.replace({
+              name: 'StationIndex'
+            })}
+            style={styles.footerButton}
+            >
+            <View>
+              {/*<Icon name='material|account-circle' size={30} color='#222' style={{backgroundColor: 'blue'}}/>*/}
+              <Text style={styles.footerButtonText}> Prep </Text>
+            </View>
+          </TouchableHighlight>
+        </View>
+        <View style={styles.footerItem}>
+          <TouchableHighlight
+            onPress={() => nav.replace({
+              name: 'Feed'
+            })}
+            style={styles.footerButton}
+            >
+            <View>
+              <Text style={styles.footerButtonText}> Feed </Text>
+            </View>
+          </TouchableHighlight>
+        </View>
+        {/* */}<View style={styles.footerItem}>
+          <TouchableHighlight
+            onPress={() => {
+              dispatch(resetSession())
+            }}
+            style={[styles.footerButton,styles.logoutButton]}
+            >
+            <Text style={[styles.footerButtonText,styles.logoutButtonText]}> Logout </Text>
+          </TouchableHighlight>
+        </View>{/* */}
+      </View>
+    }
+
+    return <View style={styles.container}>
+      {header}
+      {scene}
+      {footer}
+    </View>;
+  }
+
   render() {
 
     return (
       <Navigator
-        sceneStyle={styles.nav}
         initialRoute={{
           name: this.initialRoute,
           index: 0,
@@ -161,8 +263,73 @@ class App extends React.Component {
 let styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 80
-  }
+    marginTop: 20,
+  },
+  nav: {
+    backgroundColor: '#1825AD',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 5,
+    margin: 0,
+    flexDirection: 'row',
+  },
+  logo: {
+    color: 'white',
+    fontSize: 20,
+    fontFamily: 'OpenSans'
+  },
+  logoImage: {
+    width: 70,
+    height: 70,
+    alignItems: 'center'
+  },
+  iconFace: {
+    width: 70,
+    height: 70,
+    position: 'absolute',
+    right: 0,
+  },
+  signup: {
+    marginRight: 5,
+    right: 10,
+    position: 'absolute',
+    top: 27
+  },
+  header: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans'
+  },
+  buttonText: {
+    alignSelf: 'center',
+    fontSize: 27,
+    color: 'white',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans'
+  },
+  footerContainer: {
+    flexDirection: 'row',
+    borderTopWidth: 2,
+    borderColor: '#ccc'
+  },
+  footerItem: {
+    flex: 1
+  },
+  footerButton: {
+    padding: 5
+  },
+  footerButtonText: {
+    alignSelf: 'center',
+  },
+
+
+
+  logoutButton: {
+    backgroundColor: '#222'
+  },
+  logoutButtonText: {
+    color: '#fff'
+  },
 })
 
 function select(state) {
