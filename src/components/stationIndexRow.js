@@ -1,3 +1,4 @@
+var { Icon, } = require('react-native-icons');
 import React from 'react-native';
 import _ from 'lodash';
 import {
@@ -48,11 +49,12 @@ export default class StationIndexRow extends React.Component {
               </Text>
             </View>
             <ProgressViewIOS
+              trackTintColor="#e6e6e6"
               progressTintColor={progressColor}
               style={styles.progress}
               progress={progress} />
           </View>
-          <Text style={styles.rightArrow}>></Text>
+          <Icon name='material|chevron-right' size={40} color='#aaa' style={styles.iconArrow}/>
         </View>
         <View style={styles.seperator} />
       </TouchableOpacity>
@@ -64,11 +66,13 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'column',
     padding: 10,
-    height: 60
+    height: 69
   },
   progress: {
     paddingTop: 5,
     margin: 5,
+    height: 8,
+    borderRadius: 10,
   },
   rightArrow: {
     fontSize: 20,
@@ -83,9 +87,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   seperator: {
-    height: 1,
-    backgroundColor: '#E4E4E4',
-    borderBottomColor: 'black',
+    height: 5,
+    borderBottomColor: '#bbb',
     borderBottomWidth: 1,
   },
   stationInfo: {
@@ -95,7 +98,15 @@ const styles = StyleSheet.create({
   rowText: {
     fontWeight: 'bold',
     paddingLeft: 5,
-    paddingRight: 5
+    paddingRight: 5,
+    fontSize: 20,
+    fontFamily: 'OpenSans'
+  },
+  iconArrow: {
+    width: 70,
+    height: 70,
+    marginTop: -20,
+    marginRight: -15
   },
 })
 
