@@ -57,16 +57,17 @@ export default class TaskListItem extends React.Component {
               {this.props.name}
             </Text>
           </TouchableHighlight>
-          <Text>
+          <Text style={styles.quantity}>
             {taskQuantity > 1 ? ('X' + taskQuantity) : ''}
           </Text>
           <TouchableHighlight
+            underlayColor="#bbb"
             onPress={() => this.decrement()}>
-            <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
+            <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
           </TouchableHighlight>
           <TouchableHighlight
             onPress={() => this.increment()}>
-            <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
+            <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
           </TouchableHighlight>
         </View>
       </View>
@@ -84,6 +85,9 @@ let styles = StyleSheet.create({
   icon: {
     width: 40,
     height: 40,
+  },
+  quantity: {
+    fontSize: 16
   },
   row: {
     borderRadius: 10,
@@ -105,6 +109,7 @@ let styles = StyleSheet.create({
   text: {
     fontWeight: 'bold',
     color: 'black',
+    fontSize: 20
   },
   textCompleted: {
     color: '#777',
