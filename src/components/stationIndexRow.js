@@ -16,8 +16,11 @@ let {
 
 export default class StationIndexRow extends React.Component {
   render() {
-    let { station, tasks } = this.props
-    let stationTasks = _.filter(tasks, {stationId: station.id})
+    let { station, stationKey, tasks } = this.props
+    let stationTasks = _.filter(tasks, {stationId: stationKey})
+    console.log(station)
+    console.log(tasks)
+    // console.log(stationTasks)
     const numCompletedTasks = stationTasks.length
     const totalNumTasks = stationTasks.length
     const progress = numCompletedTasks/totalNumTasks

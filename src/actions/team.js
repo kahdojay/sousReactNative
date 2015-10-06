@@ -11,11 +11,11 @@ import {
 
 let SousFetcher = null;
 
-function getTeams(){
-  return {
-    type: GET_TEAMS
-  }
-}
+// function getTeams(){
+//   return {
+//     type: GET_TEAMS
+//   }
+// }
 
 function addTeam(name, newKey) {
   return (dispatch, getState) => {

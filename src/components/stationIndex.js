@@ -18,10 +18,10 @@ const {
 class StationIndex extends React.Component {
   render() {
     const { stations, tasks } = this.props;
-    let fetching =  <ActivityIndicatorIOS
-                        animating={true}
-                        color={'#808080'}
-                        size={'small'} />
+    // let fetching =  <ActivityIndicatorIOS
+    //                     animating={true}
+    //                     color={'#808080'}
+    //                     size={'small'} />
 
     // add the stations for listing
     let stationsList = [];
@@ -34,12 +34,12 @@ class StationIndex extends React.Component {
       stationsList.push(
         <StationIndexRow
           key={stationKey}
+          station={station}
+          tasks={tasks}
           onPress={() => this.props.navigator.push({
             name: 'StationView',
             stationKey: station.key
           })}
-          station={station}
-          tasks={tasks}
         />
       )
     })
@@ -49,7 +49,7 @@ class StationIndex extends React.Component {
         <View style={styles.stationContainer}>
           <AddForm placeholder="Add a Station..."
             onSubmit={this.props.onAddStation.bind(this)}/>
-            { stations.isFetching ? fetching : <View/> }
+            {/* stations.isFetching ? fetching : <View/> */}
             { stationsList }
         </View>
       </View>

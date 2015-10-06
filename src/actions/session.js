@@ -29,7 +29,7 @@ function resetSessionInfo(){
 function retrieveSessionInfo(){
   return (dispatch) => {
     // get the stations
-    dispatch(getStations())
+    // dispatch(getStations())
     // get the tasks
     // ...
   }
