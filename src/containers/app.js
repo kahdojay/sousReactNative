@@ -255,7 +255,7 @@ class App extends React.Component {
     return <View style={styles.container}>
       {header}
       {scene}
-      {footer}
+      {/*footer*/}
     </View>;
   }
 
