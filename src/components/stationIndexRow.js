@@ -27,11 +27,11 @@ export default class StationIndexRow extends React.Component {
 
     let progressColor = null;
     if (progress < 0.4) {
-      progressColor = "red"
+      progressColor = "#4A90E2"
     } else if (progress < 0.9) {
-      progressColor = "lightblue"
+      progressColor = "#4A90E2"
     } else {
-      progressColor = "blue"
+      progressColor = "#7ED321"
     }
 
     return (
