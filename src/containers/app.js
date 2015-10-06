@@ -149,6 +149,7 @@ class App extends React.Component {
 
   renderScene(route, nav) {
     const { dispatch } = this.props;
+
     // redirect to initial view
     if (this.props.session.isAuthenticated){
       if(route.name === 'Login' || route.name === 'Signup') {
