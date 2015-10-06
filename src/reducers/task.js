@@ -33,6 +33,7 @@ function tasks(state = initialState.tasks, action) {
       name: action.name,
       description: '',
       completed: false,
+      deleted: false,
       quantity: 1
     }
     return newState

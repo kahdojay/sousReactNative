@@ -132,6 +132,9 @@ class App extends React.Component {
                   onBack={() =>
                     this._back.bind(this)
                   }
+                  onDeleteTask={(deletedTask) =>
+                    dispatch(updateTask(deletedTask))
+                  }
                   saveTaskDescription={(newTask) =>
                     dispatch(updateTask(newTask))
                   }
@@ -234,7 +237,7 @@ class App extends React.Component {
             </View>
           </TouchableHighlight>
         </View>
-        {/* */}<View style={styles.footerItem}>
+        <View style={styles.footerItem}>
           <TouchableHighlight
             onPress={() => {
               dispatch(resetSession())

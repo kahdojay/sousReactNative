@@ -25,7 +25,7 @@ export default class TaskList extends React.Component {
   }
   render() {
     let tasks = this.props.tasks
-    let tasksCompleted = _.filter(tasks, { completed: true })
+    let tasksCompleted = _.filter(tasks, { completed: true, deleted: false })
       .map((task, index) => {
            return <TaskListItem
             task={task}
@@ -37,7 +37,7 @@ export default class TaskList extends React.Component {
             onPress={() => this.props.onTaskClick(task.id)}
             onChangeQuantity={this.props.updateTaskQuantity} />
         })
-    let tasksIncomplete = _.filter(tasks, { completed: false })
+    let tasksIncomplete = _.filter(tasks, { completed: false, deleted: false })
       .map((task, index) => {
           return <TaskListItem
             task={task}

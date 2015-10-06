@@ -18,7 +18,7 @@ let {
 export default class StationIndexRow extends React.Component {
   render() {
     let { station, tasks } = this.props
-    let stationTasks = _.filter(tasks, {stationKey: station.key})
+    let stationTasks = _.filter(tasks, {stationKey: station.key, deleted: false})
 
     // const numCompletedTasks = stationTasks.length
     const numCompletedTasks = _.filter(stationTasks, {completed: true}).length
