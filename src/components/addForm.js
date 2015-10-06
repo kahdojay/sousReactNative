@@ -58,7 +58,8 @@ export default class AddForm extends React.Component {
 let styles = StyleSheet.create({
   container: {
     height: 60,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    backgroundColor: "#f2f2f2"
   },
   inputContainer: {
     flex: 10,
@@ -73,9 +74,11 @@ let styles = StyleSheet.create({
     color: '#777',
     fontFamily: 'OpenSans',
     borderRadius: 5,
+    fontWeight: 'bold'
   },
   shareContainer: {
-    height: 50
+    height: 50,
+    backgroundColor: "#f2f2f2"
   },
   share: {
     height: 50,

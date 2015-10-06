@@ -11,6 +11,7 @@ const {
   Text,
   TextInput,
   Image,
+  ScrollView,
   TouchableHighlight,
   PropTypes,
 } = React;
@@ -47,10 +48,15 @@ class StationIndex extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.stationContainer}>
-          <AddForm placeholder="Add a Station..."
-            onSubmit={this.props.onAddStation.bind(this)}/>
-            {/* stations.isFetching ? fetching : <View/> */}
+          <AddForm placeholder="Add a Station..." onSubmit={this.props.onAddStation.bind(this)}/>
+          {stations.isFetching ? fetching : <View/>}
+          <ScrollView
+            style={styles.scrollView}
+            contentInset={{bottom:49}}
+            automaticallyAdjustContentInsets={false}
+            >
             { stationsList }
+          </ScrollView>
         </View>
       </View>
     );
@@ -63,6 +69,14 @@ const styles = StyleSheet.create({
   },
   stationContainer: {
     flex: 14
+  },
+  scrollView: {
+    backgroundColor: '#f7f7f7',
+    height: 500,
+    paddingLeft: 20,
+    paddingRight: 0,
+    marginTop: 0,
+    paddingTop: 0
   },
 });
 
