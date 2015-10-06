@@ -35,7 +35,7 @@ class App extends React.Component {
 
   constructor(props) {
     super(props)
-    this.initialRoute = 'Login'
+    this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
       'Login': {},
       'Signup': {}
@@ -185,7 +185,7 @@ class App extends React.Component {
       }
       header = <View style={styles.nav}>
         <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-        {nextButton}
+        {/*nextButton*/}
       </View>;
     }
     // setup the header for authenticated routes
