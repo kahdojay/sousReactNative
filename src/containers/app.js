@@ -208,10 +208,7 @@ class App extends React.Component {
           </View>;
         break;
         default:
-          header =  <View style={styles.nav}>
-            <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-            <Icon name='material|account-circle' size={50} color='white' style={styles.iconFace}/>
-          </View>;
+          header =  <View></View>;
       }
 
       footer = <View style={styles.footerContainer}>
