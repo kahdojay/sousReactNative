@@ -1,3 +1,4 @@
+var { Icon, } = require('react-native-icons');
 import React from 'react-native'
 import CheckBox from 'react-native-checkbox'
 import {
@@ -61,11 +62,11 @@ export default class TaskListItem extends React.Component {
           </Text>
           <TouchableHighlight
             onPress={() => this.decrement()}>
-            <Text>-</Text>
+            <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
           </TouchableHighlight>
           <TouchableHighlight
             onPress={() => this.increment()}>
-            <Text>+</Text>
+            <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
           </TouchableHighlight>
         </View>
       </View>
@@ -79,6 +80,10 @@ let styles = StyleSheet.create({
     paddingBottom: 3,
     paddingRight: 5,
     paddingLeft: 5,
+  },
+  icon: {
+    width: 40,
+    height: 40,
   },
   row: {
     borderRadius: 10,
@@ -99,10 +104,10 @@ let styles = StyleSheet.create({
   },
   text: {
     fontWeight: 'bold',
-    color: greyText,
+    color: 'black',
   },
   textCompleted: {
-    color: 'black',
+    color: '#777',
   },
 });
 
