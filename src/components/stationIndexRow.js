@@ -60,9 +60,9 @@ export default class StationIndexRow extends React.Component {
 
 const styles = StyleSheet.create({
   row: {
-    flex: 1,
     flexDirection: 'column',
     padding: 10,
+    height: 60
   },
   progress: {
     paddingTop: 5,
