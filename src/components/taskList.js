@@ -17,7 +17,7 @@ export default class TaskList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      showCompleted: false
+      showCompleted: true
     }
   }
   handlePress() {
@@ -53,9 +53,9 @@ export default class TaskList extends React.Component {
     return (
       <View>
         {tasksIncomplete}
-        <TouchableHighlight   
-          onPress={this.handlePress.bind(this)}    
-        >    
+        <TouchableHighlight
+          onPress={this.handlePress.bind(this)}
+        >
           <View style={styles.container}>
             <View style={styles.roundedCorners}>
               <Text style={styles.text}>{tasksCompleted.length} Completed Items</Text>

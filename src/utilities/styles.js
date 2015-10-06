@@ -11,6 +11,7 @@ const NavigationBarStyles = React.StyleSheet.create({
     paddingBottom: 5,
     borderBottomColor: 'rgba(0, 0, 0, 0.5)',
     borderBottomWidth: 1 / React.PixelRatio.get(),
+    flexDirection: 'column',
   },
   navBar: {
     height: NAV_HEIGHT,

@@ -17,7 +17,7 @@ class BackBtn extends React.Component {
         onPress={() => {
           this.props.navigator.pop();
         }}>
-        <Icon name='material|chevron-left' size={40} color='white' style={styles.iconBack} />
+        <Icon name='material|chevron-left' size={50} color='white' style={styles.iconBack} />
       </TouchableHighlight>
     );
   }
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   iconBack: {
     width: 70,
     height: 70,
-    marginTop: -23
+    marginTop: -15,
   }
 });
 
