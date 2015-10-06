@@ -49,7 +49,7 @@ class App extends React.Component {
   }}
 
   componentWillMount(){
-    this.props.dispatch(getTeams());
+    // this.props.dispatch(getTeams());
   }
 
   authenticatedRoute(route){

@@ -8,7 +8,10 @@ import {
 } from '../actions';
 const { SHOW_ALL } = TaskVisibility;
 
-const initialState = MockData;
+const initialState = {
+  stations: {},
+  tasks: {}
+};
 
 function taskVisibility(state = SHOW_ALL, action) {
   switch (action.type) {

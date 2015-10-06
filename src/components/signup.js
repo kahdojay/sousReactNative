@@ -26,23 +26,22 @@ class Signup extends React.Component {
   }
 
   componentWillMount() {
-    console.log("PROPS", this.props);
-    this.props.onResetSession();
+    // this.props.onResetSession();
     // setup the teams object to lowercase the name attribute
-    this.teams = _(this.props.teams.data).chain()
-
-      .thru((item) => {
-        let key = Object.keys(item)[0]
-        let newItem = Object.assign({}, item)
-        if (newItem[key] != undefined) {
-          newItem[key].name_tolower = newItem[key].name.toLowerCase()
-        }
-        return newItem;
-      }).value();
+    // this.teams = _(this.props.teams.data).chain()
+      // .thru((item) => {
+      //   let key = Object.keys(item)[0]
+      //   let newItem = Object.assign({}, item)
+      //   if (newItem[key] != undefined) {
+      //     newItem[key].name_tolower = newItem[key].name.toLowerCase()
+      //   }
+      //   return newItem;
+      // }).value();
   }
 
   onSignup() {
-    if(this.state.email == '' || this.state.password == '' || this.state.team_name == ''){
+    // TODO: check for team name
+    if(this.state.email == '' || this.state.password == ''){
       this.setState({invalid: true});
     } else {
       // first reset all the stations and tasks and ... ?
@@ -51,7 +50,7 @@ class Signup extends React.Component {
       this.props.onSignup(Object.assign({}, {
         email: this.state.email,
         password: this.state.password,
-        team_name: this.state.team_name,
+        // team_name: this.state.team_name,
         team_id: this.state.team_id
       }));
       this.setState({ password: '' })
@@ -59,17 +58,17 @@ class Signup extends React.Component {
   }
 
   render() {
-    let fetching =  <ActivityIndicatorIOS
-                        animating={true}
-                        color={'#808080'}
-                        size={'small'} />
-    let errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
-    let teamLookupStatus = (this.state.teamFound) ? <Text style={[styles.teamLookup, styles.teamFound]}>Team Found</Text> : <Text style={[styles.teamLookup, styles.teamNew]}>New Team</Text>
-    let teamLookup = (this.state.lookingForTeam) ? <View style={styles.teamLookupContainer}>{teamLookupStatus}</View> : <View/>
+    // let fetching =  <ActivityIndicatorIOS
+    //                     animating={true}
+    //                     color={'#808080'}
+    //                     size={'small'} />
+    // let errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
+    // let teamLookupStatus = (this.state.teamFound) ? <Text style={[styles.teamLookup, styles.teamFound]}>Team Found</Text> : <Text style={[styles.teamLookup, styles.teamNew]}>New Team</Text>
+    // let teamLookup = (this.state.lookingForTeam) ? <View style={styles.teamLookupContainer}>{teamLookupStatus}</View> : <View/>
     return (
       <View style={styles.container}>
         <View style={styles.login}>
-          { this.props.session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
+          {/* this.props.session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> */}
           <TextInput
             style={styles.input}
             value={this.state.email}
@@ -85,7 +84,7 @@ class Signup extends React.Component {
             onChangeText={(text) => {
               this.setState({password: text, invalid: false})
             }}/>
-          <View>
+          {/*<View>
             <TextInput
               style={styles.input}
               value={this.state.team_name}
@@ -109,7 +108,7 @@ class Signup extends React.Component {
                 this.setState(updateState)
               }}/>
             {teamLookup}
-          </View>
+          </View>*/}
           <View style={styles.buttonContainer}>
             <TouchableHighlight
               onPress={() => {
@@ -119,7 +118,7 @@ class Signup extends React.Component {
               <Text style={styles.buttonText}>Signup</Text>
             </TouchableHighlight>
           </View>
-          { this.props.session.isFetching ? fetching : <View /> }
+          {/* this.props.session.isFetching ? fetching : <View /> */}
         </View>
       </View>
     );
