@@ -48,32 +48,38 @@ class Signup extends React.Component {
   }
 
   render() {
-    // let fetching =  <ActivityIndicatorIOS
-    //                     animating={true}
-    //                     color={'#808080'}
-    //                     size={'small'} />
-    // let errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
-    // let teamLookupStatus = (this.state.teamFound) ? <Text style={[styles.teamLookup, styles.teamFound]}>Team Found</Text> : <Text style={[styles.teamLookup, styles.teamNew]}>New Team</Text>
-    // let teamLookup = (this.state.lookingForTeam) ? <View style={styles.teamLookupContainer}>{teamLookupStatus}</View> : <View/>
+    let fetching =  <ActivityIndicatorIOS
+                        animating={true}
+                        color={'#808080'}
+                        style={styles.activity}
+                        size={'small'} />
+    let errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
+    let teamLookupStatus = (this.state.teamFound) ? <Text style={[styles.teamLookup, styles.teamFound]}>Team Found</Text> : <Text style={[styles.teamLookup, styles.teamNew]}>New Team</Text>
+    let teamLookup = (this.state.lookingForTeam) ? <View style={styles.teamLookupContainer}>{teamLookupStatus}</View> : <View/>
     return (
       <View style={styles.container}>
         <View style={styles.login}>
-          <TextInput
-            style={styles.input}
-            value={this.state.email}
-            placeholder='Email'
-            onChangeText={(text) => {
-              this.setState({email: text, invalid: false})
-            }}/>
-          <TextInput
-            secureTextEntry={true}
-            style={styles.input}
-            value={this.state.password}
-            placeholder='Password'
-            onChangeText={(text) => {
-              this.setState({password: text, invalid: false})
-            }}/>
-
+          <View style={styles.inputContainer}>
+            <Icon name='material|email' size={30} color='#aaa' style={styles.iconFace}/>
+            <TextInput
+              style={styles.input}
+              value={this.state.email}
+              placeholder='Email'
+              onChangeText={(text) => {
+                this.setState({email: text, invalid: false})
+              }}/>
+          </View>
+          <View style={styles.underline}></View>
+          <View style={styles.inputContainer}>
+            <Icon name='material|lock' size={30} color='#aaa' style={styles.iconFace}/>
+            <TextInput
+              secureTextEntry={true}
+              style={styles.input}
+              value={this.state.password}
+              placeholder='Password'
+              onChangeText={(text) => {
+                this.setState({password: text, invalid: false})
+              }}/>
           </View>
           <View style={styles.underline}></View>
           { this.props.session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
@@ -84,7 +90,9 @@ class Signup extends React.Component {
             style={styles.button}>
             <Text style={styles.buttonText}>Signup</Text>
           </TouchableHighlight>
-          { this.props.session.isFetching ? fetching : <View /> }
+          <View style={styles.activityContainer}>
+            { this.props.session.isFetching ? fetching : <View /> }
+          </View>
         </View>
       </View>
     );
