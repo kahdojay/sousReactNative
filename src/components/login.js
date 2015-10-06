@@ -46,7 +46,7 @@ class Login extends React.Component {
       <View style={styles.container}>
         <View style={styles.login}>
           <View style={styles.inputContainer}>
-            <Icon name='material|face' size={30} color='#aaa' style={styles.iconFace}/>
+            <Icon name='material|email' size={30} color='#aaa' style={styles.iconFace}/>
             <TextInput style={styles.input} value={this.state.email} placeholder='E-mail Address'
               onChangeText={(text) => {
                 this.setState({email: text, password: this.state.password})

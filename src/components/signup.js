@@ -1,3 +1,4 @@
+var { Icon, } = require('react-native-icons');
 import _ from 'lodash'
 import React from 'react-native'
 
@@ -26,17 +27,6 @@ class Signup extends React.Component {
   }
 
   componentWillMount() {
-    // this.props.onResetSession();
-    // setup the teams object to lowercase the name attribute
-    // this.teams = _(this.props.teams.data).chain()
-      // .thru((item) => {
-      //   let key = Object.keys(item)[0]
-      //   let newItem = Object.assign({}, item)
-      //   if (newItem[key] != undefined) {
-      //     newItem[key].name_tolower = newItem[key].name.toLowerCase()
-      //   }
-      //   return newItem;
-      // }).value();
   }
 
   onSignup() {
@@ -68,7 +58,6 @@ class Signup extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.login}>
-          {/* this.props.session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> */}
           <TextInput
             style={styles.input}
             value={this.state.email}
@@ -84,41 +73,18 @@ class Signup extends React.Component {
             onChangeText={(text) => {
               this.setState({password: text, invalid: false})
             }}/>
-          {/*<View>
-            <TextInput
-              style={styles.input}
-              value={this.state.team_name}
-              placeholder='Team'
-              onChangeText={(text) => {
-                let updateState = {
-                  invalid: false,
-                  team_name: text,
-                  team_id: null,
-                  teamFound: false,
-                  lookingForTeam: true,
-                }
-                if(text == ''){
-                  updateState.lookingForTeam = false;
-                }
-                let foundTeams = _.filter(this.teams, { name_tolower: text.toLowerCase() })
-                if( foundTeams.length > 0 ){
-                  updateState.team_id = foundTeams[0].id;
-                  updateState.teamFound = true;
-                }
-                this.setState(updateState)
-              }}/>
-            {teamLookup}
-          </View>*/}
-          <View style={styles.buttonContainer}>
-            <TouchableHighlight
-              onPress={() => {
-                this.onSignup()
-              }}
-              style={[styles.button, styles.buttonPrimary]}>
-              <Text style={styles.buttonText}>Signup</Text>
-            </TouchableHighlight>
+
           </View>
-          {/* this.props.session.isFetching ? fetching : <View /> */}
+          <View style={styles.underline}></View>
+          { this.props.session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
+          <TouchableHighlight
+            onPress={() => {
+              this.onSignup()
+            }}
+            style={styles.button}>
+            <Text style={styles.buttonText}>Signup</Text>
+          </TouchableHighlight>
+          { this.props.session.isFetching ? fetching : <View /> }
         </View>
       </View>
     );
@@ -127,71 +93,95 @@ class Signup extends React.Component {
 
 let styles = StyleSheet.create({
   container: {
-    marginTop: 20,
     flex: 1,
-    paddingTop: 80,
-  },
-  logo: {
-    color: 'white',
-    fontSize: 20,
-    marginBottom: 10
-  },
-  header: {
-    color: 'white',
-    fontWeight: 'bold',
   },
   login: {
+    paddingLeft: 5,
+    paddingRight: 5,
+    flexDirection: 'column',
     justifyContent: 'center',
-    paddingLeft: 25,
-    paddingRight: 25
+  },
+  inputContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start'
+  },
+  errorPlaceholder: {
+    height: 0
+  },
+  iconFace: {
+    width: 70,
+    height: 70,
+  },
+  iconLock: {
+    width: 70,
+    height: 70,
+  },
+  underline: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderBottomWidth: 2,
+    borderBottomColor: '#e6e6e6',
+    marginLeft: 10
   },
   input: {
-    margin: 2,
-    height: 32,
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    paddingLeft: 4,
+    flex: 1,
+    height: 50,
+    padding: 4,
+    marginRight: 5,
+    marginTop: 10,
+    fontSize: 23,
+    borderRadius: 8,
+    color: '#333',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans'
   },
   buttonContainer: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   button: {
-    flex: 1,
-    margin: 2,
-    backgroundColor: '#ccc',
-    height: 32,
-    padding: 8,
+    height: 56,
+    backgroundColor: '#F5A623',
+    alignSelf: 'center',
+    width: 150,
+    marginTop: 20,
+    justifyContent: 'center',
+    borderRadius: 3,
   },
-  buttonPrimary: {
-    backgroundColor: '#89a',
-  },
-  buttonSecondary: {
-    backgroundColor: '#eee',
+
+  buttonWithErrors: {
+    height: 56,
+    backgroundColor: '#F5A623',
+    alignSelf: 'center',
+    width: 150,
+    marginTop: 10,
+    justifyContent: 'center',
+    borderRadius: 3,
   },
   buttonText: {
     alignSelf: 'center',
+    fontSize: 22,
+    color: 'white',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans'
   },
   errorText: {
-    color: '#d00'
+    color: '#d00',
+    textAlign: 'center',
+    marginTop: 10,
+    fontSize: 16,
+    fontFamily: 'OpenSans'
   },
-  teamLookupContainer: {
-    position: 'absolute',
-    right: 7,
-    top: 7,
-    padding: 2,
-    width: 100,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor: '#eee',
+  activity: {
+    justifyContent: 'center'
   },
-  teamLookup: {
-    alignSelf: 'center',
-    color: '#ccc'
-  },
-  teamFound: {
-  },
-  teamNew: {
+  activityContainer: {
+    paddingTop: 50,
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 })
 
