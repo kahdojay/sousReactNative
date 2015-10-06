@@ -5,6 +5,8 @@ import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
 import TaskView from '../components/taskView';
 import _ from 'lodash';
+import { BackBtn } from '../utilities/navigation';
+import { NavigationBarStyles } from '../utilities/styles';
 import { connect } from 'react-redux/native';
 var { Icon, } = require('react-native-icons');
 import {
@@ -29,6 +31,7 @@ let {
   StyleSheet,
   Navigator,
   TouchableHighlight,
+  TouchableOpacity
 } = React;
 
 class App extends React.Component {
@@ -190,10 +193,24 @@ class App extends React.Component {
     }
     // setup the header for authenticated routes
     else {
-      header =  <View style={styles.nav}>
-        <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-        <Icon name='material|account-circle' size={50} color='#aaa' style={styles.iconFace}/>
-      </View>;
+      console.log("ROUTE", route.name);
+      switch(route.name) {
+        case "StationView":
+          header =  <View></View>
+        break;
+        case "StationIndex":
+          header =  <View style={styles.nav}>
+            <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+            <Icon name='material|account-circle' size={50} color='#aaa' style={styles.iconFace}/>
+          </View>;
+        break;
+        default:
+          header =  <View style={styles.nav}>
+            <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+            <Icon name='material|account-circle' size={50} color='#aaa' style={styles.iconFace}/>
+          </View>;
+      }
+
       footer = <View style={styles.footerContainer}>
         <View style={styles.footerItem}>
           <TouchableHighlight
