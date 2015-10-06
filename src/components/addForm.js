@@ -73,6 +73,7 @@ let styles = StyleSheet.create({
     color: '#777',
     fontFamily: 'OpenSans',
     borderRadius: 5,
+    fontWeight: 'bold'
   },
   shareContainer: {
     height: 50
