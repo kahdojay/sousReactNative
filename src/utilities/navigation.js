@@ -14,6 +14,9 @@ class BackBtn extends React.Component {
         style={[styles.button, this.props.style]}
         underlayColor="#B5B5B5"
         onPress={() => {
+          if(this.props.callback){
+            this.props.callback()
+          }
           this.props.navigator.pop();
         }}>
         <Text style={styles.buttonText}>Back</Text>
