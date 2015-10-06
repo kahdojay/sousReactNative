@@ -68,10 +68,6 @@ class Signup extends React.Component {
     let teamLookup = (this.state.lookingForTeam) ? <View style={styles.teamLookupContainer}>{teamLookupStatus}</View> : <View/>
     return (
       <View style={styles.container}>
-        <View style={styles.nav}>
-          <Text style={styles.logo}>Sous</Text>
-          <Text style={styles.header}>Signup</Text>
-        </View>
         <View style={styles.login}>
           { this.props.session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
           <TextInput
@@ -116,13 +112,6 @@ class Signup extends React.Component {
           </View>
           <View style={styles.buttonContainer}>
             <TouchableHighlight
-              onPress={() => this.props.navigator.replace({
-                name: 'Login'
-              })}
-              style={[styles.button, styles.buttonSecondary]}>
-              <Text style={styles.buttonText}>Login</Text>
-            </TouchableHighlight>
-            <TouchableHighlight
               onPress={() => {
                 this.onSignup()
               }}
@@ -142,13 +131,6 @@ let styles = StyleSheet.create({
     marginTop: 20,
     flex: 1,
     paddingTop: 80,
-  },
-  nav: {
-    backgroundColor: 'blue',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 40,
-    padding: 15
   },
   logo: {
     color: 'white',

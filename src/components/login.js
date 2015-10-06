@@ -44,17 +44,6 @@ class Login extends React.Component {
     let errorMessage = <Text style={styles.errorText}>Invalid Login</Text>
     return (
       <View style={styles.container}>
-        <View style={styles.nav}>
-          <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-          <TouchableHighlight
-            onPress={() => this.props.navigator.replace({
-              name: 'Signup'
-            })}
-            style={styles.signup}>
-            <Text style={styles.buttonText}>Signup</Text>
-          </TouchableHighlight>
-        </View>
-
         <View style={styles.login}>
           <View style={styles.inputContainer}>
             <Icon name='material|face' size={30} color='#aaa' style={styles.iconFace}/>
@@ -90,36 +79,8 @@ class Login extends React.Component {
 };
 
 let styles = StyleSheet.create({
-  nav: {
-    backgroundColor: '#1825AD',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 5,
-    margin: 0,
-    flexDirection: 'row',
-  },
-  logo: {
-    color: 'white',
-    fontSize: 20,
-    fontFamily: 'OpenSans'
-  },
-  logoImage: {
-    width: 70,
-    height: 70,
-  },
-  signup: {
-    color: 'white',
-    fontSize: 22,
-    marginRight: 5,
-    right: 10,
-    position: 'absolute',
-    top: 27
-  },
-  header: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 27,
-    fontFamily: 'OpenSans'
+  container: {
+    flex: 1,
   },
   login: {
     paddingLeft: 5,
@@ -142,12 +103,6 @@ let styles = StyleSheet.create({
   iconLock: {
     width: 70,
     height: 70,
-  },
-  container: {
-    flex: 1,
-    marginTop: 20,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
   },
   underline: {
     justifyContent: 'center',
@@ -205,7 +160,7 @@ let styles = StyleSheet.create({
     fontFamily: 'OpenSans'
   },
   activity: {
-    textAlign: 'center'
+    justifyContent: 'center'
   },
   activityContainer: {
     paddingTop: 50,
