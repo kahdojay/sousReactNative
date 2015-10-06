@@ -17,16 +17,17 @@ export default class TaskListItem extends React.Component {
   increment() {
     let newTask = this.props.task
     newTask.quantity += 1
-    this.props.updateTaskQuantity(newTask)
+    this.props.onChangeQuantity(newTask)
   }
   decrement() {
     let newTask = this.props.task
-    if (newTask.quantity >= 1)
+    if (newTask.quantity >= 2)
       newTask.quantity -= 1
-    this.props.updateTaskQuantity(newTask)
+    this.props.onChangeQuantity(newTask)
   }
   render() {
     let task = this.props.task
+    let taskQuantity = task.quantity
     // let quantity = this.props.quantity > 1 ? this.props.quantity : ''
     return (
       <View style={styles.container}>
@@ -47,13 +48,24 @@ export default class TaskListItem extends React.Component {
               taskId: this.props.taskId
             })}
             style={styles.main}
-            >
+          >
             <Text style={[
               styles.text,
               this.props.completed && styles.textCompleted
             ]}>
               {this.props.name}
             </Text>
+          </TouchableHighlight>
+          <Text>
+            {taskQuantity > 1 ? ('X' + taskQuantity) : ''}
+          </Text>
+          <TouchableHighlight
+            onPress={() => this.decrement()}>
+            <Text>-</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            onPress={() => this.increment()}>
+            <Text>+</Text>
           </TouchableHighlight>
         </View>
       </View>
