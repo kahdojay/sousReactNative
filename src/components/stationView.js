@@ -1,3 +1,4 @@
+var { Icon, } = require('react-native-icons');
 import React from 'react-native';
 import TaskList from '../components/taskList';
 import { BackBtn } from '../utilities/navigation';
@@ -16,6 +17,7 @@ const {
   TouchableHighlight,
   TouchableOpacity,
   Text,
+  Image
 } = React;
 
 class StationView extends React.Component {
@@ -62,19 +64,17 @@ class StationView extends React.Component {
               navigator={this.props.navigator}
               style={NavigationBarStyles.navBarText}
               />
+            <Image source={require('image!Logo')} style={styles.logoImage}></Image>
             <TouchableOpacity
               onPress={this.showActionSheet.bind(this)}
-              style={{position: 'absolute', right: 25}}>
+              style={styles.iconMore}>
               <View
                 style={[
                   NavigationBarStyles.navBarRightButton,
                   {marginVertical: 0}
                 ]}>
-                <Text
-                  style={[
-                    NavigationBarStyles.navBarText,
-                    { marginVertical: 10, color: 'white' }
-                  ]}> ... </Text>
+                <Icon name='fontawesome|cog' size={45} color='white' style={styles.iconMore}/>
+
               </View>
             </TouchableOpacity>
           </View>
@@ -99,8 +99,17 @@ class StationView extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 20,
     backgroundColor: mainBackgroundColor,
+  },
+  logoImage: {
+    width: 70,
+    height: 70,
+    marginTop: -10
+  },
+  iconMore: {
+    width: 60,
+    height: 60,
+    marginTop: -4
   }
 });
 

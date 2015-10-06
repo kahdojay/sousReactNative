@@ -1,3 +1,4 @@
+var { Icon, } = require('react-native-icons');
 const React = require('react-native');
 
 const {
@@ -11,15 +12,15 @@ class BackBtn extends React.Component {
   render() {
     return (
       <TouchableHighlight
-        style={[styles.button, this.props.style]}
-        underlayColor="#B5B5B5"
+        style={styles.button}
+        underlayColor="transparent"
         onPress={() => {
           if(this.props.callback){
             this.props.callback()
           }
           this.props.navigator.pop();
         }}>
-        <Text style={styles.buttonText}>Back</Text>
+        <Icon name='material|chevron-left' size={50} color='white' style={styles.iconBack} />
       </TouchableHighlight>
     );
   }
@@ -32,6 +33,11 @@ BackBtn.propTypes = {
 const styles = StyleSheet.create({
   buttonText: {
     color: '#fff'
+  },
+  iconBack: {
+    width: 70,
+    height: 70,
+    marginTop: -15,
   }
 });
 
