@@ -1,6 +1,6 @@
 const React = require('react-native');
 
-const NAV_BAR_HEIGHT = 44;
+const NAV_BAR_HEIGHT = 60;
 const STATUS_BAR_HEIGHT = 20;
 const NAV_HEIGHT = NAV_BAR_HEIGHT + STATUS_BAR_HEIGHT;
 
