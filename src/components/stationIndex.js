@@ -33,7 +33,7 @@ class StationIndex extends React.Component {
         return;
       stationsList.push(
         <StationIndexRow
-          key={stationKey}
+          key={stationKey} // just for React, not visible as prop in child
           station={station}
           tasks={tasks}
           onPress={() => this.props.navigator.push({
