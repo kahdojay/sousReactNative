@@ -201,13 +201,13 @@ class App extends React.Component {
         case "StationIndex":
           header =  <View style={styles.nav}>
             <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-            <Icon name='material|account-circle' size={50} color='#aaa' style={styles.iconFace}/>
+            <Icon name='material|account-circle' size={50} color='white' style={styles.iconFace}/>
           </View>;
         break;
         default:
           header =  <View style={styles.nav}>
             <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-            <Icon name='material|account-circle' size={50} color='#aaa' style={styles.iconFace}/>
+            <Icon name='material|account-circle' size={50} color='white' style={styles.iconFace}/>
           </View>;
       }
 
