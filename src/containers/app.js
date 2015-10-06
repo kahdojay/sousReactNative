@@ -203,7 +203,7 @@ class App extends React.Component {
             style={styles.footerButton}
             >
             <View>
-              {/*<Icon name='material|account-circle' size={30} color='#222' style={{backgroundColor: 'blue'}}/>*/}
+              <Icon name='material|assignment' size={30} color='#222' style={styles.footerButtonIcon}/>
               <Text style={styles.footerButtonText}> Prep </Text>
             </View>
           </TouchableHighlight>
@@ -216,7 +216,21 @@ class App extends React.Component {
             style={styles.footerButton}
             >
             <View>
+              <Icon name='material|comments' size={24} color={'#333'} style={styles.footerButtonIcon}/>
               <Text style={styles.footerButtonText}> Feed </Text>
+            </View>
+          </TouchableHighlight>
+        </View>
+        <View style={styles.footerItem}>
+          <TouchableHighlight
+            onPress={() => nav.replace({
+              name: 'Order'
+            })}
+            style={styles.footerButton}
+            >
+            <View>
+              <Icon name='material|shopping-cart' size={30} color='#222' style={styles.footerButtonIcon}/>
+              <Text style={styles.footerButtonText}> Order </Text>
             </View>
           </TouchableHighlight>
         </View>
@@ -227,7 +241,12 @@ class App extends React.Component {
             }}
             style={[styles.footerButton,styles.logoutButton]}
             >
-            <Text style={[styles.footerButtonText,styles.logoutButtonText]}> Logout </Text>
+            <View>
+              <Icon name='material|bus' size={30} color='#fff' style={[styles.footerButtonIcon, {marginLeft: 7}]}>
+                <Icon name='material|run' size={20} color='#fff' style={{width:20, height:20, backgroundColor: 'transparent', marginLeft: -5, marginTop: 10}}/>
+              </Icon>
+              <Text style={[styles.footerButtonText,styles.logoutButtonText]}> Logout </Text>
+            </View>
           </TouchableHighlight>
         </View>{/* */}
       </View>
@@ -317,6 +336,11 @@ let styles = StyleSheet.create({
   },
   footerButton: {
     padding: 5
+  },
+  footerButtonIcon: {
+    width: 40,
+    height: 40,
+    alignSelf: 'center'
   },
   footerButtonText: {
     alignSelf: 'center',
