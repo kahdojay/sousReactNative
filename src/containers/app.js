@@ -104,6 +104,12 @@ class App extends React.Component {
                   onAddStation={name =>
                     dispatch(addStation(name, teamId))
                   }
+                  onBack={() =>
+                    this._back.bind(this)
+                  }
+                  onLogout={() =>
+                    dispatch(resetSession())
+                  }
                 />;
       case 'StationView':
         let station = _.filter(stations.data, { key: route.stationKey })[0]
@@ -308,7 +314,6 @@ class App extends React.Component {
   }
 
   render() {
-
     return (
       <Navigator
         initialRoute={{

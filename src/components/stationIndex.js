@@ -44,7 +44,7 @@ class StationIndex extends React.Component {
         />
       )
     })
-
+    
     return (
       <View style={styles.container}>
         <View style={styles.stationContainer}>
@@ -58,6 +58,10 @@ class StationIndex extends React.Component {
             { stationsList }
           </ScrollView>
         </View>
+        <TouchableHighlight
+          onPress={() => this.props.onLogout()}>
+          <Text>Logout</Text>
+        </TouchableHighlight>
       </View>
     );
   }
