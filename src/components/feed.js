@@ -51,9 +51,21 @@ class Feed extends React.Component {
   render() {
     let { messages } = this.state;
     let messagesList = messages.map(function(msg, index) {
-      return <View key={index}>
-        <Text>{msg.author} - {msg.message}</Text>
-      </View>
+      console.log(msg);
+      return (
+        <View key={index} style={styles.message}>
+          <Image style={styles.avatar}
+            source={{uri: msg.imageUrl}}
+            />
+          <View style={styles.messageContentContainer}>
+            <View style={styles.messageTextContainer}>
+              <Text style={styles.messageAuthor}>{msg.author}</Text>
+              <Text style={styles.messageTimestamp}>{new Date(msg.createdAt["$date"]).toLocaleTimeString()}</Text>
+            </View>
+            <Text style={styles.messageText} key={index}>{msg.message}</Text>
+          </View>
+        </View>
+      )
     });
 
     return (
@@ -83,6 +95,31 @@ class Feed extends React.Component {
 };
 
 const styles = StyleSheet.create({
+  message: {
+    flexDirection: 'row'
+  },
+  messageText: {
+
+  },
+  messageContentContainer: {
+
+  },
+  messageTextContainer: {
+    flex: 1,
+    flexDirection: 'row'
+  },
+  messageAuthor: {
+    fontSize: 18
+  },
+  messageTimestamp: {
+
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    margin: 7
+  },
   container: {
     flex: 1,
   },
