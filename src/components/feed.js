@@ -1,4 +1,5 @@
 var { Icon, } = require('react-native-icons');
+var DDPClient = require("ddp-client");
 const React = require('react-native');
 const AddMessageForm = require('./addMessageForm');
 import { mainBackgroundColor } from '../utilities/colors';
@@ -17,31 +18,48 @@ const {
 } = React;
 
 class Feed extends React.Component {
-  render() {
-    const { messages } = this.props;
-    // let fetching =  <ActivityIndicatorIOS
-    //                     animating={true}
-    //                     color={'#808080'}
-    //                     size={'small'} />
+  constructor(props) {
+    super(props)
+    this.state = {
+      messages: []
+    }
+  }
+  componentDidMount(){
+    var self = this;
+    var ddpClient = new DDPClient({url: 'ws://sous-chat.meteor.com/websocket'});
 
-    // add the messages for listing
-    let messagesList = [];
-    let messageKeys = Object.keys(messages.data);
-    messageKeys.forEach((messageKey) => {
-      let message = messages.data[messageKey];
-      messagesList.push(
-        // <MessageRow
-        //   key={messageKey} // just for React, not visible as prop in child
-        //   message={message}
-        //   tasks={tasks}
-        //   onPress={() => this.props.navigator.push({
-        //     name: 'StationView',
-        //     messageKey: message.key
-        //   })}
-        // />
-        <View key={message.key}><Text>{message.key} - {message.message}</Text></View>
-      )
-    })
+     ddpClient.connect(function() {
+       ddpClient.subscribe('messages');
+     });
+
+   // observe the lists collection
+   var observer = ddpClient.observe("messages");
+    observer.added = function(msg) {console.log("NEW MSG", ddpClient.collections.messages)}
+    observer.changed = () => console.log("CHANGED");
+    observer.removed = () => this.updateRows(_.cloneDeep(_.values(ddpClient.collections.messages)));
+    ddpClient.on('message', function(msg) {
+      var message = JSON.parse(msg);
+      console.log(message);
+      if (message.fields){
+        var {messages} = self.state;
+        messages.push(message.fields);
+        self.setState({messages: messages})
+      }
+    });
+  }
+
+
+  updateRows(msg) {
+    console.log(msg);
+  }
+
+  render() {
+    let { messages } = this.state;
+    // let messagesList = <View></View>
+    let messagesList = messages.map(function(msg, index) {
+      return <Text key={index}>{msg.message}</Text>
+    });
+
 
     return (
       <View style={styles.container}>
