@@ -3,7 +3,7 @@ var DDPClient = require("ddp-client");
 const React = require('react-native');
 const AddMessageForm = require('./addMessageForm');
 import { mainBackgroundColor } from '../utilities/colors';
-// import MessageRow from './messageIndexRow';
+import InvertibleScrollView from 'react-native-invertible-scroll-view';
 
 const {
   ActivityIndicatorIOS,
@@ -12,7 +12,6 @@ const {
   Text,
   TextInput,
   Image,
-  ScrollView,
   TouchableHighlight,
   PropTypes,
 } = React;
@@ -39,20 +38,24 @@ class Feed extends React.Component {
     observer.removed = () => this.updateRows(_.cloneDeep(_.values(ddpClient.collections.messages)));
     this.ddpClient.on('message', function(msg) {
       var message = JSON.parse(msg);
-      console.log(message);
       if (message.fields){
         var {messages} = self.state;
         messages.push(message.fields);
         self.setState({messages: messages})
+        self.scrollToBottom()
       }
     });
+  }
+
+  scrollToBottom() {
+    this.refs.scrollview.scrollTo(0)
   }
 
   render() {
     let { messages } = this.state;
     let messagesList = messages.map(function(msg, index) {
-      var date = new Date(msg.createdAt["$date"]).toLocaleTimeString();
-      var time = date.substring(date.length-3, date.length)
+      let date = new Date(msg.createdAt["$date"]).toLocaleTimeString();
+      let time = date.substring(date.length-3, date.length)
       return (
         <View key={index} style={styles.message}>
           <Image style={styles.avatar}
@@ -61,34 +64,39 @@ class Feed extends React.Component {
           <View style={styles.messageContentContainer}>
             <View style={styles.messageTextContainer}>
               <Text style={styles.messageAuthor}>{msg.author}</Text>
-              <Text style={styles.messageTimestamp}>{date.substring(0, date.length-5)}{time}</Text>
+              <Text style={styles.messageTimestamp}>
+                {date.substring(0, date.length-5)}{time}
+              </Text>
             </View>
             <Text style={styles.messageText} key={index}>{msg.message}</Text>
           </View>
         </View>
       )
-    });
+    }).reverse(); // reverse messages here because we use InvertedScrollView
 
     return (
       <View style={styles.container}>
         <View style={styles.messageContainer}>
           {messages.isFetching ? fetching : <View/>}
-          <ScrollView
+          <InvertibleScrollView
             style={styles.scrollView}
             contentInset={{bottom:49}}
             automaticallyAdjustContentInsets={false}
+            inverted
+            ref='scrollview'
           >
             { messagesList }
-          </ScrollView>
-          <AddMessageForm
-            placeholder="Message..."
-            onSubmit={(msg) => {
-              this.ddpClient.call('createMessage', [{
-                author: this.props.userEmail,
-                message: msg
-              }])
-            }}
-          />
+          </InvertibleScrollView>
+        <AddMessageForm
+          placeholder="Message..."
+          onSubmit={(msg) => {
+            this.scrollToBottom()
+            this.ddpClient.call('createMessage', [{
+              author: this.props.userEmail,
+              message: msg
+            }])
+          }}
+        />
         </View>
       </View>
     );
@@ -137,10 +145,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   messageContainer: {
+    flex: 1,
   },
   scrollView: {
     backgroundColor: 'white',
-    height: 500,
+    flex: 1,
     paddingLeft: 20,
     paddingRight: 0,
     marginTop: 0,
