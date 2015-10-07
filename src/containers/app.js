@@ -15,7 +15,7 @@ import {
   registerSession,
   resetSession,
   resetSessionInfo,
-  getTeams,
+  fetchTeams,
   addStation,
   deleteStation,
   getStations,
@@ -54,7 +54,7 @@ class App extends React.Component {
   }}
 
   componentWillMount(){
-    // this.props.dispatch(getTeams());
+    this.props.dispatch(fetchTeams());
   }
 
   authenticatedRoute(route){
@@ -85,9 +85,6 @@ class App extends React.Component {
                   navigator={nav}
                   session={session}
                   teams={teams}
-                  onResetSessionInfo={() => {
-                    dispatch(resetSessionInfo())
-                  }}
                   onResetSession={() => {
                     dispatch(resetSession())
                   }}
@@ -103,6 +100,12 @@ class App extends React.Component {
                   tasks={tasks}
                   onAddStation={name =>
                     dispatch(addStation(name, teamId))
+                  }
+                  onBack={() =>
+                    this._back.bind(this)
+                  }
+                  onLogout={() =>
+                    dispatch(resetSession())
                   }
                 />;
       case 'StationView':
@@ -162,7 +165,7 @@ class App extends React.Component {
     }
     // redirect to login if requested view requires authentication
     else if(route.name !== 'Login' && route.name !== 'Signup') {
-      route.name = 'Login'
+      route.name = 'Signup'
     }
 
     let header = <View />;
@@ -308,7 +311,6 @@ class App extends React.Component {
   }
 
   render() {
-
     return (
       <Navigator
         initialRoute={{

@@ -10,31 +10,6 @@ import {
 
 let SousFetcher = null;
 
-// function validateSession() {
-//   return (dispatch, getState) => {
-//     let session = getState()
-//     return dispatch(fetchSession(sessionParams))
-//   }
-// }
-
-function resetSessionInfo(){
-  return (dispatch) => {
-    // reset the stations
-    dispatch(resetStations())
-    // reset the tasks
-    // ...
-  }
-}
-
-function retrieveSessionInfo(){
-  return (dispatch) => {
-    // get the stations
-    // dispatch(getStations())
-    // get the tasks
-    // ...
-  }
-}
-
 function resetSession() {
   return {
     type: RESET_SESSION
@@ -48,19 +23,14 @@ function registerSession(sessionParams) {
     }
     dispatch(requestSession())
     return SousFetcher.user.create({
-        user: {
-          email: sessionParams.email,
-          password: sessionParams.password,
-          restaurant: sessionParams.team_name,
-          team_id: sessionParams.team_id
-        }
+        email: sessionParams.email,
+        username: sessionParams.username,
+        password: sessionParams.password,
+        team: sessionParams.teamName
       })
       .then((res) => {
         if (res.success === true){
-          // retrieve this session's information
-          dispatch(retrieveSessionInfo())
-          // dispatch receive session action
-          dispatch(receiveSession(sessionParams.email, res.token, res.user_id, res.team_id))
+          dispatch(receiveSession(sessionParams.email, res))
         } else {
           dispatch(errorSession(sessionParams.email, res.errors))
         }
@@ -75,7 +45,7 @@ function fetchSession(sessionParams) {
       .then((res) => {
         if (res.success === true){
           // dispatch receive session action
-          dispatch(receiveSession(sessionParams.email, res.token, res.user_id, res.team_id))
+          dispatch(receiveSession(sessionParams.email, res))
           // retrieve this session's information
           dispatch(retrieveSessionInfo())
         } else {
@@ -91,13 +61,13 @@ function requestSession() {
   };
 }
 
-function receiveSession(login, token, user_id, team_id) {
+function receiveSession(login, response) {
   return {
     type: RECEIVE_SESSION,
-    team_id: team_id,
-    token: token,
     login: login,
-    user_id: user_id,
+    token: response.token,
+    userId: response.userId,
+    teamKey: response.teamKey,
     receivedAt: (new Date).getTime()
   };
 }
@@ -127,6 +97,6 @@ export default {
   // validateSession,
   createSession,
   resetSession,
-  resetSessionInfo,
+  // resetSessionInfo,
   registerSession
 }

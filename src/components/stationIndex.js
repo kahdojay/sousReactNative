@@ -44,12 +44,12 @@ class StationIndex extends React.Component {
         />
       )
     })
-
+    
     return (
       <View style={styles.container}>
         <View style={styles.stationContainer}>
           <AddForm placeholder="Add a Station..." onSubmit={this.props.onAddStation.bind(this)}/>
-          {stations.isFetching ? fetching : <View/>}
+          {/*stations.isFetching ? fetching : <View/>*/}
           <ScrollView
             style={styles.scrollView}
             contentInset={{bottom:49}}
@@ -58,6 +58,10 @@ class StationIndex extends React.Component {
             { stationsList }
           </ScrollView>
         </View>
+        <TouchableHighlight
+          onPress={() => this.props.onLogout()}>
+          <Text>Logout</Text>
+        </TouchableHighlight>
       </View>
     );
   }
