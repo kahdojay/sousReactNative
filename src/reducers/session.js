@@ -22,9 +22,13 @@ function session(state = initialState, action) {
       isAuthenticated: false,
       isFetching: false,
       errors: null,
-      // for development:
       stations: {},
-      tasks: {}
+      tasks: {},
+      session: {
+        isAuthenticated: false,
+        isFetching: false,
+        login: ''
+      }
     })
   case REQUEST_SESSION:
     return Object.assign({}, state, {

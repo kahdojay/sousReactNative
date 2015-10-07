@@ -18,6 +18,7 @@ class Signup extends React.Component {
       invalid: false,
       email: '',
       password: '',
+      username: '',
       teamFound: false,
       lookingForTeam: false,
       teamName: '',
@@ -30,16 +31,16 @@ class Signup extends React.Component {
   }
 
   onSignup() {
-    // TODO: check for team name
     if(this.state.email == '' || this.state.password == ''){
       this.setState({invalid: true});
     } else {
       // first reset all the stations and tasks and ... ?
-      this.props.onResetSessionInfo();
+      // this.props.onResetSessionInfo();
       // send the signup request
       this.props.onSignup(Object.assign({}, {
         email: this.state.email,
         password: this.state.password,
+        username: this.state.username,
         teamName: this.state.teamName,
         teamId: this.state.teamId
       }));
@@ -47,7 +48,7 @@ class Signup extends React.Component {
     }
   }
 
-  onChangeText(text) {
+  searchTeams(text) {
     let updateState = {
       invalid: false,
       teamName: text,
@@ -109,9 +110,19 @@ class Signup extends React.Component {
             <Icon name='material|lock' size={30} color='#aaa' style={styles.iconFace}/>
             <TextInput
               style={styles.input}
+              placeholder='Username'
+              onChangeText={(text) => {
+                this.setState({username: text, invalid: false})
+              }}/>
+          </View>
+          <View style={styles.underline}></View>
+          <View style={styles.inputContainer}>
+            <Icon name='material|lock' size={30} color='#aaa' style={styles.iconFace}/>
+            <TextInput
+              style={styles.input}
               value={this.state.teamName}
               placeholder='Team'
-              onChangeText={this.onChangeText.bind(this)}/>
+              onChangeText={this.searchTeams.bind(this)}/>
             {teamLookup}
           </View>
           <View style={styles.underline}></View>

@@ -24,15 +24,13 @@ function registerSession(sessionParams) {
     dispatch(requestSession())
     return SousFetcher.user.create({
         email: sessionParams.email,
+        username: sessionParams.username,
         password: sessionParams.password,
         team: sessionParams.teamName
       })
       .then((res) => {
         if (res.success === true){
-          // retrieve this session's information
-          dispatch(retrieveSessionInfo())
-          // dispatch receive session action
-          dispatch(receiveSession(sessionParams.email, res.token, res.userId, res.teamKey))
+          dispatch(receiveSession(sessionParams.email, res))
         } else {
           dispatch(errorSession(sessionParams.email, res.errors))
         }
@@ -47,7 +45,7 @@ function fetchSession(sessionParams) {
       .then((res) => {
         if (res.success === true){
           // dispatch receive session action
-          dispatch(receiveSession(sessionParams.email, res.token, res.userKey, res.teamKey))
+          dispatch(receiveSession(sessionParams.email, res))
           // retrieve this session's information
           dispatch(retrieveSessionInfo())
         } else {
@@ -63,13 +61,13 @@ function requestSession() {
   };
 }
 
-function receiveSession(login, token, userId, teamKey) {
+function receiveSession(login, response) {
   return {
     type: RECEIVE_SESSION,
     login: login,
-    userId: userId,
-    token: token,
-    teamKey: teamKey,
+    token: response.token,
+    userId: response.userId,
+    teamKey: response.teamKey,
     receivedAt: (new Date).getTime()
   };
 }
@@ -96,7 +94,9 @@ export default {
   REQUEST_SESSION,
   RECEIVE_SESSION,
   ERROR_SESSION,
+  // validateSession,
   createSession,
   resetSession,
+  // resetSessionInfo,
   registerSession
 }

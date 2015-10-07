@@ -85,9 +85,6 @@ class App extends React.Component {
                   navigator={nav}
                   session={session}
                   teams={teams}
-                  onResetSessionInfo={() => {
-                    dispatch(resetSessionInfo())
-                  }}
                   onResetSession={() => {
                     dispatch(resetSession())
                   }}
@@ -168,7 +165,7 @@ class App extends React.Component {
     }
     // redirect to login if requested view requires authentication
     else if(route.name !== 'Login' && route.name !== 'Signup') {
-      route.name = 'Login'
+      route.name = 'Signup'
     }
 
     let header = <View />;
