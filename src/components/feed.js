@@ -51,9 +51,22 @@ class Feed extends React.Component {
   render() {
     let { messages } = this.state;
     let messagesList = messages.map(function(msg, index) {
-      return <View key={index}>
-        <Text>{msg.author} - {msg.message}</Text>
-      </View>
+      var date = new Date(msg.createdAt["$date"]).toLocaleTimeString();
+      var time = date.substring(date.length-3, date.length)
+      return (
+        <View key={index} style={styles.message}>
+          <Image style={styles.avatar}
+            source={{uri: msg.imageUrl}}
+            />
+          <View style={styles.messageContentContainer}>
+            <View style={styles.messageTextContainer}>
+              <Text style={styles.messageAuthor}>{msg.author}</Text>
+              <Text style={styles.messageTimestamp}>{date.substring(0, date.length-5)}{time}</Text>
+            </View>
+            <Text style={styles.messageText} key={index}>{msg.message}</Text>
+          </View>
+        </View>
+      )
     });
 
     return (
@@ -83,14 +96,50 @@ class Feed extends React.Component {
 };
 
 const styles = StyleSheet.create({
+  message: {
+    flexDirection: 'row'
+  },
+  messageText: {
+    fontSize: 18,
+    fontFamily: 'OpenSans',
+    marginLeft: 5,
+    marginBottom: 12
+  },
+  messageContentContainer: {
+    flex: 5
+  },
+  messageTextContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'stretch'
+  },
+  messageAuthor: {
+    fontSize: 18,
+    margin: 5,
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans',
+  },
+  messageTimestamp: {
+    fontSize: 14,
+    fontFamily: 'OpenSans',
+    marginTop: 9,
+    marginLeft: 10,
+    color: "#777"
+  },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    margin: 7,
+    flex: 1
+  },
   container: {
     flex: 1,
   },
   messageContainer: {
-    flex: 14
   },
   scrollView: {
-    backgroundColor: '#f7f7f7',
+    backgroundColor: 'white',
     height: 500,
     paddingLeft: 20,
     paddingRight: 0,
