@@ -21,23 +21,23 @@ class Feed extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      messages: []
+      messages: [],
     }
   }
   componentDidMount(){
     var self = this;
-    var ddpClient = new DDPClient({url: 'ws://sous-chat.meteor.com/websocket'});
+    this.ddpClient = new DDPClient({url: 'ws://sous-chat.meteor.com/websocket'});
 
-     ddpClient.connect(function() {
-       ddpClient.subscribe('messages');
-     });
+    this.ddpClient.connect(() => {
+      this.ddpClient.subscribe('messages', ['sous']);
+    });
 
-   // observe the lists collection
-   var observer = ddpClient.observe("messages");
+    // observe the lists collection
+    var observer = this.ddpClient.observe("messages");
     observer.added = function(msg) {console.log("NEW MSG", ddpClient.collections.messages)}
     observer.changed = () => console.log("CHANGED");
     observer.removed = () => this.updateRows(_.cloneDeep(_.values(ddpClient.collections.messages)));
-    ddpClient.on('message', function(msg) {
+    this.ddpClient.on('message', function(msg) {
       var message = JSON.parse(msg);
       console.log(message);
       if (message.fields){
@@ -48,18 +48,13 @@ class Feed extends React.Component {
     });
   }
 
-
-  updateRows(msg) {
-    console.log(msg);
-  }
-
   render() {
     let { messages } = this.state;
-    // let messagesList = <View></View>
     let messagesList = messages.map(function(msg, index) {
-      return <Text key={index}>{msg.message}</Text>
+      return <View key={index}>
+        <Text>{msg.author} - {msg.message}</Text>
+      </View>
     });
-
 
     return (
       <View style={styles.container}>
@@ -69,10 +64,18 @@ class Feed extends React.Component {
             style={styles.scrollView}
             contentInset={{bottom:49}}
             automaticallyAdjustContentInsets={false}
-            >
+          >
             { messagesList }
           </ScrollView>
-          <AddMessageForm placeholder="Message..." onSubmit={this.props.onSendMessage.bind(this)}/>
+          <AddMessageForm
+            placeholder="Message..."
+            onSubmit={(msg) => {
+              this.ddpClient.call('createMessage', [{
+                author: this.props.userEmail,
+                message: msg
+              }])
+            }}
+          />
         </View>
       </View>
     );
