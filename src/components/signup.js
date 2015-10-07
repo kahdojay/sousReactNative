@@ -23,23 +23,10 @@ class Signup extends React.Component {
       teamName: '',
       teamId: null
     }
-    this.teams = {}
   }
 
   componentWillMount() {
-    // console.log("PROPS", this.props);
     this.props.onResetSession();
-    // setup the teams object to lowercase the name attribute
-    this.teams = _(this.props.teams.data).chain()
-      // process the data, add nameToLower attribute
-      .thru((item) => {
-        let key = Object.keys(item)[0]
-        let newItem = Object.assign({}, item)
-        if (newItem[key] != undefined) {
-          newItem[key].nameToLower = newItem[key].name.toLowerCase()
-        }
-        return newItem;
-      }).value();
   }
 
   onSignup() {
@@ -68,10 +55,14 @@ class Signup extends React.Component {
       teamFound: false,
       lookingForTeam: true,
     }
+    let foundTeams;
     if(text == ''){
       updateState.lookingForTeam = false;
     }
-    let foundTeams = _.filter(this.teams, { nameToLower: text.toLowerCase() })
+    foundTeams = _.filter(this.props.teams.data, function(team) { 
+      return team.name.toLowerCase() === text.toLowerCase()
+    })
+
     if( foundTeams.length > 0 ){
       updateState.teamId = foundTeams[0].id;
       updateState.teamFound = true;
