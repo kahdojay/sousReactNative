@@ -48,12 +48,9 @@ function registerSession(sessionParams) {
     }
     dispatch(requestSession())
     return SousFetcher.user.create({
-        user: {
-          email: sessionParams.email,
-          password: sessionParams.password,
-          restaurant: sessionParams.team_name,
-          team_id: sessionParams.team_id
-        }
+        email: sessionParams.email,
+        password: sessionParams.password,
+        team: sessionParams.teamName
       })
       .then((res) => {
         if (res.success === true){

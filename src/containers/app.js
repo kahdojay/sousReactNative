@@ -15,7 +15,7 @@ import {
   registerSession,
   resetSession,
   resetSessionInfo,
-  getTeams,
+  fetchTeams,
   addStation,
   deleteStation,
   getStations,
@@ -54,7 +54,7 @@ class App extends React.Component {
   }}
 
   componentWillMount(){
-    // this.props.dispatch(getTeams());
+    this.props.dispatch(fetchTeams());
   }
 
   authenticatedRoute(route){

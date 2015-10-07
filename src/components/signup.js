@@ -20,13 +20,26 @@ class Signup extends React.Component {
       password: '',
       teamFound: false,
       lookingForTeam: false,
-      team_name: '',
-      team_id: null
+      teamName: '',
+      teamId: null
     }
     this.teams = {}
   }
 
   componentWillMount() {
+    // console.log("PROPS", this.props);
+    this.props.onResetSession();
+    // setup the teams object to lowercase the name attribute
+    this.teams = _(this.props.teams.data).chain()
+      // process the data, add nameToLower attribute
+      .thru((item) => {
+        let key = Object.keys(item)[0]
+        let newItem = Object.assign({}, item)
+        if (newItem[key] != undefined) {
+          newItem[key].nameToLower = newItem[key].name.toLowerCase()
+        }
+        return newItem;
+      }).value();
   }
 
   onSignup() {
@@ -40,11 +53,30 @@ class Signup extends React.Component {
       this.props.onSignup(Object.assign({}, {
         email: this.state.email,
         password: this.state.password,
-        // team_name: this.state.team_name,
-        team_id: this.state.team_id
+        teamName: this.state.teamName,
+        teamId: this.state.teamId
       }));
       this.setState({ password: '' })
     }
+  }
+
+  onChangeText(text) {
+    let updateState = {
+      invalid: false,
+      teamName: text,
+      teamId: null,
+      teamFound: false,
+      lookingForTeam: true,
+    }
+    if(text == ''){
+      updateState.lookingForTeam = false;
+    }
+    let foundTeams = _.filter(this.teams, { nameToLower: text.toLowerCase() })
+    if( foundTeams.length > 0 ){
+      updateState.teamId = foundTeams[0].id;
+      updateState.teamFound = true;
+    }
+    this.setState(updateState)
   }
 
   render() {
@@ -80,6 +112,16 @@ class Signup extends React.Component {
               onChangeText={(text) => {
                 this.setState({password: text, invalid: false})
               }}/>
+          </View>
+          <View style={styles.underline}></View>
+          <View style={styles.inputContainer}>
+            <Icon name='material|lock' size={30} color='#aaa' style={styles.iconFace}/>
+            <TextInput
+              style={styles.input}
+              value={this.state.teamName}
+              placeholder='Team'
+              onChangeText={this.onChangeText.bind(this)}/>
+            {teamLookup}
           </View>
           <View style={styles.underline}></View>
           { this.props.session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
@@ -190,6 +232,25 @@ let styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center'
+  },
+
+  teamLookupContainer: {
+    position: 'absolute',
+    right: 7,
+    top: 7,
+    padding: 2,
+    width: 100,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    backgroundColor: '#eee',
+  },
+  teamLookup: {
+    alignSelf: 'center',
+    color: '#ccc'
+  },
+  teamFound: {
+  },
+  teamNew: {
   }
 })
 
