@@ -4,6 +4,7 @@ import Signup from '../components/signup';
 import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
 import TaskView from '../components/taskView';
+import Feed from '../components/feed';
 import _ from 'lodash';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
@@ -20,7 +21,8 @@ import {
   getStations,
   updateTask,
   addTask,
-  toggleTask
+  toggleTask,
+  addMessage
 } from '../actions';
 
 let {
@@ -64,7 +66,7 @@ class App extends React.Component {
   }
 
   getScene(route, nav) {
-    const { session, teams, stations, tasks, dispatch } = this.props;
+    const { session, teams, stations, tasks, messages, dispatch } = this.props;
 
     switch (route.name) {
       case 'Login':
@@ -102,9 +104,6 @@ class App extends React.Component {
                   onAddStation={name =>
                     dispatch(addStation(name, teamId))
                   }
-                  onBack={() =>
-                    this._back.bind(this)
-                  }
                 />;
       case 'StationView':
         let station = _.filter(stations.data, { key: route.stationKey })[0]
@@ -114,7 +113,6 @@ class App extends React.Component {
                   station={station}
                   tasks={stationTasks}
                   stationId={route.stationKey}
-                  onBack={() => this._back.bind(this)}
                   onAddNewTask={(text, stationKey) =>
                     dispatch(addTask(text, stationKey))
                   }
@@ -132,14 +130,19 @@ class App extends React.Component {
         return <TaskView
                   task={tasks[route.taskId]}
                   navigator={nav}
-                  onBack={() =>
-                    this._back.bind(this)
-                  }
                   onDeleteTask={(deletedTask) =>
                     dispatch(updateTask(deletedTask))
                   }
                   saveTaskDescription={(newTask) =>
                     dispatch(updateTask(newTask))
+                  }
+                />;
+      case 'Feed':
+        return <Feed
+                  navigator={nav}
+                  messages={messages}
+                  onSendMessage={(msg) =>
+                    dispatch(addMessage(msg))
                   }
                 />;
       default:
@@ -149,6 +152,7 @@ class App extends React.Component {
 
   renderScene(route, nav) {
     const { dispatch } = this.props;
+
     // redirect to initial view
     if (this.props.session.isAuthenticated){
       if(route.name === 'Login' || route.name === 'Signup') {
@@ -163,6 +167,17 @@ class App extends React.Component {
     let header = <View />;
     let scene = this.getScene(route, nav);
     let footer = <View />;
+    let applyHighlight = '';
+    let footerButtonIconColor = '#C7C6C7';
+
+    if(_.includes(['StationIndex', 'StationView', 'TaskView'], route.name)){
+      applyHighlight = 'Prep'
+    } else if(_.includes(['Feed'], route.name)){
+      applyHighlight = 'Feed'
+    }
+
+    let prepFooterHighlight = (applyHighlight == 'Prep' ? styles.footerActiveHightlight : {});
+    let feedFooterHighlight = (applyHighlight == 'Feed' ? styles.footerActiveHightlight : {});
 
     // setup the header for unauthenticated routes
     if(this.authenticatedRoute(route) === false){
@@ -198,15 +213,14 @@ class App extends React.Component {
     else {
       console.log("ROUTE", route.name);
       switch(route.name) {
-        case "StationView":
-          header =  <View></View>
-        break;
         case "StationIndex":
+        case "Feed":
           header =  <View style={styles.nav}>
             <Image source={require('image!Logo')} style={styles.logoImage}></Image>
             <Icon name='material|account-circle' size={50} color='white' style={styles.iconFace}/>
           </View>;
-        break;
+          break;
+        case "StationView":
         default:
           header =  <View></View>;
       }
@@ -214,31 +228,47 @@ class App extends React.Component {
       footer = <View style={styles.footerContainer}>
         <View style={styles.footerItem}>
           <TouchableHighlight
+            underlayColor="#fff"
             onPress={() => nav.replace({
               name: 'StationIndex'
             })}
             style={styles.footerButton}
             >
             <View>
-              <Icon name='material|assignment' size={30} color='#222' style={styles.footerButtonIcon}/>
-              <Text style={styles.footerButtonText}> Prep </Text>
+              <Icon
+                name='material|assignment'
+                size={30}
+                color={footerButtonIconColor}
+                style={[styles.footerButtonIcon,prepFooterHighlight]}
+              />
+              <Text
+                style={[styles.footerButtonText,prepFooterHighlight]}
+              > Prep </Text>
             </View>
           </TouchableHighlight>
         </View>
         <View style={styles.footerItem}>
           <TouchableHighlight
+            underlayColor="#fff"
             onPress={() => nav.replace({
               name: 'Feed'
             })}
             style={styles.footerButton}
             >
             <View>
-              <Icon name='material|comments' size={24} color={'#333'} style={styles.footerButtonIcon}/>
-              <Text style={styles.footerButtonText}> Feed </Text>
+              <Icon
+                name='material|comments'
+                size={24}
+                color={footerButtonIconColor}
+                style={[styles.footerButtonIcon,feedFooterHighlight]}
+              />
+              <Text
+                style={[styles.footerButtonText,feedFooterHighlight]}
+              > Feed </Text>
             </View>
           </TouchableHighlight>
         </View>
-        <View style={styles.footerItem}>
+        {/* * /}<View style={styles.footerItem}>
           <TouchableHighlight
             onPress={() => nav.replace({
               name: 'Order'
@@ -250,8 +280,8 @@ class App extends React.Component {
               <Text style={styles.footerButtonText}> Order </Text>
             </View>
           </TouchableHighlight>
-        </View>
-        <View style={styles.footerItem}>
+        </View>{/* */}
+        {/* * /}<View style={styles.footerItem}>
           <TouchableHighlight
             onPress={() => {
               dispatch(resetSession())
@@ -272,7 +302,7 @@ class App extends React.Component {
     return <View style={styles.container}>
       {header}
       {scene}
-      {/*footer*/}
+      {footer}
     </View>;
   }
 
@@ -345,8 +375,8 @@ let styles = StyleSheet.create({
   },
   footerContainer: {
     flexDirection: 'row',
-    borderTopWidth: 2,
-    borderColor: '#ccc'
+    borderTopWidth: 1,
+    borderColor: '#979797'
   },
   footerItem: {
     flex: 1
@@ -361,6 +391,9 @@ let styles = StyleSheet.create({
   },
   footerButtonText: {
     alignSelf: 'center',
+  },
+  footerActiveHightlight: {
+
   },
 
 
@@ -378,7 +411,8 @@ function select(state) {
     session: state.session,
     teams: state.teams,
     stations: state.stations,
-    tasks: state.tasks
+    tasks: state.tasks,
+    messages: state.messages,
   }
 }
 
