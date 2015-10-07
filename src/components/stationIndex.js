@@ -49,7 +49,7 @@ class StationIndex extends React.Component {
       <View style={styles.container}>
         <View style={styles.stationContainer}>
           <AddForm placeholder="Add a Station..." onSubmit={this.props.onAddStation.bind(this)}/>
-          {stations.isFetching ? fetching : <View/>}
+          {/*stations.isFetching ? fetching : <View/>*/}
           <ScrollView
             style={styles.scrollView}
             contentInset={{bottom:49}}
