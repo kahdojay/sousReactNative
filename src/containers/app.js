@@ -141,6 +141,7 @@ class App extends React.Component {
         return <Feed
                   navigator={nav}
                   messages={messages}
+                  userEmail={session.login}
                   onSendMessage={(msg) =>
                     dispatch(addMessage(msg))
                   }
