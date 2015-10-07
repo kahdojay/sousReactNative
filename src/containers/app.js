@@ -4,6 +4,7 @@ import Signup from '../components/signup';
 import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
 import TaskView from '../components/taskView';
+import Feed from '../components/feed';
 import _ from 'lodash';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
@@ -20,7 +21,8 @@ import {
   getStations,
   updateTask,
   addTask,
-  toggleTask
+  toggleTask,
+  addMessage
 } from '../actions';
 
 let {
@@ -64,7 +66,7 @@ class App extends React.Component {
   }
 
   getScene(route, nav) {
-    const { session, teams, stations, tasks, dispatch } = this.props;
+    const { session, teams, stations, tasks, messages, dispatch } = this.props;
 
     switch (route.name) {
       case 'Login':
@@ -102,9 +104,6 @@ class App extends React.Component {
                   onAddStation={name =>
                     dispatch(addStation(name, teamId))
                   }
-                  onBack={() =>
-                    this._back.bind(this)
-                  }
                 />;
       case 'StationView':
         let station = _.filter(stations.data, { key: route.stationKey })[0]
@@ -114,7 +113,6 @@ class App extends React.Component {
                   station={station}
                   tasks={stationTasks}
                   stationId={route.stationKey}
-                  onBack={() => this._back.bind(this)}
                   onAddNewTask={(text, stationKey) =>
                     dispatch(addTask(text, stationKey))
                   }
@@ -132,14 +130,19 @@ class App extends React.Component {
         return <TaskView
                   task={tasks[route.taskId]}
                   navigator={nav}
-                  onBack={() =>
-                    this._back.bind(this)
-                  }
                   onDeleteTask={(deletedTask) =>
                     dispatch(updateTask(deletedTask))
                   }
                   saveTaskDescription={(newTask) =>
                     dispatch(updateTask(newTask))
+                  }
+                />;
+      case 'Feed':
+        return <Feed
+                  navigator={nav}
+                  messages={messages}
+                  onSendMessage={(msg) =>
+                    dispatch(addMessage(msg))
                   }
                 />;
       default:
@@ -210,15 +213,14 @@ class App extends React.Component {
     else {
       console.log("ROUTE", route.name);
       switch(route.name) {
-        case "StationView":
-          header =  <View></View>
-        break;
         case "StationIndex":
+        case "Feed":
           header =  <View style={styles.nav}>
             <Image source={require('image!Logo')} style={styles.logoImage}></Image>
             <Icon name='material|account-circle' size={50} color='white' style={styles.iconFace}/>
           </View>;
-        break;
+          break;
+        case "StationView":
         default:
           header =  <View></View>;
       }
@@ -409,7 +411,8 @@ function select(state) {
     session: state.session,
     teams: state.teams,
     stations: state.stations,
-    tasks: state.tasks
+    tasks: state.tasks,
+    messages: state.messages,
   }
 }
 
