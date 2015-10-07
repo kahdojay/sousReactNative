@@ -51,7 +51,6 @@ class Feed extends React.Component {
   render() {
     let { messages } = this.state;
     let messagesList = messages.map(function(msg, index) {
-      console.log(msg);
       var date = new Date(msg.createdAt["$date"]).toLocaleTimeString();
       var time = date.substring(date.length-3, date.length)
       return (

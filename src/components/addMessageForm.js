@@ -27,7 +27,7 @@ export default class AddForm extends React.Component {
           style={styles.button}>
           <View style={styles.addContainer}>
             {/*<Icon name='fontawesome|share-square-o' size={30} color='#0075FD' style={styles.message}/>*/}
-            <Text style={styles.messageText}> + </Text>
+            <Icon name='fontawesome|plus-circle' size={45} color='#f7f7f7' style={styles.icon}/>
           </View>
         </TouchableHighlight>
         <View style={styles.inputContainer}>
@@ -67,6 +67,14 @@ let styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     padding: 8
   },
+  icon: {
+    width: 50,
+    height: 50,
+    marginTop: -10,
+    marginLeft: -8,
+    backgroundColor: '#b6b6b6',
+    borderRadius: 25
+  },
   input: {
     flex: 1,
     backgroundColor: '#d6d6d6',
@@ -78,8 +86,9 @@ let styles = StyleSheet.create({
   },
   addContainer: {
     height: 50,
-    backgroundColor: "blue",
-    padding: 10
+    backgroundColor: "transparent",
+    padding: 10,
+    borderRadius: 4
   },
   message: {
     height: 50,
