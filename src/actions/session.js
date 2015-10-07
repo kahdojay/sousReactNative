@@ -10,31 +10,6 @@ import {
 
 let SousFetcher = null;
 
-// function validateSession() {
-//   return (dispatch, getState) => {
-//     let session = getState()
-//     return dispatch(fetchSession(sessionParams))
-//   }
-// }
-
-function resetSessionInfo(){
-  return (dispatch) => {
-    // reset the stations
-    dispatch(resetStations())
-    // reset the tasks
-    // ...
-  }
-}
-
-function retrieveSessionInfo(){
-  return (dispatch) => {
-    // get the stations
-    // dispatch(getStations())
-    // get the tasks
-    // ...
-  }
-}
-
 function resetSession() {
   return {
     type: RESET_SESSION
@@ -121,9 +96,7 @@ export default {
   REQUEST_SESSION,
   RECEIVE_SESSION,
   ERROR_SESSION,
-  // validateSession,
   createSession,
   resetSession,
-  resetSessionInfo,
   registerSession
 }
