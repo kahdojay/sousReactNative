@@ -57,7 +57,7 @@ function registerSession(sessionParams) {
           // retrieve this session's information
           dispatch(retrieveSessionInfo())
           // dispatch receive session action
-          dispatch(receiveSession(sessionParams.email, res.token, res.user_id, res.team_id))
+          dispatch(receiveSession(sessionParams.email, res.token, res.userId, res.teamKey))
         } else {
           dispatch(errorSession(sessionParams.email, res.errors))
         }
@@ -72,7 +72,7 @@ function fetchSession(sessionParams) {
       .then((res) => {
         if (res.success === true){
           // dispatch receive session action
-          dispatch(receiveSession(sessionParams.email, res.token, res.user_id, res.team_id))
+          dispatch(receiveSession(sessionParams.email, res.token, res.userKey, res.teamKey))
           // retrieve this session's information
           dispatch(retrieveSessionInfo())
         } else {
@@ -88,13 +88,13 @@ function requestSession() {
   };
 }
 
-function receiveSession(login, token, user_id, team_id) {
+function receiveSession(login, token, userId, teamKey) {
   return {
     type: RECEIVE_SESSION,
-    team_id: team_id,
-    token: token,
     login: login,
-    user_id: user_id,
+    userId: userId,
+    token: token,
+    teamKey: teamKey,
     receivedAt: (new Date).getTime()
   };
 }
