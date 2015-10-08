@@ -22,8 +22,7 @@ let ddpClient = new DDPClient({
   // maintainCollections : true,
   // ddpVersion : '1',  // ['1', 'pre2', 'pre1'] available
   // Use a full url instead of a set of `host`, `port` and `ssl`
-  // url: CHAT.ENPOINT_WS,
-  url: 'ws://localhost:3000/websocket'
+  url: CHAT.ENDPOINT_WS,
   // socketConstructor: WebSocket // Another constructor to create new WebSockets
 });
 
@@ -72,7 +71,7 @@ function errorMessages(errors){
 function getMessages(){
   return (dispatch, getState) => {
     let teamKey = getState().session.teamKey
-    dispatch(requestMessages())
+    // dispatch(requestMessages())
 
     ddpClient.connect((error, wasReconnected) => {
       if (error) {
