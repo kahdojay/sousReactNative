@@ -12,24 +12,15 @@ const {
   StyleSheet,
 } = React;
 
-class StationIndexRow extends React.Component {
+class PurveyorIndexRow extends React.Component {
   render() {
-    let { station, tasks } = this.props
-    let stationTasks = _.filter(tasks,
-                                {stationKey: station.key, deleted: false})
+    let { purveyor, products } = this.props
+    let purveyorProducts = _.filter(products,
+                                {purveyorKey: purveyor.key, deleted: false})
 
-    const numCompletedTasks = _.filter(stationTasks, {completed: true}).length
-    const totalNumTasks = stationTasks.length
-    const progress = numCompletedTasks/totalNumTasks
-
-    let progressColor = null;
-    if (progress < 0.4) {
-      progressColor = "#4A90E2"
-    } else if (progress < 0.9) {
-      progressColor = "#4A90E2"
-    } else {
-      progressColor = "#7ED321"
-    }
+    const numCompletedProducts = _.filter(purveyorProducts, {completed: true}).length
+    const totalNumProducts = purveyorProducts.length
+    const progress = numCompletedProducts/totalNumProducts
 
     return (
       <TouchableOpacity
@@ -39,17 +30,12 @@ class StationIndexRow extends React.Component {
           <View
             style={styles.textProgressContainer} >
             <View
-              style={styles.stationInfo} >
-              <Text style={styles.rowText}>{this.props.station.name}</Text>
+              style={styles.purveyorInfo} >
+              <Text style={styles.rowText}>{this.props.purveyor.name}</Text>
               <Text style={styles.percentage}>
-                {numCompletedTasks}/{totalNumTasks}
+                {numCompletedProducts}/{totalNumProducts}
               </Text>
             </View>
-            <ProgressViewIOS
-              trackTintColor="#e6e6e6"
-              progressTintColor={progressColor}
-              style={styles.progress}
-              progress={progress} />
           </View>
           <Icon name='material|chevron-right' size={40} color='#aaa' style={styles.iconArrow}/>
         </View>
@@ -88,7 +74,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#bbb',
     borderBottomWidth: 1,
   },
-  stationInfo: {
+  purveyorInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
@@ -107,7 +93,10 @@ const styles = StyleSheet.create({
   },
 })
 
-StationIndexRow.propTypes = {
+PurveyorIndexRow.propTypes = {
+  onPress: React.PropTypes.func,
+  products: React.PropTypes.number,
+  purveyor: React.PropTypes.object,
 };
 
-export default StationIndexRow
+export default PurveyorIndexRow
