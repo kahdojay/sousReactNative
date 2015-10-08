@@ -145,6 +145,7 @@ class App extends React.Component {
                   navigator={nav}
                   messages={messages}
                   userEmail={session.login}
+                  teamKey={session.teamKey}
                   onSendMessage={(msg) =>
                     dispatch(addMessage(msg))
                   }

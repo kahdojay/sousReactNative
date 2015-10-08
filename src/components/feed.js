@@ -25,10 +25,12 @@ class Feed extends React.Component {
   }
   componentDidMount(){
     var self = this;
-    this.ddpClient = new DDPClient({url: 'ws://sous-chat.meteor.com/websocket'});
+    var teamKey = this.props.teamKey;
+    console.log("TEAM KEY", teamKey)
+    this.ddpClient = new DDPClient({url: 'ws://localhost:3000/websocket'});
 
     this.ddpClient.connect(() => {
-      this.ddpClient.subscribe('messages', ['sous']);
+      this.ddpClient.subscribe('messages', [teamKey]);
     });
 
     // observe the lists collection
@@ -37,6 +39,7 @@ class Feed extends React.Component {
     observer.changed = () => console.log("CHANGED");
     observer.removed = () => this.updateRows(_.cloneDeep(_.values(ddpClient.collections.messages)));
     this.ddpClient.on('message', function(msg) {
+      console.log("MSG", msg);
       var message = JSON.parse(msg);
       if (message.fields){
         var {messages} = self.state;
@@ -93,7 +96,8 @@ class Feed extends React.Component {
             this.scrollToBottom()
             this.ddpClient.call('createMessage', [{
               author: this.props.userEmail,
-              message: msg
+              message: msg,
+              teamKey: this.props.teamKey
             }])
           }}
         />
