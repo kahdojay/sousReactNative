@@ -47,8 +47,6 @@ class Feed extends React.Component {
                         style={styles.activity}
                         size={'large'} />
 
-    console.log(messages);
-
     let messagesList = messages.data.map(function(msg, index) {
       let date = new Date(msg.createdAt["$date"]).toLocaleTimeString();
       let time = date.substring(date.length-3, date.length)

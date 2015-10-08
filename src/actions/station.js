@@ -2,6 +2,9 @@ import murmurhash from 'murmurhash'
 import DDPClient from 'ddp-client'
 import Fetcher from '../utilities/fetcher'
 import {
+  CHAT
+} from '../resources/apiConfig'
+import {
   RESET_STATIONS,
   GET_STATIONS,
   REQUEST_STATIONS,
@@ -14,7 +17,7 @@ import {
 let SousFetcher = null;
 
 let ddpClient = new DDPClient({
-  url: 'ws://localhost:3000/websocket'
+  url: CHAT.ENDPOINT_WS,
 });
 
 function resetStations(){
@@ -24,21 +27,6 @@ function resetStations(){
 }
 
 function addStation(name, teamKey) {
-// function addStation(name, teamId) {
-  // let newStation = {}
-  // let newKey = murmurhash.v3(name+''+teamId).toString(16);
-  // newStation[newKey] = {
-  //   key: newKey,
-  //   name: name,
-  //   teamId: teamId,
-  //   created_at: (new Date).toISOString(),
-  //   update_at: (new Date).toISOString()
-  // }
-  // return {
-  //   type: ADD_STATION,
-  //   station: newStation
-  // };
-  console.log("NAME AND TEAM", {name: name, teamKey: teamKey});
   var stationAttributes = {
     name: name,
     teamKey: teamKey,
@@ -65,13 +53,6 @@ function requestStations() {
   }
 }
 
-// function receiveStations(stations) {
-//   return {
-//     type: RECEIVE_STATIONS,
-//     stations: stations
-//   }
-// }
-
 function errorStations(errors){
   return {
     type: ERROR_STATIONS,
@@ -79,21 +60,6 @@ function errorStations(errors){
   }
 }
 
-// function fetchStations(user_id){
-//   return (dispatch) => {
-//     dispatch(requestStations())
-//     return SousFetcher.station.find({
-//       user_id: user_id,
-//       requestedAt: (new Date).getTime()
-//     }).then(res => {
-//       if (res.success === false) {
-//         dispatch(errorStations(res.errors))
-//       } else {
-//         dispatch(receiveStations(res))
-//       }
-//     })
-//   }
-// }
 function receiveStations(station) {
   return {
     type: RECEIVE_STATIONS,
@@ -102,17 +68,13 @@ function receiveStations(station) {
 }
 function getStations(){
   return (dispatch, getState) => {
-  //   let state = getState()
-  //   SousFetcher = new Fetcher(state)
-  //   return dispatch(fetchStations(state.session.user_id));
-  // }
     let teamKey = getState().session.teamKey;
     ddpClient.connect((error, wasReconnected) => {
       if (error) {
-        // return dispatch(errorMessages([{
-        //   id: 'error_feed_connection',
-        //   message: 'Feed connection error!'
-        // }]));
+        return dispatch(errorStations([{
+          id: 'error_feed_connection',
+          message: 'Feed connection error!'
+        }]));
       }
       if (wasReconnected) {
         console.log('Reestablishment of a connection.');
@@ -122,12 +84,13 @@ function getStations(){
     ddpClient.on('message', (msg) => {
       console.log("DDP MSG", msg);
       var log = JSON.parse(msg);
-      if (log.fields){
+      var stationIds = getState().stations.data.map(function(station) {
+        return station.id;
+      })
+      if (log.fields && stationIds.indexOf(log.id) === -1){
         var data = log.fields;
         data.id = log.id;
         dispatch(receiveStations(data))
-      } else {
-        // console.log('No message fields: ', message);
       }
     });
   }
