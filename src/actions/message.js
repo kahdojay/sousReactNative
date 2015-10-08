@@ -74,14 +74,14 @@ function getMessages(){
     let teamKey = getState().session.teamKey
     dispatch(requestMessages())
 
-    ddpClient.connect((error, wasReconnect) => {
+    ddpClient.connect((error, wasReconnected) => {
       if (error) {
         return dispatch(errorMessages([{
           id: 'error_feed_connection',
           message: 'Feed connection error!'
         }]));
       }
-      if (wasReconnect) {
+      if (wasReconnected) {
         console.log('Reestablishment of a connection.');
       }
       ddpClient.subscribe(CHAT.PUBLISH, [teamKey]);
