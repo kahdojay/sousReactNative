@@ -1,5 +1,4 @@
 var { Icon, } = require('react-native-icons');
-var DDPClient = require("ddp-client");
 const React = require('react-native');
 const AddMessageForm = require('./addMessageForm');
 import { mainBackgroundColor } from '../utilities/colors';
@@ -19,44 +18,38 @@ const {
 class Feed extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      messages: [],
-    }
   }
   componentDidMount(){
-    var self = this;
-    var teamKey = this.props.teamKey;
-    console.log("TEAM KEY", teamKey)
-    this.ddpClient = new DDPClient({url: 'ws://localhost:3000/websocket'});
+    this.props.onGetMessages()
+  }
 
-    this.ddpClient.connect(() => {
-      this.ddpClient.subscribe('messages', [teamKey]);
-    });
-
-    // observe the lists collection
-    var observer = this.ddpClient.observe("messages");
-    observer.added = function(msg) {console.log("NEW MSG", ddpClient.collections.messages)}
-    observer.changed = () => console.log("CHANGED");
-    observer.removed = () => this.updateRows(_.cloneDeep(_.values(ddpClient.collections.messages)));
-    this.ddpClient.on('message', function(msg) {
-      console.log("MSG", msg);
-      var message = JSON.parse(msg);
-      if (message.fields){
-        var {messages} = self.state;
-        messages.push(message.fields);
-        self.setState({messages: messages})
-        self.scrollToBottom()
-      }
-    });
+  componentDidUpdate(){
+    this.scrollToBottom();
   }
 
   scrollToBottom() {
-    this.refs.scrollview.scrollTo(0)
+    if(this.refs.hasOwnProperty('scrollview'))
+      this.refs.scrollview.scrollTo(0)
+  }
+
+  onHandleSubmit(msg) {
+    this.props.onCreateMessage([{
+      author: this.props.userEmail,
+      message: msg
+    }]);
   }
 
   render() {
-    let { messages } = this.state;
-    let messagesList = messages.map(function(msg, index) {
+    let { messages } = this.props;
+    let fetching =  <ActivityIndicatorIOS
+                        animating={true}
+                        color={'#808080'}
+                        style={styles.activity}
+                        size={'large'} />
+
+    console.log(messages);
+
+    let messagesList = messages.data.map(function(msg, index) {
       let date = new Date(msg.createdAt["$date"]).toLocaleTimeString();
       let time = date.substring(date.length-3, date.length)
       return (
@@ -92,14 +85,7 @@ class Feed extends React.Component {
           </InvertibleScrollView>
         <AddMessageForm
           placeholder="Message..."
-          onSubmit={(msg) => {
-            this.scrollToBottom()
-            this.ddpClient.call('createMessage', [{
-              author: this.props.userEmail,
-              message: msg,
-              teamKey: this.props.teamKey
-            }])
-          }}
+          onSubmit={this.onHandleSubmit.bind(this)}
         />
         </View>
       </View>
@@ -162,7 +148,8 @@ const styles = StyleSheet.create({
 });
 
 Feed.propTypes = {
-  onSendMessage: PropTypes.func.isRequired,
+  onCreateMessage: PropTypes.func.isRequired,
+  onGetMessages: PropTypes.func.isRequired,
 };
 
 module.exports = Feed;

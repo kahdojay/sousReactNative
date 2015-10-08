@@ -22,7 +22,9 @@ import {
   updateTask,
   addTask,
   toggleTask,
-  addMessage
+  createMessage,
+  getMessages,
+  resetMessages
 } from '../actions';
 
 let {
@@ -55,6 +57,7 @@ class App extends React.Component {
 
   componentWillMount(){
     this.props.dispatch(fetchTeams());
+    this.props.dispatch(resetMessages());
   }
 
   authenticatedRoute(route){
@@ -146,9 +149,12 @@ class App extends React.Component {
                   messages={messages}
                   userEmail={session.login}
                   teamKey={session.teamKey}
-                  onSendMessage={(msg) =>
-                    dispatch(addMessage(msg))
-                  }
+                  onCreateMessage={(msg) => {
+                    dispatch(createMessage(msg))
+                  }}
+                  onGetMessages={() => {
+                    dispatch(getMessages())
+                  }}
                 />;
       default:
         return <View />;
