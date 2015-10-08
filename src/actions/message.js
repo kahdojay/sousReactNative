@@ -1,16 +1,31 @@
 import murmurhash from 'murmurhash'
-import Fetcher from '../utilities/fetcher'
+import DDPClient from 'ddp-client'
+import {
+  CHAT
+} from '../resources/apiConfig'
 import {
   RESET_MESSAGES,
   GET_MESSAGES,
   REQUEST_MESSAGES,
   RECEIVE_MESSAGES,
   ERROR_MESSAGES,
-  ADD_MESSAGE,
+  CREATE_MESSAGE,
   DELETE_MESSAGE
 } from './actionTypes'
 
-let SousFetcher = null;
+let ddpClient = new DDPClient({
+  // host : "localhost",
+  // port : 3000,
+  // ssl  : false,
+  // autoReconnect : true,
+  // autoReconnectTimer : 500,
+  // maintainCollections : true,
+  // ddpVersion : '1',  // ['1', 'pre2', 'pre1'] available
+  // Use a full url instead of a set of `host`, `port` and `ssl`
+  // url: CHAT.ENPOINT_WS,
+  url: 'ws://localhost:3000/websocket'
+  // socketConstructor: WebSocket // Another constructor to create new WebSockets
+});
 
 function resetMessages(){
   return {
@@ -18,19 +33,12 @@ function resetMessages(){
   }
 }
 
-function addMessage(message) {
-  let newMessage = {}
-  let newKey = murmurhash.v3(message).toString(16);
-  // TODO: flesh out the required object parameters for the new message
-  newMessage[newKey] = {
-    key: newKey,
-    message: message,
-    created_at: (new Date).toISOString(),
-    update_at: (new Date).toISOString()
-  }
+function createMessage(message) {
+  // NOTE: this will call the update when done, so the CREATE_MESSAGE reducer currently doesnt do anything
+  ddpClient.call('createMessage', message)
   return {
-    type: ADD_MESSAGE,
-    message: newMessage
+    type: CREATE_MESSAGE,
+    message: message
   };
 }
 
@@ -47,10 +55,10 @@ function requestMessages() {
   }
 }
 
-function receiveMessages(messages) {
+function receiveMessages(message) {
   return {
     type: RECEIVE_MESSAGES,
-    messages: messages
+    message: message
   }
 }
 
@@ -61,27 +69,47 @@ function errorMessages(errors){
   }
 }
 
-function fetchMessages(user_id){
-  return (dispatch) => {
-    dispatch(requestMessages())
-    return SousFetcher.message.find({
-      user_id: user_id,
-      requestedAt: (new Date).getTime()
-    }).then(res => {
-      if (res.success === false) {
-        dispatch(errorMessages(res.errors))
-      } else {
-        dispatch(receiveMessages(res))
-      }
-    })
-  }
-}
-
 function getMessages(){
   return (dispatch, getState) => {
-    let state = getState()
-    SousFetcher = new Fetcher(state)
-    return dispatch(fetchMessages(state.session.user_id));
+    let teamKey = getState().session.teamKey
+    dispatch(requestMessages())
+
+    ddpClient.connect((error, wasReconnected) => {
+      if (error) {
+        return dispatch(errorMessages([{
+          id: 'error_feed_connection',
+          message: 'Feed connection error!'
+        }]));
+      }
+      if (wasReconnected) {
+        console.log('Reestablishment of a connection.');
+      }
+      ddpClient.subscribe(CHAT.PUBLISH, [teamKey]);
+    });
+
+    // TODO: Do we even need these observers?
+    // observe the lists collection
+    // var observer = ddpClient.observe("messages");
+    // observer.added = (msg) => {
+    //   console.log("NEW MSG", ddpClient.collections.messages)
+    // }
+    // observer.changed = () => {
+    //   console.log("CHANGED");
+    // }
+    // observer.removed = () => {
+      //TODO: should this be a skinny arrow instead of a fat arrow function?
+      //TODO: what does update row actually do?
+    //   this.updateRows(_.cloneDeep(_.values(ddpClient.collections.messages)));
+    // }
+
+    return ddpClient.on('message', (msg) => {
+      var message = JSON.parse(msg);
+      if (message.fields){
+        dispatch(receiveMessages(message.fields))
+      } else {
+        // console.log('No message fields: ', message);
+      }
+    });
   }
 }
 
@@ -91,9 +119,9 @@ export default {
   REQUEST_MESSAGES,
   RECEIVE_MESSAGES,
   ERROR_MESSAGES,
-  ADD_MESSAGE,
+  CREATE_MESSAGE,
   DELETE_MESSAGE,
-  addMessage,
+  createMessage,
   deleteMessage,
   getMessages,
   resetMessages,
