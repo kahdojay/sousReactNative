@@ -5,11 +5,15 @@ import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
 import TaskView from '../components/taskView';
 import Feed from '../components/feed';
+import PurveyorIndex from '../components/purveyorIndex';
+import PurveyorView from '../components/purveyorView';
+import ProductView from '../components/productView';
 import _ from 'lodash';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
 import { connect } from 'react-redux/native';
-var { Icon, } = require('react-native-icons');
+import { Icon } from 'react-native-icons';
+import { footerButtonIconColor } from '../utilities/colors';
 import {
   createSession,
   registerSession,
@@ -24,10 +28,16 @@ import {
   toggleTask,
   createMessage,
   getMessages,
-  resetMessages
+  resetMessages,
+  addPurveyor,
+  deletePurveyor,
+  getPurveyors,
+  updateProduct,
+  addProduct,
+  toggleProduct,
 } from '../actions';
 
-let {
+const {
   PropTypes,
   View,
   Text,
@@ -39,7 +49,6 @@ let {
 } = React;
 
 class App extends React.Component {
-
   constructor(props) {
     super(props)
     this.initialRoute = 'Signup'
@@ -69,7 +78,7 @@ class App extends React.Component {
   }
 
   getScene(route, nav) {
-    const { session, teams, stations, tasks, messages, dispatch } = this.props;
+    const { session, teams, stations, tasks, messages, dispatch, purveyors, products } = this.props;
 
     switch (route.name) {
       case 'Login':
@@ -96,7 +105,6 @@ class App extends React.Component {
                   }}
                 />
       case 'StationIndex':
-        // let teamId = session.team_id;
         let teamKey = session.teamKey;
         return <StationIndex
                   navigator={nav}
@@ -118,24 +126,22 @@ class App extends React.Component {
       case 'StationView':
         let station = _.filter(stations.data, { key: route.stationKey })[0]
         let stationTasks = _.filter(tasks, { stationKey: route.stationKey })
-        return <StationView
-                  navigator={nav}
-                  station={station}
-                  tasks={stationTasks}
-                  stationId={route.stationKey}
-                  onAddNewTask={(text, stationKey) =>
-                    dispatch(addTask(text, stationKey))
-                  }
-                  onDeleteStation={(stationKey) =>
-                    dispatch(deleteStation(stationKey))
-                  }
-                  onToggleTask={(taskId) =>
-                    dispatch(toggleTask(taskId))
-                  }
-                  updateTaskQuantity={(newTask) =>
-                    dispatch(updateTask(newTask))
-                  }
-                />;
+        return (
+          <StationView
+            navigator={nav}
+            station={station}
+            tasks={stationTasks}
+            stationId={route.stationKey}
+            onAddNewTask={(text, stationKey) => {
+              dispatch(addTask(text, stationKey))
+            }}
+            onDeleteStation={(stationKey) => {
+              dispatch(deleteStation(stationKey))
+            }}
+            onToggleTask={(taskId) => dispatch(toggleTask(taskId))}
+            updateTaskQuantity={(newTask) => dispatch(updateTask(newTask))}
+          />
+        );
       case 'TaskView':
         return <TaskView
                   task={tasks[route.taskId]}
@@ -160,6 +166,50 @@ class App extends React.Component {
                     dispatch(getMessages())
                   }}
                 />;
+      case 'Order':
+        return (
+          <PurveyorIndex
+            navigator={nav}
+            purveyors={purveyors}
+            products={products}
+            onAddPurveyor={name => {
+              dispatch(addPurveyor(name))
+            }}
+            onBack={() => this._back.bind(this)}
+          />
+        );
+      case 'PurveyorView':
+        let purveyor = _.filter(purveyors.data, { key: route.purveyorKey })[0]
+        let purveyorProducts = _.filter(products, { purveyorKey: route.purveyorKey })
+
+        return (
+          <PurveyorView
+            navigator={nav}
+            purveyor={purveyor}
+            products={purveyorProducts}
+            onAddNewProduct={(text, purveyorKey) => {
+              dispatch(addProduct(text, purveyorKey))
+            }}
+            onDeletePurveyor={(purveyorKey) => {
+              dispatch(deletePurveyor(purveyorKey))
+            }}
+            onToggleProduct={(productId) => dispatch(toggleProduct(productId))}
+            updateProductQuantity={(newProduct) => {
+              dispatch(updateProduct(newProduct))
+            }}
+          />
+        );
+        case 'ProductView':
+        return <ProductView
+                  product={products[route.productId]}
+                  navigator={nav}
+                  onDeleteProduct={(deletedProduct) =>
+                    dispatch(updateProduct(deletedProduct))
+                  }
+                  saveProductDescription={(newProduct) =>
+                    dispatch(updateProduct(newProduct))
+                  }
+                />;
       default:
         return <View />;
     }
@@ -183,7 +233,6 @@ class App extends React.Component {
     let scene = this.getScene(route, nav);
     let footer = <View />;
     let applyHighlight = '';
-    let footerButtonIconColor = '#C7C6C7';
 
     if(_.includes(['StationIndex', 'StationView', 'TaskView'], route.name)){
       applyHighlight = 'Prep'
@@ -226,14 +275,21 @@ class App extends React.Component {
     }
     // setup the header for authenticated routes
     else {
-      console.log("ROUTE", route.name);
       switch(route.name) {
-        case "StationIndex":
-        case "Feed":
-          header =  <View style={styles.nav}>
-            <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-            <Icon name='material|account-circle' size={50} color='white' style={styles.iconFace}/>
-          </View>;
+        case 'StationIndex':
+        case 'Feed':
+        case 'Order':
+          header =  (
+            <View style={styles.nav}>
+              <Image source={require('image!Logo')} style={styles.logoImage}/>
+              <Icon
+                name='material|account-circle'
+                size={50}
+                color='white'
+                style={styles.iconFace}
+              />
+            </View>
+          );
           break;
         case "StationView":
         default:
@@ -248,7 +304,7 @@ class App extends React.Component {
               name: 'StationIndex'
             })}
             style={styles.footerButton}
-            >
+          >
             <View>
               <Icon
                 name='material|assignment'
@@ -256,9 +312,9 @@ class App extends React.Component {
                 color={footerButtonIconColor}
                 style={[styles.footerButtonIcon,prepFooterHighlight]}
               />
-              <Text
-                style={[styles.footerButtonText,prepFooterHighlight]}
-              > Prep </Text>
+              <Text style={[styles.footerButtonText,prepFooterHighlight]}>
+                Prep
+              </Text>
             </View>
           </TouchableHighlight>
         </View>
@@ -269,7 +325,7 @@ class App extends React.Component {
               name: 'Feed'
             })}
             style={styles.footerButton}
-            >
+          >
             <View>
               <Icon
                 name='material|comments'
@@ -277,40 +333,51 @@ class App extends React.Component {
                 color={footerButtonIconColor}
                 style={[styles.footerButtonIcon,feedFooterHighlight]}
               />
-              <Text
-                style={[styles.footerButtonText,feedFooterHighlight]}
-              > Feed </Text>
+              <Text style={[styles.footerButtonText,feedFooterHighlight]}>
+                Feed
+              </Text>
             </View>
           </TouchableHighlight>
         </View>
-        {/* * /}<View style={styles.footerItem}>
+        <View style={styles.footerItem}>
           <TouchableHighlight
+            underlayColor='white'
             onPress={() => nav.replace({
               name: 'Order'
             })}
             style={styles.footerButton}
-            >
+          >
             <View>
-              <Icon name='material|shopping-cart' size={30} color='#222' style={styles.footerButtonIcon}/>
-              <Text style={styles.footerButtonText}> Order </Text>
+              <Icon
+                name='material|shopping-cart'
+                size={30}
+                color={footerButtonIconColor}
+                style={styles.footerButtonIcon}
+              />
+              <Text style={styles.footerButtonText}>
+                Order
+              </Text>
             </View>
           </TouchableHighlight>
-        </View>{/* */}
-        {/* * /}<View style={styles.footerItem}>
+        </View>
+        <View style={styles.footerItem}>
           <TouchableHighlight
-            onPress={() => {
-              dispatch(resetSession())
-            }}
-            style={[styles.footerButton,styles.logoutButton]}
-            >
+            style={[styles.footerButton, styles.logoutButton]}
+            onPress={() => { dispatch(resetSession()) }}
+          >
             <View>
-              <Icon name='material|bus' size={30} color='#fff' style={[styles.footerButtonIcon, {marginLeft: 7}]}>
-                <Icon name='material|run' size={20} color='#fff' style={{width:20, height:20, backgroundColor: 'transparent', marginLeft: -5, marginTop: 10}}/>
-              </Icon>
-              <Text style={[styles.footerButtonText,styles.logoutButtonText]}> Logout </Text>
+              <Icon
+                name='material|bus'
+                size={30}
+                color='#fff'
+                style={[styles.footerButtonIcon, {marginLeft: 7}]}
+              />
+              <Text style={[styles.footerButtonText,styles.logoutButtonText]}>
+                Reset
+              </Text>
             </View>
           </TouchableHighlight>
-        </View>{/* */}
+        </View>
       </View>
     }
 
@@ -407,13 +474,9 @@ let styles = StyleSheet.create({
     alignSelf: 'center',
   },
   footerActiveHightlight: {
-
   },
-
-
-
   logoutButton: {
-    backgroundColor: '#222'
+    backgroundColor: 'pink'
   },
   logoutButtonText: {
     color: '#fff'
@@ -427,6 +490,8 @@ function select(state) {
     stations: state.stations,
     tasks: state.tasks,
     messages: state.messages,
+    purveyors: state.purveyors,
+    products: state.products,
   }
 }
 

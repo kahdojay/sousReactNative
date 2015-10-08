@@ -1,6 +1,6 @@
 import React from 'react-native';
-import { Icon } from 'react-native-icons';
-import TaskList from '../components/taskList';
+import { Icon } from 'react-native-icons'
+import ProductList from '../components/productList';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
 import AddForm from './addForm';
@@ -17,14 +17,15 @@ const {
   Image
 } = React;
 
-class StationView extends React.Component {
+class PurveyorView extends React.Component {
   constructor(props) {
     super(props)
   }
   showActionSheet(){
+    console.log('show actionsheet')
     let buttons = [
-      'Delete Station',
-      'Rename Station',
+      'Delete Purveyor',
+      'Rename Purveyor',
       'Cancel'
     ]
     let deleteAction = 0;
@@ -37,16 +38,15 @@ class StationView extends React.Component {
     (buttonIndex) => {
       if( deleteAction === buttonIndex ){
         // process the delete
-        this.props.onDeleteStation(this.props.station.key);
+        this.props.onDeletePurveyor(this.props.purveyor.key);
         // pop the view
         this.props.navigator.pop();
       }
     });
   }
   render() {
-    let tasks = this.props.tasks
-    let station = this.props.station
-
+    let purveyor = this.props.purveyor
+    let products = this.props.products
     return (
       <View style={styles.container}>
         <View style={[
@@ -70,24 +70,28 @@ class StationView extends React.Component {
                   NavigationBarStyles.navBarRightButton,
                   {marginVertical: 0}
                 ]}>
-                <Icon name='fontawesome|cog' size={45} color='white' style={styles.iconMore}/>
-
+                <Icon
+                  name='fontawesome|cog'
+                  size={45}
+                  color='white'
+                  style={styles.iconMore}
+                />
               </View>
             </TouchableOpacity>
           </View>
         </View>
         <AddForm
-          placeholder="Add a Task..."
+          placeholder="Add a Product..."
           onSubmit={text => {
-            this.props.onAddNewTask(text, station.key)
+            this.props.onAddNewProduct(text, purveyor.key)
           }}/>
-        <TaskList
+        <ProductList
           navigator={this.props.navigator}
-          updateTaskQuantity={this.props.updateTaskQuantity}
-          tasks={tasks}
-          onTaskClick={(taskId) => this.props.onToggleTask(taskId)}/>
+          updateProductQuantity={this.props.updateProductQuantity}
+          products={products}
+          onProductClick={(productId) => this.props.onToggleProduct(productId)}/>
       </View>
-    );
+    )
   }
 };
 
@@ -107,7 +111,11 @@ const styles = StyleSheet.create({
     marginTop: -4
   }
 });
-StationView.propTypes = {
+
+PurveyorView.propTypes = {
+  products: React.PropTypes.Object,
+  purveyorName: React.PropTypes.string.isRequired,
+  updateProductQuantity: React.PropTypes.func,
 };
 
-export default StationView
+export default PurveyorView

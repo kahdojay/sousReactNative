@@ -1,6 +1,6 @@
-var { Icon, } = require('react-native-icons');
-const React = require('react-native');
-const AddForm = require('./addForm');
+import { Icon } from 'react-native-icons';
+import React from 'react-native';
+import AddForm from './addForm';
 import { mainBackgroundColor } from '../utilities/colors';
 import StationIndexRow from './stationIndexRow';
 
@@ -43,20 +43,18 @@ class StationIndex extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.stationContainer}>
-          <AddForm placeholder="Add a Station..." onSubmit={this.props.onAddStation.bind(this)}/>
-          {/*stations.isFetching ? fetching : <View/>*/}
+          <AddForm
+            placeholder="Add a Station..."
+            onSubmit={this.props.onAddStation.bind(this)}
+          />
           <ScrollView
             style={styles.scrollView}
             contentInset={{bottom:49}}
             automaticallyAdjustContentInsets={false}
-            >
+          >
             { stationsList }
           </ScrollView>
         </View>
-        <TouchableHighlight
-          onPress={() => this.props.onLogout()}>
-          <Text>Logout</Text>
-        </TouchableHighlight>
       </View>
     );
   }
@@ -67,7 +65,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   stationContainer: {
-    flex: 14
+    flex: 1,
   },
   scrollView: {
     backgroundColor: '#f7f7f7',
