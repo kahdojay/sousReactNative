@@ -96,13 +96,17 @@ class App extends React.Component {
                   }}
                 />
       case 'StationIndex':
-        let teamId = session.team_id;
+        // let teamId = session.team_id;
+        let teamKey = session.teamKey;
         return <StationIndex
                   navigator={nav}
                   stations={stations}
                   tasks={tasks}
+                  onGetStations={() => {
+                    dispatch(getStations())
+                  }}
                   onAddStation={name =>
-                    dispatch(addStation(name, teamId))
+                    dispatch(addStation(name, teamKey))
                   }
                   onBack={() =>
                     this._back.bind(this)
