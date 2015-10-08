@@ -4,7 +4,7 @@ import {
   REQUEST_MESSAGES,
   RECEIVE_MESSAGES,
   ERROR_MESSAGES,
-  ADD_MESSAGE,
+  CREATE_MESSAGE,
   DELETE_MESSAGE
 } from '../actions';
 
@@ -12,7 +12,7 @@ const initialState = {
   messages: {
     isFetching: false,
     errors: null,
-    data: {},
+    data: [],
     lastUpdated: null
   }
 };
@@ -27,20 +27,26 @@ function messages(state = initialState.messages, action) {
       errors: null,
     });
   case RECEIVE_MESSAGES:
+    let messagesState = state.data;
+    messagesState.push(action.message);
     return Object.assign({}, state, {
       isFetching: false,
       errors: null,
-      data: Object.assign({}, action.messages),
+      data: messagesState,
       lastUpdated: (new Date()).getTime()
     });
-  case ADD_MESSAGE:
-    return Object.assign({}, state, {
-      data: Object.assign({}, state.data, action.message)
-    });
+  case CREATE_MESSAGE:
+    //TODO: refactor this part so that it can add the message instantly and the update wont double render
+    // let currentMessages = state.data;
+    // currentMessages.push(action.messages);
+    // return Object.assign({}, state, {
+    //   data: currentMessages
+    // });
+    return state;
   case DELETE_MESSAGE:
-    let newStationState = Object.assign({}, state);
-    newStationState.data[action.messageKey].deleted = true;
-    return newStationState;
+    let newMessageState = Object.assign({}, state);
+    newMessageState.data[action.messageKey].deleted = true;
+    return newMessageState;
   case GET_MESSAGES:
   default:
     return state;
