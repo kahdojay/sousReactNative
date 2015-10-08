@@ -18,33 +18,57 @@ class Signup extends React.Component {
       invalid: false,
       email: '',
       password: '',
+      username: '',
       teamFound: false,
       lookingForTeam: false,
-      team_name: '',
-      team_id: null
+      teamName: '',
+      teamId: null
     }
-    this.teams = {}
   }
 
   componentWillMount() {
+    this.props.onResetSession();
   }
 
   onSignup() {
-    // TODO: check for team name
     if(this.state.email == '' || this.state.password == ''){
       this.setState({invalid: true});
     } else {
       // first reset all the stations and tasks and ... ?
-      this.props.onResetSessionInfo();
+      // this.props.onResetSessionInfo();
       // send the signup request
       this.props.onSignup(Object.assign({}, {
         email: this.state.email,
         password: this.state.password,
-        // team_name: this.state.team_name,
-        team_id: this.state.team_id
+        username: this.state.username,
+        teamName: this.state.teamName,
+        teamId: this.state.teamId
       }));
       this.setState({ password: '' })
     }
+  }
+
+  searchTeams(text) {
+    let updateState = {
+      invalid: false,
+      teamName: text,
+      teamId: null,
+      teamFound: false,
+      lookingForTeam: true,
+    }
+    let foundTeams;
+    if(text == ''){
+      updateState.lookingForTeam = false;
+    }
+    foundTeams = _.filter(this.props.teams.data, function(team) { 
+      return team.name.toLowerCase() === text.toLowerCase()
+    })
+
+    if( foundTeams.length > 0 ){
+      updateState.teamId = foundTeams[0].id;
+      updateState.teamFound = true;
+    }
+    this.setState(updateState)
   }
 
   render() {
@@ -80,6 +104,26 @@ class Signup extends React.Component {
               onChangeText={(text) => {
                 this.setState({password: text, invalid: false})
               }}/>
+          </View>
+          <View style={styles.underline}></View>
+          <View style={styles.inputContainer}>
+            <Icon name='material|lock' size={30} color='#aaa' style={styles.iconFace}/>
+            <TextInput
+              style={styles.input}
+              placeholder='Username'
+              onChangeText={(text) => {
+                this.setState({username: text, invalid: false})
+              }}/>
+          </View>
+          <View style={styles.underline}></View>
+          <View style={styles.inputContainer}>
+            <Icon name='material|lock' size={30} color='#aaa' style={styles.iconFace}/>
+            <TextInput
+              style={styles.input}
+              value={this.state.teamName}
+              placeholder='Team'
+              onChangeText={this.searchTeams.bind(this)}/>
+            {teamLookup}
           </View>
           <View style={styles.underline}></View>
           { this.props.session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
@@ -190,6 +234,25 @@ let styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center'
+  },
+
+  teamLookupContainer: {
+    position: 'absolute',
+    right: 7,
+    top: 7,
+    padding: 2,
+    width: 100,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    backgroundColor: '#eee',
+  },
+  teamLookup: {
+    alignSelf: 'center',
+    color: '#ccc'
+  },
+  teamFound: {
+  },
+  teamNew: {
   }
 })
 

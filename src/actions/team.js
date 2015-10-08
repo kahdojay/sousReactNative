@@ -11,11 +11,11 @@ import {
 
 let SousFetcher = null;
 
-// function getTeams(){
-//   return {
-//     type: GET_TEAMS
-//   }
-// }
+function getTeams(){
+  return {
+    type: GET_TEAMS
+  }
+}
 
 function addTeam(name, newKey) {
   return (dispatch, getState) => {
@@ -69,7 +69,10 @@ function errorTeams(errors){
 }
 
 function fetchTeams(){
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    let state = getState()
+    // this is need to access the session.token
+    SousFetcher = new Fetcher(state)
     dispatch(requestTeams())
     return SousFetcher.team.find().then(res => {
       if (res.success === false) {
@@ -81,15 +84,6 @@ function fetchTeams(){
   }
 }
 
-function getTeams(){
-  return (dispatch, getState) => {
-    let state = getState()
-    // this is need to access the session.token
-    SousFetcher = new Fetcher(state)
-    return dispatch(fetchTeams());
-  }
-}
-
 export default {
   GET_TEAMS,
   REQUEST_TEAMS,
@@ -98,6 +92,7 @@ export default {
   ADD_TEAM,
   DELETE_TEAM,
   getTeams,
+  fetchTeams,
   addTeam,
   deleteTeam
 }

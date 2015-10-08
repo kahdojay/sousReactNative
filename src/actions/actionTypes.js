@@ -28,6 +28,14 @@ export const UPDATE_TASK = 'UPDATE_TASK';
 export const TOGGLE_TASK = 'TOGGLE_TASK';
 export const SET_TASK_VISIBILITY = 'SET_TASK_VISIBILITY';
 
+export const RESET_MESSAGES = 'RESET_MESSAGES';
+export const GET_MESSAGES = 'GET_MESSAGES';
+export const CREATE_MESSAGE = 'CREATE_MESSAGE';
+export const DELETE_MESSAGE = 'DELETE_MESSAGE';
+export const REQUEST_MESSAGES = 'REQUEST_MESSAGES';
+export const RECEIVE_MESSAGES = 'RECEIVE_MESSAGES';
+export const ERROR_MESSAGES = 'ERROR_MESSAGES';
+
 /*
  * other constants
  */

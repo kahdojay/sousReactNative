@@ -17,26 +17,22 @@ const {
 } = React;
 
 class StationIndex extends React.Component {
+  componentDidMount() {
+    this.props.onGetStations()
+  }
   render() {
     const { stations, tasks } = this.props;
     // let fetching =  <ActivityIndicatorIOS
     //                     animating={true}
     //                     color={'#808080'}
     //                     size={'small'} />
-
-    // add the stations for listing
-    let stationsList = [];
-    let stationKeys = Object.keys(stations.data);
-    stationKeys.forEach((stationKey) => {
-      let station = stations.data[stationKey];
-      // exclude deleted stations
-      if(station.hasOwnProperty('deleted') && station.deleted === true)
-        return;
-      stationsList.push(
+    console.log("STATIONS", this.props.stations.data);
+    let stationsList = this.props.stations.data.map(function(station, index) {
+      return (
         <StationIndexRow
-          key={stationKey} // just for React, not visible as prop in child
+          key={index}
           station={station}
-          tasks={tasks}
+          tasks={station.tasks}
           onPress={() => this.props.navigator.push({
             name: 'StationView',
             stationKey: station.key
@@ -44,12 +40,11 @@ class StationIndex extends React.Component {
         />
       )
     })
-
     return (
       <View style={styles.container}>
         <View style={styles.stationContainer}>
           <AddForm placeholder="Add a Station..." onSubmit={this.props.onAddStation.bind(this)}/>
-          {stations.isFetching ? fetching : <View/>}
+          {/*stations.isFetching ? fetching : <View/>*/}
           <ScrollView
             style={styles.scrollView}
             contentInset={{bottom:49}}
@@ -58,6 +53,10 @@ class StationIndex extends React.Component {
             { stationsList }
           </ScrollView>
         </View>
+        <TouchableHighlight
+          onPress={() => this.props.onLogout()}>
+          <Text>Logout</Text>
+        </TouchableHighlight>
       </View>
     );
   }

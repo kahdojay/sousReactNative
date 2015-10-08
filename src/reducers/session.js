@@ -10,8 +10,8 @@ const initialState = {
   isFetching: false,
   login: null,
   token: null,
-  user_id: null,
-  team_id: null,
+  userId: null,
+  teamKey: null,
   errors: null
 };
 
@@ -21,11 +21,14 @@ function session(state = initialState, action) {
     return Object.assign({}, state, {
       isAuthenticated: false,
       isFetching: false,
-      // user_id: null,
       errors: null,
-      // for development:
       stations: {},
-      tasks: {}
+      tasks: {},
+      session: {
+        isAuthenticated: false,
+        isFetching: false,
+        login: ''
+      }
     })
   case REQUEST_SESSION:
     return Object.assign({}, state, {
@@ -38,8 +41,8 @@ function session(state = initialState, action) {
       isFetching: false,
       login: action.login,
       token: action.token,
-      user_id: action.user_id,
-      team_id: action.team_id,
+      userId: action.userId,
+      teamKey: action.teamKey,
       errors: null,
       lastUpdated: action.receivedAt
     })
@@ -47,8 +50,8 @@ function session(state = initialState, action) {
     return Object.assign({}, state, {
       isFetching: false,
       login: action.login,
-      user_id: null,
-      team_id: null,
+      userId: null,
+      teamKey: null,
       errors: action.errors
     })
   default:
