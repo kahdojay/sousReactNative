@@ -72,7 +72,7 @@ function errorMessages(errors){
 function getMessages(){
   return (dispatch, getState) => {
     let teamKey = getState().session.teamKey
-    dispatch(requestMessages())
+    // dispatch(requestMessages())
 
     ddpClient.connect((error, wasReconnected) => {
       if (error) {

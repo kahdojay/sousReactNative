@@ -17,6 +17,9 @@ const {
 } = React;
 
 class StationIndex extends React.Component {
+  componentDidMount() {
+    this.props.onGetStations()
+  }
   render() {
     const { stations, tasks } = this.props;
     // let fetching =  <ActivityIndicatorIOS
@@ -25,18 +28,16 @@ class StationIndex extends React.Component {
     //                     size={'small'} />
 
     // add the stations for listing
-    let stationsList = [];
-    let stationKeys = Object.keys(stations.data);
-    stationKeys.forEach((stationKey) => {
-      let station = stations.data[stationKey];
-      // exclude deleted stations
-      if(station.hasOwnProperty('deleted') && station.deleted === true)
-        return;
-      stationsList.push(
+
+    // let stationKeys = Object.keys(stations.data);
+    // stationKeys.forEach((stationKey) => {
+    console.log("STATIONS", this.props.stations.data);
+    let stationsList = this.props.stations.data.map(function(station, index) {
+      return (
         <StationIndexRow
-          key={stationKey} // just for React, not visible as prop in child
+          key={index}
           station={station}
-          tasks={tasks}
+          tasks={station.tasks}
           onPress={() => this.props.navigator.push({
             name: 'StationView',
             stationKey: station.key
@@ -44,7 +45,24 @@ class StationIndex extends React.Component {
         />
       )
     })
-    
+    // this.props.stations.data.forEach((station, index) => {
+    //   // let station = stations.data[stationKey];
+    //   // exclude deleted stations
+    //   if (station.hasOwnProperty('deleted') && station.deleted === true)
+    //     return;
+    //   stationsList.push(
+    //     <StationIndexRow
+    //       key={index} // just for React, not visible as prop in child
+    //       station={station}
+    //       tasks={station.tasks}
+    //       onPress={() => this.props.navigator.push({
+    //         name: 'StationView',
+    //         stationKey: station.key
+    //       })}
+    //     />
+    //   )
+    // })
+//
     return (
       <View style={styles.container}>
         <View style={styles.stationContainer}>
