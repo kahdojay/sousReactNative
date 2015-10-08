@@ -29,22 +29,14 @@ function stations(state = initialState.stations, action) {
   case RECEIVE_STATIONS:
     let stationsState = state.data;
     stationsState.push(action.station);
+
     return Object.assign({}, state, {
       isFetching: false,
       errors: null,
       data: stationsState,
       lastUpdated: (new Date()).getTime()
     });
-    // return Object.assign({}, state, {
-    //   isFetching: false,
-    //   errors: null,
-    //   data: Object.assign({}, action.stations),
-    //   lastUpdated: (new Date()).getTime()
-    // });
   case ADD_STATION:
-    // return Object.assign({}, state, {
-    //   data: Object.assign({}, state.data, action.station)
-    // });
     return state;
   case DELETE_STATION:
     let newStationState = Object.assign({}, state);

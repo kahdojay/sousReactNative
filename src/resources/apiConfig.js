@@ -9,6 +9,7 @@ export const endpoints = {
 };
 
 export const CHAT = {
-  ENPOINT_WS: 'ws://sous-chat.meteor.com/websocket',
+  // ENDPOINT_WS: 'ws://sous-chat.meteor.com/websocket',
+  ENDPOINT_WS: 'ws://localhost:3000/websocket',
   PUBLISH: 'messages',
 }
