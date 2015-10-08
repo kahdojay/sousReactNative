@@ -27,7 +27,7 @@ export default class AddForm extends React.Component {
           style={styles.button}>
           <View style={styles.shareContainer}>
             <Icon name='fontawesome|share-square-o' size={30} color='#0075FD' style={styles.share}/>
-            <Text style={styles.shareText}>Share</Text>
+            <Text style={styles.shareText}>Add</Text>
           </View>
         </TouchableHighlight>
         <View style={styles.inputContainer}>

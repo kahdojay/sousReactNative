@@ -3,6 +3,8 @@ import TaskActions from './task'
 import StationActions from './station'
 import TeamActions from './team'
 import MessageActions from './message'
+import PurveyorActions from './purveyor'
+import ProductActions from './product'
 
 export default Object.assign(
   {},
@@ -10,5 +12,7 @@ export default Object.assign(
   TaskActions,
   StationActions,
   TeamActions,
-  MessageActions
+  MessageActions,
+  PurveyorActions,
+  ProductActions,
 )
