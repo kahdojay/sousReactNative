@@ -8,6 +8,7 @@ import Feed from '../components/feed';
 import PurveyorIndex from '../components/purveyorIndex';
 import PurveyorView from '../components/purveyorView';
 import ProductView from '../components/productView';
+import ProfileView from '../components/profileView';
 import _ from 'lodash';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
@@ -43,6 +44,7 @@ import {
 } from '../actions';
 
 const {
+  ScrollView,
   PropTypes,
   View,
   Text,
@@ -225,6 +227,10 @@ class App extends React.Component {
                     dispatch(updateProduct(newProduct))
                   }
                 />;
+      case 'Profile':
+        return (
+          <ProfileView />
+        );
       default:
         return <View />;
     }
@@ -299,13 +305,26 @@ class App extends React.Component {
         case 'Order':
           header =  (
             <View style={styles.nav}>
-              <Image source={require('image!Logo')} style={styles.logoImage}/>
-              <Icon
-                name='material|account-circle'
-                size={50}
-                color='white'
-                style={styles.iconFace}
+              <View style={styles.leftBtn}></View>
+              <Image
+                source={require('image!Logo')}
+                style={styles.logoImage}
               />
+              <TouchableHighlight
+                style={styles.profileBtn}
+                onPress={() => {
+                  nav.replace({
+                    name: 'Profile'
+                  })
+                }}
+              >
+                <Icon
+                  name='material|account-circle'
+                  size={50}
+                  color='white'
+                  style={styles.iconFace}
+                />
+              </TouchableHighlight>
             </View>
           );
           break;
@@ -399,11 +418,13 @@ class App extends React.Component {
       </View>
     }
 
-    return <View style={styles.container}>
-      {header}
-      {scene}
-      {footer}
-    </View>;
+    return (
+      <View style={styles.container}>
+        {header}
+        {scene}
+        {footer}
+      </View>
+    );
   }
 
   render() {
@@ -432,9 +453,7 @@ let styles = StyleSheet.create({
   },
   nav: {
     backgroundColor: '#1825AD',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 5,
+    justifyContent: 'space-between',
     margin: 0,
     flexDirection: 'row',
   },
@@ -451,8 +470,10 @@ let styles = StyleSheet.create({
   iconFace: {
     width: 70,
     height: 70,
-    position: 'absolute',
-    right: 0,
+  },
+  profileBtn: {
+    flex: 1,
+    alignItems: 'flex-end',
   },
   signup: {
     marginRight: 5,
@@ -500,6 +521,9 @@ let styles = StyleSheet.create({
   },
   logoutButtonText: {
     color: '#fff'
+  },
+  leftBtn: {
+    flex: 1,
   },
 })
 
