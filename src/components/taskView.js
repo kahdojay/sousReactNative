@@ -27,12 +27,14 @@ class TaskView extends React.Component {
     this.props.saveTaskDescription(newTask)
   }
   deleteTask() {
+    let {stationId, task} = this.props;
     let newTask = this.props.task
     newTask.deleted = true
-    this.props.onDeleteTask(newTask)
+    this.props.onUpdateStationTask(stationId, task.recipeId, newTask)
     this.props.navigator.pop()
   }
   render() {
+    console.log("STATION ID", this.props.stationId);
     return (
       <View style={styles.container}>
         <View style={styles.navbar}>
