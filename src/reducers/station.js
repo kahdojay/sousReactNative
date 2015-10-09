@@ -57,7 +57,13 @@ function stations(state = initialState.stations, action) {
   // delete the station
   case DELETE_STATION:
     let newStationState = Object.assign({}, state);
+    newStationState.data.forEach((station, index) => {
+      if (station.id == action.stationId) {
+        newStationState.data[index].deleted = true;
+      }
+    })
     //TODO: replace the line below to update the station array
+
     // newStationState.data[action.stationId].deleted = true;
     return newStationState;
 

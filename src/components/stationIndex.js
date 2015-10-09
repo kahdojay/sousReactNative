@@ -28,16 +28,18 @@ class StationIndex extends React.Component {
     //                     size={'small'} />
     // console.log("STATIONS", this.props.stations.data);
     let stationsList = this.props.stations.data.map((station, index) => {
-      return (
-        <StationIndexRow
-          key={index}
-          station={station}
-          onPress={() => this.props.navigator.push({
-            name: 'StationView',
-            stationId: station.id
-          })}
-        />
-      )
+      if (station.deleted === false) {
+        return (
+          <StationIndexRow
+            key={index}
+            station={station}
+            onPress={() => this.props.navigator.push({
+              name: 'StationView',
+              stationId: station.id
+            })}
+          />
+        )
+      }
     })
     return (
       <View style={styles.container}>
