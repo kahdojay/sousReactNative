@@ -8,12 +8,13 @@ import Feed from '../components/feed';
 import PurveyorIndex from '../components/purveyorIndex';
 import PurveyorView from '../components/purveyorView';
 import ProductView from '../components/productView';
+import ProfileView from '../components/profileView';
 import _ from 'lodash';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
 import { connect } from 'react-redux/native';
 import { Icon } from 'react-native-icons';
-import { footerButtonIconColor } from '../utilities/colors';
+import { footerButtonIconColor, footerActiveHighlight } from '../utilities/colors';
 import {
   createSession,
   registerSession,
@@ -43,6 +44,7 @@ import {
 } from '../actions';
 
 const {
+  ScrollView,
   PropTypes,
   View,
   Text,
@@ -214,7 +216,7 @@ class App extends React.Component {
             }}
           />
         );
-        case 'ProductView':
+      case 'ProductView':
         return <ProductView
                   product={products[route.productId]}
                   navigator={nav}
@@ -225,6 +227,10 @@ class App extends React.Component {
                     dispatch(updateProduct(newProduct))
                   }
                 />;
+      case 'Profile':
+        return (
+          <ProfileView />
+        );
       default:
         return <View />;
     }
@@ -253,10 +259,13 @@ class App extends React.Component {
       applyHighlight = 'Prep'
     } else if(_.includes(['Feed'], route.name)){
       applyHighlight = 'Feed'
+    } else if(_.includes(['Order', 'PurveyorView', 'ProductView'], route.name)){
+      applyHighlight = 'Order'
     }
 
-    let prepFooterHighlight = (applyHighlight == 'Prep' ? styles.footerActiveHightlight : {});
-    let feedFooterHighlight = (applyHighlight == 'Feed' ? styles.footerActiveHightlight : {});
+    let prepFooterHighlight = (applyHighlight == 'Prep' ? styles.footerActiveHighlight : {});
+    let feedFooterHighlight = (applyHighlight == 'Feed' ? styles.footerActiveHighlight : {});
+    let orderFooterHighlight = (applyHighlight == 'Order' ? styles.footerActiveHighlight : {});
 
     // setup the header for unauthenticated routes
     if(this.authenticatedRoute(route) === false){
@@ -283,12 +292,13 @@ class App extends React.Component {
         default:
           break;
       }
-      header = <View style={styles.nav}>
-        <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-        {/*nextButton*/}
-      </View>;
+      // setup the header for authenticated routes
+      header = (
+        <View style={[styles.nav, styles.navSignUp]}>
+          <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+        </View>
+      );
     }
-    // setup the header for authenticated routes
     else {
       switch(route.name) {
         case 'StationIndex':
@@ -296,13 +306,26 @@ class App extends React.Component {
         case 'Order':
           header =  (
             <View style={styles.nav}>
-              <Image source={require('image!Logo')} style={styles.logoImage}/>
-              <Icon
-                name='material|account-circle'
-                size={50}
-                color='white'
-                style={styles.iconFace}
+              <View style={styles.leftBtn}></View>
+              <Image
+                source={require('image!Logo')}
+                style={styles.logoImage}
               />
+              <TouchableHighlight
+                style={styles.profileBtn}
+                onPress={() => {
+                  nav.replace({
+                    name: 'Profile'
+                  })
+                }}
+              >
+                <Icon
+                  name='material|account-circle'
+                  size={50}
+                  color='white'
+                  style={styles.iconFace}
+                />
+              </TouchableHighlight>
             </View>
           );
           break;
@@ -314,11 +337,11 @@ class App extends React.Component {
       footer = <View style={styles.footerContainer}>
         <View style={styles.footerItem}>
           <TouchableHighlight
-            underlayColor="#fff"
+            underlayColor='white'
             onPress={() => nav.replace({
               name: 'StationIndex'
             })}
-            style={styles.footerButton}
+            style={[styles.footerButton, prepFooterHighlight]}
           >
             <View>
               <Icon
@@ -335,11 +358,11 @@ class App extends React.Component {
         </View>
         <View style={styles.footerItem}>
           <TouchableHighlight
-            underlayColor="#fff"
+            underlayColor="white"
             onPress={() => nav.replace({
               name: 'Feed'
             })}
-            style={styles.footerButton}
+            style={[styles.footerButton, feedFooterHighlight]}
           >
             <View>
               <Icon
@@ -360,14 +383,14 @@ class App extends React.Component {
             onPress={() => nav.replace({
               name: 'Order'
             })}
-            style={styles.footerButton}
+            style={[styles.footerButton, orderFooterHighlight]}
           >
             <View>
               <Icon
                 name='material|shopping-cart'
                 size={30}
                 color={footerButtonIconColor}
-                style={styles.footerButtonIcon}
+                style={[styles.footerButtonIcon, orderFooterHighlight]}
               />
               <Text style={styles.footerButtonText}>
                 Order
@@ -396,11 +419,13 @@ class App extends React.Component {
       </View>
     }
 
-    return <View style={styles.container}>
-      {header}
-      {scene}
-      {footer}
-    </View>;
+    return (
+      <View style={styles.container}>
+        {header}
+        {scene}
+        {footer}
+      </View>
+    );
   }
 
   render() {
@@ -429,11 +454,12 @@ let styles = StyleSheet.create({
   },
   nav: {
     backgroundColor: '#1825AD',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 5,
+    justifyContent: 'space-between',
     margin: 0,
     flexDirection: 'row',
+  },
+  navSignUp: {
+    justifyContent: 'center',
   },
   logo: {
     color: 'white',
@@ -448,8 +474,10 @@ let styles = StyleSheet.create({
   iconFace: {
     width: 70,
     height: 70,
-    position: 'absolute',
-    right: 0,
+  },
+  profileBtn: {
+    flex: 1,
+    alignItems: 'flex-end',
   },
   signup: {
     marginRight: 5,
@@ -487,14 +515,19 @@ let styles = StyleSheet.create({
   },
   footerButtonText: {
     alignSelf: 'center',
+    color: footerButtonIconColor
   },
-  footerActiveHightlight: {
+  footerActiveHighlight: {
+    backgroundColor: footerActiveHighlight,
   },
   logoutButton: {
     backgroundColor: 'pink'
   },
   logoutButtonText: {
     color: '#fff'
+  },
+  leftBtn: {
+    flex: 1,
   },
 })
 

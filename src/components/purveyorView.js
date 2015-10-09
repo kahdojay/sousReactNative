@@ -5,7 +5,6 @@ import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
 import AddForm from './addForm';
 import { mainBackgroundColor, navbarColor } from '../utilities/colors';
-
 const {
   ActionSheetIOS,
   StyleSheet,

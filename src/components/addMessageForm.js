@@ -25,10 +25,12 @@ export default class AddForm extends React.Component {
           onPress={this.handleSubmit.bind(this)}
           underlayColor={"#eee"}
           style={styles.button}>
-          <View style={styles.addContainer}>
-            {/*<Icon name='fontawesome|share-square-o' size={30} color='#0075FD' style={styles.message}/>*/}
-            <Icon name='fontawesome|plus-circle' size={45} color='#f7f7f7' style={styles.icon}/>
-          </View>
+          <Icon
+            name='fontawesome|plus-circle'
+            size={45}
+            color='#b6b6b6'
+            style={styles.icon}
+          />
         </TouchableHighlight>
         <View style={styles.inputContainer}>
           <TextInput
@@ -59,7 +61,8 @@ let styles = StyleSheet.create({
   container: {
     height: 60,
     flexDirection: 'row',
-    backgroundColor: "#f2f2f2"
+    justifyContent: 'space-between',
+    backgroundColor: "#f2f2f2",
   },
   inputContainer: {
     flex: 10,
@@ -68,12 +71,9 @@ let styles = StyleSheet.create({
     padding: 8
   },
   icon: {
-    width: 50,
-    height: 50,
-    marginTop: -10,
-    marginLeft: -8,
-    backgroundColor: '#b6b6b6',
-    borderRadius: 25
+    width: 40,
+    height: 40,
+    paddingLeft: 30,
   },
   input: {
     flex: 1,
@@ -83,12 +83,6 @@ let styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     borderRadius: 5,
     fontWeight: 'bold'
-  },
-  addContainer: {
-    height: 50,
-    backgroundColor: "transparent",
-    padding: 10,
-    borderRadius: 4
   },
   message: {
     height: 50,
@@ -108,8 +102,8 @@ let styles = StyleSheet.create({
     color: 'white'
   },
   button: {
-    flex: 1.5,
-    padding: 5,
+    flex: 1,
+    padding: 15,
     justifyContent: 'center'
   },
   buttonText: {

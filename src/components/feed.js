@@ -1,10 +1,11 @@
-var { Icon, } = require('react-native-icons');
-const React = require('react-native');
-const AddMessageForm = require('./addMessageForm');
+import { Icon } from 'react-native-icons';
+import React from 'react-native';
+import AddMessageForm from './addMessageForm';
 import { mainBackgroundColor } from '../utilities/colors';
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
 
 const {
+  ScrollView,
   ActivityIndicatorIOS,
   StyleSheet,
   View,
