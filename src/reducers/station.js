@@ -62,9 +62,6 @@ function stations(state = initialState.stations, action) {
         newStationState.data[index].deleted = true;
       }
     })
-    //TODO: replace the line below to update the station array
-
-    // newStationState.data[action.stationId].deleted = true;
     return newStationState;
 
   // everything else
