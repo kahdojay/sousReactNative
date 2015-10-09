@@ -84,12 +84,6 @@ let styles = StyleSheet.create({
     borderRadius: 5,
     fontWeight: 'bold'
   },
-  // addContainer: {
-  //   height: 40,
-  //   backgroundColor: "transparent",
-  //   borderRadius: 4,
-  //   textAlign: 'center',
-  // },
   message: {
     height: 50,
     width: 50,
