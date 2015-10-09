@@ -16,12 +16,12 @@ let {
 
 export default class TaskListItem extends React.Component {
   increment() {
-    console.log((this.props.task.quantity + 1));
     this.props.onUpdateTask({quantity: (this.props.task.quantity + 1)})
   }
   decrement() {
-    console.log((this.props.task.quantity - 1));
-    this.props.onUpdateTask({quantity: (this.props.task.quantity - 1)})
+    if (this.props.task.quantity > 1 ) {
+      this.props.onUpdateTask({quantity: (this.props.task.quantity - 1)})
+    }
   }
   render() {
     let task = this.props.task
