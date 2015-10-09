@@ -12,7 +12,8 @@ import {
   ERROR_STATIONS,
   ADD_STATION,
   UPDATE_STATION,
-  DELETE_STATION
+  DELETE_STATION,
+  COMPLETE_STATION_TASK
 } from './actionTypes'
 
 // let SousFetcher = null;
@@ -38,6 +39,15 @@ function addStation(name, teamKey) {
   return {
     type: ADD_STATION,
     station: stationAttributes
+  };
+}
+
+function completeStationTask(message) {
+  // NOTE: this will call the update when done, so the CREATE_MESSAGE reducer
+  //          currently doesnt do anything
+  ddpClient.call('createMessage', [message]);
+  return {
+    type: COMPLETE_STATION_TASK
   };
 }
 
@@ -145,4 +155,5 @@ export default {
   deleteStation,
   getStations,
   resetStations,
+  completeStationTask,
 }
