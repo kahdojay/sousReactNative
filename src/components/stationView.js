@@ -85,6 +85,7 @@ class StationView extends React.Component {
         <TaskList
           navigator={this.props.navigator}
           station={station}
+          onTaskCompletionNotification={this.props.onTaskCompletionNotification}
           onUpdateStationTask={this.props.onUpdateStationTask}/>
       </View>
     );
