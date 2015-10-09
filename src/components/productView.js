@@ -46,7 +46,11 @@ class ProductView extends React.Component {
               callback={this.saveProduct.bind(this)}
               navigator={this.props.navigator}
             />
-            <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+            <Image
+              source={require('image!Logo')}
+              style={styles.logoImage}
+            />
+            <View style={NavigationBarStyles.navBarRightButton}></View>
           </View>
         </View>
 
@@ -185,7 +189,6 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     marginTop: -10,
-    flex: 1,
   },
 });
 
