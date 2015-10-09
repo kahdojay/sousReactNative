@@ -30,6 +30,7 @@ export default class TaskList extends React.Component {
            return <TaskListItem
             task={task}
             key={idx}
+            stationId={this.props.station.id}
             navigator={this.props.navigator}
             onUpdateTask={(taskAttributes) => {
               console.log("ATTRIBUTES", taskAttributes);
