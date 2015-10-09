@@ -66,6 +66,7 @@ function updateStation(stationId, stationAttributes){
 }
 
 function deleteStation(stationId) {
+  ddpClient.call('deleteStation', [stationId])
   return {
     type: DELETE_STATION,
     stationId: stationId
