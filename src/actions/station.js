@@ -14,7 +14,7 @@ import {
   DELETE_STATION
 } from './actionTypes'
 
-let SousFetcher = null;
+// let SousFetcher = null;
 
 let ddpClient = new DDPClient({
   url: CHAT.ENDPOINT_WS,
@@ -66,6 +66,7 @@ function receiveStations(station) {
     station: station
   }
 }
+
 function getStations(){
   return (dispatch, getState) => {
     let teamKey = getState().session.teamKey;
