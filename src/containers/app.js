@@ -292,12 +292,13 @@ class App extends React.Component {
         default:
           break;
       }
-      header = <View style={styles.nav}>
-        <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-        {/*nextButton*/}
-      </View>;
+      // setup the header for authenticated routes
+      header = (
+        <View style={[styles.nav, styles.navSignUp]}>
+          <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+        </View>
+      );
     }
-    // setup the header for authenticated routes
     else {
       switch(route.name) {
         case 'StationIndex':
@@ -456,6 +457,9 @@ let styles = StyleSheet.create({
     justifyContent: 'space-between',
     margin: 0,
     flexDirection: 'row',
+  },
+  navSignUp: {
+    justifyContent: 'center',
   },
   logo: {
     color: 'white',
