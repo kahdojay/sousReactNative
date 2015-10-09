@@ -39,6 +39,7 @@ import {
   updateProduct,
   addProduct,
   toggleProduct,
+  completeStationTask
 } from '../actions';
 
 const {
@@ -140,6 +141,15 @@ class App extends React.Component {
             onAddNewTask={(stationId, taskName) => {
               // dispatch(addTask(text, stationId))
               dispatch(addStationTask(stationId, {name: taskName}))
+            }}
+            onTaskCompletionNotification={(options) => {
+              console.log("OPTIONS", options);
+              let params = {
+                author: 'Sous',
+                teamKey: options.teamKey,
+                message: `${session.login} completed task ${options.task.name}`
+              };
+              dispatch(completeStationTask(params))
             }}
             onDeleteStation={(stationId) => {
               dispatch(deleteStation(stationId))

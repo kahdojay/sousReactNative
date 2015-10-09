@@ -23,6 +23,12 @@ export default class TaskListItem extends React.Component {
       this.props.onUpdateTask({quantity: (this.props.task.quantity - 1)})
     }
   }
+  handleCompleteTask() {
+    if (! this.props.task.completed) {
+      this.props.onTaskCompletionNotification(this.props.task);
+    }
+    this.props.onUpdateTask({completed: !this.props.task.completed});
+  }
   render() {
     let task = this.props.task
     return (
@@ -34,9 +40,7 @@ export default class TaskListItem extends React.Component {
           <View style={styles.checkboxContainer}>
             <CheckBox
               label=''
-              onChange={() => {
-                this.props.onUpdateTask({completed: !this.props.task.completed})
-              }}
+              onChange={this.handleCompleteTask.bind(this)}
               checked={this.props.task.completed}
             />
           </View>
