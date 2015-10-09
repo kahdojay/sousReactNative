@@ -15,6 +15,7 @@ const NavigationBarStyles = React.StyleSheet.create({
   },
   navBar: {
     height: NAV_HEIGHT,
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
