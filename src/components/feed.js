@@ -35,7 +35,8 @@ class Feed extends React.Component {
   onHandleSubmit(msg) {
     this.props.onCreateMessage([{
       author: this.props.userEmail,
-      message: msg
+      message: msg,
+      teamKey: this.props.teamKey
     }]);
   }
 
