@@ -43,7 +43,8 @@ export default class TaskListItem extends React.Component {
           <TouchableHighlight
             onPress={() => this.props.navigator.push({
               name: 'TaskView',
-              taskId: this.props.key,
+              task: this.props.task,
+              stationId: this.props.stationId
             })}
             style={styles.main}
           >
@@ -57,8 +58,6 @@ export default class TaskListItem extends React.Component {
               <Text
                 style={{fontSize: 9, position: 'absolute', left: 0, bottom: -10, color: '#ddd'}}
               >
-                {/* recipe id debug */}
-                {this.props.task.recipeId || 'null'}
               </Text>
             </View>
           </TouchableHighlight>
