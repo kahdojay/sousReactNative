@@ -154,12 +154,6 @@ class App extends React.Component {
                   task={route.task}
                   navigator={nav}
                   stationId={route.stationId}
-                  onDeleteTask={(deletedTask) =>
-                    dispatch(updateTask(deletedTask))
-                  }
-                  saveTaskDescription={(newTask) =>
-                    dispatch(updateTask(newTask))
-                  }
                   onUpdateStationTask={(stationId, taskId, taskAttributes) => {
                     dispatch(updateStationTask(stationId, taskId, taskAttributes))
                   }}
