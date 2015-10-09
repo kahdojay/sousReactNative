@@ -32,7 +32,8 @@ export default class TaskList extends React.Component {
             key={idx}
             navigator={this.props.navigator}
             onUpdateTask={(taskAttributes) => {
-              this.props.onUpdateStationTask(station.id, idx, taskAttributes);
+              console.log("ATTRIBUTES", taskAttributes);
+              this.props.onUpdateStationTask(station.id, task.recipeId, taskAttributes);
             }} />
         })
     let tasksIncomplete = _.filter(station.tasks, { completed: false, deleted: false })
@@ -43,7 +44,7 @@ export default class TaskList extends React.Component {
             key={idx}
             navigator={this.props.navigator}
             onUpdateTask={(taskAttributes) => {
-              this.props.onUpdateStationTask(station.id, idx, taskAttributes);
+              this.props.onUpdateStationTask(station.id, task.recipeId, taskAttributes);
             }} />
         })
     return (

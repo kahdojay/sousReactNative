@@ -45,7 +45,7 @@ class StationView extends React.Component {
   }
   render() {
     let station = this.props.station
-    // console.log(station);
+    console.log("STATION ID", station);
 
     return (
       <View style={styles.container}>

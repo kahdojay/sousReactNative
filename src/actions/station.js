@@ -48,9 +48,9 @@ function addStationTask(stationId, taskAttributes){
   }
 }
 
-function updateStationTask(stationId, taskIdx, taskAttributes){
+function updateStationTask(stationId, recipeId, taskAttributes){
   // console.log(arguments);
-  ddpClient.call('updateStationTask', [stationId, taskIdx, taskAttributes]);
+  ddpClient.call('updateStationTask', [stationId, recipeId, taskAttributes]);
   return {
     type: UPDATE_STATION
   }
