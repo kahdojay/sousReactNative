@@ -7,7 +7,8 @@ import {
   ERROR_STATIONS,
   ADD_STATION,
   UPDATE_STATION,
-  DELETE_STATION
+  DELETE_STATION,
+  COMPLETE_STATION_TASK
 } from '../actions';
 
 const initialState = {
@@ -46,7 +47,7 @@ function stations(state = initialState.stations, action) {
         ...stationsState.slice(stationIdx + 1)
       ]
     }
-    console.log('STATION REDUCER: ', stationsState)
+    // console.log('STATION REDUCER: ', stationsState)
     return Object.assign({}, state, {
       isFetching: false,
       errors: null,
@@ -68,6 +69,7 @@ function stations(state = initialState.stations, action) {
   case ADD_STATION:
   case UPDATE_STATION:
   case GET_STATIONS:
+  case COMPLETE_STATION_TASK:
   default:
     return state;
   }

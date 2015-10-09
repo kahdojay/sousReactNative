@@ -67,6 +67,7 @@ function receiveSession(login, response) {
     login: login,
     token: response.token,
     userId: response.userId,
+    username: response.username,
     teamKey: response.teamKey,
     receivedAt: (new Date).getTime()
   };
