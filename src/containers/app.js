@@ -151,8 +151,7 @@ class App extends React.Component {
         );
       case 'TaskView':
         return <TaskView
-                  taskIdx={taskId}
-                  task={station.tasks[route.taskId]}
+                  task={route.task}
                   navigator={nav}
                   onDeleteTask={(deletedTask) =>
                     dispatch(updateTask(deletedTask))

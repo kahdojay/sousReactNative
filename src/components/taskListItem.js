@@ -43,7 +43,7 @@ export default class TaskListItem extends React.Component {
           <TouchableHighlight
             onPress={() => this.props.navigator.push({
               name: 'TaskView',
-              taskId: this.props.key,
+              task: this.props.task,
             })}
             style={styles.main}
           >
