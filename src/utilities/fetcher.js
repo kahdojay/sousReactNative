@@ -25,11 +25,11 @@ class ApiEndpoint {
   }
 
   _api(params) {
-    console.log(this.url, params);
+    // console.log(this.url, params);
     return fetch(this.url, params)
       .then(res => res.json())
       .then(res => {
-        console.log('Logging from within fetcher: ', res);
+        // console.log('Logging from within fetcher: ', res);
         return res;
       })
   }

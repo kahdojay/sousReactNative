@@ -16,57 +16,62 @@ let {
 
 export default class TaskListItem extends React.Component {
   increment() {
-    let newTask = this.props.task
-    newTask.quantity += 1
-    this.props.onChangeQuantity(newTask)
+    console.log((this.props.task.quantity + 1));
+    this.props.onUpdateTask({quantity: (this.props.task.quantity + 1)})
   }
   decrement() {
-    let newTask = this.props.task
-    if (newTask.quantity >= 2)
-      newTask.quantity -= 1
-    this.props.onChangeQuantity(newTask)
+    console.log((this.props.task.quantity - 1));
+    this.props.onUpdateTask({quantity: (this.props.task.quantity - 1)})
   }
   render() {
     let task = this.props.task
-    let taskQuantity = task.quantity
-    // let quantity = this.props.quantity > 1 ? this.props.quantity : ''
     return (
       <View style={styles.container}>
         <View style={[
           styles.row,
-          this.props.completed && styles.rowCompleted
+          this.props.task.completed && styles.rowCompleted
         ]}>
           <View style={styles.checkboxContainer}>
             <CheckBox
               label=''
-              onChange={this.props.onPress}
-              checked={this.props.completed}
+              onChange={() => {
+                this.props.onUpdateTask({completed: !this.props.task.completed})
+              }}
+              checked={this.props.task.completed}
             />
           </View>
           <TouchableHighlight
             onPress={() => this.props.navigator.push({
               name: 'TaskView',
-              taskId: this.props.taskId
+              taskId: this.props.key,
             })}
             style={styles.main}
           >
-            <Text style={[
-              styles.text,
-              this.props.completed && styles.textCompleted
-            ]}>
-              {this.props.name}
-            </Text>
+            <View>
+              <Text style={[
+                styles.text,
+                this.props.completed && styles.textCompleted
+              ]}>
+                {this.props.task.name}
+              </Text>
+              <Text
+                style={{fontSize: 9, position: 'absolute', left: 0, bottom: -10, color: '#ddd'}}
+              >
+                {/* recipe id debug */}
+                {this.props.task.recipeId || 'null'}
+              </Text>
+            </View>
           </TouchableHighlight>
           <Text style={styles.quantity}>
-            {taskQuantity > 1 ? ('X' + taskQuantity) : ''}
+            {this.props.task.quantity > 1 ? ('X' + this.props.task.quantity) : ''}
           </Text>
           <TouchableHighlight
             underlayColor="#bbb"
-            onPress={() => this.decrement()}>
+            onPress={this.decrement.bind(this)}>
             <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
           </TouchableHighlight>
           <TouchableHighlight
-            onPress={() => this.increment()}>
+            onPress={this.increment.bind(this)}>
             <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
           </TouchableHighlight>
         </View>
@@ -117,6 +122,6 @@ let styles = StyleSheet.create({
 });
 
 TaskListItem.propTypes = {
-  // onPress: PropTypes.func.isRequired,
-  completed: PropTypes.bool.isRequired
+  // onUpdateTask: PropTypes.func.isRequired,
+  task: PropTypes.object.isRequired
 };

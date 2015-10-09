@@ -64,27 +64,26 @@ class TaskView extends React.Component {
           </View>
         </View>
         <View style={styles.mainContainer}>
-
-        <TextInput
-          style={styles.searchInput}
-          placeholder={'Title'}
-          value={this.state.textInputName}
-          onChangeText={(text) => this.setState({textInputName: text})}
-          onEndEditing={() => this.saveTask()}
-        />
-        <TextInput
-          style={styles.searchInput}
-          multiline={true}
-          placeholder={'Description'}
-          value={this.state.textInputDescription}
-          onChangeText={(text) => this.setState({textInputDescription: text})}
-          onEndEditing={() => this.saveTask()}
-        />
-        <TouchableHighlight
-          style={styles.button}
-          onPress={() => this.deleteTask()} >
-          <Text style={styles.buttonText}>Delete</Text>
-        </TouchableHighlight>
+          <TextInput
+            style={styles.searchInput}
+            placeholder={'Title'}
+            value={this.state.textInputName}
+            onChangeText={(text) => this.setState({textInputName: text})}
+            onEndEditing={() => this.saveTask()}
+          />
+          <TextInput
+            style={styles.searchInput}
+            multiline={true}
+            placeholder={'Description'}
+            value={this.state.textInputDescription}
+            onChangeText={(text) => this.setState({textInputDescription: text})}
+            onEndEditing={() => this.saveTask()}
+          />
+          <TouchableHighlight
+            style={styles.button}
+            onPress={() => this.deleteTask()} >
+            <Text style={styles.buttonText}>Delete</Text>
+          </TouchableHighlight>
         </View>
       </View>
     );

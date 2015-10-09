@@ -1,10 +1,10 @@
 import { ADD_TASK, UPDATE_TASK, TOGGLE_TASK, SET_TASK_VISIBILITY, TaskVisibility } from './actionTypes'
 
-function addTask(text, stationKey) {
+function addTask(text, stationId) {
   return {
     type: ADD_TASK,
     name: text,
-    stationKey: stationKey,
+    stationId: stationId,
   };
 }
 

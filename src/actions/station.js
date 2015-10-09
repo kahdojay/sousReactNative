@@ -2,7 +2,7 @@ import murmurhash from 'murmurhash'
 import DDPClient from 'ddp-client'
 import Fetcher from '../utilities/fetcher'
 import {
-  CHAT
+  DDP
 } from '../resources/apiConfig'
 import {
   RESET_STATIONS,
@@ -11,13 +11,14 @@ import {
   RECEIVE_STATIONS,
   ERROR_STATIONS,
   ADD_STATION,
+  UPDATE_STATION,
   DELETE_STATION
 } from './actionTypes'
 
 // let SousFetcher = null;
 
 let ddpClient = new DDPClient({
-  url: CHAT.ENDPOINT_WS,
+  url: DDP.ENDPOINT_WS,
 });
 
 function resetStations(){
@@ -40,10 +41,34 @@ function addStation(name, teamKey) {
   };
 }
 
-function deleteStation(stationKey) {
+function addStationTask(stationId, taskAttributes){
+  ddpClient.call('addStationTask', [stationId, taskAttributes]);
+  return {
+    type: UPDATE_STATION
+  }
+}
+
+function updateStationTask(stationId, taskIdx, taskAttributes){
+  // console.log(arguments);
+  ddpClient.call('updateStationTask', [stationId, taskIdx, taskAttributes]);
+  return {
+    type: UPDATE_STATION
+  }
+}
+
+function updateStation(stationId, stationAttributes){
+  //NOTE: this needs the second param to be an array due to js.array.apply call
+  //        ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply
+  ddpClient.call('updateStation', [stationId, stationAttributes]);
+  return {
+    type: UPDATE_STATION
+  }
+}
+
+function deleteStation(stationId) {
   return {
     type: DELETE_STATION,
-    stationKey: stationKey
+    stationId: stationId
   }
 }
 
@@ -61,10 +86,15 @@ function errorStations(errors){
 }
 
 function receiveStations(station) {
+  console.log(RECEIVE_STATIONS, station);
   return {
     type: RECEIVE_STATIONS,
     station: station
   }
+}
+
+function fetchStations(teamKey){
+  ddpClient.call('getStations', [teamKey]);
 }
 
 function getStations(){
@@ -78,22 +108,24 @@ function getStations(){
         }]));
       }
       if (wasReconnected) {
-        console.log('Reestablishment of a connection.');
+        // console.log('STATIONS: Reestablishment of a connection.');
       }
-      ddpClient.subscribe('stations', [teamKey]);
+      ddpClient.subscribe(DDP.SUBSCRIBE_STATIONS, [teamKey]);
     });
     ddpClient.on('message', (msg) => {
-      console.log("DDP MSG", msg);
       var log = JSON.parse(msg);
-      var stationIds = getState().stations.data.map(function(station) {
-        return station.id;
-      })
-      if (log.fields && stationIds.indexOf(log.id) === -1){
+      console.log("STATIONS DDP MSG", log);
+      // var stationIds = getState().stations.data.map(function(station) {
+      //   return station.id;
+      // })
+      if (log.fields){ //NOTE: removed: && stationIds.indexOf(log.id) === -1){ // handle in reducer
+        // console.log('here');
         var data = log.fields;
         data.id = log.id;
         dispatch(receiveStations(data))
       }
     });
+    // return fetchStations(teamKey);
   }
 }
 
@@ -104,8 +136,12 @@ export default {
   RECEIVE_STATIONS,
   ERROR_STATIONS,
   ADD_STATION,
+  UPDATE_STATION,
   DELETE_STATION,
   addStation,
+  addStationTask,
+  updateStationTask,
+  updateStation,
   deleteStation,
   getStations,
   resetStations,
