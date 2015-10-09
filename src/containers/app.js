@@ -74,7 +74,7 @@ class App extends React.Component {
     //NOTE: instead of clearing the contents, try temporarily dispatching the
     // reset calls, for example:
     // // this call will reset the session info: stations, tasks (todo), etc
-    // this.props.dispatch(resetStations());
+    this.props.dispatch(resetStations());
   }
 
   authenticatedRoute(route){
