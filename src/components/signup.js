@@ -107,7 +107,7 @@ class Signup extends React.Component {
           </View>
           <View style={styles.underline}></View>
           <View style={styles.inputContainer}>
-            <Icon name='material|lock' size={30} color='#aaa' style={styles.iconFace}/>
+            <Icon name='fontawesome|user' size={30} color='#aaa' style={styles.iconFace}/>
             <TextInput
               style={styles.input}
               placeholder='Username'
@@ -117,7 +117,7 @@ class Signup extends React.Component {
           </View>
           <View style={styles.underline}></View>
           <View style={styles.inputContainer}>
-            <Icon name='material|lock' size={30} color='#aaa' style={styles.iconFace}/>
+            <Icon name='fontawesome|users' size={30} color='#aaa' style={styles.iconFace}/>
             <TextInput
               style={styles.input}
               value={this.state.teamName}
