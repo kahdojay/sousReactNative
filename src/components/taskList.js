@@ -24,31 +24,27 @@ export default class TaskList extends React.Component {
     this.setState({showCompleted: !this.state.showCompleted})
   }
   render() {
-    let tasks = this.props.tasks
-    let tasksCompleted = _.filter(tasks, { completed: true, deleted: false })
-      .map((task, index) => {
+    let {station} = this.props
+    let tasksCompleted = _.filter(station.tasks, { completed: true, deleted: false })
+      .map((task, idx) => {
            return <TaskListItem
             task={task}
-            key={index}
-            name={task.name}
-            completed={task.completed}
-            taskId={task.id}
+            key={idx}
             navigator={this.props.navigator}
-            onPress={() => this.props.onTaskClick(task.id)}
-            onChangeQuantity={this.props.updateTaskQuantity} />
+            onUpdateTask={(taskAttributes) => {
+              this.props.onUpdateStationTask(station.id, idx, taskAttributes);
+            }} />
         })
-    let tasksIncomplete = _.filter(tasks, { completed: false, deleted: false })
-      .map((task, index) => {
+    let tasksIncomplete = _.filter(station.tasks, { completed: false, deleted: false })
+      .map((task, idx) => {
+        console.log(task);
           return <TaskListItem
             task={task}
-            key={index}
-            name={task.name}
-            quantity={task.quantity}
-            completed={task.completed}
-            taskId={task.id}
+            key={idx}
             navigator={this.props.navigator}
-            onPress={() => this.props.onTaskClick(task.id)}
-            onChangeQuantity={this.props.updateTaskQuantity} />
+            onUpdateTask={(taskAttributes) => {
+              this.props.onUpdateStationTask(station.id, idx, taskAttributes);
+            }} />
         })
     return (
       <View>
@@ -91,9 +87,8 @@ const styles = StyleSheet.create({
 })
 
 TaskList.propTypes = {
-  // onTaskClick: PropTypes.func.isRequired,
-  // tasks: PropTypes.arrayOf(PropTypes.shape({
-    // text: PropTypes.string.isRequired,
-    // completed: PropTypes.bool.isRequired
+  // onUpdateStationTask: PropTypes.func.isRequired,
+  // station: PropTypes.arrayOf(PropTypes.shape({
+    // tasks: PropTypes.array.isRequired,
   // }).isRequired).isRequired
 };

@@ -8,8 +8,9 @@ export const endpoints = {
   ENDPOINT_USER: '/users',
 };
 
-export const CHAT = {
+export const DDP = {
   // ENDPOINT_WS: 'ws://sous-chat.meteor.com/websocket',
   ENDPOINT_WS: 'ws://localhost:3000/websocket',
-  PUBLISH: 'messages',
+  SUBSCRIBE_MESSAGES: 'messages',
+  SUBSCRIBE_STATIONS: 'stations',
 }

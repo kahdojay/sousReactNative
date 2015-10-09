@@ -1,7 +1,7 @@
 import murmurhash from 'murmurhash'
 import DDPClient from 'ddp-client'
 import {
-  CHAT
+  DDP
 } from '../resources/apiConfig'
 import {
   RESET_MESSAGES,
@@ -22,7 +22,7 @@ let ddpClient = new DDPClient({
   // maintainCollections : true,
   // ddpVersion : '1',  // ['1', 'pre2', 'pre1'] available
   // Use a full url instead of a set of `host`, `port` and `ssl`
-  url: CHAT.ENDPOINT_WS,
+  url: DDP.ENDPOINT_WS,
   // socketConstructor: WebSocket // Another constructor to create new WebSockets
 });
 
@@ -33,7 +33,8 @@ function resetMessages(){
 }
 
 function createMessage(message) {
-  // NOTE: this will call the update when done, so the CREATE_MESSAGE reducer currently doesnt do anything
+  // NOTE: this will call the update when done, so the CREATE_MESSAGE reducer
+  //          currently doesnt do anything
   ddpClient.call('createMessage', message)
   return {
     type: CREATE_MESSAGE,
@@ -83,7 +84,7 @@ function getMessages(){
       if (wasReconnected) {
         console.log('Reestablishment of a connection.');
       }
-      ddpClient.subscribe(CHAT.PUBLISH, [teamKey]);
+      ddpClient.subscribe(DDP.SUBSCRIBE_MESSAGES, [teamKey]);
     });
 
     // TODO: Do we even need these observers?
