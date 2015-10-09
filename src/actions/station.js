@@ -120,7 +120,6 @@ function getStations(){
       //   return station.id;
       // })
       if (log.fields){ //NOTE: removed: && stationIds.indexOf(log.id) === -1){ // handle in reducer
-        // console.log('here');
         var data = log.fields;
         data.id = log.id;
         dispatch(receiveStations(data))
