@@ -13,7 +13,7 @@ import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
 import { connect } from 'react-redux/native';
 import { Icon } from 'react-native-icons';
-import { footerButtonIconColor } from '../utilities/colors';
+import { footerButtonIconColor, footerActiveHighlight } from '../utilities/colors';
 import {
   createSession,
   registerSession,
@@ -214,7 +214,7 @@ class App extends React.Component {
             }}
           />
         );
-        case 'ProductView':
+      case 'ProductView':
         return <ProductView
                   product={products[route.productId]}
                   navigator={nav}
@@ -253,10 +253,13 @@ class App extends React.Component {
       applyHighlight = 'Prep'
     } else if(_.includes(['Feed'], route.name)){
       applyHighlight = 'Feed'
+    } else if(_.includes(['Order', 'PurveyorView', 'ProductView'], route.name)){
+      applyHighlight = 'Order'
     }
 
-    let prepFooterHighlight = (applyHighlight == 'Prep' ? styles.footerActiveHightlight : {});
-    let feedFooterHighlight = (applyHighlight == 'Feed' ? styles.footerActiveHightlight : {});
+    let prepFooterHighlight = (applyHighlight == 'Prep' ? styles.footerActiveHighlight : {});
+    let feedFooterHighlight = (applyHighlight == 'Feed' ? styles.footerActiveHighlight : {});
+    let orderFooterHighlight = (applyHighlight == 'Order' ? styles.footerActiveHighlight : {});
 
     // setup the header for unauthenticated routes
     if(this.authenticatedRoute(route) === false){
@@ -314,11 +317,11 @@ class App extends React.Component {
       footer = <View style={styles.footerContainer}>
         <View style={styles.footerItem}>
           <TouchableHighlight
-            underlayColor="#fff"
+            underlayColor='white'
             onPress={() => nav.replace({
               name: 'StationIndex'
             })}
-            style={styles.footerButton}
+            style={[styles.footerButton, prepFooterHighlight]}
           >
             <View>
               <Icon
@@ -335,11 +338,11 @@ class App extends React.Component {
         </View>
         <View style={styles.footerItem}>
           <TouchableHighlight
-            underlayColor="#fff"
+            underlayColor="white"
             onPress={() => nav.replace({
               name: 'Feed'
             })}
-            style={styles.footerButton}
+            style={[styles.footerButton, feedFooterHighlight]}
           >
             <View>
               <Icon
@@ -360,14 +363,14 @@ class App extends React.Component {
             onPress={() => nav.replace({
               name: 'Order'
             })}
-            style={styles.footerButton}
+            style={[styles.footerButton, orderFooterHighlight]}
           >
             <View>
               <Icon
                 name='material|shopping-cart'
                 size={30}
                 color={footerButtonIconColor}
-                style={styles.footerButtonIcon}
+                style={[styles.footerButtonIcon, orderFooterHighlight]}
               />
               <Text style={styles.footerButtonText}>
                 Order
@@ -487,8 +490,10 @@ let styles = StyleSheet.create({
   },
   footerButtonText: {
     alignSelf: 'center',
+    color: footerButtonIconColor
   },
-  footerActiveHightlight: {
+  footerActiveHighlight: {
+    backgroundColor: footerActiveHighlight,
   },
   logoutButton: {
     backgroundColor: 'pink'

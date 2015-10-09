@@ -4,6 +4,7 @@ const Colors = {
   taskCompletedBackgroundColor: '#e1e1e1',
   navbarColor: '#1E00B1',
   footerButtonIconColor: '#C7C6C7',
+  footerActiveHighlight: '#2700EB'
 }
 
 module.exports = Colors
