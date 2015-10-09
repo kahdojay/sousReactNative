@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
 PurveyorIndex.propTypes = {
   onAddPurveyor: React.PropTypes.func,
   navigator: React.PropTypes.object.isRequired,
-  products: React.PropTypes.object,
+  //products: React.PropTypes.object,
   purveyors: React.PropTypes.object,
 };
 

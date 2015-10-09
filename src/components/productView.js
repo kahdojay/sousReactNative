@@ -3,6 +3,7 @@ var { Icon, } = require('react-native-icons');
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
 const {
+  ScrollView,
   StyleSheet,
   View,
   Text,
@@ -40,52 +41,55 @@ class ProductView extends React.Component {
             NavigationBarStyles.navBar,
             {paddingVertical: 20}
           ]}>
-          <BackBtn
-            style={styles.backButton}
-            callback={this.saveProduct.bind(this)}
-            navigator={this.props.navigator}
+            <BackBtn
+              style={styles.backButton}
+              callback={this.saveProduct.bind(this)}
+              navigator={this.props.navigator}
             />
             <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-
           </View>
         </View>
 
-        <View style={styles.headerContainer}>
-          <Icon name='material|assignment' size={100} color='#aaa' style={styles.iconMain}/>
-          <View style={styles.iconContainer}>
-            <View style={styles.iconSideContainer}>
-              <Text style={styles.sideText}>Timer</Text>
-              <Icon name='material|alarm' size={50} color='#aaa' style={styles.iconSide}/>
-            </View>
-            <View style={styles.iconSideContainer}>
-              <Text style={styles.sideText}>Scale</Text>
-              <Icon name='fontawesome|check-square' size={50} color='#aaa' style={styles.iconSide}/>
+        <ScrollView
+          scrollEventThrottle={200}
+        >
+          <View style={styles.headerContainer}>
+            <Icon name='material|assignment' size={100} color='#aaa' style={styles.iconMain}/>
+            <View style={styles.iconContainer}>
+              <View style={styles.iconSideContainer}>
+                <Text style={styles.sideText}>Timer</Text>
+                <Icon name='material|alarm' size={50} color='#aaa' style={styles.iconSide}/>
+              </View>
+              <View style={styles.iconSideContainer}>
+                <Text style={styles.sideText}>Scale</Text>
+                <Icon name='fontawesome|check-square' size={50} color='#aaa' style={styles.iconSide}/>
+              </View>
             </View>
           </View>
-        </View>
-        <View style={styles.mainContainer}>
 
-        <TextInput
-          style={styles.searchInput}
-          placeholder={'Title'}
-          value={this.state.textInputName}
-          onChangeText={(text) => this.setState({textInputName: text})}
-          onEndEditing={() => this.saveProduct()}
-        />
-        <TextInput
-          style={styles.searchInput}
-          multiline={true}
-          placeholder={'Description'}
-          value={this.state.textInputDescription}
-          onChangeText={(text) => this.setState({textInputDescription: text})}
-          onEndEditing={() => this.saveProduct()}
-        />
-        <TouchableHighlight
-          style={styles.button}
-          onPress={() => this.deleteProduct()} >
-          <Text style={styles.buttonText}>Delete</Text>
-        </TouchableHighlight>
-        </View>
+          <View style={styles.mainContainer}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder={'Title'}
+              value={this.state.textInputName}
+              onChangeText={(text) => this.setState({textInputName: text})}
+              onEndEditing={() => this.saveProduct()}
+            />
+            <TextInput
+              style={styles.searchInput}
+              multiline={true}
+              placeholder={'Description'}
+              value={this.state.textInputDescription}
+              onChangeText={(text) => this.setState({textInputDescription: text})}
+              onEndEditing={() => this.saveProduct()}
+            />
+            <TouchableHighlight
+              style={styles.button}
+              onPress={() => this.deleteProduct()} >
+              <Text style={styles.buttonText}>Delete</Text>
+            </TouchableHighlight>
+          </View>
+        </ScrollView>
       </View>
     );
   }
@@ -121,12 +125,12 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     flex: 1,
-    padding: 30,
     flexDirection: 'column',
     backgroundColor: '#f7f7f7'
   },
   headerContainer: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
   input: {
     height: 40,
@@ -138,15 +142,12 @@ const styles = StyleSheet.create({
   iconMain: {
     height: 100,
     width: 100,
-    marginLeft: 20,
-    marginTop: 10,
     flex: 1
   },
   sideText: {
     fontSize: 20,
     fontFamily: 'OpenSans',
     flex: 1,
-    marginLeft: 100,
     marginTop: 10
   },
   searchInput: {
@@ -158,13 +159,11 @@ const styles = StyleSheet.create({
     borderColor: '#e6e6e6',
     borderRadius: 8,
     backgroundColor: 'white',
-    marginTop: 15,
     color: 'black'
   },
   iconContainer: {
-    flex: 3,
+    flex: 1,
     flexDirection: 'column',
-    paddingRight: 80
   },
   iconSideContainer: {
     marginBottom: 10,
@@ -187,7 +186,6 @@ const styles = StyleSheet.create({
     height: 70,
     marginTop: -10,
     flex: 1,
-    marginLeft: 100
   },
 });
 
