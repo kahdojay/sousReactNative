@@ -28,7 +28,21 @@ function messages(state = initialState.messages, action) {
     });
   case RECEIVE_MESSAGES:
     let messagesState = state.data;
-    messagesState.push(action.message);
+    var messageIdx = _.findIndex(state.data, (message, idx) => {
+      return message.id == action.message.id;
+    });
+    if(messageIdx === -1){
+      messagesState.push(action.message);
+    } else {
+      messagesState = [
+        ...messagesState.slice(0, messageIdx),
+        Object.assign({}, messagesState[messageIdx], action.message),
+        ...messagesState.slice(messageIdx + 1)
+      ]
+    }
+    console.log('MESSAGE REDUCER: ', messagesState)
+
+    // messagesState.push(action.message);
     return Object.assign({}, state, {
       isFetching: false,
       errors: null,

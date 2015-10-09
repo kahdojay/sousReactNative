@@ -103,11 +103,11 @@ function getMessages(){
     // }
 
     return ddpClient.on('message', (msg) => {
-      var message = JSON.parse(msg);
-      if (message.fields){
-        dispatch(receiveMessages(message.fields))
-      } else {
-        // console.log('No message fields: ', message);
+      var log = JSON.parse(msg);
+      if (log.fields){
+        var data = log.fields;
+        data.id = log.id;
+        dispatch(receiveMessages(data))
       }
     });
   }
