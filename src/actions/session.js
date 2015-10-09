@@ -1,5 +1,5 @@
 import Fetcher from '../utilities/fetcher';
-import { getStations, resetStations } from './station'
+// import { getStations, resetStations } from './station'
 import {
   RESET_SESSION,
   REGISTER_SESSION,

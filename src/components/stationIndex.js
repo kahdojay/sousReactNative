@@ -17,28 +17,29 @@ const {
 } = React;
 
 class StationIndex extends React.Component {
-  componentDidMount() {
+  componentWillMount() {
     this.props.onGetStations()
   }
   render() {
-    const { stations, tasks } = this.props;
+    const { stations } = this.props;
     // let fetching =  <ActivityIndicatorIOS
     //                     animating={true}
     //                     color={'#808080'}
     //                     size={'small'} />
-    console.log("STATIONS", this.props.stations.data);
-    let stationsList = this.props.stations.data.map(function(station, index) {
-      return (
-        <StationIndexRow
-          key={index}
-          station={station}
-          tasks={station.tasks}
-          onPress={() => this.props.navigator.push({
-            name: 'StationView',
-            stationKey: station.key
-          })}
-        />
-      )
+    // console.log("STATIONS", this.props.stations.data);
+    let stationsList = this.props.stations.data.map((station, index) => {
+      if (station.deleted === false) {
+        return (
+          <StationIndexRow
+            key={index}
+            station={station}
+            onPress={() => this.props.navigator.push({
+              name: 'StationView',
+              stationId: station.id
+            })}
+          />
+        )
+      }
     })
     return (
       <View style={styles.container}>

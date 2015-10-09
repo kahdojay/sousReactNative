@@ -18,9 +18,13 @@ import {
   createSession,
   registerSession,
   resetSession,
-  resetSessionInfo,
+  // resetSessionInfo,
   fetchTeams,
+  resetStations,
   addStation,
+  updateStation,
+  addStationTask,
+  updateStationTask,
   deleteStation,
   getStations,
   updateTask,
@@ -67,6 +71,10 @@ class App extends React.Component {
   componentWillMount(){
     this.props.dispatch(fetchTeams());
     this.props.dispatch(resetMessages());
+    //NOTE: instead of clearing the contents, try temporarily dispatching the
+    // reset calls, for example:
+    // // this call will reset the session info: stations, tasks (todo), etc
+    this.props.dispatch(resetStations());
   }
 
   authenticatedRoute(route){
@@ -78,7 +86,7 @@ class App extends React.Component {
   }
 
   getScene(route, nav) {
-    const { session, teams, stations, tasks, messages, dispatch, purveyors, products } = this.props;
+    const { session, teams, stations, messages, dispatch, purveyors, products } = this.props;
 
     switch (route.name) {
       case 'Login':
@@ -109,13 +117,12 @@ class App extends React.Component {
         return <StationIndex
                   navigator={nav}
                   stations={stations}
-                  tasks={tasks}
                   onGetStations={() => {
                     dispatch(getStations())
                   }}
-                  onAddStation={name =>
+                  onAddStation={(name) => {
                     dispatch(addStation(name, teamKey))
-                  }
+                  }}
                   onBack={() =>
                     this._back.bind(this)
                   }
@@ -124,27 +131,28 @@ class App extends React.Component {
                   }
                 />;
       case 'StationView':
-        let station = _.filter(stations.data, { key: route.stationKey })[0]
-        let stationTasks = _.filter(tasks, { stationKey: route.stationKey })
+        let station = _.filter(stations.data, { id: route.stationId })[0]
         return (
           <StationView
             navigator={nav}
             station={station}
-            tasks={stationTasks}
-            stationId={route.stationKey}
-            onAddNewTask={(text, stationKey) => {
-              dispatch(addTask(text, stationKey))
+            stationId={route.stationId}
+            onAddNewTask={(stationId, taskName) => {
+              // dispatch(addTask(text, stationId))
+              dispatch(addStationTask(stationId, {name: taskName}))
             }}
-            onDeleteStation={(stationKey) => {
-              dispatch(deleteStation(stationKey))
+            onDeleteStation={(stationId) => {
+              dispatch(deleteStation(stationId))
             }}
-            onToggleTask={(taskId) => dispatch(toggleTask(taskId))}
-            updateTaskQuantity={(newTask) => dispatch(updateTask(newTask))}
+            onUpdateStationTask={(stationId, taskId, taskAttributes) => {
+              dispatch(updateStationTask(stationId, taskId, taskAttributes))
+            }}
           />
         );
       case 'TaskView':
         return <TaskView
-                  task={tasks[route.taskId]}
+                  taskIdx={taskId}
+                  task={station.tasks[route.taskId]}
                   navigator={nav}
                   onDeleteTask={(deletedTask) =>
                     dispatch(updateTask(deletedTask))
@@ -370,7 +378,7 @@ class App extends React.Component {
                 name='material|bus'
                 size={30}
                 color='#fff'
-                style={[styles.footerButtonIcon, {marginLeft: 7}]}
+                style={[styles.footerButtonIcon]}
               />
               <Text style={[styles.footerButtonText,styles.logoutButtonText]}>
                 Reset
@@ -488,7 +496,6 @@ function select(state) {
     session: state.session,
     teams: state.teams,
     stations: state.stations,
-    tasks: state.tasks,
     messages: state.messages,
     purveyors: state.purveyors,
     products: state.products,
