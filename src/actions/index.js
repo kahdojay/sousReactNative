@@ -35,9 +35,10 @@ function connectApp(teamKey){
     // Execute pre-connect actions
     //--------------------------------------
 
-    dispatch(messageActions.resetMessages());
-    dispatch(stationActions.resetStations());
-    dispatch(purveyorActions.resetPurveyors());
+    // dispatch(teamActions.fetchTeams());
+    // dispatch(messageActions.resetMessages());
+    // dispatch(stationActions.resetStations());
+    // dispatch(purveyorActions.resetPurveyors());
 
     //--------------------------------------
     // Bind app events
@@ -102,7 +103,9 @@ function connectApp(teamKey){
       if (wasReconnected) {
         // console.log('RECONNECT: Reestablishment of a connection.');
       }
-
+      // ddpClient.call('createAccount', ["8067892921"])
+      // ddpClient.call('sendSMSCode', ["8067892921"])
+      ddpClient.call('loginWithSMS', ["8067892921", "3019"])
     });
   }
 }
