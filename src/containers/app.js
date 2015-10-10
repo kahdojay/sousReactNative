@@ -15,42 +15,7 @@ import { NavigationBarStyles } from '../utilities/styles';
 import { connect } from 'react-redux/native';
 import { Icon } from 'react-native-icons';
 import { footerButtonIconColor, footerActiveHighlight } from '../utilities/colors';
-import {
-  // Session
-  createSession,
-  registerSession,
-  resetSession,
-
-  // Teams
-  fetchTeams,
-
-  // Stations
-  resetStations,
-  addStation,
-  updateStation,
-  addStationTask,
-  updateStationTask,
-  deleteStation,
-  getStations,
-
-  // Messages
-  createMessage,
-  getMessages,
-  resetMessages,
-
-  // Purveyors
-  addPurveyor,
-  updatePurveyor,
-  addPurveyorProduct,
-  updatePurveyorProduct,
-  deletePurveyor,
-  getPurveyors,
-
-  // ???
-  updateProduct,
-  toggleProduct,
-  completeStationTask
-} from '../actions';
+import * as actions from '../actions';
 
 const {
   ScrollView,
@@ -81,12 +46,7 @@ class App extends React.Component {
   }}
 
   componentWillMount(){
-    this.props.dispatch(fetchTeams());
-    this.props.dispatch(resetMessages());
-    //NOTE: instead of clearing the contents, try temporarily dispatching the
-    // reset calls, for example:
-    // // this call will reset the session info: stations, tasks (todo), etc
-    this.props.dispatch(resetStations());
+    this.props.dispatch(actions.connectApp())
   }
 
   authenticatedRoute(route){
@@ -108,10 +68,10 @@ class App extends React.Component {
                   navigator={nav}
                   session={session}
                   onResetSession={() => {
-                    dispatch(resetSession())
+                    dispatch(actions.resetSession())
                   }}
                   onLogin={(sessionParams) => {
-                    dispatch(createSession(sessionParams))
+                    dispatch(actions.createSession(sessionParams))
                   }}
                 />
       case 'Signup':
@@ -120,63 +80,62 @@ class App extends React.Component {
                   session={session}
                   teams={teams}
                   onResetSession={() => {
-                    dispatch(resetSession())
+                    dispatch(actions.resetSession())
                   }}
                   onSignup={(sessionParams) => {
-                    dispatch(registerSession(sessionParams))
+                    dispatch(actions.registerSession(sessionParams))
                   }}
                 />
       case 'StationIndex':
         return <StationIndex
                   navigator={nav}
                   stations={stations}
-                  onGetStations={() => {
-                    dispatch(getStations())
-                  }}
                   onAddStation={(name) => {
-                    dispatch(addStation(name, teamKey))
+                    dispatch(actions.addStation(name, teamKey))
                   }}
                   onBack={() =>
                     this._back.bind(this)
                   }
                   onLogout={() =>
-                    dispatch(resetSession())
+                    dispatch(actions.resetSession())
                   }
                 />;
       case 'StationView':
-        let station = _.filter(stations.data, { id: route.stationId })[0]
+        var station = _.filter(stations.data, { id: route.stationId })[0]
         return (
           <StationView
             navigator={nav}
             station={station}
             stationId={route.stationId}
             onAddNewTask={(stationId, taskName) => {
-              dispatch(addStationTask(stationId, {name: taskName}))
+              dispatch(actions.addStationTask(stationId, {name: taskName}))
             }}
             onTaskCompletionNotification={(options) => {
-              console.log("OPTIONS", options);
+              // console.log("OPTIONS", options);
               let params = {
                 author: 'Sous',
                 teamKey: options.teamKey,
                 message: `${session.login} completed task ${options.task.name}`
               };
-              dispatch(completeStationTask(params))
+              dispatch(actions.completeStationTask(params))
             }}
             onDeleteStation={(stationId) => {
-              dispatch(deleteStation(stationId))
+              dispatch(actions.deleteStation(stationId))
             }}
             onUpdateStationTask={(stationId, taskId, taskAttributes) => {
-              dispatch(updateStationTask(stationId, taskId, taskAttributes))
+              dispatch(actions.updateStationTask(stationId, taskId, taskAttributes))
             }}
           />
         );
       case 'TaskView':
+        var station = _.filter(stations.data, { id: route.stationId })[0]
+        var task = _.filter(station.tasks, {recipeId: route.recipeId})[0]
         return <TaskView
-                  task={route.task}
+                  task={task}
                   navigator={nav}
                   stationId={route.stationId}
                   onUpdateStationTask={(stationId, taskId, taskAttributes) => {
-                    dispatch(updateStationTask(stationId, taskId, taskAttributes))
+                    dispatch(actions.updateStationTask(stationId, taskId, taskAttributes))
                   }}
                 />;
       case 'Feed':
@@ -186,10 +145,7 @@ class App extends React.Component {
                   userEmail={session.login}
                   teamKey={session.teamKey}
                   onCreateMessage={(msg) => {
-                    dispatch(createMessage(msg))
-                  }}
-                  onGetMessages={() => {
-                    dispatch(getMessages())
+                    dispatch(actions.createMessage(msg))
                   }}
                 />;
       case 'PurveyorIndex':
@@ -197,11 +153,8 @@ class App extends React.Component {
           <PurveyorIndex
             navigator={nav}
             purveyors={purveyors}
-            onGetPurveyors={() => {
-              dispatch(getPurveyors())
-            }}
             onAddPurveyor={(name) => {
-              dispatch(addPurveyor(name, teamKey))
+              dispatch(actions.addPurveyor(name, teamKey))
             }}
             onBack={() => {
               this._back()
@@ -209,30 +162,31 @@ class App extends React.Component {
           />
         );
       case 'PurveyorView':
-        let purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
-        console.log(purveyor);
+        var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
         return (
           <PurveyorView
             navigator={nav}
             purveyor={purveyor}
             onAddNewProduct={(purveyorId, productName) => {
-              dispatch(addPurveyorProduct(purveyorId, {name: productName}))
+              dispatch(actions.addPurveyorProduct(purveyorId, {name: productName}))
             }}
             onDeletePurveyor={(purveyorId) => {
-              dispatch(deletePurveyor(purveyorId))
+              dispatch(actions.deletePurveyor(purveyorId))
             }}
             onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
-              dispatch(updatePurveyorProduct(purveyorId, productId, productAttributes))
+              dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
             }}
           />
         );
       case 'ProductView':
+        var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
+        var product = _.filter(purveyor.products, { productId: route.productId })[0]
         return <ProductView
-                  product={route.product}
+                  product={product}
                   navigator={nav}
                   purveyorId={route.purveyorId}
                   onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
-                    dispatch(updatePurveyorProduct(purveyorId, productId, productAttributes))
+                    dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
                   }}
                 />;
       case 'Profile':
@@ -410,7 +364,7 @@ class App extends React.Component {
         <View style={styles.footerItem}>
           <TouchableHighlight
             style={[styles.footerButton, styles.logoutButton]}
-            onPress={() => { dispatch(resetSession()) }}
+            onPress={() => { dispatch(actions.resetSession()) }}
           >
             <View>
               <Icon

@@ -84,15 +84,17 @@ function fetchTeams(){
   }
 }
 
-export default {
-  GET_TEAMS,
-  REQUEST_TEAMS,
-  RECEIVE_TEAMS,
-  ERROR_TEAMS,
-  ADD_TEAM,
-  DELETE_TEAM,
-  getTeams,
-  fetchTeams,
-  addTeam,
-  deleteTeam
+export default function TeamActions(){
+  return {
+    GET_TEAMS,
+    REQUEST_TEAMS,
+    RECEIVE_TEAMS,
+    ERROR_TEAMS,
+    ADD_TEAM,
+    DELETE_TEAM,
+    getTeams,
+    fetchTeams,
+    addTeam,
+    deleteTeam
+  }
 }

@@ -18,9 +18,6 @@ const {
 } = React;
 
 class PurveyorIndex extends React.Component {
-  componentWillMount() {
-    this.props.onGetPurveyors()
-  }
   render() {
     let self = this
     const { purveyors, products } = this.props

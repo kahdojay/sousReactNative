@@ -89,15 +89,17 @@ function createSession(sessionParams) {
 }
 
 // note: expose other action creators for testing
-export default {
-  RESET_SESSION,
-  REGISTER_SESSION,
-  REQUEST_SESSION,
-  RECEIVE_SESSION,
-  ERROR_SESSION,
-  // validateSession,
-  createSession,
-  resetSession,
-  // resetSessionInfo,
-  registerSession
+export default function SessionActions(ddpClient){
+  return {
+    RESET_SESSION,
+    REGISTER_SESSION,
+    REQUEST_SESSION,
+    RECEIVE_SESSION,
+    ERROR_SESSION,
+    // validateSession,
+    createSession,
+    resetSession,
+    // resetSessionInfo,
+    registerSession
+  }
 }

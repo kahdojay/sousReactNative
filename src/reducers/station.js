@@ -38,6 +38,7 @@ function stations(state = initialState.stations, action) {
     var stationIdx = _.findIndex(state.data, (station, idx) => {
       return station.id == action.station.id;
     });
+    console.log(action.station)
     if(stationIdx === -1){
       stationsState.push(action.station);
     } else {
