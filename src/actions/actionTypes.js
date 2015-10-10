@@ -52,6 +52,9 @@ export const ORDER_PURVEYOR_PRODUCT = 'ORDER_PURVEYOR_PRODUCT';
 // export const UPDATE_PRODUCT = 'UPDATE_PRODUCT';
 // export const TOGGLE_PRODUCT = 'TOGGLE_PRODUCT';
 
+export const KEYBOARD_WILL_SHOW = 'KEYBOARD_WILL_SHOW';
+export const KEYBOARD_WILL_HIDE = 'KEYBOARD_WILL_HIDE';
+
 /*
  * other constants
  */
