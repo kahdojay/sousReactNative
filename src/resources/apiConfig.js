@@ -14,4 +14,5 @@ export const DDP = {
   ENDPOINT_WS: 'ws://localhost:3000/websocket',
   SUBSCRIBE_MESSAGES: 'messages',
   SUBSCRIBE_STATIONS: 'stations',
+  SUBSCRIBE_PURVEYORS: 'purveyors',
 }

@@ -24,45 +24,42 @@ export default class ProductList extends React.Component {
     this.setState({showCompleted: !this.state.showCompleted})
   }
   render() {
-    let products = this.props.products
-    let productsCompleted = _.filter(products, { completed: true, deleted: false })
-      .map((product, index) => {
+    let {purveyor} = this.props
+    let productsOrdered = _.filter(purveyor.products, { ordered: true, deleted: false })
+      .map((product, idx) => {
            return <ProductListItem
             product={product}
-            key={index}
-            name={product.name}
-            completed={product.completed}
-            productId={product.id}
+            key={idx}
+            purveyorId={purveyor.id}
             navigator={this.props.navigator}
-            onPress={() => this.props.onProductClick(product.id)}
-            onChangeQuantity={this.props.updateProductQuantity} />
+            onUpdateProduct={(productAttributes) => {
+              this.props.onUpdatePurveyorProduct(purveyor.id, product.productId, productAttributes);
+            }} />
         })
-    let productsIncomplete = _.filter(products, { completed: false, deleted: false })
-      .map((product, index) => {
+    let productsUnordered = _.filter(purveyor.products, { ordered: false, deleted: false })
+      .map((product, idx) => {
           return <ProductListItem
             product={product}
-            key={index}
-            name={product.name}
-            quantity={product.quantity}
-            completed={product.completed}
-            productId={product.id}
+            key={idx}
+            purveyorId={purveyor.id}
             navigator={this.props.navigator}
-            onPress={() => this.props.onProductClick(product.id)}
-            onChangeQuantity={this.props.updateProductQuantity} />
+            onUpdateProduct={(productAttributes) => {
+              this.props.onUpdatePurveyorProduct(purveyor.id, product.productId, productAttributes);
+            }} />
         })
     return (
       <View>
-        {productsIncomplete}
+        {productsUnordered}
         <TouchableHighlight
           onPress={this.handlePress.bind(this)}
         >
           <View style={styles.container}>
             <View style={styles.roundedCorners}>
-              <Text style={styles.text}>{productsCompleted.length} Completed Items</Text>
+              <Text style={styles.text}>{productsOrdered.length} Ordered</Text>
             </View>
           </View>
         </TouchableHighlight>
-        {this.state.showCompleted ? productsCompleted : <View />}
+        {this.state.showCompleted ? productsOrdered : <View />}
       </View>
     );
   }
@@ -91,9 +88,8 @@ const styles = StyleSheet.create({
 })
 
 ProductList.propTypes = {
-  // onProductClick: PropTypes.func.isRequired,
+  // onUpdatePurveyorProduct: PropTypes.func.isRequired,
   // products: PropTypes.arrayOf(PropTypes.shape({
-    // text: PropTypes.string.isRequired,
-    // completed: PropTypes.bool.isRequired
+    // ordered: PropTypes.bool.isRequired
   // }).isRequired).isRequired
 };

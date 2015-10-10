@@ -16,7 +16,7 @@ class PurveyorIndexRow extends React.Component {
   render() {
     let { purveyor, products } = this.props
     let purveyorProducts = _.filter(products,
-                                {purveyorKey: purveyor.key, deleted: false})
+                                {purveyorId: purveyor.id, deleted: false})
 
     const numCompletedProducts = _.filter(purveyorProducts, {completed: true}).length
     const totalNumProducts = purveyorProducts.length

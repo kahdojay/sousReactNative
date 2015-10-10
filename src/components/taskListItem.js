@@ -30,7 +30,6 @@ export default class TaskListItem extends React.Component {
     this.props.onUpdateTask({completed: !this.props.task.completed});
   }
   render() {
-    let task = this.props.task
     return (
       <View style={styles.container}>
         <View style={[
@@ -55,13 +54,9 @@ export default class TaskListItem extends React.Component {
             <View>
               <Text style={[
                 styles.text,
-                this.props.completed && styles.textCompleted
+                this.props.task.completed && styles.textCompleted
               ]}>
                 {this.props.task.name}
-              </Text>
-              <Text
-                style={{fontSize: 9, position: 'absolute', left: 0, bottom: -10, color: '#ddd'}}
-              >
               </Text>
             </View>
           </TouchableHighlight>
