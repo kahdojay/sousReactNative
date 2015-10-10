@@ -40,7 +40,6 @@ function messages(state = initialState.messages, action) {
         ...messagesState.slice(messageIdx + 1)
       ]
     }
-    console.log('MESSAGE REDUCER: ', messagesState)
 
     // messagesState.push(action.message);
     return Object.assign({}, state, {
@@ -50,7 +49,7 @@ function messages(state = initialState.messages, action) {
       lastUpdated: (new Date()).getTime()
     });
   case CREATE_MESSAGE:
-    //TODO: refactor this part so that it can add the message instantly and the update wont double render
+    //TODO: optimistic updates would go here??
     // let currentMessages = state.data;
     // currentMessages.push(action.messages);
     // return Object.assign({}, state, {

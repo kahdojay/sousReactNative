@@ -37,6 +37,17 @@ class ProductView extends React.Component {
     this.props.onUpdatePurveyorProduct(purveyorId, product.productId, newProduct);
     this.props.navigator.pop()
   }
+  componentWillReceiveProps(nextProps){
+    if(nextProps.product.deleted === true){
+      this.props.navigator.pop()
+    } else {
+      this.setState({
+        textInputDescription: nextProps.product.description,
+        textInputName: nextProps.product.name,
+        saved: true,
+      });
+    }
+  }
   render() {
     return (
       <View style={styles.container}>

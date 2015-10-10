@@ -25,10 +25,10 @@ export const REQUEST_TEAMS = 'REQUEST_TEAMS';
 export const RECEIVE_TEAMS = 'RECEIVE_TEAMS';
 export const ERROR_TEAMS = 'ERROR_TEAMS';
 
-export const ADD_TASK = 'ADD_TASK';
-export const UPDATE_TASK = 'UPDATE_TASK';
-export const TOGGLE_TASK = 'TOGGLE_TASK';
-export const SET_TASK_VISIBILITY = 'SET_TASK_VISIBILITY';
+// export const ADD_TASK = 'ADD_TASK';
+// export const UPDATE_TASK = 'UPDATE_TASK';
+// export const TOGGLE_TASK = 'TOGGLE_TASK';
+// export const SET_TASK_VISIBILITY = 'SET_TASK_VISIBILITY';
 
 export const RESET_MESSAGES = 'RESET_MESSAGES';
 export const GET_MESSAGES = 'GET_MESSAGES';
@@ -48,9 +48,9 @@ export const RECEIVE_PURVEYORS = 'RECEIVE_PURVEYORS';
 export const ERROR_PURVEYORS = 'ERROR_PURVEYORS';
 export const ORDER_PURVEYOR_PRODUCT = 'ORDER_PURVEYOR_PRODUCT';
 
-export const ADD_PRODUCT = 'ADD_PRODUCT';
-export const UPDATE_PRODUCT = 'UPDATE_PRODUCT';
-export const TOGGLE_PRODUCT = 'TOGGLE_PRODUCT';
+// export const ADD_PRODUCT = 'ADD_PRODUCT';
+// export const UPDATE_PRODUCT = 'UPDATE_PRODUCT';
+// export const TOGGLE_PRODUCT = 'TOGGLE_PRODUCT';
 
 /*
  * other constants

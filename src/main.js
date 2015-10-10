@@ -31,6 +31,7 @@ class SousApp extends React.Component {
       store,
       {storage: AsyncStorage},
       () => {
+        // connect to the w
         this.setState({ rehydrated: true })
       }
     )
