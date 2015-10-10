@@ -20,9 +20,6 @@ class Feed extends React.Component {
   constructor(props) {
     super(props)
   }
-  componentDidMount(){
-    this.props.onGetMessages()
-  }
 
   componentDidUpdate(){
     this.scrollToBottom();
@@ -149,7 +146,6 @@ const styles = StyleSheet.create({
 
 Feed.propTypes = {
   onCreateMessage: PropTypes.func.isRequired,
-  onGetMessages: PropTypes.func.isRequired,
 };
 
 module.exports = Feed;

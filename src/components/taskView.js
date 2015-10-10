@@ -23,12 +23,14 @@ class TaskView extends React.Component {
     }
   }
   saveTask() {
-    let {stationId, task} = this.props;
-    let newTask = this.props.task;
-    newTask.description = this.state.textInputDescription;
-    newTask.name = this.state.textInputName
-    this.props.onUpdateStationTask(stationId, task.recipeId, newTask);
-    this.setState({saved: true});
+    if(this.state.saved === false){
+      let {stationId, task} = this.props;
+      let newTask = this.props.task;
+      newTask.description = this.state.textInputDescription;
+      newTask.name = this.state.textInputName
+      this.props.onUpdateStationTask(stationId, task.recipeId, newTask);
+      this.setState({saved: true});
+    }
   }
   deleteTask() {
     let {stationId, task} = this.props;
@@ -36,6 +38,17 @@ class TaskView extends React.Component {
     newTask.deleted = true
     this.props.onUpdateStationTask(stationId, task.recipeId, newTask)
     this.props.navigator.pop()
+  }
+  componentWillReceiveProps(nextProps){
+    if(nextProps.task.deleted === true){
+      this.props.navigator.pop()
+    } else {
+      this.setState({
+        textInputDescription: nextProps.task.description,
+        textInputName: nextProps.task.name,
+        saved: true,
+      });
+    }
   }
   render() {
     return (

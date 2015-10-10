@@ -43,7 +43,7 @@ export default class ProductListItem extends React.Component {
           <TouchableHighlight
             onPress={() => this.props.navigator.push({
               name: 'ProductView',
-              product: this.props.product,
+              productId: this.props.product.productId,
               purveyorId: this.props.purveyorId
             })}
             style={styles.main}
