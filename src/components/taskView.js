@@ -8,10 +8,15 @@ const {
   View,
   Text,
   TextInput,
+  NativeModules,
   Image,
   TouchableOpacity,
   TouchableHighlight,
 } = React;
+
+const {
+  UIManager
+} = NativeModules;
 
 class TaskView extends React.Component {
   constructor(props) {
@@ -22,6 +27,21 @@ class TaskView extends React.Component {
       saved: true,
     }
   }
+
+  scrollToBottom() {
+    // if(this.refs.hasOwnProperty('scrollview')){
+    //   UIManager.measure(this.refs.scrollview, (x, y, width, height, left, top) => {
+    //     console.log(height);
+    //     // this.refs.scrollview.scrollTo(999999)
+    //   });
+    // }
+  }
+  scrollToTop() {
+    if(this.refs.hasOwnProperty('scrollview')){
+      this.refs.scrollview.scrollTo(0)
+    }
+  }
+
   saveTask() {
     if(this.state.saved === false){
       let {stationId, task} = this.props;
@@ -49,27 +69,38 @@ class TaskView extends React.Component {
         saved: true,
       });
     }
+    if(nextProps.ui.keyboard.visible === true){
+      this.scrollToBottom();
+    } else {
+      this.scrollToTop();
+    }
   }
+
   render() {
+    let navBar = <View style={styles.navbar}>
+      <View style={[
+        NavigationBarStyles.navBar,
+        {paddingVertical: 20}
+      ]}>
+        <BackBtn
+          style={styles.backButton}
+          callback={this.saveTask.bind(this)}
+          navigator={this.props.navigator}
+        />
+        <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+        <View style={NavigationBarStyles.navBarRightButton}></View>
+      </View>
+    </View>
+
+    if(this.props.ui.keyboard.visible === true){
+      navBar = <View/>
+    }
     return (
       <View style={styles.container}>
-        <View style={styles.navbar}>
-          <View style={[
-            NavigationBarStyles.navBar,
-            {paddingVertical: 20}
-          ]}>
-            <BackBtn
-              style={styles.backButton}
-              callback={this.saveTask.bind(this)}
-              navigator={this.props.navigator}
-            />
-            <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-            <View style={NavigationBarStyles.navBarRightButton}></View>
-          </View>
-        </View>
-
+        {navBar}
         <ScrollView
           scrollEventThrottle={200}
+          ref='scrollview'
         >
           <View style={styles.headerContainer}>
             <Icon
