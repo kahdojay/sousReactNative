@@ -58,7 +58,7 @@ class App extends React.Component {
   }
 
   getScene(route, nav) {
-    const { session, teams, stations, messages, dispatch, purveyors, products } = this.props;
+    const { ui, session, teams, stations, messages, dispatch, purveyors, products } = this.props;
 
     let teamKey = session.teamKey;
 
@@ -104,6 +104,7 @@ class App extends React.Component {
         var station = _.filter(stations.data, { id: route.stationId })[0]
         return (
           <StationView
+            ui={ui}
             navigator={nav}
             station={station}
             stationId={route.stationId}
@@ -131,6 +132,7 @@ class App extends React.Component {
         var station = _.filter(stations.data, { id: route.stationId })[0]
         var task = _.filter(station.tasks, {recipeId: route.recipeId})[0]
         return <TaskView
+                  ui={ui}
                   task={task}
                   navigator={nav}
                   stationId={route.stationId}
@@ -165,6 +167,7 @@ class App extends React.Component {
         var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
         return (
           <PurveyorView
+            ui={ui}
             navigator={nav}
             purveyor={purveyor}
             onAddNewProduct={(purveyorId, productName) => {
@@ -182,6 +185,7 @@ class App extends React.Component {
         var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
         var product = _.filter(purveyor.products, { productId: route.productId })[0]
         return <ProductView
+                  ui={ui}
                   product={product}
                   navigator={nav}
                   purveyorId={route.purveyorId}
@@ -297,7 +301,15 @@ class App extends React.Component {
           header =  <View></View>;
       }
 
-      footer = <View style={styles.footerContainer}>
+      let footerContainerStyle = styles.footerContainer;
+      // TODO: fix the height animation to prevent FOUC
+      if(ui.keyboard.visible === true){
+        footerContainerStyle = [styles.footerContainer, {
+          marginTop: ui.keyboard.marginBottom - 70
+        }];
+      }
+
+      footer = <View style={footerContainerStyle}>
         <View style={styles.footerItem}>
           <TouchableHighlight
             underlayColor='white'
@@ -382,21 +394,15 @@ class App extends React.Component {
       </View>
     }
 
-    let footerStyle = styles.scene;
-    // TODO: fix the height animation to prevent FOUC
     if(ui.keyboard.visible === true){
-      footerStyle = [styles.scene, {
-        height: ui.keyboard.marginBottom
-      }];
+      header = <View/>
     }
 
     return (
       <View style={styles.container}>
         {header}
         {scene}
-        <View style={footerStyle}>
-          {footer}
-        </View>
+        {footer}
       </View>
     );
   }
@@ -426,6 +432,7 @@ let styles = StyleSheet.create({
     marginTop: 20,
   },
   scene: {
+    flex: 1
   },
   nav: {
     backgroundColor: '#1825AD',

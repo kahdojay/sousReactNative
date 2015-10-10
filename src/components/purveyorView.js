@@ -46,39 +46,43 @@ class PurveyorView extends React.Component {
   render() {
     let purveyor = this.props.purveyor
 
+    let navBar = <View style={[
+      NavigationBarStyles.navBarContainer,
+      {backgroundColor: navbarColor}
+    ]}>
+      <View style={[
+        NavigationBarStyles.navBar,
+        {paddingVertical: 20}
+      ]}>
+        <BackBtn
+          navigator={this.props.navigator}
+          style={NavigationBarStyles.navBarText}
+          />
+        <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+        <TouchableOpacity
+          onPress={this.showActionSheet.bind(this)}
+          style={styles.iconMore}>
+          <View
+            style={[
+              NavigationBarStyles.navBarRightButton,
+              {marginVertical: 0}
+            ]}>
+            <Icon
+              name='fontawesome|cog'
+              size={45}
+              color='white'
+              style={styles.iconMore}
+            />
+          </View>
+        </TouchableOpacity>
+      </View>
+    </View>
+    if(this.props.ui.keyboard.visible === true){
+      navBar = <View/>
+    }
     return (
       <View style={styles.container}>
-        <View style={[
-          NavigationBarStyles.navBarContainer,
-          {backgroundColor: navbarColor}
-        ]}>
-          <View style={[
-            NavigationBarStyles.navBar,
-            {paddingVertical: 20}
-          ]}>
-            <BackBtn
-              navigator={this.props.navigator}
-              style={NavigationBarStyles.navBarText}
-              />
-            <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-            <TouchableOpacity
-              onPress={this.showActionSheet.bind(this)}
-              style={styles.iconMore}>
-              <View
-                style={[
-                  NavigationBarStyles.navBarRightButton,
-                  {marginVertical: 0}
-                ]}>
-                <Icon
-                  name='fontawesome|cog'
-                  size={45}
-                  color='white'
-                  style={styles.iconMore}
-                />
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
+        {navBar}
         <AddForm
           placeholder="Add a Product..."
           onSubmit={(productName) => {
