@@ -199,7 +199,7 @@ class App extends React.Component {
   }
 
   renderScene(route, nav) {
-    const { dispatch } = this.props;
+    const { dispatch, ui } = this.props;
 
     // redirect to initial view
     if (this.props.session.isAuthenticated){
@@ -382,11 +382,21 @@ class App extends React.Component {
       </View>
     }
 
+    let footerStyle = styles.scene;
+    // TODO: fix the height animation to prevent FOUC
+    if(ui.keyboard.visible === true){
+      footerStyle = [styles.scene, {
+        height: ui.keyboard.marginBottom
+      }];
+    }
+
     return (
       <View style={styles.container}>
         {header}
         {scene}
-        {footer}
+        <View style={footerStyle}>
+          {footer}
+        </View>
       </View>
     );
   }
@@ -414,6 +424,8 @@ let styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 20,
+  },
+  scene: {
   },
   nav: {
     backgroundColor: '#1825AD',
@@ -496,6 +508,7 @@ let styles = StyleSheet.create({
 
 function select(state) {
   return {
+    ui: state.ui,
     session: state.session,
     teams: state.teams,
     stations: state.stations,

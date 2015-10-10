@@ -1,5 +1,6 @@
 import { DDP } from '../resources/apiConfig'
 import DDPClient from 'ddp-client'
+import UIActions from './ui'
 import SessionActions from './session'
 import StationActions from './station'
 import TeamActions from './team'
@@ -19,6 +20,7 @@ let ddpClient = new DDPClient({
   // socketConstructor: WebSocket // Another constructor to create new WebSockets
 });
 
+const uiActions = UIActions(ddpClient)
 const sessionActions = SessionActions(ddpClient)
 const stationActions = StationActions(ddpClient)
 const teamActions = TeamActions(ddpClient)
@@ -37,6 +39,12 @@ function connectApp(){
     dispatch(messageActions.resetMessages());
     dispatch(stationActions.resetStations());
     dispatch(purveyorActions.resetPurveyors());
+
+    //--------------------------------------
+    // Bind app events
+    //--------------------------------------
+
+    dispatch(uiActions.bindKeyboard());
 
     //--------------------------------------
     // Bind DDP client events
@@ -101,6 +109,7 @@ export default Object.assign(
   {
     'connectApp': connectApp
   },
+  uiActions,
   sessionActions,
   teamActions,
   stationActions,
