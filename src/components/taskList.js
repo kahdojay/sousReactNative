@@ -38,7 +38,7 @@ export default class TaskList extends React.Component {
            return <TaskListItem
             task={task}
             key={idx}
-            stationId={this.props.station.id}
+            stationId={station.id}
             onTaskCompletionNotification={this.onTaskCompletionNotification.bind(this)}
             navigator={this.props.navigator}
             onUpdateTask={(taskAttributes) => {
@@ -51,6 +51,7 @@ export default class TaskList extends React.Component {
           return <TaskListItem
             task={task}
             key={idx}
+            stationId={station.id}
             onTaskCompletionNotification={this.onTaskCompletionNotification.bind(this)}
             navigator={this.props.navigator}
             onUpdateTask={(taskAttributes) => {

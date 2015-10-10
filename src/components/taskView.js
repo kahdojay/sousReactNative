@@ -19,6 +19,7 @@ class TaskView extends React.Component {
     this.state = {
       textInputDescription: this.props.task.description,
       textInputName: this.props.task.name,
+      saved: true,
     }
   }
   saveTask() {
@@ -27,6 +28,7 @@ class TaskView extends React.Component {
     newTask.description = this.state.textInputDescription;
     newTask.name = this.state.textInputName
     this.props.onUpdateStationTask(stationId, task.recipeId, newTask);
+    this.setState({saved: true});
   }
   deleteTask() {
     let {stationId, task} = this.props;
@@ -80,7 +82,7 @@ class TaskView extends React.Component {
               style={styles.searchInput}
               placeholder={'Title'}
               value={this.state.textInputName}
-              onChangeText={(text) => this.setState({textInputName: text})}
+              onChangeText={(text) => this.setState({textInputName: text, saved: false})}
               onEndEditing={() => this.saveTask()}
             />
             <TextInput
@@ -88,9 +90,14 @@ class TaskView extends React.Component {
               multiline={true}
               placeholder={'Description'}
               value={this.state.textInputDescription}
-              onChangeText={(text) => this.setState({textInputDescription: text})}
+              onChangeText={(text) => this.setState({textInputDescription: text, saved: false})}
               onEndEditing={() => this.saveTask()}
             />
+            {this.state.saved === false ? <TouchableHighlight
+              style={[styles.button, {backgroundColor: '#423'}]}
+              onPress={() => this.saveTask()} >
+              <Text style={styles.buttonText}>Save</Text>
+            </TouchableHighlight> : <View />}
             <TouchableHighlight
               style={styles.button}
               onPress={() => this.deleteTask()} >
