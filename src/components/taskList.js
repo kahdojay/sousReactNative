@@ -42,7 +42,6 @@ export default class TaskList extends React.Component {
             onTaskCompletionNotification={this.onTaskCompletionNotification.bind(this)}
             navigator={this.props.navigator}
             onUpdateTask={(taskAttributes) => {
-              console.log("ATTRIBUTES", taskAttributes);
               this.props.onUpdateStationTask(station.id, task.recipeId, taskAttributes);
             }} />
         })
@@ -66,7 +65,7 @@ export default class TaskList extends React.Component {
         >
           <View style={styles.container}>
             <View style={styles.roundedCorners}>
-              <Text style={styles.text}>{tasksCompleted.length} Completed Items</Text>
+              <Text style={styles.text}>{tasksCompleted.length} Completed</Text>
             </View>
           </View>
         </TouchableHighlight>

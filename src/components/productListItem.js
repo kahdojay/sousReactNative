@@ -16,57 +16,62 @@ let {
 
 export default class ProductListItem extends React.Component {
   increment() {
-    let newProduct = this.props.product
-    newProduct.quantity += 1
-    this.props.onChangeQuantity(newProduct)
+    this.props.onUpdateProduct({quantity: (this.props.product.quantity + 1)})
   }
   decrement() {
-    let newProduct = this.props.product
-    if (newProduct.quantity >= 2)
-      newProduct.quantity -= 1
-    this.props.onChangeQuantity(newProduct)
+    if (this.props.product.quantity > 1 ) {
+      this.props.onUpdateProduct({quantity: (this.props.product.quantity - 1)})
+    }
+  }
+  handleOrderProduct() {
+    this.props.onUpdateProduct({ordered: !this.props.product.ordered});
   }
   render() {
-    let product = this.props.product
-    let productQuantity = product.quantity
-    // let quantity = this.props.quantity > 1 ? this.props.quantity : ''
     return (
       <View style={styles.container}>
         <View style={[
           styles.row,
-          this.props.completed && styles.rowCompleted
+          this.props.product.ordered && styles.rowCompleted
         ]}>
           <View style={styles.checkboxContainer}>
             <CheckBox
               label=''
-              onChange={this.props.onPress}
-              checked={this.props.completed}
+              onChange={this.handleOrderProduct.bind(this)}
+              checked={this.props.product.ordered}
             />
           </View>
           <TouchableHighlight
             onPress={() => this.props.navigator.push({
               name: 'ProductView',
-              productId: this.props.productId
+              product: this.props.product,
+              purveyorId: this.props.purveyorId
             })}
             style={styles.main}
           >
-            <Text style={[
-              styles.text,
-              this.props.completed && styles.textCompleted
-            ]}>
-              {this.props.name}
-            </Text>
+            <View>
+              <Text style={[
+                styles.text,
+                this.props.ordered && styles.textCompleted
+              ]}>
+                {this.props.product.name}
+              </Text>
+              <Text
+                style={{fontSize: 9, position: 'absolute', left: 0, bottom: -10, color: '#999'}}
+              >
+                {this.props.product.price + ' • ' + this.props.product.unit}
+              </Text>
+            </View>
           </TouchableHighlight>
           <Text style={styles.quantity}>
-            {productQuantity > 1 ? ('X' + productQuantity) : ''}
+            {this.props.product.quantity > 1 ? ('X' + this.props.product.quantity) : ''}
           </Text>
           <TouchableHighlight
             underlayColor="#bbb"
-            onPress={() => this.decrement()}>
+            onPress={this.decrement.bind(this)}>
             <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
           </TouchableHighlight>
           <TouchableHighlight
-            onPress={() => this.increment()}>
+            onPress={this.increment.bind(this)}>
             <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
           </TouchableHighlight>
         </View>
@@ -117,6 +122,6 @@ let styles = StyleSheet.create({
 });
 
 ProductListItem.propTypes = {
-  // onPress: PropTypes.func.isRequired,
-  completed: PropTypes.bool.isRequired
+  // onUpdateProduct: PropTypes.func.isRequired,
+  product: PropTypes.object.isRequired
 };
