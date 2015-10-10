@@ -37,7 +37,7 @@ class PurveyorView extends React.Component {
     (buttonIndex) => {
       if( deleteAction === buttonIndex ){
         // process the delete
-        this.props.onDeletePurveyor(this.props.purveyor.key);
+        this.props.onDeletePurveyor(this.props.purveyor.id);
         // pop the view
         this.props.navigator.pop();
       }
@@ -45,7 +45,7 @@ class PurveyorView extends React.Component {
   }
   render() {
     let purveyor = this.props.purveyor
-    let products = this.props.products
+
     return (
       <View style={styles.container}>
         <View style={[
@@ -81,14 +81,13 @@ class PurveyorView extends React.Component {
         </View>
         <AddForm
           placeholder="Add a Product..."
-          onSubmit={text => {
-            this.props.onAddNewProduct(text, purveyor.key)
+          onSubmit={(productName) => {
+            this.props.onAddNewProduct(purveyor.id, productName)
           }}/>
         <ProductList
           navigator={this.props.navigator}
-          updateProductQuantity={this.props.updateProductQuantity}
-          products={products}
-          onProductClick={(productId) => this.props.onToggleProduct(productId)}/>
+          purveyor={purveyor}
+          onUpdatePurveyorProduct={this.props.onUpdatePurveyorProduct}/>
       </View>
     )
   }
@@ -112,9 +111,7 @@ const styles = StyleSheet.create({
 });
 
 PurveyorView.propTypes = {
-  products: React.PropTypes.Object,
-  purveyorName: React.PropTypes.string.isRequired,
-  updateProductQuantity: React.PropTypes.func,
+  // purveyor: PropTypes.object.isRequired,
 };
 
 export default PurveyorView

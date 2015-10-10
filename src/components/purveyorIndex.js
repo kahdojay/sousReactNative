@@ -18,6 +18,9 @@ const {
 } = React;
 
 class PurveyorIndex extends React.Component {
+  componentWillMount() {
+    this.props.onGetPurveyors()
+  }
   render() {
     let self = this
     const { purveyors, products } = this.props
@@ -27,12 +30,11 @@ class PurveyorIndex extends React.Component {
         return (
           <PurveyorIndexRow
             key={idx}
-            products={products}
             purveyor={purveyor}
             onPress={() => {
               self.props.navigator.push({
                 name: 'PurveyorView',
-                purveyorKey: purveyor.key,
+                purveyorId: purveyor.id,
               })
             }}
           />
@@ -44,7 +46,7 @@ class PurveyorIndex extends React.Component {
       <View style={styles.container}>
         <AddForm
           placeholder="Add purveyor..."
-          onSubmit={this.props.onAddPurveyor.bind(this)}
+          onSubmit={this.props.onAddPurveyor}
         />
         <ScrollView
         >

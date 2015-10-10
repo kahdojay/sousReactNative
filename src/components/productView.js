@@ -19,18 +19,22 @@ class ProductView extends React.Component {
     this.state = {
       textInputDescription: this.props.product.description,
       textInputName: this.props.product.name,
+      saved: true,
     }
   }
   saveProduct() {
-    let newProduct = this.props.product
+    let {purveyorId, product} = this.props;
+    let newProduct = this.props.product;
     newProduct.description = this.state.textInputDescription
     newProduct.name = this.state.textInputName
-    this.props.saveProductDescription(newProduct)
+    this.props.onUpdatePurveyorProduct(purveyorId, product.productId, newProduct);
+    this.setState({saved: true});
   }
   deleteProduct() {
-    let newProduct = this.props.product
+    let {purveyorId, product} = this.props;
+    let newProduct = this.props.product;
     newProduct.deleted = true
-    this.props.onDeleteProduct(newProduct)
+    this.props.onUpdatePurveyorProduct(purveyorId, product.productId, newProduct);
     this.props.navigator.pop()
   }
   render() {
@@ -76,7 +80,7 @@ class ProductView extends React.Component {
               style={styles.searchInput}
               placeholder={'Title'}
               value={this.state.textInputName}
-              onChangeText={(text) => this.setState({textInputName: text})}
+              onChangeText={(text) => this.setState({textInputName: text, saved: false})}
               onEndEditing={() => this.saveProduct()}
             />
             <TextInput
@@ -84,9 +88,14 @@ class ProductView extends React.Component {
               multiline={true}
               placeholder={'Description'}
               value={this.state.textInputDescription}
-              onChangeText={(text) => this.setState({textInputDescription: text})}
+              onChangeText={(text) => this.setState({textInputDescription: text, saved: false})}
               onEndEditing={() => this.saveProduct()}
             />
+            {this.state.saved === false ? <TouchableHighlight
+              style={[styles.button, {backgroundColor: '#423'}]}
+              onPress={() => this.saveProduct()} >
+              <Text style={styles.buttonText}>Save</Text>
+            </TouchableHighlight> : <View />}
             <TouchableHighlight
               style={styles.button}
               onPress={() => this.deleteProduct()} >

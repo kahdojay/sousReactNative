@@ -16,11 +16,15 @@ import { connect } from 'react-redux/native';
 import { Icon } from 'react-native-icons';
 import { footerButtonIconColor, footerActiveHighlight } from '../utilities/colors';
 import {
+  // Session
   createSession,
   registerSession,
   resetSession,
-  // resetSessionInfo,
+
+  // Teams
   fetchTeams,
+
+  // Stations
   resetStations,
   addStation,
   updateStation,
@@ -28,17 +32,22 @@ import {
   updateStationTask,
   deleteStation,
   getStations,
-  updateTask,
-  addTask,
-  toggleTask,
+
+  // Messages
   createMessage,
   getMessages,
   resetMessages,
+
+  // Purveyors
   addPurveyor,
+  updatePurveyor,
+  addPurveyorProduct,
+  updatePurveyorProduct,
   deletePurveyor,
   getPurveyors,
+
+  // ???
   updateProduct,
-  addProduct,
   toggleProduct,
   completeStationTask
 } from '../actions';
@@ -91,6 +100,8 @@ class App extends React.Component {
   getScene(route, nav) {
     const { session, teams, stations, messages, dispatch, purveyors, products } = this.props;
 
+    let teamKey = session.teamKey;
+
     switch (route.name) {
       case 'Login':
         return <Login
@@ -116,7 +127,6 @@ class App extends React.Component {
                   }}
                 />
       case 'StationIndex':
-        let teamKey = session.teamKey;
         return <StationIndex
                   navigator={nav}
                   stations={stations}
@@ -141,7 +151,6 @@ class App extends React.Component {
             station={station}
             stationId={route.stationId}
             onAddNewTask={(stationId, taskName) => {
-              // dispatch(addTask(text, stationId))
               dispatch(addStationTask(stationId, {name: taskName}))
             }}
             onTaskCompletionNotification={(options) => {
@@ -183,49 +192,48 @@ class App extends React.Component {
                     dispatch(getMessages())
                   }}
                 />;
-      case 'Order':
+      case 'PurveyorIndex':
         return (
           <PurveyorIndex
             navigator={nav}
             purveyors={purveyors}
-            products={products}
-            onAddPurveyor={name => {
-              dispatch(addPurveyor(name))
+            onGetPurveyors={() => {
+              dispatch(getPurveyors())
             }}
-            onBack={() => this._back.bind(this)}
+            onAddPurveyor={(name) => {
+              dispatch(addPurveyor(name, teamKey))
+            }}
+            onBack={() => {
+              this._back()
+            }}
           />
         );
       case 'PurveyorView':
-        let purveyor = _.filter(purveyors.data, { key: route.purveyorKey })[0]
-        let purveyorProducts = _.filter(products, { purveyorKey: route.purveyorKey })
-
+        let purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
+        console.log(purveyor);
         return (
           <PurveyorView
             navigator={nav}
             purveyor={purveyor}
-            products={purveyorProducts}
-            onAddNewProduct={(text, purveyorKey) => {
-              dispatch(addProduct(text, purveyorKey))
+            onAddNewProduct={(purveyorId, productName) => {
+              dispatch(addPurveyorProduct(purveyorId, {name: productName}))
             }}
-            onDeletePurveyor={(purveyorKey) => {
-              dispatch(deletePurveyor(purveyorKey))
+            onDeletePurveyor={(purveyorId) => {
+              dispatch(deletePurveyor(purveyorId))
             }}
-            onToggleProduct={(productId) => dispatch(toggleProduct(productId))}
-            updateProductQuantity={(newProduct) => {
-              dispatch(updateProduct(newProduct))
+            onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
+              dispatch(updatePurveyorProduct(purveyorId, productId, productAttributes))
             }}
           />
         );
       case 'ProductView':
         return <ProductView
-                  product={products[route.productId]}
+                  product={route.product}
                   navigator={nav}
-                  onDeleteProduct={(deletedProduct) =>
-                    dispatch(updateProduct(deletedProduct))
-                  }
-                  saveProductDescription={(newProduct) =>
-                    dispatch(updateProduct(newProduct))
-                  }
+                  purveyorId={route.purveyorId}
+                  onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
+                    dispatch(updatePurveyorProduct(purveyorId, productId, productAttributes))
+                  }}
                 />;
       case 'Profile':
         return (
@@ -259,7 +267,7 @@ class App extends React.Component {
       applyHighlight = 'Prep'
     } else if(_.includes(['Feed'], route.name)){
       applyHighlight = 'Feed'
-    } else if(_.includes(['Order', 'PurveyorView', 'ProductView'], route.name)){
+    } else if(_.includes(['PurveyorIndex', 'PurveyorView', 'ProductView'], route.name)){
       applyHighlight = 'Order'
     }
 
@@ -303,7 +311,7 @@ class App extends React.Component {
       switch(route.name) {
         case 'StationIndex':
         case 'Feed':
-        case 'Order':
+        case 'PurveyorIndex':
           header =  (
             <View style={styles.nav}>
               <View style={styles.leftBtn}></View>
@@ -330,6 +338,7 @@ class App extends React.Component {
           );
           break;
         case "StationView":
+        case "PurveyorView":
         default:
           header =  <View></View>;
       }
@@ -381,7 +390,7 @@ class App extends React.Component {
           <TouchableHighlight
             underlayColor='white'
             onPress={() => nav.replace({
-              name: 'Order'
+              name: 'PurveyorIndex'
             })}
             style={[styles.footerButton, orderFooterHighlight]}
           >

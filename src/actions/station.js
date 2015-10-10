@@ -1,6 +1,4 @@
-import murmurhash from 'murmurhash'
 import DDPClient from 'ddp-client'
-import Fetcher from '../utilities/fetcher'
 import {
   DDP
 } from '../resources/apiConfig'
@@ -15,8 +13,6 @@ import {
   DELETE_STATION,
   COMPLETE_STATION_TASK
 } from './actionTypes'
-
-// let SousFetcher = null;
 
 let ddpClient = new DDPClient({
   url: DDP.ENDPOINT_WS,
@@ -43,8 +39,6 @@ function addStation(name, teamKey) {
 }
 
 function completeStationTask(message) {
-  // NOTE: this will call the update when done, so the CREATE_MESSAGE reducer
-  //          currently doesnt do anything
   ddpClient.call('createMessage', [message]);
   return {
     type: COMPLETE_STATION_TASK
@@ -59,7 +53,6 @@ function addStationTask(stationId, taskAttributes){
 }
 
 function updateStationTask(stationId, recipeId, taskAttributes){
-  // console.log(arguments);
   ddpClient.call('updateStationTask', [stationId, recipeId, taskAttributes]);
   return {
     type: UPDATE_STATION
@@ -67,8 +60,6 @@ function updateStationTask(stationId, recipeId, taskAttributes){
 }
 
 function updateStation(stationId, stationAttributes){
-  //NOTE: this needs the second param to be an array due to js.array.apply call
-  //        ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/apply
   ddpClient.call('updateStation', [stationId, stationAttributes]);
   return {
     type: UPDATE_STATION
@@ -97,7 +88,7 @@ function errorStations(errors){
 }
 
 function receiveStations(station) {
-  console.log(RECEIVE_STATIONS, station);
+  // console.log(RECEIVE_STATIONS, station);
   return {
     type: RECEIVE_STATIONS,
     station: station
@@ -125,17 +116,16 @@ function getStations(){
     });
     ddpClient.on('message', (msg) => {
       var log = JSON.parse(msg);
-      console.log("STATIONS DDP MSG", log);
+      // console.log("STATIONS DDP MSG", log);
       // var stationIds = getState().stations.data.map(function(station) {
       //   return station.id;
       // })
-      if (log.fields){ //NOTE: removed: && stationIds.indexOf(log.id) === -1){ // handle in reducer
+      if (log.fields){
         var data = log.fields;
         data.id = log.id;
         dispatch(receiveStations(data))
       }
     });
-    // return fetchStations(teamKey);
   }
 }
 
