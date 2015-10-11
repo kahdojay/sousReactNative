@@ -5,7 +5,7 @@
   "scripts": {
     "start_cold": "./node_modules/.bin/react-native-webpack-server start",
     "start": "HOT=1 ./node_modules/.bin/react-native-webpack-server start --hot",
-    "bundle": "./node_modules/.bin/react-native-webpack-server bundle"
+    "bundle": "rnws bundle"
   },
   "dependencies": {
     "ddp-client": "^0.1.2",
@@ -25,7 +25,7 @@
     "babel-core": "^5.1.4",
     "babel-loader": "^5.0.0",
     "babel-plugin-react-transform": "^1.0.5",
-    "react-native-webpack-server": "^0.4.0",
+    "react-native-webpack-server": "^0.7.1",
     "react-transform-hmr": "^0.1.6",
     "redux-devtools": "^2.1.5",
     "webpack": "^1.8.4",

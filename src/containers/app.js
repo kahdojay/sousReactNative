@@ -45,10 +45,6 @@ class App extends React.Component {
     }
   }}
 
-  componentWillMount(){
-    this.props.dispatch(actions.connectApp())
-  }
-
   authenticatedRoute(route){
     let isAuthenticated = false;
     if(this.unauthenticatedRoutes.hasOwnProperty(route.name) === false){
@@ -89,6 +85,9 @@ class App extends React.Component {
       case 'StationIndex':
         return <StationIndex
                   navigator={nav}
+                  onConnectApp={() => {
+                    this.props.dispatch(actions.connectApp(teamKey))
+                  }}
                   stations={stations}
                   onAddStation={(name) => {
                     dispatch(actions.addStation(name, teamKey))

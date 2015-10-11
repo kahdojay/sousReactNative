@@ -27,9 +27,8 @@ const teamActions = TeamActions(ddpClient)
 const messageActions = MessageActions(ddpClient)
 const purveyorActions = PurveyorActions(ddpClient)
 
-function connectApp(){
+function connectApp(teamKey){
   return (dispatch, getState) => {
-    let teamKey = getState().session.teamKey;
 
     //--------------------------------------
     // Execute pre-connect actions
