@@ -50,21 +50,24 @@ class Feed extends React.Component {
       let date = new Date(msg.createdAt["$date"]).toLocaleTimeString();
       let time = date.substring(date.length-3, date.length)
       return (
-        <View key={index} style={styles.message}>
-          {/*<Image style={styles.avatar}
-            source={{uri: msg.imageUrl}}
-            />*/}
-          <Icon name='fontawesome|user' size={30} color='#0075FD' style={styles.avatar}/>
-          <View style={styles.messageContentContainer}>
-            <View style={styles.messageTextContainer}>
-              <Text style={styles.messageAuthor}>{msg.author}</Text>
-              <Text style={styles.messageTimestamp}>
-                {date.substring(0, date.length-5)}{time}
-              </Text>
+        <View>
+          <View key={index} style={styles.message}>
+            {/*<Image style={styles.avatar}
+              source={{uri: msg.imageUrl}}
+              />*/}
+            <Icon name='fontawesome|user' size={30} color='#0075FD' style={styles.avatar}/>
+            <View style={styles.messageContentContainer}>
+              <View style={styles.messageTextContainer}>
+                <Text style={styles.messageAuthor}>{msg.author}</Text>
+                <Text style={styles.messageTimestamp}>
+                  {date.substring(0, date.length-5)}{time}
+                </Text>
+              </View>
+              <Text style={styles.messageText} key={index}>{msg.message}</Text>
             </View>
-            <Text style={styles.messageText} key={index}>{msg.message}</Text>
           </View>
-        </View>
+          <View style={styles.separator} />
+        </View>  
       )
     }).reverse(); // reverse messages here because we use InvertedScrollView
 
@@ -143,6 +146,11 @@ const styles = StyleSheet.create({
     paddingRight: 0,
     marginTop: 0,
     paddingTop: 0
+  },
+  separator: {
+    height: 5,
+    borderBottomColor: '#bbb',
+    borderBottomWidth: 1,
   },
 });
 
