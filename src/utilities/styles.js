@@ -1,6 +1,6 @@
 const React = require('react-native');
 
-const NAV_BAR_HEIGHT = 60;
+const NAV_BAR_HEIGHT = 30;
 const STATUS_BAR_HEIGHT = 20;
 const NAV_HEIGHT = NAV_BAR_HEIGHT + STATUS_BAR_HEIGHT;
 
@@ -27,7 +27,7 @@ const NavigationBarStyles = React.StyleSheet.create({
     right: 0,
   },
   navBarText: {
-    marginVertical: 10,
+    // marginVertical: 10,
     flex: 2,
   },
   navBarTitleText: {
@@ -40,10 +40,10 @@ const NavigationBarStyles = React.StyleSheet.create({
   },
   navBarLeftButton: {
     paddingLeft: 10,
-    marginVertical: 20,
+    // marginVertical: 20,
   },
   navBarRightButton: {
-    marginVertical: 20,
+    // marginVertical: 20,
     paddingRight: 10,
   },
   navBarButtonText: {

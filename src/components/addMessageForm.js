@@ -21,17 +21,6 @@ export default class AddForm extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <TouchableHighlight
-          onPress={this.handleSubmit.bind(this)}
-          underlayColor={"#eee"}
-          style={styles.button}>
-          <Icon
-            name='fontawesome|plus-circle'
-            size={45}
-            color='#b6b6b6'
-            style={styles.icon}
-          />
-        </TouchableHighlight>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
@@ -41,6 +30,12 @@ export default class AddForm extends React.Component {
             onSubmitEditing={this.handleSubmit.bind(this)}
             />
         </View>
+        <TouchableHighlight
+          onPress={this.handleSubmit.bind(this)}
+          underlayColor={"#eee"}
+          style={styles.button}>
+          <Text style={styles.sendButtonText}>Send</Text>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -59,52 +54,59 @@ export default class AddForm extends React.Component {
 
 let styles = StyleSheet.create({
   container: {
-    height: 60,
+    height: 50,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     backgroundColor: "#f2f2f2",
+    // alignItems: 'center',
   },
   inputContainer: {
-    flex: 10,
-    flexDirection: 'column',
+    flex: 5,
+    flexDirection: 'row',
     backgroundColor: '#f2f2f2',
     padding: 8
   },
   icon: {
-    width: 40,
-    height: 40,
+    width: 30,
+    height: 30,
     paddingLeft: 30,
   },
   input: {
     flex: 1,
     backgroundColor: '#d6d6d6',
-    paddingLeft: 20,
     color: '#777',
     fontFamily: 'OpenSans',
     borderRadius: 5,
     fontWeight: 'bold'
   },
-  message: {
-    height: 50,
-    width: 50,
-    color: 'black',
-    marginTop: -10,
-    marginLeft: 4,
-    backgroundColor: 'transparent'
+  button: {
+    flex: 1,
+    // padding: 15,
+    justifyContent: 'center'
   },
+  sendButtonText: {
+    flex: 1,
+    marginTop: 10,
+    alignItems: 'center',
+    alignSelf: 'center'
+  },
+  // message: {
+  //   height: 50,
+  //   width: 50,
+  //   color: 'black',
+  //   // marginTop: -10,
+  //   marginLeft: 4,
+  //   backgroundColor: 'transparent'
+  // },
   messageText: {
+    marginLeft: 5,
     fontSize: 15,
-    marginTop: -10,
+    // marginTop: -10,
     fontFamily: 'OpenSans',
     textAlign: 'center',
     color: '#0075FD',
     fontWeight: 'bold',
     color: 'white'
-  },
-  button: {
-    flex: 1,
-    padding: 15,
-    justifyContent: 'center'
   },
   buttonText: {
     fontFamily: 'OpenSans'

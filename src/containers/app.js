@@ -272,12 +272,11 @@ class App extends React.Component {
         case 'PurveyorIndex':
           header =  (
             <View style={styles.nav}>
-              <View style={styles.leftBtn}></View>
               <Image
                 source={require('image!Logo')}
                 style={styles.logoImage}
               />
-              <TouchableHighlight
+              {/*<TouchableHighlight
                 style={styles.profileBtn}
                 onPress={() => {
                   nav.replace({
@@ -291,7 +290,7 @@ class App extends React.Component {
                   color='white'
                   style={styles.iconFace}
                 />
-              </TouchableHighlight>
+              </TouchableHighlight>*/}
             </View>
           );
           break;
@@ -373,7 +372,7 @@ class App extends React.Component {
             </View>
           </TouchableHighlight>
         </View>
-        <View style={styles.footerItem}>
+        {/*<View style={styles.footerItem}>
           <TouchableHighlight
             style={[styles.footerButton, styles.logoutButton]}
             onPress={() => { dispatch(actions.resetSession()) }}
@@ -390,7 +389,7 @@ class App extends React.Component {
               </Text>
             </View>
           </TouchableHighlight>
-        </View>
+        </View>*/}
       </View>
     }
 
@@ -438,7 +437,7 @@ let styles = StyleSheet.create({
     backgroundColor: '#1825AD',
     justifyContent: 'space-between',
     margin: 0,
-    flexDirection: 'row',
+    alignItems: 'center'
   },
   navSignUp: {
     justifyContent: 'center',
@@ -449,8 +448,8 @@ let styles = StyleSheet.create({
     fontFamily: 'OpenSans'
   },
   logoImage: {
-    width: 70,
-    height: 70,
+    width: 45,
+    height: 45,
     alignItems: 'center'
   },
   iconFace: {
@@ -491,8 +490,8 @@ let styles = StyleSheet.create({
     padding: 5
   },
   footerButtonIcon: {
-    width: 40,
-    height: 40,
+    width: 25,
+    height: 25,
     alignSelf: 'center'
   },
   footerButtonText: {

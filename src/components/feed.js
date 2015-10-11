@@ -51,9 +51,10 @@ class Feed extends React.Component {
       let time = date.substring(date.length-3, date.length)
       return (
         <View key={index} style={styles.message}>
-          <Image style={styles.avatar}
+          {/*<Image style={styles.avatar}
             source={{uri: msg.imageUrl}}
-            />
+            />*/}
+          <Icon name='fontawesome|user' size={30} color='#0075FD' style={styles.avatar}/>
           <View style={styles.messageContentContainer}>
             <View style={styles.messageTextContainer}>
               <Text style={styles.messageAuthor}>{msg.author}</Text>
@@ -101,12 +102,12 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   messageContentContainer: {
-    flex: 5
+    flex: 9
   },
   messageTextContainer: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'stretch'
+    // alignItems: 'stretch'
   },
   messageAuthor: {
     fontSize: 18,
@@ -125,7 +126,8 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    margin: 7,
+    // margin: 7,
+    alignSelf: 'center',
     flex: 1
   },
   container: {

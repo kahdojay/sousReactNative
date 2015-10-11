@@ -21,15 +21,6 @@ export default class AddForm extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <TouchableHighlight
-          onPress={this.handleSubmit.bind(this)}
-          underlayColor={"#eee"}
-          style={styles.button}>
-          <View style={styles.shareContainer}>
-            <Icon name='fontawesome|share-square-o' size={30} color='#0075FD' style={styles.share}/>
-            <Text style={styles.shareText}>Add</Text>
-          </View>
-        </TouchableHighlight>
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
@@ -39,6 +30,14 @@ export default class AddForm extends React.Component {
             onSubmitEditing={this.handleSubmit.bind(this)}
             />
         </View>
+        <TouchableHighlight
+          onPress={this.handleSubmit.bind(this)}
+          underlayColor={"#eee"}
+          style={styles.button}>
+          <View style={styles.shareContainer}>
+            <Icon name='fontawesome|plus-circle' size={30} color='#0075FD' style={styles.share}/>
+          </View>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -57,7 +56,7 @@ export default class AddForm extends React.Component {
 
 let styles = StyleSheet.create({
   container: {
-    height: 60,
+    height: 50,
     flexDirection: 'row',
     backgroundColor: "#f2f2f2"
   },
@@ -77,7 +76,7 @@ let styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   shareContainer: {
-    height: 50,
+    height: 40,
     backgroundColor: "#f2f2f2"
   },
   share: {
@@ -85,11 +84,9 @@ let styles = StyleSheet.create({
     width: 50,
     color: 'black',
     marginTop: -10,
-    marginLeft: 4,
     backgroundColor: 'transparent'
   },
   shareText: {
-    fontSize: 15,
     marginTop: -10,
     fontFamily: 'OpenSans',
     textAlign: 'center',
@@ -97,8 +94,8 @@ let styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   button: {
-    flex: 1.5,
-    padding: 5,
+    flex: 2,
+    alignItems: 'center',
     justifyContent: 'center'
   },
   buttonText: {

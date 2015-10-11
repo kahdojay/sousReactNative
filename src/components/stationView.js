@@ -24,7 +24,7 @@ class StationView extends React.Component {
   showActionSheet(){
     let buttons = [
       'Delete Station',
-      'Rename Station',
+      // 'Rename Station',
       'Cancel'
     ]
     let deleteAction = 0;
@@ -53,7 +53,7 @@ class StationView extends React.Component {
     ]}>
       <View style={[
         NavigationBarStyles.navBar,
-        {paddingVertical: 20}
+        {paddingVertical: 5}
       ]}>
         <BackBtn
           navigator={this.props.navigator}
@@ -68,7 +68,7 @@ class StationView extends React.Component {
               NavigationBarStyles.navBarRightButton,
               {marginVertical: 0}
             ]}>
-            <Icon name='fontawesome|cog' size={45} color='white' style={styles.iconMore}/>
+            <Icon name='fontawesome|ellipsis-h' size={40} color='white' style={styles.iconMore}/>
 
           </View>
         </TouchableOpacity>
@@ -103,14 +103,14 @@ const styles = StyleSheet.create({
     backgroundColor: mainBackgroundColor,
   },
   logoImage: {
-    width: 70,
-    height: 70,
-    marginTop: -10
+    width: 45,
+    height: 45,
+    // marginTop: -10
   },
   iconMore: {
-    width: 60,
-    height: 60,
-    marginTop: -4
+    width: 40,
+    height: 40,
+    // marginTop: -4
   }
 });
 StationView.propTypes = {

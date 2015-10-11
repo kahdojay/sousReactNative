@@ -20,7 +20,7 @@ class BackBtn extends React.Component {
           }
           this.props.navigator.pop();
         }}>
-        <Icon name='material|chevron-left' size={50} color='white' style={styles.iconBack} />
+        <Icon name='material|chevron-left' size={40} color='white' style={styles.iconBack} />
       </TouchableHighlight>
     );
   }
@@ -35,9 +35,9 @@ const styles = StyleSheet.create({
     color: '#fff'
   },
   iconBack: {
-    width: 70,
-    height: 70,
-    marginTop: -15,
+    width: 45,
+    height: 45,
+    // marginTop: -15,
   }
 });
 
