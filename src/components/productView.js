@@ -1,18 +1,24 @@
-const React = require('react-native');
-var { Icon, } = require('react-native-icons');
+import React from 'react-native';
+import { Icon } from 'react-native-icons';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
 import { mainBackgroundColor, navbarColor } from '../utilities/colors';
+
 const {
   ScrollView,
   StyleSheet,
   View,
   Text,
   TextInput,
+  NativeModules,
   Image,
   TouchableOpacity,
   TouchableHighlight,
 } = React;
+
+const {
+  UIManager
+} = NativeModules;
 
 class ProductView extends React.Component {
   constructor(props) {
@@ -25,6 +31,7 @@ class ProductView extends React.Component {
   }
 
   scrollToBottom() {
+    // TODO: automatically scroll to bottom on TextInput focus (alternatively, define method to calculate y-position of TextInput and scroll to there)
     // if(this.refs.hasOwnProperty('scrollview')){
     //   UIManager.measure(this.refs.scrollview, (x, y, width, height, left, top) => {
     //     console.log(height);
@@ -39,18 +46,20 @@ class ProductView extends React.Component {
   }
 
   saveProduct() {
-    let {purveyorId, product} = this.props;
-    let newProduct = this.props.product;
-    newProduct.description = this.state.textInputDescription
-    newProduct.name = this.state.textInputName
-    this.props.onUpdatePurveyorProduct(purveyorId, product.productId, newProduct);
-    this.setState({saved: true});
+    if(this.state.saved === false){
+      let {purveyorId, product} = this.props;
+      let newProduct = this.props.product;
+      newProduct.description = this.state.textInputDescription;
+      newProduct.name = this.state.textInputName
+      this.props.onUpdatePurveyorProduct(purveyorId, product.recipeId, newProduct);
+      this.setState({saved: true});
+    }
   }
   deleteProduct() {
     let {purveyorId, product} = this.props;
-    let newProduct = this.props.product;
+    let newProduct = this.props.product
     newProduct.deleted = true
-    this.props.onUpdatePurveyorProduct(purveyorId, product.productId, newProduct);
+    this.props.onUpdatePurveyorProduct(purveyorId, product.recipeId, newProduct)
     this.props.navigator.pop()
   }
   componentWillReceiveProps(nextProps){
@@ -69,6 +78,7 @@ class ProductView extends React.Component {
       this.scrollToTop();
     }
   }
+
   render() {
     let navBar = <View style={[NavigationBarStyles.navBarContainer, {backgroundColor: navbarColor}]}>
       <View style={[
@@ -80,13 +90,11 @@ class ProductView extends React.Component {
           callback={this.saveProduct.bind(this)}
           navigator={this.props.navigator}
         />
-        <Image
-          source={require('image!Logo')}
-          style={styles.logoImage}
-        />
+        <Image source={require('image!Logo')} style={styles.logoImage}></Image>
         <View style={NavigationBarStyles.navBarRightButton}></View>
       </View>
     </View>
+
     if(this.props.ui.keyboard.visible === true){
       navBar = <View/>
     }
@@ -96,9 +104,16 @@ class ProductView extends React.Component {
         <ScrollView
           scrollEventThrottle={200}
           ref='scrollview'
+          automaticallyAdjustContentInsets={false}
+          contentContainerStyle={styles.scrollWrapper}
         >
           <View style={styles.headerContainer}>
-            <Icon name='material|assignment' size={100} color='#aaa' style={styles.iconMain}/>
+            <Icon
+              name='material|assignment'
+              size={100}
+              color='#aaa'
+              style={styles.iconMain}
+            />
             <View style={styles.iconContainer}>
               <View style={styles.iconSideContainer}>
                 <Text style={styles.sideText}>Timer</Text>
@@ -144,20 +159,12 @@ class ProductView extends React.Component {
   }
 };
 
-
 const styles = StyleSheet.create({
-  // navbar: {
-  //   flexDirection: 'row',
-  //   height: 80,
-  //   backgroundColor: '#1E00B1',
-  //   alignItems: 'stretch'
-  // },
   button: {
     height: 56,
     backgroundColor: '#F5A623',
     alignSelf: 'center',
     width: 150,
-    // marginTop: 30,
     justifyContent: 'center',
     borderRadius: 3,
   },
@@ -170,39 +177,38 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    alignItems: 'stretch',
+  },
+  scrollWrapper: {
+    flex: 1,
+    justifyContent: 'space-between'
+  },
+  headerContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f7f7f7'
   },
   mainContainer: {
     flex: 1,
-    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#f7f7f7'
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
   },
   input: {
     height: 40,
     borderColor: 'blue',
     borderWidth: 1,
     color: 'black',
-    // marginTop: 20
   },
   iconMain: {
     height: 100,
     width: 100,
     flex: 1
   },
-  sideText: {
-    fontSize: 20,
-    fontFamily: 'OpenSans',
-    flex: 1,
-    // marginTop: 10
-  },
   searchInput: {
     height: 50,
     padding: 4,
-    // marginRight: 5,
     fontSize: 23,
     borderWidth: 1,
     borderColor: '#e6e6e6',
@@ -210,13 +216,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     color: 'black'
   },
+  sideText: {
+    fontSize: 20,
+    fontFamily: 'OpenSans',
+    flex: 1,
+  },
   iconContainer: {
     flex: 1,
     flexDirection: 'column',
   },
   iconSideContainer: {
-    // marginBottom: 10,
-    // marginTop: 10,
     flexDirection: 'row',
   },
   iconSide: {
@@ -233,9 +242,7 @@ const styles = StyleSheet.create({
   logoImage: {
     width: 45,
     height: 45,
-    // marginTop: -10,
   },
 });
-
 
 module.exports = ProductView;
