@@ -8,7 +8,7 @@ import {
 const initialState = {
   isAuthenticated: false,
   isFetching: false,
-  login: null,
+  phoneNumber: null,
   token: null,
   userId: null,
   firstName: "First",
@@ -30,19 +30,20 @@ function session(state = initialState, action) {
       session: {
         isAuthenticated: false,
         isFetching: false,
-        login: ''
+        phoneNumber: ''
       }
     })
   case REQUEST_SESSION:
     return Object.assign({}, state, {
       isFetching: true,
+      phoneNumber: action.phoneNumber,
       errors: null
     })
   case RECEIVE_SESSION:
     return Object.assign({}, state, {
       isAuthenticated: true,
       isFetching: false,
-      login: action.login,
+      phoneNumber: action.phoneNumber,
       token: action.token,
       userId: action.userId,
       teamKey: action.teamKey,
@@ -52,7 +53,7 @@ function session(state = initialState, action) {
   case ERROR_SESSION:
     return Object.assign({}, state, {
       isFetching: false,
-      login: action.login,
+      phoneNumber: action.phoneNumber,
       userId: null,
       teamKey: null,
       errors: action.errors

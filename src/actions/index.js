@@ -29,15 +29,17 @@ const purveyorActions = PurveyorActions(ddpClient)
 
 function connectApp(teamKey){
   return (dispatch, getState) => {
-    const {session} = getState();
+    const {session} = getState()
 
     //--------------------------------------
     // Execute pre-connect actions
     //--------------------------------------
 
-    // dispatch(teamActions.fetchTeams());
     // dispatch(messageActions.resetMessages());
     // dispatch(stationActions.resetStations());
+    dispatch(uiActions.resetUI()); //NOTE: why doesnt this work?
+    // dispatch(teamActions.fetchTeams());
+    // dispatch(sessionActions.resetSession());
     // dispatch(purveyorActions.resetPurveyors());
 
     //--------------------------------------
@@ -53,11 +55,15 @@ function connectApp(teamKey){
     ddpClient.on('connected', () => {
       Object.keys(DDP.SUBSCRIBE_LIST).forEach((resourceKey) => {
         let resource = DDP.SUBSCRIBE_LIST[resourceKey];
-        var resourceAttr = session.teamKey;
-        if(resource.channel === 'errors'){
-          resourceAttr = session.userId;
+        let resourceParam = null
+        if(resource.channel === 'restricted'){
+          resourceParam = session.phoneNumber
+        } else if(resource.channel === 'errors'){
+          resourceParam = session.userId;
+        } else {
+          resourceParam = session.teamKey
         }
-        ddpClient.subscribe(resource.channel, [resourceAttr]);
+        ddpClient.subscribe(resource.channel, [resourceParam]);
       })
     })
     ddpClient.on('message', (msg) => {
@@ -80,10 +86,15 @@ function connectApp(teamKey){
           case 'purveyors':
             dispatch(purveyorActions.receivePurveyors(data))
             break;
+          case 'users':
+            dispatch(sessionActions.receiveSession(data))
+            break;
           default:
             console.log("TODO: wire up collection: ", log.collection);
             break;
         }
+      } else if(log){
+        // console.log("MAIN DDP MSG", log);
       }
     });
 
@@ -103,9 +114,6 @@ function connectApp(teamKey){
       if (wasReconnected) {
         // console.log('RECONNECT: Reestablishment of a connection.');
       }
-      // ddpClient.call('createAccount', ["8067892921"])
-      // ddpClient.call('sendSMSCode', ["8067892921"])
-      ddpClient.call('loginWithSMS', ["8067892921", "3019"])
     });
   }
 }

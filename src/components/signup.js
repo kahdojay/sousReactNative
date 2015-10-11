@@ -6,8 +6,10 @@ const {
   StyleSheet,
   View,
   Text,
+  Image,
   TextInput,
   TouchableHighlight,
+  ScrollView,
   ActivityIndicatorIOS,
 } = React;
 
@@ -16,13 +18,7 @@ class Signup extends React.Component {
     super(props)
     this.state = {
       invalid: false,
-      email: '',
-      password: '',
-      username: '',
-      teamFound: false,
-      lookingForTeam: false,
-      teamName: '',
-      teamId: null
+      phoneNumber: this.props.session.phoneNumber
     }
   }
 
@@ -31,20 +27,16 @@ class Signup extends React.Component {
   }
 
   onSignup() {
-    if(this.state.email == '' || this.state.password == ''){
+    this.refs.phone.blur();
+    if(this.state.phoneNumber == ''){
       this.setState({invalid: true});
     } else {
       // first reset all the stations and tasks and ... ?
       // this.props.onResetSessionInfo();
       // send the signup request
       this.props.onSignup(Object.assign({}, {
-        email: this.state.email,
-        password: this.state.password,
-        username: this.state.username,
-        teamName: this.state.teamName,
-        teamId: this.state.teamId
+        phoneNumber: this.state.phoneNumber
       }));
-      this.setState({ password: '' })
     }
   }
 
@@ -60,7 +52,7 @@ class Signup extends React.Component {
     if(text == ''){
       updateState.lookingForTeam = false;
     }
-    foundTeams = _.filter(this.props.teams.data, function(team) { 
+    foundTeams = _.filter(this.props.teams.data, function(team) {
       return team.name.toLowerCase() === text.toLowerCase()
     })
 
@@ -82,17 +74,33 @@ class Signup extends React.Component {
     let teamLookup = (this.state.lookingForTeam) ? <View style={styles.teamLookupContainer}>{teamLookupStatus}</View> : <View/>
     return (
       <View style={styles.container}>
+        <View style={styles.logoContainer}>
+          <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+        </View>
         <View style={styles.login}>
+          <Text style={styles.headerText}>Use your phone number to log in to Sous.</Text>
+          <Text>First, we'll send you a <Text style={styles.boldText}>text message</Text> to verify your account.</Text>
           <View style={styles.inputContainer}>
-            <Icon name='material|email' size={30} color='#aaa' style={styles.iconFace}/>
+            <Icon name='material|phone' size={30} color='#aaa' style={styles.iconFace}/>
             <TextInput
+              ref='phone'
               style={styles.input}
-              value={this.state.email}
-              placeholder='Email'
+              value={this.state.phoneNumber}
+              keyboardType='phone-pad'
+              placeholder='Phone Number'
               onChangeText={(text) => {
-                this.setState({email: text, invalid: false})
-              }}/>
+                this.setState({phoneNumber: text})
+              }} />
           </View>
+          { this.props.session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
+          <TouchableHighlight
+            onPress={() => {
+              this.onSignup()
+            }}
+            style={styles.button}>
+            <Text style={styles.buttonText}>Send SMS</Text>
+          </TouchableHighlight>
+          {/* * /}
           <View style={styles.underline}></View>
           <View style={styles.inputContainer}>
             <Icon name='material|lock' size={30} color='#aaa' style={styles.iconFace}/>
@@ -137,6 +145,7 @@ class Signup extends React.Component {
           <View style={styles.activityContainer}>
             { this.props.session.isFetching ? fetching : <View /> }
           </View>
+          {/* */}
         </View>
       </View>
     );
@@ -145,7 +154,30 @@ class Signup extends React.Component {
 
 let styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
+  },
+  headerText: {
+    fontSize: 21,
+    alignSelf: 'center'
+  },
+  boldText: {
+    fontWeight: 'bold'
+  },
+  summaryText: {
+    alignSelf: 'center'
+  },
+  logoContainer: {
+    marginTop: 40,
+    borderRadius: 100/2,
+    backgroundColor: '#1825AD',
+    padding: 15,
+    width: 100,
+    height: 100,
+    alignSelf: 'center'
+  },
+  logoImage: {
+    width: 70,
+    height: 70
   },
   login: {
     paddingLeft: 5,

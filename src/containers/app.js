@@ -19,12 +19,12 @@ import { Icon } from 'react-native-icons';
 import * as actions from '../actions';
 
 const {
-  ScrollView,
   PropTypes,
   View,
   Text,
   Image,
   StyleSheet,
+  ScrollView,
   Navigator,
   TouchableHighlight,
   TouchableOpacity
@@ -250,6 +250,8 @@ class App extends React.Component {
       route.name = 'Signup'
     }
 
+    let footerContainerStyle = styles.footerContainer;
+
     let header = <View />;
     let scene = this.getScene(route, nav);
 
@@ -279,11 +281,7 @@ class App extends React.Component {
           break;
       }
       // setup the header for authenticated routes
-      header = (
-        <View style={[styles.nav, styles.navSignUp]}>
-          <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-        </View>
-      );
+      header = <View/>;
     }
     else {
       switch(route.name) {
@@ -321,12 +319,23 @@ class App extends React.Component {
       }
     }
 
+    // console.log(ui.keyboard.visible);
     if(ui.keyboard.visible === true){
       header = <View/>
     }
 
+    let stylesContainer = [styles.container, {height: ui.keyboard.screenY}];
+    // console.log(ui.keyboard.screenY);
+
+    // // TODO: fix the height animation to prevent FOUC
+    if(ui.keyboard.visible === true){
+      // stylesContainer = [styles.container, {height: ui.keyboard.screenY}];
+    }
+
     return (
-      <View style={styles.container}>
+      <ScrollView
+        style={stylesContainer}
+        bounces={false}>
         {header}
         {scene}
         <Footer
@@ -334,7 +343,7 @@ class App extends React.Component {
           ui={ui}
           route={route}
         />
-      </View>
+      </ScrollView>
     );
   }
 
@@ -359,8 +368,7 @@ class App extends React.Component {
 
 let styles = StyleSheet.create({
   container: {
-    flex: 1,
-    marginTop: 20,
+    marginTop: 20
   },
   scene: {
     flex: 1
