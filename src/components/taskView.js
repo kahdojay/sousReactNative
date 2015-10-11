@@ -31,6 +31,7 @@ class TaskView extends React.Component {
   }
 
   scrollToBottom() {
+    // TODO: automatically scroll to bottom on TextInput focus (alternatively, define method to calculate y-position of TextInput and scroll to there)
     // if(this.refs.hasOwnProperty('scrollview')){
     //   UIManager.measure(this.refs.scrollview, (x, y, width, height, left, top) => {
     //     console.log(height);
@@ -103,6 +104,8 @@ class TaskView extends React.Component {
         <ScrollView
           scrollEventThrottle={200}
           ref='scrollview'
+          automaticallyAdjustContentInsets={false}
+          contentContainerStyle={styles.scrollWrapper}
         >
           <View style={styles.headerContainer}>
             <Icon
@@ -157,18 +160,11 @@ class TaskView extends React.Component {
 };
 
 const styles = StyleSheet.create({
-  // navbar: {
-  //   flexDirection: 'row',
-  //   height: 30,
-  //   backgroundColor: '#1E00B1',
-  //   alignItems: 'stretch'
-  // },
   button: {
     height: 56,
     backgroundColor: '#F5A623',
     alignSelf: 'center',
     width: 150,
-    // marginTop: 30,
     justifyContent: 'center',
     borderRadius: 3,
   },
@@ -181,39 +177,38 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    alignItems: 'stretch',
+  },
+  scrollWrapper: {
+    flex: 1,
+    justifyContent: 'space-between'
+  },
+  headerContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f7f7f7'
   },
   mainContainer: {
     flex: 1,
-    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#f7f7f7'
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
   },
   input: {
     height: 40,
     borderColor: 'blue',
     borderWidth: 1,
     color: 'black',
-    // marginTop: 20
   },
   iconMain: {
     height: 100,
     width: 100,
     flex: 1
   },
-  sideText: {
-    fontSize: 20,
-    fontFamily: 'OpenSans',
-    flex: 1,
-    // marginTop: 10
-  },
   searchInput: {
     height: 50,
     padding: 4,
-    // marginRight: 5,
     fontSize: 23,
     borderWidth: 1,
     borderColor: '#e6e6e6',
@@ -221,13 +216,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     color: 'black'
   },
+  sideText: {
+    fontSize: 20,
+    fontFamily: 'OpenSans',
+    flex: 1,
+  },
   iconContainer: {
     flex: 1,
     flexDirection: 'column',
   },
   iconSideContainer: {
-    // marginBottom: 10,
-    // marginTop: 10,
     flexDirection: 'row',
   },
   iconSide: {
@@ -244,9 +242,7 @@ const styles = StyleSheet.create({
   logoImage: {
     width: 45,
     height: 45,
-    // marginTop: -10,
   },
 });
-
 
 module.exports = TaskView;

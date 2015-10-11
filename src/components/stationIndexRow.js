@@ -52,7 +52,7 @@ class StationIndexRow extends React.Component {
           </View>
           <Icon name='material|chevron-right' size={40} color='#aaa' style={styles.iconArrow}/>
         </View>
-        <View style={styles.seperator} />
+        <View style={styles.separator} />
       </TouchableOpacity>
     );
   }
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   textProgressContainer: {
     flex: 1,
   },
-  seperator: {
+  separator: {
     height: 5,
     borderBottomColor: '#bbb',
     borderBottomWidth: 1,
