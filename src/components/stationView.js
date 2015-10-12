@@ -45,8 +45,6 @@ class StationView extends React.Component {
   }
   render() {
     let station = this.props.station
-    // console.log("STATION ID", station);
-
     let navBar = <View style={[
       NavigationBarStyles.navBarContainer,
       {backgroundColor: navbarColor}
@@ -84,7 +82,6 @@ class StationView extends React.Component {
         <AddForm
           placeholder="Add a Task..."
           onSubmit={(taskName) => {
-
             this.props.onAddNewTask(station.id, taskName)
           }}/>
         <TaskList
@@ -111,7 +108,15 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     // marginTop: -4
-  }
+  },
+  scrollView: {
+    backgroundColor: 'white',
+    flex: 1,
+    paddingLeft: 10,
+    paddingRight: 0,
+    marginTop: 0,
+    paddingTop: 0
+  },
 });
 StationView.propTypes = {
 };

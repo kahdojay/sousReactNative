@@ -34,7 +34,7 @@ export default class AddForm extends React.Component {
           onPress={this.handleSubmit.bind(this)}
           underlayColor={"#eee"}
           style={styles.button}>
-          <Text style={styles.sendButtonText}>Send</Text>
+          <Icon name="fontawesome|plus-circle" size={30} color={'#777'} style={styles.icon}/>
         </TouchableHighlight>
       </View>
     );
@@ -73,11 +73,14 @@ let styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    backgroundColor: '#d6d6d6',
-    color: '#777',
+    backgroundColor: 'white',
+    color: 'black',
     fontFamily: 'OpenSans',
     borderRadius: 5,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    paddingLeft: 10,
+    borderWidth: 1,
+    borderColor: '#ddd'
   },
   button: {
     flex: 1,

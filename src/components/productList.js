@@ -10,6 +10,7 @@ let {
   PropTypes,
   StyleSheet,
   Text,
+  ScrollView,
   TouchableHighlight,
 } = React;
 
@@ -48,7 +49,9 @@ export default class ProductList extends React.Component {
             }} />
         })
     return (
-      <View>
+      <ScrollView
+        keyboardShouldPersistTaps={false}
+      >
         {productsUnordered}
         <TouchableHighlight
           onPress={this.handlePress.bind(this)}
@@ -60,7 +63,7 @@ export default class ProductList extends React.Component {
           </View>
         </TouchableHighlight>
         {this.state.showCompleted ? productsOrdered : <View />}
-      </View>
+      </ScrollView>
     );
   }
 }

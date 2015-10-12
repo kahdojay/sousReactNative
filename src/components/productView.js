@@ -103,6 +103,7 @@ class ProductView extends React.Component {
         {navBar}
         <ScrollView
           scrollEventThrottle={200}
+          keyboardShouldPersistTaps={false}
           ref='scrollview'
           automaticallyAdjustContentInsets={false}
           contentContainerStyle={styles.scrollWrapper}

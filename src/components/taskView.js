@@ -104,8 +104,9 @@ class TaskView extends React.Component {
         <ScrollView
           scrollEventThrottle={200}
           ref='scrollview'
+          keyboardShouldPersistTaps={false}
+          style={styles.scrollView}
           automaticallyAdjustContentInsets={false}
-          contentContainerStyle={styles.scrollWrapper}
         >
           <View style={styles.headerContainer}>
             <Icon
@@ -168,6 +169,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 3,
   },
+  scrollView: {
+    backgroundColor: 'white',
+    flex: 1,
+    paddingLeft: 10,
+    paddingRight: 0,
+    marginTop: 0,
+    paddingTop: 0
+  },
   buttonText: {
     alignSelf: 'center',
     fontSize: 22,
@@ -177,6 +186,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    backgroundColor: '#f7f7f7'
   },
   scrollWrapper: {
     flex: 1,

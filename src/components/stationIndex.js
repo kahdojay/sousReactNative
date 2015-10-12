@@ -22,26 +22,10 @@ class StationIndex extends React.Component {
   }
 
   render() {
-    const { stations } = this.props;
     // let fetching =  <ActivityIndicatorIOS
     //                     animating={true}
     //                     color={'#808080'}
     //                     size={'small'} />
-    // console.log("STATIONS", this.props.stations.data);
-    let stationsList = this.props.stations.data.map((station, index) => {
-      if (station.deleted === false) {
-        return (
-          <StationIndexRow
-            key={index}
-            station={station}
-            onPress={() => this.props.navigator.push({
-              name: 'StationView',
-              stationId: station.id
-            })}
-          />
-        )
-      }
-    })
     return (
       <View style={styles.container}>
         <View style={styles.stationContainer}>
@@ -51,10 +35,25 @@ class StationIndex extends React.Component {
           />
           <ScrollView
             style={styles.scrollView}
+            keyboardShouldPersistTaps={false}
             contentInset={{bottom:49}}
             automaticallyAdjustContentInsets={false}
           >
-            { stationsList }
+            { this.props.stations.data.map((station, index) => {
+              if (station.deleted === false) {
+                return (
+                  <StationIndexRow
+                    key={index}
+                    station={station}
+                    onPress={() => this.props.navigator.push({
+                      name: 'StationView',
+                      stationId: station.id
+                    })}
+                  />
+                );
+              }
+              })
+            }
           </ScrollView>
         </View>
       </View>

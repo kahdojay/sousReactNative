@@ -7,6 +7,7 @@ import {
 
 let {
   View,
+  ScrollView,
   PropTypes,
   StyleSheet,
   Text,
@@ -58,7 +59,12 @@ export default class TaskList extends React.Component {
             }} />
         })
     return (
-      <View>
+      <ScrollView
+        style={styles.scrollView}
+        keyboardShouldPersistTaps={false}
+        contentInset={{bottom:49}}
+        automaticallyAdjustContentInsets={false}
+        >
         {tasksIncomplete}
         <TouchableHighlight
           onPress={this.handlePress.bind(this)}
@@ -70,7 +76,7 @@ export default class TaskList extends React.Component {
           </View>
         </TouchableHighlight>
         {this.state.showCompleted ? tasksCompleted : <View />}
-      </View>
+      </ScrollView>
     );
   }
 }

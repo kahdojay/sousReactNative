@@ -45,44 +45,39 @@ class Feed extends React.Component {
                         color={'#808080'}
                         style={styles.activity}
                         size={'large'} />
-
-    let messagesList = messages.data.map(function(msg, index) {
-      let date = new Date(msg.createdAt["$date"]).toLocaleTimeString();
-      let time = date.substring(date.length-3, date.length)
-      return (
-        <View>
-          <View key={index} style={styles.message}>
-            {/*<Image style={styles.avatar}
-              source={{uri: msg.imageUrl}}
-              />*/}
-            <Icon name='fontawesome|user' size={30} color='#0075FD' style={styles.avatar}/>
-            <View style={styles.messageContentContainer}>
-              <View style={styles.messageTextContainer}>
-                <Text style={styles.messageAuthor}>{msg.author}</Text>
-                <Text style={styles.messageTimestamp}>
-                  {date.substring(0, date.length-5)}{time}
-                </Text>
-              </View>
-              <Text style={styles.messageText} key={index}>{msg.message}</Text>
-            </View>
-          </View>
-          <View style={styles.separator} />
-        </View>  
-      )
-    }).reverse(); // reverse messages here because we use InvertedScrollView
-
     return (
       <View style={styles.container}>
         <View style={styles.messageContainer}>
-          {messages.isFetching ? fetching : <View/>}
+          {messages.isFetching ? fetching : <View style={styles.notFetching}/>}
           <InvertibleScrollView
             style={styles.scrollView}
             contentInset={{bottom:49}}
+            keyboardShouldPersistTaps={false}
             automaticallyAdjustContentInsets={false}
             inverted
             ref='scrollview'
           >
-            { messagesList }
+            { this.props.messages.data.map((msg, index) => {
+              let date = new Date(msg.createdAt["$date"]).toLocaleTimeString();
+              let time = date.substring(date.length-3, date.length)
+              return (
+                <View key={index} style={styles.messageContainer}>
+                  <View style={styles.message}>
+                    <Icon name='fontawesome|user' size={30} color='#f7f7f7' style={styles.avatar}/>
+                    <View style={styles.messageContentContainer}>
+                      <View style={styles.messageTextContainer}>
+                        <Text style={styles.messageAuthor}>{msg.author}</Text>
+                        <Text style={styles.messageTimestamp}>
+                          {date.substring(0, date.length-6)}{time}
+                        </Text>
+                      </View>
+                      <Text style={styles.messageText} key={index}>{msg.message}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.separator} />
+                </View>
+              )
+            }).reverse() }
           </InvertibleScrollView>
         <AddMessageForm
           placeholder="Message..."
@@ -99,36 +94,47 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   messageText: {
-    fontSize: 18,
+    fontSize: 14,
     fontFamily: 'OpenSans',
     marginLeft: 5,
-    marginBottom: 12
+    marginBottom: 10
   },
   messageContentContainer: {
-    flex: 9
+    flex: 9,
+    marginLeft: 10
+  },
+  messageContainer: {
+    padding: 0,
+    margin: 0,
   },
   messageTextContainer: {
     flex: 1,
     flexDirection: 'row',
-    // alignItems: 'stretch'
   },
   messageAuthor: {
-    fontSize: 18,
+    fontSize: 14,
     margin: 5,
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
   },
   messageTimestamp: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'OpenSans',
     marginTop: 9,
-    marginLeft: 10,
-    color: "#777"
+    marginLeft: 6,
+    fontWeight: 'bold',
+    color: "#ddd"
+  },
+  notFetching: {
+    height: 0
   },
   avatar: {
     width: 60,
-    height: 60,
-    borderRadius: 30,
+    height: 50,
+    borderRadius: 25,
+    paddingLeft: 10,
+    paddingRight: 10,
+    backgroundColor: "#1E00B1",
     // margin: 7,
     alignSelf: 'center',
     flex: 1
@@ -142,15 +148,18 @@ const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: 'white',
     flex: 1,
-    paddingLeft: 20,
+    paddingLeft: 10,
     paddingRight: 0,
     marginTop: 0,
     paddingTop: 0
   },
   separator: {
     height: 5,
-    borderBottomColor: '#bbb',
+    borderBottomColor: '#f1f1f1',
     borderBottomWidth: 1,
+  },
+  activity: {
+    height: 0,
   },
 });
 

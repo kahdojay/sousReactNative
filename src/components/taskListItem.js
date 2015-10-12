@@ -30,6 +30,12 @@ export default class TaskListItem extends React.Component {
     this.props.onUpdateTask({completed: !this.props.task.completed});
   }
   render() {
+    var taskStyle;
+    if (this.props.task.completed) {
+      taskStyle = styles.taskCompletedText;
+    } else {
+      taskStyle = styles.taskIncompleteText;
+    }
     return (
       <View style={styles.container}>
         <View style={[
@@ -92,6 +98,12 @@ let styles = StyleSheet.create({
   quantity: {
     fontSize: 16
   },
+  taskCompletedText: {
+
+  },
+  taskIncompleteText: {
+
+  },
   row: {
     borderRadius: 10,
     flexDirection: 'row',
@@ -112,10 +124,11 @@ let styles = StyleSheet.create({
   text: {
     fontWeight: 'bold',
     color: 'black',
-    fontSize: 20
+    fontSize: 16
   },
   textCompleted: {
     color: '#777',
+    textDecorationLine: "line-through",
   },
 });
 
