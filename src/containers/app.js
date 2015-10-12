@@ -265,7 +265,7 @@ class App extends React.Component {
                 source={require('image!Logo')}
                 style={styles.logoImage}
               />
-              {/*<TouchableHighlight
+              <TouchableHighlight
                 style={styles.profileBtn}
                 onPress={() => {
                   nav.replace({
@@ -279,7 +279,7 @@ class App extends React.Component {
                   color='white'
                   style={styles.iconFace}
                 />
-              </TouchableHighlight>*/}
+              </TouchableHighlight>
             </View>
           );
           break;
@@ -338,6 +338,7 @@ let styles = StyleSheet.create({
     backgroundColor: '#1825AD',
     justifyContent: 'space-between',
     margin: 0,
+    flexDirection: 'row',
     alignItems: 'center'
   },
   navSignUp: {
@@ -346,12 +347,16 @@ let styles = StyleSheet.create({
   logo: {
     color: 'white',
     fontSize: 20,
+    flex: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
     fontFamily: 'OpenSans'
   },
   logoImage: {
     width: 45,
     height: 45,
-    alignItems: 'center'
+    alignItems: 'center',
+    flex: .5
   },
   iconFace: {
     width: 70,
