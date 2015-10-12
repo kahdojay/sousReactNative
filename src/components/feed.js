@@ -48,7 +48,7 @@ class Feed extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.messageContainer}>
-          {messages.isFetching ? fetching : <View/>}
+          {messages.isFetching ? fetching : <View style={styles.notFetching}/>}
           <InvertibleScrollView
             style={styles.scrollView}
             contentInset={{bottom:49}}
@@ -60,8 +60,8 @@ class Feed extends React.Component {
               let date = new Date(msg.createdAt["$date"]).toLocaleTimeString();
               let time = date.substring(date.length-3, date.length)
               return (
-                <View>
-                  <View key={index} style={styles.message}>
+                <View key={index} style={styles.messageContainer}>
+                  <View style={styles.message}>
                     <Icon name='fontawesome|user' size={30} color='#0075FD' style={styles.avatar}/>
                     <View style={styles.messageContentContainer}>
                       <View style={styles.messageTextContainer}>
@@ -93,36 +93,46 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   messageText: {
-    fontSize: 18,
+    fontSize: 16,
     fontFamily: 'OpenSans',
     marginLeft: 5,
-    marginBottom: 12
+    marginBottom: 10
   },
   messageContentContainer: {
     flex: 9
   },
+  messageContainer: {
+    padding: 0,
+    margin: 0,
+  },
   messageTextContainer: {
     flex: 1,
     flexDirection: 'row',
-    // alignItems: 'stretch'
   },
   messageAuthor: {
-    fontSize: 18,
+    fontSize: 16,
     margin: 5,
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
   },
   messageTimestamp: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: 'OpenSans',
     marginTop: 9,
-    marginLeft: 10,
-    color: "#777"
+    marginLeft: 6,
+    fontWeight: 'bold',
+    color: "#bbb"
+  },
+  notFetching: {
+    height: 0
   },
   avatar: {
     width: 60,
-    height: 60,
-    borderRadius: 30,
+    height: 50,
+    borderRadius: 25,
+    paddingLeft: 10,
+    paddingRight: 10,
+    backgroundColor: "#f7f7f7",
     // margin: 7,
     alignSelf: 'center',
     flex: 1
@@ -145,6 +155,9 @@ const styles = StyleSheet.create({
     height: 5,
     borderBottomColor: '#bbb',
     borderBottomWidth: 1,
+  },
+  activity: {
+    height: 0,
   },
 });
 
