@@ -108,7 +108,15 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     // marginTop: -4
-  }
+  },
+  scrollView: {
+    backgroundColor: 'white',
+    flex: 1,
+    paddingLeft: 10,
+    paddingRight: 0,
+    marginTop: 0,
+    paddingTop: 0
+  },
 });
 StationView.propTypes = {
 };
