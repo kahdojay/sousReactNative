@@ -15,6 +15,7 @@ import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
 import { connect } from 'react-redux/native';
 import { footerButtonIconColor, footerActiveHighlight } from '../utilities/colors';
+import { Icon } from 'react-native-icons';
 import * as actions from '../actions';
 
 const {
