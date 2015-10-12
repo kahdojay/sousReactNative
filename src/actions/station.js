@@ -55,6 +55,7 @@ export default function StationActions(ddpClient) {
     return {
       type: UPDATE_STATION,
       stationId: stationId,
+      recipeId: newTaskAttributes.recipeId,
       task: newTaskAttributes
     }
   }
@@ -64,7 +65,7 @@ export default function StationActions(ddpClient) {
     return {
       type: UPDATE_STATION,
       stationId: stationId,
-      recipeId: receipeId,
+      recipeId: recipeId,
       task: taskAttributes
     }
   }
