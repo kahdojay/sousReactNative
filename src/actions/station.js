@@ -1,3 +1,4 @@
+import shortid from 'shortid'
 import {
   RESET_STATIONS,
   GET_STATIONS,
@@ -19,16 +20,17 @@ export default function StationActions(ddpClient) {
   }
 
   function addStation(name, teamKey) {
-    var stationAttributes = {
+    var newStationAttributes = {
+      _id: shortid.generate(),
       name: name,
       teamKey: teamKey,
       tasks: [],
       deleted: false
     }
-    ddpClient.call('createStation', [stationAttributes]);
+    ddpClient.call('createStation', [newStationAttributes]);
     return {
       type: ADD_STATION,
-      station: stationAttributes
+      station: newStationAttributes
     };
   }
 
@@ -40,23 +42,39 @@ export default function StationActions(ddpClient) {
   }
 
   function addStationTask(stationId, taskAttributes){
-    ddpClient.call('addStationTask', [stationId, taskAttributes]);
+    var newTaskAttributes = {
+      recipeId: shortid.generate(),
+      name: taskAttributes.name,
+      description: "",
+      deleted: false,
+      completed: false,
+      quantity: 1,
+      unit: 0 // for future use
+    }
+    ddpClient.call('addStationTask', [stationId, newTaskAttributes]);
     return {
-      type: UPDATE_STATION
+      type: UPDATE_STATION,
+      stationId: stationId,
+      task: newTaskAttributes
     }
   }
 
   function updateStationTask(stationId, recipeId, taskAttributes){
     ddpClient.call('updateStationTask', [stationId, recipeId, taskAttributes]);
     return {
-      type: UPDATE_STATION
+      type: UPDATE_STATION,
+      stationId: stationId,
+      recipeId: receipeId,
+      task: taskAttributes
     }
   }
 
   function updateStation(stationId, stationAttributes){
     ddpClient.call('updateStation', [stationId, stationAttributes]);
     return {
-      type: UPDATE_STATION
+      type: UPDATE_STATION,
+      stationId: stationId,
+      station: stationAttributes
     }
   }
 
