@@ -24,7 +24,6 @@ class ProfileView extends React.Component {
     return (
    		<ScrollView
         style={styles.scrollView}
-        contentInset={{bottom:49}}
         keyboardShouldPersistTaps={false}
         automaticallyAdjustContentInsets={false}>
 
@@ -47,13 +46,28 @@ class ProfileView extends React.Component {
           <View style={styles.userInfoContainer}>
 
             <View style={styles.userProfile}>
-              <View></View>
-              <View></View>
-              <View></View>
+              <View style={styles.infoField}>
+                <Text style={styles.inputName}>Name</Text>
+                <Text style={styles.inputInfo}>Thomas Keller</Text>
+              </View>
+              <View style={styles.infoField}>
+                <Text style={styles.inputName}>E-mail Address</Text>
+                <Text style={styles.inputInfo}>cheftommy@yahoo.com</Text>
+              </View>
+              <View style={styles.infoField}>
+                <Text style={styles.inputName}>Invite Users</Text>
+                <Text style={styles.inputInfo}></Text>
+              </View>
             </View>
             <View style={styles.userPreferences}>
-              <View></View>
-              <View></View>
+              <View style={styles.infoField}>
+                <Text style={styles.inputName}>Notifications</Text>
+                <Text style={styles.inputInfo}></Text>
+              </View>
+              <View style={styles.infoField}>
+                <Text style={styles.inputName}>Contact Us</Text>
+                <Text style={styles.inputInfo}></Text>
+              </View>
             </View>
             <View style={styles.deactivateContainer}>
               <TouchableHighlight style={styles.deactivateButton}>
@@ -77,7 +91,7 @@ class ProfileView extends React.Component {
 // />
 let styles = StyleSheet.create({
   scrollView: {
-    backgroundColor: 'white',
+    backgroundColor: '#f2f2f2',
     flex: 1,
   },
   userInfoContainer: {
@@ -85,20 +99,43 @@ let styles = StyleSheet.create({
     justifyContent: 'center',
   },
   userProfile: {
-    height: 70,
-    backgroundColor: 'red',
+    flex: 1,
+    backgroundColor: 'white',
+    margin: 10,
   },
   userPreferences: {
-    height: 50,
-    backgroundColor: 'blue',
+    flex: 2,
+    margin: 10,
+    marginTop: 0,
+    backgroundColor: 'white',
+  },
+  infoField: {
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#fff',
+    height: 25,
+    paddingLeft: 5,
+    flexDirection: 'row',
+  },
+  inputName: {
+    flex: 1,
+    color: 'black',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans',
+    fontSize: 14,
+    letterSpacing: -.5,
+  },
+  inputInfo: {
+    fontFamily: 'OpenSans',
+    fontSize: 14,
   },
   deactivateContainer: {
-    height: 40,
+    flex: 1,
+    marginTop: 5,
     backgroundColor: 'transparent',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 10,
   },
   deactivateButton: {
     backgroundColor: '#ddd',
@@ -120,7 +157,7 @@ let styles = StyleSheet.create({
   },
   navbar: {
     height: 70,
-    backgroundColor: 'blue',
+    backgroundColor: '#1E00B1',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -151,13 +188,12 @@ let styles = StyleSheet.create({
     flex: 1,
   },
   wrapper: {
-    padding: 10,
     justifyContent: 'center',
     alignItems: 'stretch',
     flexDirection: 'column',
   },
   phoneNumber: {
-    backgroundColor: 'blue',
+    backgroundColor: '#1E00B1',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -169,7 +205,7 @@ let styles = StyleSheet.create({
     padding: 5,
   },
   avatar: {
-    backgroundColor: '#f7f7f7',
+    backgroundColor: '#f2f2f2',
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
