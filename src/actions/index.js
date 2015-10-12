@@ -63,6 +63,7 @@ function connectApp(){
       //   return station.id;
       // })
       if (log.fields){
+        console.log("MAIN DDP MSG", log);
         var data = log.fields;
         data.id = log.id;
         switch(log.collection){
