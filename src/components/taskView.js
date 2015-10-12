@@ -31,7 +31,8 @@ class TaskView extends React.Component {
   }
 
   scrollToBottom() {
-    // TODO: automatically scroll to bottom on TextInput focus (alternatively, define method to calculate y-position of TextInput and scroll to there)
+    // TODO: automatically scroll to bottom on TextInput focus (alternatively,
+    // define method to calculate y-position of TextInput and scroll to there)
     // if(this.refs.hasOwnProperty('scrollview')){
     //   UIManager.measure(this.refs.scrollview, (x, y, width, height, left, top) => {
     //     console.log(height);

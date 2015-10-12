@@ -1,5 +1,9 @@
 import React from 'react-native';
 import Footer from '../components/footer';
+import _ from 'lodash';
+import NavigationBar from 'react-native-navbar';
+import { connect } from 'react-redux/native';
+import { Icon } from 'react-native-icons';
 import Login from '../components/login';
 import Signup from '../components/signup';
 import StationIndex from '../components/stationIndex';
@@ -10,12 +14,10 @@ import PurveyorIndex from '../components/purveyorIndex';
 import PurveyorView from '../components/purveyorView';
 import ProductView from '../components/productView';
 import ProfileView from '../components/profileView';
-import _ from 'lodash';
+import NavbarTitle from '../components/NavbarTitle';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
-import { connect } from 'react-redux/native';
-import { footerButtonIconColor, footerActiveHighlight } from '../utilities/colors';
-import { Icon } from 'react-native-icons';
+import { navbarColor, } from '../utilities/colors';
 import * as actions from '../actions';
 
 const {
@@ -23,6 +25,7 @@ const {
   PropTypes,
   View,
   Text,
+  ActionSheetIOS,
   Image,
   StyleSheet,
   Navigator,
@@ -58,7 +61,7 @@ class App extends React.Component {
     return isAuthenticated;
   }
 
-  getScene(route, nav) {
+  getScene(route, nav, navBar) {
     const { ui, session, teams, stations, messages, dispatch, purveyors, products } = this.props;
     let teamKey = session.teamKey;
     // console.log(teamKey);
@@ -89,6 +92,7 @@ class App extends React.Component {
       case 'StationIndex':
         return <StationIndex
                   navigator={nav}
+                  navBar={navBar}
                   onConnectApp={() => {
                     this.props.dispatch(actions.connectApp(teamKey))
                   }}
@@ -236,6 +240,31 @@ class App extends React.Component {
     }
   }
 
+  showActionSheetStationView(navigator, route){
+    const { dispatch } = this.props;
+    console.log('action sheet: route', route)
+    let buttons = [
+      'Delete Station',
+      // 'Rename Station',
+      'Cancel'
+    ]
+    let deleteAction = 0;
+    let cancelAction = 2;
+    ActionSheetIOS.showActionSheetWithOptions({
+      options: buttons,
+      cancelButtonIndex: cancelAction,
+      destructiveButtonIndex: deleteAction,
+    },
+    (buttonIndex) => {
+      if (deleteAction === buttonIndex){
+        // process the delete
+        dispatch(actions.deleteStation(route.stationId))
+        // pop the view
+        navigator.pop();
+      }
+    });
+  }
+
   renderScene(route, nav) {
     const { dispatch, ui } = this.props;
 
@@ -249,72 +278,84 @@ class App extends React.Component {
     else if(route.name !== 'Login' && route.name !== 'Signup') {
       route.name = 'Signup'
     }
+    let navBar = route.navigationBar;
 
     let header = <View />;
-    let scene = this.getScene(route, nav);
+    let scene = this.getScene(route, nav, navBar);
+    let footer = <View />;
+    let applyHighlight = '';
+
+    if(_.includes(['StationIndex', 'StationView', 'TaskView'], route.name)){
+      applyHighlight = 'Prep'
+    } else if(_.includes(['Feed'], route.name)){
+      applyHighlight = 'Feed'
+    } else if(_.includes(['PurveyorIndex', 'PurveyorView', 'ProductView'], route.name)){
+      applyHighlight = 'Order'
+    }
+
+    let prepFooterHighlight = (applyHighlight == 'Prep' ? styles.footerActiveHighlight : {});
+    let feedFooterHighlight = (applyHighlight == 'Feed' ? styles.footerActiveHighlight : {});
+    let orderFooterHighlight = (applyHighlight == 'Order' ? styles.footerActiveHighlight : {});
 
     // setup the header for unauthenticated routes
     if(this.authenticatedRoute(route) === false){
-      let nextButton = <View />;
-      switch (route.name) {
-        case 'Login':
-          nextButton = <TouchableHighlight
-            onPress={() => nav.replace({
-              name: 'Signup'
-            })}
-            style={styles.signup}>
-            <Text style={styles.buttonText}>Signup</Text>
-          </TouchableHighlight>;
-          break;
-        case 'Signup':
-          nextButton = <TouchableHighlight
-            onPress={() => nav.replace({
-              name: 'Login'
-            })}
-            style={styles.signup}>
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableHighlight>;
-          break;
-        default:
-          break;
-      }
       // setup the header for authenticated routes
-      header = (
-        <View style={[styles.nav, styles.navSignUp]}>
-          <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-        </View>
-      );
-    }
-    else {
+      // header = (
+      //   <View style={[styles.nav, styles.navSignUp]}>
+      //     <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+      //   </View>
+      // );
+      if (navBar) {
+        navBar = React.addons.cloneWithProps(navBar, {
+          navigator: nav,
+          route: route,
+        })
+      }
+    } else {
       switch(route.name) {
         case 'StationIndex':
+          if (navBar) {
+            navBar = React.addons.cloneWithProps(navBar, {
+              navigator: nav,
+              route: route,
+              hidePrev: false,
+              onNext: () => console.log('profileView'),
+              onPrev: null,
+              nextTitle: 'profile',
+            })
+          }
+          break;
         case 'Feed':
+          if (navBar) {
+            navBar = React.addons.cloneWithProps(navBar, {
+              navigator: nav,
+              route: route,
+              hidePrev: true,
+              onNext: null,
+            })
+          }
+          break;
         case 'PurveyorIndex':
-          header =  (
-            <View style={styles.nav}>
-              <Image
-                source={require('image!Logo')}
-                style={styles.logoImage}
-              />
-              <TouchableHighlight
-                style={styles.profileBtn}
-                onPress={() => {
-                  nav.replace({
-                    name: 'Profile'
-                  })
-                }}
-              >
-                <Icon
-                  name='material|account-circle'
-                  size={50}
-                  color='white'
-                  style={styles.iconFace}
-                />
-              </TouchableHighlight>
-            </View>
-          );
+          if (navBar) {
+            navBar = React.addons.cloneWithProps(navBar, {
+              navigator: nav,
+              route: route,
+              hidePrev: true,
+              onNext: null,
+              onPrev: null,
+            })
+          }
           break;
         case "StationView":
+          if (navBar) {
+            navBar = React.addons.cloneWithProps(navBar, {
+              navigator: nav,
+              route: route,
+              onNext: (navigator, route) => this.showActionSheetStationView(navigator, route),
+              nextTitle: '...',
+            })
+          }
+          break;
         case "PurveyorView":
         default:
           header =  <View></View>;
@@ -327,7 +368,7 @@ class App extends React.Component {
 
     return (
       <View style={styles.container}>
-        {header}
+        {navBar}
         {scene}
         <Footer
           nav={nav}
@@ -342,10 +383,17 @@ class App extends React.Component {
     return (
       <Navigator
         initialRoute={{
-          name: this.initialRoute,
           index: 0,
+          name: this.initialRoute,
+          navigationBar: (
+            <NavigationBar
+              customTitle={<NavbarTitle />}
+              style={styles.nav}
+            />
+          )
         }}
         renderScene={this.renderScene.bind(this)}
+        // TODO: commented out to prevent ghosting, review animation options later
         // configureScene={(route) => {
         //   if (route.sceneConfig) {
         //     return route.sceneConfig;
@@ -366,11 +414,7 @@ let styles = StyleSheet.create({
     flex: 1
   },
   nav: {
-    backgroundColor: '#1825AD',
-    justifyContent: 'space-between',
-    margin: 0,
-    flexDirection: 'row',
-    alignItems: 'center'
+    backgroundColor: navbarColor,
   },
   navSignUp: {
     justifyContent: 'center',

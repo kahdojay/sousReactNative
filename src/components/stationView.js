@@ -78,7 +78,6 @@ class StationView extends React.Component {
 
     return (
       <View style={styles.container}>
-        {navBar}
         <AddForm
           placeholder="Add a Task..."
           onSubmit={(taskName) => {
