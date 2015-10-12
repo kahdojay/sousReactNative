@@ -45,8 +45,8 @@ class App extends React.Component {
     }
   }}
 
-  componentWillMount(){
-    this.props.dispatch(actions.connectApp())
+  componentWillMount() {
+    this.props.dispatch(actions.fetchTeams());
   }
 
   authenticatedRoute(route){
@@ -89,6 +89,9 @@ class App extends React.Component {
       case 'StationIndex':
         return <StationIndex
                   navigator={nav}
+                  onConnectApp={() => {
+                    this.props.dispatch(actions.connectApp(teamKey))
+                  }}
                   stations={stations}
                   onAddStation={(name) => {
                     dispatch(actions.addStation(name, teamKey))
@@ -414,12 +417,12 @@ class App extends React.Component {
           index: 0,
         }}
         renderScene={this.renderScene.bind(this)}
-        configureScene={(route) => {
-          if (route.sceneConfig) {
-            return route.sceneConfig;
-          }
-          return Navigator.SceneConfigs.FloatFromRight;
-        }}
+        // configureScene={(route) => {
+        //   if (route.sceneConfig) {
+        //     return route.sceneConfig;
+        //   }
+        //   return Navigator.SceneConfigs.FloatFromRight;
+        // }}
       />
     )
   }

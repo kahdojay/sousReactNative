@@ -17,6 +17,10 @@ const {
 } = React;
 
 class StationIndex extends React.Component {
+  componentWillMount(){
+    this.props.onConnectApp()
+  }
+
   render() {
     const { stations } = this.props;
     // let fetching =  <ActivityIndicatorIOS
