@@ -30,7 +30,6 @@ export default class TaskListItem extends React.Component {
     this.props.onUpdateTask({completed: !this.props.task.completed});
   }
   render() {
-    console.log("TASK ITEM PROPS", this.props);
     var taskStyle;
     if (this.props.task.completed) {
       taskStyle = styles.taskCompletedText;

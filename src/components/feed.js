@@ -62,7 +62,7 @@ class Feed extends React.Component {
               return (
                 <View key={index} style={styles.messageContainer}>
                   <View style={styles.message}>
-                    <Icon name='fontawesome|user' size={30} color='#0075FD' style={styles.avatar}/>
+                    <Icon name='fontawesome|user' size={30} color='#f7f7f7' style={styles.avatar}/>
                     <View style={styles.messageContentContainer}>
                       <View style={styles.messageTextContainer}>
                         <Text style={styles.messageAuthor}>{msg.author}</Text>
@@ -93,13 +93,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   messageText: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'OpenSans',
     marginLeft: 5,
     marginBottom: 10
   },
   messageContentContainer: {
-    flex: 9
+    flex: 9,
+    marginLeft: 10
   },
   messageContainer: {
     padding: 0,
@@ -110,18 +111,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   messageAuthor: {
-    fontSize: 16,
+    fontSize: 14,
     margin: 5,
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
   },
   messageTimestamp: {
-    fontSize: 13,
+    fontSize: 12,
     fontFamily: 'OpenSans',
     marginTop: 9,
     marginLeft: 6,
     fontWeight: 'bold',
-    color: "#bbb"
+    color: "#ddd"
   },
   notFetching: {
     height: 0
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     paddingLeft: 10,
     paddingRight: 10,
-    backgroundColor: "#f7f7f7",
+    backgroundColor: "#1E00B1",
     // margin: 7,
     alignSelf: 'center',
     flex: 1
@@ -146,14 +147,14 @@ const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: 'white',
     flex: 1,
-    paddingLeft: 20,
+    paddingLeft: 10,
     paddingRight: 0,
     marginTop: 0,
     paddingTop: 0
   },
   separator: {
     height: 5,
-    borderBottomColor: '#bbb',
+    borderBottomColor: '#f1f1f1',
     borderBottomWidth: 1,
   },
   activity: {

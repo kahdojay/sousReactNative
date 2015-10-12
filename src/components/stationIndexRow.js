@@ -20,10 +20,7 @@ class StationIndexRow extends React.Component {
     const numCompletedTasks = _.filter(stationTasks, {completed: true}).length
     const totalNumTasks = stationTasks.length
     const progress = numCompletedTasks/totalNumTasks
-
     let progressColor = progress < 0.9 ? "#4A90E2" : "#7ED321";
-    console.log("NUM COMPLETED", numCompletedTasks);
-    console.log("TOTAL", totalNumTasks);
     let percentage = Math.floor(( numCompletedTasks / totalNumTasks)*100) || 0
     return (
       <TouchableOpacity
