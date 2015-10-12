@@ -67,7 +67,7 @@ class Feed extends React.Component {
                       <View style={styles.messageTextContainer}>
                         <Text style={styles.messageAuthor}>{msg.author}</Text>
                         <Text style={styles.messageTimestamp}>
-                          {date.substring(0, date.length-5)}{time}
+                          {date.substring(0, date.length-6)}{time}
                         </Text>
                       </View>
                       <Text style={styles.messageText} key={index}>{msg.message}</Text>
