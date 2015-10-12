@@ -417,12 +417,12 @@ class App extends React.Component {
           index: 0,
         }}
         renderScene={this.renderScene.bind(this)}
-        configureScene={(route) => {
-          if (route.sceneConfig) {
-            return route.sceneConfig;
-          }
-          return Navigator.SceneConfigs.FloatFromRight;
-        }}
+        // configureScene={(route) => {
+        //   if (route.sceneConfig) {
+        //     return route.sceneConfig;
+        //   }
+        //   return Navigator.SceneConfigs.FloatFromRight;
+        // }}
       />
     )
   }
