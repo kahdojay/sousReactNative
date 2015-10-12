@@ -46,6 +46,7 @@ class PurveyorIndex extends React.Component {
           onSubmit={this.props.onAddPurveyor}
         />
         <ScrollView
+          keyboardShouldPersistTaps={false}
         >
           {purveyorsList}
         </ScrollView>

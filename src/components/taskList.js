@@ -61,6 +61,7 @@ export default class TaskList extends React.Component {
     return (
       <ScrollView
         style={styles.scrollView}
+        keyboardShouldPersistTaps={false}
         contentInset={{bottom:49}}
         automaticallyAdjustContentInsets={false}
         >

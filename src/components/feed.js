@@ -52,6 +52,7 @@ class Feed extends React.Component {
           <InvertibleScrollView
             style={styles.scrollView}
             contentInset={{bottom:49}}
+            keyboardShouldPersistTaps={false}
             automaticallyAdjustContentInsets={false}
             inverted
             ref='scrollview'

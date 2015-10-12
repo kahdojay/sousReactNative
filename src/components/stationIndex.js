@@ -35,6 +35,7 @@ class StationIndex extends React.Component {
           />
           <ScrollView
             style={styles.scrollView}
+            keyboardShouldPersistTaps={false}
             contentInset={{bottom:49}}
             automaticallyAdjustContentInsets={false}
           >
