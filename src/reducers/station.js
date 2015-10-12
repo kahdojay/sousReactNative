@@ -94,7 +94,6 @@ function stations(state = initialState.stations, action) {
       data: currentStationsDataState,
       lastUpdated: (new Date()).getTime()
     });
-    // this
 
   // update station
   case UPDATE_STATION:

@@ -61,7 +61,7 @@ function connectApp(teamKey){
       //   return station.id;
       // })
       if (log.fields){
-        // console.log("MAIN DDP WITH FIELDS MSG", log);
+        console.log("MAIN DDP WITH FIELDS MSG", log);
         var data = log.fields;
         data.id = log.id;
         switch(log.collection){
