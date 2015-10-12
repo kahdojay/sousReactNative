@@ -5,7 +5,7 @@
   "scripts": {
     "start_cold": "./node_modules/.bin/react-native-webpack-server start",
     "start": "HOT=1 ./node_modules/.bin/react-native-webpack-server start --hot",
-    "bundle": "rnws bundle"
+    "bundle": "./node_modules/.bin/react-native-webpack-server bundle"
   },
   "dependencies": {
     "ddp-client": "^0.1.2",

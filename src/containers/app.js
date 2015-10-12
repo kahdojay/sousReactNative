@@ -1,4 +1,5 @@
 import React from 'react-native';
+import Footer from '../components/footer';
 import Login from '../components/login';
 import Signup from '../components/signup';
 import StationIndex from '../components/stationIndex';
@@ -13,7 +14,6 @@ import _ from 'lodash';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
 import { connect } from 'react-redux/native';
-import { Icon } from 'react-native-icons';
 import { footerButtonIconColor, footerActiveHighlight } from '../utilities/colors';
 import * as actions from '../actions';
 
@@ -221,20 +221,6 @@ class App extends React.Component {
 
     let header = <View />;
     let scene = this.getScene(route, nav);
-    let footer = <View />;
-    let applyHighlight = '';
-
-    if(_.includes(['StationIndex', 'StationView', 'TaskView'], route.name)){
-      applyHighlight = 'Prep'
-    } else if(_.includes(['Feed'], route.name)){
-      applyHighlight = 'Feed'
-    } else if(_.includes(['PurveyorIndex', 'PurveyorView', 'ProductView'], route.name)){
-      applyHighlight = 'Order'
-    }
-
-    let prepFooterHighlight = (applyHighlight == 'Prep' ? styles.footerActiveHighlight : {});
-    let feedFooterHighlight = (applyHighlight == 'Feed' ? styles.footerActiveHighlight : {});
-    let orderFooterHighlight = (applyHighlight == 'Order' ? styles.footerActiveHighlight : {});
 
     // setup the header for unauthenticated routes
     if(this.authenticatedRoute(route) === false){
@@ -302,98 +288,6 @@ class App extends React.Component {
         default:
           header =  <View></View>;
       }
-
-      let footerContainerStyle = styles.footerContainer;
-      // TODO: fix the height animation to prevent FOUC
-      if(ui.keyboard.visible === true){
-        footerContainerStyle = [styles.footerContainer, {
-          marginTop: ui.keyboard.marginBottom - 70
-        }];
-      }
-
-      footer = <View style={footerContainerStyle}>
-        <View style={styles.footerItem}>
-          <TouchableHighlight
-            underlayColor='white'
-            onPress={() => nav.replace({
-              name: 'StationIndex'
-            })}
-            style={[styles.footerButton, prepFooterHighlight]}
-          >
-            <View>
-              <Icon
-                name='material|assignment'
-                size={30}
-                color={footerButtonIconColor}
-                style={[styles.footerButtonIcon,prepFooterHighlight]}
-              />
-              <Text style={[styles.footerButtonText,prepFooterHighlight]}>
-                Prep
-              </Text>
-            </View>
-          </TouchableHighlight>
-        </View>
-        <View style={styles.footerItem}>
-          <TouchableHighlight
-            underlayColor="white"
-            onPress={() => nav.replace({
-              name: 'Feed'
-            })}
-            style={[styles.footerButton, feedFooterHighlight]}
-          >
-            <View>
-              <Icon
-                name='material|comments'
-                size={24}
-                color={footerButtonIconColor}
-                style={[styles.footerButtonIcon,feedFooterHighlight]}
-              />
-              <Text style={[styles.footerButtonText,feedFooterHighlight]}>
-                Feed
-              </Text>
-            </View>
-          </TouchableHighlight>
-        </View>
-        <View style={styles.footerItem}>
-          <TouchableHighlight
-            underlayColor='white'
-            onPress={() => nav.replace({
-              name: 'PurveyorIndex'
-            })}
-            style={[styles.footerButton, orderFooterHighlight]}
-          >
-            <View>
-              <Icon
-                name='material|shopping-cart'
-                size={30}
-                color={footerButtonIconColor}
-                style={[styles.footerButtonIcon, orderFooterHighlight]}
-              />
-              <Text style={styles.footerButtonText}>
-                Order
-              </Text>
-            </View>
-          </TouchableHighlight>
-        </View>
-        {/*<View style={styles.footerItem}>
-          <TouchableHighlight
-            style={[styles.footerButton, styles.logoutButton]}
-            onPress={() => { dispatch(actions.resetSession()) }}
-          >
-            <View>
-              <Icon
-                name='material|bus'
-                size={30}
-                color='#fff'
-                style={[styles.footerButtonIcon]}
-              />
-              <Text style={[styles.footerButtonText,styles.logoutButtonText]}>
-                Reset
-              </Text>
-            </View>
-          </TouchableHighlight>
-        </View>*/}
-      </View>
     }
 
     if(ui.keyboard.visible === true){
@@ -404,7 +298,11 @@ class App extends React.Component {
       <View style={styles.container}>
         {header}
         {scene}
-        {footer}
+        <Footer
+          nav={nav}
+          ui={ui}
+          route={route}
+        />
       </View>
     );
   }
