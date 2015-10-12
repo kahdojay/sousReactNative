@@ -45,6 +45,10 @@ class App extends React.Component {
     }
   }}
 
+  componentWillMount() {
+    this.props.dispatch(actions.fetchTeams());
+  }
+
   authenticatedRoute(route){
     let isAuthenticated = false;
     if(this.unauthenticatedRoutes.hasOwnProperty(route.name) === false){

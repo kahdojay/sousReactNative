@@ -34,7 +34,6 @@ function connectApp(teamKey){
     // Execute pre-connect actions
     //--------------------------------------
 
-    dispatch(teamActions.fetchTeams());
     dispatch(messageActions.resetMessages());
     dispatch(stationActions.resetStations());
     dispatch(purveyorActions.resetPurveyors());
