@@ -45,32 +45,6 @@ class Feed extends React.Component {
                         color={'#808080'}
                         style={styles.activity}
                         size={'large'} />
-
-    let messagesList = messages.data.map(function(msg, index) {
-      let date = new Date(msg.createdAt["$date"]).toLocaleTimeString();
-      let time = date.substring(date.length-3, date.length)
-      return (
-        <View>
-          <View key={index} style={styles.message}>
-            {/*<Image style={styles.avatar}
-              source={{uri: msg.imageUrl}}
-              />*/}
-            <Icon name='fontawesome|user' size={30} color='#0075FD' style={styles.avatar}/>
-            <View style={styles.messageContentContainer}>
-              <View style={styles.messageTextContainer}>
-                <Text style={styles.messageAuthor}>{msg.author}</Text>
-                <Text style={styles.messageTimestamp}>
-                  {date.substring(0, date.length-5)}{time}
-                </Text>
-              </View>
-              <Text style={styles.messageText} key={index}>{msg.message}</Text>
-            </View>
-          </View>
-          <View style={styles.separator} />
-        </View>  
-      )
-    }).reverse(); // reverse messages here because we use InvertedScrollView
-
     return (
       <View style={styles.container}>
         <View style={styles.messageContainer}>
@@ -82,7 +56,27 @@ class Feed extends React.Component {
             inverted
             ref='scrollview'
           >
-            { messagesList }
+            { this.props.messages.data.map((msg, index) => {
+              let date = new Date(msg.createdAt["$date"]).toLocaleTimeString();
+              let time = date.substring(date.length-3, date.length)
+              return (
+                <View>
+                  <View key={index} style={styles.message}>
+                    <Icon name='fontawesome|user' size={30} color='#0075FD' style={styles.avatar}/>
+                    <View style={styles.messageContentContainer}>
+                      <View style={styles.messageTextContainer}>
+                        <Text style={styles.messageAuthor}>{msg.author}</Text>
+                        <Text style={styles.messageTimestamp}>
+                          {date.substring(0, date.length-5)}{time}
+                        </Text>
+                      </View>
+                      <Text style={styles.messageText} key={index}>{msg.message}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.separator} />
+                </View>
+              )
+            }).reverse() }
           </InvertibleScrollView>
         <AddMessageForm
           placeholder="Message..."
