@@ -61,6 +61,7 @@ class App extends React.Component {
   getScene(route, nav) {
     const { ui, session, teams, stations, messages, dispatch, purveyors, products } = this.props;
     let teamKey = session.teamKey;
+    // console.log(teamKey);
     switch (route.name) {
       case 'Login':
         return <Login

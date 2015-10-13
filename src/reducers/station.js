@@ -43,6 +43,7 @@ function stations(state = initialState.stations, action) {
       data: currentStationsDataState,
       lastUpdated: (new Date()).getTime()
     });
+
   // delete the station
   case DELETE_STATION:
     var newStationState = Object.assign({}, state);
@@ -63,7 +64,7 @@ function stations(state = initialState.stations, action) {
       lastUpdated: (new Date()).getTime()
     });
 
-  // update station -- added this
+  // update station
   case UPDATE_STATION:
     // action {
     //   stationId
