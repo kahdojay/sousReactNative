@@ -29,6 +29,7 @@ const purveyorActions = PurveyorActions(ddpClient)
 
 function connectApp(teamKey){
   return (dispatch, getState) => {
+    const {session} = getState();
 
     //--------------------------------------
     // Execute pre-connect actions
@@ -51,12 +52,16 @@ function connectApp(teamKey){
     ddpClient.on('connected', () => {
       Object.keys(DDP.SUBSCRIBE_LIST).forEach((resourceKey) => {
         let resource = DDP.SUBSCRIBE_LIST[resourceKey];
-        ddpClient.subscribe(resource.channel, [teamKey]);
+        var resourceAttr = session.teamKey;
+        if(resource.channel === 'errors'){
+          resourceAttr = session.userId;
+        }
+        ddpClient.subscribe(resource.channel, [resourceAttr]);
       })
     })
     ddpClient.on('message', (msg) => {
       var log = JSON.parse(msg);
-      // console.log("MAIN DDP MSG", log);
+      console.log("MAIN DDP MSG", log);
       // var stationIds = getState().stations.data.map(function(station) {
       //   return station.id;
       // })

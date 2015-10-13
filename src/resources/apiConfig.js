@@ -16,7 +16,8 @@ export const DDP = {
   SUBSCRIBE_LIST: {
     MESSAGES: {channel: 'messages'},
     STATIONS: {channel: 'stations'},
-    PURVEYORS: {channel: 'purveyors'}
+    PURVEYORS: {channel: 'purveyors'},
+    ERRORS: {channel: 'errors'}
   },
   // SUBSCRIBE_MESSAGES: 'messages',
   // SUBSCRIBE_STATIONS: 'stations',

@@ -48,21 +48,24 @@ export default function StationActions(ddpClient) {
   }
 
   function addStationTask(stationId, taskAttributes){
-    var newTaskAttributes = {
-      recipeId: shortid.generate(),
-      name: taskAttributes.name,
-      description: "",
-      deleted: false,
-      completed: false,
-      quantity: 1,
-      unit: 0 // for future use
-    }
-    ddpClient.call('addStationTask', [stationId, newTaskAttributes]);
-    return {
-      type: UPDATE_STATION,
-      stationId: stationId,
-      recipeId: newTaskAttributes.recipeId,
-      task: newTaskAttributes
+    return (dispatch, getState) => {
+      const {session} = getState();
+      var newTaskAttributes = {
+        recipeId: shortid.generate(),
+        name: taskAttributes.name,
+        description: "",
+        deleted: false,
+        completed: false,
+        quantity: 1,
+        unit: 0 // for future use
+      }
+      ddpClient.call('addStationTask', [session.userId, stationId, newTaskAttributes]);
+      return {
+        type: UPDATE_STATION,
+        stationId: stationId,
+        recipeId: newTaskAttributes.recipeId,
+        task: newTaskAttributes
+      }
     }
   }
 
