@@ -2,6 +2,7 @@ import { Icon } from 'react-native-icons';
 import React from 'react-native';
 import { mainBackgroundColor } from '../utilities/colors';
 import ImageGallery from './imageGallery';
+import Camera from './camera';
 const {
   View,
   Text,
@@ -40,15 +41,14 @@ class ProfileView extends React.Component {
     },
     (buttonIndex) => {
       if( takePhoto === buttonIndex ){
-        // process the delete
-        console.log("CHANGE YOUR IMAGE WITH UPLOAD");
+        this.props.navigator.push({
+          name: 'Camera'
+        });
       } else if ( photoUpload === buttonIndex) {
-        // process upload photo
+        // console.log("TAKE A PHOTO");
         const fetchParams = {
           first: 100,
         };
-
-        console.log("TAKE A PHOTO");
         CameraRoll.getPhotos(fetchParams, this.storeImages.bind(this), this.logImageError);
       }
     });

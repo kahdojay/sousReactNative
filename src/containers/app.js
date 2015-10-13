@@ -9,6 +9,7 @@ import Signup from '../components/signup';
 import ImageGallery from '../components/imageGallery';
 import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
+import Camera from '../components/camera';
 import TaskView from '../components/taskView';
 import Feed from '../components/feed';
 import PurveyorIndex from '../components/purveyorIndex';
@@ -255,6 +256,12 @@ class App extends React.Component {
             onUpdateAvatar={(image) => {
               dispatch(actions.updateSession(image, session));
             }}
+            />
+        );
+      case 'Camera':
+        return (
+          <Camera
+            navigator={nav}
             />
         )
       default:
