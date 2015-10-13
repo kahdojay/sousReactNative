@@ -2,7 +2,6 @@ import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
-import { mainBackgroundColor, navbarColor } from '../utilities/colors';
 
 const {
   ScrollView,
@@ -31,7 +30,8 @@ class TaskView extends React.Component {
   }
 
   scrollToBottom() {
-    // TODO: automatically scroll to bottom on TextInput focus (alternatively, define method to calculate y-position of TextInput and scroll to there)
+    // TODO: automatically scroll to bottom on TextInput focus (alternatively,
+    // define method to calculate y-position of TextInput and scroll to there)
     // if(this.refs.hasOwnProperty('scrollview')){
     //   UIManager.measure(this.refs.scrollview, (x, y, width, height, left, top) => {
     //     console.log(height);
@@ -80,27 +80,11 @@ class TaskView extends React.Component {
   }
 
   render() {
-    let navBar = <View style={[NavigationBarStyles.navBarContainer, {backgroundColor: navbarColor}]}>
-      <View style={[
-        NavigationBarStyles.navBar,
-        {paddingVertical: 5}
-      ]}>
-        <BackBtn
-          style={styles.backButton}
-          callback={this.saveTask.bind(this)}
-          navigator={this.props.navigator}
-        />
-        <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-        <View style={NavigationBarStyles.navBarRightButton}></View>
-      </View>
-    </View>
-
     if(this.props.ui.keyboard.visible === true){
-      navBar = <View/>
+      // navBar = <View/>
     }
     return (
       <View style={styles.container}>
-        {navBar}
         <ScrollView
           scrollEventThrottle={200}
           ref='scrollview'

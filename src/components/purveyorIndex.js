@@ -32,6 +32,7 @@ class PurveyorIndex extends React.Component {
               self.props.navigator.push({
                 name: 'PurveyorView',
                 purveyorId: purveyor.id,
+                navigationBar: self.props.navBar
               })
             }}
           />
@@ -45,9 +46,7 @@ class PurveyorIndex extends React.Component {
           placeholder="Add purveyor..."
           onSubmit={this.props.onAddPurveyor}
         />
-        <ScrollView
-          keyboardShouldPersistTaps={false}
-        >
+        <ScrollView keyboardShouldPersistTaps={false} >
           {purveyorsList}
         </ScrollView>
       </View>
@@ -72,7 +71,6 @@ const styles = StyleSheet.create({
 PurveyorIndex.propTypes = {
   onAddPurveyor: React.PropTypes.func,
   navigator: React.PropTypes.object.isRequired,
-  //products: React.PropTypes.object,
   purveyors: React.PropTypes.object,
 };
 

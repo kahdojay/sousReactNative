@@ -1,5 +1,9 @@
 import React from 'react-native';
 import Footer from '../components/footer';
+import _ from 'lodash';
+import NavigationBar from 'react-native-navbar';
+import { connect } from 'react-redux/native';
+import { Icon } from 'react-native-icons';
 import Login from '../components/login';
 import Signup from '../components/signup';
 import StationIndex from '../components/stationIndex';
@@ -10,12 +14,10 @@ import PurveyorIndex from '../components/purveyorIndex';
 import PurveyorView from '../components/purveyorView';
 import ProductView from '../components/productView';
 import ProfileView from '../components/profileView';
-import _ from 'lodash';
+import NavbarTitle from '../components/NavbarTitle';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
-import { connect } from 'react-redux/native';
-import { footerButtonIconColor, footerActiveHighlight } from '../utilities/colors';
-import { Icon } from 'react-native-icons';
+import Colors from '../utilities/colors';
 import * as actions from '../actions';
 
 const {
@@ -23,6 +25,7 @@ const {
   PropTypes,
   View,
   Text,
+  ActionSheetIOS,
   Image,
   StyleSheet,
   Navigator,
@@ -58,10 +61,10 @@ class App extends React.Component {
     return isAuthenticated;
   }
 
-  getScene(route, nav) {
+  getScene(route, nav, navBar) {
     const { ui, session, teams, stations, messages, dispatch, purveyors, products } = this.props;
     let teamKey = session.teamKey;
-    // console.log(teamKey);
+
     switch (route.name) {
       case 'Login':
         return <Login
@@ -89,6 +92,7 @@ class App extends React.Component {
       case 'StationIndex':
         return <StationIndex
                   navigator={nav}
+                  navBar={navBar}
                   onConnectApp={() => {
                     this.props.dispatch(actions.connectApp(teamKey))
                   }}
@@ -117,6 +121,7 @@ class App extends React.Component {
           <StationView
             ui={ui}
             navigator={nav}
+            navBar={navBar}
             station={station}
             stationId={route.stationId}
             onAddNewTask={function(stationId, taskName){
@@ -160,6 +165,7 @@ class App extends React.Component {
       case 'Feed':
         return <Feed
                   navigator={nav}
+                  navBar={navBar}
                   messages={messages}
                   userEmail={session.login}
                   teamKey={session.teamKey}
@@ -171,6 +177,7 @@ class App extends React.Component {
         return (
           <PurveyorIndex
             navigator={nav}
+            navBar={navBar}
             purveyors={purveyors}
             onAddPurveyor={(name) => {
               console.log("THIS", this);
@@ -195,6 +202,7 @@ class App extends React.Component {
           <PurveyorView
             ui={ui}
             navigator={nav}
+            navBar={navBar}
             purveyor={purveyor}
             onAddNewProduct={(purveyorId, productName) => {
               var products = purveyor.products.map((product) => {
@@ -236,6 +244,50 @@ class App extends React.Component {
     }
   }
 
+  showActionSheetStationView(navigator, route) {
+    const { dispatch } = this.props;
+    let buttons = [
+      'Delete Station',
+      // 'Rename Station',
+      'Cancel'
+    ]
+    let deleteAction = 0;
+    let cancelAction = 2;
+    ActionSheetIOS.showActionSheetWithOptions({
+      options: buttons,
+      cancelButtonIndex: cancelAction,
+      destructiveButtonIndex: deleteAction,
+    },
+    (buttonIndex) => {
+      if (deleteAction === buttonIndex){
+        dispatch(actions.deleteStation(route.stationId))
+        navigator.pop();
+      }
+    });
+  }
+  showActionSheetPurveyorView(navigator, route) {
+    const { dispatch } = this.props;
+    let buttons = [
+      'Delete Purveyor',
+      // 'Rename Purveyor',
+      'Cancel'
+    ]
+    let deleteAction = 0;
+    let cancelAction = 2;
+    ActionSheetIOS.showActionSheetWithOptions({
+      options: buttons,
+      cancelButtonIndex: cancelAction,
+      destructiveButtonIndex: deleteAction,
+    },
+    (buttonIndex) => {
+      console.log('route', navigator, route)
+      if (deleteAction === buttonIndex) {
+        dispatch(actions.deletePurveyor(route.purveyorId));
+        navigator.pop();
+      }
+    });
+  }
+
   renderScene(route, nav) {
     const { dispatch, ui } = this.props;
 
@@ -249,88 +301,115 @@ class App extends React.Component {
     else if(route.name !== 'Login' && route.name !== 'Signup') {
       route.name = 'Signup'
     }
-
-    let header = <View />;
-    let scene = this.getScene(route, nav);
+    let navBar = route.navigationBar;
+    let scene = this.getScene(route, nav, navBar);
 
     // setup the header for unauthenticated routes
     if(this.authenticatedRoute(route) === false){
-      let nextButton = <View />;
-      switch (route.name) {
-        case 'Login':
-          nextButton = <TouchableHighlight
-            onPress={() => nav.replace({
-              name: 'Signup'
-            })}
-            style={styles.signup}>
-            <Text style={styles.buttonText}>Signup</Text>
-          </TouchableHighlight>;
-          break;
-        case 'Signup':
-          nextButton = <TouchableHighlight
-            onPress={() => nav.replace({
-              name: 'Login'
-            })}
-            style={styles.signup}>
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableHighlight>;
-          break;
-        default:
-          break;
+      if (navBar) {
+        navBar = React.addons.cloneWithProps(navBar, {
+          navigator: nav,
+          route: route,
+        })
       }
-      // setup the header for authenticated routes
-      header = (
-        <View style={[styles.nav, styles.navSignUp]}>
-          <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-        </View>
-      );
-    }
-    else {
+    } else {
       switch(route.name) {
         case 'StationIndex':
+          if (navBar) {
+            navBar = React.addons.cloneWithProps(navBar, {
+              navigator: nav,
+              route: route,
+              hidePrev: true,
+              onNext: (navigator, route) => {
+                navigator.push({
+                  name: 'Profile',
+                  navigationBar: navBar,
+                })
+              },
+              onPrev: null,
+              nextTitle: 'profile',
+            })
+          }
+          break;
         case 'Feed':
+          if (navBar) {
+            navBar = React.addons.cloneWithProps(navBar, {
+              navigator: nav,
+              route: route,
+              hidePrev: true,
+              onNext: null,
+            })
+          }
+          break;
         case 'PurveyorIndex':
-          header =  (
-            <View style={styles.nav}>
-              <Image
-                source={require('image!Logo')}
-                style={styles.logoImage}
-              />
-              <TouchableHighlight
-                style={styles.profileBtn}
-                onPress={() => {
-                  nav.replace({
-                    name: 'Profile'
-                  })
-                }}
-              >
-                <Icon
-                  name='material|account-circle'
-                  size={50}
-                  color='white'
-                  style={styles.iconFace}
-                />
-              </TouchableHighlight>
-            </View>
-          );
+          if (navBar) {
+            console.log('purvyerIndex has navbar')
+            navBar = React.addons.cloneWithProps(navBar, {
+              navigator: nav,
+              route: route,
+              hidePrev: true,
+              onNext: null,
+              onPrev: null,
+            })
+          }
           break;
         case "StationView":
+          if (navBar) {
+            navBar = React.addons.cloneWithProps(navBar, {
+              navigator: nav,
+              route: route,
+              onNext: (navigator, route) => this.showActionSheetStationView(navigator, route),
+              nextTitle: '...',
+              hidePrev: false,
+            })
+          }
+          break;
         case "PurveyorView":
+          if (navBar) {
+            navBar = React.addons.cloneWithProps(navBar, {
+              navigator: nav,
+              route: route,
+              onNext: (navigator, route) => this.showActionSheetPurveyorView(navigator, route),
+              nextTitle: '...',
+              hidePrev: false,
+            })
+          }
+          break;
+        case 'ProductView':
+          if (navBar) {
+            navBar = React.addons.cloneWithProps(navBar, {
+              navigator: nav,
+              route: route,
+              onNext: null,
+              hidePrev: false,
+            })
+          }
+          break;
         default:
-          header =  <View></View>;
+          if (navBar) {
+            navBar = React.addons.cloneWithProps(navBar, {
+              hidePrev: false,
+              navigator: nav,
+              route: route,
+              onNext: null,
+            })
+          };
       }
     }
 
     if(ui.keyboard.visible === true){
-      header = <View/>
+      // header = <View/>
     }
+    console.log('app.js navBar', navBar)
 
     return (
       <View style={styles.container}>
-        {header}
+        {navBar}
         {scene}
         <Footer
+          onPressResetSession={() => dispatch(actions.resetSession())}
           nav={nav}
+          navBar={navBar}
           ui={ui}
           route={route}
         />
@@ -342,10 +421,17 @@ class App extends React.Component {
     return (
       <Navigator
         initialRoute={{
-          name: this.initialRoute,
           index: 0,
+          name: this.initialRoute,
+          navigationBar: (
+            <NavigationBar
+              customTitle={<NavbarTitle />}
+              style={styles.nav}
+            />
+          )
         }}
         renderScene={this.renderScene.bind(this)}
+        // TODO: commented out to prevent ghosting, review animation options later
         // configureScene={(route) => {
         //   if (route.sceneConfig) {
         //     return route.sceneConfig;
@@ -366,11 +452,7 @@ let styles = StyleSheet.create({
     flex: 1
   },
   nav: {
-    backgroundColor: '#1825AD',
-    justifyContent: 'space-between',
-    margin: 0,
-    flexDirection: 'row',
-    alignItems: 'center'
+    backgroundColor: Colors.navbarColor,
   },
   navSignUp: {
     justifyContent: 'center',
@@ -414,29 +496,6 @@ let styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontFamily: 'OpenSans'
-  },
-  footerContainer: {
-    flexDirection: 'row',
-    borderTopWidth: 1,
-    borderColor: '#979797'
-  },
-  footerItem: {
-    flex: 1
-  },
-  footerButton: {
-    padding: 5
-  },
-  footerButtonIcon: {
-    width: 25,
-    height: 25,
-    alignSelf: 'center'
-  },
-  footerButtonText: {
-    alignSelf: 'center',
-    color: footerButtonIconColor
-  },
-  footerActiveHighlight: {
-    backgroundColor: footerActiveHighlight,
   },
   logoutButton: {
     backgroundColor: 'pink'

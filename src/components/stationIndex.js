@@ -47,7 +47,8 @@ class StationIndex extends React.Component {
                     station={station}
                     onPress={() => this.props.navigator.push({
                       name: 'StationView',
-                      stationId: station.id
+                      stationId: station.id,
+                      navigationBar: this.props.navBar,
                     })}
                   />
                 );

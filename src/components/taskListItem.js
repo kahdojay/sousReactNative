@@ -1,12 +1,9 @@
-var { Icon, } = require('react-native-icons');
+import { Icon, } from 'react-native-icons';
 import React from 'react-native'
 import CheckBox from 'react-native-checkbox'
-import {
-  greyText,
-  taskCompletedBackgroundColor
-} from '../utilities/colors';
+import { greyText, taskCompletedBackgroundColor } from '../utilities/colors';
 
-let {
+const {
   TouchableHighlight,
   PropTypes,
   Text,
@@ -14,7 +11,7 @@ let {
   View,
 } = React;
 
-export default class TaskListItem extends React.Component {
+class TaskListItem extends React.Component {
   increment() {
     this.props.onUpdateTask({quantity: (this.props.task.quantity + 1)})
   }
@@ -36,6 +33,7 @@ export default class TaskListItem extends React.Component {
     } else {
       taskStyle = styles.taskIncompleteText;
     }
+
     return (
       <View style={styles.container}>
         <View style={[
@@ -50,11 +48,14 @@ export default class TaskListItem extends React.Component {
             />
           </View>
           <TouchableHighlight
-            onPress={() => this.props.navigator.push({
-              name: 'TaskView',
-              recipeId: this.props.task.recipeId,
-              stationId: this.props.stationId
-            })}
+            onPress={() => {
+              this.props.navigator.push({
+                name: 'TaskView',
+                recipeId: this.props.task.recipeId,
+                stationId: this.props.stationId,
+                navigationBar: this.props.navBar,
+              })
+            }}
             style={styles.main}
           >
             <View>
@@ -99,10 +100,8 @@ let styles = StyleSheet.create({
     fontSize: 16
   },
   taskCompletedText: {
-
   },
   taskIncompleteText: {
-
   },
   row: {
     borderRadius: 10,
@@ -133,6 +132,7 @@ let styles = StyleSheet.create({
 });
 
 TaskListItem.propTypes = {
-  // onUpdateTask: PropTypes.func.isRequired,
   task: PropTypes.object.isRequired
 };
+
+export default TaskListItem

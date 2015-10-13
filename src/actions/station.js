@@ -1,4 +1,4 @@
-import shortid from 'shortid'
+import Shortid from 'shortid'
 import MessageActions from './message'
 import {
   RESET_STATIONS,
@@ -25,7 +25,7 @@ export default function StationActions(ddpClient) {
 
   function addStation(name, teamKey) {
     var newStationAttributes = {
-      _id: shortid.generate(),
+      _id: Shortid.generate(),
       name: name,
       teamKey: teamKey,
       tasks: [],
@@ -51,7 +51,7 @@ export default function StationActions(ddpClient) {
     return (dispatch, getState) => {
       const {session} = getState();
       var newTaskAttributes = {
-        recipeId: shortid.generate(),
+        recipeId: Shortid.generate(),
         name: taskAttributes.name,
         description: "",
         deleted: false,
@@ -59,7 +59,7 @@ export default function StationActions(ddpClient) {
         quantity: 1,
         unit: 0 // for future use
       }
-      ddpClient.call('addStationTask', [stationId, newTaskAttributes, session.userId]);
+      ddpClient.call('addStationTask', [session.userId, stationId, newTaskAttributes]);
       return {
         type: UPDATE_STATION,
         stationId: stationId,

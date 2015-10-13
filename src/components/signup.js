@@ -1,4 +1,4 @@
-var { Icon, } = require('react-native-icons');
+import { Icon, } from 'react-native-icons';
 import _ from 'lodash'
 import React from 'react-native'
 
@@ -60,7 +60,7 @@ class Signup extends React.Component {
     if(text == ''){
       updateState.lookingForTeam = false;
     }
-    foundTeams = _.filter(this.props.teams.data, function(team) { 
+    foundTeams = _.filter(this.props.teams.data, function(team) {
       return team.name.toLowerCase() === text.toLowerCase()
     })
 
@@ -91,7 +91,8 @@ class Signup extends React.Component {
               placeholder='Email'
               onChangeText={(text) => {
                 this.setState({email: text, invalid: false})
-              }}/>
+              }}
+            />
           </View>
           <View style={styles.underline}></View>
           <View style={styles.inputContainer}>
