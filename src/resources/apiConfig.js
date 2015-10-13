@@ -11,12 +11,13 @@ export const endpoints = {
 
 export const DDP = {
   // ENDPOINT_WS: 'ws://sous-chat.meteor.com/websocket',
-  // ENDPOINT_WS: 'ws://localhost:3000/websocket',
-  ENDPOINT_WS: 'ws://sousmeteor-52834.onmodulus.net/websocket',
+  ENDPOINT_WS: 'ws://localhost:3000/websocket',
+  // ENDPOINT_WS: 'ws://sousmeteor-52834.onmodulus.net/websocket',
   SUBSCRIBE_LIST: {
     MESSAGES: {channel: 'messages'},
     STATIONS: {channel: 'stations'},
-    PURVEYORS: {channel: 'purveyors'}
+    PURVEYORS: {channel: 'purveyors'},
+    ERRORS: {channel: 'errors'}
   },
   // SUBSCRIBE_MESSAGES: 'messages',
   // SUBSCRIBE_STATIONS: 'stations',

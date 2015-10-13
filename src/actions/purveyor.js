@@ -1,3 +1,5 @@
+import shortid from 'shortid'
+import MessageActions from './message'
 import {
   RESET_PURVEYORS,
   GET_PURVEYORS,
@@ -12,6 +14,8 @@ import {
 
 export default function PurveyorActions(ddpClient){
 
+  const messageActions = MessageActions(ddpClient)
+
   function resetPurveyors(){
     return {
       type: RESET_PURVEYORS
@@ -19,45 +23,65 @@ export default function PurveyorActions(ddpClient){
   }
 
   function addPurveyor(name, teamKey) {
-    var purveyorAttributes = {
+    var newPurveyorAttributes = {
+      _id: shortid.generate(),
+      teamKey: teamKey,
       name: name,
       description: "",
-      teamKey: teamKey,
-      products: [],
-      deleted: false
+      products:    [],
+      deleted:  false
     }
-    ddpClient.call('createPurveyor', [purveyorAttributes]);
+    ddpClient.call('createPurveyor', [newPurveyorAttributes]);
     return {
       type: ADD_PURVEYOR,
-      purveyor: purveyorAttributes
+      purveyor: newPurveyorAttributes
     };
   }
 
-  function completePurveyorProduct(message) {
-    ddpClient.call('createMessage', [message]);
-    return {
-      type: ORDER_PURVEYOR_PRODUCT
-    };
+  function completePurveyorProduct(messageText) {
+    return (dispatch) => {
+      dispatch(messageActions.createMessage(messageText))
+      return {
+        type: ORDER_PURVEYOR_PRODUCT
+      };
+    }
   }
 
   function addPurveyorProduct(purveyorId, productAttributes){
-    ddpClient.call('addPurveyorProduct', [purveyorId, productAttributes]);
+    var newProductAttributes = {
+      productId: shortid.generate(),
+      name: productAttributes.name,
+      description: "",
+      deleted: false,
+      ordered: false,
+      quantity: 1,
+      price: 0.0,
+      unit: '0 oz'
+    }
+    ddpClient.call('addPurveyorProduct', [purveyorId, newProductAttributes]);
     return {
-      type: UPDATE_PURVEYOR
+      type: UPDATE_PURVEYOR,
+      purveyorId: purveyorId,
+      product: newProductAttributes
     }
   }
 
   function updatePurveyorProduct(purveyorId, productId, productAttributes){
     ddpClient.call('updatePurveyorProduct', [purveyorId, productId, productAttributes]);
     return {
-      type: UPDATE_PURVEYOR
+      type: UPDATE_PURVEYOR,
+      purveyorId: purveyorId,
+      productId: productId,
+      product: productAttributes
     }
   }
 
   function updatePurveyor(purveyorId, purveyorAttributes){
     ddpClient.call('updatePurveyor', [purveyorId, purveyorAttributes]);
     return {
-      type: UPDATE_PURVEYOR
+      type: UPDATE_PURVEYOR,
+      purveyorId: purveyorId,
+      purveyor: purveyorAttributes
     }
   }
 

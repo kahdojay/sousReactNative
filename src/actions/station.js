@@ -1,3 +1,5 @@
+import shortid from 'shortid'
+import MessageActions from './message'
 import {
   RESET_STATIONS,
   GET_STATIONS,
@@ -10,7 +12,10 @@ import {
   COMPLETE_STATION_TASK
 } from './actionTypes'
 
+
 export default function StationActions(ddpClient) {
+
+  const messageActions = MessageActions(ddpClient)
 
   function resetStations(){
     return {
@@ -19,44 +24,67 @@ export default function StationActions(ddpClient) {
   }
 
   function addStation(name, teamKey) {
-    var stationAttributes = {
+    var newStationAttributes = {
+      _id: shortid.generate(),
       name: name,
       teamKey: teamKey,
       tasks: [],
       deleted: false
     }
-    ddpClient.call('createStation', [stationAttributes]);
+    ddpClient.call('createStation', [newStationAttributes]);
     return {
       type: ADD_STATION,
-      station: stationAttributes
+      station: newStationAttributes
     };
   }
 
-  function completeStationTask(message) {
-    ddpClient.call('createMessage', [message]);
-    return {
-      type: COMPLETE_STATION_TASK
-    };
+  function completeStationTask(messageText) {
+    return (dispatch) => {
+      dispatch(messageActions.createMessage(messageText))
+      return {
+        type: COMPLETE_STATION_TASK
+      };
+    }
   }
 
   function addStationTask(stationId, taskAttributes){
-    ddpClient.call('addStationTask', [stationId, taskAttributes]);
-    return {
-      type: UPDATE_STATION
+    return (dispatch, getState) => {
+      const {session} = getState();
+      var newTaskAttributes = {
+        recipeId: shortid.generate(),
+        name: taskAttributes.name,
+        description: "",
+        deleted: false,
+        completed: false,
+        quantity: 1,
+        unit: 0 // for future use
+      }
+      ddpClient.call('addStationTask', [stationId, newTaskAttributes, session.userId]);
+      return {
+        type: UPDATE_STATION,
+        stationId: stationId,
+        recipeId: newTaskAttributes.recipeId,
+        task: newTaskAttributes
+      }
     }
   }
 
   function updateStationTask(stationId, recipeId, taskAttributes){
     ddpClient.call('updateStationTask', [stationId, recipeId, taskAttributes]);
     return {
-      type: UPDATE_STATION
+      type: UPDATE_STATION,
+      stationId: stationId,
+      recipeId: recipeId,
+      task: taskAttributes
     }
   }
 
   function updateStation(stationId, stationAttributes){
     ddpClient.call('updateStation', [stationId, stationAttributes]);
     return {
-      type: UPDATE_STATION
+      type: UPDATE_STATION,
+      stationId: stationId,
+      station: stationAttributes
     }
   }
 

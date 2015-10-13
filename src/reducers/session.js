@@ -11,6 +11,9 @@ const initialState = {
   login: null,
   token: null,
   userId: null,
+  firstName: "First",
+  lastName: "Last",
+  imageUrl: "",
   teamKey: null,
   errors: null
 };

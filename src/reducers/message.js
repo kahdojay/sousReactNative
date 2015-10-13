@@ -1,3 +1,4 @@
+import { getIdx, updateByIdx, updateDataState } from '../utilities/reducer'
 import {
   RESET_MESSAGES,
   GET_MESSAGES,
@@ -19,47 +20,51 @@ const initialState = {
 
 function messages(state = initialState.messages, action) {
   switch (action.type) {
+  // reset the messages
   case RESET_MESSAGES:
     return Object.assign({}, initialState.messages);
+
+  // request the messages
   case REQUEST_MESSAGES:
     return Object.assign({}, state, {
       isFetching: true,
       errors: null,
     });
-  case RECEIVE_MESSAGES:
-    let messagesState = state.data;
-    var messageIdx = _.findIndex(state.data, (message, idx) => {
-      return message.id == action.message.id;
-    });
-    if(messageIdx === -1){
-      messagesState.push(action.message);
-    } else {
-      messagesState = [
-        ...messagesState.slice(0, messageIdx),
-        Object.assign({}, messagesState[messageIdx], action.message),
-        ...messagesState.slice(messageIdx + 1)
-      ]
-    }
 
-    // messagesState.push(action.message);
+  // receive the messages
+  case RECEIVE_MESSAGES:
+    var newMessageState = Object.assign({}, state);
+    var currentMessagesDataState = updateDataState(newMessageState.data, action.message)
+    // console.log(action.type, action.message.id)
+    // console.log('STATION REDUCER: ', currentMessagesDataState)
     return Object.assign({}, state, {
-      isFetching: false,
+      isFetching: false, // do we need to phase this out?
       errors: null,
-      data: messagesState,
+      data: currentMessagesDataState,
       lastUpdated: (new Date()).getTime()
     });
+
+  // create message
   case CREATE_MESSAGE:
-    //TODO: optimistic updates would go here??
-    // let currentMessages = state.data;
-    // currentMessages.push(action.messages);
-    // return Object.assign({}, state, {
-    //   data: currentMessages
-    // });
-    return state;
+    var newMessageState = Object.assign({}, state);
+    var currentMessagesDataState = updateDataState(newMessageState.data, action.message)
+    console.log(action.type, action.message.id)
+    return Object.assign({}, state, {
+      data: currentMessagesDataState,
+      lastUpdated: (new Date()).getTime()
+    });
+
+  // delete message
   case DELETE_MESSAGE:
-    let newMessageState = Object.assign({}, state);
-    newMessageState.data[action.messageKey].deleted = true;
-    return newMessageState;
+    var newMessageState = Object.assign({}, state);
+    var messageIdx = getIdx(newMessageState.data, action.messageId);
+    var currentMessagesDataState = updateByIdx(newMessageState.data, messageIdx, { deleted: true });
+    return Object.assign({}, state, {
+      data: currentMessagesDataState,
+      lastUpdated: (new Date()).getTime()
+    });
+
+  // everything else
   case GET_MESSAGES:
   default:
     return state;

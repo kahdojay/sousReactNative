@@ -60,9 +60,8 @@ class App extends React.Component {
 
   getScene(route, nav) {
     const { ui, session, teams, stations, messages, dispatch, purveyors, products } = this.props;
-
     let teamKey = session.teamKey;
-
+    // console.log(teamKey);
     switch (route.name) {
       case 'Login':
         return <Login
@@ -95,7 +94,15 @@ class App extends React.Component {
                   }}
                   stations={stations}
                   onAddStation={(name) => {
-                    dispatch(actions.addStation(name, teamKey))
+                    var stations = this.props.stations.data.map((station) => {
+                      if (! station.deleted)
+                        return station.name;
+                    });
+                    if (stations.indexOf(name) === -1) {
+                      dispatch(actions.addStation(name, teamKey))
+                    } else {
+                      console.log("ERROR: station already exists");
+                    }
                   }}
                   onBack={() =>
                     this._back.bind(this)
@@ -112,17 +119,23 @@ class App extends React.Component {
             navigator={nav}
             station={station}
             stationId={route.stationId}
-            onAddNewTask={(stationId, taskName) => {
-              dispatch(actions.addStationTask(stationId, {name: taskName}))
+            onAddNewTask={function(stationId, taskName){
+              console.log("TASKS", this.stationId);
+              let tasks = this.station.tasks.map((task) => {
+                if (! task.deleted)
+                  return task.name;
+              });
+              if (tasks.indexOf(taskName) === -1) {
+                console.log("NO MATCH", stationId);
+                dispatch(actions.addStationTask(stationId, {name: taskName}))
+              } else {
+                console.log("ERROR: Task already exists");
+              }
             }}
-            onTaskCompletionNotification={(options) => {
-              // console.log("OPTIONS", options);
-              let params = {
-                author: 'Sous',
-                teamKey: options.teamKey,
-                message: `${session.login} completed task ${options.task.name}`
-              };
-              dispatch(actions.completeStationTask(params))
+            onTaskCompletionNotification={(task) => {
+              // console.log("TASK: ", task);
+              var msg = `{{author}} completed task ${task.name}`;
+              dispatch(actions.completeStationTask(msg))
             }}
             onDeleteStation={(stationId) => {
               dispatch(actions.deleteStation(stationId))
@@ -160,7 +173,16 @@ class App extends React.Component {
             navigator={nav}
             purveyors={purveyors}
             onAddPurveyor={(name) => {
-              dispatch(actions.addPurveyor(name, teamKey))
+              console.log("THIS", this);
+              var purveyors = this.props.purveyors.data.map((purveyor) => {
+                if (! purveyor.deleted)
+                  return purveyor.name;
+              });
+              if (purveyors.indexOf(name) === -1) {
+                dispatch(actions.addPurveyor(name, teamKey))
+              } else {
+                console.log("ERROR: purveyor already exists");
+              }
             }}
             onBack={() => {
               this._back()
@@ -175,7 +197,15 @@ class App extends React.Component {
             navigator={nav}
             purveyor={purveyor}
             onAddNewProduct={(purveyorId, productName) => {
-              dispatch(actions.addPurveyorProduct(purveyorId, {name: productName}))
+              var products = purveyor.products.map((product) => {
+                if (! product.deleted)
+                  return product.name;
+              });
+              if (products.indexOf(productName) === -1) {
+                dispatch(actions.addPurveyorProduct(purveyorId, {name: productName}))
+              } else {
+                console.log("ERROR: Product already exists");
+              }
             }}
             onDeletePurveyor={(purveyorId) => {
               dispatch(actions.deletePurveyor(purveyorId))

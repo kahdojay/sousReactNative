@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { getIdx, updateByIdx, updateDataState } from '../utilities/reducer'
 import {
   RESET_PURVEYORS,
   GET_PURVEYORS,
@@ -34,40 +34,71 @@ function purveyors(state = initialState.purveyors, action) {
 
   // receive the purveyors
   case RECEIVE_PURVEYORS:
-    let purveyorsState = state.data;
-    var purveyorIdx = _.findIndex(state.data, (purveyor, idx) => {
-      return purveyor.id == action.purveyor.id;
-    });
-    if(purveyorIdx === -1){
-      purveyorsState.push(action.purveyor);
-    } else {
-      purveyorsState = [
-        ...purveyorsState.slice(0, purveyorIdx),
-        Object.assign({}, purveyorsState[purveyorIdx], action.purveyor),
-        ...purveyorsState.slice(purveyorIdx + 1)
-      ]
-    }
-    // console.log('PURVEYOR REDUCER: ', purveyorsState)
+    var newPurveyorState = Object.assign({}, state);
+    var currentPurveyorsDataState = updateDataState(newPurveyorState.data, action.purveyor)
+    // console.log(action.type, action.purveyor.id)
+    // console.log('STATION REDUCER: ', currentPurveyorsDataState)
     return Object.assign({}, state, {
-      isFetching: false,
+      isFetching: false, // do we need to phase this out?
       errors: null,
-      data: purveyorsState,
+      data: currentPurveyorsDataState,
       lastUpdated: (new Date()).getTime()
     });
 
   // delete the purveyor
   case DELETE_PURVEYOR:
-    let newPurveyorState = Object.assign({}, state);
-    newPurveyorState.data.forEach((purveyor, index) => {
-      if (purveyor.id == action.purveyorId) {
-        newPurveyorState.data[index].deleted = true;
-      }
-    })
-    return newPurveyorState;
+    var newPurveyorState = Object.assign({}, state);
+    var purveyorIdx = getIdx(newPurveyorState.data, action.purveyorId);
+    var currentPurveyorsDataState = updateByIdx(newPurveyorState.data, purveyorIdx, { deleted: true });
+    return Object.assign({}, state, {
+      data: currentPurveyorsDataState,
+      lastUpdated: (new Date()).getTime()
+    });
+
+  // add purveyor
+  case ADD_PURVEYOR:
+    var newPurveyorState = Object.assign({}, state);
+    var currentPurveyorsDataState = updateDataState(newPurveyorState.data, action.purveyor)
+    // console.log(action.type, action.purveyor.id)
+    return Object.assign({}, state, {
+      data: currentPurveyorsDataState,
+      lastUpdated: (new Date()).getTime()
+    });
+
+  // update purveyor
+  case UPDATE_PURVEYOR:
+    // action {
+    //   purveyorId
+    //   purveyor
+    //   ------- OR -------
+    //   purveyorId
+    //   productId
+    //   product
+    // }
+
+    var newPurveyorState = Object.assign({}, state);
+    var currentPurveyorsDataState = newPurveyorState.data;
+    // if purveyor passed in, then assume we are only updating the purveyor attributes
+    if (action.hasOwnProperty('purveyor')) {
+      currentPurveyorsDataState = updateDataState(newPurveyorState.data, action.purveyor);
+    }
+    // if productId and product passed in, then assume we are updating a specific product
+    else if(action.hasOwnProperty('productId') && action.hasOwnProperty('product')){
+      var purveyorIdx = getIdx(newPurveyorState.data, action.purveyorId);
+      // console.log(action.type, action.productId);
+      var productIdx = getIdx(newPurveyorState.data[purveyorIdx].products, action.productId);
+      var currentProductsDataState = updateByIdx(newPurveyorState.data[purveyorIdx].products, productIdx, action.product);
+      currentPurveyorsDataState = updateByIdx(newPurveyorState.data, purveyorIdx, {
+        products: currentProductsDataState
+      });
+    }
+
+    return Object.assign({}, state, {
+      data: currentPurveyorsDataState,
+      lastUpdated: (new Date()).getTime()
+    });
 
   // everything else
-  case ADD_PURVEYOR:
-  case UPDATE_PURVEYOR:
   case GET_PURVEYORS:
   case ORDER_PURVEYOR_PRODUCT:
   default:

@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { getIdx, updateByIdx, updateDataState } from '../utilities/reducer'
 import {
   RESET_STATIONS,
   GET_STATIONS,
@@ -31,44 +31,73 @@ function stations(state = initialState.stations, action) {
       isFetching: true,
       errors: null,
     });
-
   // receive the stations
   case RECEIVE_STATIONS:
-    let stationsState = state.data;
-    var stationIdx = _.findIndex(state.data, (station, idx) => {
-      return station.id == action.station.id;
-    });
-    // console.log(action.station)
-    if(stationIdx === -1){
-      stationsState.push(action.station);
-    } else {
-      stationsState = [
-        ...stationsState.slice(0, stationIdx),
-        Object.assign({}, stationsState[stationIdx], action.station),
-        ...stationsState.slice(stationIdx + 1)
-      ]
-    }
-    // console.log('STATION REDUCER: ', stationsState)
+    var newStationState = Object.assign({}, state);
+    var currentStationsDataState = updateDataState(newStationState.data, action.station)
+    // console.log(action.type, action.station.id)
+    // console.log('STATION REDUCER: ', currentStationsDataState)
     return Object.assign({}, state, {
-      isFetching: false,
+      isFetching: false, // do we need to phase this out?
       errors: null,
-      data: stationsState,
+      data: currentStationsDataState,
       lastUpdated: (new Date()).getTime()
     });
 
   // delete the station
   case DELETE_STATION:
-    let newStationState = Object.assign({}, state);
-    newStationState.data.forEach((station, index) => {
-      if (station.id == action.stationId) {
-        newStationState.data[index].deleted = true;
-      }
-    })
-    return newStationState;
+    var newStationState = Object.assign({}, state);
+    var stationIdx = getIdx(newStationState.data, action.stationId);
+    var currentStationsDataState = updateByIdx(newStationState.data, stationIdx, { deleted: true });
+    return Object.assign({}, state, {
+      data: currentStationsDataState,
+      lastUpdated: (new Date()).getTime()
+    });
+
+  // add station
+  case ADD_STATION:
+    var newStationState = Object.assign({}, state);
+    var currentStationsDataState = updateDataState(newStationState.data, action.station)
+    // console.log(action.type, action.station.id)
+    return Object.assign({}, state, {
+      data: currentStationsDataState,
+      lastUpdated: (new Date()).getTime()
+    });
+
+  // update station
+  case UPDATE_STATION:
+    // action {
+    //   stationId
+    //   station
+    //   ------- OR -------
+    //   stationId
+    //   recipeId
+    //   task
+    // }
+
+    var newStationState = Object.assign({}, state);
+    var currentStationsDataState = newStationState.data;
+    // if station passed in, then assume we are only updating the station attributes
+    if (action.hasOwnProperty('station')) {
+      currentStationsDataState = updateDataState(newStationState.data, action.station);
+    }
+    // if recipeId and task passed in, then assume we are updating a specific task
+    else if(action.hasOwnProperty('recipeId') && action.hasOwnProperty('task')){
+      var stationIdx = getIdx(newStationState.data, action.stationId);
+      // console.log(action.type, action.recipeId);
+      var taskIdx = getIdx(newStationState.data[stationIdx].tasks, action.recipeId);
+      var currentTasksDataState = updateByIdx(newStationState.data[stationIdx].tasks, taskIdx, action.task);
+      currentStationsDataState = updateByIdx(newStationState.data, stationIdx, {
+        tasks: currentTasksDataState
+      });
+    }
+
+    return Object.assign({}, state, {
+      data: currentStationsDataState,
+      lastUpdated: (new Date()).getTime()
+    });
 
   // everything else
-  case ADD_STATION:
-  case UPDATE_STATION:
   case GET_STATIONS:
   case COMPLETE_STATION_TASK:
   default:
