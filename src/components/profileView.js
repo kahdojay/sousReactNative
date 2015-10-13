@@ -10,17 +10,49 @@ const {
   ScrollView,
   TouchableHighlight,
   StyleSheet,
+  ActionSheetIOS,
 } = React;
 
 class ProfileView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      name: ''
+      name: '',
+      editAvatar: false,
+      editUsername: false,
+      editEmail: false,
     }
   }
-
+  showActionSheet(){
+    let buttons = [
+      'Take a Photo',
+      'Choose Existing Photo',
+      'Cancel'
+    ]
+    let deleteAction = 0;
+    let cancelAction = 2;
+    ActionSheetIOS.showActionSheetWithOptions({
+      options: buttons,
+      cancelButtonIndex: cancelAction,
+    },
+    (buttonIndex) => {
+      if( deleteAction === buttonIndex ){
+        // process the delete
+        console.log("CHANGE YOUR IMAGE WITH UPLOAD");
+      } else if ( cancelAction === buttonIndex) {
+        // process upload photo
+        console.log("TAKE A PHOTO");
+      }
+    });
+  }
   render() {
+    console.log(this.props);
+    var avatar;
+    if (this.props.imageURL === "") {
+      avatar = <Icon name="material|account-circle" size={100} style={styles.userIcon} />
+    } else {
+      avatar = <Image style={styles.userIcon} source={{uri: this.props.imageURL}}/>
+    }
     return (
    		<ScrollView
         style={styles.scrollView}
@@ -33,26 +65,29 @@ class ProfileView extends React.Component {
             <Text style={styles.navbarText}>Account</Text>
           </TouchableHighlight>
           <TouchableHighlight style={styles.navbarPush}>
-            <Text style={styles.navbarText}>Switch Team</Text>
+            <Text style={styles.sideNavbarText}>Switch Team</Text>
           </TouchableHighlight>
         </View>
         <View style={styles.wrapper}>
-          <View style={styles.avatar}>
-            <Icon name="material|account-circle" size={100} style={styles.userIcon} />
-          </View>
+          <TouchableHighlight
+            underlayColor="#f7f7f7"
+            onPress={() => this.showActionSheet()}
+            style={styles.avatar}>
+            {avatar}
+          </TouchableHighlight>
           <View style={styles.phoneNumber}>
-            <Text style={styles.phoneText}>(555) 555-5555</Text>
+            <Text style={styles.phoneText}>{this.props.phoneNumber}</Text>
           </View>
           <View style={styles.userInfoContainer}>
 
             <View style={styles.userProfile}>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>Name</Text>
-                <Text style={styles.inputInfo}>Thomas Keller</Text>
+                <Text style={styles.inputInfo}>{this.props.username}</Text>
               </View>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>E-mail Address</Text>
-                <Text style={styles.inputInfo}>cheftommy@yahoo.com</Text>
+                <Text style={styles.inputInfo}>{this.props.email}</Text>
               </View>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>Invite Users</Text>
@@ -159,6 +194,11 @@ let styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     fontWeight: 'bold'
+  },
+  sideNavbarText: {
+    color: 'white',
+    fontSize: 14,
+    textAlign: 'center',
   },
   icon: {
     height: 30,

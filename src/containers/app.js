@@ -236,8 +236,14 @@ class App extends React.Component {
                   }}
                 />;
       case 'Profile':
+      // console.log("SESSION", session);
         return (
-          <ProfileView />
+          <ProfileView
+            email={session.login}
+            username={session.firstName}
+            imageURL={session.imageUrl}
+            phoneNumber={"(555) 555-5555"}
+            />
         );
       default:
         return <View />;
