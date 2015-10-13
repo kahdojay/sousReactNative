@@ -6,8 +6,10 @@ import { connect } from 'react-redux/native';
 import { Icon } from 'react-native-icons';
 import Login from '../components/login';
 import Signup from '../components/signup';
+import ImageGallery from '../components/imageGallery';
 import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
+import Camera from '../components/camera';
 import TaskView from '../components/taskView';
 import Feed from '../components/feed';
 import PurveyorIndex from '../components/purveyorIndex';
@@ -236,9 +238,33 @@ class App extends React.Component {
                   }}
                 />;
       case 'Profile':
+      // console.log("SESSION", session);
         return (
-          <ProfileView />
+          <ProfileView
+            email={session.login}
+            username={session.firstName}
+            imageURL={session.imageUrl}
+            phoneNumber={"(555) 555-5555"}
+            navigator={nav}
+            navBar={navBar}
+            />
         );
+      case 'ImageGallery':
+        return (
+          <ImageGallery
+            navigator={nav}
+            photos={route.photos}
+            onUpdateAvatar={(image) => {
+              dispatch(actions.updateSession(image, session));
+            }}
+            />
+        );
+      case 'Camera':
+        return (
+          <Camera
+            navigator={nav}
+            />
+        )
       default:
         return <View />;
     }
