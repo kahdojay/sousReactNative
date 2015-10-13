@@ -164,6 +164,7 @@ class App extends React.Component {
       case 'Feed':
         return <Feed
                   navigator={nav}
+                  navBar={navBar}
                   messages={messages}
                   userEmail={session.login}
                   teamKey={session.teamKey}
@@ -242,7 +243,6 @@ class App extends React.Component {
 
   showActionSheetStationView(navigator, route){
     const { dispatch } = this.props;
-    console.log('action sheet: route', route)
     let buttons = [
       'Delete Station',
       // 'Rename Station',
@@ -257,9 +257,7 @@ class App extends React.Component {
     },
     (buttonIndex) => {
       if (deleteAction === buttonIndex){
-        // process the delete
         dispatch(actions.deleteStation(route.stationId))
-        // pop the view
         navigator.pop();
       }
     });
@@ -279,19 +277,10 @@ class App extends React.Component {
       route.name = 'Signup'
     }
     let navBar = route.navigationBar;
-
-    let header = <View />;
     let scene = this.getScene(route, nav, navBar);
-    let applyHighlight = '';
 
     // setup the header for unauthenticated routes
     if(this.authenticatedRoute(route) === false){
-      // setup the header for authenticated routes
-      // header = (
-      //   <View style={[styles.nav, styles.navSignUp]}>
-      //     <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-      //   </View>
-      // );
       if (navBar) {
         navBar = React.addons.cloneWithProps(navBar, {
           navigator: nav,
@@ -358,7 +347,9 @@ class App extends React.Component {
         {navBar}
         {scene}
         <Footer
+          onPressResetSession={() => dispatch(actions.resetSession())}
           nav={nav}
+          navBar={navBar}
           ui={ui}
           route={route}
         />
