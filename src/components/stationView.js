@@ -35,10 +35,8 @@ class StationView extends React.Component {
       destructiveButtonIndex: deleteAction,
     },
     (buttonIndex) => {
-      if( deleteAction === buttonIndex ){
-        // process the delete
+      if (deleteAction === buttonIndex) {
         this.props.onDeleteStation(this.props.station.id);
-        // pop the view
         this.props.navigator.pop();
       }
     });
@@ -85,6 +83,7 @@ class StationView extends React.Component {
           }}/>
         <TaskList
           navigator={this.props.navigator}
+          navBar={this.props.navBar}
           station={station}
           onTaskCompletionNotification={this.props.onTaskCompletionNotification}
           onUpdateStationTask={this.props.onUpdateStationTask}/>

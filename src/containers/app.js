@@ -121,6 +121,7 @@ class App extends React.Component {
           <StationView
             ui={ui}
             navigator={nav}
+            navBar={navBar}
             station={station}
             stationId={route.stationId}
             onAddNewTask={function(stationId, taskName){
@@ -294,7 +295,7 @@ class App extends React.Component {
             navBar = React.addons.cloneWithProps(navBar, {
               navigator: nav,
               route: route,
-              hidePrev: false,
+              hidePrev: true,
               onNext: () => console.log('profileView'),
               onPrev: null,
               nextTitle: 'profile',
@@ -329,12 +330,20 @@ class App extends React.Component {
               route: route,
               onNext: (navigator, route) => this.showActionSheetStationView(navigator, route),
               nextTitle: '...',
+              hidePrev: false,
             })
           }
           break;
         case "PurveyorView":
         default:
-          header =  <View></View>;
+          if (navBar) {
+            navBar = React.addons.cloneWithProps(navBar, {
+              navigator: nav,
+              route: route,
+              onNext: null,
+              hidePrev: false,
+            })
+          };
       }
     }
 

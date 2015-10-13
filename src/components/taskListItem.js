@@ -36,6 +36,7 @@ export default class TaskListItem extends React.Component {
     } else {
       taskStyle = styles.taskIncompleteText;
     }
+
     return (
       <View style={styles.container}>
         <View style={[
@@ -50,11 +51,14 @@ export default class TaskListItem extends React.Component {
             />
           </View>
           <TouchableHighlight
-            onPress={() => this.props.navigator.push({
-              name: 'TaskView',
-              recipeId: this.props.task.recipeId,
-              stationId: this.props.stationId
-            })}
+            onPress={() => {
+              this.props.navigator.push({
+                name: 'TaskView',
+                recipeId: this.props.task.recipeId,
+                stationId: this.props.stationId,
+                navigationBar: this.props.navBar,
+              })
+            }}
             style={styles.main}
           >
             <View>
