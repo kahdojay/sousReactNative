@@ -94,7 +94,15 @@ class App extends React.Component {
                   }}
                   stations={stations}
                   onAddStation={(name) => {
-                    dispatch(actions.addStation(name, teamKey))
+                    var stations = this.props.stations.data.map((station) => {
+                      if (! station.deleted)
+                        return station.name;
+                    });
+                    if (stations.indexOf(name) === -1) {
+                      dispatch(actions.addStation(name, teamKey))
+                    } else {
+                      console.log("ERROR: station already exists");
+                    }
                   }}
                   onBack={() =>
                     this._back.bind(this)
@@ -111,8 +119,18 @@ class App extends React.Component {
             navigator={nav}
             station={station}
             stationId={route.stationId}
-            onAddNewTask={(stationId, taskName) => {
-              dispatch(actions.addStationTask(stationId, {name: taskName}))
+            onAddNewTask={function(stationId, taskName){
+              console.log("TASKS", this.stationId);
+              let tasks = this.station.tasks.map((task) => {
+                if (! task.deleted)
+                  return task.name;
+              });
+              if (tasks.indexOf(taskName) === -1) {
+                console.log("NO MATCH", stationId);
+                dispatch(actions.addStationTask(stationId, {name: taskName}))
+              } else {
+                console.log("ERROR: Task already exists");
+              }
             }}
             onTaskCompletionNotification={(task) => {
               // console.log("TASK: ", task);

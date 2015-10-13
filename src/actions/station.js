@@ -59,7 +59,7 @@ export default function StationActions(ddpClient) {
         quantity: 1,
         unit: 0 // for future use
       }
-      ddpClient.call('addStationTask', [session.userId, stationId, newTaskAttributes]);
+      ddpClient.call('addStationTask', [stationId, newTaskAttributes, session.userId]);
       return {
         type: UPDATE_STATION,
         stationId: stationId,
