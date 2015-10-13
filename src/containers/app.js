@@ -282,20 +282,7 @@ class App extends React.Component {
 
     let header = <View />;
     let scene = this.getScene(route, nav, navBar);
-    let footer = <View />;
     let applyHighlight = '';
-
-    if(_.includes(['StationIndex', 'StationView', 'TaskView'], route.name)){
-      applyHighlight = 'Prep'
-    } else if(_.includes(['Feed'], route.name)){
-      applyHighlight = 'Feed'
-    } else if(_.includes(['PurveyorIndex', 'PurveyorView', 'ProductView'], route.name)){
-      applyHighlight = 'Order'
-    }
-
-    let prepFooterHighlight = (applyHighlight == 'Prep' ? styles.footerActiveHighlight : {});
-    let feedFooterHighlight = (applyHighlight == 'Feed' ? styles.footerActiveHighlight : {});
-    let orderFooterHighlight = (applyHighlight == 'Order' ? styles.footerActiveHighlight : {});
 
     // setup the header for unauthenticated routes
     if(this.authenticatedRoute(route) === false){
@@ -458,29 +445,6 @@ let styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontFamily: 'OpenSans'
-  },
-  footerContainer: {
-    flexDirection: 'row',
-    borderTopWidth: 1,
-    borderColor: '#979797'
-  },
-  footerItem: {
-    flex: 1
-  },
-  footerButton: {
-    padding: 5
-  },
-  footerButtonIcon: {
-    width: 25,
-    height: 25,
-    alignSelf: 'center'
-  },
-  footerButtonText: {
-    alignSelf: 'center',
-    color: footerButtonIconColor
-  },
-  footerActiveHighlight: {
-    backgroundColor: footerActiveHighlight,
   },
   logoutButton: {
     backgroundColor: 'pink'
