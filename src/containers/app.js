@@ -173,7 +173,16 @@ class App extends React.Component {
             navigator={nav}
             purveyors={purveyors}
             onAddPurveyor={(name) => {
-              dispatch(actions.addPurveyor(name, teamKey))
+              console.log("THIS", this);
+              var purveyors = this.props.purveyors.data.map((purveyor) => {
+                if (! purveyor.deleted)
+                  return purveyor.name;
+              });
+              if (purveyors.indexOf(name) === -1) {
+                dispatch(actions.addPurveyor(name, teamKey))
+              } else {
+                console.log("ERROR: purveyor already exists");
+              }
             }}
             onBack={() => {
               this._back()
@@ -188,7 +197,15 @@ class App extends React.Component {
             navigator={nav}
             purveyor={purveyor}
             onAddNewProduct={(purveyorId, productName) => {
-              dispatch(actions.addPurveyorProduct(purveyorId, {name: productName}))
+              var products = purveyor.products.map((product) => {
+                if (! product.deleted)
+                  return product.name;
+              });
+              if (products.indexOf(productName) === -1) {
+                dispatch(actions.addPurveyorProduct(purveyorId, {name: productName}))
+              } else {
+                console.log("ERROR: Product already exists");
+              }
             }}
             onDeletePurveyor={(purveyorId) => {
               dispatch(actions.deletePurveyor(purveyorId))
