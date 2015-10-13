@@ -30,7 +30,7 @@ class TaskList extends React.Component {
             task={task}
             key={idx}
             stationId={station.id}
-            onTaskCompletionNotification={this.onTaskCompletionNotification.bind(this)}
+            onTaskCompletionNotification={this.props.onTaskCompletionNotification.bind(this)}
             navigator={this.props.navigator}
             navBar={this.props.navBar}
             onUpdateTask={(taskAttributes) => {
@@ -46,7 +46,7 @@ class TaskList extends React.Component {
               task={task}
               key={idx}
               stationId={station.id}
-              onTaskCompletionNotification={this.onTaskCompletionNotification.bind(this)}
+              onTaskCompletionNotification={this.props.onTaskCompletionNotification.bind(this)}
               navigator={this.props.navigator}
               navBar={this.props.navBar}
               onUpdateTask={(taskAttributes) => {
