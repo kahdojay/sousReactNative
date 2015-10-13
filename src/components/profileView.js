@@ -25,8 +25,8 @@ class ProfileView extends React.Component {
    		<ScrollView
         style={styles.scrollView}
         keyboardShouldPersistTaps={false}
-        automaticallyAdjustContentInsets={false}>
-
+        automaticallyAdjustContentInsets={false}
+      >
         <View style={styles.navbar}>
           <Icon name="fontawesome|angle-left" size={40} color="white" style={styles.icon}/>
           <TouchableHighlight style={styles.logo}>
@@ -81,14 +81,6 @@ class ProfileView extends React.Component {
   }
 }
 
-// <TextInput
-//   style={styles.nameInput}
-//   placeholder='Name'
-//   value={this.name}
-//   onChangeText={(name) => {
-//     this.setState({name})
-//   }}
-// />
 let styles = StyleSheet.create({
   scrollView: {
     backgroundColor: '#f2f2f2',

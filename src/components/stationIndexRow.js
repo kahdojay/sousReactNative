@@ -22,6 +22,7 @@ class StationIndexRow extends React.Component {
     const progress = numCompletedTasks/totalNumTasks
     let progressColor = progress < 0.9 ? "#4A90E2" : "#7ED321";
     let percentage = Math.floor(( numCompletedTasks / totalNumTasks)*100) || 0
+
     return (
       <TouchableOpacity
         onPress={this.props.onPress}

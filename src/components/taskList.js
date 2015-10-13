@@ -25,8 +25,8 @@ class TaskList extends React.Component {
     let {station} = this.props
     let tasksCompleted = _.filter(station.tasks, { completed: true, deleted: false })
       .map((task, idx) => {
-         return (
-           <TaskListItem
+        return (
+          <TaskListItem
             task={task}
             key={idx}
             stationId={station.id}
@@ -36,9 +36,9 @@ class TaskList extends React.Component {
             onUpdateTask={(taskAttributes) => {
               this.props.onUpdateStationTask(station.id, task.recipeId, taskAttributes);
             }}
-            />
-          )
-        })
+          />
+        )
+      })
     let tasksIncomplete = _.filter(station.tasks, { completed: false, deleted: false })
       .map((task, idx) => {
           return (

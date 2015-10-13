@@ -34,7 +34,6 @@ class Footer extends React.Component {
     let prepFooterHighlight = (applyHighlight == 'Prep' ? styles.footerActiveHighlight : {});
     let feedFooterHighlight = (applyHighlight == 'Feed' ? styles.footerActiveHighlight : {});
     let orderFooterHighlight = (applyHighlight == 'Order' ? styles.footerActiveHighlight : {});
-    console.log(this.props.route.name)
 
     return (
       <View style={footerContainerStyle}>
@@ -110,7 +109,7 @@ class Footer extends React.Component {
             </View>
           </TouchableHighlight>
         </View>
-        {/**/}<View style={styles.footerItem}>
+        {/*<View style={styles.footerItem}>
           <TouchableHighlight
             style={[styles.footerButton, styles.logoutButton]}
             onPress={this.props.onPressResetSession}
@@ -127,12 +126,11 @@ class Footer extends React.Component {
               </Text>
             </View>
           </TouchableHighlight>
-        </View>{/**/}
+        </View>*/}
       </View>
     );
   }
 };
-
 
 let styles = StyleSheet.create({
   container: {
@@ -220,6 +218,5 @@ let styles = StyleSheet.create({
     flex: 1,
   },
 })
-
 
 module.exports = Footer;

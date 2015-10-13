@@ -26,8 +26,9 @@ class Feed extends React.Component {
   }
 
   scrollToBottom() {
-    if(this.refs.hasOwnProperty('scrollview'))
+    if(this.refs.hasOwnProperty('scrollview')) {
       this.refs.scrollview.scrollTo(0)
+    }
   }
 
   onHandleSubmit(msg) {
@@ -74,7 +75,8 @@ class Feed extends React.Component {
                   <View style={styles.separator} />
                 </View>
               )
-            }).reverse() }
+            }).reverse()
+          }
           </InvertibleScrollView>
         <AddMessageForm
           placeholder="Message..."

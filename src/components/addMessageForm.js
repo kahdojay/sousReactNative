@@ -1,4 +1,4 @@
-var { Icon, } = require('react-native-icons');
+import { Icon, } from 'react-native-icons';
 import React from 'react-native';
 
 let {
@@ -58,7 +58,6 @@ let styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     backgroundColor: "#f2f2f2",
-    // alignItems: 'center',
   },
   inputContainer: {
     flex: 5,
@@ -84,7 +83,6 @@ let styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    // padding: 15,
     justifyContent: 'center'
   },
   sendButtonText: {
@@ -93,18 +91,9 @@ let styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center'
   },
-  // message: {
-  //   height: 50,
-  //   width: 50,
-  //   color: 'black',
-  //   // marginTop: -10,
-  //   marginLeft: 4,
-  //   backgroundColor: 'transparent'
-  // },
   messageText: {
     marginLeft: 5,
     fontSize: 15,
-    // marginTop: -10,
     fontFamily: 'OpenSans',
     textAlign: 'center',
     color: '#0075FD',

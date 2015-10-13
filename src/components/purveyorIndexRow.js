@@ -95,7 +95,6 @@ const styles = StyleSheet.create({
 
 PurveyorIndexRow.propTypes = {
   onPress: React.PropTypes.func,
-  //products: React.PropTypes.number,
   purveyor: React.PropTypes.object,
 };
 

@@ -17,7 +17,7 @@ import ProfileView from '../components/profileView';
 import NavbarTitle from '../components/NavbarTitle';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
-import { navbarColor, } from '../utilities/colors';
+import Colors from '../utilities/colors';
 import * as actions from '../actions';
 
 const {
@@ -64,7 +64,7 @@ class App extends React.Component {
   getScene(route, nav, navBar) {
     const { ui, session, teams, stations, messages, dispatch, purveyors, products } = this.props;
     let teamKey = session.teamKey;
-    // console.log(teamKey);
+
     switch (route.name) {
       case 'Login':
         return <Login
@@ -177,6 +177,7 @@ class App extends React.Component {
         return (
           <PurveyorIndex
             navigator={nav}
+            navBar={navBar}
             purveyors={purveyors}
             onAddPurveyor={(name) => {
               console.log("THIS", this);
@@ -201,6 +202,7 @@ class App extends React.Component {
           <PurveyorView
             ui={ui}
             navigator={nav}
+            navBar={navBar}
             purveyor={purveyor}
             onAddNewProduct={(purveyorId, productName) => {
               var products = purveyor.products.map((product) => {
@@ -242,7 +244,7 @@ class App extends React.Component {
     }
   }
 
-  showActionSheetStationView(navigator, route){
+  showActionSheetStationView(navigator, route) {
     const { dispatch } = this.props;
     let buttons = [
       'Delete Station',
@@ -259,6 +261,28 @@ class App extends React.Component {
     (buttonIndex) => {
       if (deleteAction === buttonIndex){
         dispatch(actions.deleteStation(route.stationId))
+        navigator.pop();
+      }
+    });
+  }
+  showActionSheetPurveyorView(navigator, route) {
+    const { dispatch } = this.props;
+    let buttons = [
+      'Delete Purveyor',
+      // 'Rename Purveyor',
+      'Cancel'
+    ]
+    let deleteAction = 0;
+    let cancelAction = 2;
+    ActionSheetIOS.showActionSheetWithOptions({
+      options: buttons,
+      cancelButtonIndex: cancelAction,
+      destructiveButtonIndex: deleteAction,
+    },
+    (buttonIndex) => {
+      console.log('route', navigator, route)
+      if (deleteAction === buttonIndex) {
+        dispatch(actions.deletePurveyor(route.purveyorId));
         navigator.pop();
       }
     });
@@ -296,7 +320,12 @@ class App extends React.Component {
               navigator: nav,
               route: route,
               hidePrev: true,
-              onNext: () => console.log('profileView'),
+              onNext: (navigator, route) => {
+                navigator.push({
+                  name: 'Profile',
+                  navigationBar: navBar,
+                })
+              },
               onPrev: null,
               nextTitle: 'profile',
             })
@@ -314,6 +343,7 @@ class App extends React.Component {
           break;
         case 'PurveyorIndex':
           if (navBar) {
+            console.log('purvyerIndex has navbar')
             navBar = React.addons.cloneWithProps(navBar, {
               navigator: nav,
               route: route,
@@ -335,7 +365,17 @@ class App extends React.Component {
           }
           break;
         case "PurveyorView":
-        default:
+          if (navBar) {
+            navBar = React.addons.cloneWithProps(navBar, {
+              navigator: nav,
+              route: route,
+              onNext: (navigator, route) => this.showActionSheetPurveyorView(navigator, route),
+              nextTitle: '...',
+              hidePrev: false,
+            })
+          }
+          break;
+        case 'ProductView':
           if (navBar) {
             navBar = React.addons.cloneWithProps(navBar, {
               navigator: nav,
@@ -343,13 +383,24 @@ class App extends React.Component {
               onNext: null,
               hidePrev: false,
             })
+          }
+          break;
+        default:
+          if (navBar) {
+            navBar = React.addons.cloneWithProps(navBar, {
+              hidePrev: false,
+              navigator: nav,
+              route: route,
+              onNext: null,
+            })
           };
       }
     }
 
     if(ui.keyboard.visible === true){
-      header = <View/>
+      // header = <View/>
     }
+    console.log('app.js navBar', navBar)
 
     return (
       <View style={styles.container}>
@@ -401,7 +452,7 @@ let styles = StyleSheet.create({
     flex: 1
   },
   nav: {
-    backgroundColor: navbarColor,
+    backgroundColor: Colors.navbarColor,
   },
   navSignUp: {
     justifyContent: 'center',

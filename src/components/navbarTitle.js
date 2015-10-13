@@ -1,9 +1,7 @@
 import React from 'react-native'
-import {
-  navbarColor
-} from '../utilities/colors';
+import { navbarColor } from '../utilities/colors';
 
-let {
+const {
   TouchableHighlight,
   PropTypes,
   Text,
@@ -16,10 +14,7 @@ class NavbarTitle extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Image
-          source={require('image!Logo')}
-          style={styles.logoImage}
-        />
+        <Image source={require('image!Logo')} style={styles.logoImage} />
       </View>
     );
   }

@@ -1,4 +1,4 @@
-var { Icon, } = require('react-native-icons');
+import { Icon, } from 'react-native-icons';
 import _ from 'lodash'
 import React from 'react-native'
 

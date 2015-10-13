@@ -80,27 +80,11 @@ class ProductView extends React.Component {
   }
 
   render() {
-    let navBar = <View style={[NavigationBarStyles.navBarContainer, {backgroundColor: navbarColor}]}>
-      <View style={[
-        NavigationBarStyles.navBar,
-        {paddingVertical: 5}
-      ]}>
-        <BackBtn
-          style={styles.backButton}
-          callback={this.saveProduct.bind(this)}
-          navigator={this.props.navigator}
-        />
-        <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-        <View style={NavigationBarStyles.navBarRightButton}></View>
-      </View>
-    </View>
-
     if(this.props.ui.keyboard.visible === true){
-      navBar = <View/>
+      // navBar = <View/>
     }
     return (
       <View style={styles.container}>
-        {navBar}
         <ScrollView
           scrollEventThrottle={200}
           keyboardShouldPersistTaps={false}
