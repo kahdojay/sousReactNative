@@ -31,11 +31,7 @@ class Feed extends React.Component {
   }
 
   onHandleSubmit(msg) {
-    this.props.onCreateMessage([{
-      author: this.props.userEmail,
-      message: msg,
-      teamKey: this.props.teamKey
-    }]);
+    this.props.onCreateMessage(msg);
   }
 
   render() {
@@ -58,7 +54,8 @@ class Feed extends React.Component {
             ref='scrollview'
           >
             { this.props.messages.data.map((msg, index) => {
-              let date = new Date(msg.createdAt["$date"]).toLocaleTimeString();
+              // let date = new Date(msg.createdAt["$date"]).toLocaleTimeString();
+              let date = new Date(msg.createdAt).toLocaleTimeString();
               let time = date.substring(date.length-3, date.length)
               return (
                 <View key={index} style={styles.messageContainer}>

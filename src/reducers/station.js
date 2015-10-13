@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { getIdx, updateByIdx, updateDataState } from '../utilities/reducer'
 import {
   RESET_STATIONS,
   GET_STATIONS,
@@ -20,38 +20,6 @@ const initialState = {
   }
 };
 
-function getIdx(currentDataState, findId){
-  return _.findIndex(currentDataState, (item, idx) => {
-    return item.id == findId;
-  });
-}
-
-function updateByIdx(currentDataState, idx, attributes){
-  if(idx === -1){
-    currentDataState.push(attributes);
-  } else {
-    currentDataState = [
-      ...currentDataState.slice(0, idx),
-      Object.assign({}, currentDataState[idx], attributes),
-      ...currentDataState.slice(idx + 1)
-    ]
-  }
-  return currentDataState
-}
-
-function updateData(currentDataState, attributes){
-  // cleanup for the data passed to mongo
-  if(attributes.hasOwnProperty('_id')){
-    attributes.id = attributes._id;
-    delete attributes._id
-  }
-  if(attributes.hasOwnProperty('id') === true) {
-    var idx = getIdx(currentDataState, attributes.id);
-    currentDataState = updateByIdx(currentDataState, idx, attributes)
-  }
-  return currentDataState;
-}
-
 function stations(state = initialState.stations, action) {
   switch (action.type) {
   // reset the stations
@@ -66,7 +34,7 @@ function stations(state = initialState.stations, action) {
   // receive the stations
   case RECEIVE_STATIONS:
     var newStationState = Object.assign({}, state);
-    var currentStationsDataState = updateData(newStationState.data, action.station)
+    var currentStationsDataState = updateDataState(newStationState.data, action.station)
     // console.log(action.type, action.station.id)
     // console.log('STATION REDUCER: ', currentStationsDataState)
     return Object.assign({}, state, {
@@ -88,7 +56,7 @@ function stations(state = initialState.stations, action) {
   // add station
   case ADD_STATION:
     var newStationState = Object.assign({}, state);
-    var currentStationsDataState = updateData(newStationState.data, action.station)
+    var currentStationsDataState = updateDataState(newStationState.data, action.station)
     // console.log(action.type, action.station.id)
     return Object.assign({}, state, {
       data: currentStationsDataState,
@@ -110,7 +78,7 @@ function stations(state = initialState.stations, action) {
     var currentStationsDataState = newStationState.data;
     // if station passed in, then assume we are only updating the station attributes
     if (action.hasOwnProperty('station')) {
-      currentStationsDataState = updateData(newStationState.data, action.station);
+      currentStationsDataState = updateDataState(newStationState.data, action.station);
     }
     // if recipeId and task passed in, then assume we are updating a specific task
     else if(action.hasOwnProperty('recipeId') && action.hasOwnProperty('task')){
@@ -127,9 +95,10 @@ function stations(state = initialState.stations, action) {
       data: currentStationsDataState,
       lastUpdated: (new Date()).getTime()
     });
+
+  // everything else
   case GET_STATIONS:
   case COMPLETE_STATION_TASK:
-  // everything else
   default:
     return state;
   }

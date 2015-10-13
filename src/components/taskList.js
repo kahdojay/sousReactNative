@@ -24,14 +24,6 @@ export default class TaskList extends React.Component {
   handlePress() {
     this.setState({showCompleted: !this.state.showCompleted})
   }
-  onTaskCompletionNotification(task){
-    var options = {
-      task: task,
-      timestamp: new Date(),
-      teamKey: this.props.station.teamKey
-    }
-    this.props.onTaskCompletionNotification(options);
-  }
   render() {
     let {station} = this.props
     let tasksCompleted = _.filter(station.tasks, { completed: true, deleted: false })
@@ -40,7 +32,7 @@ export default class TaskList extends React.Component {
             task={task}
             key={idx}
             stationId={station.id}
-            onTaskCompletionNotification={this.onTaskCompletionNotification.bind(this)}
+            onTaskCompletionNotification={this.props.onTaskCompletionNotification}
             navigator={this.props.navigator}
             onUpdateTask={(taskAttributes) => {
               this.props.onUpdateStationTask(station.id, task.recipeId, taskAttributes);
@@ -52,7 +44,7 @@ export default class TaskList extends React.Component {
             task={task}
             key={idx}
             stationId={station.id}
-            onTaskCompletionNotification={this.onTaskCompletionNotification.bind(this)}
+            onTaskCompletionNotification={this.props.onTaskCompletionNotification}
             navigator={this.props.navigator}
             onUpdateTask={(taskAttributes) => {
               this.props.onUpdateStationTask(station.id, task.recipeId, taskAttributes);

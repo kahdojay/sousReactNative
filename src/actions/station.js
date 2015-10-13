@@ -1,4 +1,5 @@
 import shortid from 'shortid'
+import MessageActions from './message'
 import {
   RESET_STATIONS,
   GET_STATIONS,
@@ -11,7 +12,10 @@ import {
   COMPLETE_STATION_TASK
 } from './actionTypes'
 
+
 export default function StationActions(ddpClient) {
+
+  const messageActions = MessageActions(ddpClient)
 
   function resetStations(){
     return {
@@ -34,11 +38,13 @@ export default function StationActions(ddpClient) {
     };
   }
 
-  function completeStationTask(message) {
-    ddpClient.call('createMessage', [message]);
-    return {
-      type: COMPLETE_STATION_TASK
-    };
+  function completeStationTask(messageText) {
+    return (dispatch) => {
+      dispatch(messageActions.createMessage(messageText))
+      return {
+        type: COMPLETE_STATION_TASK
+      };
+    }
   }
 
   function addStationTask(stationId, taskAttributes){

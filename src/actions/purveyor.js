@@ -1,3 +1,4 @@
+import MessageActions from './message'
 import {
   RESET_PURVEYORS,
   GET_PURVEYORS,
@@ -11,6 +12,8 @@ import {
 } from './actionTypes'
 
 export default function PurveyorActions(ddpClient){
+
+  const messageActions = MessageActions(ddpClient)
 
   function resetPurveyors(){
     return {
@@ -33,11 +36,13 @@ export default function PurveyorActions(ddpClient){
     };
   }
 
-  function completePurveyorProduct(message) {
-    ddpClient.call('createMessage', [message]);
-    return {
-      type: ORDER_PURVEYOR_PRODUCT
-    };
+  function completePurveyorProduct(messageText) {
+    return (dispatch) => {
+      dispatch(messageActions.createMessage(messageText))
+      return {
+        type: ORDER_PURVEYOR_PRODUCT
+      };
+    }
   }
 
   function addPurveyorProduct(purveyorId, productAttributes){

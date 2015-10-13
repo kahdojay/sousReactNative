@@ -60,9 +60,7 @@ class App extends React.Component {
 
   getScene(route, nav) {
     const { ui, session, teams, stations, messages, dispatch, purveyors, products } = this.props;
-
     let teamKey = session.teamKey;
-
     switch (route.name) {
       case 'Login':
         return <Login
@@ -115,14 +113,10 @@ class App extends React.Component {
             onAddNewTask={(stationId, taskName) => {
               dispatch(actions.addStationTask(stationId, {name: taskName}))
             }}
-            onTaskCompletionNotification={(options) => {
-              // console.log("OPTIONS", options);
-              let params = {
-                author: 'Sous',
-                teamKey: options.teamKey,
-                message: `${session.login} completed task ${options.task.name}`
-              };
-              dispatch(actions.completeStationTask(params))
+            onTaskCompletionNotification={(task) => {
+              // console.log("TASK: ", task);
+              var msg = `{{author}} completed task ${task.name}`;
+              dispatch(actions.completeStationTask(msg))
             }}
             onDeleteStation={(stationId) => {
               dispatch(actions.deleteStation(stationId))
