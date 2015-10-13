@@ -246,6 +246,7 @@ class App extends React.Component {
             imageURL={session.imageUrl}
             phoneNumber={"(555) 555-5555"}
             navigator={nav}
+            navBar={navBar}
             />
         );
       case 'ImageGallery':

@@ -21,23 +21,8 @@ class Camera extends React.Component {
   render() {
     return (
       <View>
-      <View style={[
-        NavigationBarStyles.navBarContainer,
-        {backgroundColor: navbarColor}
-      ]}>
-        <View style={[
-          NavigationBarStyles.navBar,
-          {paddingVertical: 5}
-        ]}>
-          <BackBtn
-            navigator={this.props.navigator}
-            style={NavigationBarStyles.navBarText}
-            />
-          <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-        </View>
-      </View>
-      <ScrollView style={styles.container}>
-      </ScrollView>
+        <ScrollView style={styles.container}>
+        </ScrollView>
       </View>
     )
   }

@@ -42,7 +42,8 @@ class ProfileView extends React.Component {
     (buttonIndex) => {
       if( takePhoto === buttonIndex ){
         this.props.navigator.push({
-          name: 'Camera'
+          name: 'Camera',
+          navigationBar: this.props.navBar
         });
       } else if ( photoUpload === buttonIndex) {
         // console.log("TAKE A PHOTO");
@@ -76,15 +77,6 @@ class ProfileView extends React.Component {
         keyboardShouldPersistTaps={false}
         automaticallyAdjustContentInsets={false}
       >
-        <View style={styles.navbar}>
-          <Icon name="fontawesome|angle-left" size={40} color="white" style={styles.icon}/>
-          <TouchableHighlight style={styles.logo}>
-            <Text style={styles.navbarText}>Account</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style={styles.navbarPush}>
-            <Text style={styles.sideNavbarText}>Switch Team</Text>
-          </TouchableHighlight>
-        </View>
         <View style={styles.wrapper}>
           <TouchableHighlight
             underlayColor="#f7f7f7"
