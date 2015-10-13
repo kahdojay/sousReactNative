@@ -26,8 +26,9 @@ class Feed extends React.Component {
   }
 
   scrollToBottom() {
-    if(this.refs.hasOwnProperty('scrollview'))
+    if(this.refs.hasOwnProperty('scrollview')) {
       this.refs.scrollview.scrollTo(0)
+    }
   }
 
   onHandleSubmit(msg) {
@@ -74,7 +75,8 @@ class Feed extends React.Component {
                   <View style={styles.separator} />
                 </View>
               )
-            }).reverse() }
+            }).reverse()
+          }
           </InvertibleScrollView>
         <AddMessageForm
           placeholder="Message..."
@@ -127,12 +129,8 @@ const styles = StyleSheet.create({
   },
   avatar: {
     width: 60,
-    height: 50,
-    borderRadius: 25,
-    paddingLeft: 10,
-    paddingRight: 10,
-    backgroundColor: "#1E00B1",
-    // margin: 7,
+    height: 60,
+    borderRadius: 30,
     alignSelf: 'center',
     flex: 1
   },

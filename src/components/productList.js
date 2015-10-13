@@ -1,11 +1,8 @@
 import React from 'react-native';
 import ProductListItem from './productListItem';
-import {
-  greyText,
-  productCompletedBackgroundColor
-} from '../utilities/colors';
+import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
 
-let {
+const {
   View,
   PropTypes,
   StyleSheet,
@@ -14,7 +11,7 @@ let {
   TouchableHighlight,
 } = React;
 
-export default class ProductList extends React.Component {
+class ProductList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -33,6 +30,7 @@ export default class ProductList extends React.Component {
             key={idx}
             purveyorId={purveyor.id}
             navigator={this.props.navigator}
+            navBar={this.props.navBar}
             onUpdateProduct={(productAttributes) => {
               this.props.onUpdatePurveyorProduct(purveyor.id, product.productId, productAttributes);
             }} />
@@ -44,18 +42,15 @@ export default class ProductList extends React.Component {
             key={idx}
             purveyorId={purveyor.id}
             navigator={this.props.navigator}
+            navBar={this.props.navBar}
             onUpdateProduct={(productAttributes) => {
               this.props.onUpdatePurveyorProduct(purveyor.id, product.productId, productAttributes);
             }} />
         })
     return (
-      <ScrollView
-        keyboardShouldPersistTaps={false}
-      >
+      <ScrollView keyboardShouldPersistTaps={false} >
         {productsUnordered}
-        <TouchableHighlight
-          onPress={this.handlePress.bind(this)}
-        >
+        <TouchableHighlight onPress={this.handlePress.bind(this)} >
           <View style={styles.container}>
             <View style={styles.roundedCorners}>
               <Text style={styles.text}>{productsOrdered.length} Ordered</Text>
@@ -91,8 +86,6 @@ const styles = StyleSheet.create({
 })
 
 ProductList.propTypes = {
-  // onUpdatePurveyorProduct: PropTypes.func.isRequired,
-  // products: PropTypes.arrayOf(PropTypes.shape({
-    // ordered: PropTypes.bool.isRequired
-  // }).isRequired).isRequired
 };
+
+export default ProductList

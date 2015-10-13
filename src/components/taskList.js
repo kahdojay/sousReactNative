@@ -1,11 +1,8 @@
 import React from 'react-native';
 import TaskListItem from './taskListItem';
-import {
-  greyText,
-  taskCompletedBackgroundColor
-} from '../utilities/colors';
+import { greyText, taskCompletedBackgroundColor } from '../utilities/colors';
 
-let {
+const {
   View,
   ScrollView,
   PropTypes,
@@ -14,7 +11,7 @@ let {
   TouchableHighlight,
 } = React;
 
-export default class TaskList extends React.Component {
+class TaskList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -28,27 +25,35 @@ export default class TaskList extends React.Component {
     let {station} = this.props
     let tasksCompleted = _.filter(station.tasks, { completed: true, deleted: false })
       .map((task, idx) => {
-           return <TaskListItem
+        return (
+          <TaskListItem
             task={task}
             key={idx}
             stationId={station.id}
-            onTaskCompletionNotification={this.props.onTaskCompletionNotification}
+            onTaskCompletionNotification={this.props.onTaskCompletionNotification.bind(this)}
             navigator={this.props.navigator}
+            navBar={this.props.navBar}
             onUpdateTask={(taskAttributes) => {
               this.props.onUpdateStationTask(station.id, task.recipeId, taskAttributes);
-            }} />
-        })
+            }}
+          />
+        )
+      })
     let tasksIncomplete = _.filter(station.tasks, { completed: false, deleted: false })
       .map((task, idx) => {
-          return <TaskListItem
-            task={task}
-            key={idx}
-            stationId={station.id}
-            onTaskCompletionNotification={this.props.onTaskCompletionNotification}
-            navigator={this.props.navigator}
-            onUpdateTask={(taskAttributes) => {
-              this.props.onUpdateStationTask(station.id, task.recipeId, taskAttributes);
-            }} />
+          return (
+            <TaskListItem
+              task={task}
+              key={idx}
+              stationId={station.id}
+              onTaskCompletionNotification={this.props.onTaskCompletionNotification.bind(this)}
+              navigator={this.props.navigator}
+              navBar={this.props.navBar}
+              onUpdateTask={(taskAttributes) => {
+                this.props.onUpdateStationTask(station.id, task.recipeId, taskAttributes);
+              }}
+            />
+          )
         })
     return (
       <ScrollView
@@ -96,8 +101,6 @@ const styles = StyleSheet.create({
 })
 
 TaskList.propTypes = {
-  // onUpdateStationTask: PropTypes.func.isRequired,
-  // station: PropTypes.arrayOf(PropTypes.shape({
-    // tasks: PropTypes.array.isRequired,
-  // }).isRequired).isRequired
 };
+
+export default TaskList

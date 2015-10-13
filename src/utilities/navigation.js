@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
   iconBack: {
     width: 45,
     height: 45,
+    
     // marginTop: -15,
   }
 });

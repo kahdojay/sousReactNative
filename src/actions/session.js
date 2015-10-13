@@ -4,7 +4,8 @@ import {
   REGISTER_SESSION,
   REQUEST_SESSION,
   RECEIVE_SESSION,
-  ERROR_SESSION
+  ERROR_SESSION,
+  UPDATE_SESSION,
 } from './actionTypes'
 
 export default function SessionActions(ddpClient){
@@ -23,22 +24,23 @@ export default function SessionActions(ddpClient){
     }
   }
 
-  // function fetchSession(sessionParams) {
-  //   return (dispatch) => {
-  //     dispatch(requestSession())
-  //     return SousFetcher.session.create(sessionParams)
-  //       .then((res) => {
-  //         if (res.success === true){
-  //           // dispatch receive session action
-  //           dispatch(receiveSession(sessionParams.email, res))
-  //           // retrieve this session's information
-  //           dispatch(retrieveSessionInfo())
-  //         } else {
-  //           dispatch(errorSession(sessionParams.email, res.errors))
-  //         }
-  //       })
-  //   }
-  // }
+  function updateSession(image, session) {
+    let newImage = image;
+    console.log("IMAGE", image);
+    return (dispatch, getState) => {
+      console.log("STATE", getState());
+      let session = getState().session;
+      let login = session.login;
+      let response = {
+        token: session.token,
+        userId: session.userId,
+        teamKey: session.teamKey,
+        username: session.username,
+        imageUrl: newImage.uri,
+      }
+      dispatch(receiveSession(login, response));
+    }
+  }
 
   function requestSession(sessionParams) {
     return {
@@ -53,7 +55,8 @@ export default function SessionActions(ddpClient){
       login: login,
       token: response.token,
       userId: response.userId,
-      username: response.username,
+      username: response.username || "",
+      imageUrl: response.imageUrl || "",
       teamKey: response.teamKey,
       receivedAt: (new Date).getTime()
     };
@@ -80,10 +83,10 @@ export default function SessionActions(ddpClient){
     REQUEST_SESSION,
     RECEIVE_SESSION,
     ERROR_SESSION,
-    // validateSession,
+    UPDATE_SESSION,
     // createSession,
     resetSession,
-    // resetSessionInfo,
+    updateSession,
     registerSession
   }
 }

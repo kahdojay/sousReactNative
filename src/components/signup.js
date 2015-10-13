@@ -1,4 +1,4 @@
-var { Icon, } = require('react-native-icons');
+import { Icon, } from 'react-native-icons';
 import _ from 'lodash'
 import React from 'react-native'
 
@@ -89,8 +89,9 @@ class Signup extends React.Component {
               keyboardType='phone-pad'
               placeholder='Phone Number'
               onChangeText={(text) => {
-                this.setState({phoneNumber: text})
-              }} />
+                this.setState({phoneNumber: text, invalid: false})
+              }}
+            />
           </View>
           { this.props.session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
           <TouchableHighlight

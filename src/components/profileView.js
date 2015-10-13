@@ -1,58 +1,102 @@
 import { Icon } from 'react-native-icons';
 import React from 'react-native';
 import { mainBackgroundColor } from '../utilities/colors';
-
+import ImageGallery from './imageGallery';
+import Camera from './camera';
 const {
   View,
   Text,
   TextInput,
   PropTypes,
   ScrollView,
+  Image,
   TouchableHighlight,
   StyleSheet,
+  ActionSheetIOS,
+  CameraRoll,
 } = React;
 
 class ProfileView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      name: ''
+      name: '',
+      editAvatar: false,
+      editUsername: false,
+      editEmail: false,
     }
   }
-
+  showActionSheet(){
+    let buttons = [
+      'Take a Photo',
+      'Choose Existing Photo',
+      'Cancel'
+    ]
+    let takePhoto = 0;
+    let photoUpload = 1;
+    let cancelAction = 2;
+    ActionSheetIOS.showActionSheetWithOptions({
+      options: buttons,
+      cancelButtonIndex: cancelAction,
+    },
+    (buttonIndex) => {
+      if( takePhoto === buttonIndex ){
+        this.props.navigator.push({
+          name: 'Camera',
+          navigationBar: this.props.navBar
+        });
+      } else if ( photoUpload === buttonIndex) {
+        // console.log("TAKE A PHOTO");
+        const fetchParams = {
+          first: 100,
+        };
+        CameraRoll.getPhotos(fetchParams, this.storeImages.bind(this), this.logImageError);
+      }
+    });
+  }
+  logImageError(err) {
+    console.log("IMAGE ERROR", err);
+  }
+  storeImages(data){
+    this.props.navigator.push({
+      name: 'ImageGallery',
+      photos: data,
+    });
+  }
   render() {
+    console.log(this.props);
+    var avatar;
+    if (this.props.imageURL === "") {
+      avatar = <Icon name="material|account-circle" size={100} style={styles.userIcon} />
+    } else {
+      avatar = <Image style={styles.userIcon} source={{uri: this.props.imageURL}}/>
+    }
     return (
    		<ScrollView
         style={styles.scrollView}
         keyboardShouldPersistTaps={false}
-        automaticallyAdjustContentInsets={false}>
-
-        <View style={styles.navbar}>
-          <Icon name="fontawesome|angle-left" size={40} color="white" style={styles.icon}/>
-          <TouchableHighlight style={styles.logo}>
-            <Text style={styles.navbarText}>Account</Text>
-          </TouchableHighlight>
-          <TouchableHighlight style={styles.navbarPush}>
-            <Text style={styles.navbarText}>Switch Team</Text>
-          </TouchableHighlight>
-        </View>
+        automaticallyAdjustContentInsets={false}
+      >
         <View style={styles.wrapper}>
-          <View style={styles.avatar}>
-            <Icon name="material|account-circle" size={100} style={styles.userIcon} />
-          </View>
+          <TouchableHighlight
+            underlayColor="#f7f7f7"
+            onPress={() => this.showActionSheet()}
+            style={styles.avatar}>
+            {avatar}
+          </TouchableHighlight>
           <View style={styles.phoneNumber}>
-            <Text style={styles.phoneText}>(555) 555-5555</Text>
+            <Text style={styles.phoneText}>{this.props.phoneNumber}</Text>
           </View>
           <View style={styles.userInfoContainer}>
 
             <View style={styles.userProfile}>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>Name</Text>
-                <Text style={styles.inputInfo}>Thomas Keller</Text>
+                <Text style={styles.inputInfo}>{this.props.username}</Text>
               </View>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>E-mail Address</Text>
-                <Text style={styles.inputInfo}>cheftommy@yahoo.com</Text>
+                <Text style={styles.inputInfo}>{this.props.email}</Text>
               </View>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>Invite Users</Text>
@@ -81,14 +125,6 @@ class ProfileView extends React.Component {
   }
 }
 
-// <TextInput
-//   style={styles.nameInput}
-//   placeholder='Name'
-//   value={this.name}
-//   onChangeText={(name) => {
-//     this.setState({name})
-//   }}
-// />
 let styles = StyleSheet.create({
   scrollView: {
     backgroundColor: '#f2f2f2',
@@ -168,6 +204,11 @@ let styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold'
   },
+  sideNavbarText: {
+    color: 'white',
+    fontSize: 14,
+    textAlign: 'center',
+  },
   icon: {
     height: 30,
     width: 30,
@@ -183,9 +224,10 @@ let styles = StyleSheet.create({
     alignItems: 'center'
   },
   userIcon: {
-    width: 100,
-    height: 100,
-    flex: 1,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    margin: 4,
   },
   wrapper: {
     justifyContent: 'center',
@@ -209,6 +251,7 @@ let styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   nameInput: {
     backgroundColor: 'white',

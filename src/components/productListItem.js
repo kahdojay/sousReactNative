@@ -1,12 +1,9 @@
-var { Icon, } = require('react-native-icons');
+import { Icon, } from 'react-native-icons';
 import React from 'react-native'
 import CheckBox from 'react-native-checkbox'
-import {
-  greyText,
-  productCompletedBackgroundColor
-} from '../utilities/colors';
+import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
 
-let {
+const {
   TouchableHighlight,
   PropTypes,
   Text,
@@ -14,7 +11,7 @@ let {
   View,
 } = React;
 
-export default class ProductListItem extends React.Component {
+class ProductListItem extends React.Component {
   increment() {
     this.props.onUpdateProduct({quantity: (this.props.product.quantity + 1)})
   }
@@ -41,11 +38,14 @@ export default class ProductListItem extends React.Component {
             />
           </View>
           <TouchableHighlight
-            onPress={() => this.props.navigator.push({
-              name: 'ProductView',
-              productId: this.props.product.productId,
-              purveyorId: this.props.purveyorId
-            })}
+            onPress={() => {
+              this.props.navigator.push({
+                name: 'ProductView',
+                productId: this.props.product.productId,
+                purveyorId: this.props.purveyorId,
+                navigationBar: this.props.navBar
+              })
+            }}
             style={styles.main}
           >
             <View>
@@ -122,6 +122,7 @@ let styles = StyleSheet.create({
 });
 
 ProductListItem.propTypes = {
-  // onUpdateProduct: PropTypes.func.isRequired,
   product: PropTypes.object.isRequired
 };
+
+export default ProductListItem

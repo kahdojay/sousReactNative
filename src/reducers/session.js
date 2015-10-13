@@ -45,6 +45,8 @@ function session(state = initialState, action) {
       isFetching: false,
       phoneNumber: action.phoneNumber,
       token: action.token,
+      imageUrl: action.imageUrl,
+      username: action.username,
       userId: action.userId,
       teamKey: action.teamKey,
       errors: null,

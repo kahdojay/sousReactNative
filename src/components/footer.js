@@ -21,7 +21,9 @@ class Footer extends React.Component {
     }
     let applyHighlight = '';
 
-    if(_.includes(['StationIndex', 'StationView', 'TaskView'], this.props.route.name)){
+    if (_.includes(['Signup', 'Login'], this.props.route.name)){
+      return null;
+    } else if(_.includes(['StationIndex', 'StationView', 'TaskView'], this.props.route.name)){
       applyHighlight = 'Prep'
     } else if(_.includes(['Feed'], this.props.route.name)){
       applyHighlight = 'Feed'
@@ -32,16 +34,18 @@ class Footer extends React.Component {
     let prepFooterHighlight = (applyHighlight == 'Prep' ? styles.footerActiveHighlight : {});
     let feedFooterHighlight = (applyHighlight == 'Feed' ? styles.footerActiveHighlight : {});
     let orderFooterHighlight = (applyHighlight == 'Order' ? styles.footerActiveHighlight : {});
-    console.log(this.props.route.name)
 
     return (
       <View style={footerContainerStyle}>
         <View style={styles.footerItem}>
           <TouchableHighlight
             underlayColor='white'
-            onPress={() => this.props.nav.replace({
-              name: 'StationIndex'
-            })}
+            onPress={() => {
+              this.props.nav.replace({
+                name: 'StationIndex',
+                navigationBar: this.props.navBar
+              })
+            }}
             style={[styles.footerButton, prepFooterHighlight]}
           >
             <View>
@@ -60,9 +64,12 @@ class Footer extends React.Component {
         <View style={styles.footerItem}>
           <TouchableHighlight
             underlayColor="white"
-            onPress={() => this.props.nav.replace({
-              name: 'Feed'
-            })}
+            onPress={() => {
+              this.props.nav.replace({
+                name: 'Feed',
+                navigationBar: this.props.navBar,
+              })
+            }}
             style={[styles.footerButton, feedFooterHighlight]}
           >
             <View>
@@ -81,9 +88,12 @@ class Footer extends React.Component {
         <View style={styles.footerItem}>
           <TouchableHighlight
             underlayColor='white'
-            onPress={() => this.props.nav.replace({
-              name: 'PurveyorIndex'
-            })}
+            onPress={() => {
+              this.props.nav.replace({
+                name: 'PurveyorIndex',
+                navigationBar: this.props.navBar
+              })
+            }}
             style={[styles.footerButton, orderFooterHighlight]}
           >
             <View>
@@ -102,7 +112,7 @@ class Footer extends React.Component {
         {/*<View style={styles.footerItem}>
           <TouchableHighlight
             style={[styles.footerButton, styles.logoutButton]}
-            onPress={() => { dispatch(actions.resetSession()) }}
+            onPress={this.props.onPressResetSession}
           >
             <View>
               <Icon
@@ -121,7 +131,6 @@ class Footer extends React.Component {
     );
   }
 };
-
 
 let styles = StyleSheet.create({
   container: {
@@ -209,6 +218,5 @@ let styles = StyleSheet.create({
     flex: 1,
   },
 })
-
 
 module.exports = Footer;

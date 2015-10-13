@@ -26,8 +26,8 @@ var config = {
         path.resolve(__dirname, 'src'),
         path.resolve(__dirname, 'node_modules/react-native-checkbox'),
         path.resolve(__dirname, 'node_modules/react-native-icons'),
-        path.resolve(__dirname, 'node_modules/react-native-invertible-scroll-view')
-        // path.resolve(__dirname, 'node_modules/react-native-navbar'),
+        path.resolve(__dirname, 'node_modules/react-native-invertible-scroll-view'),
+        path.resolve(__dirname, 'node_modules/react-native-navbar'),
         // Note: add any other js or node modules that need babel processing
       ],
       loader: 'babel',
