@@ -6,6 +6,7 @@ import { connect } from 'react-redux/native';
 import { Icon } from 'react-native-icons';
 import Login from '../components/login';
 import Signup from '../components/signup';
+import ImageGallery from '../components/imageGallery';
 import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
 import TaskView from '../components/taskView';
@@ -243,8 +244,19 @@ class App extends React.Component {
             username={session.firstName}
             imageURL={session.imageUrl}
             phoneNumber={"(555) 555-5555"}
+            navigator={nav}
             />
         );
+      case 'ImageGallery':
+        return (
+          <ImageGallery
+            navigator={nav}
+            photos={route.photos}
+            onUpdateAvatar={(image) => {
+              dispatch(actions.updateSession(image, session));
+            }}
+            />
+        )
       default:
         return <View />;
     }

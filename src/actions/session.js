@@ -5,7 +5,8 @@ import {
   REGISTER_SESSION,
   REQUEST_SESSION,
   RECEIVE_SESSION,
-  ERROR_SESSION
+  ERROR_SESSION,
+  UPDATE_SESSION,
 } from './actionTypes'
 
 let SousFetcher = null;
@@ -37,7 +38,23 @@ function registerSession(sessionParams) {
       })
   }
 }
-
+function updateSession(image, session) {
+  let newImage = image;
+  console.log("IMAGE", image);
+  return (dispatch, getState) => {
+    console.log("STATE", getState());
+    let session = getState().session;
+    let login = session.login;
+    let response = {
+      token: session.token,
+      userId: session.userId,
+      teamKey: session.teamKey,
+      username: session.username,
+      imageUrl: newImage.uri,
+    }
+    dispatch(receiveSession(login, response));
+  }
+}
 function fetchSession(sessionParams) {
   return (dispatch) => {
     dispatch(requestSession())
@@ -62,12 +79,14 @@ function requestSession() {
 }
 
 function receiveSession(login, response) {
+  console.log("USERNAME", response.username);
   return {
     type: RECEIVE_SESSION,
     login: login,
     token: response.token,
     userId: response.userId,
-    username: response.username,
+    username: response.username || "",
+    imageUrl: response.imageUrl || "",
     teamKey: response.teamKey,
     receivedAt: (new Date).getTime()
   };
@@ -96,9 +115,11 @@ export default function SessionActions(ddpClient){
     REQUEST_SESSION,
     RECEIVE_SESSION,
     ERROR_SESSION,
+    UPDATE_SESSION,
     // validateSession,
     createSession,
     resetSession,
+    updateSession,
     // resetSessionInfo,
     registerSession
   }

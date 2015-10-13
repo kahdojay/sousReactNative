@@ -1,16 +1,18 @@
 import { Icon } from 'react-native-icons';
 import React from 'react-native';
 import { mainBackgroundColor } from '../utilities/colors';
-
+import ImageGallery from './imageGallery';
 const {
   View,
   Text,
   TextInput,
   PropTypes,
   ScrollView,
+  Image,
   TouchableHighlight,
   StyleSheet,
   ActionSheetIOS,
+  CameraRoll,
 } = React;
 
 class ProfileView extends React.Component {
@@ -29,20 +31,35 @@ class ProfileView extends React.Component {
       'Choose Existing Photo',
       'Cancel'
     ]
-    let deleteAction = 0;
+    let takePhoto = 0;
+    let photoUpload = 1;
     let cancelAction = 2;
     ActionSheetIOS.showActionSheetWithOptions({
       options: buttons,
       cancelButtonIndex: cancelAction,
     },
     (buttonIndex) => {
-      if( deleteAction === buttonIndex ){
+      if( takePhoto === buttonIndex ){
         // process the delete
         console.log("CHANGE YOUR IMAGE WITH UPLOAD");
-      } else if ( cancelAction === buttonIndex) {
+      } else if ( photoUpload === buttonIndex) {
         // process upload photo
+        const fetchParams = {
+          first: 100,
+        };
+
         console.log("TAKE A PHOTO");
+        CameraRoll.getPhotos(fetchParams, this.storeImages.bind(this), this.logImageError);
       }
+    });
+  }
+  logImageError(err) {
+    console.log("IMAGE ERROR", err);
+  }
+  storeImages(data){
+    this.props.navigator.push({
+      name: 'ImageGallery',
+      photos: data,
     });
   }
   render() {
@@ -215,9 +232,10 @@ let styles = StyleSheet.create({
     alignItems: 'center'
   },
   userIcon: {
-    width: 100,
-    height: 100,
-    flex: 1,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    margin: 4,
   },
   wrapper: {
     justifyContent: 'center',
@@ -241,6 +259,7 @@ let styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   nameInput: {
     backgroundColor: 'white',
