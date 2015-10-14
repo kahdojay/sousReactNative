@@ -23,11 +23,11 @@ export default function StationActions(ddpClient) {
     }
   }
 
-  function addStation(name, teamKey) {
+  function addStation(name, teamId) {
     var newStationAttributes = {
       _id: Shortid.generate(),
       name: name,
-      teamKey: teamKey,
+      teamId: teamId,
       tasks: [],
       deleted: false
     }
@@ -41,9 +41,9 @@ export default function StationActions(ddpClient) {
   function completeStationTask(messageText) {
     return (dispatch) => {
       dispatch(messageActions.createMessage(messageText))
-      return {
+      return dispatch({
         type: COMPLETE_STATION_TASK
-      };
+      });
     }
   }
 
@@ -60,12 +60,12 @@ export default function StationActions(ddpClient) {
         unit: 0 // for future use
       }
       ddpClient.call('addStationTask', [session.userId, stationId, newTaskAttributes]);
-      return {
+      return dispatch({
         type: UPDATE_STATION,
         stationId: stationId,
         recipeId: newTaskAttributes.recipeId,
         task: newTaskAttributes
-      }
+      })
     }
   }
 

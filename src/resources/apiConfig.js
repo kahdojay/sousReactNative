@@ -14,6 +14,7 @@ export const DDP = {
   ENDPOINT_WS: 'ws://localhost:3000/websocket',
   // ENDPOINT_WS: 'ws://sousmeteor-52834.onmodulus.net/websocket',
   SUBSCRIBE_LIST: {
+    RESTRICTED: {channel: 'restricted'},
     MESSAGES: {channel: 'messages'},
     STATIONS: {channel: 'stations'},
     PURVEYORS: {channel: 'purveyors'},

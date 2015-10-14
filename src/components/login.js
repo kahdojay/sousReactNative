@@ -26,7 +26,6 @@ class Login extends React.Component {
   }
 
   componentWillMount(){
-    this.props.onResetSession();
     if(this.props.session.login !== ''){
       this.setState({
         email: this.props.session.login,

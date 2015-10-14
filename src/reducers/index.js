@@ -13,7 +13,7 @@ const reducers = combineReducers(Object.assign(
   station,
   session,
   message,
-  purveyor,
+  purveyor
 ));
 
 export default reducers;

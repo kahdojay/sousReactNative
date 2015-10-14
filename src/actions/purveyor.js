@@ -22,10 +22,10 @@ export default function PurveyorActions(ddpClient){
     }
   }
 
-  function addPurveyor(name, teamKey) {
+  function addPurveyor(name, teamId) {
     var newPurveyorAttributes = {
       _id: shortid.generate(),
-      teamKey: teamKey,
+      teamId: teamId,
       name: name,
       description: "",
       products:    [],
@@ -41,9 +41,9 @@ export default function PurveyorActions(ddpClient){
   function completePurveyorProduct(messageText) {
     return (dispatch) => {
       dispatch(messageActions.createMessage(messageText))
-      return {
+      return dispatch({
         type: ORDER_PURVEYOR_PRODUCT
-      };
+      });
     }
   }
 

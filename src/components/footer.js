@@ -133,58 +133,6 @@ class Footer extends React.Component {
 };
 
 let styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 20,
-  },
-  scene: {
-    flex: 1
-  },
-  nav: {
-    backgroundColor: '#1825AD',
-    justifyContent: 'space-between',
-    margin: 0,
-    alignItems: 'center'
-  },
-  navSignUp: {
-    justifyContent: 'center',
-  },
-  logo: {
-    color: 'white',
-    fontSize: 20,
-    fontFamily: 'OpenSans'
-  },
-  logoImage: {
-    width: 45,
-    height: 45,
-    alignItems: 'center'
-  },
-  iconFace: {
-    width: 70,
-    height: 70,
-  },
-  profileBtn: {
-    flex: 1,
-    alignItems: 'flex-end',
-  },
-  signup: {
-    marginRight: 5,
-    right: 10,
-    position: 'absolute',
-    top: 27
-  },
-  header: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontFamily: 'OpenSans'
-  },
-  buttonText: {
-    alignSelf: 'center',
-    fontSize: 27,
-    color: 'white',
-    fontWeight: 'bold',
-    fontFamily: 'OpenSans'
-  },
   footerContainer: {
     flexDirection: 'row',
     borderTopWidth: 1,
