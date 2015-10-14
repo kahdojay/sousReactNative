@@ -48,7 +48,9 @@ export default function ConnectActions(ddpClient) {
       //--------------------------------------
 
       ddpClient.on('connected', () => {
-        connectChannels(session)
+        console.log('CONNECTED: TODO');
+        if (session.isAuthenticated)
+          connectChannels(session)
       })
       ddpClient.on('message', (msg) => {
         var log = JSON.parse(msg);

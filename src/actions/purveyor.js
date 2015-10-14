@@ -41,7 +41,7 @@ export default function PurveyorActions(ddpClient){
   function completePurveyorProduct(messageText) {
     return (dispatch) => {
       dispatch(messageActions.createMessage(messageText))
-      return dispath({
+      return dispatch({
         type: ORDER_PURVEYOR_PRODUCT
       });
     }

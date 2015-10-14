@@ -85,6 +85,7 @@ class App extends React.Component {
                   }}
                 />
       case 'StationIndex':
+        console.log("SESSION", session);
         return <StationIndex
                   navigator={nav}
                   navBar={navBar}
@@ -305,11 +306,15 @@ class App extends React.Component {
   }
 
   renderScene(route, nav) {
+    console.log("PROPS", this.props);
     const { dispatch, ui } = this.props;
 
     // redirect to initial view
     if (this.props.session.isAuthenticated){
-      if(route.name === 'Login' || route.name === 'Signup') {
+      if (route.name === 'Login' || route.name === 'Signup') {
+        // check session for first name and last name - if none, redirect to UserProfile
+        // else send to StationIndex
+        // route.name = 'UserProfile';
         route.name = 'StationIndex';
       }
     }
@@ -431,7 +436,7 @@ class App extends React.Component {
 
     let footer = (
       <Footer
-        onPressteamId={() => {
+        onPressResetSession={() => {
           dispatch(actions.resetSession())
         }}
         nav={nav}
@@ -452,10 +457,10 @@ class App extends React.Component {
 
   configureScene(route) {
     // // TODO: commented out to prevent ghosting, review animation options later
-    // if (route.sceneConfig) {
-    //   return route.sceneConfig;
-    // }
-    // return Navigator.SceneConfigs.FloatFromRight;
+    if (route.sceneConfig) {
+      return route.sceneConfig;
+    }
+    return Navigator.SceneConfigs.FloatFromRight;
   }
 
   render() {
@@ -480,7 +485,8 @@ class App extends React.Component {
 
 let styles = StyleSheet.create({
   container: {
-    marginTop: 20
+    marginTop: 20,
+    flex: 1
   },
   scene: {
     flex: 1

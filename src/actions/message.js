@@ -34,7 +34,7 @@ export default function MessageActions(ddpClient) {
       };
       console.log(newMessage);
       ddpClient.call('createMessage', [newMessage])
-      return dispath({
+      return dispatch({
         type: CREATE_MESSAGE,
         message: newMessage
       });

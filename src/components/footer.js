@@ -112,7 +112,7 @@ class Footer extends React.Component {
         {/*<View style={styles.footerItem}>
           <TouchableHighlight
             style={[styles.footerButton, styles.logoutButton]}
-            onPress={this.props.onPressteamId}
+            onPress={this.props.onPressResetSession}
           >
             <View>
               <Icon

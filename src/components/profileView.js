@@ -64,7 +64,7 @@ class ProfileView extends React.Component {
     });
   }
   render() {
-    // console.log(this.props);
+    console.log("PROFILE", this.props);
     var avatar;
     if (this.props.imageURL === "") {
       avatar = <Icon name="material|account-circle" size={100} style={styles.userIcon} />

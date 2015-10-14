@@ -36,6 +36,7 @@ export default function SessionActions(ddpClient){
   }
 
   function updateSession(sessionParams) {
+    console.log(sessionParams);
     return (dispatch) => {
       return dispatch(receiveSession(sessionParams))
     }
@@ -51,10 +52,18 @@ export default function SessionActions(ddpClient){
   function receiveSession(response) {
     return (dispatch, getState) => {
       const {session} = getState();
-      var isAuthenticated = false;
+      var isAuthenticated = session.isAuthenticated;
+      console.log("AUTHENTICATE", isAuthenticated);
       //TODO: make this a bit more secure
       if(response.hasOwnProperty('smsVerified') && response.smsVerified === true && response.authToken){
+        console.log("SESSION", session, response);
         isAuthenticated = true;
+        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.STATIONS.channel)
+        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.STATIONS.channel, [session.teamId]);
+        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel)
+        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [session.teamId]);
+        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel)
+        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [session.teamId]);
       }
       var action = Object.assign({}, session, response, {
         type: RECEIVE_SESSION,
