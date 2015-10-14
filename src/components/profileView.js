@@ -3,6 +3,7 @@ import React from 'react-native';
 import { mainBackgroundColor } from '../utilities/colors';
 import ImageGallery from './imageGallery';
 import Camera from './camera';
+var UIImagePickerManager = require('NativeModules').UIImagePickerManager;
 const {
   View,
   Text,
@@ -27,32 +28,72 @@ class ProfileView extends React.Component {
     }
   }
   showActionSheet(){
-    let buttons = [
-      'Take a Photo',
-      'Choose Existing Photo',
-      'Cancel'
-    ]
-    let takePhoto = 0;
-    let photoUpload = 1;
-    let cancelAction = 2;
-    ActionSheetIOS.showActionSheetWithOptions({
-      options: buttons,
-      cancelButtonIndex: cancelAction,
-    },
-    (buttonIndex) => {
-      if( takePhoto === buttonIndex ){
-        this.props.navigator.push({
-          name: 'Camera',
-          navigationBar: this.props.navBar
-        });
-      } else if ( photoUpload === buttonIndex) {
-        // console.log("TAKE A PHOTO");
-        const fetchParams = {
-          first: 100,
-        };
-        CameraRoll.getPhotos(fetchParams, this.storeImages.bind(this), this.logImageError);
+    var options = {
+      title: 'Select Avatar',
+      cancelButtonTitle: 'Cancel',
+      takePhotoButtonTitle: 'Take Photo...',
+      takePhotoButtonHidden: false,
+      chooseFromLibraryButtonTitle: 'Choose from Library...',
+      chooseFromLibraryButtonHidden: false,
+      customButtons: {
+         // [Button Text] : [String returned upon selection]
+      },
+      maxWidth: 400,
+      maxHeight: 400,
+      returnBase64Image: false,
+      returnIsVertical: false,
+      quality: 1,
+      allowsEditing: false, // Built in iOS functionality to resize/reposition the image
+      //storageOptions: {   // if provided, the image will get saved in the documents directory (rather than tmp directory)
+      //  skipBackup: true, // will set attribute so the image is not backed up to iCloud
+      //  path: "images",   // will save image at /Documents/images rather than the root
+      //}
+    };
+
+// The first arg will be the options object for customization, the second is
+// your callback which sends string: responseType, string: response.
+// responseType will be either 'cancel', 'data', 'uri', or one of your custom button values
+    UIImagePickerManager.showImagePicker(options, (responseType, response) => {
+      console.log(`Response Type = ${responseType}`);
+
+      if (responseType !== 'cancel') {
+        let source;
+        if (responseType === 'data') { // New photo taken OR passed returnBase64Image true -  response is the 64 bit encoded image data string
+          source = {uri: 'data:image/jpeg;base64,' + response, isStatic: true};
+        }
+        else if (responseType === 'uri') { // Selected from library - response is the URI to the local file asset
+          source = {uri: response.replace('file://', ''), isStatic: true};
+        }
+
+        this.props.onUpdateAvatar(source);
       }
     });
+    // let buttons = [
+    //   'Take a Photo',
+    //   'Choose Existing Photo',
+    //   'Cancel'
+    // ]
+    // let takePhoto = 0;
+    // let photoUpload = 1;
+    // let cancelAction = 2;
+    // ActionSheetIOS.showActionSheetWithOptions({
+    //   options: buttons,
+    //   cancelButtonIndex: cancelAction,
+    // },
+    // (buttonIndex) => {
+    //   if( takePhoto === buttonIndex ){
+    //     this.props.navigator.push({
+    //       name: 'Camera',
+    //       navigationBar: this.props.navBar
+    //     });
+    //   } else if ( photoUpload === buttonIndex) {
+    //     // console.log("TAKE A PHOTO");
+    //     const fetchParams = {
+    //       first: 100,
+    //     };
+    //     CameraRoll.getPhotos(fetchParams, this.storeImages.bind(this), this.logImageError);
+    //   }
+    // });
   }
   logImageError(err) {
     console.log("IMAGE ERROR", err);
