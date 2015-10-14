@@ -40,6 +40,7 @@ function session(state = initialState.session, action) {
       username: action.username,
       login: action.login,
       notifications: action.notifications,
+      phoneNumber: action.phoneNumber,
       imageUrl: action.imageUrl,
       teamId: action.teamId,
       firstName: action.firstName,

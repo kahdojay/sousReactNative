@@ -22,9 +22,8 @@ class ProfileView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      editAvatar: false,
-      editUsername: false,
-      editEmail: false,
+      editPhoneNumber: false,
+      phoneNumber: this.props.phoneNumber,
       firstName: this.props.firstName,
       lastName: this.props.lastName,
       email: this.props.email,
@@ -84,29 +83,41 @@ class ProfileView extends React.Component {
     });
   }
   needsSave() {
-    let propValues = [ this.props.firstName, this.props.lastName, this.props.email, this.props.notifications ];
-    let stateValues = [ this.state.firstName, this.state.lastName, this.state.email, this.state.notifications ];
+    let propValues = [ this.props.firstName, this.props.lastName, this.props.email, this.props.notifications, this.props.phoneNumber ];
+    let stateValues = [ this.state.firstName, this.state.lastName, this.state.email, this.state.notifications, this.state.phoneNumber ];
     console.log("PROPS", propValues == stateValues);
-
     return JSON.stringify(propValues) == JSON.stringify(stateValues);
   }
   render() {
     console.log("PROFILE", this.props);
-    var avatar;
+    let avatar = <Image style={styles.userIcon} source={{uri: this.props.imageURL}}/>
     if (this.props.imageURL === "") {
       avatar = <Icon name="material|account-circle" size={100} style={styles.userIcon} />
-    } else {
-      avatar = <Image style={styles.userIcon} source={{uri: this.props.imageURL}}/>
     }
-    var saveChanges = <View style={styles.saveContainer}>
+    let phoneNumber = <TouchableHighlight
+                        onPress={() => this.setState({editPhoneNumber: ! this.state.editPhoneNumber})}
+                        style={styles.phoneNumber}>
+                        <Text style={styles.phoneText}>{this.props.phoneNumber}</Text>
+                      </TouchableHighlight>
+    if (this.state.editPhoneNumber) {
+      phoneNumber = <View style={styles.infoField}>
+                      <TextInput
+                        onChange={(e) => this.setState({phoneNumber: e.nativeEvent.text})}
+                        style={styles.inputField}
+                        value={this.state.phoneNumber}></TextInput>
+                    </View>
+    }
+    let saveChanges = <View style={styles.saveContainer}>
                         <TouchableHighlight
                           onPress={() => {
-                            let {firstName, lastName, email, notifications} = this.state;
+                            let {firstName, lastName, email, notifications, phoneNumber} = this.state;
                             let data = {
                               firstName: firstName,
                               lastName: lastName,
                               login: email,
                               notifications: notifications,
+                              username: phoneNumber,
+                              phoneNumber: phoneNumber,
                             };
                             this.props.onUpdateInfo(data);
                           }}
@@ -134,9 +145,7 @@ class ProfileView extends React.Component {
           </TouchableHighlight>
           </View>
 
-          <View style={styles.phoneNumber}>
-            <Text style={styles.phoneText}>{this.props.phoneNumber}</Text>
-          </View>
+          {phoneNumber}
           <View style={styles.userInfoContainer}>
 
             <View style={styles.userProfile}>
