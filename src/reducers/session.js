@@ -32,7 +32,7 @@ function session(state = initialState.session, action) {
       errors: null
     })
   case RECEIVE_SESSION:
-    // console.log(action.type, action);
+    console.log("ACTION", action);
     var newSessionState = Object.assign({}, state, {
       isAuthenticated: action.isAuthenticated,
       smsSent: action.smsSent,

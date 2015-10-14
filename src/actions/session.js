@@ -37,8 +37,9 @@ export default function SessionActions(ddpClient){
 
   function updateSession(sessionParams) {
     console.log(sessionParams);
+    let params = {imageUrl: sessionParams.uri}
     return (dispatch) => {
-      return dispatch(receiveSession(sessionParams))
+      return dispatch(receiveSession(params))
     }
   }
 
@@ -50,6 +51,7 @@ export default function SessionActions(ddpClient){
   }
 
   function receiveSession(response) {
+    console.log("RES", response);
     return (dispatch, getState) => {
       const {session} = getState();
       var isAuthenticated = session.isAuthenticated;

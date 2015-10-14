@@ -26,7 +26,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
-		899803771BCD9DF10011F96A /* UIImagePickerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 899803761BCD9DF10011F96A /* UIImagePickerManager.m */; settings = {ASSET_TAGS = (); }; };
+		899803FF1BCEC7E00011F96A /* UIImagePickerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 899803FE1BCEC7E00011F96A /* UIImagePickerManager.m */; settings = {ASSET_TAGS = (); }; };
 		89A667011BC2F38A00F45CFD /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89A667001BC2F38A00F45CFD /* OpenSans-Regular.ttf */; settings = {ASSET_TAGS = (); }; };
 		89EFDE591BCC097F001FBBEF /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE501BCC097F001FBBEF /* OpenSans-Bold.ttf */; settings = {ASSET_TAGS = (); }; };
 		89EFDE5A1BCC097F001FBBEF /* OpenSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE511BCC097F001FBBEF /* OpenSans-BoldItalic.ttf */; settings = {ASSET_TAGS = (); }; };
@@ -151,8 +151,8 @@
 		146833FF1AC3E56700842450 /* React.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = React.xcodeproj; path = "../node_modules/react-native/React/React.xcodeproj"; sourceTree = "<group>"; };
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
-		899803751BCD9DF10011F96A /* UIImagePickerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIImagePickerManager.h; sourceTree = "<group>"; };
-		899803761BCD9DF10011F96A /* UIImagePickerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIImagePickerManager.m; sourceTree = "<group>"; };
+		899803FD1BCEC7E00011F96A /* UIImagePickerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIImagePickerManager.h; sourceTree = "<group>"; };
+		899803FE1BCEC7E00011F96A /* UIImagePickerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIImagePickerManager.m; sourceTree = "<group>"; };
 		89A667001BC2F38A00F45CFD /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Regular.ttf"; sourceTree = SOURCE_ROOT; };
 		89EFDE501BCC097F001FBBEF /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Bold.ttf"; sourceTree = "<group>"; };
 		89EFDE511BCC097F001FBBEF /* OpenSans-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-BoldItalic.ttf"; sourceTree = "<group>"; };
@@ -308,7 +308,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				899803741BCD9DF10011F96A /* UIImagePickerManager */,
+				899803FC1BCEC7E00011F96A /* UIImagePickerManager */,
 				1178179C1BCDE788009F23E6 /* ReactNativeIcons.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
@@ -354,11 +354,11 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		899803741BCD9DF10011F96A /* UIImagePickerManager */ = {
+		899803FC1BCEC7E00011F96A /* UIImagePickerManager */ = {
 			isa = PBXGroup;
 			children = (
-				899803751BCD9DF10011F96A /* UIImagePickerManager.h */,
-				899803761BCD9DF10011F96A /* UIImagePickerManager.m */,
+				899803FD1BCEC7E00011F96A /* UIImagePickerManager.h */,
+				899803FE1BCEC7E00011F96A /* UIImagePickerManager.m */,
 			);
 			name = UIImagePickerManager;
 			path = "../node_modules/react-native-image-picker/UIImagePickerManager";
@@ -628,7 +628,7 @@
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
-				899803771BCD9DF10011F96A /* UIImagePickerManager.m in Sources */,
+				899803FF1BCEC7E00011F96A /* UIImagePickerManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
