@@ -41,7 +41,7 @@ function connectApp(){
     dispatch(stationActions.resetStations());
     // dispatch(uiActions.resetUI()); //NOTE: why doesnt this work?
     // dispatch(teamActions.fetchTeams());
-    // dispatch(sessionActions.resetSession());
+    dispatch(sessionActions.resetSession());
     dispatch(purveyorActions.resetPurveyors());
 
     //--------------------------------------

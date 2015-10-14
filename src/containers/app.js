@@ -9,7 +9,7 @@ import Signup from '../components/signup';
 import ImageGallery from '../components/imageGallery';
 import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
-import Camera from '../components/camera';
+import UserInfo from '../components/userInfo';
 import TaskView from '../components/taskView';
 import Feed from '../components/feed';
 import PurveyorIndex from '../components/purveyorIndex';
@@ -260,11 +260,9 @@ class App extends React.Component {
             }}
             />
         );
-      case 'Camera':
+      case 'UserInfo':
         return (
-          <Camera
-            navigator={nav}
-            />
+          <UserInfo />
         )
       default:
         return <View />;
@@ -325,7 +323,11 @@ class App extends React.Component {
         // check session for first name and last name - if none, redirect to UserProfile
         // else send to StationIndex
         // route.name = 'UserProfile';
-        route.name = 'StationIndex';
+        if (this.props.session.firstName === "" || this.props.session.lastName === "") {
+          route.name = 'UserInfo';
+        } else {
+          route.name = 'StationIndex';
+        }
       }
     }
     // redirect to login if requested view requires authentication
@@ -455,12 +457,12 @@ class App extends React.Component {
         route={route}
         />
     );
-
+    let pageFooter = route.name == "UserInfo" ? <View></View> : footer;
     return (
       <View style={styles.container}>
         {navBar}
         {scene}
-        {footer}
+        {pageFooter}
       </View>
     );
   }
