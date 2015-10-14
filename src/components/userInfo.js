@@ -77,9 +77,9 @@ class UserInfo extends React.Component{
                   if (firstName != '' && lastName != '') {
                     console.log("REGISTER USER WITH FIRST/LAST NAME");
                     this.props.onUpdateAvatar({firstName: firstName, lastName: lastName});
-                    // this.props.navigator.push({
-                    //
-                    // })
+                    this.props.navigator.push({
+                      name: 'StationIndex',
+                    })
                   }
                 }}
                 style={styles.deactivateButton}>

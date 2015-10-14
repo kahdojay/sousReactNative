@@ -267,6 +267,7 @@ class App extends React.Component {
               console.log("IMAGE", image);
               dispatch(actions.updateSession(image, session));
             }}
+            navigator={nav}
             />
         )
       default:
@@ -369,6 +370,8 @@ class App extends React.Component {
               onPrev: null,
               nextTitle: 'profile',
             })
+          } else {
+            // ADD NAVBAR
           }
           break;
         case 'Feed':
