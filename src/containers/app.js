@@ -235,6 +235,10 @@ class App extends React.Component {
             phoneNumber={"(555) 555-5555"}
             navigator={nav}
             navBar={navBar}
+            onUpdateAvatar={(image) => {
+              console.log("IMAGE", image);
+              dispatch(actions.updateSession(image, session));
+            }}
             />
         );
       case 'ImageGallery':
