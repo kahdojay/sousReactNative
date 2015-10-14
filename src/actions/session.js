@@ -37,9 +37,8 @@ export default function SessionActions(ddpClient){
 
   function updateSession(sessionParams) {
     console.log(sessionParams);
-    let params = {imageUrl: sessionParams.uri}
     return (dispatch) => {
-      return dispatch(receiveSession(params))
+      return dispatch(receiveSession(sessionParams))
     }
   }
 
