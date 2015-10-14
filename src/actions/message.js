@@ -27,17 +27,17 @@ export default function MessageActions(ddpClient) {
         message: messageText,
         userId: session.userId,
         author: author || "Default",
-        teamKey: session.teamKey,
+        teamId: session.teamId,
         createdAt: (new Date()).getTime(),
         imageUrl: session.imageUrl,
         delete: false
       };
       console.log(newMessage);
       ddpClient.call('createMessage', [newMessage])
-      return {
+      return dispath({
         type: CREATE_MESSAGE,
         message: newMessage
-      };
+      });
     }
   }
 

@@ -2,7 +2,6 @@
 // let expect = require('chai').expect;
 import { DDP } from '../src/resources/apiConfig'
 import DDPClient from 'ddp-client'
-// import WebSocket from 'ws'
 
 // console.log(WebSocket)
 
@@ -18,7 +17,7 @@ import DDPClient from 'ddp-client'
     // ddpVersion : '1',  // ['1', 'pre2', 'pre1'] available
     // Use a full url instead of a set of `host`, `port` and `ssl`
     url: DDP.ENDPOINT_WS,
-    socketConstructor: WebSocket // Another constructor to create new WebSockets
+    // socketConstructor: WebSocket // Another constructor to create new WebSockets
   });
 
   // before(() => {

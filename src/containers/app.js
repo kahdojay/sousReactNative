@@ -51,7 +51,7 @@ class App extends React.Component {
   }}
 
   componentWillMount() {
-    this.props.dispatch(actions.fetchTeams());
+    this.props.dispatch(actions.connectApp())
   }
 
   authenticatedRoute(route){
@@ -64,16 +64,13 @@ class App extends React.Component {
 
   getScene(route, nav, navBar) {
     const { ui, session, teams, stations, messages, dispatch, purveyors, products } = this.props;
-    let teamKey = session.teamKey;
+    let teamId = session.teamId;
 
     switch (route.name) {
       // case 'Login':
       //   return <Login
       //             navigator={nav}
       //             session={session}
-      //             onResetSession={() => {
-      //               dispatch(actions.resetSession())
-      //             }}
       //             onLogin={(sessionParams) => {
       //               dispatch(actions.createSession(sessionParams))
       //             }}
@@ -83,10 +80,7 @@ class App extends React.Component {
                   navigator={nav}
                   session={session}
                   teams={teams}
-                  onResetSession={() => {
-                    dispatch(actions.resetSession())
-                  }}
-                  onSignup={(sessionParams) => {
+                  onRegisterSession={(sessionParams) => {
                     dispatch(actions.registerSession(sessionParams))
                   }}
                 />
@@ -94,9 +88,6 @@ class App extends React.Component {
         return <StationIndex
                   navigator={nav}
                   navBar={navBar}
-                  onConnectApp={() => {
-                    this.props.dispatch(actions.connectApp(teamKey))
-                  }}
                   stations={stations}
                   onAddStation={(name) => {
                     var stations = this.props.stations.data.map((station) => {
@@ -104,16 +95,13 @@ class App extends React.Component {
                         return station.name;
                     });
                     if (stations.indexOf(name) === -1) {
-                      dispatch(actions.addStation(name, teamKey))
+                      dispatch(actions.addStation(name, teamId))
                     } else {
                       console.log("ERROR: station already exists");
                     }
                   }}
                   onBack={() =>
                     this._back.bind(this)
-                  }
-                  onLogout={() =>
-                    dispatch(actions.resetSession())
                   }
                 />;
       case 'StationView':
@@ -169,7 +157,7 @@ class App extends React.Component {
                   navBar={navBar}
                   messages={messages}
                   userEmail={session.login}
-                  teamKey={session.teamKey}
+                  teamId={session.teamId}
                   onCreateMessage={(msg) => {
                     dispatch(actions.createMessage(msg))
                   }}
@@ -187,7 +175,7 @@ class App extends React.Component {
                   return purveyor.name;
               });
               if (purveyors.indexOf(name) === -1) {
-                dispatch(actions.addPurveyor(name, teamKey))
+                dispatch(actions.addPurveyor(name, teamId))
               } else {
                 console.log("ERROR: purveyor already exists");
               }
@@ -237,7 +225,7 @@ class App extends React.Component {
                   }}
                 />;
       case 'Profile':
-      // console.log("SESSION", session);
+        // console.log("SESSION", session);
         return (
           <ProfileView
             email={session.login}
@@ -254,7 +242,10 @@ class App extends React.Component {
             navigator={nav}
             photos={route.photos}
             onUpdateAvatar={(image) => {
-              dispatch(actions.updateSession(image, session));
+              console.log("IMAGE", image);
+              dispatch(actions.updateSession({
+                imageUrl: image.uri
+              }));
             }}
             />
         );
@@ -305,7 +296,7 @@ class App extends React.Component {
       destructiveButtonIndex: deleteAction,
     },
     (buttonIndex) => {
-      console.log('route', navigator, route)
+      // console.log('route', navigator, route)
       if (deleteAction === buttonIndex) {
         dispatch(actions.deletePurveyor(route.purveyorId));
         navigator.pop();
@@ -333,10 +324,11 @@ class App extends React.Component {
     // setup the header for unauthenticated routes
     if(this.authenticatedRoute(route) === false){
       if (navBar) {
-        navBar = React.addons.cloneWithProps(navBar, {
-          navigator: nav,
-          route: route,
-        })
+        // navBar = React.addons.cloneWithProps(navBar, {
+        //   navigator: nav,
+        //   route: route,
+        // })
+        navBar = <View />
       }
     } else {
       switch(route.name) {
@@ -427,7 +419,7 @@ class App extends React.Component {
     if(ui.keyboard.visible === true){
       // header = <View/>
     }
-    console.log('app.js navBar', navBar)
+    // console.log('app.js navBar', navBar)
 
     let stylesContainer = [styles.container, {height: ui.keyboard.screenY}];
     // console.log(ui.keyboard.screenY);
@@ -437,19 +429,33 @@ class App extends React.Component {
       // stylesContainer = [styles.container, {height: ui.keyboard.screenY}];
     }
 
+    let footer = (
+      <Footer
+        onPressteamId={() => {
+          dispatch(actions.resetSession())
+        }}
+        nav={nav}
+        navBar={navBar}
+        ui={ui}
+        route={route}
+        />
+    );
+
     return (
       <View style={styles.container}>
         {navBar}
         {scene}
-        <Footer
-          onPressResetSession={() => dispatch(actions.resetSession())}
-          nav={nav}
-          navBar={navBar}
-          ui={ui}
-          route={route}
-        />
+        {footer}
       </View>
     );
+  }
+
+  configureScene(route) {
+    // // TODO: commented out to prevent ghosting, review animation options later
+    // if (route.sceneConfig) {
+    //   return route.sceneConfig;
+    // }
+    // return Navigator.SceneConfigs.FloatFromRight;
   }
 
   render() {
@@ -466,13 +472,7 @@ class App extends React.Component {
           )
         }}
         renderScene={this.renderScene.bind(this)}
-        // TODO: commented out to prevent ghosting, review animation options later
-        // configureScene={(route) => {
-        //   if (route.sceneConfig) {
-        //     return route.sceneConfig;
-        //   }
-        //   return Navigator.SceneConfigs.FloatFromRight;
-        // }}
+        configureScene={this.configureScene.bind(this)}
       />
     )
   }

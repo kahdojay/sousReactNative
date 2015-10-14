@@ -18,24 +18,40 @@ class Signup extends React.Component {
     super(props)
     this.state = {
       invalid: false,
-      phoneNumber: this.props.session.phoneNumber
+      phoneNumber: this.props.session.phoneNumber,
+      smsToken: ''
     }
   }
 
-  componentWillMount() {
-    this.props.onResetSession();
-  }
-
   onSignup() {
-    this.refs.phone.blur();
+    if(this.refs.phone){
+      this.refs.phone.blur();
+    }
+    if(this.refs.code){
+      this.refs.code.blur();
+    }
     if(this.state.phoneNumber == ''){
       this.setState({invalid: true});
     } else {
-      // first reset all the stations and tasks and ... ?
-      // this.props.onResetSessionInfo();
-      // send the signup request
-      this.props.onSignup(Object.assign({}, {
+      this.props.onRegisterSession(Object.assign({}, {
         phoneNumber: this.state.phoneNumber
+      }));
+    }
+  }
+
+  onVerify() {
+    if(this.refs.phone){
+      this.refs.phone.blur();
+    }
+    if(this.refs.code){
+      this.refs.code.blur();
+    }
+    if(this.state.smsToken == ''){
+      this.setState({invalid: true});
+    } else {
+      this.props.onRegisterSession(Object.assign({}, {
+        phoneNumber: this.state.phoneNumber,
+        smsToken: this.state.smsToken,
       }));
     }
   }
@@ -63,7 +79,12 @@ class Signup extends React.Component {
     this.setState(updateState)
   }
 
+  formatPhoneNumber(phoneNumber){
+    return phoneNumber;
+  }
+
   render() {
+    const {session} = this.props;
     let fetching =  <ActivityIndicatorIOS
                         animating={true}
                         color={'#808080'}
@@ -72,35 +93,77 @@ class Signup extends React.Component {
     let errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
     let teamLookupStatus = (this.state.teamFound) ? <Text style={[styles.teamLookup, styles.teamFound]}>Team Found</Text> : <Text style={[styles.teamLookup, styles.teamNew]}>New Team</Text>
     let teamLookup = (this.state.lookingForTeam) ? <View style={styles.teamLookupContainer}>{teamLookupStatus}</View> : <View/>
+    let formattedPhoneNumber = this.formatPhoneNumber(session.phoneNumber);
+    let signup = (
+      <View style={styles.login}>
+        <Text style={styles.headerText}>Use your phone number to log in to Sous.</Text>
+        <Text style={styles.centered}>First, we'll send you a <Text style={styles.boldText}>text message</Text> to verify your account.</Text>
+        <View style={styles.inputContainer}>
+          <Icon name='material|phone' size={30} color='#aaa' style={styles.iconFace}/>
+          <TextInput
+            ref='phone'
+            style={styles.input}
+            value={this.state.phoneNumber}
+            keyboardType='phone-pad'
+            placeholder='Phone Number'
+            onChangeText={(text) => {
+              this.setState({phoneNumber: text, invalid: false})
+            }}
+          />
+        </View>
+        { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
+        <TouchableHighlight
+          onPress={() => {
+            this.onSignup()
+          }}
+          style={styles.button}>
+          <Text style={styles.buttonText}>Send SMS</Text>
+        </TouchableHighlight>
+      </View>
+    );
+    if(session.smsSent === true){
+      signup = (
+        <View style={styles.login}>
+          <Text style={styles.headerText}>We just sent a text to</Text>
+          <Text style={[styles.boldText, styles.centered, styles.largeText]}>{formattedPhoneNumber}</Text>
+          <Text style={styles.centered}>Enter the verification code below to sign in.</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              ref='code'
+              style={styles.input}
+              value={this.state.smsToken}
+              keyboardType='phone-pad'
+              placeholder='Verification Code'
+              onChangeText={(text) => {
+                this.setState({smsToken: text, invalid: false})
+              }}
+            />
+          </View>
+          { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
+          <TouchableHighlight
+            onPress={() => {
+              this.onVerify()
+            }}
+            style={styles.button}>
+            <Text style={styles.buttonText}>Verify</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            onPress={() => {
+              this.onSignup()
+            }}
+            style={[styles.button, styles.buttonLinkWrap]}>
+            <Text style={styles.buttonLink}>Send again</Text>
+          </TouchableHighlight>
+        </View>
+      );
+    }
     return (
       <View style={styles.container}>
         <View style={styles.logoContainer}>
           <Image source={require('image!Logo')} style={styles.logoImage}></Image>
         </View>
-        <View style={styles.login}>
-          <Text style={styles.headerText}>Use your phone number to log in to Sous.</Text>
-          <Text>First, we'll send you a <Text style={styles.boldText}>text message</Text> to verify your account.</Text>
-          <View style={styles.inputContainer}>
-            <Icon name='material|phone' size={30} color='#aaa' style={styles.iconFace}/>
-            <TextInput
-              ref='phone'
-              style={styles.input}
-              value={this.state.phoneNumber}
-              keyboardType='phone-pad'
-              placeholder='Phone Number'
-              onChangeText={(text) => {
-                this.setState({phoneNumber: text, invalid: false})
-              }}
-            />
-          </View>
-          { this.props.session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
-          <TouchableHighlight
-            onPress={() => {
-              this.onSignup()
-            }}
-            style={styles.button}>
-            <Text style={styles.buttonText}>Send SMS</Text>
-          </TouchableHighlight>
+        {signup}
+        <View>
           {/* * /}
           <View style={styles.underline}></View>
           <View style={styles.inputContainer}>
@@ -135,7 +198,7 @@ class Signup extends React.Component {
             {teamLookup}
           </View>
           <View style={styles.underline}></View>
-          { this.props.session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
+          { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
           <TouchableHighlight
             onPress={() => {
               this.onSignup()
@@ -144,7 +207,7 @@ class Signup extends React.Component {
             <Text style={styles.buttonText}>Signup</Text>
           </TouchableHighlight>
           <View style={styles.activityContainer}>
-            { this.props.session.isFetching ? fetching : <View /> }
+            { session.isFetching ? fetching : <View /> }
           </View>
           {/* */}
         </View>
@@ -161,8 +224,14 @@ let styles = StyleSheet.create({
     fontSize: 21,
     alignSelf: 'center'
   },
+  centered: {
+    alignSelf: 'center'
+  },
   boldText: {
     fontWeight: 'bold'
+  },
+  largeText: {
+    fontSize: 23
   },
   summaryText: {
     alignSelf: 'center'
@@ -189,7 +258,9 @@ let styles = StyleSheet.create({
   inputContainer: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
+    borderBottomWidth: 1,
+    borderColor: 'black'
   },
   errorPlaceholder: {
     height: 0
@@ -234,7 +305,12 @@ let styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 3,
   },
-
+  buttonLinkWrap: {
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderColor: '#1825AD',
+    width: 120
+  },
   buttonWithErrors: {
     height: 56,
     backgroundColor: '#F5A623',
@@ -250,6 +326,13 @@ let styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontFamily: 'OpenSans'
+  },
+  buttonLink: {
+    alignSelf: 'center',
+    fontSize: 16,
+    color: '#1825AD',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans',
   },
   errorText: {
     color: '#d00',
