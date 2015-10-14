@@ -15,6 +15,13 @@ let {
 
 
 class UserInfo extends React.Component{
+  constructor(props) {
+    super(props);
+    this.state = {
+      firstName: '',
+      lastName: '',
+    }
+  }
   render(){
     return (
       <ScrollView
@@ -24,16 +31,16 @@ class UserInfo extends React.Component{
       >
         <View style={styles.wrapper}>
           <View style={styles.userInfoContainer}>
-            <View style={styles.userProfile}>
+            <View style={styles.headerContainer}>
               <View style={styles.infoField}>
-                <Text style={styles.inputName}>
+                <Text style={styles.title}>
                   Great! Looks like this is your first time here.
                 </Text>
               </View>
             </View>
             <View style={styles.userProfile}>
-              <View style={styles.infoField}>
-                <Text style={styles.inputName}>
+              <View style={styles.headerContainer}>
+                <Text style={styles.question}>
                   {"What's your name?"}
                 </Text>
               </View>
@@ -45,15 +52,37 @@ class UserInfo extends React.Component{
             <View style={styles.userProfile}>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>First Name</Text>
+                <TextInput
+                  style={styles.input}
+                  value={this.state.firstName}
+                  onChange={(e) => this.setState({firstName: e.nativeEvent.text})}
+                  placeholder={"First Name"}/>
               </View>
+              <View style={styles.separator}></View>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>Last Name</Text>
+                <TextInput
+                  style={styles.input}
+                  value={this.state.lastName}
+                  onChange={(e) => this.setState({lastName: e.nativeEvent.text})}
+                  placeholder={"Last Name"} />
               </View>
-
+              <View style={styles.separator}></View>
             </View>
 
             <View style={styles.deactivateContainer}>
-              <TouchableHighlight style={styles.deactivateButton}>
+              <TouchableHighlight
+                onPress={() => {
+                  let {firstName, lastName} = this.state;
+                  if (firstName != '' && lastName != '') {
+                    console.log("REGISTER USER WITH FIRST/LAST NAME");
+                    this.props.onUpdateAvatar({firstName: firstName, lastName: lastName});
+                    // this.props.navigator.push({
+                    //
+                    // })
+                  }
+                }}
+                style={styles.deactivateButton}>
                 <Text style={styles.deactivateText}>Login</Text>
               </TouchableHighlight>
             </View>
@@ -65,12 +94,20 @@ class UserInfo extends React.Component{
 }
 let styles = StyleSheet.create({
   scrollView: {
-    backgroundColor: '#f2f2f2',
+    backgroundColor: 'white',
     flex: 1,
   },
   userInfoContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
+  },
+  separator: {
+    height: 1,
+    borderColor: '#eee',
+    borderWidth: 1,
+  },
+  headerContainer: {
+
   },
   userProfile: {
     flex: 1,
@@ -87,9 +124,27 @@ let styles = StyleSheet.create({
     backgroundColor: 'white',
     borderWidth: 1,
     borderColor: '#fff',
-    height: 25,
+    height: 45,
     paddingLeft: 5,
+    paddingTop: 15,
     flexDirection: 'row',
+  },
+  title: {
+    flex: 1,
+    marginLeft: 5,
+    color: 'black',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans',
+    fontSize: 13,
+    letterSpacing: -.5,
+  },
+  question: {
+    flex: 1,
+    color: 'black',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans',
+    fontSize: 18,
+    letterSpacing: -.5,
   },
   inputName: {
     flex: 1,
@@ -100,8 +155,11 @@ let styles = StyleSheet.create({
     letterSpacing: -.5,
   },
   inputInfo: {
+    flex: 1,
     fontFamily: 'OpenSans',
     fontSize: 14,
+    paddingBottom: 5,
+    marginBottom: 5,
   },
   deactivateContainer: {
     flex: 1,
@@ -116,6 +174,17 @@ let styles = StyleSheet.create({
     padding: 10,
     width: 100,
     borderRadius: 7,
+  },
+  input: {
+    flex: 1,
+    padding: 4,
+    marginRight: 5,
+    marginBottom: 5,
+    fontSize: 14,
+    borderRadius: 8,
+    color: '#333',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans'
   },
   deactivateText:{
     fontSize: 16,

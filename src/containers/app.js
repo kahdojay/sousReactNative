@@ -262,7 +262,12 @@ class App extends React.Component {
         );
       case 'UserInfo':
         return (
-          <UserInfo />
+          <UserInfo
+            onUpdateAvatar={(image) => {
+              console.log("IMAGE", image);
+              dispatch(actions.updateSession(image, session));
+            }}
+            />
         )
       default:
         return <View />;
