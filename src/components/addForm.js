@@ -1,7 +1,7 @@
 import { Icon, } from 'react-native-icons';
 import React from 'react-native';
 
-let {
+const {
   View,
   Text,
   TextInput,
