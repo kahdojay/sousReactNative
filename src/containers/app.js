@@ -230,14 +230,19 @@ class App extends React.Component {
         return (
           <ProfileView
             email={session.login}
-            username={session.firstName}
+            firstName={session.firstName}
+            lastName={session.lastName}
             imageURL={session.imageUrl}
-            phoneNumber={"(555) 555-5555"}
+            phoneNumber={session.username}
             navigator={nav}
             navBar={navBar}
+            onUpdateInfo={(data) => {
+              console.log("DATA", data);
+              dispatch(actions.updateSession(data, session));
+            }}
             onUpdateAvatar={(image) => {
               console.log("IMAGE", image);
-              dispatch(actions.updateSession(image, session));
+              dispatch(actions.updateSession({imageUrl: image.uri}, session));
             }}
             />
         );

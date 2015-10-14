@@ -21,10 +21,13 @@ class ProfileView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      name: '',
       editAvatar: false,
       editUsername: false,
       editEmail: false,
+      firstName: this.props.firstName,
+      lastName: this.props.lastName,
+      email: this.props.email,
+      saveChanges: false
     }
   }
   showActionSheet(){
@@ -68,32 +71,6 @@ class ProfileView extends React.Component {
         this.props.onUpdateAvatar(source);
       }
     });
-    // let buttons = [
-    //   'Take a Photo',
-    //   'Choose Existing Photo',
-    //   'Cancel'
-    // ]
-    // let takePhoto = 0;
-    // let photoUpload = 1;
-    // let cancelAction = 2;
-    // ActionSheetIOS.showActionSheetWithOptions({
-    //   options: buttons,
-    //   cancelButtonIndex: cancelAction,
-    // },
-    // (buttonIndex) => {
-    //   if( takePhoto === buttonIndex ){
-    //     this.props.navigator.push({
-    //       name: 'Camera',
-    //       navigationBar: this.props.navBar
-    //     });
-    //   } else if ( photoUpload === buttonIndex) {
-    //     // console.log("TAKE A PHOTO");
-    //     const fetchParams = {
-    //       first: 100,
-    //     };
-    //     CameraRoll.getPhotos(fetchParams, this.storeImages.bind(this), this.logImageError);
-    //   }
-    // });
   }
   logImageError(err) {
     console.log("IMAGE ERROR", err);
@@ -104,6 +81,13 @@ class ProfileView extends React.Component {
       photos: data,
     });
   }
+  needsSave() {
+    let propValues = [ this.props.firstName, this.props.lastName, this.props.email ];
+    let stateValues = [ this.state.firstName, this.state.lastName, this.state.email ];
+    console.log("PROPS", propValues == stateValues);
+
+    return JSON.stringify(propValues) == JSON.stringify(stateValues);
+  }
   render() {
     console.log("PROFILE", this.props);
     var avatar;
@@ -112,6 +96,21 @@ class ProfileView extends React.Component {
     } else {
       avatar = <Image style={styles.userIcon} source={{uri: this.props.imageURL}}/>
     }
+    var saveChanges = <View style={styles.saveContainer}>
+                        <TouchableHighlight
+                          onPress={() => {
+                            let {firstName, lastName, email} = this.state;
+                            let data = {
+                              firstName: firstName,
+                              lastName: lastName,
+                              login: email
+                            };
+                            this.props.onUpdateInfo(data);
+                          }}
+                          style={styles.saveButton}>
+                          <Text style={styles.saveText}>Save Changes</Text>
+                        </TouchableHighlight>
+                      </View>
     return (
    		<ScrollView
         style={styles.scrollView}
@@ -119,12 +118,19 @@ class ProfileView extends React.Component {
         automaticallyAdjustContentInsets={false}
       >
         <View style={styles.wrapper}>
+          <View>
+
           <TouchableHighlight
             underlayColor="#f7f7f7"
             onPress={() => this.showActionSheet()}
             style={styles.avatar}>
+            <View>
             {avatar}
+            <Text style={styles.changeAvatarText}>Change Avatar</Text>
+            </View>
           </TouchableHighlight>
+          </View>
+
           <View style={styles.phoneNumber}>
             <Text style={styles.phoneText}>{this.props.phoneNumber}</Text>
           </View>
@@ -132,18 +138,38 @@ class ProfileView extends React.Component {
 
             <View style={styles.userProfile}>
               <View style={styles.infoField}>
-                <Text style={styles.inputName}>Name</Text>
-                <Text style={styles.inputInfo}>{this.props.username}</Text>
+                <Text style={styles.inputName}>First Name</Text>
+                <TextInput
+                  style={styles.inputField}
+                  onChange={(e) => {
+                    this.setState({firstName: e.nativeEvent.text})
+                  }}
+                  value={this.state.firstName}></TextInput>
+              </View>
+              <View style={styles.infoField}>
+                <Text style={styles.inputName}>Last Name</Text>
+                <TextInput
+                  onChange={(e) => {
+                    this.setState({lastName: e.nativeEvent.text})
+                  }}
+                  style={styles.inputField}
+                  value={this.state.lastName}></TextInput>
               </View>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>E-mail Address</Text>
-                <Text style={styles.inputInfo}>{this.props.email}</Text>
+                <TextInput
+                  style={styles.inputField}
+                  onChange={(e) => {
+                    this.setState({email: e.nativeEvent.text})
+                  }}
+                  value={this.state.email}></TextInput>
               </View>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>Invite Users</Text>
                 <Text style={styles.inputInfo}></Text>
               </View>
             </View>
+            {! this.needsSave() ? saveChanges : <View></View>}
             <View style={styles.userPreferences}>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>Notifications</Text>
@@ -206,6 +232,23 @@ let styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     fontSize: 14,
   },
+  inputField: {
+    flex: 1,
+    backgroundColor: 'white',
+    color: 'black',
+    fontFamily: 'OpenSans',
+    borderRadius: 5,
+    fontWeight: 'bold',
+    paddingLeft: 10,
+    borderWidth: 1,
+    paddingRight: 3,
+    fontSize: 14,
+    borderColor: '#ddd'
+  },
+  changeAvatarText: {
+    fontFamily: 'OpenSans',
+    fontSize: 14,
+  },
   deactivateContainer: {
     flex: 1,
     marginTop: 5,
@@ -221,6 +264,26 @@ let styles = StyleSheet.create({
     borderRadius: 7,
   },
   deactivateText:{
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#777',
+    textAlign: 'center',
+  },
+  saveContainer: {
+    flex: 1,
+    margin: 5,
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  saveButton: {
+    backgroundColor: '#ddd',
+    padding: 10,
+    width: 150,
+    borderRadius: 7,
+  },
+  saveText:{
     fontSize: 16,
     fontWeight: 'bold',
     color: '#777',
