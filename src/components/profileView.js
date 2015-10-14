@@ -10,6 +10,7 @@ const {
   TextInput,
   PropTypes,
   ScrollView,
+  SwitchIOS,
   Image,
   TouchableHighlight,
   StyleSheet,
@@ -27,7 +28,8 @@ class ProfileView extends React.Component {
       firstName: this.props.firstName,
       lastName: this.props.lastName,
       email: this.props.email,
-      saveChanges: false
+      saveChanges: false,
+      notifications: this.props.notifications,
     }
   }
   showActionSheet(){
@@ -82,8 +84,8 @@ class ProfileView extends React.Component {
     });
   }
   needsSave() {
-    let propValues = [ this.props.firstName, this.props.lastName, this.props.email ];
-    let stateValues = [ this.state.firstName, this.state.lastName, this.state.email ];
+    let propValues = [ this.props.firstName, this.props.lastName, this.props.email, this.props.notifications ];
+    let stateValues = [ this.state.firstName, this.state.lastName, this.state.email, this.state.notifications ];
     console.log("PROPS", propValues == stateValues);
 
     return JSON.stringify(propValues) == JSON.stringify(stateValues);
@@ -99,11 +101,12 @@ class ProfileView extends React.Component {
     var saveChanges = <View style={styles.saveContainer}>
                         <TouchableHighlight
                           onPress={() => {
-                            let {firstName, lastName, email} = this.state;
+                            let {firstName, lastName, email, notifications} = this.state;
                             let data = {
                               firstName: firstName,
                               lastName: lastName,
-                              login: email
+                              login: email,
+                              notifications: notifications,
                             };
                             this.props.onUpdateInfo(data);
                           }}
@@ -166,14 +169,18 @@ class ProfileView extends React.Component {
               </View>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>Invite Users</Text>
-                <Text style={styles.inputInfo}></Text>
+                <Icon name="fontawesome|plus" size={20} color={'#777'} style={styles.inviteIcon}/>
               </View>
             </View>
             {! this.needsSave() ? saveChanges : <View></View>}
             <View style={styles.userPreferences}>
-              <View style={styles.infoField}>
+              <View style={styles.largeInfoField}>
                 <Text style={styles.inputName}>Notifications</Text>
-                <Text style={styles.inputInfo}></Text>
+                <SwitchIOS
+                  style={{marginBottom: 10,}}
+                  value={this.state.notifications}
+                  onValueChange={(value) => this.setState({notifications: value})}
+                  />
               </View>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>Contact Us</Text>
@@ -218,6 +225,15 @@ let styles = StyleSheet.create({
     borderColor: '#fff',
     height: 25,
     paddingLeft: 5,
+    flexDirection: 'row',
+  },
+  largeInfoField: {
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#fff',
+    height: 40,
+    paddingLeft: 5,
+    paddingTop: 5,
     flexDirection: 'row',
   },
   inputName: {
@@ -317,6 +333,11 @@ let styles = StyleSheet.create({
     height: 30,
     width: 30,
     flex: 1,
+  },
+  inviteIcon: {
+    height: 20,
+    width: 20,
+    marginRight: 8,
   },
   logo: {
     flex: 2.5,

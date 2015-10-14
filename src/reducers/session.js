@@ -39,6 +39,7 @@ function session(state = initialState.session, action) {
       userId: action.userId,
       username: action.username,
       login: action.login,
+      notifications: action.notifications,
       imageUrl: action.imageUrl,
       teamId: action.teamId,
       firstName: action.firstName,

@@ -236,6 +236,7 @@ class App extends React.Component {
             phoneNumber={session.username}
             navigator={nav}
             navBar={navBar}
+            notifications={session.notifications || false}
             onUpdateInfo={(data) => {
               console.log("DATA", data);
               dispatch(actions.updateSession(data, session));
