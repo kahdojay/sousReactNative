@@ -1,5 +1,6 @@
 import { DDP } from '../resources/apiConfig'
 import {
+  RESET_SESSION_VERSION,
   RESET_SESSION,
   REGISTER_SESSION,
   REQUEST_SESSION,
@@ -9,6 +10,12 @@ import {
 } from './actionTypes'
 
 export default function SessionActions(ddpClient){
+
+  function resetSessionVersion() {
+    return {
+      type: RESET_SESSION_VERSION
+    }
+  }
 
   function resetSession() {
     return {
@@ -29,6 +36,20 @@ export default function SessionActions(ddpClient){
       if(sessionParams.hasOwnProperty('smsToken')){
         ddpClient.call('loginWithSMS', [sessionParams.phoneNumber, sessionParams.smsToken])
       } else {
+        // dispatch a session clear to get make sure no lingering data exists
+        dispatch(receiveSession({
+          isAuthenticated: false,
+          authToken: "",
+          smsVerified: false,
+          smsSent: false,
+          username: null,
+          userId: null,
+          firstName: "",
+          lastName: "",
+          imageUrl: "",
+          teamId: null,
+          errors: null,
+        }))
         ddpClient.call('sendSMSCode', [sessionParams.phoneNumber])
       }
       return dispatch(requestSession(sessionParams))
@@ -36,8 +57,10 @@ export default function SessionActions(ddpClient){
   }
 
   function updateSession(sessionParams) {
-    console.log(sessionParams);
-    return (dispatch) => {
+    return (dispatch, getState) => {
+      const {session} = getState()
+      console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
+      ddpClient.call('updateUser', [session.userId, sessionParams])
       return dispatch(receiveSession(sessionParams))
     }
   }
@@ -50,14 +73,14 @@ export default function SessionActions(ddpClient){
   }
 
   function receiveSession(response) {
-    console.log("RES", response);
+    // console.log("RES", response);
     return (dispatch, getState) => {
       const {session} = getState();
       var isAuthenticated = session.isAuthenticated;
-      console.log("AUTHENTICATE", isAuthenticated);
+      // console.log("AUTHENTICATE", isAuthenticated);
       //TODO: make this a bit more secure
       if(response.hasOwnProperty('smsVerified') && response.smsVerified === true && response.authToken){
-        console.log("SESSION", session, response);
+        // console.log("SESSION", session, response);
         isAuthenticated = true;
         ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.STATIONS.channel)
         ddpClient.subscribe(DDP.SUBSCRIBE_LIST.STATIONS.channel, [session.teamId]);
@@ -75,10 +98,9 @@ export default function SessionActions(ddpClient){
     }
   }
 
-  function errorSession(login, errors) {
+  function errorSession(errors) {
     return {
       type: ERROR_SESSION,
-      login: login,
       errors: errors
     }
   }
@@ -91,6 +113,7 @@ export default function SessionActions(ddpClient){
   // }
 
   return {
+    RESET_SESSION_VERSION,
     RESET_SESSION,
     REGISTER_SESSION,
     REQUEST_SESSION,
@@ -98,9 +121,10 @@ export default function SessionActions(ddpClient){
     ERROR_SESSION,
     UPDATE_SESSION,
     // createSession,
-    resetSession,
-    updateSession,
-    registerSession,
-    receiveSession
+    'resetSessionVersion': resetSessionVersion,
+    'resetSession': resetSession,
+    'updateSession': updateSession,
+    'registerSession': registerSession,
+    'receiveSession': receiveSession
   }
 }

@@ -1,4 +1,6 @@
+import { SESSION_VERSION } from '../resources/apiConfig'
 import {
+  RESET_SESSION_VERSION,
   UPDATE_SESSION,
   RESET_SESSION,
   REQUEST_SESSION,
@@ -8,14 +10,19 @@ import {
 
 const initialState = {
   session: {
+    version: 0,
     isAuthenticated: false,
+    authToken: "",
     smsSent: false,
+    smsVerified: false,
     phoneNumber: null,
     username: null,
+    email: null,
     userId: null,
     firstName: "",
     lastName: "",
     imageUrl: "",
+    notifications: false,
     teamId: null,
     errors: null,
     lastUpdated: null
@@ -24,27 +31,25 @@ const initialState = {
 
 function session(state = initialState.session, action) {
   switch (action.type) {
+  case RESET_SESSION_VERSION:
+    var newState = state;
+    if(SESSION_VERSION !== newState.version){
+      newState = Object.assign({}, initialState.session, {
+        version: SESSION_VERSION
+      })
+      console.log('UPDATING APP SESSION TO: ', newState);
+    }
+    return newState;
   case RESET_SESSION:
-    return Object.assign({}, state, initialState.session)
+    return Object.assign({}, initialState.session)
   case REQUEST_SESSION:
     return Object.assign({}, state, {
       phoneNumber: action.phoneNumber,
       errors: null
     })
   case RECEIVE_SESSION:
-    console.log("ACTION", action);
-    var newSessionState = Object.assign({}, state, {
-      isAuthenticated: action.isAuthenticated,
-      smsSent: action.smsSent,
-      userId: action.userId,
-      username: action.username,
-      login: action.login,
-      notifications: action.notifications,
-      phoneNumber: action.phoneNumber,
-      imageUrl: action.imageUrl,
-      teamId: action.teamId,
-      firstName: action.firstName,
-      lastName: action.lastName,
+    var newSessionState = Object.assign({}, state, action, {
+      userId: action.id,
       errors: null,
       lastUpdated: (new Date).getTime()
     })

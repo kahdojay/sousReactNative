@@ -43,7 +43,6 @@ class Footer extends React.Component {
             onPress={() => {
               this.props.nav.replace({
                 name: 'StationIndex',
-                navigationBar: this.props.navBar
               })
             }}
             style={[styles.footerButton, prepFooterHighlight]}
@@ -66,8 +65,7 @@ class Footer extends React.Component {
             underlayColor="white"
             onPress={() => {
               this.props.nav.replace({
-                name: 'Feed',
-                navigationBar: this.props.navBar,
+                name: 'Feed'
               })
             }}
             style={[styles.footerButton, feedFooterHighlight]}
@@ -90,8 +88,7 @@ class Footer extends React.Component {
             underlayColor='white'
             onPress={() => {
               this.props.nav.replace({
-                name: 'PurveyorIndex',
-                navigationBar: this.props.navBar
+                name: 'PurveyorIndex'
               })
             }}
             style={[styles.footerButton, orderFooterHighlight]}

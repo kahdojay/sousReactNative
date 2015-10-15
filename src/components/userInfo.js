@@ -40,9 +40,7 @@ class UserInfo extends React.Component{
             </View>
             <View style={styles.userProfile}>
               <View style={styles.headerContainer}>
-                <Text style={styles.question}>
-                  {"What's your name?"}
-                </Text>
+                <Text style={styles.question}>What's your name?</Text>
               </View>
             </View>
           </View>
@@ -76,10 +74,7 @@ class UserInfo extends React.Component{
                   let {firstName, lastName} = this.state;
                   if (firstName != '' && lastName != '') {
                     console.log("REGISTER USER WITH FIRST/LAST NAME");
-                    this.props.onUpdateAvatar({firstName: firstName, lastName: lastName});
-                    this.props.navigator.push({
-                      name: 'StationIndex',
-                    })
+                    this.props.onUpdateInfo({firstName: firstName, lastName: lastName});
                   }
                 }}
                 style={styles.deactivateButton}>

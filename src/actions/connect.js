@@ -7,7 +7,7 @@ export default function ConnectActions(ddpClient) {
   function connectSingleChannel(resource, resourceParam){
     if(connectedChannels.hasOwnProperty(resource.channel) === false){
       if(resourceParam){
-        console.log('SUBSCRIBING TO CHANNEL: ', resource.channel)
+        // console.log('SUBSCRIBING TO CHANNEL: ', resource.channel)
         ddpClient.subscribe(resource.channel, [resourceParam]);
         connectedChannels[resource.channel] = true;
         //TODO: disconnect from the channels that require teamId and then
@@ -48,7 +48,7 @@ export default function ConnectActions(ddpClient) {
       //--------------------------------------
 
       ddpClient.on('connected', () => {
-        console.log('CONNECTED: TODO');
+        // console.log('CONNECTED: TODO');
         if (session.isAuthenticated)
           connectChannels(session)
       })
