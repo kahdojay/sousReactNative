@@ -53,7 +53,7 @@ class InviteView extends React.Component {
       .value();
     // TODO send numbers to twilio
     console.log('smss to send', resultSet)
-    return resultSet;
+    this.props.onSMSInvite(resultSet);
   }
 
   render() {

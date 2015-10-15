@@ -282,7 +282,11 @@ class App extends React.Component {
       case 'Camera':
         return <Camera navigator={nav} />
       case 'InviteView':
-        return <InviteView />
+        return (
+          <InviteView
+            onSMSInvite={(contactList) => dispatch(actions.inviteContacts(contactList))}
+          />
+        );
       default:
         return <View />;
     }
