@@ -103,7 +103,7 @@ module.exports = class Menu extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      ready: false
+      ready: true
     }
   }
   componentDidMount(){

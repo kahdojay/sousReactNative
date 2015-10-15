@@ -133,7 +133,8 @@ let styles = StyleSheet.create({
   footerContainer: {
     flexDirection: 'row',
     borderTopWidth: 1,
-    borderColor: '#979797'
+    borderColor: '#979797',
+    backgroundColor: 'white',
   },
   footerItem: {
     flex: 1

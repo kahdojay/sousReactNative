@@ -13,6 +13,7 @@
     "lodash": "^3.10.1",
     "murmurhash": "0.0.2",
     "react-native": "^0.11.0",
+    "react-native-addressbook": "^1.2.0",
     "react-native-checkbox": "^1.0.2",
     "react-native-icons": "^0.4.0",
     "react-native-image-picker": "^0.7.1",

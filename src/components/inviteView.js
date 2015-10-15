@@ -98,6 +98,10 @@ let styles = StyleSheet.create({
     paddingRight: 10,
     paddingLeft: 10,
   },
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
 })
 
 InviteView.propTypes = {
