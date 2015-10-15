@@ -17,6 +17,7 @@ import PurveyorIndex from '../components/purveyorIndex';
 import PurveyorView from '../components/purveyorView';
 import ProductView from '../components/productView';
 import ProfileView from '../components/profileView';
+import InviteView from '../components/inviteView';
 import NavbarTitle from '../components/NavbarTitle';
 import { BackBtn } from '../utilities/navigation';
 import Colors from '../utilities/colors';
@@ -228,15 +229,17 @@ class App extends React.Component {
       case 'ProductView':
         var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
         var product = _.filter(purveyor.products, { productId: route.productId })[0]
-        return <ProductView
-                  ui={ui}
-                  product={product}
-                  navigator={nav}
-                  purveyorId={route.purveyorId}
-                  onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
-                    dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
-                  }}
-                />;
+        return (
+          <ProductView
+            ui={ui}
+            product={product}
+            navigator={nav}
+            purveyorId={route.purveyorId}
+            onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
+              dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
+            }}
+          />
+        );
       case 'Profile':
         return (
           <ProfileView
@@ -252,7 +255,7 @@ class App extends React.Component {
                 imageUrl: image.uri
               }));
             }}
-            />
+          />
         );
       case 'ImageGallery':
         return (
@@ -264,7 +267,7 @@ class App extends React.Component {
                 imageUrl: image.uri
               }));
             }}
-            />
+          />
         );
       case 'UserInfo':
         return (
@@ -276,6 +279,10 @@ class App extends React.Component {
             navigator={nav}
             />
         )
+      case 'Camera':
+        return <Camera navigator={nav} />
+      case 'InviteView':
+        return <InviteView />
       default:
         return <View />;
     }
@@ -317,7 +324,6 @@ class App extends React.Component {
       destructiveButtonIndex: deleteAction,
     },
     (buttonIndex) => {
-      // console.log('route', navigator, route)
       if (deleteAction === buttonIndex) {
         dispatch(actions.deletePurveyor(route.purveyorId));
         navigator.pop();
@@ -430,6 +436,36 @@ class App extends React.Component {
             onNext: null,
             hidePrev: false,
           })
+          break;
+        case 'Profile':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            onNext: (navigator, route) => {
+              navigator.push({
+                name: 'InviteView',
+                navigationBar: navBar,
+              })
+            },
+            hidePrev: false,
+            nextTitle: 'Invite',
+          })
+          break;
+        case 'Profile':
+          if (navBar) {
+            navBar = React.addons.cloneWithProps(navBar, {
+              navigator: nav,
+              route: route,
+              onNext: (navigator, route) => {
+                navigator.push({
+                  name: 'InviteView',
+                  navigationBar: navBar,
+                })
+              },
+              hidePrev: false,
+              nextTitle: 'Invite',
+            })
+          }
           break;
         default:
           navBar = React.addons.cloneWithProps(this.navBar, {

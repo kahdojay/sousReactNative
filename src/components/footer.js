@@ -21,7 +21,7 @@ class Footer extends React.Component {
     }
     let applyHighlight = '';
 
-    if (_.includes(['Signup', 'Login'], this.props.route.name)){
+    if (_.includes(['Signup', 'Login', 'Profile', 'InviteView'], this.props.route.name)){
       return null;
     } else if(_.includes(['StationIndex', 'StationView', 'TaskView'], this.props.route.name)){
       applyHighlight = 'Prep'
