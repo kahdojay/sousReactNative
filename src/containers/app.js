@@ -438,20 +438,18 @@ class App extends React.Component {
           })
           break;
         case 'Profile':
-          if (navBar) {
-            navBar = React.addons.cloneWithProps(navBar, {
-              navigator: nav,
-              route: route,
-              onNext: (navigator, route) => {
-                navigator.push({
-                  name: 'InviteView',
-                  navigationBar: navBar,
-                })
-              },
-              hidePrev: false,
-              nextTitle: 'Invite',
-            })
-          }
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            onNext: (navigator, route) => {
+              navigator.push({
+                name: 'InviteView',
+                navigationBar: navBar,
+              })
+            },
+            hidePrev: false,
+            nextTitle: 'Invite',
+          })
           break;
         default:
           navBar = React.addons.cloneWithProps(this.navBar, {
