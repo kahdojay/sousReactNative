@@ -38,8 +38,8 @@ const {
 } = React;
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor(props, ctx) {
+    super(props, ctx);
     this.state = {
       touchToClose: false,
       open: false,
@@ -406,18 +406,25 @@ class App extends React.Component {
           //   <Text style={[NavigationBarStyles.navBarText, NavigationBarStyles.navBarButtonText, ]}>Profile</Text>
           // </View>)
           // console.log(nextItem)
+          console.log("THIS", this.context.menuActions);
           navBar = React.addons.cloneWithProps(this.navBar, {
+
             navigator: nav,
             route: route,
             hidePrev: true,
+            onPrev: (navigator, route) => {
+              this.setState({open: true, touchToClose: true })
+              // this.context.menuActions.toggle();
+            },
             // customNext: nextItem
             onNext: (navigator, route) => {
               navigator.push({
                 name: 'Profile',
-              })
+              });
             },
-            onPrev: null,
+            // onPrev: null,
             nextTitle: 'profile',
+            prevTitle: 'menu',
           })
           break;
         case 'Feed':
@@ -476,22 +483,6 @@ class App extends React.Component {
             hidePrev: false,
             nextTitle: 'Invite',
           })
-          break;
-        case 'Profile':
-          if (navBar) {
-            navBar = React.addons.cloneWithProps(navBar, {
-              navigator: nav,
-              route: route,
-              onNext: (navigator, route) => {
-                navigator.push({
-                  name: 'InviteView',
-                  navigationBar: navBar,
-                })
-              },
-              hidePrev: false,
-              nextTitle: 'Invite',
-            })
-          }
           break;
         default:
           navBar = React.addons.cloneWithProps(this.navBar, {
@@ -630,6 +621,10 @@ let styles = StyleSheet.create({
     flex: 1,
   },
 })
+
+// App.contextTypes = {
+//   menuActions: React.PropTypes.object.isRequired
+// };
 
 function select(state) {
   return {
