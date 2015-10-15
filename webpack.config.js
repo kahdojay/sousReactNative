@@ -27,6 +27,7 @@ var config = {
         path.resolve(__dirname, 'node_modules/react-native-invertible-scroll-view'),
         path.resolve(__dirname, 'node_modules/react-native-navbar'),
         path.resolve(__dirname, 'node_modules/react-native-image-picker'),
+        path.resolve(__dirname, 'node_modules/react-native-side-menu'),
 
 
         // Note: add any other js or node modules that need babel processing

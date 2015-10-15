@@ -3,7 +3,8 @@ import React from 'react-native';
 import AddMessageForm from './addMessageForm';
 import { mainBackgroundColor } from '../utilities/colors';
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
-
+let SideMenu = require('react-native-side-menu');
+import Menu from './menu';
 const {
   ScrollView,
   ActivityIndicatorIOS,
@@ -13,12 +14,53 @@ const {
   TextInput,
   Image,
   TouchableHighlight,
+  TouchableOpacity,
   PropTypes,
 } = React;
 
+class Button extends React.Component {
+  handlePress(e) {
+    this.context.menuActions.toggle();
+    if (this.props.onPress) {
+      this.props.onPress(e);
+    }
+  }
+
+  render() {
+    return (
+      <TouchableOpacity
+        onPress={this.handlePress.bind(this)}
+        style={this.props.style}>
+        <Text>{this.props.children}</Text>
+      </TouchableOpacity>
+    );
+  }
+}
+
+Button.contextTypes = {
+  menuActions: React.PropTypes.object.isRequired
+};
+
 class Feed extends React.Component {
-  constructor(props) {
-    super(props)
+  constructor(props, ctx) {
+    super(props, ctx);
+    this.state = {
+      touchToClose: false,
+    }
+  }
+
+  handleOpenWithTouchToClose() {
+    this.setState({
+      touchToClose: true,
+    });
+  }
+
+  handleChange(isOpen) {
+    if (!isOpen) {
+      this.setState({
+        touchToClose: false,
+      });
+    }
   }
 
   componentDidUpdate(){
@@ -43,7 +85,13 @@ class Feed extends React.Component {
                         style={styles.activity}
                         size={'large'} />
     return (
+
+        <SideMenu
+        menu={<Menu />}
+        touchToClose={this.state.touchToClose}
+        onChange={this.handleChange.bind(this)}>
       <View style={styles.container}>
+        
         <View style={styles.messageContainer}>
           {messages.isFetching ? fetching : <View style={styles.notFetching}/>}
           <InvertibleScrollView
@@ -84,6 +132,8 @@ class Feed extends React.Component {
         />
         </View>
       </View>
+      </SideMenu>
+
     );
   }
 };
@@ -155,6 +205,39 @@ const styles = StyleSheet.create({
   },
   activity: {
     height: 0,
+  },
+  button: {
+    position: 'absolute',
+    bottom: 50,
+    backgroundColor: 'red',
+    borderRadius: 20,
+  },
+  button2: {
+    position: 'absolute',
+    bottom: 20,
+    backgroundColor: 'red',
+    borderRadius: 20,
+  },
+  caption: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    alignItems: 'center',
+  },
+  menuContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+  },
+  instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
   },
 });
 
