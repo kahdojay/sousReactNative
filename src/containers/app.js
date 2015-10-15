@@ -12,6 +12,8 @@ import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
 import UserInfo from '../components/userInfo';
 import TaskView from '../components/taskView';
+let SideMenu = require('react-native-side-menu');
+import Menu from '../components/menu';
 import Feed from '../components/feed';
 import PurveyorIndex from '../components/purveyorIndex';
 import PurveyorView from '../components/purveyorView';
@@ -36,8 +38,12 @@ const {
 } = React;
 
 class App extends React.Component {
-  constructor(props) {
-    super(props)
+  constructor(props, ctx) {
+    super(props, ctx);
+    this.state = {
+      touchToClose: false,
+      open: false,
+    }
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
       'Login': {},
@@ -61,6 +67,21 @@ class App extends React.Component {
         </TouchableOpacity>
       ), props)
     };
+  }
+  handleOpenWithTouchToClose() {
+    this.setState({
+      touchToClose: true,
+      open: true,
+    });
+  }
+
+  handleChange(isOpen) {
+    if (!isOpen) {
+      this.setState({
+        touchToClose: false,
+        open: false,
+      });
+    }
   }
 
   _back() {() => {
@@ -174,6 +195,7 @@ class App extends React.Component {
                   messages={messages}
                   userEmail={session.login}
                   teamId={session.teamId}
+                  session={session}
                   onCreateMessage={(msg) => {
                     dispatch(actions.createMessage(msg))
                   }}
@@ -384,18 +406,25 @@ class App extends React.Component {
           //   <Text style={[NavigationBarStyles.navBarText, NavigationBarStyles.navBarButtonText, ]}>Profile</Text>
           // </View>)
           // console.log(nextItem)
+          console.log("THIS", this.context.menuActions);
           navBar = React.addons.cloneWithProps(this.navBar, {
+
             navigator: nav,
             route: route,
             hidePrev: true,
+            onPrev: (navigator, route) => {
+              this.setState({open: true, touchToClose: true })
+              // this.context.menuActions.toggle();
+            },
             // customNext: nextItem
             onNext: (navigator, route) => {
               navigator.push({
                 name: 'Profile',
-              })
+              });
             },
-            onPrev: null,
+            // onPrev: null,
             nextTitle: 'profile',
+            prevTitle: 'menu',
           })
           break;
         case 'Feed':
@@ -455,22 +484,6 @@ class App extends React.Component {
             nextTitle: 'Invite',
           })
           break;
-        case 'Profile':
-          if (navBar) {
-            navBar = React.addons.cloneWithProps(navBar, {
-              navigator: nav,
-              route: route,
-              onNext: (navigator, route) => {
-                navigator.push({
-                  name: 'InviteView',
-                  navigationBar: navBar,
-                })
-              },
-              hidePrev: false,
-              nextTitle: 'Invite',
-            })
-          }
-          break;
         default:
           navBar = React.addons.cloneWithProps(this.navBar, {
             hidePrev: false,
@@ -507,11 +520,13 @@ class App extends React.Component {
     );
     let pageFooter = route.name == "UserInfo" ? <View></View> : footer;
     return (
-      <View style={styles.container}>
-        {navBar}
-        {scene}
-        {pageFooter}
-      </View>
+
+        <View style={styles.container}>
+          {navBar}
+          {scene}
+          {pageFooter}
+        </View>
+
     );
   }
 
@@ -525,6 +540,10 @@ class App extends React.Component {
 
   render() {
     return (
+      <SideMenu
+        menu={<Menu session={this.props.session} open={this.state.open}/> }
+        touchToClose={this.state.touchToClose}
+        onChange={this.handleChange.bind(this)}>
       <Navigator
         initialRoute={{
           index: 0,
@@ -533,6 +552,7 @@ class App extends React.Component {
         renderScene={this.renderScene.bind(this)}
         configureScene={this.configureScene.bind(this)}
       />
+    </SideMenu>
     )
   }
 }
@@ -601,6 +621,10 @@ let styles = StyleSheet.create({
     flex: 1,
   },
 })
+
+// App.contextTypes = {
+//   menuActions: React.PropTypes.object.isRequired
+// };
 
 function select(state) {
   return {

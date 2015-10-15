@@ -57,6 +57,7 @@ class PurveyorIndex extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   scrollView: {
     backgroundColor: '#f7f7f7',
