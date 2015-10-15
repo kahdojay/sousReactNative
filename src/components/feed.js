@@ -46,12 +46,14 @@ class Feed extends React.Component {
     super(props, ctx);
     this.state = {
       touchToClose: false,
+      open: false,
     }
   }
 
   handleOpenWithTouchToClose() {
     this.setState({
       touchToClose: true,
+      open: true,
     });
   }
 
@@ -59,6 +61,7 @@ class Feed extends React.Component {
     if (!isOpen) {
       this.setState({
         touchToClose: false,
+        open: false,
       });
     }
   }
@@ -86,53 +89,45 @@ class Feed extends React.Component {
                         size={'large'} />
     return (
 
-        <SideMenu
-        menu={<Menu />}
-        touchToClose={this.state.touchToClose}
-        onChange={this.handleChange.bind(this)}>
-      <View style={styles.container}>
-        
-        <View style={styles.messageContainer}>
-          {messages.isFetching ? fetching : <View style={styles.notFetching}/>}
-          <InvertibleScrollView
-            style={styles.scrollView}
-            contentInset={{bottom:49}}
-            keyboardShouldPersistTaps={false}
-            automaticallyAdjustContentInsets={false}
-            inverted
-            ref='scrollview'
-          >
-            { this.props.messages.data.map((msg, index) => {
-              // let date = new Date(msg.createdAt["$date"]).toLocaleTimeString();
-              let date = new Date(msg.createdAt).toLocaleTimeString();
-              let time = date.substring(date.length-3, date.length)
-              return (
-                <View key={index} style={styles.messageContainer}>
-                  <View style={styles.message}>
-                    <Icon name='fontawesome|user' size={30} color='#f7f7f7' style={styles.avatar}/>
-                    <View style={styles.messageContentContainer}>
-                      <View style={styles.messageTextContainer}>
-                        <Text style={styles.messageAuthor}>{msg.author}</Text>
-                        <Text style={styles.messageTimestamp}>
-                          {date.substring(0, date.length-6)}{time}
-                        </Text>
+          <View style={styles.container}>
+            <View style={styles.messageContainer}>
+              {messages.isFetching ? fetching : <View style={styles.notFetching}/>}
+              <InvertibleScrollView
+                style={styles.scrollView}
+                contentInset={{bottom:49}}
+                keyboardShouldPersistTaps={false}
+                automaticallyAdjustContentInsets={false}
+                inverted
+                ref='scrollview'>
+                { this.props.messages.data.map((msg, index) => {
+                  // let date = new Date(msg.createdAt["$date"]).toLocaleTimeString();
+                  let date = new Date(msg.createdAt).toLocaleTimeString();
+                  let time = date.substring(date.length-3, date.length)
+                  return (
+                    <View key={index} style={styles.messageContainer}>
+                      <View style={styles.message}>
+                        <Icon name='fontawesome|user' size={30} color='#f7f7f7' style={styles.avatar}/>
+                        <View style={styles.messageContentContainer}>
+                          <View style={styles.messageTextContainer}>
+                            <Text style={styles.messageAuthor}>{msg.author}</Text>
+                            <Text style={styles.messageTimestamp}>
+                              {date.substring(0, date.length-6)}{time}
+                            </Text>
+                          </View>
+                          <Text style={styles.messageText} key={index}>{msg.message}</Text>
+                        </View>
                       </View>
-                      <Text style={styles.messageText} key={index}>{msg.message}</Text>
+                      <View style={styles.separator} />
                     </View>
-                  </View>
-                  <View style={styles.separator} />
-                </View>
-              )
-            }).reverse()
-          }
-          </InvertibleScrollView>
-        <AddMessageForm
-          placeholder="Message..."
-          onSubmit={this.onHandleSubmit.bind(this)}
-        />
+                  )
+                }).reverse()
+              }
+            </InvertibleScrollView>
+            <AddMessageForm
+              placeholder="Message..."
+              onSubmit={this.onHandleSubmit.bind(this)}/>
+          </View>
         </View>
-      </View>
-      </SideMenu>
 
     );
   }

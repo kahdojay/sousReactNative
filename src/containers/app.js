@@ -12,6 +12,8 @@ import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
 import UserInfo from '../components/userInfo';
 import TaskView from '../components/taskView';
+let SideMenu = require('react-native-side-menu');
+import Menu from '../components/menu';
 import Feed from '../components/feed';
 import PurveyorIndex from '../components/purveyorIndex';
 import PurveyorView from '../components/purveyorView';
@@ -37,7 +39,11 @@ const {
 
 class App extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
+    this.state = {
+      touchToClose: false,
+      open: false,
+    }
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
       'Login': {},
@@ -61,6 +67,21 @@ class App extends React.Component {
         </TouchableOpacity>
       ), props)
     };
+  }
+  handleOpenWithTouchToClose() {
+    this.setState({
+      touchToClose: true,
+      open: true,
+    });
+  }
+
+  handleChange(isOpen) {
+    if (!isOpen) {
+      this.setState({
+        touchToClose: false,
+        open: false,
+      });
+    }
   }
 
   _back() {() => {
@@ -174,6 +195,7 @@ class App extends React.Component {
                   messages={messages}
                   userEmail={session.login}
                   teamId={session.teamId}
+                  session={session}
                   onCreateMessage={(msg) => {
                     dispatch(actions.createMessage(msg))
                   }}
@@ -507,11 +529,13 @@ class App extends React.Component {
     );
     let pageFooter = route.name == "UserInfo" ? <View></View> : footer;
     return (
-      <View style={styles.container}>
-        {navBar}
-        {scene}
-        {pageFooter}
-      </View>
+
+        <View style={styles.container}>
+          {navBar}
+          {scene}
+          {pageFooter}
+        </View>
+
     );
   }
 
@@ -525,6 +549,10 @@ class App extends React.Component {
 
   render() {
     return (
+      <SideMenu
+        menu={<Menu session={this.props.session} open={this.state.open}/> }
+        touchToClose={this.state.touchToClose}
+        onChange={this.handleChange.bind(this)}>
       <Navigator
         initialRoute={{
           index: 0,
@@ -533,6 +561,7 @@ class App extends React.Component {
         renderScene={this.renderScene.bind(this)}
         configureScene={this.configureScene.bind(this)}
       />
+    </SideMenu>
     )
   }
 }
