@@ -1,5 +1,4 @@
 import React from 'react-native';
-import Footer from '../components/footer';
 import _ from 'lodash';
 import NavigationBar from 'react-native-navbar';
 import NavigationBarStyles from 'react-native-navbar/styles'
@@ -142,14 +141,14 @@ class App extends React.Component {
                     this._back.bind(this)
                   }
                 />;
-              case 'TeamView':
-        var team = _.filter(teams.data, { id: route.teamId })[0]
+      case 'TeamView':
+        var team = _.filter(teams.data, { id: teamId })[0]
         return (
           <TeamView
             ui={ui}
             navigator={nav}
             team={team}
-            teamId={route.teamId}
+            teamId={teamId}
             onAddNewTask={function(teamId, taskName){
               console.log("TASKS", this.teamId);
               let tasks = this.team.tasks.map((task) => {
@@ -366,9 +365,9 @@ class App extends React.Component {
         if (this.props.session.firstName === "" || this.props.session.lastName === "") {
           route.name = 'UserInfo';
         }
-        // else send to TeamIndex
+        // else send to Feed
         else {
-          route.name = 'TeamIndex';
+          route.name = 'Feed';
         }
       }
     }
@@ -380,7 +379,10 @@ class App extends React.Component {
     let navBar = <View />;
     let nextItem = <View />;
     let scene = this.getScene(route, nav);
-
+this.props.navigator.push({
+  name: 'TeamView',
+  navigationBar: this.props.navBar,
+})
     // setup the header for unauthenticated routes
     if(this.authenticatedRoute(route) === false){
       navBar = <View />
@@ -404,7 +406,7 @@ class App extends React.Component {
           //   <Text style={[NavigationBarStyles.navBarText, NavigationBarStyles.navBarButtonText, ]}>Profile</Text>
           // </View>)
           // console.log(nextItem)
-          console.log("THIS", this.context.menuActions);
+          // console.log("THIS", this.context.menuActions);
           navBar = React.addons.cloneWithProps(this.navBar, {
 
             navigator: nav,
@@ -506,25 +508,20 @@ class App extends React.Component {
       // stylesContainer = [styles.container, {height: ui.keyboard.screenY}];
     }
 
-    let footer = (
-      <Footer
-        onPressResetSession={() => {
-          dispatch(actions.resetSession())
-        }}
-        nav={nav}
-        ui={ui}
-        route={route}
-        />
-    );
-    let pageFooter = route.name == "UserInfo" ? <View></View> : footer;
     return (
-
+      <SideMenu
+        menu={<Menu
+          nav={nav}
+          session={this.props.session}
+          open={this.state.open}/> }
+        touchToClose={this.state.touchToClose}
+        onChange={this.handleChange.bind(this)}
+      >
         <View style={styles.container}>
           {navBar}
           {scene}
-          {pageFooter}
         </View>
-
+      </SideMenu>
     );
   }
 
@@ -538,10 +535,6 @@ class App extends React.Component {
 
   render() {
     return (
-      <SideMenu
-        menu={<Menu session={this.props.session} open={this.state.open}/> }
-        touchToClose={this.state.touchToClose}
-        onChange={this.handleChange.bind(this)}>
       <Navigator
         initialRoute={{
           index: 0,
@@ -550,7 +543,6 @@ class App extends React.Component {
         renderScene={this.renderScene.bind(this)}
         configureScene={this.configureScene.bind(this)}
       />
-    </SideMenu>
     )
   }
 }

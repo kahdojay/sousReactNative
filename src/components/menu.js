@@ -131,9 +131,36 @@ module.exports = class Menu extends Component {
                   </TouchableHighlight>
                 </View>
                 <View style={styles.teamItems}>
-                  <Text style={styles.teamItemText}>Prep List</Text>
-                  <Text style={styles.teamItemText}>Recipe Book</Text>
-                  <Text style={styles.teamItemText}>Order Guide</Text>
+                  <TouchableHighlight
+                    underlayColor='white'
+                    onPress={() => {
+                      this.props.nav.replace({
+                        name: 'TeamView',
+                      })
+                    }}
+                  >
+                    <Text style={styles.teamItemText}>Prep List</Text>
+                  </TouchableHighlight>
+                  <TouchableHighlight
+                    underlayColor='white'
+                    onPress={() => {
+                      this.props.nav.replace({
+                        name: 'RecipeIndex',
+                      })
+                    }}
+                  >
+                    <Text style={styles.teamItemText}>Recipe Book</Text>
+                  </TouchableHighlight>
+                  <TouchableHighlight
+                    underlayColor='white'
+                    onPress={() => {
+                      this.props.nav.replace({
+                        name: 'PurveyorIndex',
+                      })
+                    }}
+                  >
+                    <Text style={styles.teamItemText}>Order Guide</Text>
+                  </TouchableHighlight>
                 </View>
               </ScrollView>
     var content = this.state.ready ? menu : <View></View>

@@ -42,11 +42,12 @@ class TeamIndex extends React.Component {
                   <TeamIndexRow
                     key={index}
                     team={team}
-                    onPress={() => this.props.navigator.push({
-                      name: 'TeamView',
-                      teamId: team.id,
-                      navigationBar: this.props.navBar,
-                    })}
+                    onPress={() => {
+                      this.props.navigator.push({
+                        name: 'TeamView',
+                        navigationBar: this.props.navBar,
+                      })
+                    }}
                   />
                 );
               }
