@@ -68,7 +68,7 @@ class ProfileView extends React.Component {
         else if (responseType === 'uri') { // Selected from library - response is the URI to the local file asset
           source = {uri: response.replace('file://', ''), isStatic: true};
         }
-
+        console.log("SOURCE", source);
         this.props.onUpdateAvatar(source);
       }
     });
@@ -90,12 +90,11 @@ class ProfileView extends React.Component {
   }
   render() {
     console.log("PROFILE", this.props);
-    let avatar = <Image style={styles.userIcon} source={{uri: this.props.session.imageURL}}/>
-    if (this.props.session.imageURL === "") {
+    let avatar = <Image style={styles.userIcon} source={{uri: this.props.session.imageUrl}}/>
+    if (! this.props.session.imageUrl) {
       avatar = <Icon name="material|account-circle" size={100} style={styles.userIcon} />
     }
     let phoneNumber = <TouchableHighlight
-                        onPress={() => this.setState({editPhoneNumber: ! this.state.editPhoneNumber})}
                         style={styles.phoneNumber}>
                         <Text style={styles.phoneText}>{this.props.session.phoneNumber}</Text>
                       </TouchableHighlight>
