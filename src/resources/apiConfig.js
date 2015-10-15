@@ -24,3 +24,5 @@ export const DDP = {
   // SUBSCRIBE_STATIONS: 'stations',
   // SUBSCRIBE_PURVEYORS: 'purveyors',
 }
+
+export const SESSION_VERSION = 1444868918576

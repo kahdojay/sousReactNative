@@ -2,6 +2,7 @@ import React from 'react-native';
 import Footer from '../components/footer';
 import _ from 'lodash';
 import NavigationBar from 'react-native-navbar';
+import NavigationBarStyles from 'react-native-navbar/styles'
 import { connect } from 'react-redux/native';
 import { Icon } from 'react-native-icons';
 import Login from '../components/login';
@@ -9,7 +10,7 @@ import Signup from '../components/signup';
 import ImageGallery from '../components/imageGallery';
 import StationIndex from '../components/stationIndex';
 import StationView from '../components/stationView';
-import Camera from '../components/camera';
+import UserInfo from '../components/userInfo';
 import TaskView from '../components/taskView';
 import Feed from '../components/feed';
 import PurveyorIndex from '../components/purveyorIndex';
@@ -18,7 +19,6 @@ import ProductView from '../components/productView';
 import ProfileView from '../components/profileView';
 import NavbarTitle from '../components/NavbarTitle';
 import { BackBtn } from '../utilities/navigation';
-import { NavigationBarStyles } from '../utilities/styles';
 import Colors from '../utilities/colors';
 import * as actions from '../actions';
 
@@ -42,6 +42,24 @@ class App extends React.Component {
       'Login': {},
       'Signup': {}
     }
+    this.navBar = (
+      <NavigationBar
+        customTitle={<NavbarTitle />}
+        style={styles.nav}
+      />
+    );
+    this.navBarItem = (props, nextComponent) => {
+      return React.addons.cloneWithProps((
+        <TouchableOpacity
+          onPress={() => {
+            console.log('Oops, need to specify function')
+          }}>
+          <View style={NavigationBarStyles.navBarRightButton}>
+            {nextComponent}
+          </View>
+        </TouchableOpacity>
+      ), props)
+    };
   }
 
   _back() {() => {
@@ -62,7 +80,7 @@ class App extends React.Component {
     return isAuthenticated;
   }
 
-  getScene(route, nav, navBar) {
+  getScene(route, nav) {
     const { ui, session, teams, stations, messages, dispatch, purveyors, products } = this.props;
     let teamId = session.teamId;
 
@@ -85,10 +103,8 @@ class App extends React.Component {
                   }}
                 />
       case 'StationIndex':
-        console.log("SESSION", session);
         return <StationIndex
                   navigator={nav}
-                  navBar={navBar}
                   stations={stations}
                   onAddStation={(name) => {
                     var stations = this.props.stations.data.map((station) => {
@@ -111,7 +127,6 @@ class App extends React.Component {
           <StationView
             ui={ui}
             navigator={nav}
-            navBar={navBar}
             station={station}
             stationId={route.stationId}
             onAddNewTask={function(stationId, taskName){
@@ -155,7 +170,6 @@ class App extends React.Component {
       case 'Feed':
         return <Feed
                   navigator={nav}
-                  navBar={navBar}
                   messages={messages}
                   userEmail={session.login}
                   teamId={session.teamId}
@@ -167,7 +181,6 @@ class App extends React.Component {
         return (
           <PurveyorIndex
             navigator={nav}
-            navBar={navBar}
             purveyors={purveyors}
             onAddPurveyor={(name) => {
               console.log("THIS", this);
@@ -192,7 +205,6 @@ class App extends React.Component {
           <PurveyorView
             ui={ui}
             navigator={nav}
-            navBar={navBar}
             purveyor={purveyor}
             onAddNewProduct={(purveyorId, productName) => {
               var products = purveyor.products.map((product) => {
@@ -226,24 +238,19 @@ class App extends React.Component {
                   }}
                 />;
       case 'Profile':
-        // console.log("SESSION", session);
         return (
           <ProfileView
-            email={session.login}
-            firstName={session.firstName}
-            lastName={session.lastName}
-            imageURL={session.imageUrl}
-            phoneNumber={session.username}
             navigator={nav}
-            navBar={navBar}
-            notifications={session.notifications || false}
+            session={session}
             onUpdateInfo={(data) => {
               console.log("DATA", data);
-              dispatch(actions.updateSession(data, session));
+              dispatch(actions.updateSession(data));
             }}
             onUpdateAvatar={(image) => {
               console.log("IMAGE", image);
-              dispatch(actions.updateSession({imageUrl: image.uri}, session));
+              dispatch(actions.updateSession({
+                imageUrl: image.uri
+              }));
             }}
             />
         );
@@ -253,16 +260,19 @@ class App extends React.Component {
             navigator={nav}
             photos={route.photos}
             onUpdateAvatar={(image) => {
-              console.log("IMAGE", image);
               dispatch(actions.updateSession({
                 imageUrl: image.uri
               }));
             }}
             />
         );
-      case 'Camera':
+      case 'UserInfo':
         return (
-          <Camera
+          <UserInfo
+            onUpdateInfo={(data) => {
+              console.log("DATA", data);
+              dispatch(actions.updateSession(data));
+            }}
             navigator={nav}
             />
         )
@@ -316,16 +326,20 @@ class App extends React.Component {
   }
 
   renderScene(route, nav) {
-    console.log("PROPS", this.props);
+    // console.log("PROPS", this.props);
     const { dispatch, ui } = this.props;
 
     // redirect to initial view
     if (this.props.session.isAuthenticated){
-      if (route.name === 'Login' || route.name === 'Signup') {
-        // check session for first name and last name - if none, redirect to UserProfile
+      if (route.name === 'Login' || route.name === 'Signup' || route.name == 'UserInfo') {
+        // check session for first name and last name - if none, redirect to UserInfo
+        if (this.props.session.firstName === "" || this.props.session.lastName === "") {
+          route.name = 'UserInfo';
+        }
         // else send to StationIndex
-        // route.name = 'UserProfile';
-        route.name = 'StationIndex';
+        else {
+          route.name = 'StationIndex';
+        }
       }
     }
     // redirect to login if requested view requires authentication
@@ -333,100 +347,97 @@ class App extends React.Component {
       route.name = 'Signup'
     }
 
-    let navBar = route.navigationBar;
-    let scene = this.getScene(route, nav, navBar);
+    let navBar = <View />;
+    let nextItem = <View />;
+    let scene = this.getScene(route, nav);
 
     // setup the header for unauthenticated routes
     if(this.authenticatedRoute(route) === false){
-      if (navBar) {
-        // navBar = React.addons.cloneWithProps(navBar, {
-        //   navigator: nav,
-        //   route: route,
-        // })
-        navBar = <View />
-      }
+      navBar = <View />
     } else {
       switch(route.name) {
         case 'StationIndex':
-          if (navBar) {
-            navBar = React.addons.cloneWithProps(navBar, {
-              navigator: nav,
-              route: route,
-              hidePrev: true,
-              onNext: (navigator, route) => {
-                navigator.push({
-                  name: 'Profile',
-                  navigationBar: navBar,
-                })
-              },
-              onPrev: null,
-              nextTitle: 'profile',
-            })
-          }
+          // nextItem = this.navBarItem({
+          //   onPress: (navigator, route) => {
+          //     console.log(arguments)
+          //     navigator.push({
+          //       name: 'Profile'
+          //     })
+          //   }
+          // }, <View>
+          //   {/* * /}<Icon
+          //     name='material|account-circle'
+          //     size={50}
+          //     color='white'
+          //     style={styles.iconFace}
+          //     />{/* */}
+          //   <Text style={[NavigationBarStyles.navBarText, NavigationBarStyles.navBarButtonText, ]}>Profile</Text>
+          // </View>)
+          // console.log(nextItem)
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            hidePrev: true,
+            // customNext: nextItem
+            onNext: (navigator, route) => {
+              navigator.push({
+                name: 'Profile',
+              })
+            },
+            onPrev: null,
+            nextTitle: 'profile',
+          })
           break;
         case 'Feed':
-          if (navBar) {
-            navBar = React.addons.cloneWithProps(navBar, {
-              navigator: nav,
-              route: route,
-              hidePrev: true,
-              onNext: null,
-            })
-          }
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            hidePrev: true,
+            onNext: null,
+          })
           break;
         case 'PurveyorIndex':
-          if (navBar) {
-            console.log('purvyerIndex has navbar')
-            navBar = React.addons.cloneWithProps(navBar, {
-              navigator: nav,
-              route: route,
-              hidePrev: true,
-              onNext: null,
-              onPrev: null,
-            })
-          }
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            hidePrev: true,
+            onNext: null,
+            onPrev: null,
+          })
           break;
         case "StationView":
-          if (navBar) {
-            navBar = React.addons.cloneWithProps(navBar, {
-              navigator: nav,
-              route: route,
-              onNext: (navigator, route) => this.showActionSheetStationView(navigator, route),
-              nextTitle: '...',
-              hidePrev: false,
-            })
-          }
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            onNext: (navigator, route) => this.showActionSheetStationView(navigator, route),
+            nextTitle: '...',
+            hidePrev: false,
+          })
           break;
         case "PurveyorView":
-          if (navBar) {
-            navBar = React.addons.cloneWithProps(navBar, {
-              navigator: nav,
-              route: route,
-              onNext: (navigator, route) => this.showActionSheetPurveyorView(navigator, route),
-              nextTitle: '...',
-              hidePrev: false,
-            })
-          }
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            onNext: (navigator, route) => this.showActionSheetPurveyorView(navigator, route),
+            nextTitle: '...',
+            hidePrev: false,
+          })
           break;
         case 'ProductView':
-          if (navBar) {
-            navBar = React.addons.cloneWithProps(navBar, {
-              navigator: nav,
-              route: route,
-              onNext: null,
-              hidePrev: false,
-            })
-          }
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            onNext: null,
+            hidePrev: false,
+          })
           break;
         default:
-          if (navBar) {
-            navBar = React.addons.cloneWithProps(navBar, {
-              hidePrev: false,
-              navigator: nav,
-              route: route,
-              onNext: null,
-            })
-          };
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            hidePrev: false,
+            navigator: nav,
+            route: route,
+            onNext: null,
+          })
       }
     }
 
@@ -450,17 +461,16 @@ class App extends React.Component {
           dispatch(actions.resetSession())
         }}
         nav={nav}
-        navBar={navBar}
         ui={ui}
         route={route}
         />
     );
-
+    let pageFooter = route.name == "UserInfo" ? <View></View> : footer;
     return (
       <View style={styles.container}>
         {navBar}
         {scene}
-        {footer}
+        {pageFooter}
       </View>
     );
   }
@@ -478,13 +488,7 @@ class App extends React.Component {
       <Navigator
         initialRoute={{
           index: 0,
-          name: this.initialRoute,
-          navigationBar: (
-            <NavigationBar
-              customTitle={<NavbarTitle />}
-              style={styles.nav}
-            />
-          )
+          name: this.initialRoute
         }}
         renderScene={this.renderScene.bind(this)}
         configureScene={this.configureScene.bind(this)}

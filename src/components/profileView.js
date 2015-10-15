@@ -23,12 +23,12 @@ class ProfileView extends React.Component {
     super(props)
     this.state = {
       editPhoneNumber: false,
-      phoneNumber: this.props.phoneNumber,
-      firstName: this.props.firstName,
-      lastName: this.props.lastName,
-      email: this.props.email,
+      phoneNumber: this.props.session.phoneNumber,
+      firstName: this.props.session.firstName,
+      lastName: this.props.session.lastName,
+      email: this.props.session.email,
       saveChanges: false,
-      notifications: this.props.notifications,
+      notifications: this.props.session.notifications || false,
     }
   }
   showActionSheet(){
@@ -83,21 +83,21 @@ class ProfileView extends React.Component {
     });
   }
   needsSave() {
-    let propValues = [ this.props.firstName, this.props.lastName, this.props.email, this.props.notifications, this.props.phoneNumber ];
+    let propValues = [ this.props.session.firstName, this.props.session.lastName, this.props.session.email, this.props.session.notifications, this.props.session.phoneNumber ];
     let stateValues = [ this.state.firstName, this.state.lastName, this.state.email, this.state.notifications, this.state.phoneNumber ];
     console.log("PROPS", propValues == stateValues);
     return JSON.stringify(propValues) == JSON.stringify(stateValues);
   }
   render() {
     console.log("PROFILE", this.props);
-    let avatar = <Image style={styles.userIcon} source={{uri: this.props.imageURL}}/>
-    if (this.props.imageURL === "") {
+    let avatar = <Image style={styles.userIcon} source={{uri: this.props.session.imageURL}}/>
+    if (this.props.session.imageURL === "") {
       avatar = <Icon name="material|account-circle" size={100} style={styles.userIcon} />
     }
     let phoneNumber = <TouchableHighlight
                         onPress={() => this.setState({editPhoneNumber: ! this.state.editPhoneNumber})}
                         style={styles.phoneNumber}>
-                        <Text style={styles.phoneText}>{this.props.phoneNumber}</Text>
+                        <Text style={styles.phoneText}>{this.props.session.phoneNumber}</Text>
                       </TouchableHighlight>
     if (this.state.editPhoneNumber) {
       phoneNumber = <View style={styles.infoField}>
@@ -114,7 +114,7 @@ class ProfileView extends React.Component {
                             let data = {
                               firstName: firstName,
                               lastName: lastName,
-                              login: email,
+                              email: email,
                               notifications: notifications,
                               username: phoneNumber,
                               phoneNumber: phoneNumber,
