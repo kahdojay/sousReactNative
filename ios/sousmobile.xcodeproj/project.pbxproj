@@ -139,6 +139,20 @@
 			remoteGlobalIDString = 145CC57B1AED80100006342E;
 			remoteInfo = RCTAddressBookTests;
 		};
+		C430DD961BCEC63F00962F41 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C430DD901BCEC63F00962F41 /* RCTAddressBook.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 145CC5701AED80100006342E;
+			remoteInfo = RCTAddressBook;
+		};
+		C430DD981BCEC63F00962F41 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C430DD901BCEC63F00962F41 /* RCTAddressBook.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 145CC57B1AED80100006342E;
+			remoteInfo = RCTAddressBookTests;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -410,6 +424,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		C430DD911BCEC63F00962F41 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C430DD971BCEC63F00962F41 /* libRCTAddressBook.a */,
+				C430DD991BCEC63F00962F41 /* RCTAddressBookTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -608,6 +631,20 @@
 			fileType = archive.ar;
 			path = libRCTText.a;
 			remoteRef = 832341B41AAA6A8300B99B32 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C430DD971BCEC63F00962F41 /* libRCTAddressBook.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTAddressBook.a;
+			remoteRef = C430DD961BCEC63F00962F41 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		C430DD991BCEC63F00962F41 /* RCTAddressBookTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = RCTAddressBookTests.xctest;
+			remoteRef = C430DD981BCEC63F00962F41 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		C430DD971BCEC63F00962F41 /* libRCTAddressBook.a */ = {

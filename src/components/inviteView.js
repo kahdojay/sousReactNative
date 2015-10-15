@@ -51,6 +51,7 @@ class InviteView extends React.Component {
       .filter(function(c) { return c.selected; })
       .map('phoneNumbers[0].number')
       .value();
+    // TODO send numbers to twilio
     console.log('smss to send', resultSet)
     return resultSet;
   }
