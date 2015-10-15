@@ -22,35 +22,35 @@ class TaskList extends React.Component {
     this.setState({showCompleted: !this.state.showCompleted})
   }
   render() {
-    let {station} = this.props
-    let tasksCompleted = _.filter(station.tasks, { completed: true, deleted: false })
+    let {team} = this.props
+    let tasksCompleted = _.filter(team.tasks, { completed: true, deleted: false })
       .map((task, idx) => {
         return (
           <TaskListItem
             task={task}
             key={idx}
-            stationId={station.id}
+            teamId={team.id}
             onTaskCompletionNotification={this.props.onTaskCompletionNotification.bind(this)}
             navigator={this.props.navigator}
             navBar={this.props.navBar}
             onUpdateTask={(taskAttributes) => {
-              this.props.onUpdateStationTask(station.id, task.recipeId, taskAttributes);
+              this.props.onUpdateTeamTask(team.id, task.recipeId, taskAttributes);
             }}
           />
         )
       })
-    let tasksIncomplete = _.filter(station.tasks, { completed: false, deleted: false })
+    let tasksIncomplete = _.filter(team.tasks, { completed: false, deleted: false })
       .map((task, idx) => {
           return (
             <TaskListItem
               task={task}
               key={idx}
-              stationId={station.id}
+              teamId={team.id}
               onTaskCompletionNotification={this.props.onTaskCompletionNotification.bind(this)}
               navigator={this.props.navigator}
               navBar={this.props.navBar}
               onUpdateTask={(taskAttributes) => {
-                this.props.onUpdateStationTask(station.id, task.recipeId, taskAttributes);
+                this.props.onUpdateTeamTask(team.id, task.recipeId, taskAttributes);
               }}
             />
           )

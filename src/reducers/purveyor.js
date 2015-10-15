@@ -37,7 +37,7 @@ function purveyors(state = initialState.purveyors, action) {
     var newPurveyorState = Object.assign({}, state);
     var currentPurveyorsDataState = updateDataState(newPurveyorState.data, action.purveyor)
     // console.log(action.type, action.purveyor.id)
-    // console.log('STATION REDUCER: ', currentPurveyorsDataState)
+    // console.log('TEAM REDUCER: ', currentPurveyorsDataState)
     return Object.assign({}, state, {
       isFetching: false, // do we need to phase this out?
       errors: null,

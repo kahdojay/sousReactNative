@@ -23,7 +23,7 @@ class Footer extends React.Component {
 
     if (_.includes(['Signup', 'Login', 'Profile', 'InviteView'], this.props.route.name)){
       return null;
-    } else if(_.includes(['StationIndex', 'StationView', 'TaskView'], this.props.route.name)){
+    } else if(_.includes(['TeamIndex', 'TeamView', 'TaskView'], this.props.route.name)){
       applyHighlight = 'Prep'
     } else if(_.includes(['Feed'], this.props.route.name)){
       applyHighlight = 'Feed'
@@ -42,7 +42,7 @@ class Footer extends React.Component {
             underlayColor='white'
             onPress={() => {
               this.props.nav.replace({
-                name: 'StationIndex',
+                name: 'TeamIndex',
               })
             }}
             style={[styles.footerButton, prepFooterHighlight]}

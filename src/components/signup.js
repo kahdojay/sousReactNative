@@ -56,29 +56,6 @@ class Signup extends React.Component {
     }
   }
 
-  searchTeams(text) {
-    let updateState = {
-      invalid: false,
-      teamName: text,
-      teamId: null,
-      teamFound: false,
-      lookingForTeam: true,
-    }
-    let foundTeams;
-    if(text == ''){
-      updateState.lookingForTeam = false;
-    }
-    foundTeams = _.filter(this.props.teams.data, function(team) {
-      return team.name.toLowerCase() === text.toLowerCase()
-    })
-
-    if( foundTeams.length > 0 ){
-      updateState.teamId = foundTeams[0].id;
-      updateState.teamFound = true;
-    }
-    this.setState(updateState)
-  }
-
   formatPhoneNumber(phoneNumber){
     return phoneNumber;
   }
@@ -91,8 +68,6 @@ class Signup extends React.Component {
                         style={styles.activity}
                         size={'small'} />
     let errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
-    let teamLookupStatus = (this.state.teamFound) ? <Text style={[styles.teamLookup, styles.teamFound]}>Team Found</Text> : <Text style={[styles.teamLookup, styles.teamNew]}>New Team</Text>
-    let teamLookup = (this.state.lookingForTeam) ? <View style={styles.teamLookupContainer}>{teamLookupStatus}</View> : <View/>
     let formattedPhoneNumber = this.formatPhoneNumber(session.phoneNumber);
     let signup = (
       <View style={styles.login}>
@@ -163,54 +138,6 @@ class Signup extends React.Component {
           <Image source={require('image!Logo')} style={styles.logoImage}></Image>
         </View>
         {signup}
-        <View>
-          {/* * /}
-          <View style={styles.underline}></View>
-          <View style={styles.inputContainer}>
-            <Icon name='material|lock' size={30} color='#aaa' style={styles.iconFace}/>
-            <TextInput
-              secureTextEntry={true}
-              style={styles.input}
-              value={this.state.password}
-              placeholder='Password'
-              onChangeText={(text) => {
-                this.setState({password: text, invalid: false})
-              }}/>
-          </View>
-          <View style={styles.underline}></View>
-          <View style={styles.inputContainer}>
-            <Icon name='fontawesome|user' size={30} color='#aaa' style={styles.iconFace}/>
-            <TextInput
-              style={styles.input}
-              placeholder='Username'
-              onChangeText={(text) => {
-                this.setState({username: text, invalid: false})
-              }}/>
-          </View>
-          <View style={styles.underline}></View>
-          <View style={styles.inputContainer}>
-            <Icon name='fontawesome|users' size={30} color='#aaa' style={styles.iconFace}/>
-            <TextInput
-              style={styles.input}
-              value={this.state.teamName}
-              placeholder='Team'
-              onChangeText={this.searchTeams.bind(this)}/>
-            {teamLookup}
-          </View>
-          <View style={styles.underline}></View>
-          { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
-          <TouchableHighlight
-            onPress={() => {
-              this.onSignup()
-            }}
-            style={styles.button}>
-            <Text style={styles.buttonText}>Signup</Text>
-          </TouchableHighlight>
-          <View style={styles.activityContainer}>
-            { session.isFetching ? fetching : <View /> }
-          </View>
-          {/* */}
-        </View>
       </View>
     );
   }
@@ -351,25 +278,6 @@ let styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-
-  teamLookupContainer: {
-    position: 'absolute',
-    right: 7,
-    top: 7,
-    padding: 2,
-    width: 100,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor: '#eee',
-  },
-  teamLookup: {
-    alignSelf: 'center',
-    color: '#ccc'
-  },
-  teamFound: {
-  },
-  teamNew: {
-  }
 })
 
 module.exports = Signup;

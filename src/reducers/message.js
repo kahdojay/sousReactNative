@@ -36,7 +36,7 @@ function messages(state = initialState.messages, action) {
     var newMessageState = Object.assign({}, state);
     var currentMessagesDataState = updateDataState(newMessageState.data, action.message)
     // console.log(action.type, action.message.id)
-    // console.log('STATION REDUCER: ', currentMessagesDataState)
+    // console.log('TEAM REDUCER: ', currentMessagesDataState)
     return Object.assign({}, state, {
       isFetching: false, // do we need to phase this out?
       errors: null,

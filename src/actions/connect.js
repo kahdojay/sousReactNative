@@ -22,7 +22,7 @@ export default function ConnectActions(ddpClient) {
       var resourceParam = null
       if(resource.channel === 'restricted'){
         resourceParam = session.phoneNumber
-      } else if(resource.channel === 'errors'){
+      } else if(resource.channel === 'errors' || resource.channel === 'teams'){
         resourceParam = session.userId;
       } else {
         resourceParam = session.teamId
@@ -35,7 +35,6 @@ export default function ConnectActions(ddpClient) {
     const {
       uiActions,
       sessionActions,
-      stationActions,
       teamActions,
       messageActions,
       purveyorActions
@@ -55,8 +54,8 @@ export default function ConnectActions(ddpClient) {
       ddpClient.on('message', (msg) => {
         var log = JSON.parse(msg);
         // console.log("MAIN DDP MSG", log);
-        // var stationIds = getState().stations.data.map(function(station) {
-        //   return station.id;
+        // var teamIds = getState().teams.data.map(function(team) {
+        //   return team.id;
         // })
         if (log.hasOwnProperty('fields')){
           console.log("MAIN DDP WITH FIELDS MSG", log);
@@ -66,8 +65,8 @@ export default function ConnectActions(ddpClient) {
             case 'messages':
               dispatch(messageActions.receiveMessages(data))
               break;
-            case 'stations':
-              dispatch(stationActions.receiveStations(data))
+            case 'teams':
+              dispatch(teamActions.receiveTeams(data))
               break;
             case 'purveyors':
               dispatch(purveyorActions.receivePurveyors(data))
@@ -93,7 +92,7 @@ export default function ConnectActions(ddpClient) {
 
       ddpClient.connect((error, wasReconnected) => {
         if (error) {
-          // return dispatch(errorStations([{
+          // return dispatch(errorTeams([{
           //   id: 'error_feed_connection',
           //   message: 'Feed connection error!'
           // }]));

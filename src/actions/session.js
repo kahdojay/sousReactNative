@@ -93,8 +93,8 @@ export default function SessionActions(ddpClient){
       if(response.hasOwnProperty('smsVerified') && response.smsVerified === true && response.authToken){
         // console.log("SESSION", session, response);
         isAuthenticated = true;
-        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.STATIONS.channel)
-        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.STATIONS.channel, [session.teamId]);
+        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.TEAMS.channel)
+        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.TEAMS.channel, [session.userId]);
         ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel)
         ddpClient.subscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [session.teamId]);
         ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel)

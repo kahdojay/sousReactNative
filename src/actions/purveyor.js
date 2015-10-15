@@ -22,20 +22,23 @@ export default function PurveyorActions(ddpClient){
     }
   }
 
-  function addPurveyor(name, teamId) {
-    var newPurveyorAttributes = {
-      _id: shortid.generate(),
-      teamId: teamId,
-      name: name,
-      description: "",
-      products:    [],
-      deleted:  false
+  function addPurveyor(name) {
+    return (dispatch, getState) => {
+      const { session } = getState();
+      var newPurveyorAttributes = {
+        _id: shortid.generate(),
+        teamId: session.currentTeamId,
+        name: name,
+        description: "",
+        products:    [],
+        deleted:  false
+      }
+      ddpClient.call('createPurveyor', [newPurveyorAttributes]);
+      return dispatch({
+        type: ADD_PURVEYOR,
+        purveyor: newPurveyorAttributes
+      });
     }
-    ddpClient.call('createPurveyor', [newPurveyorAttributes]);
-    return {
-      type: ADD_PURVEYOR,
-      purveyor: newPurveyorAttributes
-    };
   }
 
   function completePurveyorProduct(messageText) {
