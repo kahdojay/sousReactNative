@@ -171,7 +171,7 @@ module.exports = class Menu extends Component {
                         })
                       }}
                     >
-                      <Text style={styles.teamItemText}>Recipe Book</Text>
+                      <Text style={styles.teamItemText}>Switch Teams</Text>
                     </TouchableHighlight>
                     <TouchableHighlight
                       underlayColor='white'

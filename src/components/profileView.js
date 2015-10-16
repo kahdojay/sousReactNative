@@ -1,9 +1,7 @@
 import { Icon } from 'react-native-icons';
 import React from 'react-native';
 import { mainBackgroundColor } from '../utilities/colors';
-import ImageGallery from './imageGallery';
-import Camera from './camera';
-var UIImagePickerManager = require('NativeModules').UIImagePickerManager;
+let UIImagePickerManager = require('NativeModules').UIImagePickerManager;
 const {
   View,
   Text,

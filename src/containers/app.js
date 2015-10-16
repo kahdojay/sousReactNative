@@ -6,7 +6,6 @@ import { connect } from 'react-redux/native';
 import { Icon } from 'react-native-icons';
 import Login from '../components/login';
 import Signup from '../components/signup';
-import ImageGallery from '../components/imageGallery';
 import TeamIndex from '../components/teamIndex';
 import TeamView from '../components/teamView';
 import UserInfo from '../components/userInfo';
@@ -105,14 +104,6 @@ class App extends React.Component {
     const { ui, session, teams, messages, dispatch, purveyors, products } = this.props;
 
     switch (route.name) {
-      // case 'Login':
-      //   return <Login
-      //             navigator={nav}
-      //             session={session}
-      //             onLogin={(sessionParams) => {
-      //               dispatch(actions.createSession(sessionParams))
-      //             }}
-      //           />
       case 'Signup':
         return <Signup
                   navigator={nav}
@@ -122,16 +113,15 @@ class App extends React.Component {
                   }}
                 />
       case 'TeamIndex':
-        console.log("ACTIONS", actions);
         return <TeamIndex
                   navigator={nav}
                   teams={teams}
                   onUpdateTeam={(teamId) => {
-                    console.log("TEAM ID", actions);
                     dispatch(actions.updateSession({
                       teamId: teamId
                     }));
                     dispatch(actions.resetMessages());
+                    dispatch(actions.resetPurveyors());
                   }}
                   onAddTeam={(name) => {
                     var teams = this.props.teams.data.map((team) => {
@@ -156,7 +146,7 @@ class App extends React.Component {
             navigator={nav}
             team={team}
             onAddNewTask={(taskName) => {
-              console.log(taskName);
+              // console.log(taskName);
               dispatch(actions.addTeamTask({name: taskName}))
             }}
             onTaskCompletionNotification={(task) => {
@@ -200,7 +190,6 @@ class App extends React.Component {
             purveyors={purveyors}
             session={session}
             onAddPurveyor={(name) => {
-              // console.log("THIS", this);
               var purveyors = this.props.purveyors.data.map((purveyor) => {
                 if (! purveyor.deleted)
                   return purveyor.name;
@@ -224,7 +213,7 @@ class App extends React.Component {
             navigator={nav}
             purveyor={purveyor}
             onAddNewProduct={(purveyorId, productName) => {
-              var products = purveyor.products.map((product) => {
+              let products = purveyor.products.map((product) => {
                 if (! product.deleted)
                   return product.name;
               });
@@ -243,8 +232,8 @@ class App extends React.Component {
           />
         );
       case 'ProductView':
-        var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
-        var product = _.filter(purveyor.products, { productId: route.productId })[0]
+        let purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
+        let product = _.filter(purveyor.products, { productId: route.productId })[0]
         return (
           <ProductView
             ui={ui}
@@ -273,30 +262,16 @@ class App extends React.Component {
             }}
           />
         );
-      case 'ImageGallery':
-        return (
-          <ImageGallery
-            navigator={nav}
-            photos={route.photos}
-            onUpdateAvatar={(image) => {
-              dispatch(actions.updateSession({
-                imageUrl: image.uri
-              }));
-            }}
-          />
-        );
       case 'UserInfo':
         return (
           <UserInfo
             onUpdateInfo={(data) => {
-              console.log("DATA", data);
+              // console.log("DATA", data);
               dispatch(actions.updateSession(data));
             }}
             navigator={nav}
             />
         )
-      case 'Camera':
-        return <Camera navigator={nav} />
       case 'InviteView':
         return (
           <InviteView
@@ -358,11 +333,9 @@ class App extends React.Component {
     // redirect to initial view
     if (this.props.session.isAuthenticated){
       if (route.name === 'Login' || route.name === 'Signup' || route.name == 'UserInfo') {
-        // check session for first name and last name - if none, redirect to UserInfo
         if (this.props.session.firstName === "" || this.props.session.lastName === "") {
           route.name = 'UserInfo';
         }
-        // else send to Feed
         else {
           route.name = 'Feed';
         }
@@ -383,7 +356,7 @@ class App extends React.Component {
     } else {
       switch(route.name) {
         case 'TeamIndex':
-        console.log("PROPS", this);
+        // console.log("PROPS", this);
           // nextItem = this.navBarItem({
           //   onPress: (navigator, route) => {
           //     console.log(arguments)
