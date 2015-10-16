@@ -91,7 +91,7 @@ class Signup extends React.Component {
       <View style={styles.login}>
 
         <Text style={styles.headerText}>Use your phone number to log in to Sous.</Text>
-        <Text style={styles.centered}>First, we'll send you a <Text style={styles.boldText}>text message</Text> to verify your account.</Text>
+        <Text style={styles.centered}>First, we will send you a <Text style={styles.boldText}>text message</Text> to verify your account.</Text>
         <View style={styles.inputContainer}>
           <Icon name='material|phone' size={30} color='#aaa' style={styles.iconFace}/>
           <TextInput
@@ -153,8 +153,16 @@ class Signup extends React.Component {
         </View>
       );
     }
+
     return (
-      <View style={styles.container}>
+      <ScrollView
+        automaticallyAdjustContentInsets={false}
+        ref="scrollView"
+        style={[
+          styles.container,
+          this.props.ui.keyboard.visible && {height: this.props.ui.keyboard.screenY}
+        ]}
+      >
         <View style={styles.navbar}>
           <Text style={styles.signup}>Signup/Login</Text>
         </View>
@@ -162,14 +170,13 @@ class Signup extends React.Component {
           <Image source={require('image!Logo')} style={styles.logoImage}></Image>
         </View>
         {signup}
-      </View>
+      </ScrollView>
     );
   }
 };
 
 let styles = StyleSheet.create({
   container: {
-    flex: 1
   },
   navbar: {
     height: 40,
