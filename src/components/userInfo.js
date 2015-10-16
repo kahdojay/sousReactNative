@@ -40,7 +40,7 @@ class UserInfo extends React.Component{
             </View>
             <View style={styles.userProfile}>
               <View style={styles.headerContainer}>
-                <Text style={styles.question}>What's your name?</Text>
+                <Text style={styles.question}>What's your <Text style={[styles.question, styles.bold]}>name?</Text></Text>
               </View>
             </View>
           </View>
@@ -49,7 +49,6 @@ class UserInfo extends React.Component{
 
             <View style={styles.userProfile}>
               <View style={styles.infoField}>
-                <Text style={styles.inputName}>First Name</Text>
                 <TextInput
                   style={styles.input}
                   value={this.state.firstName}
@@ -58,7 +57,6 @@ class UserInfo extends React.Component{
               </View>
               <View style={styles.separator}></View>
               <View style={styles.infoField}>
-                <Text style={styles.inputName}>Last Name</Text>
                 <TextInput
                   style={styles.input}
                   value={this.state.lastName}
@@ -128,7 +126,7 @@ let styles = StyleSheet.create({
     flex: 1,
     marginLeft: 5,
     color: 'black',
-    fontWeight: 'bold',
+    fontWeight: 'normal',
     fontFamily: 'OpenSans',
     fontSize: 13,
     letterSpacing: -.5,
@@ -136,14 +134,16 @@ let styles = StyleSheet.create({
   question: {
     flex: 1,
     color: 'black',
-    fontWeight: 'bold',
     fontFamily: 'OpenSans',
     fontSize: 18,
     letterSpacing: -.5,
   },
+  bold: {
+    fontWeight: 'bold',
+  },
   inputName: {
     flex: 1,
-    color: 'black',
+    color: '#bbb',
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
     fontSize: 14,
