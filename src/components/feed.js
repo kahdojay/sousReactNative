@@ -3,6 +3,7 @@ import React from 'react-native';
 import AddMessageForm from './addMessageForm';
 import { mainBackgroundColor } from '../utilities/colors';
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 let SideMenu = require('react-native-side-menu');
 import Menu from './menu';
 const {
@@ -88,19 +89,21 @@ class Feed extends React.Component {
                         style={styles.activity}
                         size={'large'} />
     return (
-
-          <View style={styles.container}>
-            <View style={styles.messageContainer}>
-              {messages.isFetching ? fetching : <View style={styles.notFetching}/>}
-              <InvertibleScrollView
-                style={styles.scrollView}
-                contentInset={{bottom:49}}
-                keyboardShouldPersistTaps={false}
-                automaticallyAdjustContentInsets={false}
-                inverted
-                ref='scrollview'>
-                { _.filter(messages.data, (msg) =>
-                  {return msg.teamId === session.teamId }).map((msg, index) => {
+      <View style={styles.container}>
+        <View style={styles.messageContainer}>
+          {messages.isFetching ? fetching : <View style={styles.notFetching}/>}
+          <InvertibleScrollView
+            style={styles.scrollView}
+            contentInset={{bottom:49}}
+            keyboardShouldPersistTaps={false}
+            automaticallyAdjustContentInsets={false}
+            inverted
+            ref='scrollview'
+          >
+            {
+                _.filter(messages.data, (msg) => {
+                  return msg.teamId === session.teamId
+                }).map((msg, index) => {
                   let date = new Date(msg.createdAt).toLocaleTimeString();
                   let time = date.substring(date.length-3, date.length)
                   let icon = <Icon name='fontawesome|user' size={30} color='#f7f7f7' style={styles.avatar}/>
@@ -124,15 +127,17 @@ class Feed extends React.Component {
                       <View style={styles.separator} />
                     </View>
                   )
-                }).reverse()
-              }
-            </InvertibleScrollView>
-            <AddMessageForm
-              placeholder="Message..."
-              onSubmit={this.onHandleSubmit.bind(this)}/>
-          </View>
+                }
+              ).reverse()
+            }
+          </InvertibleScrollView>
+          <AddMessageForm
+            placeholder="Message..."
+            onSubmit={this.onHandleSubmit.bind(this)}
+          />
         </View>
-
+        <KeyboardSpacer />
+      </View>
     );
   }
 };
