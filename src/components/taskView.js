@@ -150,11 +150,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5A623',
     alignSelf: 'center',
     width: 150,
+    marginTop: 20,
     justifyContent: 'center',
     borderRadius: 3,
   },
   scrollView: {
-    backgroundColor: 'white',
+    backgroundColor: 'transparent',
     flex: 1,
     paddingLeft: 10,
     paddingRight: 0,
@@ -208,12 +209,16 @@ const styles = StyleSheet.create({
     borderColor: '#e6e6e6',
     borderRadius: 8,
     backgroundColor: 'white',
-    color: 'black'
+    color: 'black',
+    marginRight: 10,
+    marginTop: 10,
   },
   sideText: {
     fontSize: 20,
+    marginTop: 10,
     fontFamily: 'OpenSans',
     flex: 1,
+    fontWeight: 'bold',
   },
   iconContainer: {
     flex: 1,
