@@ -117,6 +117,7 @@ class App extends React.Component {
         return <TeamIndex
                   navigator={nav}
                   teams={teams}
+                  messages={messages}
                   onUpdateTeam={(teamId) => {
                     dispatch(actions.updateSession({
                       teamId: teamId
@@ -357,42 +358,16 @@ class App extends React.Component {
     } else {
       switch(route.name) {
         case 'TeamIndex':
-        // console.log("PROPS", this);
-          // nextItem = this.navBarItem({
-          //   onPress: (navigator, route) => {
-          //     console.log(arguments)
-          //     navigator.push({
-          //       name: 'Profile'
-          //     })
-          //   }
-          // }, <View>
-          //   {/* * /}<Icon
-          //     name='material|account-circle'
-          //     size={50}
-          //     color='white'
-          //     style={styles.iconFace}
-          //     />{/* */}
-          //   <Text style={[NavigationBarStyles.navBarText, NavigationBarStyles.navBarButtonText, ]}>Profile</Text>
-          // </View>)
-          // console.log(nextItem)
-          // console.log("THIS", this.context.menuActions);
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            hidePrev: true,
-            onPrev: (navigator, route) => {
-              this.setState({open: true, touchToClose: true })
-              // this.context.menuActions.toggle();
-            },
-            // customNext: nextItem
+            customPrev: <FeedViewLeftButton />,
             onNext: (navigator, route) => {
               navigator.push({
                 name: 'Profile',
               });
             },
-            // onPrev: null,
             nextTitle: 'profile',
-            prevTitle: 'menu',
           })
           break;
         case 'Feed':
@@ -408,9 +383,8 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            hidePrev: true,
             onNext: null,
-            onPrev: null,
+            customPrev: <FeedViewLeftButton />,
           })
           break;
         case "TeamView":
@@ -419,7 +393,7 @@ class App extends React.Component {
             route: route,
             onNext: (navigator, route) => this.showActionSheetTeamView(navigator, route),
             nextTitle: '...',
-            hidePrev: false,
+            customPrev: <FeedViewLeftButton />,
           })
           break;
         case "PurveyorView":
@@ -449,7 +423,7 @@ class App extends React.Component {
                 navigationBar: navBar,
               })
             },
-            hidePrev: false,
+            customPrev: <FeedViewLeftButton />,
             nextTitle: 'Invite',
           })
           break;

@@ -48,6 +48,7 @@ class TaskListItem extends React.Component {
             />
           </View>
           <TouchableHighlight
+            underlayColor='#eee'
             onPress={() => {
               this.props.navigator.push({
                 name: 'TaskView',
@@ -57,7 +58,7 @@ class TaskListItem extends React.Component {
             }}
             style={styles.main}
           >
-            <View>
+            <View style={{padding: 10, borderRadius: 2,}}>
               <Text style={[
                 styles.text,
                 this.props.task.completed && styles.textCompleted
@@ -70,11 +71,12 @@ class TaskListItem extends React.Component {
             {this.props.task.quantity > 1 ? ('X' + this.props.task.quantity) : ''}
           </Text>
           <TouchableHighlight
-            underlayColor="#bbb"
+            underlayColor='transparent'
             onPress={this.decrement.bind(this)}>
             <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
           </TouchableHighlight>
           <TouchableHighlight
+            underlayColor='transparent'
             onPress={this.increment.bind(this)}>
             <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
           </TouchableHighlight>

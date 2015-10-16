@@ -57,7 +57,25 @@ class Signup extends React.Component {
   }
 
   formatPhoneNumber(phoneNumber){
-    return phoneNumber;
+    if (phoneNumber) {
+      return phoneNumber.split('').map((num, index) => {
+        switch(index){
+          case 0:
+            return `(${num}`;
+          break;
+          case 2:
+            return `${num}) `
+          break;
+          case 5:
+            return `${num}-`
+          break;
+          default:
+          return num;
+        }
+      }).join('');
+    } else {
+      return phoneNumber;
+    }
   }
 
   render() {
@@ -82,13 +100,15 @@ class Signup extends React.Component {
             value={this.state.phoneNumber}
             keyboardType='phone-pad'
             placeholder='Phone Number'
-            onChangeText={(text) => {
-              this.setState({phoneNumber: text, invalid: false})
+            onChange={(e) => {
+
+              this.setState({phoneNumber: e.nativeEvent.text, invalid: false})
             }}
           />
         </View>
         { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
         <TouchableHighlight
+          underlayColor='#C6861D'
           onPress={() => {
             this.onSignup()
           }}
@@ -110,8 +130,8 @@ class Signup extends React.Component {
               value={this.state.smsToken}
               keyboardType='phone-pad'
               placeholder='Verification Code'
-              onChangeText={(text) => {
-                this.setState({smsToken: text, invalid: false})
+              onChange={(e) => {
+                this.setState({smsToken: e.nativeEvent.text, invalid: false})
               }}
             />
           </View>
@@ -127,7 +147,7 @@ class Signup extends React.Component {
             onPress={() => {
               this.onSignup()
             }}
-            style={[styles.button, styles.buttonLinkWrap]}>
+            style={[styles.smallButton, styles.buttonLinkWrap]}>
             <Text style={styles.buttonLink}>Send again</Text>
           </TouchableHighlight>
         </View>
@@ -165,23 +185,32 @@ let styles = StyleSheet.create({
     fontSize: 15,
   },
   headerText: {
-    fontSize: 21,
-    alignSelf: 'center'
+    fontSize: 22,
+    alignSelf: 'center',
+    textAlign: 'center',
+    paddingLeft: 8,
+    paddingRight: 8,
+    fontWeight: 'bold',
   },
   centered: {
-    alignSelf: 'center'
+    alignSelf: 'center',
+    textAlign: 'center',
+    lineHeight: 20,
   },
   boldText: {
     fontWeight: 'bold'
   },
   largeText: {
-    fontSize: 23
+    fontSize: 20,
+    marginBottom: 10,
+    marginTop: 5,
   },
   summaryText: {
     alignSelf: 'center'
   },
   logoContainer: {
-    marginTop: 40,
+    marginTop: 10,
+    marginBottom: 15,
     borderRadius: 100/2,
     backgroundColor: '#1825AD',
     padding: 15,
@@ -204,7 +233,8 @@ let styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     borderBottomWidth: 1,
-    borderColor: 'black'
+    borderColor: '#777',
+    marginLeft: 10,
   },
   errorPlaceholder: {
     height: 0
@@ -220,7 +250,7 @@ let styles = StyleSheet.create({
   underline: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     borderBottomColor: '#e6e6e6',
     marginLeft: 10
   },
@@ -230,7 +260,7 @@ let styles = StyleSheet.create({
     padding: 4,
     marginRight: 5,
     marginTop: 10,
-    fontSize: 23,
+    fontSize: 20,
     borderRadius: 8,
     color: '#333',
     fontWeight: 'bold',
@@ -249,10 +279,16 @@ let styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 3,
   },
+  smallButton: {
+    height: 20,
+    alignSelf: 'center',
+    width: 150,
+    marginTop: 20,
+    justifyContent: 'center',
+    borderRadius: 3,
+  },
   buttonLinkWrap: {
     backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderColor: '#1825AD',
     width: 120
   },
   buttonWithErrors: {

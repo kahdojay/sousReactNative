@@ -61,6 +61,7 @@ class TaskList extends React.Component {
         >
         {tasksIncomplete}
         <TouchableHighlight
+          underlayColor='transparent'
           onPress={this.handlePress.bind(this)}
         >
           <View style={styles.container}>

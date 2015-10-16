@@ -62,6 +62,17 @@ export default function SessionActions(ddpClient){
         ddpClient.call('sendSMSCode', [sessionParams.phoneNumber])
       } else {
         ddpClient.call('loginWithSMS', [sessionParams.phoneNumber, sessionParams.smsToken])
+        let {session} = getState();
+        let messageAttributes = {
+          message: 'Welcome to Sous! This is your personal Notepad, but you can create a new team and start collaborating with your fellow cooks by tapping the icon in the top right.',
+          userId: session.userId,
+          author: 'SOUS',
+          teamId: session.teamId,
+          createdAt: new Date(),
+          imageUrl: session.imageUrl,
+        }
+        console.log("SESSION", session, messageAttributes);
+        ddpClient.call('createMessage', [messageAttributes])
       }
       return dispatch(requestSession(sessionParams))
     }
@@ -70,11 +81,11 @@ export default function SessionActions(ddpClient){
   function updateSession(sessionParams) {
     return (dispatch, getState) => {
       const {session} = getState()
-      ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel)
-      ddpClient.subscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [sessionParams.teamId]);
-      ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel)
-      ddpClient.subscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [sessionParams.teamId]);
-      // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
+      // ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel)
+      // ddpClient.subscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [sessionParams.teamId]);
+      // ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel)
+      // ddpClient.subscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [sessionParams.teamId]);
+      // // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
       ddpClient.call('updateUser', [session.userId, sessionParams])
       return dispatch(receiveSession(sessionParams))
     }

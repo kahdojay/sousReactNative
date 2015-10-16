@@ -2,7 +2,7 @@ import React from 'react-native';
 import _ from 'lodash';
 import AddressBook from 'react-native-addressbook';
 import CheckBox from 'react-native-checkbox'
-
+import Colors from '../utilities/colors';
 const {
   ScrollView,
   View,
@@ -62,9 +62,9 @@ class InviteView extends React.Component {
         {
           this.state.contacts.map(function(contact, idx) {
             return (
-              <TouchableHighlight key={idx} >
+              <TouchableHighlight key={idx} underlayColor="#eee" style={{paddingTop: 10,}}>
                 <View style={styles.contactRow} >
-                  <Text>{contact.firstName} {contact.lastName}</Text>
+                  <Text style={styles.contactText}>{contact.firstName} {contact.lastName}</Text>
                   <CheckBox
                     label=''
                     onChange={(checked) => {
@@ -82,8 +82,11 @@ class InviteView extends React.Component {
             );
           }, this)
         }
-        <TouchableHighlight onPress={() => this.sendSMS()}>
-          <Text>sendsms</Text>
+        <TouchableHighlight
+          style={styles.button}
+          underlayColor={Colors.buttonPress}
+          onPress={() => this.sendSMS()}>
+          <Text style={styles.buttonText}>Send SMS</Text>
         </TouchableHighlight>
       </ScrollView>
     );
@@ -97,10 +100,32 @@ let styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingRight: 10,
     paddingLeft: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee'
   },
   container: {
     flex: 1,
     backgroundColor: 'white',
+  },
+  contactText: {
+    fontFamily: 'OpenSans',
+    fontWeight: 'bold',
+  },
+  button: {
+    height: 56,
+    backgroundColor: '#F5A623',
+    alignSelf: 'center',
+    width: 150,
+    marginTop: 20,
+    justifyContent: 'center',
+    borderRadius: 3,
+  },
+  buttonText: {
+    alignSelf: 'center',
+    fontSize: 22,
+    color: 'white',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans'
   },
 })
 
