@@ -71,6 +71,7 @@ class Signup extends React.Component {
     let formattedPhoneNumber = this.formatPhoneNumber(session.phoneNumber);
     let signup = (
       <View style={styles.login}>
+
         <Text style={styles.headerText}>Use your phone number to log in to Sous.</Text>
         <Text style={styles.centered}>First, we'll send you a <Text style={styles.boldText}>text message</Text> to verify your account.</Text>
         <View style={styles.inputContainer}>
@@ -134,6 +135,9 @@ class Signup extends React.Component {
     }
     return (
       <View style={styles.container}>
+        <View style={styles.navbar}>
+          <Text style={styles.signup}>Signup/Login</Text>
+        </View>
         <View style={styles.logoContainer}>
           <Image source={require('image!Logo')} style={styles.logoImage}></Image>
         </View>
@@ -146,6 +150,19 @@ class Signup extends React.Component {
 let styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  navbar: {
+    height: 40,
+    backgroundColor: '#1825AD',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  signup: {
+    textAlign: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans',
+    fontWeight: 'bold',
+    fontSize: 15,
   },
   headerText: {
     fontSize: 21,

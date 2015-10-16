@@ -70,8 +70,10 @@ export default function SessionActions(ddpClient){
   function updateSession(sessionParams) {
     return (dispatch, getState) => {
       const {session} = getState()
-      ddpClient.unsubscribe('messages');
-      ddpClient.subscribe('messages', sessionParams.teamId);
+      ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel)
+      ddpClient.subscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [sessionParams.teamId]);
+      ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel)
+      ddpClient.subscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [sessionParams.teamId]);
       // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
       ddpClient.call('updateUser', [session.userId, sessionParams])
       return dispatch(receiveSession(sessionParams))
