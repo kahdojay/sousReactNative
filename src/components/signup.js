@@ -143,7 +143,7 @@ class Signup extends React.Component {
             onPress={() => {
               this.onSignup()
             }}
-            style={[styles.button, styles.buttonLinkWrap]}>
+            style={[styles.smallButton, styles.buttonLinkWrap]}>
             <Text style={styles.buttonLink}>Send again</Text>
           </TouchableHighlight>
         </View>
@@ -197,7 +197,9 @@ let styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   largeText: {
-    fontSize: 20
+    fontSize: 20,
+    marginBottom: 10,
+    marginTop: 5,
   },
   summaryText: {
     alignSelf: 'center'
@@ -227,7 +229,7 @@ let styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     borderBottomWidth: 1,
-    borderColor: 'black',
+    borderColor: '#777',
     marginLeft: 10,
   },
   errorPlaceholder: {
@@ -244,7 +246,7 @@ let styles = StyleSheet.create({
   underline: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     borderBottomColor: '#e6e6e6',
     marginLeft: 10
   },
@@ -254,7 +256,7 @@ let styles = StyleSheet.create({
     padding: 4,
     marginRight: 5,
     marginTop: 10,
-    fontSize: 23,
+    fontSize: 20,
     borderRadius: 8,
     color: '#333',
     fontWeight: 'bold',
@@ -273,10 +275,16 @@ let styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 3,
   },
+  smallButton: {
+    height: 20,
+    alignSelf: 'center',
+    width: 150,
+    marginTop: 20,
+    justifyContent: 'center',
+    borderRadius: 3,
+  },
   buttonLinkWrap: {
     backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderColor: '#1825AD',
     width: 120
   },
   buttonWithErrors: {
