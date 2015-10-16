@@ -81,7 +81,7 @@ class Feed extends React.Component {
   }
 
   render() {
-    let { messages } = this.props;
+    let { messages, session } = this.props;
     let fetching =  <ActivityIndicatorIOS
                         animating={true}
                         color={'#808080'}
@@ -99,8 +99,8 @@ class Feed extends React.Component {
                 automaticallyAdjustContentInsets={false}
                 inverted
                 ref='scrollview'>
-                { this.props.messages.data.map((msg, index) => {
-                  // let date = new Date(msg.createdAt["$date"]).toLocaleTimeString();
+                { _.filter(messages.data, (msg) =>
+                  {return msg.teamId === session.teamId }).map((msg, index) => {
                   let date = new Date(msg.createdAt).toLocaleTimeString();
                   let time = date.substring(date.length-3, date.length)
                   return (

@@ -104,76 +104,92 @@ module.exports = class Menu extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      ready: true
+      ready: false
     }
   }
+  componentDidMount(){
+    setTimeout(()=> {
+      this.setState({ready: true})
+    }, 100)
+  }
   render() {
+    console.log("MENU PROPS", this.props);
     const {teams, session} = this.props
     if(teams.data.length === 0){
       return <View />;
     }
     const team = _.filter(teams.data, { id: session.teamId })[0]
+    var menu = <View>
+                <ScrollView style={styles.menu}>
+                  <View style={styles.avatarContainer}>
+                    <Image
+                      style={styles.avatar}
+                      source={{ uri: session.imageUrl }}/>
+                    <Text style={styles.name}>{session.firstName} {session.lastName}</Text>
+                    <TouchableHighlight
+                      onPress={() => {
+                        this.props.nav.replace({
+                          name: 'Profile',
+                        })
+                      }}
+                      >
+                      <Text style={styles.editProfile}>Edit Profile</Text>
+                    </TouchableHighlight>
+                  </View>
+                  <View style={styles.separator} />
+                  <View style={styles.inviteContainer}>
+                    <TouchableHighlight
+                      underlayColor='white'
+                      onPress={() => {
+                        this.props.nav.replace({
+                          name: 'Feed',
+                        })
+                      }}
+                    >
+                      <Text style={styles.teamText}>{team ? team.name: ''}</Text>
+                    </TouchableHighlight>
+                    <TouchableHighlight style={styles.saveButton}>
+                      <Text style={styles.saveText}>Invite to Notepad</Text>
+                    </TouchableHighlight>
+                  </View>
+                  <View style={styles.teamItems}>
+                    <TouchableHighlight
+                      underlayColor='white'
+                      onPress={() => {
+                        this.props.nav.replace({
+                          name: 'TeamView',
+                        })
+                      }}
+                    >
+                      <Text style={styles.teamItemText}>Prep List</Text>
+                    </TouchableHighlight>
+                    <TouchableHighlight
+                      underlayColor='white'
+                      onPress={() => {
+                        this.props.nav.replace({
+                          name: 'TeamIndex',
+                        })
+                      }}
+                    >
+                      <Text style={styles.teamItemText}>Switch Teams</Text>
+                    </TouchableHighlight>
+                    <TouchableHighlight
+                      underlayColor='white'
+                      onPress={() => {
+                        this.props.nav.replace({
+                          name: 'PurveyorIndex',
+                        })
+                      }}
+                    >
+                      <Text style={styles.teamItemText}>Order Guide</Text>
+                    </TouchableHighlight>
+                  </View>
+                </ScrollView>
+              </View>;
+    var content = this.state.ready ? menu : <View></View>;
     return (
       <View>
-        <ScrollView style={styles.menu}>
-          <View style={styles.avatarContainer}>
-            <Image
-              style={styles.avatar}
-              source={{ uri: session.imageUrl }}/>
-            <Text style={styles.name}>{session.firstName} {session.lastName}</Text>
-            <TouchableHighlight>
-              <Text style={styles.editProfile}>Edit Profile</Text>
-            </TouchableHighlight>
-          </View>
-          <View style={styles.separator} />
-          <View style={styles.inviteContainer}>
-            <TouchableHighlight
-              underlayColor='white'
-              onPress={() => {
-                this.props.nav.replace({
-                  name: 'Feed',
-                })
-              }}
-            >
-              <Text style={styles.teamText}>{team.name}</Text>
-            </TouchableHighlight>
-            <TouchableHighlight style={styles.saveButton}>
-              <Text style={styles.saveText}>Invite to Notepad</Text>
-            </TouchableHighlight>
-          </View>
-          <View style={styles.teamItems}>
-            <TouchableHighlight
-              underlayColor='white'
-              onPress={() => {
-                this.props.nav.replace({
-                  name: 'TeamView',
-                })
-              }}
-            >
-              <Text style={styles.teamItemText}>Prep List</Text>
-            </TouchableHighlight>
-            <TouchableHighlight
-              underlayColor='white'
-              onPress={() => {
-                this.props.nav.replace({
-                  name: 'RecipeIndex',
-                })
-              }}
-            >
-              <Text style={styles.teamItemText}>Recipe Book</Text>
-            </TouchableHighlight>
-            <TouchableHighlight
-              underlayColor='white'
-              onPress={() => {
-                this.props.nav.replace({
-                  name: 'PurveyorIndex',
-                })
-              }}
-            >
-              <Text style={styles.teamItemText}>Order Guide</Text>
-            </TouchableHighlight>
-          </View>
-        </ScrollView>
+        {content}
       </View>
     );
   }

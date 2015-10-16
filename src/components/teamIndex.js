@@ -43,8 +43,9 @@ class TeamIndex extends React.Component {
                     key={index}
                     team={team}
                     onPress={() => {
+                      this.props.onUpdateTeam(team.id);
                       this.props.navigator.push({
-                        name: 'TeamView',
+                        name: 'Feed',
                         navigationBar: this.props.navBar,
                       })
                     }}
