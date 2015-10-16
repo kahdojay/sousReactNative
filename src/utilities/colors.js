@@ -7,6 +7,8 @@ const Colors = {
   footerActiveHighlight: '#2700EB',
   blue: '#1E00B1',
   darkBlue: '#18008E',
+  button: '#1825AD',
+  buttonPress: '#C4851C',
 }
 
 module.exports = Colors

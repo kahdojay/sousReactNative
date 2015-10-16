@@ -38,6 +38,7 @@ class ProductListItem extends React.Component {
             />
           </View>
           <TouchableHighlight
+            underlayColor={'#eee'}
             onPress={() => {
               this.props.navigator.push({
                 name: 'ProductView',
@@ -56,7 +57,7 @@ class ProductListItem extends React.Component {
                 {this.props.product.name}
               </Text>
               <Text
-                style={{fontSize: 9, position: 'absolute', left: 0, bottom: -10, color: '#999'}}
+                style={{fontSize: 9,  color: '#999'}}
               >
                 {this.props.product.price + ' • ' + this.props.product.unit}
               </Text>
@@ -66,11 +67,12 @@ class ProductListItem extends React.Component {
             {this.props.product.quantity > 1 ? ('X' + this.props.product.quantity) : ''}
           </Text>
           <TouchableHighlight
-            underlayColor="#bbb"
+            underlayColor="transparent"
             onPress={this.decrement.bind(this)}>
             <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
           </TouchableHighlight>
           <TouchableHighlight
+            underlayColor='transparent'
             onPress={this.increment.bind(this)}>
             <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
           </TouchableHighlight>

@@ -50,7 +50,9 @@ class ProductList extends React.Component {
     return (
       <ScrollView keyboardShouldPersistTaps={false} >
         {productsUnordered}
-        <TouchableHighlight onPress={this.handlePress.bind(this)} >
+        <TouchableHighlight
+          underlayColor={'#eee'}
+          onPress={this.handlePress.bind(this)} >
           <View style={styles.container}>
             <View style={styles.roundedCorners}>
               <Text style={styles.text}>{productsOrdered.length} Ordered</Text>

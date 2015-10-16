@@ -2,7 +2,7 @@ import React from 'react-native';
 import _ from 'lodash';
 import AddressBook from 'react-native-addressbook';
 import CheckBox from 'react-native-checkbox'
-
+import Colors from '../utilities/colors';
 const {
   ScrollView,
   View,
@@ -84,7 +84,7 @@ class InviteView extends React.Component {
         }
         <TouchableHighlight
           style={styles.button}
-          underlayColor="#eee"
+          underlayColor={Colors.buttonPress}
           onPress={() => this.sendSMS()}>
           <Text style={styles.buttonText}>Send SMS</Text>
         </TouchableHighlight>
