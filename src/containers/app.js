@@ -11,7 +11,7 @@ import TeamIndex from '../components/teamIndex';
 import TeamView from '../components/teamView';
 import UserInfo from '../components/userInfo';
 import TaskView from '../components/taskView';
-let SideMenu = require('react-native-side-menu');
+import SideMenu from 'react-native-side-menu';
 import Menu from '../components/menu';
 import Feed from '../components/feed';
 import PurveyorIndex from '../components/purveyorIndex';
@@ -103,7 +103,6 @@ class App extends React.Component {
 
   getScene(route, nav) {
     const { ui, session, teams, messages, dispatch, purveyors, products } = this.props;
-    let teamId = session.teamId;
 
     switch (route.name) {
       // case 'Login':
@@ -142,49 +141,38 @@ class App extends React.Component {
                   }
                 />;
       case 'TeamView':
-        var team = _.filter(teams.data, { id: teamId })[0]
+        var team = _.filter(teams.data, { id: session.teamId })[0]
         return (
           <TeamView
             ui={ui}
             navigator={nav}
             team={team}
-            teamId={teamId}
-            onAddNewTask={function(teamId, taskName){
-              console.log("TASKS", this.teamId);
-              let tasks = this.team.tasks.map((task) => {
-                if (! task.deleted)
-                  return task.name;
-              });
-              if (tasks.indexOf(taskName) === -1) {
-                console.log("NO MATCH", teamId);
-                dispatch(actions.addTeamTask(teamId, {name: taskName}))
-              } else {
-                console.log("ERROR: Task already exists");
-              }
+            onAddNewTask={(taskName) => {
+              console.log(taskName);
+              dispatch(actions.addTeamTask({name: taskName}))
             }}
             onTaskCompletionNotification={(task) => {
               // console.log("TASK: ", task);
               var msg = `{{author}} completed task ${task.name}`;
               dispatch(actions.completeTeamTask(msg))
             }}
-            onDeleteTeam={(teamId) => {
-              dispatch(actions.deleteTeam(teamId))
+            onDeleteTeam={() => {
+              dispatch(actions.deleteTeam())
             }}
-            onUpdateTeamTask={(teamId, taskId, taskAttributes) => {
-              dispatch(actions.updateTeamTask(teamId, taskId, taskAttributes))
+            onUpdateTeamTask={(taskId, taskAttributes) => {
+              dispatch(actions.updateTeamTask(taskId, taskAttributes))
             }}
           />
         );
       case 'TaskView':
-        var team = _.filter(teams.data, { id: route.teamId })[0]
+        var team = _.filter(teams.data, { id: session.teamId })[0]
         var task = _.filter(team.tasks, {recipeId: route.recipeId})[0]
         return <TaskView
                   ui={ui}
                   task={task}
                   navigator={nav}
-                  teamId={route.teamId}
-                  onUpdateTeamTask={(teamId, taskId, taskAttributes) => {
-                    dispatch(actions.updateTeamTask(teamId, taskId, taskAttributes))
+                  onUpdateTeamTask={(taskId, taskAttributes) => {
+                    dispatch(actions.updateTeamTask(taskId, taskAttributes))
                   }}
                 />;
       case 'Feed':
@@ -203,7 +191,7 @@ class App extends React.Component {
             navigator={nav}
             purveyors={purveyors}
             onAddPurveyor={(name) => {
-              console.log("THIS", this);
+              // console.log("THIS", this);
               var purveyors = this.props.purveyors.data.map((purveyor) => {
                 if (! purveyor.deleted)
                   return purveyor.name;
@@ -356,7 +344,7 @@ class App extends React.Component {
 
   renderScene(route, nav) {
     // console.log("PROPS", this.props);
-    const { dispatch, ui } = this.props;
+    const { dispatch, ui, teams } = this.props;
 
     // redirect to initial view
     if (this.props.session.isAuthenticated){
@@ -379,10 +367,7 @@ class App extends React.Component {
     let navBar = <View />;
     let nextItem = <View />;
     let scene = this.getScene(route, nav);
-this.props.navigator.push({
-  name: 'TeamView',
-  navigationBar: this.props.navBar,
-})
+
     // setup the header for unauthenticated routes
     if(this.authenticatedRoute(route) === false){
       navBar = <View />
@@ -508,10 +493,16 @@ this.props.navigator.push({
       // stylesContainer = [styles.container, {height: ui.keyboard.screenY}];
     }
 
+    var CustomSideView = SideMenu
+    if(this.props.session.isAuthenticated !== true){
+      CustomSideView = View
+    }
+
     return (
-      <SideMenu
+      <CustomSideView
         menu={<Menu
           nav={nav}
+          teams={teams}
           session={this.props.session}
           open={this.state.open}/> }
         touchToClose={this.state.touchToClose}
@@ -521,7 +512,7 @@ this.props.navigator.push({
           {navBar}
           {scene}
         </View>
-      </SideMenu>
+      </CustomSideView>
     );
   }
 
@@ -550,7 +541,8 @@ this.props.navigator.push({
 let styles = StyleSheet.create({
   container: {
     marginTop: 20,
-    flex: 1
+    flex: 1,
+    backgroundColor: 'white'
   },
   scene: {
     flex: 1

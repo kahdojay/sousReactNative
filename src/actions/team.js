@@ -50,52 +50,73 @@ export default function TeamActions(ddpClient) {
     }
   }
 
-  function addTeamTask(teamId, taskAttributes){
+  function addTeamTask(taskAttributes){
+    return (dispatch, getState) => {
+      const {session, teams} = getState();
+      var team = _.filter(teams.data, { id: session.teamId })[0]
+      let tasks = team.tasks.map((task) => {
+        if (! task.deleted)
+          return task.name;
+      });
+      if (tasks.indexOf(taskAttributes.name) === -1) {
+        var newTaskAttributes = {
+          recipeId: Shortid.generate(),
+          name: taskAttributes.name,
+          description: "",
+          deleted: false,
+          completed: false,
+          quantity: 1,
+          unit: 0 // for future use
+        }
+        ddpClient.call('addTeamTask', [session.userId, session.teamId, newTaskAttributes]);
+        return dispatch({
+          type: UPDATE_TEAM,
+          teamId: session.teamId,
+          recipeId: newTaskAttributes.recipeId,
+          task: newTaskAttributes
+        })
+      } else {
+        return dispatch(errorTeams([{
+          machineId: 'team-task-validation',
+          message: 'Task already exists'
+        }]))
+      }
+    }
+  }
+
+  function updateTeamTask(recipeId, taskAttributes){
     return (dispatch, getState) => {
       const {session} = getState();
-      var newTaskAttributes = {
-        recipeId: Shortid.generate(),
-        name: taskAttributes.name,
-        description: "",
-        deleted: false,
-        completed: false,
-        quantity: 1,
-        unit: 0 // for future use
-      }
-      ddpClient.call('addTeamTask', [session.userId, teamId, newTaskAttributes]);
+      ddpClient.call('updateTeamTask', [session.teamId, recipeId, taskAttributes]);
       return dispatch({
         type: UPDATE_TEAM,
-        teamId: teamId,
-        recipeId: newTaskAttributes.recipeId,
-        task: newTaskAttributes
+        teamId: session.teamId,
+        recipeId: recipeId,
+        task: taskAttributes
       })
     }
   }
 
-  function updateTeamTask(teamId, recipeId, taskAttributes){
-    ddpClient.call('updateTeamTask', [teamId, recipeId, taskAttributes]);
-    return {
-      type: UPDATE_TEAM,
-      teamId: teamId,
-      recipeId: recipeId,
-      task: taskAttributes
+  function updateTeam(teamAttributes){
+    return (dispatch, getState) => {
+      const {session} = getState();
+      ddpClient.call('updateTeam', [session.teamId, teamAttributes]);
+      return dispatch({
+        type: UPDATE_TEAM,
+        teamId: session.teamId,
+        team: teamAttributes
+      })
     }
   }
 
-  function updateTeam(teamId, teamAttributes){
-    ddpClient.call('updateTeam', [teamId, teamAttributes]);
-    return {
-      type: UPDATE_TEAM,
-      teamId: teamId,
-      team: teamAttributes
-    }
-  }
-
-  function deleteTeam(teamId) {
-    ddpClient.call('deleteTeam', [teamId])
-    return {
-      type: DELETE_TEAM,
-      teamId: teamId
+  function deleteTeam() {
+    return (dispatch, getState) => {
+      const {session} = getState();
+      ddpClient.call('deleteTeam', [session.teamId])
+      return dispatch({
+        type: DELETE_TEAM,
+        teamId: session.teamId
+      })
     }
   }
 

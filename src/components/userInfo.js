@@ -73,7 +73,7 @@ class UserInfo extends React.Component{
                 onPress={() => {
                   let {firstName, lastName} = this.state;
                   if (firstName != '' && lastName != '') {
-                    console.log("REGISTER USER WITH FIRST/LAST NAME");
+                    // console.log("REGISTER USER WITH FIRST/LAST NAME");
                     this.props.onUpdateInfo({firstName: firstName, lastName: lastName});
                   }
                 }}

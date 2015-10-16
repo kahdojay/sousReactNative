@@ -37,7 +37,7 @@ function session(state = initialState.session, action) {
       newState = Object.assign({}, initialState.session, {
         version: SESSION_VERSION
       })
-      console.log('UPDATING APP SESSION TO: ', newState);
+      // console.log('UPDATING APP SESSION TO: ', newState);
     }
     return newState;
   case RESET_SESSION:
@@ -49,7 +49,6 @@ function session(state = initialState.session, action) {
     })
   case RECEIVE_SESSION:
     var newSessionState = Object.assign({}, state, action, {
-      userId: action.id,
       errors: null,
       lastUpdated: (new Date).getTime()
     })

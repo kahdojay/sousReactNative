@@ -27,7 +27,7 @@ export default function PurveyorActions(ddpClient){
       const { session } = getState();
       var newPurveyorAttributes = {
         _id: shortid.generate(),
-        teamId: session.currentTeamId,
+        teamId: session.teamId,
         name: name,
         description: "",
         products:    [],

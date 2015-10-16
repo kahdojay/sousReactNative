@@ -32,15 +32,15 @@ class TeamView extends React.Component {
       <View style={styles.container}>
         <AddForm
           placeholder="Add a Task..."
-          onSubmit={(taskName) => {
-            this.props.onAddNewTask(team.id, taskName)
-          }}/>
+          onSubmit={this.props.onAddNewTask}
+        />
         <TaskList
           navigator={this.props.navigator}
           navBar={this.props.navBar}
           team={team}
           onTaskCompletionNotification={this.props.onTaskCompletionNotification}
-          onUpdateTeamTask={this.props.onUpdateTeamTask}/>
+          onUpdateTeamTask={this.props.onUpdateTeamTask}
+        />
       </View>
     );
   }

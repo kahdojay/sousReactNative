@@ -29,12 +29,11 @@ class TaskList extends React.Component {
           <TaskListItem
             task={task}
             key={idx}
-            teamId={team.id}
-            onTaskCompletionNotification={this.props.onTaskCompletionNotification.bind(this)}
+            onTaskCompletionNotification={this.props.onTaskCompletionNotification}
             navigator={this.props.navigator}
             navBar={this.props.navBar}
             onUpdateTask={(taskAttributes) => {
-              this.props.onUpdateTeamTask(team.id, task.recipeId, taskAttributes);
+              this.props.onUpdateTeamTask(task.recipeId, taskAttributes);
             }}
           />
         )
@@ -45,19 +44,17 @@ class TaskList extends React.Component {
             <TaskListItem
               task={task}
               key={idx}
-              teamId={team.id}
-              onTaskCompletionNotification={this.props.onTaskCompletionNotification.bind(this)}
+              onTaskCompletionNotification={this.props.onTaskCompletionNotification}
               navigator={this.props.navigator}
               navBar={this.props.navBar}
               onUpdateTask={(taskAttributes) => {
-                this.props.onUpdateTeamTask(team.id, task.recipeId, taskAttributes);
+                this.props.onUpdateTeamTask(task.recipeId, taskAttributes);
               }}
             />
           )
         })
     return (
       <ScrollView
-        style={styles.scrollView}
         keyboardShouldPersistTaps={false}
         contentInset={{bottom:49}}
         automaticallyAdjustContentInsets={false}

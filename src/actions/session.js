@@ -36,17 +36,8 @@ export default function SessionActions(ddpClient){
 
   function registerSession(sessionParams) {
     return (dispatch, getState) => {
-
-      //--------------------------------------
-      // Re-connect DDP RESTRICTED channel
-      //--------------------------------------
-      ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.RESTRICTED.channel)
-      ddpClient.subscribe(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [sessionParams.phoneNumber]);
-
       // process ddp call
-      if(sessionParams.hasOwnProperty('smsToken')){
-        ddpClient.call('loginWithSMS', [sessionParams.phoneNumber, sessionParams.smsToken])
-      } else {
+      if(sessionParams.hasOwnProperty('smsToken') === false){
         // dispatch a session clear to get make sure no lingering data exists
         dispatch(receiveSession({
           isAuthenticated: false,
@@ -61,7 +52,16 @@ export default function SessionActions(ddpClient){
           teamId: null,
           errors: null,
         }))
+
+        //--------------------------------------
+        // Re-connect DDP RESTRICTED channel
+        //--------------------------------------
+        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.RESTRICTED.channel)
+        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [sessionParams.phoneNumber]);
+
         ddpClient.call('sendSMSCode', [sessionParams.phoneNumber])
+      } else {
+        ddpClient.call('loginWithSMS', [sessionParams.phoneNumber, sessionParams.smsToken])
       }
       return dispatch(requestSession(sessionParams))
     }
@@ -70,7 +70,7 @@ export default function SessionActions(ddpClient){
   function updateSession(sessionParams) {
     return (dispatch, getState) => {
       const {session} = getState()
-      console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
+      // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
       ddpClient.call('updateUser', [session.userId, sessionParams])
       return dispatch(receiveSession(sessionParams))
     }
@@ -85,6 +85,10 @@ export default function SessionActions(ddpClient){
 
   function receiveSession(response) {
     // console.log("RES", response);
+    // Add the userId from the user.id coming back from the server
+    if(response.hasOwnProperty('id') && response.id){
+      response.userId = response.id;
+    }
     return (dispatch, getState) => {
       const {session} = getState();
       var isAuthenticated = session.isAuthenticated;
@@ -93,12 +97,19 @@ export default function SessionActions(ddpClient){
       if(response.hasOwnProperty('smsVerified') && response.smsVerified === true && response.authToken){
         // console.log("SESSION", session, response);
         isAuthenticated = true;
+      }
+      if(response.hasOwnProperty('userId') && response.userId){
+        // console.log(response);
         ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.TEAMS.channel)
-        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.TEAMS.channel, [session.userId]);
+        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.TEAMS.channel, [response.userId]);
+        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.ERRORS.channel)
+        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.ERRORS.channel, [response.userId]);
+      }
+      if(response.hasOwnProperty('teamId') && response.teamId){
         ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel)
-        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [session.teamId]);
+        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [response.teamId]);
         ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel)
-        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [session.teamId]);
+        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [response.teamId]);
       }
       var action = Object.assign({}, session, response, {
         type: RECEIVE_SESSION,

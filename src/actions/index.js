@@ -35,6 +35,7 @@ function connectApp(){
     // Execute pre-connect actions
     //--------------------------------------
 
+    // dispatch(sessionActions.resetSession());
     dispatch(sessionActions.resetSessionVersion());
     dispatch(messageActions.resetMessages());
     dispatch(teamActions.resetTeams());

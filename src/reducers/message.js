@@ -48,7 +48,7 @@ function messages(state = initialState.messages, action) {
   case CREATE_MESSAGE:
     var newMessageState = Object.assign({}, state);
     var currentMessagesDataState = updateDataState(newMessageState.data, action.message)
-    console.log(action.type, action.message.id)
+    // console.log(action.type, action.message.id)
     return Object.assign({}, state, {
       data: currentMessagesDataState,
       lastUpdated: (new Date()).getTime()
