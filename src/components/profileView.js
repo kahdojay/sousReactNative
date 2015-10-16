@@ -58,7 +58,7 @@ class ProfileView extends React.Component {
 // your callback which sends string: responseType, string: response.
 // responseType will be either 'cancel', 'data', 'uri', or one of your custom button values
     UIImagePickerManager.showImagePicker(options, (responseType, response) => {
-      console.log(`Response Type = ${responseType}`);
+      // console.log(`Response Type = ${responseType}`);
 
       if (responseType !== 'cancel') {
         let source;
@@ -68,13 +68,13 @@ class ProfileView extends React.Component {
         else if (responseType === 'uri') { // Selected from library - response is the URI to the local file asset
           source = {uri: response.replace('file://', ''), isStatic: true};
         }
-        console.log("SOURCE", source);
+        // console.log("SOURCE", source);
         this.props.onUpdateAvatar(source);
       }
     });
   }
   logImageError(err) {
-    console.log("IMAGE ERROR", err);
+    // console.log("IMAGE ERROR", err);
   }
   storeImages(data){
     this.props.navigator.push({
@@ -85,11 +85,11 @@ class ProfileView extends React.Component {
   needsSave() {
     let propValues = [ this.props.session.firstName, this.props.session.lastName, this.props.session.email, this.props.session.notifications, this.props.session.phoneNumber ];
     let stateValues = [ this.state.firstName, this.state.lastName, this.state.email, this.state.notifications, this.state.phoneNumber ];
-    console.log("PROPS", propValues == stateValues);
+    // console.log("PROPS", propValues == stateValues);
     return JSON.stringify(propValues) == JSON.stringify(stateValues);
   }
   render() {
-    console.log("PROFILE", this.props);
+    // console.log("PROFILE", this.props);
     let avatar = <Image style={styles.userIcon} source={{uri: this.props.session.imageUrl}}/>
     if (! this.props.session.imageUrl) {
       avatar = <Icon name="material|account-circle" size={100} style={styles.userIcon} />

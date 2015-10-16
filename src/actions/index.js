@@ -3,7 +3,6 @@ import DDPClient from 'ddp-client'
 import ConnectActions from './connect'
 import UIActions from './ui'
 import SessionActions from './session'
-import StationActions from './station'
 import TeamActions from './team'
 import MessageActions from './message'
 import PurveyorActions from './purveyor'
@@ -26,7 +25,6 @@ const uiActions = UIActions(ddpClient)
 const sessionActions = SessionActions(ddpClient, {
   'connectActions': connectActions
 })
-const stationActions = StationActions(ddpClient)
 const teamActions = TeamActions(ddpClient)
 const messageActions = MessageActions(ddpClient)
 const purveyorActions = PurveyorActions(ddpClient)
@@ -37,11 +35,11 @@ function connectApp(){
     // Execute pre-connect actions
     //--------------------------------------
 
+    // dispatch(sessionActions.resetSession());
     dispatch(sessionActions.resetSessionVersion());
     dispatch(messageActions.resetMessages());
-    dispatch(stationActions.resetStations());
+    dispatch(teamActions.resetTeams());
     // dispatch(uiActions.resetUI()); //NOTE: why doesnt this work?
-    // dispatch(teamActions.fetchTeams());
     dispatch(purveyorActions.resetPurveyors());
 
     //--------------------------------------
@@ -57,7 +55,6 @@ function connectApp(){
     dispatch(connectActions.connectDDP({
       'uiActions': uiActions,
       'sessionActions': sessionActions,
-      'stationActions': stationActions,
       'teamActions': teamActions,
       'messageActions': messageActions,
       'purveyorActions': purveyorActions
@@ -72,7 +69,6 @@ export default Object.assign({
   uiActions,
   sessionActions,
   teamActions,
-  stationActions,
   messageActions,
   purveyorActions
 )

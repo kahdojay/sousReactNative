@@ -2,7 +2,7 @@ import { Icon } from 'react-native-icons';
 import React from 'react-native';
 import AddForm from './addForm';
 import { mainBackgroundColor } from '../utilities/colors';
-import StationIndexRow from './stationIndexRow';
+import TeamIndexRow from './teamIndexRow';
 
 const {
   ActivityIndicatorIOS,
@@ -16,7 +16,7 @@ const {
   PropTypes,
 } = React;
 
-class StationIndex extends React.Component {
+class TeamIndex extends React.Component {
 
   render() {
     // let fetching =  <ActivityIndicatorIOS
@@ -25,10 +25,10 @@ class StationIndex extends React.Component {
     //                     size={'small'} />
     return (
       <View style={styles.container}>
-        <View style={styles.stationContainer}>
+        <View style={styles.teamContainer}>
           <AddForm
-            placeholder="Add a Station..."
-            onSubmit={this.props.onAddStation.bind(this)}
+            placeholder="Add a Team..."
+            onSubmit={this.props.onAddTeam.bind(this)}
           />
           <ScrollView
             style={styles.scrollView}
@@ -36,17 +36,18 @@ class StationIndex extends React.Component {
             contentInset={{bottom:49}}
             automaticallyAdjustContentInsets={false}
           >
-            { this.props.stations.data.map((station, index) => {
-              if (station.deleted === false) {
+            { this.props.teams.data.map((team, index) => {
+              if (team.deleted === false) {
                 return (
-                  <StationIndexRow
+                  <TeamIndexRow
                     key={index}
-                    station={station}
-                    onPress={() => this.props.navigator.push({
-                      name: 'StationView',
-                      stationId: station.id,
-                      navigationBar: this.props.navBar,
-                    })}
+                    team={team}
+                    onPress={() => {
+                      this.props.navigator.push({
+                        name: 'TeamView',
+                        navigationBar: this.props.navBar,
+                      })
+                    }}
                   />
                 );
               }
@@ -62,8 +63,9 @@ class StationIndex extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
-  stationContainer: {
+  teamContainer: {
     flex: 1,
   },
   scrollView: {
@@ -76,8 +78,8 @@ const styles = StyleSheet.create({
   },
 });
 
-StationIndex.propTypes = {
-  onAddStation: PropTypes.func.isRequired,
+TeamIndex.propTypes = {
+  onAddTeam: PropTypes.func.isRequired,
 };
 
-module.exports = StationIndex;
+module.exports = TeamIndex;

@@ -17,13 +17,13 @@ const {
   Image
 } = React;
 
-class StationView extends React.Component {
+class TeamView extends React.Component {
   constructor(props) {
     super(props)
   }
 
   render() {
-    let station = this.props.station
+    let team = this.props.team
     if(this.props.ui.keyboard.visible === true){
       // navBar = <View/>
     }
@@ -32,15 +32,15 @@ class StationView extends React.Component {
       <View style={styles.container}>
         <AddForm
           placeholder="Add a Task..."
-          onSubmit={(taskName) => {
-            this.props.onAddNewTask(station.id, taskName)
-          }}/>
+          onSubmit={this.props.onAddNewTask}
+        />
         <TaskList
           navigator={this.props.navigator}
           navBar={this.props.navBar}
-          station={station}
+          team={team}
           onTaskCompletionNotification={this.props.onTaskCompletionNotification}
-          onUpdateStationTask={this.props.onUpdateStationTask}/>
+          onUpdateTeamTask={this.props.onUpdateTeamTask}
+        />
       </View>
     );
   }
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     paddingTop: 0
   },
 });
-StationView.propTypes = {
+TeamView.propTypes = {
 };
 
-export default StationView
+export default TeamView

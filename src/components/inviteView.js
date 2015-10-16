@@ -39,7 +39,7 @@ class InviteView extends React.Component {
             return c;
           })
           .value();
-        console.log('contacts:', contacts)
+        // console.log('contacts:', contacts)
         this.setState({ contacts: contacts });
       }
     })
@@ -52,7 +52,7 @@ class InviteView extends React.Component {
       .map('phoneNumbers[0].number')
       .value();
     // TODO send numbers to twilio
-    console.log('smss to send', resultSet)
+    // console.log('smss to send', resultSet)
     this.props.onSMSInvite(resultSet);
   }
 

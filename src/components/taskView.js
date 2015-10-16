@@ -47,19 +47,19 @@ class TaskView extends React.Component {
 
   saveTask() {
     if(this.state.saved === false){
-      let {stationId, task} = this.props;
+      let {task} = this.props;
       let newTask = this.props.task;
       newTask.description = this.state.textInputDescription;
       newTask.name = this.state.textInputName
-      this.props.onUpdateStationTask(stationId, task.recipeId, newTask);
+      this.props.onUpdateTeamTask(task.recipeId, newTask);
       this.setState({saved: true});
     }
   }
   deleteTask() {
-    let {stationId, task} = this.props;
+    let {task} = this.props;
     let newTask = this.props.task
     newTask.deleted = true
-    this.props.onUpdateStationTask(stationId, task.recipeId, newTask)
+    this.props.onUpdateTeamTask(task.recipeId, newTask)
     this.props.navigator.pop()
   }
   componentWillReceiveProps(nextProps){

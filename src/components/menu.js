@@ -1,5 +1,6 @@
-const React = require('react-native');
-const Dimensions = require('Dimensions');
+import _ from 'lodash'
+import React from 'react-native';
+import Dimensions from 'Dimensions';
 const {
   StyleSheet,
   ScrollView,
@@ -106,40 +107,73 @@ module.exports = class Menu extends Component {
       ready: true
     }
   }
-  componentDidMount(){
-    setTimeout(()=> {
-      this.setState({ready: true});
-    }, 2000)
-  }
   render() {
-    console.log("MENU", this.props);
-    var menu = <ScrollView style={styles.menu}>
-                <View style={styles.avatarContainer}>
-                  <Image
-                    style={styles.avatar}
-                    source={{ uri: this.props.session.imageUrl }}/>
-                  <Text style={styles.name}>{this.props.session.firstName} {this.props.session.lastName}</Text>
-                  <TouchableHighlight>
-                    <Text style={styles.editProfile}>Edit Profile</Text>
-                  </TouchableHighlight>
-                </View>
-                <View style={styles.separator} />
-                <View style={styles.inviteContainer}>
-                  <Text style={styles.teamText}>Notepad</Text>
-                  <TouchableHighlight style={styles.saveButton}>
-                    <Text style={styles.saveText}>Invite to Notepad</Text>
-                  </TouchableHighlight>
-                </View>
-                <View style={styles.teamItems}>
-                  <Text style={styles.teamItemText}>Prep List</Text>
-                  <Text style={styles.teamItemText}>Recipe Book</Text>
-                  <Text style={styles.teamItemText}>Order Guide</Text>
-                </View>
-              </ScrollView>
-    var content = this.state.ready ? menu : <View></View>
+    const {teams, session} = this.props
+    if(teams.data.length === 0){
+      return <View />;
+    }
+    const team = _.filter(teams.data, { id: session.teamId })[0]
     return (
       <View>
-        {content}
+        <ScrollView style={styles.menu}>
+          <View style={styles.avatarContainer}>
+            <Image
+              style={styles.avatar}
+              source={{ uri: session.imageUrl }}/>
+            <Text style={styles.name}>{session.firstName} {session.lastName}</Text>
+            <TouchableHighlight>
+              <Text style={styles.editProfile}>Edit Profile</Text>
+            </TouchableHighlight>
+          </View>
+          <View style={styles.separator} />
+          <View style={styles.inviteContainer}>
+            <TouchableHighlight
+              underlayColor='white'
+              onPress={() => {
+                this.props.nav.replace({
+                  name: 'Feed',
+                })
+              }}
+            >
+              <Text style={styles.teamText}>{team.name}</Text>
+            </TouchableHighlight>
+            <TouchableHighlight style={styles.saveButton}>
+              <Text style={styles.saveText}>Invite to Notepad</Text>
+            </TouchableHighlight>
+          </View>
+          <View style={styles.teamItems}>
+            <TouchableHighlight
+              underlayColor='white'
+              onPress={() => {
+                this.props.nav.replace({
+                  name: 'TeamView',
+                })
+              }}
+            >
+              <Text style={styles.teamItemText}>Prep List</Text>
+            </TouchableHighlight>
+            <TouchableHighlight
+              underlayColor='white'
+              onPress={() => {
+                this.props.nav.replace({
+                  name: 'RecipeIndex',
+                })
+              }}
+            >
+              <Text style={styles.teamItemText}>Recipe Book</Text>
+            </TouchableHighlight>
+            <TouchableHighlight
+              underlayColor='white'
+              onPress={() => {
+                this.props.nav.replace({
+                  name: 'PurveyorIndex',
+                })
+              }}
+            >
+              <Text style={styles.teamItemText}>Order Guide</Text>
+            </TouchableHighlight>
+          </View>
+        </ScrollView>
       </View>
     );
   }

@@ -1,5 +1,4 @@
 import React from 'react-native';
-import Footer from '../components/footer';
 import _ from 'lodash';
 import NavigationBar from 'react-native-navbar';
 import NavigationBarStyles from 'react-native-navbar/styles'
@@ -8,11 +7,11 @@ import { Icon } from 'react-native-icons';
 import Login from '../components/login';
 import Signup from '../components/signup';
 import ImageGallery from '../components/imageGallery';
-import StationIndex from '../components/stationIndex';
-import StationView from '../components/stationView';
+import TeamIndex from '../components/teamIndex';
+import TeamView from '../components/teamView';
 import UserInfo from '../components/userInfo';
 import TaskView from '../components/taskView';
-let SideMenu = require('react-native-side-menu');
+import SideMenu from 'react-native-side-menu';
 import Menu from '../components/menu';
 import Feed from '../components/feed';
 import PurveyorIndex from '../components/purveyorIndex';
@@ -103,8 +102,7 @@ class App extends React.Component {
   }
 
   getScene(route, nav) {
-    const { ui, session, teams, stations, messages, dispatch, purveyors, products } = this.props;
-    let teamId = session.teamId;
+    const { ui, session, teams, messages, dispatch, purveyors, products } = this.props;
 
     switch (route.name) {
       // case 'Login':
@@ -119,74 +117,62 @@ class App extends React.Component {
         return <Signup
                   navigator={nav}
                   session={session}
-                  teams={teams}
                   onRegisterSession={(sessionParams) => {
                     dispatch(actions.registerSession(sessionParams))
                   }}
                 />
-      case 'StationIndex':
-        return <StationIndex
+              case 'TeamIndex':
+        return <TeamIndex
                   navigator={nav}
-                  stations={stations}
-                  onAddStation={(name) => {
-                    var stations = this.props.stations.data.map((station) => {
-                      if (! station.deleted)
-                        return station.name;
+                  teams={teams}
+                  onAddTeam={(name) => {
+                    var teams = this.props.teams.data.map((team) => {
+                      if (! team.deleted)
+                        return team.name;
                     });
-                    if (stations.indexOf(name) === -1) {
-                      dispatch(actions.addStation(name, teamId))
+                    if (teams.indexOf(name) === -1) {
+                      dispatch(actions.addTeam(name))
                     } else {
-                      console.log("ERROR: station already exists");
+                      console.log("ERROR: team already exists");
                     }
                   }}
                   onBack={() =>
                     this._back.bind(this)
                   }
                 />;
-      case 'StationView':
-        var station = _.filter(stations.data, { id: route.stationId })[0]
+      case 'TeamView':
+        var team = _.filter(teams.data, { id: session.teamId })[0]
         return (
-          <StationView
+          <TeamView
             ui={ui}
             navigator={nav}
-            station={station}
-            stationId={route.stationId}
-            onAddNewTask={function(stationId, taskName){
-              console.log("TASKS", this.stationId);
-              let tasks = this.station.tasks.map((task) => {
-                if (! task.deleted)
-                  return task.name;
-              });
-              if (tasks.indexOf(taskName) === -1) {
-                console.log("NO MATCH", stationId);
-                dispatch(actions.addStationTask(stationId, {name: taskName}))
-              } else {
-                console.log("ERROR: Task already exists");
-              }
+            team={team}
+            onAddNewTask={(taskName) => {
+              console.log(taskName);
+              dispatch(actions.addTeamTask({name: taskName}))
             }}
             onTaskCompletionNotification={(task) => {
               // console.log("TASK: ", task);
               var msg = `{{author}} completed task ${task.name}`;
-              dispatch(actions.completeStationTask(msg))
+              dispatch(actions.completeTeamTask(msg))
             }}
-            onDeleteStation={(stationId) => {
-              dispatch(actions.deleteStation(stationId))
+            onDeleteTeam={() => {
+              dispatch(actions.deleteTeam())
             }}
-            onUpdateStationTask={(stationId, taskId, taskAttributes) => {
-              dispatch(actions.updateStationTask(stationId, taskId, taskAttributes))
+            onUpdateTeamTask={(taskId, taskAttributes) => {
+              dispatch(actions.updateTeamTask(taskId, taskAttributes))
             }}
           />
         );
       case 'TaskView':
-        var station = _.filter(stations.data, { id: route.stationId })[0]
-        var task = _.filter(station.tasks, {recipeId: route.recipeId})[0]
+        var team = _.filter(teams.data, { id: session.teamId })[0]
+        var task = _.filter(team.tasks, {recipeId: route.recipeId})[0]
         return <TaskView
                   ui={ui}
                   task={task}
                   navigator={nav}
-                  stationId={route.stationId}
-                  onUpdateStationTask={(stationId, taskId, taskAttributes) => {
-                    dispatch(actions.updateStationTask(stationId, taskId, taskAttributes))
+                  onUpdateTeamTask={(taskId, taskAttributes) => {
+                    dispatch(actions.updateTeamTask(taskId, taskAttributes))
                   }}
                 />;
       case 'Feed':
@@ -194,7 +180,6 @@ class App extends React.Component {
                   navigator={nav}
                   messages={messages}
                   userEmail={session.login}
-                  teamId={session.teamId}
                   session={session}
                   onCreateMessage={(msg) => {
                     dispatch(actions.createMessage(msg))
@@ -206,17 +191,17 @@ class App extends React.Component {
             navigator={nav}
             purveyors={purveyors}
             onAddPurveyor={(name) => {
-              console.log("THIS", this);
+              // console.log("THIS", this);
               var purveyors = this.props.purveyors.data.map((purveyor) => {
                 if (! purveyor.deleted)
                   return purveyor.name;
               });
               if (purveyors.indexOf(name) === -1) {
-                dispatch(actions.addPurveyor(name, teamId))
+                dispatch(actions.addPurveyor(name))
               } else {
                 console.log("ERROR: purveyor already exists");
               }
-            }}
+          }}
             onBack={() => {
               this._back()
             }}
@@ -314,11 +299,11 @@ class App extends React.Component {
     }
   }
 
-  showActionSheetStationView(navigator, route) {
+  showActionSheetTeamView(navigator, route) {
     const { dispatch } = this.props;
     let buttons = [
-      'Delete Station',
-      // 'Rename Station',
+      'Delete Team',
+      // 'Rename Team',
       'Cancel'
     ]
     let deleteAction = 0;
@@ -330,7 +315,7 @@ class App extends React.Component {
     },
     (buttonIndex) => {
       if (deleteAction === buttonIndex){
-        dispatch(actions.deleteStation(route.stationId))
+        dispatch(actions.deleteTeam(route.teamId))
         navigator.pop();
       }
     });
@@ -359,7 +344,7 @@ class App extends React.Component {
 
   renderScene(route, nav) {
     // console.log("PROPS", this.props);
-    const { dispatch, ui } = this.props;
+    const { dispatch, ui, teams } = this.props;
 
     // redirect to initial view
     if (this.props.session.isAuthenticated){
@@ -368,9 +353,9 @@ class App extends React.Component {
         if (this.props.session.firstName === "" || this.props.session.lastName === "") {
           route.name = 'UserInfo';
         }
-        // else send to StationIndex
+        // else send to Feed
         else {
-          route.name = 'StationIndex';
+          route.name = 'Feed';
         }
       }
     }
@@ -388,7 +373,7 @@ class App extends React.Component {
       navBar = <View />
     } else {
       switch(route.name) {
-        case 'StationIndex':
+        case 'TeamIndex':
           // nextItem = this.navBarItem({
           //   onPress: (navigator, route) => {
           //     console.log(arguments)
@@ -406,7 +391,7 @@ class App extends React.Component {
           //   <Text style={[NavigationBarStyles.navBarText, NavigationBarStyles.navBarButtonText, ]}>Profile</Text>
           // </View>)
           // console.log(nextItem)
-          console.log("THIS", this.context.menuActions);
+          // console.log("THIS", this.context.menuActions);
           navBar = React.addons.cloneWithProps(this.navBar, {
 
             navigator: nav,
@@ -444,11 +429,11 @@ class App extends React.Component {
             onPrev: null,
           })
           break;
-        case "StationView":
+        case "TeamView":
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            onNext: (navigator, route) => this.showActionSheetStationView(navigator, route),
+            onNext: (navigator, route) => this.showActionSheetTeamView(navigator, route),
             nextTitle: '...',
             hidePrev: false,
           })
@@ -508,25 +493,26 @@ class App extends React.Component {
       // stylesContainer = [styles.container, {height: ui.keyboard.screenY}];
     }
 
-    let footer = (
-      <Footer
-        onPressResetSession={() => {
-          dispatch(actions.resetSession())
-        }}
-        nav={nav}
-        ui={ui}
-        route={route}
-        />
-    );
-    let pageFooter = route.name == "UserInfo" ? <View></View> : footer;
-    return (
+    var CustomSideView = SideMenu
+    if(this.props.session.isAuthenticated !== true){
+      CustomSideView = View
+    }
 
+    return (
+      <CustomSideView
+        menu={<Menu
+          nav={nav}
+          teams={teams}
+          session={this.props.session}
+          open={this.state.open}/> }
+        touchToClose={this.state.touchToClose}
+        onChange={this.handleChange.bind(this)}
+      >
         <View style={styles.container}>
           {navBar}
           {scene}
-          {pageFooter}
         </View>
-
+      </CustomSideView>
     );
   }
 
@@ -540,10 +526,6 @@ class App extends React.Component {
 
   render() {
     return (
-      <SideMenu
-        menu={<Menu session={this.props.session} open={this.state.open}/> }
-        touchToClose={this.state.touchToClose}
-        onChange={this.handleChange.bind(this)}>
       <Navigator
         initialRoute={{
           index: 0,
@@ -552,7 +534,6 @@ class App extends React.Component {
         renderScene={this.renderScene.bind(this)}
         configureScene={this.configureScene.bind(this)}
       />
-    </SideMenu>
     )
   }
 }
@@ -560,7 +541,8 @@ class App extends React.Component {
 let styles = StyleSheet.create({
   container: {
     marginTop: 20,
-    flex: 1
+    flex: 1,
+    backgroundColor: 'white'
   },
   scene: {
     flex: 1
@@ -631,7 +613,6 @@ function select(state) {
     ui: state.ui,
     session: state.session,
     teams: state.teams,
-    stations: state.stations,
     messages: state.messages,
     purveyors: state.purveyors,
     products: state.products,

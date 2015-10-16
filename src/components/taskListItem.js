@@ -52,7 +52,6 @@ class TaskListItem extends React.Component {
               this.props.navigator.push({
                 name: 'TaskView',
                 recipeId: this.props.task.recipeId,
-                stationId: this.props.stationId,
                 navigationBar: this.props.navBar,
               })
             }}

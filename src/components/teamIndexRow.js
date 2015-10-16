@@ -12,13 +12,13 @@ const {
   StyleSheet,
 } = React;
 
-class StationIndexRow extends React.Component {
+class TeamIndexRow extends React.Component {
   render() {
-    let { station } = this.props
-    let stationTasks = _.filter(station.tasks,{deleted: false})
+    let { team } = this.props
+    let teamTasks = _.filter(team.tasks,{deleted: false})
 
-    const numCompletedTasks = _.filter(stationTasks, {completed: true}).length
-    const totalNumTasks = stationTasks.length
+    const numCompletedTasks = _.filter(teamTasks, {completed: true}).length
+    const totalNumTasks = teamTasks.length
     const progress = numCompletedTasks/totalNumTasks
     let progressColor = progress < 0.9 ? "#4A90E2" : "#7ED321";
     let percentage = Math.floor(( numCompletedTasks / totalNumTasks)*100) || 0
@@ -31,8 +31,8 @@ class StationIndexRow extends React.Component {
           <View
             style={styles.textProgressContainer} >
             <View
-              style={styles.stationInfo} >
-              <Text style={styles.rowText}>{this.props.station.name}</Text>
+              style={styles.teamInfo} >
+              <Text style={styles.rowText}>{this.props.team.name}</Text>
               <Text style={styles.percentage}>
                 {percentage}%
               </Text>
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#bbb',
     borderBottomWidth: 1,
   },
-  stationInfo: {
+  teamInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   },
 })
 
-StationIndexRow.propTypes = {
+TeamIndexRow.propTypes = {
 };
 
-export default StationIndexRow
+export default TeamIndexRow
