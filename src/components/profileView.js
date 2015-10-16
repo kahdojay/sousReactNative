@@ -1,5 +1,6 @@
 import { Icon } from 'react-native-icons';
 import React from 'react-native';
+import Colors from '../utilities/colors';
 import { mainBackgroundColor } from '../utilities/colors';
 let UIImagePickerManager = require('NativeModules').UIImagePickerManager;
 const {
@@ -93,6 +94,7 @@ class ProfileView extends React.Component {
       avatar = <Icon name="material|account-circle" size={100} style={styles.userIcon} />
     }
     let phoneNumber = <TouchableHighlight
+                        underlayColor={Colors.darkBlue}
                         style={styles.phoneNumber}>
                         <Text style={styles.phoneText}>{this.props.session.phoneNumber}</Text>
                       </TouchableHighlight>
@@ -106,6 +108,7 @@ class ProfileView extends React.Component {
     }
     let saveChanges = <View style={styles.saveContainer}>
                         <TouchableHighlight
+                          underlayColor='#bbb'
                           onPress={() => {
                             let {firstName, lastName, email, notifications, phoneNumber} = this.state;
                             let data = {
@@ -136,8 +139,8 @@ class ProfileView extends React.Component {
             onPress={() => this.showActionSheet()}
             style={styles.avatar}>
             <View>
-            {avatar}
-            <Text style={styles.changeAvatarText}>Change Avatar</Text>
+              {avatar}
+              <Text style={styles.changeAvatarText}>Change Avatar</Text>
             </View>
           </TouchableHighlight>
           </View>
@@ -173,10 +176,15 @@ class ProfileView extends React.Component {
                   }}
                   value={this.state.email}></TextInput>
               </View>
-              <View style={styles.infoField}>
-                <Text style={styles.inputName}>Invite Users</Text>
+              <TouchableHighlight
+                onPress={() => {console.log('Invite')}}
+                style={styles.infoField} underlayColor='#eee'>
+                <View style={{flexDirection: 'row', flex: 1}}>
+
+                <Text style={styles.inviteText}>Invite Users</Text>
                 <Icon name="fontawesome|plus" size={20} color={'#777'} style={styles.inviteIcon}/>
-              </View>
+                </View>
+              </TouchableHighlight>
             </View>
             {! this.needsSave() ? saveChanges : <View></View>}
             <View style={styles.userPreferences}>
@@ -244,6 +252,14 @@ let styles = StyleSheet.create({
   },
   inputName: {
     flex: 1,
+    color: 'black',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans',
+    fontSize: 14,
+    letterSpacing: -.5,
+  },
+  inviteText: {
+    flex: 8,
     color: 'black',
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
@@ -344,6 +360,7 @@ let styles = StyleSheet.create({
     height: 20,
     width: 20,
     marginRight: 8,
+    flex: 1,
   },
   logo: {
     flex: 2.5,
