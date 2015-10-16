@@ -57,21 +57,25 @@ class Signup extends React.Component {
   }
 
   formatPhoneNumber(phoneNumber){
-    return phoneNumber.split('').map((num, index) => {
-      switch(index){
-        case 0:
-          return `(${num}`;
-        break;
-        case 2:
-          return `${num}) `
-        break;
-        case 5:
-          return `${num}-`
-        break;
-        default:
-        return num;
-      }
-    }).join('');
+    if (phoneNumber) {
+      return phoneNumber.split('').map((num, index) => {
+        switch(index){
+          case 0:
+            return `(${num}`;
+          break;
+          case 2:
+            return `${num}) `
+          break;
+          case 5:
+            return `${num}-`
+          break;
+          default:
+          return num;
+        }
+      }).join('');
+    } else {
+      return phoneNumber;
+    }
   }
 
   render() {

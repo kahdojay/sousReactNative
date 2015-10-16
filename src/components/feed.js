@@ -103,10 +103,14 @@ class Feed extends React.Component {
                   {return msg.teamId === session.teamId }).map((msg, index) => {
                   let date = new Date(msg.createdAt).toLocaleTimeString();
                   let time = date.substring(date.length-3, date.length)
+                  let icon = <Icon name='fontawesome|user' size={30} color='#f7f7f7' style={styles.avatar}/>
+                  if (msg.imageUrl) {
+                    icon = <Image source={{uri: msg.imageUrl}} style={styles.avatarImage} />
+                  }
                   return (
                     <View key={index} style={styles.messageContainer}>
                       <View style={styles.message}>
-                        <Icon name='fontawesome|user' size={30} color='#f7f7f7' style={styles.avatar}/>
+                        {icon}
                         <View style={styles.messageContentContainer}>
                           <View style={styles.messageTextContainer}>
                             <Text style={styles.messageAuthor}>{msg.author}</Text>
@@ -178,6 +182,11 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignSelf: 'center',
     flex: 1
+  },
+  avatarImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
   container: {
     flex: 1,

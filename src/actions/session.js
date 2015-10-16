@@ -62,6 +62,17 @@ export default function SessionActions(ddpClient){
         ddpClient.call('sendSMSCode', [sessionParams.phoneNumber])
       } else {
         ddpClient.call('loginWithSMS', [sessionParams.phoneNumber, sessionParams.smsToken])
+        let {session} = getState();
+        let messageAttributes = {
+          message: 'Welcome to Sous! This is your personal Notepad, but you can create a new team and start collaborating with your fellow cooks by tapping the icon in the top right.',
+          userId: session.userId,
+          author: 'SOUS',
+          teamId: session.teamId,
+          createdAt: new Date(),
+          imageUrl: session.imageUrl,
+        }
+        console.log("SESSION", session, messageAttributes);
+        ddpClient.call('createMessage', [messageAttributes])
       }
       return dispatch(requestSession(sessionParams))
     }

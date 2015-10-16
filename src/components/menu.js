@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { Icon } from 'react-native-icons';
 import React from 'react-native';
 import Dimensions from 'Dimensions';
 const {
@@ -119,13 +120,17 @@ module.exports = class Menu extends Component {
       return <View />;
     }
     const team = _.filter(teams.data, { id: session.teamId })[0]
+    let avatar = <Icon name="material|account-circle" size={100} style={styles.avatar} />
+    if (session.imageUrl) {
+      avatar = <Image
+        style={styles.avatar}
+        source={{ uri: session.imageUrl }}/>;
+    }
     return (
       <View>
         <ScrollView style={styles.menu}>
           <View style={styles.avatarContainer}>
-            <Image
-              style={styles.avatar}
-              source={{ uri: session.imageUrl }}/>
+            {avatar}
             <Text style={styles.name}>{session.firstName} {session.lastName}</Text>
             <TouchableHighlight
               onPress={() => {
