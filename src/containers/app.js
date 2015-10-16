@@ -121,10 +121,18 @@ class App extends React.Component {
                     dispatch(actions.registerSession(sessionParams))
                   }}
                 />
-              case 'TeamIndex':
+      case 'TeamIndex':
+        console.log("ACTIONS", actions);
         return <TeamIndex
                   navigator={nav}
                   teams={teams}
+                  onUpdateTeam={(teamId) => {
+                    console.log("TEAM ID", actions);
+                    dispatch(actions.updateSession({
+                      teamId: teamId
+                    }));
+                    dispatch(actions.resetMessages());
+                  }}
                   onAddTeam={(name) => {
                     var teams = this.props.teams.data.map((team) => {
                       if (! team.deleted)
@@ -190,6 +198,7 @@ class App extends React.Component {
           <PurveyorIndex
             navigator={nav}
             purveyors={purveyors}
+            session={session}
             onAddPurveyor={(name) => {
               // console.log("THIS", this);
               var purveyors = this.props.purveyors.data.map((purveyor) => {
@@ -374,6 +383,7 @@ class App extends React.Component {
     } else {
       switch(route.name) {
         case 'TeamIndex':
+        console.log("PROPS", this);
           // nextItem = this.navBarItem({
           //   onPress: (navigator, route) => {
           //     console.log(arguments)
@@ -413,6 +423,7 @@ class App extends React.Component {
           })
           break;
         case 'Feed':
+          console.log("PROPS", this);
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
@@ -505,8 +516,8 @@ class App extends React.Component {
           teams={teams}
           session={this.props.session}
           open={this.state.open}/> }
-        touchToClose={this.state.touchToClose}
-        onChange={this.handleChange.bind(this)}
+          touchToClose={this.state.touchToClose}
+          onChange={this.handleChange.bind(this)}
       >
         <View style={styles.container}>
           {navBar}

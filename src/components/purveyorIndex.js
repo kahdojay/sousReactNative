@@ -20,24 +20,26 @@ const {
 class PurveyorIndex extends React.Component {
   render() {
     let self = this
-    const { purveyors, products } = this.props
+    const { purveyors, products, session } = this.props
 
-    let purveyorsList = _.map(purveyors.data, function(purveyor, idx) {
-      if (purveyor.deleted === false) {
-        return (
-          <PurveyorIndexRow
-            key={idx}
-            purveyor={purveyor}
-            onPress={() => {
-              self.props.navigator.push({
-                name: 'PurveyorView',
-                purveyorId: purveyor.id,
-                navigationBar: self.props.navBar
-              })
-            }}
-          />
-        )
-      }
+    let purveyorsList = _.map(_.filter(purveyors.data, (purveyor) =>
+      {return purveyor.teamId === session.teamId}),
+        function(purveyor, idx) {
+          if (purveyor.deleted === false) {
+            return (
+              <PurveyorIndexRow
+                key={idx}
+                purveyor={purveyor}
+                onPress={() => {
+                  self.props.navigator.push({
+                    name: 'PurveyorView',
+                    purveyorId: purveyor.id,
+                    navigationBar: self.props.navBar
+                  })
+                }}
+              />
+            )
+          }
     })
 
     return (
