@@ -1,5 +1,6 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
+import Colors from '../utilities/colors';
 
 const {
   View,
@@ -21,7 +22,9 @@ class FeedViewLeftButton extends React.Component {
     let { navigator, route } = this.props;
 
     return (
-      <TouchableHighlight onPress={this.handlePress.bind(this)} >
+      <TouchableHighlight
+        underlayColor={Colors.darkBlue}
+        onPress={this.handlePress.bind(this)} >
         <Icon name='fontawesome|bars' size={30} color='white' style={styles.hamburger} />
       </TouchableHighlight>
     );
@@ -32,6 +35,7 @@ let styles = StyleSheet.create({
   hamburger: {
     width: 50,
     height: 50,
+    marginTop: 6,
   }
 })
 

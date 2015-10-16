@@ -117,6 +117,7 @@ class App extends React.Component {
         return <TeamIndex
                   navigator={nav}
                   teams={teams}
+                  messages={messages}
                   onUpdateTeam={(teamId) => {
                     dispatch(actions.updateSession({
                       teamId: teamId
