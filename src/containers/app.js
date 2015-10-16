@@ -33,7 +33,8 @@ const {
   StyleSheet,
   Navigator,
   TouchableHighlight,
-  TouchableOpacity
+  TouchableOpacity,
+  ScrollView,
 } = React;
 
 class App extends React.Component {
@@ -106,13 +107,16 @@ class App extends React.Component {
 
     switch (route.name) {
       case 'Signup':
-        return <Signup
-                  navigator={nav}
-                  session={session}
-                  onRegisterSession={(sessionParams) => {
-                    dispatch(actions.registerSession(sessionParams))
-                  }}
-                />
+        return (
+          <Signup
+            navigator={nav}
+            session={session}
+            onRegisterSession={(sessionParams) => {
+              dispatch(actions.registerSession(sessionParams))
+            }}
+            ui={ui}
+          />
+        );
       case 'TeamIndex':
         return <TeamIndex
                   navigator={nav}
@@ -175,15 +179,17 @@ class App extends React.Component {
                   }}
                 />;
       case 'Feed':
-        return <Feed
-                  navigator={nav}
-                  messages={messages}
-                  userEmail={session.login}
-                  session={session}
-                  onCreateMessage={(msg) => {
-                    dispatch(actions.createMessage(msg))
-                  }}
-                />;
+        return (
+          <Feed
+            navigator={nav}
+            messages={messages}
+            userEmail={session.login}
+            session={session}
+            onCreateMessage={(msg) => {
+              dispatch(actions.createMessage(msg))
+            }}
+          />
+        );
       case 'PurveyorIndex':
         return (
           <PurveyorIndex
@@ -413,7 +419,7 @@ class App extends React.Component {
             onPrev: null,
           })
           break;
-        case "TeamView":
+        case 'TeamView':
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
@@ -422,7 +428,7 @@ class App extends React.Component {
             hidePrev: false,
           })
           break;
-        case "PurveyorView":
+        case 'PurveyorView':
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
@@ -463,20 +469,6 @@ class App extends React.Component {
       }
     }
 
-    // console.log(ui.keyboard.visible);
-    if(ui.keyboard.visible === true){
-      // header = <View/>
-    }
-    // console.log('app.js navBar', navBar)
-
-    let stylesContainer = [styles.container, {height: ui.keyboard.screenY}];
-    // console.log(ui.keyboard.screenY);
-
-    // // TODO: fix the height animation to prevent FOUC
-    if(ui.keyboard.visible === true){
-      // stylesContainer = [styles.container, {height: ui.keyboard.screenY}];
-    }
-
     var CustomSideView = SideMenu
     if(this.props.session.isAuthenticated !== true){
       CustomSideView = View
@@ -484,15 +476,18 @@ class App extends React.Component {
 
     return (
       <CustomSideView
-        menu={<Menu
-          nav={nav}
-          teams={teams}
-          session={this.props.session}
-          open={this.state.open}/> }
-          touchToClose={this.state.touchToClose}
-          onChange={this.handleChange.bind(this)}
+        menu={
+          <Menu
+            nav={nav}
+            teams={teams}
+            session={this.props.session}
+            open={this.state.open}
+          />
+        }
+        touchToClose={this.state.touchToClose}
+        onChange={this.handleChange.bind(this)}
       >
-        <View style={styles.container}>
+        <View style={styles.container} >
           {navBar}
           {scene}
         </View>
@@ -501,7 +496,7 @@ class App extends React.Component {
   }
 
   configureScene(route) {
-    // // TODO: commented out to prevent ghosting, review animation options later
+    // TODO: commented out to prevent ghosting, review animation options later
     if (route.sceneConfig) {
       return route.sceneConfig;
     }
@@ -526,7 +521,7 @@ let styles = StyleSheet.create({
   container: {
     marginTop: 20,
     flex: 1,
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   scene: {
     flex: 1
@@ -587,10 +582,6 @@ let styles = StyleSheet.create({
     flex: 1,
   },
 })
-
-// App.contextTypes = {
-//   menuActions: React.PropTypes.object.isRequired
-// };
 
 function select(state) {
   return {
