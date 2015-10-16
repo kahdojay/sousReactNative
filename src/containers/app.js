@@ -13,6 +13,7 @@ import TaskView from '../components/taskView';
 import SideMenu from 'react-native-side-menu';
 import Menu from '../components/menu';
 import Feed from '../components/feed';
+import FeedViewLeftButton from '../components/feedViewLeftButton';
 import PurveyorIndex from '../components/purveyorIndex';
 import PurveyorView from '../components/purveyorView';
 import ProductView from '../components/productView';
@@ -335,8 +336,8 @@ class App extends React.Component {
       if (route.name === 'Login' || route.name === 'Signup' || route.name == 'UserInfo') {
         if (this.props.session.firstName === "" || this.props.session.lastName === "") {
           route.name = 'UserInfo';
-        }
-        else {
+        } else {
+          // else send to Feed
           route.name = 'Feed';
         }
       }
@@ -376,7 +377,6 @@ class App extends React.Component {
           // console.log(nextItem)
           // console.log("THIS", this.context.menuActions);
           navBar = React.addons.cloneWithProps(this.navBar, {
-
             navigator: nav,
             route: route,
             hidePrev: true,
@@ -400,8 +400,8 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            hidePrev: true,
             onNext: null,
+            customPrev: <FeedViewLeftButton />,
           })
           break;
         case 'PurveyorIndex':
