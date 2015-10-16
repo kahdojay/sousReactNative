@@ -26,8 +26,6 @@ export default function SessionActions(ddpClient){
   function inviteContacts(contactList) {
     return (dispatch, getState) => {
       const { session } = getState();
-      // TODO remove dummy numbers here
-      contactList = ['6466961475', '562 310 5753', '(203)-507-1105', ' (806) 789-2921']
       contactList.forEach((contact) => {
         ddpClient.call('sendSMSInvite', [contact, session.teamId, session.userId]);
       })
