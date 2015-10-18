@@ -72,6 +72,12 @@ export default function ConnectActions(ddpClient) {
             case 'purveyors':
               dispatch(purveyorActions.receivePurveyors(data))
               break;
+            case 'categories':
+              dispatch(teamActions.receiveCategories(data))
+              break;
+            case 'products':
+              dispatch(teamActions.receiveProducts(data))
+              break;
             case 'users':
               dispatch(sessionActions.receiveSession(data))
               break;

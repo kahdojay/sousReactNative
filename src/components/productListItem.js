@@ -1,4 +1,4 @@
-import { Icon, } from 'react-native-icons';
+import { Icon } from 'react-native-icons';
 import React from 'react-native'
 import CheckBox from 'react-native-checkbox'
 import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
@@ -12,47 +12,95 @@ const {
 } = React;
 
 class ProductListItem extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      added: false,
+      quantity: 1,
+      purveyorId: '',
+      note: ''
+    }
+  }
+  componentWillMount() {
+    // this.updateStateFromCart(this.props.cart.orders)
+  }
+  updateStateFromCart(cartOrders) {
+    let cartItem = null
+    let cartPurveyorId = ''
+    this.props.product.purveyors.map((purveyorId) => {
+      if (cartOrders.hasOwnProperty(purveyorId) === true && cartOrders[purveyorId].products.hasOwnProperty(this.props.product.id)) {
+        cartPurveyorId = purveyorId
+        cartItem = cartOrders[purveyorId].products[this.props.product.id]
+      }
+    })
+    if (cartItem !== null) {
+      this.setState({
+        added: true,
+        quantity: cartItem.quantity,
+        purveyorId: cartPurveyorId,
+        note: cartItem.note
+      })
+    }
+  }
+  updateCartFromState() {
+    if (this.state.added === true) {
+      this.props.onUpdateProductInCart(
+        this.state.purveyorId, 
+        this.props.product.id, 
+        {
+          quantity: this.state.quantity,
+          note: this.state.note
+        }
+      )
+    }
+  }
   increment() {
-    this.props.onUpdateProduct({quantity: (this.props.product.quantity + 1)})
+    this.setState({
+      quantity: this.state.quantity + 1
+    }, this.updateCartFromState.bind(this))
   }
   decrement() {
-    if (this.props.product.quantity > 1 ) {
-      this.props.onUpdateProduct({quantity: (this.props.product.quantity - 1)})
+    if (this.state.quantity > 1 ) {
+      this.setState({
+        quantity: this.state.quantity - 1
+      }, this.updateCartFromState.bind(this))
     }
   }
   handleOrderProduct() {
-    this.props.onUpdateProduct({ordered: !this.props.product.ordered});
+    this.setState({
+      added: !this.state.added
+    }, this.updateCartFromState.bind(this))
   }
   render() {
     return (
       <View style={styles.container}>
         <View style={[
           styles.row,
-          this.props.product.ordered && styles.rowCompleted
+          this.state.added && styles.rowCompleted
         ]}>
           <View style={styles.checkboxContainer}>
             <CheckBox
               label=''
               onChange={this.handleOrderProduct.bind(this)}
-              checked={this.props.product.ordered}
+              checked={this.state.added}
             />
           </View>
-          <TouchableHighlight
+          {/*<TouchableHighlight
             underlayColor={'#eee'}
             onPress={() => {
               this.props.navigator.push({
                 name: 'ProductView',
                 productId: this.props.product.productId,
                 purveyorId: this.props.purveyorId,
-                navigationBar: this.props.navBar
               })
             }}
-            style={styles.main}
-          >
-            <View>
+          >*/}
+            <View
+              style={styles.main}
+            >
               <Text style={[
                 styles.text,
-                this.props.ordered && styles.textCompleted
+                this.state.added && styles.textCompleted
               ]}>
                 {this.props.product.name}
               </Text>
@@ -62,9 +110,9 @@ class ProductListItem extends React.Component {
                 {this.props.product.price + ' • ' + this.props.product.unit}
               </Text>
             </View>
-          </TouchableHighlight>
+          {/*</TouchableHighlight>*/}
           <Text style={styles.quantity}>
-            {this.props.product.quantity > 1 ? ('X' + this.props.product.quantity) : ''}
+            {this.state.quantity > 1 ? ('X' + this.state.quantity) : ''}
           </Text>
           <TouchableHighlight
             underlayColor="transparent"

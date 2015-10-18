@@ -18,6 +18,7 @@ import PurveyorIndex from '../components/purveyorIndex';
 import PurveyorView from '../components/purveyorView';
 import ProductView from '../components/productView';
 import CategoryIndex from '../components/categoryIndex';
+import CategoryView from '../components/categoryView';
 import ProfileView from '../components/profileView';
 import InviteView from '../components/inviteView';
 import NavbarTitle from '../components/NavbarTitle';
@@ -261,7 +262,26 @@ class App extends React.Component {
             navigator={nav}
             categories={team.categories}
           />
-      );
+        )
+      case 'CategoryView':
+        var team = _.filter(teams.data, { id: session.teamId })[0]
+        var category = _.filter(team.categories, { id: route.categoryId })[0]
+        // console.log('teams products', teams.products)
+        console.log('route', route)
+        console.log('category', category)
+        // console.log('team', team)
+        return (
+          <CategoryView
+            ui={ui}
+            navigator={nav}
+            category={category}
+            cart={team.cart}
+            products={teams.products}
+            onUpdateProductInCart={(purveyorId, productId, productAttributes) => {
+              dispatch(actions.addProductToCart(purveyorId, productId, productAttributes))
+            }}
+          />
+        );
       case 'Profile':
         return (
           <ProfileView
@@ -386,7 +406,7 @@ class App extends React.Component {
           })
           break;
         case 'Feed':
-          console.log("PROPS", this);
+          // console.log("PROPS", this);
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,

@@ -8,6 +8,8 @@ export const DDP = {
     MESSAGES: {channel: 'messages'},
     TEAMS: {channel: 'teams'},
     PURVEYORS: {channel: 'purveyors'},
+    CATEGORIES: {channel: 'categories'},
+    PRODUCTS: {channel: 'products'},
     ERRORS: {channel: 'errors'}
   },
 }
