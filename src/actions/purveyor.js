@@ -29,8 +29,8 @@ export default function PurveyorActions(ddpClient){
         _id: shortid.generate(),
         teamId: session.teamId,
         name: name,
-        description: "",
-        products:    [],
+        description: '',
+        // products:    [],
         deleted:  false
       }
       ddpClient.call('createPurveyor', [newPurveyorAttributes]);

@@ -43,16 +43,15 @@ class ProductListItem extends React.Component {
     }
   }
   updateCartFromState() {
-    if (this.state.added === true) {
-      this.props.onUpdateProductInCart(
-        this.state.purveyorId, 
-        this.props.product.id, 
-        {
-          quantity: this.state.quantity,
-          note: this.state.note
-        }
-      )
-    }
+    this.props.onUpdateProductInCart(
+      (this.state.added === true ? 'add' : 'remove'),
+      {
+        purveyorId: this.state.purveyorId,
+        productId: this.props.product.id, 
+        quantity: this.state.quantity,
+        note: this.state.note
+      }
+    )
   }
   increment() {
     this.setState({
@@ -67,23 +66,35 @@ class ProductListItem extends React.Component {
     }
   }
   handleOrderProduct() {
+    // default to first purveyor
+    // let purveyor = this.props.product.purveyors[0]
+    // if product has multiple purveyors, show modal first asking which purveyor
     this.setState({
       added: !this.state.added
+      // set the purveyor
     }, this.updateCartFromState.bind(this))
   }
   render() {
+    let checkbox
+    if (this.props.product.purveyors.length > 1) {
+      checkbox =  <CheckBox
+                    label=''
+                    onChange={this.handleOrderProduct.bind(this)}
+                    checked={this.state.added}
+                  />
+    } else {
+      checkbox = <CheckBox
+                    label=''
+                    onChange={this.handleOrderProduct.bind(this)}
+                    checked={this.state.added}
+                    dots={true}
+                  />
+    }
     return (
       <View style={styles.container}>
-        <View style={[
-          styles.row,
-          this.state.added && styles.rowCompleted
-        ]}>
+        <View style={styles.row}>
           <View style={styles.checkboxContainer}>
-            <CheckBox
-              label=''
-              onChange={this.handleOrderProduct.bind(this)}
-              checked={this.state.added}
-            />
+            {checkbox}
           </View>
           {/*<TouchableHighlight
             underlayColor={'#eee'}
@@ -98,10 +109,7 @@ class ProductListItem extends React.Component {
             <View
               style={styles.main}
             >
-              <Text style={[
-                styles.text,
-                this.state.added && styles.textCompleted
-              ]}>
+              <Text style={styles.productText}>
                 {this.props.product.name}
               </Text>
               <Text
@@ -151,9 +159,6 @@ let styles = StyleSheet.create({
     padding: 5,
     alignItems: 'center',
   },
-  rowCompleted: {
-    backgroundColor: productCompletedBackgroundColor,
-  },
   checkboxContainer: {
     flex: 1,
     alignItems: 'center',
@@ -161,13 +166,10 @@ let styles = StyleSheet.create({
   main: {
     flex: 4,
   },
-  text: {
+  productText: {
     fontWeight: 'bold',
     color: 'black',
     fontSize: 20
-  },
-  textCompleted: {
-    color: '#777',
   },
 });
 
