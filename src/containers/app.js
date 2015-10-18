@@ -440,6 +440,14 @@ class App extends React.Component {
             hidePrev: false,
           })
           break;
+        case 'CategoryIndex':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            onNext: null,
+            customPrev: <FeedViewLeftButton />,
+          })
+          break;
         case 'ProductView':
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
@@ -499,7 +507,6 @@ class App extends React.Component {
   }
 
   configureScene(route) {
-    // TODO: commented out to prevent ghosting, review animation options later
     if (route.sceneConfig) {
       return route.sceneConfig;
     }
