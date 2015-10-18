@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
 CategoryIndex.propTypes = {
   // onAddCategory: React.PropTypes.func,
   navigator: React.PropTypes.object.isRequired,
-  categories: React.PropTypes.object,
+  categories: React.PropTypes.array.isRequired,
 };
 
 module.exports = CategoryIndex;

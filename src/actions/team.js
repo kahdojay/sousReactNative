@@ -5,14 +5,14 @@ import {
   GET_TEAMS,
   REQUEST_TEAMS,
   RECEIVE_TEAMS,
+  RECEIVE_CATEGORIES,
+  RECEIVE_PRODUCTS,
   ERROR_TEAMS,
   ADD_TEAM,
   UPDATE_TEAM,
   DELETE_TEAM,
   COMPLETE_TEAM_TASK
 } from './actionTypes'
-
-const defaultCategories = [];
 
 export default function TeamActions(ddpClient) {
 
@@ -26,14 +26,18 @@ export default function TeamActions(ddpClient) {
 
   function addTeam(name) {
     return (dispatch, getState) => {
-      const {session} = getState();
+      const {session, teams} = getState();
       var newTeamAttributes = {
         _id: Shortid.generate(),
         name: name,
         tasks: [],
+        categories: teams.defaultCategories,
         users: [session.userId],
-        categories: defaultCategories,
-        cart: {},
+        cart: {
+          date: null,
+          total: 0.0,
+          orders: {}
+        },
         deleted: false
       }
       ddpClient.call('createTeam', [newTeamAttributes]);
@@ -144,11 +148,27 @@ export default function TeamActions(ddpClient) {
     }
   }
 
+  function receiveCategories(category) {
+    return {
+      type: RECEIVE_CATEGORIES,
+      category: category
+    }
+  }
+
+  function receiveProducts(product) {
+    return {
+      type: RECEIVE_PRODUCTS,
+      product: product
+    }
+  }
+
   return {
     RESET_TEAMS,
     GET_TEAMS,
     REQUEST_TEAMS,
     RECEIVE_TEAMS,
+    RECEIVE_CATEGORIES,
+    RECEIVE_PRODUCTS,
     ERROR_TEAMS,
     ADD_TEAM,
     UPDATE_TEAM,
@@ -160,6 +180,8 @@ export default function TeamActions(ddpClient) {
     deleteTeam,
     // getTeams,
     receiveTeams,
+    receiveCategories,
+    receiveProducts,
     resetTeams,
     completeTeamTask,
   }

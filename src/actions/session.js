@@ -123,6 +123,10 @@ export default function SessionActions(ddpClient){
         ddpClient.subscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [response.teamId]);
         ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel)
         ddpClient.subscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [response.teamId]);
+        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.CATEGORIES.channel)
+        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.CATEGORIES.channel, [response.teamId]);
+        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.PRODUCTS.channel)
+        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.PRODUCTS.channel, [response.teamId]);
       }
       var action = Object.assign({}, session, response, {
         type: RECEIVE_SESSION,
