@@ -16,10 +16,6 @@ class CategoryIndexRow extends React.Component {
   render() {
     let { category } = this.props
 
-    const numCompletedProducts = _.filter(categoryProducts, {completed: true}).length
-    const totalNumProducts = categoryProducts.length
-    const progress = numCompletedProducts/totalNumProducts
-
     return (
       <TouchableOpacity
         onPress={this.props.onPress}
@@ -29,9 +25,9 @@ class CategoryIndexRow extends React.Component {
             style={styles.textProgressContainer} >
             <View
               style={styles.categoryInfo} >
-              <Text style={styles.rowText}>{this.props.category.name}</Text>
+              <Text style={styles.rowText}>{category.name}</Text>
               <Text style={styles.percentage}>
-                {numCompletedProducts}/{totalNumProducts}
+                {category.products.length}
               </Text>
             </View>
           </View>
