@@ -122,6 +122,13 @@ class Signup extends React.Component {
         <View style={styles.login}>
           <Text style={styles.headerText}>We just sent a text to</Text>
           <Text style={[styles.boldText, styles.centered, styles.largeText]}>{formattedPhoneNumber}</Text>
+          <TouchableHighlight
+            onPress={() => {
+              this.onSignup()
+            }}
+            style={[styles.smallButton, styles.buttonLinkWrap]}>
+            <Text style={styles.buttonLink}>Send again</Text>
+          </TouchableHighlight>
           <Text style={styles.centered}>Enter the verification code below to sign in.</Text>
           <View style={styles.inputContainer}>
             <TextInput
@@ -142,13 +149,6 @@ class Signup extends React.Component {
             }}
             style={styles.button}>
             <Text style={styles.buttonText}>Verify</Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            onPress={() => {
-              this.onSignup()
-            }}
-            style={[styles.smallButton, styles.buttonLinkWrap]}>
-            <Text style={styles.buttonLink}>Send again</Text>
           </TouchableHighlight>
         </View>
       );
@@ -290,7 +290,6 @@ let styles = StyleSheet.create({
     height: 20,
     alignSelf: 'center',
     width: 150,
-    marginTop: 20,
     justifyContent: 'center',
     borderRadius: 3,
   },
