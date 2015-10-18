@@ -17,6 +17,7 @@ import FeedViewLeftButton from '../components/feedViewLeftButton';
 import PurveyorIndex from '../components/purveyorIndex';
 import PurveyorView from '../components/purveyorView';
 import ProductView from '../components/productView';
+import CategoryIndex from '../components/categoryIndex';
 import ProfileView from '../components/profileView';
 import InviteView from '../components/inviteView';
 import NavbarTitle from '../components/NavbarTitle';
@@ -207,7 +208,7 @@ class App extends React.Component {
               } else {
                 console.log("ERROR: purveyor already exists");
               }
-          }}
+            }}
             onBack={() => {
               this._back()
             }}
@@ -253,6 +254,14 @@ class App extends React.Component {
             }}
           />
         );
+      case 'CategoryIndex':
+        var team = _.filter(teams.data, { id: session.teamId })[0]
+        return (
+          <CategoryIndex
+            navigator={nav}
+            categories={team.categories}
+          />
+        )
       case 'Profile':
         return (
           <ProfileView
