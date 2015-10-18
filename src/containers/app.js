@@ -261,7 +261,7 @@ class App extends React.Component {
             navigator={nav}
             categories={team.categories}
           />
-        )
+      );
       case 'Profile':
         return (
           <ProfileView

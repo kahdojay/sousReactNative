@@ -71,4 +71,4 @@ CategoryIndex.propTypes = {
   categories: React.PropTypes.object,
 };
 
-module.exports = CategoryIndex;
+export default CategoryIndex
