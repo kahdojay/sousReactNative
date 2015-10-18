@@ -25,12 +25,10 @@ class CategoryView extends React.Component {
 
   render() {
     const {cart, category} = this.props
-    console.log('category', category)
     let products = _.filter(this.props.products, (product) => {
       if (category.products.indexOf(product.id) !== -1)
         return product
     })
-    console.log('products', products)
 
     if(this.props.ui.keyboard.visible === true){
       // navBar = <View/>
