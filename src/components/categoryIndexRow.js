@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   },
 })
 
-PurveyorIndexRow.propTypes = {
+CategoryIndexRow.propTypes = {
   onPress: React.PropTypes.func,
   category: React.PropTypes.object,
 };
