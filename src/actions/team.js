@@ -12,6 +12,7 @@ import {
   COMPLETE_TEAM_TASK
 } from './actionTypes'
 
+const defaultCategories = [];
 
 export default function TeamActions(ddpClient) {
 
@@ -31,6 +32,8 @@ export default function TeamActions(ddpClient) {
         name: name,
         tasks: [],
         users: [session.userId],
+        categories: defaultCategories,
+        cart: {},
         deleted: false
       }
       ddpClient.call('createTeam', [newTeamAttributes]);
