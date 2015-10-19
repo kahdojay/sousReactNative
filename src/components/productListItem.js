@@ -1,6 +1,7 @@
-import { Icon } from 'react-native-icons';
+import { Icon } from 'react-native-icons'
 import React from 'react-native'
 import CheckBox from 'react-native-checkbox'
+import ProductToggle from './productToggle'
 import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
 
 const {
@@ -9,6 +10,7 @@ const {
   Text,
   StyleSheet,
   View,
+  Modal,
 } = React;
 
 class ProductListItem extends React.Component {
@@ -17,11 +19,14 @@ class ProductListItem extends React.Component {
     this.state = {
       added: false,
       quantity: 1,
-      purveyorId: '',
+      selectedPurveyorId: this.props.product.purveyors[0],
       note: ''
     }
   }
   componentWillMount() {
+    // this.updateStateFromCart(this.props.cart.orders)
+  }
+  componentDidUpdate(prevProps, prevState) {
     // this.updateStateFromCart(this.props.cart.orders)
   }
   updateStateFromCart(cartOrders) {
@@ -46,7 +51,7 @@ class ProductListItem extends React.Component {
     this.props.onUpdateProductInCart(
       (this.state.added === true ? 'add' : 'remove'),
       {
-        purveyorId: this.state.purveyorId,
+        purveyorId: this.state.selectedPurveyorId,
         productId: this.props.product.id, 
         quantity: this.state.quantity,
         note: this.state.note
@@ -65,60 +70,51 @@ class ProductListItem extends React.Component {
       }, this.updateCartFromState.bind(this))
     }
   }
-  handleOrderProduct() {
+  handleOrderProduct(id) {
     // default to first purveyor
-    // let purveyor = this.props.product.purveyors[0]
+    let purveyorId = this.props.product.purveyors[0]
     // if product has multiple purveyors, show modal first asking which purveyor
     this.setState({
-      added: !this.state.added
+      added: !this.state.added,
       // set the purveyor
+      purveyorId: purveyorId
     }, this.updateCartFromState.bind(this))
   }
   render() {
-    let checkbox
-    if (this.props.product.purveyors.length > 1) {
-      checkbox =  <CheckBox
-                    label=''
-                    onChange={this.handleOrderProduct.bind(this)}
-                    checked={this.state.added}
-                  />
-    } else {
-      checkbox = <CheckBox
-                    label=''
-                    onChange={this.handleOrderProduct.bind(this)}
-                    checked={this.state.added}
-                    dots={true}
-                  />
-    }
+    let {product} = this.props
+    // let multiplePurveyors = product.purveyors.length > 1
+    {/*let checkbox =  <CheckBox
+                      label=''
+                      onChange={this.handleOrderProduct.bind(this)}
+                      checked={this.state.added}
+                      dots={multiplePurveyors}
+                    />*/}
     return (
       <View style={styles.container}>
         <View style={styles.row}>
           <View style={styles.checkboxContainer}>
-            {checkbox}
+            <ProductToggle
+              purveyors={product.purveyors}
+              onToggleCartProduct={this.handleOrderProduct.bind(this)}
+            />
           </View>
-          {/*<TouchableHighlight
-            underlayColor={'#eee'}
-            onPress={() => {
-              this.props.navigator.push({
-                name: 'ProductView',
-                productId: this.props.product.productId,
-                purveyorId: this.props.purveyorId,
-              })
-            }}
-          >*/}
             <View
               style={styles.main}
             >
               <Text style={styles.productText}>
-                {this.props.product.name}
+                {product.name}
               </Text>
               <Text
                 style={{fontSize: 9,  color: '#999'}}
               >
-                {this.props.product.price + ' • ' + this.props.product.unit}
+                {product.amount + ' • ' + product.unit}
+              </Text>
+              <Text
+                style={{fontSize: 9,  color: '#999'}}
+              >
+                {this.state.selectedPurveyorId}
               </Text>
             </View>
-          {/*</TouchableHighlight>*/}
           <Text style={styles.quantity}>
             {this.state.quantity > 1 ? ('X' + this.state.quantity) : ''}
           </Text>
@@ -167,9 +163,8 @@ let styles = StyleSheet.create({
     flex: 4,
   },
   productText: {
-    fontWeight: 'bold',
     color: 'black',
-    fontSize: 20
+    fontSize: 15
   },
 });
 
