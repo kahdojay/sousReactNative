@@ -47,17 +47,19 @@ function teams(state = initialState.teams, action) {
       data: currentTeamsDataState,
       lastUpdated: (new Date()).getTime()
     });
+
   case RECEIVE_CATEGORIES:
     var defaultCategoriesState = Object.assign({}, state);
     var currentDefaultCategoriesState = updateDataState(defaultCategoriesState.defaultCategories, action.category)
     return Object.assign({}, state, {
       defaultCategories: currentDefaultCategoriesState,
     });
+
   case RECEIVE_PRODUCTS:
-    var productsState = Object.assign({}, state);
-    var newProductsState = updateDataState(productsState.products, action.product)
+    var newProductsState = Object.assign({}, state);
+    var currentProductsState = updateDataState(newProductsState.products, action.product)
     return Object.assign({}, state, {
-      products: newProductsState,
+      products: currentProductsState,
     });
 
   // delete the team

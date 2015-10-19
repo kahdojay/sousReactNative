@@ -2,6 +2,9 @@ import { Icon } from 'react-native-icons';
 import React from 'react-native'
 import CheckBox from 'react-native-checkbox'
 import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
+import {
+  CART
+} from '../actions/actionTypes';
 
 const {
   TouchableHighlight,
@@ -22,8 +25,13 @@ class ProductListItem extends React.Component {
     }
   }
   componentWillMount() {
+    // console.log(this.props);
     // this.updateStateFromCart(this.props.cart.orders)
   }
+  // componentDidUpdate(prevProps, prevState) {
+  //   // console.log(this.props);
+  //   // this.updateStateFromCart(this.props.cart.orders)
+  // }
   updateStateFromCart(cartOrders) {
     let cartItem = null
     let cartPurveyorId = ''
@@ -43,14 +51,16 @@ class ProductListItem extends React.Component {
     }
   }
   updateCartFromState() {
+    const cartAttributes = {
+      purveyorId: this.state.purveyorId,
+      productId: this.props.product.id,
+      quantity: this.state.quantity,
+      note: this.state.note
+    };
+    console.log(cartAttributes)
     this.props.onUpdateProductInCart(
-      (this.state.added === true ? 'add' : 'remove'),
-      {
-        purveyorId: this.state.purveyorId,
-        productId: this.props.product.id, 
-        quantity: this.state.quantity,
-        note: this.state.note
-      }
+      (this.state.added === true ? CART.ADD : CART.REMOVE),
+      cartAttributes
     )
   }
   increment() {

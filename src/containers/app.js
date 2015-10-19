@@ -267,8 +267,8 @@ class App extends React.Component {
         var team = _.filter(teams.data, { id: session.teamId })[0]
         var category = _.filter(team.categories, { id: route.categoryId })[0]
         // console.log('teams products', teams.products)
-        console.log('route', route)
-        console.log('category', category)
+        // console.log('route', route)
+        // console.log('category', category)
         // console.log('team', team)
         return (
           <CategoryView
@@ -277,9 +277,9 @@ class App extends React.Component {
             category={category}
             cart={team.cart}
             products={teams.products}
-            onUpdateProductInCart={(cartAction, productAttributes) => {
-              console.log(cartAction, productAttributes)
-              // dispatch(actions.addProductToCart(cartAction, productAttributes))
+            onUpdateProductInCart={(cartAction, cartAttributes) => {
+              // console.log(cartAction, cartAttributes)
+              dispatch(actions.updateProductInCart(cartAction, cartAttributes))
             }}
           />
         );
