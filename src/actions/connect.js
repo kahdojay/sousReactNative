@@ -16,7 +16,7 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
-  function connectChannels(session){
+  function connectChannels(session, teamIds){
     Object.keys(DDP.SUBSCRIBE_LIST).forEach((resourceKey) => {
       var resource = DDP.SUBSCRIBE_LIST[resourceKey];
       // console.log('Connecting: ', resource.channel, ' with session: ', session);
@@ -25,6 +25,8 @@ export default function ConnectActions(ddpClient) {
         resourceParam = session.phoneNumber
       } else if(resource.channel === 'errors' || resource.channel === 'teams'){
         resourceParam = session.userId;
+      } else if (resource.channel === 'messages') {
+        resourceParam = teamIds;
       } else {
         resourceParam = session.teamId
       }
@@ -41,17 +43,20 @@ export default function ConnectActions(ddpClient) {
       purveyorActions
     } = allActions
     return (dispatch, getState) => {
-      const {session} = getState()
+      const {session, teams} = getState();
 
+      console.log('TEAMS', teams);
+      let teamIds = teams.data.map((team) => {return team.id});
+      ddpClient.on('connected', () => {
+        // console.log('CONNECTED: TODO');
+        if (session.isAuthenticated)
+          connectChannels(session, teamIds)
+      });
       //--------------------------------------
       // Bind DDP client events
       //--------------------------------------
 
-      ddpClient.on('connected', () => {
-        // console.log('CONNECTED: TODO');
-        if (session.isAuthenticated)
-          connectChannels(session)
-      })
+
       ddpClient.on('message', (msg) => {
         var log = JSON.parse(msg);
         // console.log("MAIN DDP MSG", log);

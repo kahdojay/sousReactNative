@@ -80,7 +80,6 @@ export default function SessionActions(ddpClient){
     return (dispatch, getState) => {
       const {session} = getState()
       // ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel)
-      // ddpClient.subscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [sessionParams.teamId]);
       // ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel)
       // ddpClient.subscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [sessionParams.teamId]);
       // // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
@@ -110,7 +109,7 @@ export default function SessionActions(ddpClient){
         function resolveTeams() {
           return resolve(teams);
         }
-        setTimeout(resolveTeams, 1000);
+        setTimeout(resolveTeams, 100);
       });
       p1.then(function(teams){
         // console.log('TEAMS', teams.data);
