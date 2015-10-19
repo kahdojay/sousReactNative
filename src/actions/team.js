@@ -272,7 +272,8 @@ export default function TeamActions(ddpClient, allActions) {
       const {session} = getState()
       const orderId = Shortid.generate();
       ddpClient.call('sendOrder', [session.userId, session.teamId, orderId])
-      //TODO: add each teams[session.teamId].cart.orders into teams[session.teamId].orders seperately
+      // TODO: add each teams[session.teamId].cart.orders into teams[session.teamId].orders seperately
+      // ...
       return dispatch({
         type: ORDER_SENT
       })
