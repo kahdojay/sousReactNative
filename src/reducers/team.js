@@ -60,6 +60,20 @@ function teams(state = initialState.teams, action) {
       products: newProductsState,
     });
 
+  case RECEIVE_CATEGORIES:
+    var defaultCategoriesState = Object.assign({}, state);
+    var currentDefaultCategoriesState = updateDataState(defaultCategoriesState.defaultCategories, action.category)
+    return Object.assign({}, state, {
+      defaultCategories: currentDefaultCategoriesState,
+    });
+
+  case RECEIVE_PRODUCTS:
+    var newProductsState = Object.assign({}, state);
+    var currentProductsState = updateDataState(newProductsState.products, action.product)
+    return Object.assign({}, state, {
+      products: currentProductsState,
+    });
+
   // delete the team
   case DELETE_TEAM:
     var newTeamState = Object.assign({}, state);

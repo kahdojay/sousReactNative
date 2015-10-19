@@ -2,6 +2,9 @@ import React from 'react-native'
 import ProductToggle from './productToggle'
 import { Icon } from 'react-native-icons'
 import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
+import {
+  CART
+} from '../actions/actionTypes';
 
 const {
   TouchableHighlight,
@@ -22,13 +25,13 @@ class ProductListItem extends React.Component {
       note: ''
     }
   }
+
   componentWillMount() {
-    // this.updateStateFromCart(this.props.cart.orders)
+    // console.log(this.props);
+    this.stateUpdateFromCart(this.props.cart.orders)
   }
-  componentDidUpdate(prevProps, prevState) {
-    // this.updateStateFromCart(this.props.cart.orders)
-  }
-  updateStateFromCart(cartOrders) {
+
+  stateUpdateFromCart(cartOrders) {
     let cartItem = null
     let cartPurveyorId = ''
     this.props.product.purveyors.map((purveyorId) => {
@@ -38,45 +41,54 @@ class ProductListItem extends React.Component {
       }
     })
     if (cartItem !== null) {
-      this.setState({
+      const newState = {
         added: true,
         quantity: cartItem.quantity,
         purveyorId: cartPurveyorId,
         note: cartItem.note
-      })
+      };
+      // console.log(newState)
+      this.setState(newState);
     }
   }
-  updateCartFromState() {
+
+  cartUpdateFromState() {
+    const cartAttributes = {
+      purveyorId: this.state.selectedPurveyorId,
+      productId: this.props.product.id,
+      quantity: this.state.quantity,
+      note: this.state.note
+    };
+    // console.log(cartAttributes)
     this.props.onUpdateProductInCart(
-      (this.state.added === true ? 'add' : 'remove'),
-      {
-        purveyorId: this.state.selectedPurveyorId,
-        productId: this.props.product.id, 
-        quantity: this.state.quantity,
-        note: this.state.note
-      }
+      (this.state.added === true ? CART.ADD : CART.REMOVE),
+      cartAttributes
     )
   }
+
   increment() {
     this.setState({
       quantity: this.state.quantity + 1
-    }, this.updateCartFromState.bind(this))
+    }, this.cartUpdateFromState.bind(this))
   }
+
   decrement() {
     if (this.state.quantity > 1 ) {
       this.setState({
         quantity: this.state.quantity - 1
-      }, this.updateCartFromState.bind(this))
+      }, this.cartUpdateFromState.bind(this))
     }
   }
+
   handleToggleProduct(id) {
     this.setState({
       added: !this.state.added,
       selectedPurveyorId: id
-    }, this.updateCartFromState.bind(this))
+    }, this.cartUpdateFromState.bind(this))
   }
   render() {
     let {product} = this.props
+
     return (
       <View style={styles.container}>
         <View style={styles.row}>
@@ -99,7 +111,7 @@ class ProductListItem extends React.Component {
               <Text
                 style={{fontSize: 9,  color: '#999'}}
               >
-                {product.amount + ' • ' + product.unit}
+                {product.amount + ' ' + product.unit}
               </Text>
               <Text
                 style={{fontSize: 9,  color: '#999'}}

@@ -40,8 +40,12 @@ class SousApp extends React.Component {
   render() {
     if (this.state.rehydrated === false) {
       return (
-        <View>
-          <Text>LOADING</Text>
+        <View style={{
+          marginTop: 20,
+          flex: 1,
+          backgroundColor: '#18008E',
+        }}>
+          <Text style={{color: 'white', alignSelf: 'center'}}>LOADING</Text>
         </View>
       )
     } else {

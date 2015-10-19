@@ -262,7 +262,7 @@ class App extends React.Component {
             navigator={nav}
             categories={team.categories}
           />
-        )
+        );
       case 'CategoryView':
         var team = _.filter(teams.data, { id: session.teamId })[0]
         var category = _.filter(team.categories, { id: route.categoryId })[0]
@@ -273,9 +273,9 @@ class App extends React.Component {
             category={category}
             cart={team.cart}
             products={teams.products}
-            onUpdateProductInCart={(cartAction, productAttributes) => {
-              console.log(cartAction, productAttributes)
-              // dispatch(actions.addProductToCart(cartAction, productAttributes))
+            onUpdateProductInCart={(cartAction, cartAttributes) => {
+              // console.log(cartAction, cartAttributes)
+              dispatch(actions.updateProductInCart(cartAction, cartAttributes))
             }}
           />
         );
