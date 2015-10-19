@@ -14,7 +14,20 @@ const {
 
 class TeamIndexRow extends React.Component {
   render() {
-    let { team } = this.props
+    let { team, messages } = this.props
+    // console.log('TEAM MESSAGES', team);
+    let memberCount = _.compact(team.users).length;
+    console.log('MEMBERS', memberCount);
+    let filteredMessages = messages.data.map((message) => {
+      if (message.teamId === team.id)
+        return message;
+    });
+    let recentMessages = filteredMessages.sort((a,b) => {
+      return b.createdAt - a.createdAt
+    });
+    console.log('FILTERED MESSAGES', recentMessages);
+    let mostRecentMessage = recentMessages[0].message.split('').splice(0, 30).join('') + '...';
+    console.log('RECENT', mostRecentMessage);
     let teamTasks = _.filter(team.tasks,{deleted: false})
 
     const numCompletedTasks = _.filter(teamTasks, {completed: true}).length
@@ -32,16 +45,15 @@ class TeamIndexRow extends React.Component {
             style={styles.textProgressContainer} >
             <View
               style={styles.teamInfo} >
-              <Text style={styles.rowText}>{this.props.team.name}</Text>
+              <View style={styles.teamTextContainer}>
+                <Text style={styles.rowText}>{this.props.team.name}</Text>
+                <Text style={styles.memberCount}>{memberCount} members</Text>
+              </View>
               <Text style={styles.percentage}>
-                {percentage}%
+                {mostRecentMessage}
               </Text>
             </View>
-            <ProgressViewIOS
-              trackTintColor="#e6e6e6"
-              progressTintColor={progressColor}
-              style={styles.progress}
-              progress={progress} />
+
           </View>
           <Icon name='material|chevron-right' size={40} color='#aaa' style={styles.iconArrow}/>
         </View>
@@ -75,14 +87,34 @@ const styles = StyleSheet.create({
   textProgressContainer: {
     flex: 1,
   },
+  teamTextContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  memberCount: {
+    fontFamily: 'OpenSans',
+    fontSize: 11,
+    color: '#999',
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  percentage:{
+    fontFamily: 'OpenSans',
+    color: '#777',
+    fontSize: 13,
+    marginLeft: 5,
+  },
   separator: {
     height: 5,
     borderBottomColor: '#bbb',
     borderBottomWidth: 1,
   },
   teamInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'stretch',
   },
   rowText: {
     fontWeight: 'bold',
