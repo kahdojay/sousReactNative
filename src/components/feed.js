@@ -154,7 +154,8 @@ const styles = StyleSheet.create({
   },
   messageContentContainer: {
     flex: 9,
-    marginLeft: 10
+    marginLeft: 10,
+    paddingRight: 10,
   },
   messageContainer: {
     padding: 0,
