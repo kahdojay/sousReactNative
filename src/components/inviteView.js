@@ -30,6 +30,7 @@ class InviteView extends React.Component {
         console.log('error fetching contacts')
       }
       else {
+        console.log('contacts', contacts)
         contacts = _.chain(contacts)
           // filter contacts with no numbers vvv
           .filter(function(c) { return c.phoneNumbers[0]; })
@@ -39,7 +40,6 @@ class InviteView extends React.Component {
             return c;
           })
           .value();
-        // console.log('contacts:', contacts)
         this.setState({ contacts: contacts });
       }
     })
@@ -51,8 +51,6 @@ class InviteView extends React.Component {
       .filter(function(c) { return c.selected; })
       .map('phoneNumbers[0].number')
       .value();
-    // TODO send numbers to twilio
-    // console.log('smss to send', resultSet)
     this.props.onSMSInvite(resultSet);
   }
 

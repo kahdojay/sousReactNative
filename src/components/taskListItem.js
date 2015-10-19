@@ -21,7 +21,6 @@ class TaskListItem extends React.Component {
     }
   }
   handleCompleteTask() {
-    console.log('COMPLETE');
     if (! this.props.task.completed) {
       this.props.onTaskCompletionNotification(this.props.task);
     }
@@ -43,9 +42,9 @@ class TaskListItem extends React.Component {
         ]}>
           <View style={styles.checkboxContainer}>
             <CheckBox
+              checked={this.props.task.completed}
               label=''
               onChange={this.handleCompleteTask.bind(this)}
-              checked={this.props.task.completed}
             />
           </View>
           <TouchableHighlight
