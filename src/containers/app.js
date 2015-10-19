@@ -54,7 +54,6 @@ class App extends React.Component {
     }
     this.navBar = (
       <NavigationBar
-        customTitle={<NavbarTitle />}
         style={styles.nav}
       />
     );
@@ -405,6 +404,8 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
+            title: 'Feed',
+            titleColor: 'black',
             customPrev: <FeedViewLeftButton />,
             customNext: <FeedViewRightButton />,
           })
@@ -533,6 +534,8 @@ let styles = StyleSheet.create({
   },
   nav: {
     backgroundColor: Colors.navbarColor,
+    borderBottomWidth: 2,
+    borderBottomColor: '#ccc',
   },
   navSignUp: {
     justifyContent: 'center',

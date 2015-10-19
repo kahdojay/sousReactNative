@@ -25,7 +25,7 @@ class FeedViewLeftButton extends React.Component {
       <TouchableHighlight
         underlayColor={Colors.darkBlue}
         onPress={this.handlePress.bind(this)} >
-        <Icon name='fontawesome|bars' size={30} color='white' style={styles.hamburger} />
+        <Icon name='fontawesome|bars' size={30} color={Colors.navbarIconColor} style={styles.hamburger} />
       </TouchableHighlight>
     );
   }
