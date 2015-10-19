@@ -15,6 +15,7 @@ import Menu from '../components/menu';
 import Feed from '../components/feed';
 import FeedViewLeftButton from '../components/feedViewLeftButton';
 import FeedViewRightButton from '../components/feedViewRightButton';
+import TimesNavButton from '../components/timesNavButton';
 import PurveyorIndex from '../components/purveyorIndex';
 import PurveyorView from '../components/purveyorView';
 import ProductView from '../components/productView';
@@ -374,7 +375,8 @@ class App extends React.Component {
             route: route,
             hidePrev: false,
             buttonsColor: '#ccc',
-            prevTitle: 'X', //TODO create customPrev
+            customPrev: <TimesNavButton />,
+            // prevTitle: 'x', //TODO create customPrev
             title: 'Switch Teams',
           })
           break;
@@ -405,6 +407,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             buttonsColor: '#ccc',
+
             prevTitle: 'X',
             title: teamName,
           })
