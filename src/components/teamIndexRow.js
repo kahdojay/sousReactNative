@@ -24,8 +24,12 @@ class TeamIndexRow extends React.Component {
     let recentMessages = filteredMessages.sort((a,b) => {
       return b.createdAt - a.createdAt
     });
-    // console.log('FILTERED MESSAGES', recentMessages);
-    let mostRecentMessage = recentMessages.length > 0 ? recentMessages[0].message.split('').splice(0, 30).join('') + '...' : '';
+    let mostRecentMessage = '';
+    if (recentMessages.length > 0 && recentMessages[0].message.split('').length > 25) {
+      mostRecentMessage  = recentMessages[0].message.split('').splice(0, 30).join('') + '...'
+    } else if (recentMessages.length > 0) {
+      mostRecentMessage  = recentMessages[0].message.split('').splice(0, 30).join('');
+    }
     let teamTasks = _.filter(team.tasks,{deleted: false})
 
     const numCompletedTasks = _.filter(teamTasks, {completed: true}).length
@@ -65,7 +69,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'column',
     padding: 10,
-    height: 69
+    height: 73
   },
   progress: {
     paddingTop: 5,

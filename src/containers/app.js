@@ -15,6 +15,7 @@ import Menu from '../components/menu';
 import Feed from '../components/feed';
 import FeedViewLeftButton from '../components/feedViewLeftButton';
 import FeedViewRightButton from '../components/feedViewRightButton';
+import NavBackButton from '../components/navBackButton';
 import PurveyorIndex from '../components/purveyorIndex';
 import PurveyorView from '../components/purveyorView';
 import ProductView from '../components/productView';
@@ -374,7 +375,8 @@ class App extends React.Component {
             route: route,
             hidePrev: false,
             buttonsColor: '#ccc',
-            prevTitle: 'X', //TODO create customPrev
+            customPrev: <NavBackButton iconFont='times' />,
+            // prevTitle: 'x', //TODO create customPrev
             title: 'Switch Teams',
           })
           break;
@@ -405,7 +407,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             buttonsColor: '#ccc',
-            prevTitle: 'X',
+            customPrev: <NavBackButton iconFont={'times'} />,
             title: teamName,
           })
           break;
@@ -424,7 +426,7 @@ class App extends React.Component {
             route: route,
             hidePrev: false,
             buttonsColor: '#ccc',
-            prevTitle: 'X',
+            customPrev: <NavBackButton iconFont={'times'} />,
             title: 'Order Guide',
             onNext: null,
           })
@@ -442,7 +444,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             hidePrev: false,
-            prevTitle: '<', //TODO create customLeft button
+            customPrev: <NavBackButton iconFont={'chevron-left'}/>,
             title: 'Account',
           })
           break;
@@ -451,6 +453,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             hidePrev: true,
+            customPrev: <NavBackButton iconFont={'times'} />,
             title: 'Invite Teammates',
           })
           break;

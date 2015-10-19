@@ -33,7 +33,7 @@ module.exports = class Menu extends Component {
       return <View />;
     }
     const team = _.filter(teams.data, { id: session.teamId })[0]
-    let avatar = <Icon name='material|account-circle' size={100} color='white' style={styles.avatar} />
+    let avatar = <Icon name='material|account-circle' size={80} color='white' style={styles.avatar} />
     if (session.imageUrl) {
       avatar = <Image
                   style={styles.avatar}
@@ -53,9 +53,9 @@ module.exports = class Menu extends Component {
                         </TouchableHighlight>
     let totalTasks = team.tasks.length
     let completeTasksCount = _.filter(team.tasks, function(task) {
-      return task.completed === true
+      return (task.deleted == false && task.completed === true)
     }).length
-    let progress = completeTasksCount / totalTasks
+    let progress = Math.round((completeTasksCount / totalTasks)*100);
     return (
       <View>
         <ScrollView style={styles.menu}>
@@ -101,11 +101,11 @@ module.exports = class Menu extends Component {
               <View style={styles.progressContainer}>
                 <View style={styles.progressRow}>
                   <Text style={styles.menuItemText}>Prep List</Text>
-                  <Text style={styles.menuItemText}>{progress * 100}%</Text>
+                  <Text style={styles.menuItemText}> {progress}%</Text>
                 </View>
-                <ProgressViewIOS 
-                  style={styles.progressBar} 
-                  progress={progress}
+                <ProgressViewIOS
+                  style={styles.progressBar}
+                  progress={progress/100}
                   trackTintColor='white'
                 />
               </View>
@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   avatarContainer: {
+    flex: 1,
     width: 214,
     flexDirection: 'column',
     justifyContent: 'center',
@@ -149,6 +150,7 @@ const styles = StyleSheet.create({
     width: 75,
     height: 75,
     borderRadius: 34,
+    marginLeft: 20,
   },
   name: {
     fontFamily: 'OpenSans',

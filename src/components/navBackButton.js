@@ -10,26 +10,26 @@ const {
   StyleSheet,
 } = React;
 
-class FeedViewLeftButton extends React.Component {
+class NavBackButton extends React.Component {
   constructor(props) {
     super(props)
   }
-  componentDidMount(){
-    console.log('PROPS', this.props);
-  }
   handlePress(e) {
-    console.log('MENU', this.context.menuActions);
-    this.context.menuActions.toggle();
+    let routes = this.props.navigator.getCurrentRoutes();
+    console.log('PRESS', routes);
+    this.props.navigator.replacePreviousAndPop({
+    name: 'Feed',
+  });
   }
 
   render() {
-    let { navigator, route } = this.props;
+    // let { navigator, route } = this.props;
 
     return (
       <TouchableHighlight
         underlayColor='white'
         onPress={this.handlePress.bind(this)} >
-        <Icon name='fontawesome|bars' size={30} color={Colors.navbarIconColor} style={styles.hamburger} />
+        <Icon name={`fontawesome|${this.props.iconFont}`} size={30} color={Colors.navbarIconColor} style={styles.hamburger} />
       </TouchableHighlight>
     );
   }
@@ -43,11 +43,4 @@ let styles = StyleSheet.create({
   }
 })
 
-FeedViewLeftButton.propTypes = {
-};
-
-FeedViewLeftButton.contextTypes = {
-  menuActions: React.PropTypes.object.isRequired
-}
-
-export default FeedViewLeftButton
+export default NavBackButton;

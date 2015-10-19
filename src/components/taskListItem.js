@@ -21,6 +21,7 @@ class TaskListItem extends React.Component {
     }
   }
   handleCompleteTask() {
+    console.log('COMPLETE');
     if (! this.props.task.completed) {
       this.props.onTaskCompletionNotification(this.props.task);
     }
