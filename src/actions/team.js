@@ -8,7 +8,10 @@ import {
   RECEIVE_TEAMS,
   RECEIVE_CATEGORIES,
   RECEIVE_PRODUCTS,
+<<<<<<< HEAD
   UPDATE_TEAM_CART,
+=======
+>>>>>>> development
   ERROR_TEAMS,
   ADD_TEAM,
   UPDATE_TEAM,

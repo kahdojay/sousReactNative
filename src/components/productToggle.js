@@ -1,7 +1,8 @@
-var React = require('react-native');
+import React from 'react-native'
 import CheckBox from 'react-native-checkbox'
 import { Icon } from 'react-native-icons'
-var {
+
+const {
   Modal,
   StyleSheet,
   SwitchIOS,
@@ -10,126 +11,99 @@ var {
   View,
 } = React;
 
-// exports.displayName = (undefined: ?string);
-// exports.framework = 'React';
-// exports.title = '<Modal>';
-// exports.description = 'Component for presenting modal views.';
-
-var Button = React.createClass({
-  getInitialState() {
-    return {
-      active: false,
-    };
-  },
-
-  _onHighlight() {
-    this.setState({active: true});
-  },
-
-  _onUnhighlight() {
-    this.setState({active: false});
-  },
-
+class ModalToggle extends React.Component {
   render() {
-    var colorStyle = {
-      color: this.state.active ? '#fff' : '#000',
-    };
     return (
       <TouchableHighlight
-        onHideUnderlay={this._onUnhighlight}
         onPress={this.props.onPress}
-        onShowUnderlay={this._onHighlight}
         style={[styles.button, this.props.style]}
-        underlayColor="#a9d9d4">
+        underlayColor="#eee">
           <View>{this.props.children}</View>
       </TouchableHighlight>
     );
   }
-});
+}
 
-var ModalExample = React.createClass({
-  getInitialState() {
-    return {
+class ProductToggle extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
       animated: true,
       modalVisible: false,
       transparent: true,
     };
-  },
+  }
 
   _setModalVisible(visible) {
     this.setState({modalVisible: visible});
-  },
+  }
+
+  _handlePurveyorSelect(purveyorId) {
+    this._setModalVisible(false)
+    this.props.onToggleCartProduct(purveyorId)
+  }
 
   render() {
-    var modalBackgroundStyle = {
-      backgroundColor: this.state.transparent ? 'rgba(0, 0, 0, 0.5)' : '#f5fcff',
-    };
-    var innerContainerTransparentStyle = this.state.transparent
-      ? {backgroundColor: '#fff', padding: 20}
-      : null;
-
-    // if multiple purveyors, show the modal button
-      // on purveyor select, toggle cart product, passing in purveyorId
-    // if single purveyor, show the checkbox
-
     let checkbox =  <CheckBox
                       label=''
-                      onChange={this.props.onToggleCartProduct}
-                      checked={this.props.checked}
+                      onChange={this._handlePurveyorSelect.bind(this, this.props.currentlySelectedPurveyorId)}
+                      checked={this.props.added}
                     />
-    let purveyorSelectButton = <Button onPress={this._setModalVisible.bind(this, true)}>
-                                  <Icon
-                                    name='fontawesome|ellipsis-h'
-                                    size={30}
-                                    color='black'
-                                    style={styles.icon}
-                                  />
-                                </Button>
 
+    let modalShowButton = <ModalToggle
+                            onPress={this._setModalVisible.bind(this, true)}>
+                              <Icon
+                                name='fontawesome|ellipsis-h'
+                                size={30}
+                                color='black'
+                                style={styles.icon}
+                              />
+                          </ModalToggle>
+
+    let purveyorsArray = this.props.purveyors.map(function(purveyorId, idx) {
+                            return (
+                              <ModalToggle
+                                key={idx}
+                                style={styles.modalButton}
+                                onPress={this._handlePurveyorSelect.bind(this, purveyorId)}
+                              >
+                                <Text>{purveyorId}</Text>
+                              </ModalToggle>
+                            )
+                          }.bind(this))
     return (
       <View>
         <Modal
           animated={true}
           transparent={true}
           visible={this.state.modalVisible}>
-          <View style={[styles.container, modalBackgroundStyle]}>
-            <View style={[styles.innerContainer, innerContainerTransparentStyle]}>
-              <Text>This modal was presented {this.state.animated ? 'with' : 'without'} animation.</Text>
-              <Button
-                onPress={this._setModalVisible.bind(this, false)}
-                style={styles.modalButton}>
-                <Text>Close</Text>
-              </Button>
+          <View style={styles.container}>
+            <View style={styles.innerContainer}>
+              <Text style={styles.modalHeader}>Select Purveyor</Text>
+              {purveyorsArray}
             </View>
           </View>
         </Modal>
-        {this.props.purveyors.length > 1 ? purveyorSelectButton : checkbox}
-
-
+        {this.props.added === false && this.props.purveyors.length > 1 ? modalShowButton : checkbox}
       </View>
     );
-  },
-});
-
-export default ModalExample
+  }
+};
 
 var styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     padding: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
   },
   innerContainer: {
     borderRadius: 10,
+    backgroundColor: '#fff',
+    padding: 20,
+    alignItems: 'center'
   },
-  row: {
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row',
-    marginBottom: 20,
-  },
-  rowTitle: {
-    flex: 1,
+  modalHeader: {
     fontWeight: 'bold',
   },
   button: {
@@ -139,11 +113,6 @@ var styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
   },
-  buttonText: {
-    fontSize: 18,
-    margin: 5,
-    textAlign: 'center',
-  },
   modalButton: {
     marginTop: 10,
   },
@@ -152,3 +121,5 @@ var styles = StyleSheet.create({
     height: 40,
   },
 });
+
+export default ProductToggle

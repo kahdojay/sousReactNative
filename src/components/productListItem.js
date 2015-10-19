@@ -1,7 +1,6 @@
-import { Icon } from 'react-native-icons'
 import React from 'react-native'
-import CheckBox from 'react-native-checkbox'
 import ProductToggle from './productToggle'
+import { Icon } from 'react-native-icons'
 import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
 import {
   CART
@@ -26,11 +25,13 @@ class ProductListItem extends React.Component {
       note: ''
     }
   }
+
   componentWillMount() {
     // console.log(this.props);
-    this.updateStateFromCart(this.props.cart.orders)
+    this.stateUpdateFromCart(this.props.cart.orders)
   }
-  updateStateFromCart(cartOrders) {
+
+  stateUpdateFromCart(cartOrders) {
     let cartItem = null
     let cartPurveyorId = ''
     this.props.product.purveyors.map((purveyorId) => {
@@ -46,11 +47,12 @@ class ProductListItem extends React.Component {
         purveyorId: cartPurveyorId,
         note: cartItem.note
       };
-      console.log(newState)
+      // console.log(newState)
       this.setState(newState);
     }
   }
-  updateCartFromState() {
+
+  cartUpdateFromState() {
     const cartAttributes = {
       purveyorId: this.state.selectedPurveyorId,
       productId: this.props.product.id,
@@ -63,45 +65,41 @@ class ProductListItem extends React.Component {
       cartAttributes
     )
   }
+
   increment() {
     this.setState({
       quantity: this.state.quantity + 1
-    }, this.updateCartFromState.bind(this))
+    }, this.cartUpdateFromState.bind(this))
   }
+
   decrement() {
     if (this.state.quantity > 1 ) {
       this.setState({
         quantity: this.state.quantity - 1
-      }, this.updateCartFromState.bind(this))
+      }, this.cartUpdateFromState.bind(this))
     }
   }
-  handleOrderProduct(id) {
-    // default to first purveyor
-    let purveyorId = this.props.product.purveyors[0]
-    // if product has multiple purveyors, show modal first asking which purveyor
+
+  handleToggleProduct(id) {
     this.setState({
       added: !this.state.added,
-      // set the purveyor
-      purveyorId: purveyorId
-    }, this.updateCartFromState.bind(this))
+      selectedPurveyorId: id
+    }, this.cartUpdateFromState.bind(this))
   }
   render() {
     let {product} = this.props
-    // let multiplePurveyors = product.purveyors.length > 1
-    {/*let checkbox =  <CheckBox
-                      label=''
-                      onChange={this.handleOrderProduct.bind(this)}
-                      checked={this.state.added}
-                      dots={multiplePurveyors}
-                    />*/}
+
     return (
       <View style={styles.container}>
         <View style={styles.row}>
           <View style={styles.checkboxContainer}>
             <ProductToggle
-              checked={this.state.added}
+              added={this.state.added}
               purveyors={product.purveyors}
-              onToggleCartProduct={this.handleOrderProduct.bind(this)}
+              currentlySelectedPurveyorId={this.state.selectedPurveyorId}
+              onToggleCartProduct={(id) => {
+                this.handleToggleProduct(id)
+              }}
             />
           </View>
             <View
