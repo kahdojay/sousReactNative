@@ -16,6 +16,7 @@ import Feed from '../components/feed';
 import FeedViewLeftButton from '../components/feedViewLeftButton';
 import FeedViewRightButton from '../components/feedViewRightButton';
 import TimesNavButton from '../components/timesNavButton';
+import NavBackButton from '../components/navBackButton';
 import PurveyorIndex from '../components/purveyorIndex';
 import PurveyorView from '../components/purveyorView';
 import ProductView from '../components/productView';
@@ -445,7 +446,8 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             hidePrev: false,
-            prevTitle: '<', //TODO create customLeft button
+            customPrev: <NavBackButton />,
+            // prevTitle: '<', //TODO create customLeft button
             title: 'Account',
           })
           break;
