@@ -198,7 +198,7 @@ module.exports = class Menu extends Component {
               underlayColor='#ccc'
               onPress={() => {
                 this.props.nav.replace({
-                  name: 'PurveyorIndex',
+                  name: 'CategoryIndex',
                 })
               }}
             >

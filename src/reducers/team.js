@@ -4,6 +4,8 @@ import {
   GET_TEAMS,
   REQUEST_TEAMS,
   RECEIVE_TEAMS,
+  RECEIVE_CATEGORIES,
+  RECEIVE_PRODUCTS,
   ERROR_TEAMS,
   ADD_TEAM,
   UPDATE_TEAM,
@@ -16,6 +18,8 @@ const initialState = {
     isFetching: false,
     errors: null,
     data: [],
+    defaultCategories: [],
+    products: [],
     lastUpdated: null
   }
 };
@@ -42,6 +46,18 @@ function teams(state = initialState.teams, action) {
       errors: null,
       data: currentTeamsDataState,
       lastUpdated: (new Date()).getTime()
+    });
+  case RECEIVE_CATEGORIES:
+    var defaultCategoriesState = Object.assign({}, state);
+    var currentDefaultCategoriesState = updateDataState(defaultCategoriesState.defaultCategories, action.category)
+    return Object.assign({}, state, {
+      defaultCategories: currentDefaultCategoriesState,
+    });
+  case RECEIVE_PRODUCTS:
+    var productsState = Object.assign({}, state);
+    var newProductsState = updateDataState(productsState.products, action.product)
+    return Object.assign({}, state, {
+      products: newProductsState,
     });
 
   // delete the team

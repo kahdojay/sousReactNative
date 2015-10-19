@@ -14,52 +14,22 @@ const {
 class ProductList extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {
-      showCompleted: true
-    }
-  }
-  handlePress() {
-    this.setState({showCompleted: !this.state.showCompleted})
   }
   render() {
-    let {purveyor} = this.props
-    let productsOrdered = _.filter(purveyor.products, { ordered: true, deleted: false })
-      .map((product, idx) => {
-           return <ProductListItem
-            product={product}
-            key={idx}
-            purveyorId={purveyor.id}
-            navigator={this.props.navigator}
-            navBar={this.props.navBar}
-            onUpdateProduct={(productAttributes) => {
-              this.props.onUpdatePurveyorProduct(purveyor.id, product.productId, productAttributes);
-            }} />
-        })
-    let productsUnordered = _.filter(purveyor.products, { ordered: false, deleted: false })
-      .map((product, idx) => {
-          return <ProductListItem
-            product={product}
-            key={idx}
-            purveyorId={purveyor.id}
-            navigator={this.props.navigator}
-            navBar={this.props.navBar}
-            onUpdateProduct={(productAttributes) => {
-              this.props.onUpdatePurveyorProduct(purveyor.id, product.productId, productAttributes);
-            }} />
-        })
+    const {cart, products} = this.props
+    let productList = _.map(products, (product, idx) => {
+      return (
+        <ProductListItem
+          cart={cart}
+          product={product}
+          key={idx}
+          onUpdateProductInCart={this.props.onUpdateProductInCart}
+        />
+      )
+    })
     return (
       <ScrollView keyboardShouldPersistTaps={false} >
-        {productsUnordered}
-        <TouchableHighlight
-          underlayColor={'#eee'}
-          onPress={this.handlePress.bind(this)} >
-          <View style={styles.container}>
-            <View style={styles.roundedCorners}>
-              <Text style={styles.text}>{productsOrdered.length} Ordered</Text>
-            </View>
-          </View>
-        </TouchableHighlight>
-        {this.state.showCompleted ? productsOrdered : <View />}
+        {productList}
       </ScrollView>
     );
   }

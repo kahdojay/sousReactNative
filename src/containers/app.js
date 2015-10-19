@@ -17,6 +17,8 @@ import FeedViewLeftButton from '../components/feedViewLeftButton';
 import PurveyorIndex from '../components/purveyorIndex';
 import PurveyorView from '../components/purveyorView';
 import ProductView from '../components/productView';
+import CategoryIndex from '../components/categoryIndex';
+import CategoryView from '../components/categoryView';
 import ProfileView from '../components/profileView';
 import InviteView from '../components/inviteView';
 import NavbarTitle from '../components/NavbarTitle';
@@ -207,7 +209,7 @@ class App extends React.Component {
               } else {
                 console.log("ERROR: purveyor already exists");
               }
-          }}
+            }}
             onBack={() => {
               this._back()
             }}
@@ -250,6 +252,30 @@ class App extends React.Component {
             purveyorId={route.purveyorId}
             onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
               dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
+            }}
+          />
+        );
+      case 'CategoryIndex':
+        var team = _.filter(teams.data, { id: session.teamId })[0]
+        return (
+          <CategoryIndex
+            navigator={nav}
+            categories={team.categories}
+          />
+        )
+      case 'CategoryView':
+        var team = _.filter(teams.data, { id: session.teamId })[0]
+        var category = _.filter(team.categories, { id: route.categoryId })[0]
+        return (
+          <CategoryView
+            ui={ui}
+            navigator={nav}
+            category={category}
+            cart={team.cart}
+            products={teams.products}
+            onUpdateProductInCart={(cartAction, productAttributes) => {
+              console.log(cartAction, productAttributes)
+              // dispatch(actions.addProductToCart(cartAction, productAttributes))
             }}
           />
         );
@@ -377,7 +403,7 @@ class App extends React.Component {
           })
           break;
         case 'Feed':
-          console.log("PROPS", this);
+          // console.log("PROPS", this);
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
@@ -409,6 +435,14 @@ class App extends React.Component {
             onNext: (navigator, route) => this.showActionSheetPurveyorView(navigator, route),
             nextTitle: '...',
             hidePrev: false,
+          })
+          break;
+        case 'CategoryIndex':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            onNext: null,
+            customPrev: <FeedViewLeftButton />,
           })
           break;
         case 'ProductView':
@@ -470,7 +504,6 @@ class App extends React.Component {
   }
 
   configureScene(route) {
-    // TODO: commented out to prevent ghosting, review animation options later
     if (route.sceneConfig) {
       return route.sceneConfig;
     }
