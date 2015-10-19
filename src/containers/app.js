@@ -317,27 +317,6 @@ class App extends React.Component {
     }
   }
 
-  showActionSheetTeamView(navigator, route) {
-    const { dispatch } = this.props;
-    let buttons = [
-      'Delete Team',
-      // 'Rename Team',
-      'Cancel'
-    ]
-    let deleteAction = 0;
-    let cancelAction = 2;
-    ActionSheetIOS.showActionSheetWithOptions({
-      options: buttons,
-      cancelButtonIndex: cancelAction,
-      destructiveButtonIndex: deleteAction,
-    },
-    (buttonIndex) => {
-      if (deleteAction === buttonIndex){
-        dispatch(actions.deleteTeam(route.teamId))
-        navigator.pop();
-      }
-    });
-  }
   showActionSheetPurveyorView(navigator, route) {
     const { dispatch } = this.props;
     let buttons = [
@@ -428,8 +407,6 @@ class App extends React.Component {
             buttonsColor: '#ccc',
             prevTitle: 'X',
             title: teamName,
-            onNext: (navigator, route) => this.showActionSheetTeamView(navigator, route),
-            nextTitle: '...', //TODO factor out into customRightButton
           })
           break;
         case 'PurveyorView':

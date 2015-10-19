@@ -176,18 +176,10 @@ class ProfileView extends React.Component {
                   }}
                   value={this.state.email}></TextInput>
               </View>
-              <TouchableHighlight
-                onPress={() => {console.log('Invite')}}
-                style={styles.infoField} underlayColor='#eee'>
-                <View style={{flexDirection: 'row', flex: 1}}>
-
-                <Text style={styles.inviteText}>Invite Users</Text>
-                <Icon name="fontawesome|plus" size={20} color={'#777'} style={styles.inviteIcon}/>
-                </View>
-              </TouchableHighlight>
             </View>
             {! this.needsSave() ? saveChanges : <View></View>}
-            <View style={styles.userPreferences}>
+
+            {/*<View style={styles.userPreferences}>
               <View style={styles.largeInfoField}>
                 <Text style={styles.inputName}>Notifications</Text>
                 <SwitchIOS
@@ -205,8 +197,10 @@ class ProfileView extends React.Component {
               <TouchableHighlight style={styles.deactivateButton}>
                 <Text style={styles.deactivateText}>Deactivate Account</Text>
               </TouchableHighlight>
-            </View>
+            </View>*/}
+
           </View>
+
         </View>
       </ScrollView>
     );
