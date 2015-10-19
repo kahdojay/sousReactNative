@@ -14,7 +14,16 @@ const {
 
 class TeamIndexRow extends React.Component {
   render() {
-    let { team } = this.props
+    let { team, messages } = this.props
+    // console.log('TEAM MESSAGES', messages);
+    let filteredMessages = messages.data.map((message) => {
+      if (message.teamId === team.id)
+        return message;
+    });
+    let mostRecentMessage = filteredMessages.sort((a,b) => {
+      return a.createdAt < b.createdAt
+    })[0].message;
+    console.log('RECENT', mostRecentMessage);
     let teamTasks = _.filter(team.tasks,{deleted: false})
 
     const numCompletedTasks = _.filter(teamTasks, {completed: true}).length
