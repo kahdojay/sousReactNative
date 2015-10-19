@@ -18,9 +18,11 @@ import {
   CART
 } from './actionTypes'
 
-export default function TeamActions(ddpClient) {
+export default function TeamActions(ddpClient, allActions) {
 
-  const messageActions = MessageActions(ddpClient)
+  const {
+    messageActions
+  } = allActions
 
   function resetTeams(){
     return {
