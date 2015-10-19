@@ -14,7 +14,11 @@ class FeedViewLeftButton extends React.Component {
   constructor(props) {
     super(props)
   }
+  componentDidMount(){
+    console.log('PROPS', this.props);
+  }
   handlePress(e) {
+    console.log('MENU', this.context.menuActions);
     this.context.menuActions.toggle();
   }
 

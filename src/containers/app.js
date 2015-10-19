@@ -454,6 +454,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             hidePrev: true,
+            customPrev: <TimesNavButton />,
             title: 'Invite Teammates',
           })
           break;

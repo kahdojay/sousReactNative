@@ -15,8 +15,11 @@ class TimesNavButton extends React.Component {
     super(props)
   }
   handlePress(e) {
-    console.log('PRESS');
-    this.props.navigator.pop();
+    let routes = this.props.navigator.getCurrentRoutes();
+    console.log('PRESS', routes);
+    this.props.navigator.replacePreviousAndPop({
+    name: 'Feed',
+  });
   }
 
   render() {
