@@ -14,6 +14,7 @@ import SideMenu from 'react-native-side-menu';
 import Menu from '../components/menu';
 import Feed from '../components/feed';
 import FeedViewLeftButton from '../components/feedViewLeftButton';
+import FeedViewRightButton from '../components/feedViewRightButton';
 import PurveyorIndex from '../components/purveyorIndex';
 import PurveyorView from '../components/purveyorView';
 import ProductView from '../components/productView';
@@ -53,7 +54,6 @@ class App extends React.Component {
     }
     this.navBar = (
       <NavigationBar
-        customTitle={<NavbarTitle />}
         style={styles.nav}
       />
     );
@@ -395,20 +395,19 @@ class App extends React.Component {
             route: route,
             customPrev: <FeedViewLeftButton />,
             onNext: (navigator, route) => {
-              navigator.push({
-                name: 'Profile',
-              });
+              navigator.push({ name: 'Profile' });
             },
             nextTitle: 'profile',
           })
           break;
         case 'Feed':
-          // console.log("PROPS", this);
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            onNext: null,
+            title: 'Feed',
+            titleColor: 'black',
             customPrev: <FeedViewLeftButton />,
+            customNext: <FeedViewRightButton />,
           })
           break;
         case 'PurveyorIndex':
@@ -535,6 +534,8 @@ let styles = StyleSheet.create({
   },
   nav: {
     backgroundColor: Colors.navbarColor,
+    borderBottomWidth: 2,
+    borderBottomColor: '#ccc',
   },
   navSignUp: {
     justifyContent: 'center',

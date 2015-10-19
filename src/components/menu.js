@@ -187,17 +187,6 @@ module.exports = class Menu extends Component {
               underlayColor='#ccc'
               onPress={() => {
                 this.props.nav.replace({
-                  name: 'TeamIndex',
-                })
-              }}
-            >
-              <Text style={styles.teamItemText}>Switch Teams</Text>
-            </TouchableHighlight>
-            <TouchableHighlight
-              style={styles.viewSelect}
-              underlayColor='#ccc'
-              onPress={() => {
-                this.props.nav.replace({
                   name: 'CategoryIndex',
                 })
               }}

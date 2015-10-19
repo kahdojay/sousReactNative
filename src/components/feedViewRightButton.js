@@ -10,12 +10,12 @@ const {
   StyleSheet,
 } = React;
 
-class FeedViewLeftButton extends React.Component {
+class FeedViewRightButton extends React.Component {
   constructor(props) {
     super(props)
   }
   handlePress(e) {
-    this.context.menuActions.toggle();
+    this.props.navigator.push({ name: 'TeamIndex', });
   }
 
   render() {
@@ -25,25 +25,25 @@ class FeedViewLeftButton extends React.Component {
       <TouchableHighlight
         underlayColor={Colors.darkBlue}
         onPress={this.handlePress.bind(this)} >
-        <Icon name='fontawesome|bars' size={30} color={Colors.navbarIconColor} style={styles.hamburger} />
+        <Icon name='fontawesome|comment-o' size={30} color={Colors.navbarIconColor} style={styles.bubble} />
       </TouchableHighlight>
     );
   }
 }
 
 let styles = StyleSheet.create({
-  hamburger: {
+  bubble: {
     width: 50,
     height: 50,
     marginTop: 6,
   }
 })
 
-FeedViewLeftButton.propTypes = {
+FeedViewRightButton.propTypes = {
 };
 
-FeedViewLeftButton.contextTypes = {
+FeedViewRightButton.contextTypes = {
   menuActions: React.PropTypes.object.isRequired
 }
 
-export default FeedViewLeftButton
+export default FeedViewRightButton
