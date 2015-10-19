@@ -15,7 +15,9 @@ const {
 class TeamIndexRow extends React.Component {
   render() {
     let { team, messages } = this.props
-    // console.log('TEAM MESSAGES', messages);
+    // console.log('TEAM MESSAGES', team);
+    let memberCount = _.compact(team.users).length;
+    console.log('MEMBERS', memberCount);
     let filteredMessages = messages.data.map((message) => {
       if (message.teamId === team.id)
         return message;
@@ -41,7 +43,10 @@ class TeamIndexRow extends React.Component {
             style={styles.textProgressContainer} >
             <View
               style={styles.teamInfo} >
-              <Text style={styles.rowText}>{this.props.team.name}</Text>
+              <View style={styles.teamTextContainer}>
+                <Text style={styles.rowText}>{this.props.team.name}</Text>
+                <Text style={styles.memberCount}>{memberCount} members</Text>
+              </View>
               <Text style={styles.percentage}>
                 {mostRecentMessage}
               </Text>
@@ -80,10 +85,24 @@ const styles = StyleSheet.create({
   textProgressContainer: {
     flex: 1,
   },
+  teamTextContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  memberCount: {
+    fontFamily: 'OpenSans',
+    fontSize: 11,
+    color: '#999',
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
   percentage:{
     fontFamily: 'OpenSans',
     color: '#777',
     fontSize: 13,
+    marginLeft: 5,
   },
   separator: {
     height: 5,
