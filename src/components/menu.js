@@ -84,9 +84,9 @@ module.exports = class Menu extends Component {
                 })
               }}
             >
-              <Text style={styles.teamText}>{team.name}</Text>
+              <Text style={styles.teamText}>{team ? team.name : ''}</Text>
             </TouchableHighlight>
-            {team.name === 'Notepad' ? <View/> : inviteButton}
+            {team && team.name === 'Notepad' ? <View/> : inviteButton}
           </View>
           <View style={styles.menuItems}>
             <TouchableHighlight
