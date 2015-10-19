@@ -28,7 +28,7 @@ class ProductListItem extends React.Component {
   }
   componentWillMount() {
     // console.log(this.props);
-    // this.updateStateFromCart(this.props.cart.orders)
+    this.updateStateFromCart(this.props.cart.orders)
   }
   updateStateFromCart(cartOrders) {
     let cartItem = null
@@ -40,12 +40,14 @@ class ProductListItem extends React.Component {
       }
     })
     if (cartItem !== null) {
-      this.setState({
+      const newState = {
         added: true,
         quantity: cartItem.quantity,
         purveyorId: cartPurveyorId,
         note: cartItem.note
-      })
+      };
+      console.log(newState)
+      this.setState(newState);
     }
   }
   updateCartFromState() {
@@ -97,6 +99,7 @@ class ProductListItem extends React.Component {
         <View style={styles.row}>
           <View style={styles.checkboxContainer}>
             <ProductToggle
+              checked={this.state.added}
               purveyors={product.purveyors}
               onToggleCartProduct={this.handleOrderProduct.bind(this)}
             />
@@ -110,7 +113,7 @@ class ProductListItem extends React.Component {
               <Text
                 style={{fontSize: 9,  color: '#999'}}
               >
-                {product.amount + ' • ' + product.unit}
+                {product.amount + ' ' + product.unit}
               </Text>
               <Text
                 style={{fontSize: 9,  color: '#999'}}

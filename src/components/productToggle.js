@@ -75,13 +75,13 @@ var ModalExample = React.createClass({
     let checkbox =  <CheckBox
                       label=''
                       onChange={this.props.onToggleCartProduct}
-                      checked={this.state.added}
+                      checked={this.props.checked}
                     />
     let purveyorSelectButton = <Button onPress={this._setModalVisible.bind(this, true)}>
-                                  <Icon 
-                                    name='fontawesome|ellipsis-h' 
-                                    size={30} 
-                                    color='black' 
+                                  <Icon
+                                    name='fontawesome|ellipsis-h'
+                                    size={30}
+                                    color='black'
                                     style={styles.icon}
                                   />
                                 </Button>
@@ -104,8 +104,8 @@ var ModalExample = React.createClass({
           </View>
         </Modal>
         {this.props.purveyors.length > 1 ? purveyorSelectButton : checkbox}
-        
-        
+
+
       </View>
     );
   },
