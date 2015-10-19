@@ -29,7 +29,7 @@ class NavBackButton extends React.Component {
       <TouchableHighlight
         underlayColor='white'
         onPress={this.handlePress.bind(this)} >
-        <Icon name='fontawesome|chevron-left' size={30} color={Colors.navbarIconColor} style={styles.hamburger} />
+        <Icon name={`fontawesome|${this.props.iconFont}`} size={30} color={Colors.navbarIconColor} style={styles.hamburger} />
       </TouchableHighlight>
     );
   }
