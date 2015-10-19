@@ -87,6 +87,7 @@ class Signup extends React.Component {
                         size={'small'} />
     let errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
     let formattedPhoneNumber = this.formatPhoneNumber(session.phoneNumber);
+    console.log('FORMAT', session);
     let signup = (
       <View style={styles.login}>
 

@@ -156,7 +156,7 @@ module.exports = class Menu extends Component {
                 })
               }}
             >
-              <Text style={styles.teamText}>{team.name}</Text>
+              <Text style={styles.teamText}>{team ? team.name : ''}</Text>
             </TouchableHighlight>
             <TouchableHighlight
               underlayColor='#eee'
@@ -167,7 +167,7 @@ module.exports = class Menu extends Component {
               }}
               style={styles.saveButton}
             >
-              <Text style={styles.saveText}>Invite to {team.name}</Text>
+              <Text style={styles.saveText}>Invite to {team ? team.name : ''}</Text>
             </TouchableHighlight>
           </View>
           <View style={styles.teamItems}>

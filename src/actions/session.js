@@ -64,10 +64,10 @@ export default function SessionActions(ddpClient){
         let messageAttributes = {
           message: 'Welcome to Sous! This is your personal Notepad, but you can create a new team and start collaborating with your fellow cooks by tapping the icon in the top right.',
           userId: session.userId,
-          author: 'SOUS',
+          author: 'Sous',
           teamId: session.teamId,
-          createdAt: new Date(),
-          imageUrl: session.imageUrl,
+          createdAt: (new Date()).getTime(),
+          imageUrl: 'https://sous-assets-production.s3.amazonaws.com/uploads/89b217dc-4ec5-43e8-9569-8fc85e6fdd52/New+Sous+Logo+Circle+Small.png',
         }
         console.log("SESSION", session, messageAttributes);
         ddpClient.call('createMessage', [messageAttributes])
@@ -146,6 +146,9 @@ export default function SessionActions(ddpClient){
         // console.log('isAuthenticated: ', action.type, action.isAuthenticated);
         return dispatch(action);
       });
+      p1.catch((err) => {
+        console.log('ERROR', err);
+      })
     }
   }
 
