@@ -22,7 +22,7 @@ class TeamIndexRow extends React.Component {
     });
     let mostRecentMessage = filteredMessages.sort((a,b) => {
       return a.createdAt < b.createdAt
-    })[0].message;
+    })[0].message.split('').splice(0, 30).join('') + '...';
     console.log('RECENT', mostRecentMessage);
     let teamTasks = _.filter(team.tasks,{deleted: false})
 
@@ -43,14 +43,10 @@ class TeamIndexRow extends React.Component {
               style={styles.teamInfo} >
               <Text style={styles.rowText}>{this.props.team.name}</Text>
               <Text style={styles.percentage}>
-                {percentage}%
+                {mostRecentMessage}
               </Text>
             </View>
-            <ProgressViewIOS
-              trackTintColor="#e6e6e6"
-              progressTintColor={progressColor}
-              style={styles.progress}
-              progress={progress} />
+
           </View>
           <Icon name='material|chevron-right' size={40} color='#aaa' style={styles.iconArrow}/>
         </View>
@@ -84,14 +80,20 @@ const styles = StyleSheet.create({
   textProgressContainer: {
     flex: 1,
   },
+  percentage:{
+    fontFamily: 'OpenSans',
+    color: '#777',
+    fontSize: 13,
+  },
   separator: {
     height: 5,
     borderBottomColor: '#bbb',
     borderBottomWidth: 1,
   },
   teamInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'stretch',
   },
   rowText: {
     fontWeight: 'bold',
