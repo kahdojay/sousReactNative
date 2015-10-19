@@ -106,7 +106,7 @@ class Feed extends React.Component {
                 }).map((msg, index) => {
                   let date = new Date(msg.createdAt).toLocaleTimeString();
                   let time = date.substring(date.length-3, date.length)
-                  let icon = <Icon name='fontawesome|user' size={30} color='#f7f7f7' style={styles.avatar}/>
+                  let icon = <Icon name='fontawesome|user' size={25} color='#777' style={styles.avatar}/>
                   if (msg.imageUrl) {
                     icon = <Image source={{uri: msg.imageUrl}} style={styles.avatarImage} />
                   }
@@ -189,9 +189,10 @@ const styles = StyleSheet.create({
     flex: 1
   },
   avatarImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 40,
+    marginTop: 10,
+    height: 40,
+    borderRadius: 20,
   },
   container: {
     flex: 1,
