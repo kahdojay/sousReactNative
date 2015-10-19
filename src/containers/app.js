@@ -393,18 +393,20 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            customPrev: <FeedViewLeftButton />,
-            onNext: (navigator, route) => {
-              navigator.push({ name: 'Profile' });
-            },
-            nextTitle: 'profile',
+            hidePrev: false,
+            buttonsColor: '#ccc',
+            prevTitle: 'X', //TODO create customPrev
+            title: 'Switch Teams',
           })
           break;
         case 'Feed':
+          //TODO prevent FOUC
+          var teamName = teams.data[0] ? teams.data[0].name : '';
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            title: 'Feed',
+            hidePrev: false,
+            title: teamName,
             titleColor: 'black',
             customPrev: <FeedViewLeftButton />,
             customNext: <FeedViewRightButton />,
@@ -414,34 +416,40 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            onNext: null,
             customPrev: <FeedViewLeftButton />,
+            onNext: null,
           })
           break;
         case 'TeamView':
+          var teamName = teams.data[0] ? teams.data[0].name : '';
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
+            buttonsColor: '#ccc',
+            prevTitle: 'X',
+            title: teamName,
             onNext: (navigator, route) => this.showActionSheetTeamView(navigator, route),
-            nextTitle: '...',
-            customPrev: <FeedViewLeftButton />,
+            nextTitle: '...', //TODO factor out into customRightButton
           })
           break;
         case 'PurveyorView':
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
+            hidePrev: false,
             onNext: (navigator, route) => this.showActionSheetPurveyorView(navigator, route),
             nextTitle: '...',
-            hidePrev: false,
           })
           break;
         case 'CategoryIndex':
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
+            hidePrev: false,
+            buttonsColor: '#ccc',
+            prevTitle: 'X',
+            title: 'Order Guide',
             onNext: null,
-            customPrev: <FeedViewLeftButton />,
           })
           break;
         case 'ProductView':
@@ -456,14 +464,17 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            onNext: (navigator, route) => {
-              navigator.push({
-                name: 'InviteView',
-                navigationBar: navBar,
-              })
-            },
-            customPrev: <FeedViewLeftButton />,
-            nextTitle: 'Invite',
+            hidePrev: false,
+            prevTitle: '<', //TODO create customLeft button
+            title: 'Account',
+          })
+          break;
+        case 'InviteView':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            hidePrev: true,
+            title: 'Invite Teammates',
           })
           break;
         default:

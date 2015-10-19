@@ -51,6 +51,7 @@ class TeamIndex extends React.Component {
                       this.props.navigator.push({
                         name: 'Feed',
                         navigationBar: this.props.navBar,
+                        teamId: team.id,
                       })
                     }}
                   />
