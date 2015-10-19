@@ -1,7 +1,6 @@
-import { Icon } from 'react-native-icons'
 import React from 'react-native'
-import CheckBox from 'react-native-checkbox'
 import ProductToggle from './productToggle'
+import { Icon } from 'react-native-icons'
 import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
 
 const {
@@ -70,32 +69,25 @@ class ProductListItem extends React.Component {
       }, this.updateCartFromState.bind(this))
     }
   }
-  handleOrderProduct(id) {
-    // default to first purveyor
-    let purveyorId = this.props.product.purveyors[0]
-    // if product has multiple purveyors, show modal first asking which purveyor
+  handleToggleProduct(id) {
     this.setState({
       added: !this.state.added,
-      // set the purveyor
-      purveyorId: purveyorId
+      selectedPurveyorId: id
     }, this.updateCartFromState.bind(this))
   }
   render() {
     let {product} = this.props
-    // let multiplePurveyors = product.purveyors.length > 1
-    {/*let checkbox =  <CheckBox
-                      label=''
-                      onChange={this.handleOrderProduct.bind(this)}
-                      checked={this.state.added}
-                      dots={multiplePurveyors}
-                    />*/}
     return (
       <View style={styles.container}>
         <View style={styles.row}>
           <View style={styles.checkboxContainer}>
             <ProductToggle
+              added={this.state.added}
               purveyors={product.purveyors}
-              onToggleCartProduct={this.handleOrderProduct.bind(this)}
+              currentlySelectedPurveyorId={this.state.selectedPurveyorId}
+              onToggleCartProduct={(id) => {
+                this.handleToggleProduct(id)
+              }}
             />
           </View>
             <View
