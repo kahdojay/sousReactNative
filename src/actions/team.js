@@ -1,5 +1,6 @@
 import Shortid from 'shortid'
 import MessageActions from './message'
+import { getIdx, updateByIdx, updateDataState } from '../utilities/reducer'
 import {
   RESET_TEAMS,
   GET_TEAMS,
@@ -7,11 +8,13 @@ import {
   RECEIVE_TEAMS,
   RECEIVE_CATEGORIES,
   RECEIVE_PRODUCTS,
+  UPDATE_TEAM_CART,
   ERROR_TEAMS,
   ADD_TEAM,
   UPDATE_TEAM,
   DELETE_TEAM,
-  COMPLETE_TEAM_TASK
+  COMPLETE_TEAM_TASK,
+  CART
 } from './actionTypes'
 
 export default function TeamActions(ddpClient) {
@@ -281,6 +284,7 @@ export default function TeamActions(ddpClient) {
     receiveTeams,
     receiveCategories,
     receiveProducts,
+    updateProductInCart,
     sendOrder,
     resetTeams,
     completeTeamTask,

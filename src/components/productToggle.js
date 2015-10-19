@@ -24,7 +24,7 @@ class ModalToggle extends React.Component {
   }
 }
 
-class ProductToggle extends React.Component{
+class ProductToggle extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -50,12 +50,12 @@ class ProductToggle extends React.Component{
                       checked={this.props.added}
                     />
 
-    let modalShowButton = <ModalToggle 
+    let modalShowButton = <ModalToggle
                             onPress={this._setModalVisible.bind(this, true)}>
-                              <Icon 
-                                name='fontawesome|ellipsis-h' 
-                                size={30} 
-                                color='black' 
+                              <Icon
+                                name='fontawesome|ellipsis-h'
+                                size={30}
+                                color='black'
                                 style={styles.icon}
                               />
                           </ModalToggle>
@@ -99,7 +99,7 @@ var styles = StyleSheet.create({
   },
   innerContainer: {
     borderRadius: 10,
-    backgroundColor: '#fff', 
+    backgroundColor: '#fff',
     padding: 20,
     alignItems: 'center'
   },
