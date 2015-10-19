@@ -178,27 +178,6 @@ class ProfileView extends React.Component {
               </View>
             </View>
             {! this.needsSave() ? saveChanges : <View></View>}
-
-            {/*<View style={styles.userPreferences}>
-              <View style={styles.largeInfoField}>
-                <Text style={styles.inputName}>Notifications</Text>
-                <SwitchIOS
-                  style={{marginBottom: 10,}}
-                  value={this.state.notifications}
-                  onValueChange={(value) => this.setState({notifications: value})}
-                  />
-              </View>
-              <View style={styles.infoField}>
-                <Text style={styles.inputName}>Contact Us</Text>
-                <Text style={styles.inputInfo}></Text>
-              </View>
-            </View>
-            <View style={styles.deactivateContainer}>
-              <TouchableHighlight style={styles.deactivateButton}>
-                <Text style={styles.deactivateText}>Deactivate Account</Text>
-              </TouchableHighlight>
-            </View>*/}
-
           </View>
 
         </View>
