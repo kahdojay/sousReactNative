@@ -22,9 +22,11 @@ class TeamIndexRow extends React.Component {
       if (message.teamId === team.id)
         return message;
     });
-    let mostRecentMessage = filteredMessages.sort((a,b) => {
-      return a.createdAt < b.createdAt
-    })[0].message.split('').splice(0, 30).join('') + '...';
+    let recentMessages = filteredMessages.sort((a,b) => {
+      return b.createdAt - a.createdAt
+    });
+    console.log('FILTERED MESSAGES', recentMessages);
+    let mostRecentMessage = recentMessages[0].message.split('').splice(0, 30).join('') + '...';
     console.log('RECENT', mostRecentMessage);
     let teamTasks = _.filter(team.tasks,{deleted: false})
 
