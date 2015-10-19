@@ -138,7 +138,7 @@ module.exports = class Menu extends Component {
             <TouchableHighlight
               underlayColor={'#777'}
               onPress={() => {
-                this.props.nav.replace({
+                this.props.nav.push({
                   name: 'Profile',
                 })
               }}
@@ -151,7 +151,7 @@ module.exports = class Menu extends Component {
             <TouchableHighlight
               underlayColor='#aaa'
               onPress={() => {
-                this.props.nav.replace({
+                this.props.nav.push({
                   name: 'Feed',
                 })
               }}
@@ -161,7 +161,7 @@ module.exports = class Menu extends Component {
             <TouchableHighlight
               underlayColor='#eee'
               onPress={() => {
-                this.props.nav.replace({
+                this.props.nav.push({
                   name: 'InviteView',
                 })
               }}
@@ -175,7 +175,7 @@ module.exports = class Menu extends Component {
               style={styles.viewSelect}
               underlayColor='#ccc'
               onPress={() => {
-                this.props.nav.replace({
+                this.props.nav.push({
                   name: 'TeamView',
                 })
               }}
@@ -186,7 +186,7 @@ module.exports = class Menu extends Component {
               style={styles.viewSelect}
               underlayColor='#ccc'
               onPress={() => {
-                this.props.nav.replace({
+                this.props.nav.push({
                   name: 'CategoryIndex',
                 })
               }}

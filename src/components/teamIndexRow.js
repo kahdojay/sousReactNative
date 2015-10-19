@@ -26,7 +26,9 @@ class TeamIndexRow extends React.Component {
       return b.createdAt - a.createdAt
     });
     console.log('FILTERED MESSAGES', recentMessages);
-    let mostRecentMessage = recentMessages[0].message.split('').splice(0, 30).join('') + '...';
+    let mostRecentMessage = recentMessages[0] ?
+                              recentMessages[0].message.split('').splice(0, 30).join('') + '...' :
+                              '';
     console.log('RECENT', mostRecentMessage);
     let teamTasks = _.filter(team.tasks,{deleted: false})
 
