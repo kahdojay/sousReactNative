@@ -191,6 +191,7 @@ export default function TeamActions(ddpClient) {
         // add the product purveyor
         if (updatedCart.orders.hasOwnProperty(cartAttributes.purveyorId) === false) {
           updatedCart.orders[cartAttributes.purveyorId] = {
+            id: Shortid.generate(),
             total: 0.0,
             deliveryInstruction: '',
             products: {}
@@ -260,6 +261,7 @@ export default function TeamActions(ddpClient) {
       const {session} = getState()
       const orderId = Shortid.generate();
       ddpClient.call('sendOrder', [session.userId, session.teamId, orderId])
+      //TODO: add each teams[session.teamId].cart.orders into teams[session.teamId].orders seperately
       return dispatch({
         type: ORDER_SENT
       })
