@@ -262,7 +262,7 @@ class App extends React.Component {
             navigator={nav}
             categories={team.categories}
           />
-        )
+      );
       case 'CategoryView':
         var team = _.filter(teams.data, { id: session.teamId })[0]
         var category = _.filter(team.categories, { id: route.categoryId })[0]
