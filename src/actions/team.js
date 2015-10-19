@@ -263,6 +263,16 @@ export default function TeamActions(ddpClient) {
     }
   }
 
+  function sendOrder() {
+    return (dispatch, getState) => {
+      const {session} = getState()
+      ddpClient.call('sendOrder', [session.userId, session.teamId])
+      return dispatch({
+        type: ORDER_SENT
+      })
+    }
+  }
+
   return {
     RESET_TEAMS,
     GET_TEAMS,
@@ -284,6 +294,7 @@ export default function TeamActions(ddpClient) {
     receiveCategories,
     receiveProducts,
     updateProductInCart,
+    sendOrder,
     resetTeams,
     completeTeamTask,
   }
