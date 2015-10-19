@@ -27,6 +27,7 @@ export const CART = {
   REMOVE: 'REMOVE_FROM_CART',
   RESET: 'RESET_CART'
 };
+export const ORDER_SENT = 'ORDER_SENT';
 
 export const RESET_MESSAGES = 'RESET_MESSAGES';
 export const GET_MESSAGES = 'GET_MESSAGES';

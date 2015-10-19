@@ -41,6 +41,7 @@ export default function TeamActions(ddpClient) {
           total: 0.0,
           orders: {}
         },
+        orders: [],
         deleted: false
       }
       ddpClient.call('createTeam', [newTeamAttributes]);
@@ -257,7 +258,8 @@ export default function TeamActions(ddpClient) {
   function sendOrder() {
     return (dispatch, getState) => {
       const {session} = getState()
-      ddpClient.call('sendOrder', [session.userId, session.teamId])
+      const orderId = Shortid.generate();
+      ddpClient.call('sendOrder', [session.userId, session.teamId, orderId])
       return dispatch({
         type: ORDER_SENT
       })
@@ -275,6 +277,7 @@ export default function TeamActions(ddpClient) {
     ADD_TEAM,
     UPDATE_TEAM,
     DELETE_TEAM,
+    ORDER_SENT,
     addTeam,
     addTeamTask,
     updateTeamTask,
