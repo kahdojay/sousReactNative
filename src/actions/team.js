@@ -255,6 +255,10 @@ export default function TeamActions(ddpClient, allActions) {
         //   };
         // }
         break;
+      case CART.DELETE:
+        // TODO: DELETE PRODUCT
+        console.log('DELETING PRODUCT');
+      break;
       case CART.RESET:
         console.log('cart.RESET:', currentTeam.data)
         updatedCart = {

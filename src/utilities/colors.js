@@ -10,6 +10,7 @@ const Colors = {
   darkBlue: '#18008E',
   button: '#1825AD',
   buttonPress: '#C4851C',
+  lightBlue: '#4C9EF5',
 }
 
 module.exports = Colors
