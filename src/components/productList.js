@@ -23,6 +23,7 @@ class ProductList extends React.Component {
           cart={cart}
           product={product}
           key={idx}
+          purveyors={this.props.purveyors}
           onUpdateProductInCart={this.props.onUpdateProductInCart}
         />
       )

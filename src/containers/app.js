@@ -277,8 +277,8 @@ class App extends React.Component {
             category={category}
             cart={team.cart}
             products={teams.products}
+            purveyors={purveyors}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
-              // console.log(cartAction, cartAttributes)
               dispatch(actions.updateProductInCart(cartAction, cartAttributes))
             }}
           />
