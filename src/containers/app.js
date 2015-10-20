@@ -23,6 +23,7 @@ import ProductView from '../components/productView';
 import CategoryIndex from '../components/categoryIndex';
 import CategoryView from '../components/categoryView';
 import CategoryViewRightButton from '../components/CategoryViewRightButton';
+import ProductCreate from '../components/productCreate';
 import ProfileView from '../components/profileView';
 import InviteView from '../components/inviteView';
 import NavbarTitle from '../components/NavbarTitle';
@@ -300,6 +301,10 @@ class App extends React.Component {
             }}
           />
         );
+      case 'ProductCreate':
+        return (
+          <ProductCreate />
+        )
       case 'UserInfo':
         return (
           <UserInfo
