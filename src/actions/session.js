@@ -97,58 +97,49 @@ export default function SessionActions(ddpClient){
 
   function receiveSession(response) {
 
-    console.log("RES", response);
+    // console.log("RES", response);
     // Add the userId from the user.id coming back from the server
     if(response.hasOwnProperty('id') && response.id){
       response.userId = response.id;
     }
     return (dispatch, getState) => {
-      const {session} = getState();
-      var p1 = new Promise(function(resolve, reject) {
-        let {teams} = getState();
-        function resolveTeams() {
-          return resolve(teams);
-        }
-        setTimeout(resolveTeams, 100);
+      const {session, teams} = getState();
+      var isAuthenticated = session.isAuthenticated;
+      // console.log("AUTHENTICATE", isAuthenticated);
+      //TODO: make this a bit more secure
+      if(response.hasOwnProperty('smsVerified') && response.smsVerified === true && response.authToken){
+        // console.log("SESSION", session, response);
+        isAuthenticated = true;
+      }
+      if(response.hasOwnProperty('userId') && response.userId){
+        // console.log(response);
+        // if local app state contains team, connect the messages
+        // let teamIds = teams.data.map((team) => {teamIds.push(team.id)})
+        // console.log('TEAM IDS', teamIds);
+        // if (teamIds.length > 0) {
+        //   ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel)
+        //   ddpClient.subscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [teamIds]);
+        // }
+
+        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.TEAMS.channel)
+        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.TEAMS.channel, [response.userId]);
+        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.ERRORS.channel)
+        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.ERRORS.channel, [response.userId]);
+      }
+      if(response.hasOwnProperty('teamId') && response.teamId){
+        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel)
+        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [response.teamId]);
+        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.CATEGORIES.channel)
+        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.CATEGORIES.channel, [response.teamId]);
+        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.PRODUCTS.channel)
+        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.PRODUCTS.channel, [response.teamId]);
+      }
+      var action = Object.assign({}, session, response, {
+        type: RECEIVE_SESSION,
+        isAuthenticated: isAuthenticated
       });
-      p1.then(function(teams){
-        // console.log('TEAMS', teams.data);
-        let teamIds = teams.data.map((team) => {return team.id})
-        console.log('TEAM IDS', teamIds);
-        var isAuthenticated = session.isAuthenticated;
-        // console.log("AUTHENTICATE", isAuthenticated);
-        //TODO: make this a bit more secure
-        if(response.hasOwnProperty('smsVerified') && response.smsVerified === true && response.authToken){
-          // console.log("SESSION", session, response);
-          isAuthenticated = true;
-        }
-        if(response.hasOwnProperty('userId') && response.userId){
-          // console.log(response);
-          ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.TEAMS.channel)
-          ddpClient.subscribe(DDP.SUBSCRIBE_LIST.TEAMS.channel, [response.userId]);
-          ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.ERRORS.channel)
-          ddpClient.subscribe(DDP.SUBSCRIBE_LIST.ERRORS.channel, [response.userId]);
-        }
-        if(response.hasOwnProperty('teamId') && response.teamId){
-          ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel)
-          ddpClient.subscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [teamIds]);
-          ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel)
-          ddpClient.subscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [response.teamId]);
-          ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.CATEGORIES.channel)
-          ddpClient.subscribe(DDP.SUBSCRIBE_LIST.CATEGORIES.channel, [response.teamId]);
-          ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.PRODUCTS.channel)
-          ddpClient.subscribe(DDP.SUBSCRIBE_LIST.PRODUCTS.channel, [response.teamId]);
-        }
-        var action = Object.assign({}, session, response, {
-          type: RECEIVE_SESSION,
-          isAuthenticated: isAuthenticated
-        });
-        // console.log('isAuthenticated: ', action.type, action.isAuthenticated);
-        return dispatch(action);
-      });
-      p1.catch((err) => {
-        console.log('ERROR', err);
-      })
+      // console.log('isAuthenticated: ', action.type, action.isAuthenticated);
+      return dispatch(action);
     }
   }
 
