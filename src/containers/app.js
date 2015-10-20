@@ -342,7 +342,7 @@ class App extends React.Component {
 
   renderScene(route, nav) {
     // console.log("PROPS", this.props);
-    const { dispatch, ui, teams } = this.props;
+    const { dispatch, ui, teams, session } = this.props;
 
     // redirect to initial view
     if (this.props.session.isAuthenticated){
@@ -382,12 +382,12 @@ class App extends React.Component {
           break;
         case 'Feed':
           //TODO prevent FOUC
-          var teamName = teams.data[0] ? teams.data[0].name : '';
+          var team = _.filter(teams.data, { id: session.teamId })[0]
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
             hidePrev: false,
-            title: teamName,
+            title: team.name,
             titleColor: 'black',
             customPrev: <FeedViewLeftButton />,
             customNext: <FeedViewRightButton />,
