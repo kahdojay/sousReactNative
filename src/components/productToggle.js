@@ -1,4 +1,5 @@
 import React from 'react-native'
+import _ from 'lodash'
 import CheckBox from 'react-native-checkbox'
 import { Icon } from 'react-native-icons'
 
@@ -17,8 +18,9 @@ class ModalToggle extends React.Component {
       <TouchableHighlight
         onPress={this.props.onPress}
         style={[styles.button, this.props.style]}
-        underlayColor="#eee">
-          <View>{this.props.children}</View>
+        underlayColor="#eee"
+      >
+        <View>{this.props.children}</View>
       </TouchableHighlight>
     );
   }
@@ -44,33 +46,38 @@ class ProductToggle extends React.Component {
   }
 
   render() {
-    let checkbox =  <CheckBox
-                      label=''
-                      onChange={this._handlePurveyorSelect.bind(this, this.props.currentlySelectedPurveyorId)}
-                      checked={this.props.added}
-                    />
+    let checkbox = (
+      <CheckBox
+        label=''
+        onChange={this._handlePurveyorSelect.bind(this, this.props.currentlySelectedPurveyorId)}
+        checked={this.props.added}
+      />
+    );
 
-    let modalShowButton = <ModalToggle
-                            onPress={this._setModalVisible.bind(this, true)}>
-                              <Icon
-                                name='fontawesome|ellipsis-h'
-                                size={30}
-                                color='black'
-                                style={styles.icon}
-                              />
-                          </ModalToggle>
+    let modalShowButton = (
+      <ModalToggle onPress={this._setModalVisible.bind(this, true)} >
+        <Icon
+          name='fontawesome|ellipsis-h'
+          size={30}
+          color='black'
+          style={styles.icon}
+        />
+      </ModalToggle>
+    );
 
-    let purveyorsArray = this.props.purveyors.map(function(purveyorId, idx) {
-                            return (
-                              <ModalToggle
-                                key={idx}
-                                style={styles.modalButton}
-                                onPress={this._handlePurveyorSelect.bind(this, purveyorId)}
-                              >
-                                <Text>{purveyorId}</Text>
-                              </ModalToggle>
-                            )
-                          }.bind(this))
+    let purveyorsArray = this.props.availablePurveyors
+      .map((purveyorId, idx) => {
+        const purveyorName = _.find(this.props.allPurveyors.data, { id: purveyorId }).name;
+        return (
+          <ModalToggle
+            key={idx}
+            style={styles.modalButton}
+            onPress={this._handlePurveyorSelect.bind(this, purveyorId)}
+          >
+            <Text>{purveyorName}</Text>
+          </ModalToggle>
+        )
+      })
     return (
       <View>
         <Modal
@@ -84,7 +91,7 @@ class ProductToggle extends React.Component {
             </View>
           </View>
         </Modal>
-        {this.props.added === false && this.props.purveyors.length > 1 ? modalShowButton : checkbox}
+        {this.props.added === false && this.props.availablePurveyors.length > 1 ? modalShowButton : checkbox}
       </View>
     );
   }

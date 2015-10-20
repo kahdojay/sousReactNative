@@ -269,7 +269,6 @@ class App extends React.Component {
       case 'CategoryView':
         var team = _.filter(teams.data, { id: session.teamId })[0]
         var category = _.filter(team.categories, { id: route.categoryId })[0]
-        // console.log(team.cart);
         return (
           <CategoryView
             ui={ui}
@@ -277,8 +276,8 @@ class App extends React.Component {
             category={category}
             cart={team.cart}
             products={teams.products}
+            purveyors={purveyors}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
-              // console.log(cartAction, cartAttributes)
               dispatch(actions.updateProductInCart(cartAction, cartAttributes))
             }}
           />
@@ -447,6 +446,16 @@ class App extends React.Component {
             customPrev: <NavBackButton iconFont={'times'} />,
             title: 'Order Guide',
             customNext: <CategoryViewRightButton />
+          })
+          break;
+        case 'CategoryView':
+          var team = _.filter(teams.data, { id: session.teamId })[0]
+          var category = _.filter(team.categories, { id: route.categoryId })[0];
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: <NavBackButton iconFont={'chevron-left'} />,
+            title: category.name,
           })
           break;
         case 'ProductView':

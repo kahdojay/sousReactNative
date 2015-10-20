@@ -2,6 +2,7 @@ import React from 'react-native'
 import ProductToggle from './productToggle'
 import { Icon } from 'react-native-icons'
 import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
+import _ from 'lodash';
 import {
   CART
 } from '../actions/actionTypes';
@@ -88,7 +89,8 @@ class ProductListItem extends React.Component {
   }
   render() {
     let {product} = this.props
-    console.log('PRODUCT', product);
+    console.log('list item product', product)
+    const purveyorString = _.find(this.props.purveyors.data, { id: this.state.selectedPurveyorId }).name;
 
     return (
       <View style={styles.container}>
@@ -96,30 +98,25 @@ class ProductListItem extends React.Component {
           <View style={styles.checkboxContainer}>
             <ProductToggle
               added={this.state.added}
-              purveyors={product.purveyors}
+              availablePurveyors={product.purveyors}
+              allPurveyors={this.props.purveyors}
               currentlySelectedPurveyorId={this.state.selectedPurveyorId}
               onToggleCartProduct={(id) => {
                 this.handleToggleProduct(id)
               }}
             />
           </View>
-            <View
-              style={styles.main}
-            >
-              <Text style={styles.productText}>
-                {product.name}
-              </Text>
-              <Text
-                style={{fontSize: 9,  color: '#999'}}
-              >
-                {product.amount + ' ' + product.unit}
-              </Text>
-              <Text
-                style={{fontSize: 9,  color: '#999'}}
-              >
-                {this.state.selectedPurveyorId}
-              </Text>
-            </View>
+          <View style={styles.main} >
+            <Text style={styles.productText}>
+              {product.name}
+            </Text>
+            <Text style={{fontSize: 9,  color: '#999'}} >
+              {product.amount + ' ' + product.unit}
+            </Text>
+            <Text style={{fontSize: 9,  color: '#999'}} >
+              {purveyorString}
+            </Text>
+          </View>
           <Text style={styles.quantity}>
             {this.state.quantity > 1 ? ('X' + this.state.quantity) : ''}
           </Text>

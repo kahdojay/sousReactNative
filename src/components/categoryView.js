@@ -8,7 +8,6 @@ import { mainBackgroundColor, navbarColor } from '../utilities/colors';
 import _ from 'lodash'
 
 const {
-  ActionSheetIOS,
   StyleSheet,
   View,
   PropTypes,
@@ -45,6 +44,7 @@ class CategoryView extends React.Component {
           navigator={this.props.navigator}
           cart={cart}
           products={products}
+          purveyors={this.props.purveyors}
           onUpdateProductInCart={this.props.onUpdateProductInCart}
         />
       </View>
