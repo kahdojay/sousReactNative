@@ -449,6 +449,16 @@ class App extends React.Component {
             customNext: <CategoryViewRightButton />
           })
           break;
+        case 'CategoryView':
+          var team = _.filter(teams.data, { id: session.teamId })[0]
+          var category = _.filter(team.categories, { id: route.categoryId })[0];
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: <NavBackButton iconFont={'chevron-left'} />,
+            title: category.name,
+          })
+          break;
         case 'ProductView':
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,

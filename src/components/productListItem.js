@@ -103,23 +103,21 @@ class ProductListItem extends React.Component {
               }}
             />
           </View>
-            <View
-              style={styles.main}
+          <View style={styles.main} >
+            <Text style={styles.productText}>
+              {product.name}
+            </Text>
+            <Text
+              style={{fontSize: 9,  color: '#999'}}
             >
-              <Text style={styles.productText}>
-                {product.name}
-              </Text>
-              <Text
-                style={{fontSize: 9,  color: '#999'}}
-              >
-                {product.amount + ' ' + product.unit}
-              </Text>
-              <Text
-                style={{fontSize: 9,  color: '#999'}}
-              >
-                {this.state.selectedPurveyorId}
-              </Text>
-            </View>
+              {product.amount + ' ' + product.unit}
+            </Text>
+            <Text
+              style={{fontSize: 9,  color: '#999'}}
+            >
+              {this.state.selectedPurveyorId}
+            </Text>
+          </View>
           <Text style={styles.quantity}>
             {this.state.quantity > 1 ? ('X' + this.state.quantity) : ''}
           </Text>
