@@ -83,7 +83,13 @@ class InviteView extends React.Component {
         <TouchableHighlight
           style={styles.button}
           underlayColor={Colors.buttonPress}
-          onPress={() => this.sendSMS()}>
+          onPress={() => {
+
+            this.sendSMS();
+            this.props.navigator.replacePreviousAndPop({
+              name: 'Feed',
+            });
+          }}>
           <Text style={styles.buttonText}>Send SMS</Text>
         </TouchableHighlight>
       </ScrollView>

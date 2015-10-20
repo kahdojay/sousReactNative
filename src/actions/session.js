@@ -35,6 +35,7 @@ export default function SessionActions(ddpClient){
   function registerSession(sessionParams) {
     return (dispatch, getState) => {
       // process ddp call
+      console.log('SESSION PARAMS', sessionParams);
       if(sessionParams.hasOwnProperty('smsToken') === false){
         // dispatch a session clear to get make sure no lingering data exists
         dispatch(receiveSession({
@@ -49,6 +50,7 @@ export default function SessionActions(ddpClient){
           imageUrl: "",
           teamId: null,
           errors: null,
+          phoneNumber: sessionParams.phoneNumber,
         }))
 
         //--------------------------------------
