@@ -25,8 +25,10 @@ const uiActions = UIActions(ddpClient)
 const sessionActions = SessionActions(ddpClient, {
   'connectActions': connectActions
 })
-const teamActions = TeamActions(ddpClient)
 const messageActions = MessageActions(ddpClient)
+const teamActions = TeamActions(ddpClient{
+  'messageActions': messageActions
+})
 const purveyorActions = PurveyorActions(ddpClient)
 
 function connectApp(){

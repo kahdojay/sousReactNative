@@ -15,12 +15,15 @@ import {
   UPDATE_TEAM,
   DELETE_TEAM,
   COMPLETE_TEAM_TASK,
+  ORDER_SENT,
   CART
 } from './actionTypes'
 
-export default function TeamActions(ddpClient) {
+export default function TeamActions(ddpClient, allActions) {
 
-  const messageActions = MessageActions(ddpClient)
+  const {
+    messageActions
+  } = allActions
 
   function resetTeams(){
     return {
@@ -42,6 +45,7 @@ export default function TeamActions(ddpClient) {
           total: 0.0,
           orders: {}
         },
+        orders: [],
         deleted: false
       }
       ddpClient.call('createTeam', [newTeamAttributes]);
@@ -199,6 +203,7 @@ export default function TeamActions(ddpClient) {
         // add the product purveyor
         if (updatedCart.orders.hasOwnProperty(cartAttributes.purveyorId) === false) {
           updatedCart.orders[cartAttributes.purveyorId] = {
+            id: Shortid.generate(),
             total: 0.0,
             deliveryInstruction: '',
             products: {}
@@ -263,6 +268,18 @@ export default function TeamActions(ddpClient) {
     }
   }
 
+  function sendCart() {
+    return (dispatch, getState) => {
+      const {session} = getState()
+      const orderId = Shortid.generate();
+      ddpClient.call('sendCart', [session.userId, session.teamId, orderId])
+      // TODO: add each teams[session.teamId].cart.orders into teams[session.teamId].orders seperately
+      return dispatch({
+        type: ORDER_SENT
+      })
+    }
+  }
+
   return {
     RESET_TEAMS,
     GET_TEAMS,
@@ -274,6 +291,7 @@ export default function TeamActions(ddpClient) {
     ADD_TEAM,
     UPDATE_TEAM,
     DELETE_TEAM,
+    ORDER_SENT,
     addTeam,
     addTeamTask,
     updateTeamTask,
@@ -284,6 +302,7 @@ export default function TeamActions(ddpClient) {
     receiveCategories,
     receiveProducts,
     updateProductInCart,
+    sendCart,
     resetTeams,
     completeTeamTask,
   }
