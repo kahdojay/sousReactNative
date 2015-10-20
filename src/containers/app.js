@@ -13,6 +13,7 @@ import TaskView from '../components/taskView';
 import SideMenu from 'react-native-side-menu';
 import Menu from '../components/menu';
 import Feed from '../components/feed';
+import CartView from '../components/cartView';
 import FeedViewLeftButton from '../components/feedViewLeftButton';
 import FeedViewRightButton from '../components/feedViewRightButton';
 import NavBackButton from '../components/navBackButton';
@@ -315,6 +316,12 @@ class App extends React.Component {
             onSMSInvite={(contactList) => dispatch(actions.inviteContacts(contactList))}
           />
         );
+      case 'CartView':
+        return (
+          <CartView
+            navigator={nav}
+          />
+        );
       default:
         return <View />;
     }
@@ -430,7 +437,8 @@ class App extends React.Component {
             buttonsColor: '#ccc',
             customPrev: <NavBackButton iconFont={'times'} />,
             title: 'Order Guide',
-            onNext: null,
+            nextTitle: 'Cart',
+            onNext: (navigator, route) => navigator.push({name: 'CartView'}),
           })
           break;
         case 'ProductView':

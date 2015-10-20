@@ -178,8 +178,7 @@ export default function TeamActions(ddpClient, allActions) {
     }
   }
 
-  function updateProductInCart(cartAction, cartAttributes){
-    console.log(cartAction, cartAttributes);
+  function updateProductInCart(cartAction, cartAttributes) {
     return (dispatch, getState) => {
       const {session, teams} = getState();
 
@@ -193,9 +192,12 @@ export default function TeamActions(ddpClient, allActions) {
       let currentTeamIdx = getIdx(teams.data, session.teamId);
       let updatedCart = Object.assign({}, teams.data[currentTeamIdx].cart);
       let cartProductPurveyor = null;
+      let currentTeam = _.filter(teams.data, { id: session.teamId });
+      console.log('cartAttributes', cartAttributes)
 
       switch (cartAction) {
       case CART.ADD:
+        console.log('cart.ADD:')
         // add the date
         if (updatedCart.date === null) {
           updatedCart.date = (new Date()).getTime()
@@ -222,34 +224,39 @@ export default function TeamActions(ddpClient, allActions) {
           quantity: cartAttributes.quantity,
           note: cartAttributes.note
         }
-
         // update the product purveyor
         updatedCart.orders[cartAttributes.purveyorId] = cartProductPurveyor;
         break;
       case CART.REMOVE:
+        // TODO: decrement cart total on delete
+        console.log('cart.REMOVE:', currentTeam)
+        delete updatedCart
+                .orders[cartAttributes.purveyorId]
+                .products[cartAttributes.productId];
         // get the product purveyor
-        if (updatedCart.orders.hasOwnProperty(cartAttributes.purveyorId) === true) {
-          cartProductPurveyor = updatedCart.orders[cartAttributes.purveyorId];
-
-          // delete the product
-          if (cartProductPurveyor.products.hasOwnProperty(cartAttributes.productId) === true) {
-            delete cartProductPurveyor.products[cartAttributes];
-          }
-          // clean up product purveyors
-          if (Object.keys(cartProductPurveyor.products).length === 0){
-            delete updatedCart.orders[cartAttributes.purveyorId];
-          }
-        }
+        // if (updatedCart.orders.hasOwnProperty(cartAttributes.purveyorId) === true) {
+        //   cartProductPurveyor = updatedCart.orders[cartAttributes.purveyorId];
+        //
+        //   // delete the product
+        //   if (cartProductPurveyor.products.hasOwnProperty(cartAttributes.productId) === true) {
+        //     delete cartProductPurveyor.products[cartAttributes];
+        //   }
+        //   // clean up product purveyors
+        //   if (Object.keys(cartProductPurveyor.products).length === 0){
+        //     delete updatedCart.orders[cartAttributes.purveyorId];
+        //   }
+        // }
         // clean up the cart
-        if (Object.keys(updatedCart.orders)) {
-          updatedCart = {
-            date: null,
-            total: 0.0,
-            orders: {}
-          };
-        }
+        // if (Object.keys(updatedCart.orders)) {
+        //   updatedCart = {
+        //     date: null,
+        //     total: 0.0,
+        //     orders: {}
+        //   };
+        // }
         break;
       case CART.RESET:
+        console.log('cart.RESET:', currentTeam.data)
         updatedCart = {
           date: null,
           total: 0.0,
