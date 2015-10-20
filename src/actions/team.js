@@ -15,6 +15,7 @@ import {
   UPDATE_TEAM,
   DELETE_TEAM,
   COMPLETE_TEAM_TASK,
+  ORDER_SENT,
   CART
 } from './actionTypes'
 
