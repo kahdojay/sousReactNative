@@ -89,6 +89,7 @@ class ProductListItem extends React.Component {
   }
   render() {
     let {product} = this.props
+    console.log('list item product', product)
     const purveyorString = _.find(this.props.purveyors.data, { id: this.state.selectedPurveyorId }).name;
 
     return (
@@ -97,7 +98,8 @@ class ProductListItem extends React.Component {
           <View style={styles.checkboxContainer}>
             <ProductToggle
               added={this.state.added}
-              purveyors={product.purveyors}
+              availablePurveyors={product.purveyors}
+              allPurveyors={this.props.purveyors}
               currentlySelectedPurveyorId={this.state.selectedPurveyorId}
               onToggleCartProduct={(id) => {
                 this.handleToggleProduct(id)

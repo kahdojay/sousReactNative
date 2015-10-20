@@ -269,7 +269,6 @@ class App extends React.Component {
       case 'CategoryView':
         var team = _.filter(teams.data, { id: session.teamId })[0]
         var category = _.filter(team.categories, { id: route.categoryId })[0]
-        // console.log(team.cart);
         return (
           <CategoryView
             ui={ui}

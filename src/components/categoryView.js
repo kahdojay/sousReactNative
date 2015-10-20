@@ -8,7 +8,6 @@ import { mainBackgroundColor, navbarColor } from '../utilities/colors';
 import _ from 'lodash'
 
 const {
-  ActionSheetIOS,
   StyleSheet,
   View,
   PropTypes,
