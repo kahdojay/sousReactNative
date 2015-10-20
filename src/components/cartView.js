@@ -6,6 +6,7 @@ const {
   View,
   Text,
   ScrollView,
+  TouchableHighlight,
   StyleSheet,
 } = React;
 
@@ -31,7 +32,19 @@ class CartView extends React.Component {
               });
               productName = appProduct.name;
               if (productName)
-                return <Text style={styles.productTitle} key={index}>{quantity} {productName}</Text>;
+                return (
+                  <View style={styles.productContainer}>
+                    <Text style={styles.productTitle} key={index}>{quantity} {productName}</Text>
+                    <TouchableHighlight
+                      onPress={() => {
+                        console.log('delete ITEM');
+                        this.props.onDeleteProduct(purveyorProduct, team.id)
+                      }}
+                      underlayColor='transparent'>
+                      <Icon name='fontawesome|times' size={25} color='#999' style={styles.icon} />
+                    </TouchableHighlight>
+                  </View>
+                )
             });
             return (
               <View style={styles.purveyorContainer}>
@@ -41,6 +54,13 @@ class CartView extends React.Component {
             );
           }
         })}
+        <TouchableHighlight
+          onPress={() => {
+            this.props.onSubmitOrder();
+          }}
+          style={styles.button}>
+          <Text style={styles.buttonText}>Submit Order</Text>
+        </TouchableHighlight>
       </ScrollView>
     );
   }
@@ -50,6 +70,22 @@ let styles = StyleSheet.create({
   purveyorContainer: {
     marginLeft: 10,
     marginRight: 10,
+  },
+  icon: {
+    width: 30,
+    height: 30,
+    borderWidth: 2,
+    borderColor: '#999',
+    borderRadius: 4,
+    marginTop: 4,
+  },
+  productContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    marginTop: 1,
+    justifyContent: 'space-between',
+    paddingRight: 5,
   },
   purveyorTitle: {
     backgroundColor: Colors.lightBlue,
@@ -67,6 +103,22 @@ let styles = StyleSheet.create({
     fontSize: 14,
     backgroundColor: 'white',
     marginTop: 1,
+  },
+  buttonText: {
+    alignSelf: 'center',
+    fontSize: 22,
+    color: 'white',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans'
+  },
+  button: {
+    height: 56,
+    backgroundColor: '#F5A623',
+    alignSelf: 'center',
+    width: 200,
+    marginTop: 20,
+    justifyContent: 'center',
+    borderRadius: 3,
   },
   scrollView: {
     backgroundColor: '#f2f2f2',

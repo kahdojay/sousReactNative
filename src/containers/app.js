@@ -328,6 +328,14 @@ class App extends React.Component {
             team={this.props.teams.data[teamIndex]}
             purveyors={this.props.purveyors.data}
             appState={this.props}
+            onDeleteProduct={(productId, teamId) => {
+              console.log('delete PRODUCT', productId, teamId);
+
+            }}
+            onSubmitOrder={() => {
+              console.log('SUBMIT ORDER');
+              dispatch(actions.sendCart());
+            }}
           />
         );
       default:
