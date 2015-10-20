@@ -25,7 +25,7 @@ class CartView extends React.Component {
             let purveyorProducts = _.keys(cart.orders[purveyor.id].products);
             let productName = '';
             let productRows = purveyorProducts.map((purveyorProduct, index) => {
-              console.log('PRODUCT', cart.orders[purveyor.id].products[purveyorProduct])
+              // console.log('PRODUCT', cart.orders[purveyor.id].products[purveyorProduct])
               let quantity = cart.orders[purveyor.id].products[purveyorProduct].quantity
               let appProduct = _.find(products, (product) => {
                 return product.id == purveyorProduct
@@ -38,7 +38,7 @@ class CartView extends React.Component {
                     <TouchableHighlight
                       onPress={() => {
                         console.log('delete ITEM');
-                        this.props.onDeleteProduct(purveyorProduct, team.id)
+                        this.props.onDeleteProduct(purveyor.id, purveyorProduct)
                       }}
                       underlayColor='transparent'>
                       <Icon name='fontawesome|times' size={25} color='#999' style={styles.icon} />

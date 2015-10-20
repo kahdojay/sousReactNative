@@ -328,9 +328,10 @@ class App extends React.Component {
             team={this.props.teams.data[teamIndex]}
             purveyors={this.props.purveyors.data}
             appState={this.props}
-            onDeleteProduct={(productId, teamId) => {
-              console.log('delete PRODUCT', productId, teamId);
-
+            onDeleteProduct={(purveyorId, productId) => {
+              console.log('delete PRODUCT', purveyorId, productId);
+                // console.log(cartAction, cartAttributes)
+                dispatch(actions.updateProductInCart('REMOVE_FROM_CART', {purveyorId: purveyorId, productId: productId}))
             }}
             onSubmitOrder={() => {
               console.log('SUBMIT ORDER');
