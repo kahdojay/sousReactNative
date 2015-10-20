@@ -311,6 +311,7 @@ class App extends React.Component {
       case 'InviteView':
         return (
           <InviteView
+            navigator={nav}
             onSMSInvite={(contactList) => dispatch(actions.inviteContacts(contactList))}
           />
         );
