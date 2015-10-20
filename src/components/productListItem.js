@@ -88,6 +88,7 @@ class ProductListItem extends React.Component {
   }
   render() {
     let {product} = this.props
+    console.log('PRODUCT', product);
 
     return (
       <View style={styles.container}>

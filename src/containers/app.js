@@ -318,9 +318,17 @@ class App extends React.Component {
           />
         );
       case 'CartView':
+        let teamIndex;
+        teams.data.forEach((team, idx) => {
+          if (team.id == session.teamId)
+            teamIndex = idx
+        });
         return (
           <CartView
             navigator={nav}
+            team={this.props.teams.data[teamIndex]}
+            purveyors={this.props.purveyors.data}
+            appState={this.props}
           />
         );
       default:
