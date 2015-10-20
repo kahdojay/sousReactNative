@@ -55,7 +55,7 @@ module.exports = class Menu extends Component {
     let completeTasksCount = _.filter(team.tasks, function(task) {
       return (task.deleted == false && task.completed === true)
     }).length
-    let progress = Math.round((completeTasksCount / totalTasks)*100);
+    let progress = Math.round((completeTasksCount / totalTasks)*100) || 0;
     return (
       <View>
         <ScrollView style={styles.menu}>

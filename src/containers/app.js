@@ -22,6 +22,7 @@ import PurveyorView from '../components/purveyorView';
 import ProductView from '../components/productView';
 import CategoryIndex from '../components/categoryIndex';
 import CategoryView from '../components/categoryView';
+import CategoryViewRightButton from '../components/CategoryViewRightButton';
 import ProfileView from '../components/profileView';
 import InviteView from '../components/inviteView';
 import NavbarTitle from '../components/NavbarTitle';
@@ -378,6 +379,7 @@ class App extends React.Component {
       navBar = <View />
     } else {
       switch(route.name) {
+        //TODO: remove cloneWithProps as it's deprecated
         case 'TeamIndex':
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
@@ -385,7 +387,6 @@ class App extends React.Component {
             hidePrev: false,
             buttonsColor: '#ccc',
             customPrev: <NavBackButton iconFont='times' />,
-            // prevTitle: 'x', //TODO create customPrev
             title: 'Switch Teams',
           })
           break;
@@ -437,8 +438,7 @@ class App extends React.Component {
             buttonsColor: '#ccc',
             customPrev: <NavBackButton iconFont={'times'} />,
             title: 'Order Guide',
-            nextTitle: 'Cart',
-            onNext: (navigator, route) => navigator.push({name: 'CartView'}),
+            customNext: <CategoryViewRightButton />
           })
           break;
         case 'ProductView':
@@ -462,9 +462,16 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            hidePrev: true,
             customPrev: <NavBackButton iconFont={'times'} />,
             title: 'Invite Teammates',
+          })
+          break;
+        case 'CartView':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: <NavBackButton iconFont={'chevron-left'} />,
+            title: 'Cart',
           })
           break;
         default:
