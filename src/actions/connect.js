@@ -8,6 +8,7 @@ export default function ConnectActions(ddpClient) {
     if(connectedChannels.hasOwnProperty(resource.channel) === false){
       if(resourceParam){
         // console.log('SUBSCRIBING TO CHANNEL: ', resource.channel, ' using param: ', resourceParam)
+        ddpClient.unsubscribe(resource.channel);
         ddpClient.subscribe(resource.channel, [resourceParam]);
         connectedChannels[resource.channel] = true;
         //TODO: disconnect from the channels that require teamId and then
@@ -26,7 +27,11 @@ export default function ConnectActions(ddpClient) {
       } else if(resource.channel === 'errors' || resource.channel === 'teams'){
         resourceParam = session.userId;
       } else if (resource.channel === 'messages') {
-        resourceParam = teamIds;
+        if (teamIds.length > 0) {
+          resourceParam = teamIds;
+        } else {
+          resourceParam = null
+        }
       } else {
         resourceParam = session.teamId
       }
@@ -44,19 +49,9 @@ export default function ConnectActions(ddpClient) {
     } = allActions
     return (dispatch, getState) => {
       const {session, teams} = getState();
-
-      console.log('TEAMS', teams);
-      let teamIds = teams.data.map((team) => {return team.id});
-      ddpClient.on('connected', () => {
-        // console.log('CONNECTED: TODO');
-        if (session.isAuthenticated)
-          connectChannels(session, teamIds)
-      });
       //--------------------------------------
       // Bind DDP client events
       //--------------------------------------
-
-
       ddpClient.on('message', (msg) => {
         var log = JSON.parse(msg);
         // console.log("MAIN DDP MSG", log);
@@ -90,13 +85,18 @@ export default function ConnectActions(ddpClient) {
               console.log("TODO: wire up collection: ", log.collection);
               break;
           }
-          // TODO: do we need this?
-          // if(Object.keys(connectedChannels).length < Object.keys(DDP.SUBSCRIBE_LIST).length){
-          //   connectChannels(session);
-          // }
         } else if(log){
           // console.log("MAIN DDP MSG", log);
         }
+      });
+
+      let teamIds = teams.data.map((team) => {return team.id});
+      // console.log('TEAMS', teams);
+      // console.log('TEAM IDS', teamIds);
+      ddpClient.on('connected', () => {
+        // console.log('CONNECTED: TODO');
+        if (session.isAuthenticated)
+          connectChannels(session, teamIds)
       });
 
       //--------------------------------------

@@ -1,3 +1,4 @@
+import { DDP } from '../resources/apiConfig'
 import Shortid from 'shortid'
 import MessageActions from './message'
 import { getIdx, updateByIdx, updateDataState } from '../utilities/reducer'
@@ -143,11 +144,19 @@ export default function TeamActions(ddpClient) {
     }
   }
 
+  let teamIds = []
   function receiveTeams(team) {
     // console.log(RECEIVE_TEAMS, team);
-    return {
-      type: RECEIVE_TEAMS,
-      team: team
+    return (dispatch, getState) => {
+      const {teams} = getState();
+      // teams.data.map((team) => {teamIds.push(team.id)})
+      teamIds.push(team.id)
+      ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel)
+      ddpClient.subscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [teamIds]);
+      return dispatch({
+              type: RECEIVE_TEAMS,
+              team: team
+            })
     }
   }
 

@@ -402,13 +402,13 @@ class App extends React.Component {
           })
           break;
         case 'TeamView':
-          var teamName = teams.data[0] ? teams.data[0].name : '';
+          var team = _.filter(teams.data, { id: session.teamId })[0]
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
             buttonsColor: '#ccc',
             customPrev: <NavBackButton iconFont={'times'} />,
-            title: teamName,
+            title: team.name,
           })
           break;
         case 'PurveyorView':

@@ -32,7 +32,7 @@ export default function MessageActions(ddpClient) {
         imageUrl: session.imageUrl,
         delete: false
       };
-      // console.log(newMessage);
+      console.log('newMessage', newMessage);
       ddpClient.call('createMessage', [newMessage])
       return dispatch({
         type: CREATE_MESSAGE,
