@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   },
   avatarContainer: {
     flex: 1,
-    width: 214,
+    width: window.width * .7,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
   inviteContainer: {
     flex: 1,
-    width: 214,
+    width: window.width * .7,
     flexDirection: 'column',
     alignItems: 'center',
   },
