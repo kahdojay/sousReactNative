@@ -76,7 +76,7 @@ class ProductCreate extends React.Component {
           <Text style={styles.inputField} >{this.state.amountSelected ? this.state.amount : 'Amount of'} {this.state.unitSelected ? this.state.unit : 'Units'}</Text>
         </View>
         <MultiPickerIOS style={styles.picker}>
-          <Group selectedValue={this.state.category} onChange={(e) => {
+          <Group style={styles.group} selectedValue={this.state.category} onChange={(e) => {
               this.setState({category: e.newValue, categorySelected: true}, () => {
                 this.submitReady();
               })
@@ -138,13 +138,20 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   picker: {
-    width: 500,
-    paddingRight: 20,
-    paddingLeft: 20,
-    marginLeft: 20,
+    // width: Dimensions.get('window').width * .3,
+    // width: 500,
+    // paddingRight: 20,
+    // paddingLeft: 20,
+    // marginLeft: 20,
+    // alignItems: 'center',
+    // justifyContent: 'center',
+  },
+  group: {
+    // width: Dimensions.get('window').width,
+    // width: 555,
   },
   inputField: {
-    flex: 1,
+    flex: 2,
     backgroundColor: 'white',
     borderWidth: 1,
     color: '#777',
@@ -154,7 +161,7 @@ const styles = StyleSheet.create({
     margin: 2,
     fontFamily: 'OpenSans',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 14,
   },
   scrollView: {
     backgroundColor: '#f9f9f9',
