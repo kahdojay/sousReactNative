@@ -46,6 +46,7 @@ class CategoryView extends React.Component {
           onPress={() => {
             this.props.navigator.push({
               name: 'ProductCreate',
+              categoryId: category.id,
             })
           }}
           style={styles.createButton}

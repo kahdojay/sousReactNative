@@ -24,6 +24,7 @@ import CategoryIndex from '../components/categoryIndex';
 import CategoryView from '../components/categoryView';
 import CategoryViewRightButton from '../components/CategoryViewRightButton';
 import ProductCreate from '../components/productCreate';
+import ProductCreateRightCheckbox from '../components/ProductCreateRightCheckbox';
 import ProfileView from '../components/profileView';
 import InviteView from '../components/inviteView';
 import NavbarTitle from '../components/NavbarTitle';
@@ -308,12 +309,11 @@ class App extends React.Component {
       case 'UserInfo':
         return (
           <UserInfo
+            navigator={nav}
             onUpdateInfo={(data) => {
-              // console.log("DATA", data);
               dispatch(actions.updateSession(data));
             }}
-            navigator={nav}
-            />
+          />
         )
       case 'InviteView':
         return (
@@ -335,7 +335,10 @@ class App extends React.Component {
             purveyors={this.props.purveyors.data}
             appState={this.props}
             onDeleteProduct={(purveyorId, productId) => {
-              dispatch(actions.updateProductInCart('REMOVE_FROM_CART', {purveyorId: purveyorId, productId: productId}))
+              dispatch(actions.updateProductInCart(
+                'REMOVE_FROM_CART',
+                {purveyorId: purveyorId, productId: productId}
+              ))
             }}
             onSubmitOrder={(msg) => {
               dispatch(actions.sendCart());
@@ -504,6 +507,15 @@ class App extends React.Component {
             route: route,
             customPrev: <NavBackButton navName='CategoryIndex' iconFont={'fontawesome|chevron-left'} />,
             title: 'Cart',
+          })
+          break;
+        case 'ProductCreate':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: <NavBackButton iconFont={'fontawesome|times'} pop={true} />,
+            title: 'Add New Product',
+            customNext: <ProductCreateRightCheckbox disabled={true} />,
           })
           break;
         default:

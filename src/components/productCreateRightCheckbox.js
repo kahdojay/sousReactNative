@@ -10,25 +10,21 @@ const {
   StyleSheet,
 } = React;
 
-class NavBackButton extends React.Component {
+class ProductCreateRightCheckbox extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      iconFont: this.props.iconFont || 'fontawesome|chevron-left',
-      navName: this.props.navName || 'Feed'
+      iconFont: this.props.iconFont || 'fontawesome|check-square',
+      navName: this.props.navName || 'CategoryIndex',
+      disabled: this.props.disabled || true,
     }
   }
 
-  // if pop={true} simply pop, overrides other conditions
   handlePress(e) {
     let routes = this.props.navigator.getCurrentRoutes();
-    if (this.props.pop) {
-      this.props.navigator.pop();
-    } else {
-      this.props.navigator.replacePreviousAndPop({
-        name: this.state.navName,
-      });
-    }
+    this.props.navigator.replacePreviousAndPop({
+      name: this.state.navName,
+    });
   }
 
   render() {
@@ -38,7 +34,12 @@ class NavBackButton extends React.Component {
       <TouchableHighlight
         underlayColor='white'
         onPress={this.handlePress.bind(this)} >
-        <Icon name={`${this.state.iconFont}`} size={30} color={Colors.navbarIconColor} style={styles.hamburger} />
+        <Icon
+          name={`${this.state.iconFont}`}
+          size={30}
+          color={Colors.disabled}
+          style={styles.hamburger}
+        />
       </TouchableHighlight>
     );
   }
@@ -52,4 +53,4 @@ let styles = StyleSheet.create({
   }
 })
 
-export default NavBackButton;
+export default ProductCreateRightCheckbox;
