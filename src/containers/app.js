@@ -28,6 +28,7 @@ import InviteView from '../components/inviteView';
 import NavbarTitle from '../components/NavbarTitle';
 import { BackBtn } from '../utilities/navigation';
 import Colors from '../utilities/colors';
+import Urls from '../resources/urls';
 import * as actions from '../actions';
 
 const {
@@ -329,13 +330,11 @@ class App extends React.Component {
             purveyors={this.props.purveyors.data}
             appState={this.props}
             onDeleteProduct={(purveyorId, productId) => {
-              console.log('delete PRODUCT', purveyorId, productId);
-                // console.log(cartAction, cartAttributes)
-                dispatch(actions.updateProductInCart('REMOVE_FROM_CART', {purveyorId: purveyorId, productId: productId}))
+              dispatch(actions.updateProductInCart('REMOVE_FROM_CART', {purveyorId: purveyorId, productId: productId}))
             }}
-            onSubmitOrder={() => {
-              console.log('SUBMIT ORDER');
+            onSubmitOrder={(msg) => {
               dispatch(actions.sendCart());
+              dispatch(actions.createMessage(msg, 'Sous', Urls.sousLogo));
             }}
           />
         );

@@ -17,10 +17,12 @@ export default function MessageActions(ddpClient) {
     }
   }
 
-  function createMessage(messageText) {
+  function createMessage(messageText, author, imageUrl) {      console.log('imageUrl', imageUrl)
     return (dispatch, getState) => {
       const {session} = getState()
-      var author = `${session.firstName} ${session.lastName.substring(0,1)}`
+      author = author ? author : `${session.firstName} ${session.lastName.substring(0,1)}`;
+      imageUrl = imageUrl ? imageUrl : session.imageUrl;
+
       messageText = messageText.replace('{{author}}', author);
       var newMessage = {
         _id: shortid.generate(),
@@ -29,7 +31,7 @@ export default function MessageActions(ddpClient) {
         author: author || "Default",
         teamId: session.teamId,
         createdAt: (new Date()).getTime(),
-        imageUrl: session.imageUrl,
+        imageUrl: imageUrl,
         delete: false
       };
       console.log('newMessage', newMessage);
