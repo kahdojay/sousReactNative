@@ -59,7 +59,7 @@ export default function PurveyorActions(ddpClient){
       ordered: false,
       quantity: 1,
       price: 0.0,
-      unit: '0 oz'
+      unit: productAttributes.unit || '0 oz'
     }
     ddpClient.call('addPurveyorProduct', [purveyorId, newProductAttributes]);
     return {

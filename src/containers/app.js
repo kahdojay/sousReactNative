@@ -307,6 +307,9 @@ class App extends React.Component {
           <ProductCreate
             appState={this.props}
             purveyors={this.props.purveyors}
+            onAddProduct={(productAttributes) => {
+              console.log('PRODUCT ADDED', productAttributes);
+            }}
             />
         )
       case 'UserInfo':
@@ -516,9 +519,10 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
+            hideNext: true,
             customPrev: <NavBackButton iconFont={'fontawesome|times'} pop={true} />,
             title: 'Add New Product',
-            customNext: <ProductCreateRightCheckbox disabled={true} />,
+            // customNext: <ProductCreateRightCheckbox disabled={true} />,
           })
           break;
         default:
