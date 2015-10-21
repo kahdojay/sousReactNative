@@ -27,6 +27,7 @@
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		8918EAB21BD801C20068EBBA /* libRNMultiPickerIOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8918EAB11BD801AF0068EBBA /* libRNMultiPickerIOS.a */; };
+		8918EB061BD8227C0068EBBA /* libRNOverlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8918EB051BD822690068EBBA /* libRNOverlay.a */; };
 		899803FF1BCEC7E00011F96A /* UIImagePickerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 899803FE1BCEC7E00011F96A /* UIImagePickerManager.m */; settings = {ASSET_TAGS = (); }; };
 		89A667011BC2F38A00F45CFD /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89A667001BC2F38A00F45CFD /* OpenSans-Regular.ttf */; settings = {ASSET_TAGS = (); }; };
 		89EFDE591BCC097F001FBBEF /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE501BCC097F001FBBEF /* OpenSans-Bold.ttf */; settings = {ASSET_TAGS = (); }; };
@@ -133,6 +134,13 @@
 			remoteGlobalIDString = 7A37E20C1AE588B100920C3B;
 			remoteInfo = RNMultiPickerIOS;
 		};
+		8918EB041BD822690068EBBA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8918EAF21BD822690068EBBA /* RNOverlay.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = RNOverlay;
+		};
 		C430DD961BCEC63F00962F41 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C430DD901BCEC63F00962F41 /* RCTAddressBook.xcodeproj */;
@@ -175,6 +183,7 @@
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		8918EA9F1BD801AE0068EBBA /* RNMultiPicker.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNMultiPicker.xcodeproj; path = "../node_modules/react-native-multipicker/RNMultiPicker.xcodeproj"; sourceTree = "<group>"; };
+		8918EAF21BD822690068EBBA /* RNOverlay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNOverlay.xcodeproj; path = "../node_modules/react-native-overlay/RNOverlay.xcodeproj"; sourceTree = "<group>"; };
 		899803FD1BCEC7E00011F96A /* UIImagePickerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIImagePickerManager.h; sourceTree = "<group>"; };
 		899803FE1BCEC7E00011F96A /* UIImagePickerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIImagePickerManager.m; sourceTree = "<group>"; };
 		89A667001BC2F38A00F45CFD /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Regular.ttf"; sourceTree = SOURCE_ROOT; };
@@ -202,6 +211,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8918EB061BD8227C0068EBBA /* libRNOverlay.a in Frameworks */,
 				110F5ECF1BCF2D5700234ED6 /* libReactNativeIcons.a in Frameworks */,
 				C430DDA41BCEC67100962F41 /* libRCTAddressBook.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
@@ -335,6 +345,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				8918EAF21BD822690068EBBA /* RNOverlay.xcodeproj */,
 				8918EA9F1BD801AE0068EBBA /* RNMultiPicker.xcodeproj */,
 				110F5EC91BCF2D4900234ED6 /* ReactNativeIcons.xcodeproj */,
 				899803FC1BCEC7E00011F96A /* UIImagePickerManager */,
@@ -387,6 +398,14 @@
 			isa = PBXGroup;
 			children = (
 				8918EAB11BD801AF0068EBBA /* libRNMultiPickerIOS.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8918EAF31BD822690068EBBA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8918EB051BD822690068EBBA /* libRNOverlay.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -546,6 +565,10 @@
 					ProductGroup = 8918EAA01BD801AE0068EBBA /* Products */;
 					ProjectRef = 8918EA9F1BD801AE0068EBBA /* RNMultiPicker.xcodeproj */;
 				},
+				{
+					ProductGroup = 8918EAF31BD822690068EBBA /* Products */;
+					ProjectRef = 8918EAF21BD822690068EBBA /* RNOverlay.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -638,6 +661,13 @@
 			fileType = archive.ar;
 			path = libRNMultiPickerIOS.a;
 			remoteRef = 8918EAB01BD801AF0068EBBA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		8918EB051BD822690068EBBA /* libRNOverlay.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNOverlay.a;
+			remoteRef = 8918EB041BD822690068EBBA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		C430DD971BCEC63F00962F41 /* libRCTAddressBook.a */ = {

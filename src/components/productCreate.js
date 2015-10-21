@@ -2,7 +2,10 @@ const React = require('react-native');
 let MultiPickerIOS = require('react-native-multipicker');
 let { Group, Item } = MultiPickerIOS;
 let Dimensions = require('Dimensions');
+import {Icon}  from 'react-native-icons';
+import Overlay from 'react-native-overlay';
 import _ from 'lodash';
+
 const {
   StyleSheet,
   View,
@@ -10,6 +13,7 @@ const {
   TextInput,
   PickerIOS,
   TouchableHighlight,
+  TouchableOpacity,
   ScrollView,
 } = React;
 
@@ -18,17 +22,30 @@ class ProductCreate extends React.Component {
     super(props);
     this.state = {
       name: '',
-      purveyor: this.props.purveyors.data[0].name,
+      purveyor: this.props.purveyors.data[0],
       category: _.find(this.props.appState.teams.data, (team) => {
         return team.id === this.props.appState.session.teamId
-      }).categories[0].name,
+      }).categories[0],
       amount: 1,
       unit: 'bag',
       purveyorSelected: false,
       categorySelected: false,
       amountSelected: false,
       unitSelected: false,
+      ready: false,
+      loaded: false,
     }
+  }
+  componentWillUnmount(){
+    console.log('UPDATE', this.state)
+  }
+
+  componentDidMount(){
+    let self = this;
+    function changeCheckbox() {
+      self.setState({loaded: true})
+    }
+    setTimeout(changeCheckbox, 500);
   }
 
   submitReady(){
@@ -39,20 +56,38 @@ class ProductCreate extends React.Component {
       this.state.unitSelected &&
       this.state.name != ''
     ) {
-      console.log('CHANGE STATE TO CHANGE BUTTON TO GREEN');
+      this.setState({ready: true})
     }
   }
   render() {
-    console.log('DIMENSIONS', Dimensions.get('window').width);
-    let purveyors = _.pluck(this.props.purveyors.data, 'name');
+    let purveyors = this.props.purveyors.data;
     let currentTeamId = this.props.appState.session.teamId;
     let teams = this.props.appState.teams.data;
-    let categories = _.pluck(_.find(teams, (team) => {return team.id == currentTeamId}).categories, 'name');
-    console.log('STATE', this.state);
+    let categories = _.find(teams, (team) => {return team.id == currentTeamId}).categories;
     let units = ['bag', 'bunch', 'cs', 'dozen', 'ea', 'g', 'kg', 'lb', 'oz', 'pack', 'tub']
-    console.log('PROPS', this.props);
+    let button = <Overlay isVisible={true} style={{flex: 1, alignItems: 'stretch', width: 400}}>
+                  <TouchableOpacity underlayColor='#eee'
+                    style={{position: 'absolute', right: 5, top: 30}}
+                    onPress={()=> {
+                      if (this.state.ready) {
+
+                        let productAttributes = {
+                          name: this.state.name,
+                          purveyorId: this.state.purveyor.id,
+                          amount: `${this.state.amount} ${this.state.unit}` ,
+                          categoryId: this.state.category.id,
+                        }
+                        this.props.onAddProduct(productAttributes);
+                        this.props.navigator.pop();
+                      }
+                    }}>
+                    <Icon name='fontawesome|check-square'
+                      size={40} color={this.state.ready ? 'green' : '#ccc'} style={{height: 40, width: 40, }} />
+                  </TouchableOpacity>
+                </Overlay>
     return (
       <ScrollView style={styles.scrollView}>
+        {this.state.loaded ? button : <View></View>}
         <View style={styles.inputContainer}>
           <Text style={styles.inputTitle}>Name</Text>
           <TextInput style={styles.inputField} placeholder='Name'onChange={(e) => {
@@ -64,11 +99,11 @@ class ProductCreate extends React.Component {
         <View style={styles.emptySpace}></View>
         <View style={styles.inputContainer}>
           <Text style={styles.inputTitle}>Purveyor</Text>
-          <Text style={styles.inputField}> {this.state.purveyorSelected ? this.state.purveyor : 'Select Purveyor'}</Text>
+          <Text style={styles.inputField}> {this.state.purveyorSelected ? this.state.purveyor.name : 'Select Purveyor'}</Text>
         </View>
         <View style={styles.inputContainer}>
           <Text style={styles.inputTitle}>Category</Text>
-          <Text style={styles.inputField}>{this.state.categorySelected ? this.state.category : 'Select Category'}</Text>
+          <Text style={styles.inputField}>{this.state.categorySelected ? this.state.category.name : 'Select Category'}</Text>
         </View>
 
         <View style={styles.inputContainer}>
@@ -82,7 +117,7 @@ class ProductCreate extends React.Component {
               })
             }}>
               {categories.map((category, idx) => {
-                return <Item value={category} key={idx} label={category} />;
+                return <Item value={category} key={idx} label={category.name} />;
               })}
           </Group>
           <Group selectedValue={this.state.purveyor} onChange={(e) => {
@@ -91,7 +126,7 @@ class ProductCreate extends React.Component {
               })
             }}>
               { purveyors.map((purveyor, idx) => {
-                return <Item value={purveyor} key={idx} label={purveyor} />
+                return <Item value={purveyor} key={idx} label={purveyor.name} />
               })}
           </Group>
         </MultiPickerIOS>
@@ -149,6 +184,9 @@ const styles = StyleSheet.create({
   group: {
     // width: Dimensions.get('window').width,
     // width: 555,
+    paddingRight: 20,
+    paddingLeft: 20,
+    marginLeft: 20,
   },
   inputField: {
     flex: 2,
