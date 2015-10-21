@@ -412,7 +412,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             hidePrev: false,
-            title: team.name,
+            title: team.name || 'Sous',
             titleColor: 'black',
             customPrev: <FeedViewLeftButton />,
             customNext: <FeedViewRightButton />,
@@ -465,6 +465,7 @@ class App extends React.Component {
             route: route,
             customPrev: <NavBackButton navName='CategoryIndex' iconFont={'fontawesome|chevron-left'} />,
             title: category.name,
+            customNext: <CategoryViewRightButton cart={team.cart} />
           })
           break;
         case 'ProductView':
