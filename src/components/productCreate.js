@@ -1,6 +1,7 @@
 const React = require('react-native');
 let MultiPickerIOS = require('react-native-multipicker');
 let { Group, Item } = MultiPickerIOS;
+let Dimensions = require('Dimensions');
 import _ from 'lodash';
 const {
   StyleSheet,
@@ -29,7 +30,20 @@ class ProductCreate extends React.Component {
       unitSelected: false,
     }
   }
+
+  submitReady(){
+    if (
+      this.state.purveyorSelected &&
+      this.state.categorySelected &&
+      this.state.amountSelected &&
+      this.state.unitSelected &&
+      this.state.name != ''
+    ) {
+      console.log('CHANGE STATE TO CHANGE BUTTON TO GREEN');
+    }
+  }
   render() {
+    console.log('DIMENSIONS', Dimensions.get('window').width);
     let purveyors = _.pluck(this.props.purveyors.data, 'name');
     let currentTeamId = this.props.appState.session.teamId;
     let teams = this.props.appState.teams.data;
@@ -42,7 +56,9 @@ class ProductCreate extends React.Component {
         <View style={styles.inputContainer}>
           <Text style={styles.inputTitle}>Name</Text>
           <TextInput style={styles.inputField} placeholder='Name'onChange={(e) => {
-              this.setState({name: e.nativeEvent.text})
+              this.setState({name: e.nativeEvent.text}, () => {
+                this.submitReady();
+              });
             }}/>
         </View>
         <View style={styles.emptySpace}></View>
@@ -61,14 +77,18 @@ class ProductCreate extends React.Component {
         </View>
         <MultiPickerIOS style={styles.picker}>
           <Group selectedValue={this.state.category} onChange={(e) => {
-              this.setState({category: e.newValue, categorySelected: true})
+              this.setState({category: e.newValue, categorySelected: true}, () => {
+                this.submitReady();
+              })
             }}>
               {categories.map((category, idx) => {
                 return <Item value={category} key={idx} label={category} />;
               })}
           </Group>
           <Group selectedValue={this.state.purveyor} onChange={(e) => {
-              this.setState({purveyor: e.newValue, purveyorSelected: true})
+              this.setState({purveyor: e.newValue, purveyorSelected: true}, () => {
+                this.submitReady();
+              })
             }}>
               { purveyors.map((purveyor, idx) => {
                 return <Item value={purveyor} key={idx} label={purveyor} />
@@ -78,14 +98,18 @@ class ProductCreate extends React.Component {
         <MultiPickerIOS style={styles.picker}>
           <Group selectedValue={this.state.amount} onChange={(e) => {
               console.log(e)
-              this.setState({amount: e.newValue, amountSelected: true});
+              this.setState({amount: e.newValue, amountSelected: true}, () => {
+                this.submitReady();
+              });
             }}>
             { _.range(1, 500).map((num) => {
               return <Item value={num} key={num} label={num.toString()} />
             })}
           </Group>
           <Group selectedValue={this.state.unit} onChange={(e) => {
-              this.setState({unit: e.newValue, unitSelected: true})
+              this.setState({unit: e.newValue, unitSelected: true}, () => {
+                this.submitReady();
+              })
             }}>
             { units.map((val, idx) => {
               return <Item value={val} key={idx} label={val} />
@@ -114,8 +138,10 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   picker: {
-    alignItems: 'stretch',
-    padding: 10,
+    width: 500,
+    paddingRight: 20,
+    paddingLeft: 20,
+    marginLeft: 20,
   },
   inputField: {
     flex: 1,
