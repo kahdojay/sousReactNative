@@ -19,6 +19,7 @@
     "react-native-image-picker": "^0.7.1",
     "react-native-invertible-scroll-view": "^0.1.2",
     "react-native-keyboard-spacer": "^0.1.1",
+    "react-native-multipicker": "^0.1.1",
     "react-native-navbar": "^0.8.2",
     "react-native-side-menu": "^0.14.2",
     "react-redux": "^2.1.2",

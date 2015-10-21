@@ -30,6 +30,7 @@ var config = {
         path.resolve(__dirname, 'node_modules/react-native-side-menu'),
         path.resolve(__dirname, 'node_modules/react-native-addressbook'),
         path.resolve(__dirname, 'node_modules/react-native-keyboard-spacer'),
+        path.resolve(__dirname, 'node_modules/react-native-multipicker'),
         // Note: add any other js or node modules that need babel processing
       ],
       loader: ['babel-loader'],
