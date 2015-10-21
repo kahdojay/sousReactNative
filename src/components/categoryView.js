@@ -5,6 +5,7 @@ import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
 import AddForm from './addForm';
 import { mainBackgroundColor, navbarColor } from '../utilities/colors';
+import Colors from '../utilities/colors';
 import _ from 'lodash'
 
 const {
@@ -40,6 +41,18 @@ class CategoryView extends React.Component {
             this.props.onAddNewProduct(category.id, productName)
           }}
         />*/}
+        <TouchableHighlight
+          underlayColor='#eee'
+          onPress={() => {
+            this.props.navigator.push({
+              name: 'ProductCreate',
+              categoryId: category.id,
+            })
+          }}
+          style={styles.createButton}
+        >
+          <Text style={styles.createButtonText}>create new product</Text>
+        </TouchableHighlight>
         <ProductList
           navigator={this.props.navigator}
           cart={cart}
@@ -64,6 +77,15 @@ const styles = StyleSheet.create({
   iconMore: {
     width: 40,
     height: 40,
+  },
+  createButton: {
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 7,
+  },
+  createButtonText: {
+    textAlign: 'center',
+    color: Colors.navbarIconColor
   }
 });
 
