@@ -1,5 +1,7 @@
 const React = require('react-native');
-
+let MultiPickerIOS = require('react-native-multipicker');
+let { Group, Item } = MultiPickerIOS;
+import _ from 'lodash';
 const {
   StyleSheet,
   View,
@@ -12,6 +14,13 @@ const {
 
 class ProductCreate extends React.Component {
   render() {
+    let purveyors = _.pluck(this.props.purveyors.data, 'name');
+    let currentTeamId = this.props.appState.session.teamId;
+    let teams = this.props.appState.teams.data;
+    let categories = _.pluck(_.find(teams, (team) => {return team.id == currentTeamId}).categories, 'name');
+    console.log('CURRENT TEAM', categories);
+    let units = ['bag', 'bunch', 'cs', 'dozen', 'ea', 'g', 'kg', 'lb', 'oz', 'pack', 'tub']
+    console.log('PROPS', this.props);
     return (
       <ScrollView style={styles.scrollView}>
         <View style={styles.inputContainer}>
@@ -35,6 +44,31 @@ class ProductCreate extends React.Component {
           <Text style={styles.inputTitle}>Amount</Text>
           <TextInput style={styles.inputField} placeholder='Amount'/>
         </View>
+        <MultiPickerIOS style={styles.picker} onChange={this._someOnChange}>
+          <Group selectedValue={'How'} >
+              {categories.map((category, idx) => {
+                return <Item value={category} key={idx} label={category} />;
+              })}
+          </Group>
+          <Group selectedValue='Uno'>
+              { purveyors.map((purveyor, idx) => {
+                return <Item value={purveyor} key={idx} label={purveyor} />
+              })}
+          </Group>
+
+        </MultiPickerIOS>
+        <MultiPickerIOS style={styles.picker}>
+          <Group selectedValue={1} >
+            { _.range(1, 500).map((num) => {
+              return <Item value={num} key={num} label={num.toString()} />
+            })}
+          </Group>
+          <Group selectedValue='Uno'>
+            { units.map((val, idx) => {
+              return <Item value={val} key={idx} label={val} />
+            })}
+          </Group>
+        </MultiPickerIOS>
       </ScrollView>
     );
   }
