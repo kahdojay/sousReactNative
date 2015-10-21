@@ -307,6 +307,7 @@ class App extends React.Component {
           <ProductCreate
             appState={this.props}
             purveyors={this.props.purveyors}
+            navigator={nav}
             onAddProduct={(productAttributes) => {
               console.log('PRODUCT ADDED', productAttributes);
             }}

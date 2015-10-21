@@ -36,6 +36,9 @@ class ProductCreate extends React.Component {
       loaded: false,
     }
   }
+  componentWillUnmount(){
+    console.log('UPDATE', this.state)
+  }
 
   componentDidMount(){
     let self = this;
@@ -75,6 +78,7 @@ class ProductCreate extends React.Component {
                           categoryId: this.state.category.id,
                         }
                         this.props.onAddProduct(productAttributes);
+                        this.props.navigator.pop();
                       }
                     }}>
                     <Icon name='fontawesome|check-square'
