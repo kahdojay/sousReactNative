@@ -304,7 +304,10 @@ class App extends React.Component {
         );
       case 'ProductCreate':
         return (
-          <ProductCreate />
+          <ProductCreate
+            appState={this.props}
+            purveyors={this.props.purveyors}
+            />
         )
       case 'UserInfo':
         return (

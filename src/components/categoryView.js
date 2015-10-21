@@ -51,7 +51,7 @@ class CategoryView extends React.Component {
           }}
           style={styles.createButton}
         >
-          <Text style={styles.createButtonText}>create new product</Text>
+          <Text style={styles.createButtonText}>Create New Product...</Text>
         </TouchableHighlight>
         <ProductList
           navigator={this.props.navigator}
@@ -84,8 +84,12 @@ const styles = StyleSheet.create({
     borderRadius: 7,
   },
   createButtonText: {
-    textAlign: 'center',
-    color: Colors.navbarIconColor
+    color: Colors.navbarIconColor,
+    padding: 5,
+    marginLeft: 10,
+    fontFamily: 'OpenSans',
+    fontSize: 16,
+    fontWeight: 'bold',
   }
 });
 
