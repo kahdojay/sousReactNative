@@ -433,7 +433,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             buttonsColor: '#ccc',
-            customPrev: <NavBackButton iconFont={'times'} />,
+            customPrev: <NavBackButton iconFont={'fontawesome|times'} />,
             title: team.name,
           })
           break;
@@ -447,14 +447,15 @@ class App extends React.Component {
           })
           break;
         case 'CategoryIndex':
+          var team = _.filter(teams.data, { id: session.teamId })[0]
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
             hidePrev: false,
             buttonsColor: '#ccc',
-            customPrev: <NavBackButton iconFont={'times'} />,
+            customPrev: <NavBackButton iconFont={'fontawesome|times'} />,
             title: 'Order Guide',
-            customNext: <CategoryViewRightButton />
+            customNext: <CategoryViewRightButton cart={team.cart} />
           })
           break;
         case 'CategoryView':
@@ -463,7 +464,7 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            customPrev: <NavBackButton iconFont={'chevron-left'} />,
+            customPrev: <NavBackButton navName='CategoryIndex' iconFont={'fontawesome|chevron-left'} />,
             title: category.name,
           })
           break;
@@ -480,7 +481,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             hidePrev: false,
-            customPrev: <NavBackButton iconFont={'chevron-left'}/>,
+            customPrev: <NavBackButton iconFont={'fontawesome|chevron-left'}/>,
             title: 'Account',
           })
           break;
@@ -488,7 +489,7 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            customPrev: <NavBackButton iconFont={'times'} />,
+            customPrev: <NavBackButton iconFont={'fontawesome|times'} />,
             title: 'Invite Teammates',
           })
           break;
@@ -496,7 +497,7 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            customPrev: <NavBackButton iconFont={'chevron-left'} />,
+            customPrev: <NavBackButton navName='CategoryIndex' iconFont={'fontawesome|chevron-left'} />,
             title: 'Cart',
           })
           break;

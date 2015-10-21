@@ -13,13 +13,18 @@ const {
 class NavBackButton extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      iconFont: this.props.iconFont || 'fontawesome|chevron-left',
+      navName: this.props.navName || 'Feed'
+    }
   }
+
   handlePress(e) {
     let routes = this.props.navigator.getCurrentRoutes();
-    console.log('PRESS', routes);
+    // console.log('PRESS', routes);
     this.props.navigator.replacePreviousAndPop({
-    name: 'Feed',
-  });
+      name: this.state.navName,
+    });
   }
 
   render() {
@@ -29,7 +34,7 @@ class NavBackButton extends React.Component {
       <TouchableHighlight
         underlayColor='white'
         onPress={this.handlePress.bind(this)} >
-        <Icon name={`fontawesome|${this.props.iconFont}`} size={30} color={Colors.navbarIconColor} style={styles.hamburger} />
+        <Icon name={`${this.state.iconFont}`} size={30} color={Colors.navbarIconColor} style={styles.hamburger} />
       </TouchableHighlight>
     );
   }

@@ -89,7 +89,7 @@ class ProductListItem extends React.Component {
   }
   render() {
     let {product} = this.props
-    console.log('list item product', product)
+    // console.log('list item product', product)
     const purveyorString = _.find(this.props.purveyors.data, { id: this.state.selectedPurveyorId }).name;
 
     return (
