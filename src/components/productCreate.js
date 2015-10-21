@@ -3,6 +3,7 @@ let MultiPickerIOS = require('react-native-multipicker');
 let { Group, Item } = MultiPickerIOS;
 let Dimensions = require('Dimensions');
 import _ from 'lodash';
+
 const {
   StyleSheet,
   View,
