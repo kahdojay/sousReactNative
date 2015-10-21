@@ -2,6 +2,7 @@ const React = require('react-native');
 let MultiPickerIOS = require('react-native-multipicker');
 let { Group, Item } = MultiPickerIOS;
 let Dimensions = require('Dimensions');
+import Icon from 'react-native-icons';
 import _ from 'lodash';
 
 const {
