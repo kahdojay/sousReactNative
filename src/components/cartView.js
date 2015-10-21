@@ -1,6 +1,7 @@
 import { Icon } from 'react-native-icons';
 import React from 'react-native';
 import Colors from '../utilities/colors';
+import _ from 'lodash';
 
 const {
   View,
@@ -26,9 +27,13 @@ class CartView extends React.Component {
     })
   }
 
-  handleSubmitPress() {
+  handleSubmitPress(cartPurveyors) {
+    const cartPurveyorsString = _.pluck(cartPurveyors, 'name').join(', ');
     if(this.state.numberOfOrders > 0){
-      this.props.onSubmitOrder();
+      this.props.onSubmitOrder('Order sent to ' + cartPurveyorsString);
+      this.props.navigator.replacePreviousAndPop({
+        name: 'Feed',
+      });
     }
   }
 
@@ -44,7 +49,7 @@ class CartView extends React.Component {
   }
 
   renderPurveyorProducts(purveyorId) {
-
+    //TODO dry this out by recieving necessary info from render()
     const {team, purveyors, appState} = this.props
     const cart = team.cart
     const products = appState.teams.products
@@ -76,20 +81,7 @@ class CartView extends React.Component {
     });
   }
 
-  renderPurveyors() {
-
-    const {team, purveyors, appState} = this.props
-    const cart = team.cart
-    const products = appState.teams.products
-    // console.log('CART PROPS', this.props.team)
-    // console.log('PURVEYORS', appState)
-
-    const cartPurveyorIds = Object.keys(cart.orders)
-    const cartPurveyors = _.map(cartPurveyorIds, (purveyorId) => {
-      return _.filter(purveyors, {id: purveyorId})[0]
-    })
-    cartPurveyors.sort(this.nameSort)
-
+  renderPurveyors(cartPurveyors) {
     return _.map(cartPurveyors, (purveyor) => {
       return (
         <View key={purveyor.id} style={styles.purveyorContainer}>
@@ -102,12 +94,21 @@ class CartView extends React.Component {
 
   render() {
     const buttonStyle = this.state.numberOfOrders > 0 ? styles.button : [styles.button,styles.buttonDisabled];
+    const {team, purveyors, appState} = this.props
+    const cart = team.cart
+    const products = appState.teams.products
+
+    const cartPurveyorIds = Object.keys(cart.orders)
+    const cartPurveyors = _.map(cartPurveyorIds, (purveyorId) => {
+      return _.filter(purveyors, {id: purveyorId})[0]
+    })
+    cartPurveyors.sort(this.nameSort)
 
     return (
       <ScrollView style={styles.scrollView}>
-        {this.renderPurveyors()}
+        {this.renderPurveyors(cartPurveyors)}
         <TouchableHighlight
-          onPress={::this.handleSubmitPress}
+          onPress={this.handleSubmitPress.bind(this, cartPurveyors)}
           style={buttonStyle}>
           <Text style={styles.buttonText}>Submit Order</Text>
         </TouchableHighlight>
