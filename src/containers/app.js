@@ -402,7 +402,7 @@ class App extends React.Component {
             route: route,
             hidePrev: false,
             buttonsColor: '#ccc',
-            customPrev: <NavBackButton iconFont='times' />,
+            customPrev: <NavBackButton iconFont={'fontawesome|times'} />,
             title: 'Switch Teams',
           })
           break;
