@@ -76,7 +76,8 @@ export default function ConnectActions(ddpClient) {
       sessionActions,
       teamActions,
       messageActions,
-      purveyorActions
+      purveyorActions,
+      errorActions
     } = allActions
     return (dispatch, getState) => {
       const {session, teams} = getState();
@@ -115,6 +116,9 @@ export default function ConnectActions(ddpClient) {
             case 'users':
               // console.log("MAIN DDP WITH FIELDS MSG", log);
               dispatch(sessionActions.receiveSession(data))
+              break;
+            case 'errors':
+              dispatch(errorActions.receiveErrors(data))              
               break;
             default:
               // console.log("TODO: wire up collection: ", log.collection);
