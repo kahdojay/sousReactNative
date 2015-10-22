@@ -291,11 +291,11 @@ class App extends React.Component {
             navigator={nav}
             session={session}
             onUpdateInfo={(data) => {
-              console.log("DATA", data);
+              // console.log("DATA", data);
               dispatch(actions.updateSession(data));
             }}
             onUpdateAvatar={(image) => {
-              console.log("IMAGE", image);
+              // console.log("IMAGE", image);
               dispatch(actions.updateSession({
                 imageUrl: image.uri
               }));

@@ -80,14 +80,12 @@ class Signup extends React.Component {
 
   render() {
     const {session} = this.props;
-    let fetching =  <ActivityIndicatorIOS
+    const fetching =  <ActivityIndicatorIOS
                         animating={true}
                         color={'#808080'}
                         style={styles.activity}
                         size={'small'} />
-    let errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
-    let formattedPhoneNumber = this.formatPhoneNumber(session.phoneNumber);
-    console.log('FORMAT', session);
+    const errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
     let signup = (
       <View style={styles.login}>
 
@@ -119,6 +117,7 @@ class Signup extends React.Component {
       </View>
     );
     if(session.smsSent === true){
+      const formattedPhoneNumber = this.formatPhoneNumber(session.phoneNumber);
       signup = (
         <View style={styles.login}>
           <Text style={styles.headerText}>We just sent a text to</Text>

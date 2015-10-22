@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { DDP } from '../resources/apiConfig'
 import Shortid from 'shortid'
 import MessageActions from './message'
@@ -22,7 +23,8 @@ import {
 export default function TeamActions(ddpClient, allActions) {
 
   const {
-    messageActions
+    messageActions,
+    connectActions
   } = allActions
 
   function resetTeams(){
@@ -148,19 +150,20 @@ export default function TeamActions(ddpClient, allActions) {
     }
   }
 
-  let teamIds = []
   function receiveTeams(team) {
     // console.log(RECEIVE_TEAMS, team);
     return (dispatch, getState) => {
-      const {teams} = getState();
-      // teams.data.map((team) => {teamIds.push(team.id)})
-      teamIds.push(team.id)
-      ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel)
-      ddpClient.subscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [teamIds]);
+      const {session, teams} = getState();
+      let teamIds = _.pluck(teams.data, 'id');
+
+      if( teamIds.indexOf(team._id) === -1 ){
+        teamIds.push(team._id)
+        connectActions.subscribeDDP(undefined, teamIds);
+      }
       return dispatch({
-              type: RECEIVE_TEAMS,
-              team: team
-            })
+        type: RECEIVE_TEAMS,
+        team: team
+      })
     }
   }
 

@@ -1,42 +1,70 @@
 import { DDP } from '../resources/apiConfig'
+import {
+  CREATE_CONNECTION,
+  RESET_CONNECTIONS,
+  SUBSCRIBE_CONNECTION,
+  UNSUBSCRIBE_CONNECTION,
+  ERROR_CONNECTION
+} from './actionTypes'
 
 export default function ConnectActions(ddpClient) {
 
   var connectedChannels = {}
 
-  function connectSingleChannel(resource, resourceParam){
-    if(connectedChannels.hasOwnProperty(resource.channel) === false){
-      if(resourceParam){
-        // console.log('SUBSCRIBING TO CHANNEL: ', resource.channel, ' using param: ', resourceParam)
-        ddpClient.unsubscribe(resource.channel);
-        ddpClient.subscribe(resource.channel, [resourceParam]);
-        connectedChannels[resource.channel] = true;
-        //TODO: disconnect from the channels that require teamId and then
-        //reconnect with a new key
+  function processSubscription(channel, argsList){
+    // console.log('PROCESSING: ', channel, argsList);
+    return (dispatch, getState) => {
+      const {connect} = getState()
+
+      let proceed = false
+      const connectionDetails = [channel, argsList]
+      const connectionId = JSON.stringify(connectionDetails)
+
+      // console.log(connect.channels.hasOwnProperty(channel), ' === false ?');
+
+      if( connect.channels.hasOwnProperty(channel) === false ){
+        proceed = true
+      } else {
+        // console.log(connect.channels[channel], ' === ', connectionId, ' ?');
+        if( connect.channels[channel] !== connectionId ){
+          proceed = true
+        }
+      }
+
+      if(proceed === true){
+        ddpClient.unsubscribe(channel)
+        // console.log('CONNECTING: ', channel, argsList);
+        ddpClient.subscribe(channel, argsList);
+        dispatch({
+          type: SUBSCRIBE_CONNECTION,
+          channel: channel,
+          connectionId: connectionId,
+        })
       }
     }
   }
 
-  function connectChannels(session, teamIds){
-    Object.keys(DDP.SUBSCRIBE_LIST).forEach((resourceKey) => {
-      var resource = DDP.SUBSCRIBE_LIST[resourceKey];
-      // console.log('Connecting: ', resource.channel, ' with session: ', session);
-      var resourceParam = null
-      if(resource.channel === 'restricted'){
-        resourceParam = session.phoneNumber
-      } else if(resource.channel === 'errors' || resource.channel === 'teams'){
-        resourceParam = session.userId;
-      } else if (resource.channel === 'messages') {
-        if (teamIds.length > 0) {
-          resourceParam = teamIds;
-        } else {
-          resourceParam = null
-        }
-      } else {
-        resourceParam = session.teamId
+  function subscribeDDP(session, teamIds){
+    return (dispatch, getState) => {
+      const {connect} = getState();
+      if(teamIds !== undefined && teamIds.length > 0){
+        dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [teamIds]))
       }
-      connectSingleChannel(resource, resourceParam);
-    })
+      if(session !== undefined){
+        if(session.phoneNumber !== ""){
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [session.phoneNumber]))
+        }
+        if(session.userId !== null){
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS.channel, [session.userId]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ERRORS.channel, [session.userId]))
+        }
+        if(session.teamId !== null){
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [session.teamId]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CATEGORIES.channel, [session.teamId]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PRODUCTS.channel, [session.teamId]))
+        }
+      }
+    }
   }
 
   function connectDDP(allActions){
@@ -49,6 +77,9 @@ export default function ConnectActions(ddpClient) {
     } = allActions
     return (dispatch, getState) => {
       const {session, teams} = getState();
+      dispatch({
+        type: RESET_CONNECTIONS
+      })
       //--------------------------------------
       // Bind DDP client events
       //--------------------------------------
@@ -79,6 +110,7 @@ export default function ConnectActions(ddpClient) {
               dispatch(teamActions.receiveProducts(data))
               break;
             case 'users':
+              // console.log("MAIN DDP WITH FIELDS MSG", log);
               dispatch(sessionActions.receiveSession(data))
               break;
             default:
@@ -90,13 +122,15 @@ export default function ConnectActions(ddpClient) {
         }
       });
 
-      let teamIds = teams.data.map((team) => {return team.id});
+
       // console.log('TEAMS', teams);
       // console.log('TEAM IDS', teamIds);
       ddpClient.on('connected', () => {
-        // console.log('CONNECTED: TODO');
-        if (session.isAuthenticated)
-          connectChannels(session, teamIds)
+        dispatch({
+          type: CREATE_CONNECTION
+        })
+        const teamIds = _.pluck(teams.data, 'id')
+        dispatch(subscribeDDP(session, teamIds))
       });
 
       //--------------------------------------
@@ -122,8 +156,14 @@ export default function ConnectActions(ddpClient) {
   // TODO: how to handle disconnect?
 
   return {
-    'connectSingleChannel': connectSingleChannel,
-    'connectChannels': connectChannels,
+    CREATE_CONNECTION,
+    RESET_CONNECTIONS,
+    SUBSCRIBE_CONNECTION,
+    UNSUBSCRIBE_CONNECTION,
+    ERROR_CONNECTION,
+    // 'connectSingleChannel': connectSingleChannel,
+    // 'connectChannels': connectChannels,
     'connectDDP': connectDDP,
+    'subscribeDDP': subscribeDDP,
   }
 }
