@@ -434,7 +434,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             hidePrev: false,
-            title: team.name || 'Sous',
+            title: team ? team.name : 'Sous',
             titleColor: 'black',
             customPrev: <Components.FeedViewLeftButton />,
             customNext: <Components.FeedViewRightButton />,
@@ -734,6 +734,7 @@ function mapStateToProps(state) {
     messages: state.messages,
     purveyors: state.purveyors,
     products: state.products,
+    errors: state.errors
   }
 }
 

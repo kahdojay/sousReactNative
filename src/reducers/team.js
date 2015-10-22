@@ -47,7 +47,6 @@ function teams(state = initialState.teams, action) {
       data: currentTeamsDataState,
       lastUpdated: (new Date()).getTime()
     });
-
   case RECEIVE_CATEGORIES:
     var defaultCategoriesState = Object.assign({}, state);
     // var currentDefaultCategoriesState = updateDataState(defaultCategoriesState.defaultCategories, action.category)
