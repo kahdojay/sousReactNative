@@ -3,6 +3,7 @@ import {
   RESET_ERRORS,
   RECEIVE_ERRORS,
   CREATE_ERROR,
+  DELETE_ERRORS
 } from './actionTypes'
 
 export default function ErrorActions(ddpClient) {
@@ -13,22 +14,22 @@ export default function ErrorActions(ddpClient) {
     }
   }
 
-  function createError(errorText) {      
-    console.log('errorText', errorText)
-    return (dispatch, getState) => {
-      var newError = {
-        _id: shortid.generate(),
-        error: errorText,
-        createdAt: (new Date()).getTime(),
-      };
-      console.log('newError', newError);
-      ddpClient.call('createError', [newError])
-      return dispatch({
-        type: CREATE_ERROR,
-        error: newError
-      });
-    }
-  }
+  // function createError(errorText) {      
+  //   console.log('errorText', errorText)
+  //   return (dispatch, getState) => {
+  //     var newError = {
+  //       _id: shortid.generate(),
+  //       error: errorText,
+  //       createdAt: (new Date()).getTime(),
+  //     };
+  //     console.log('newError', newError);
+  //     ddpClient.call('createError', [newError])
+  //     return dispatch({
+  //       type: CREATE_ERROR,
+  //       error: newError
+  //     });
+  //   }
+  // }
 
   function receiveErrors(error) {
     return {
@@ -37,11 +38,20 @@ export default function ErrorActions(ddpClient) {
     }
   }
 
+  function deleteErrors(errorIdList) {
+    return {
+      type: DELETE_ERRORS,
+      errorIdList: errorIdList
+    }
+  }
+
   return {
     RESET_ERRORS,
     RECEIVE_ERRORS,
     CREATE_ERROR,
-    createError,
+    DELETE_ERRORS,
+    // createError,
+    deleteErrors,
     resetErrors,
     receiveErrors
   }

@@ -48,6 +48,7 @@ export const RESET_ERRORS = 'RESET_ERRORS';
 export const GET_ERRORS = 'GET_ERRORS';
 export const CREATE_ERROR = 'CREATE_ERROR';
 export const RECEIVE_ERRORS = 'RECEIVE_ERRORS';
+export const DELETE_ERRORS = 'DELETE_ERRORS';
 
 export const RESET_PURVEYORS = 'RESET_PURVEYORS';
 export const GET_PURVEYORS = 'GET_PURVEYORS';
