@@ -25,7 +25,6 @@ project.xcworkspace
 # node.js
 #
 node_modules/*
-!node_modules/react-native-checkbox
 npm-debug.log
 
 # ignore secrets.js

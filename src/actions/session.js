@@ -9,7 +9,22 @@ import {
   UPDATE_SESSION,
 } from './actionTypes'
 
-export default function SessionActions(ddpClient){
+export default function SessionActions(ddpClient, allActions){
+
+  const {
+    connectActions
+  } = allActions;
+
+  const allowedUserFields = {
+    phoneNumber: true,
+    username: true,
+    email: true,
+    firstName: true,
+    lastName: true,
+    imageUrl: true,
+    notifications: true,
+    teamId: true,
+  };
 
   function resetSessionVersion() {
     return {
@@ -34,45 +49,42 @@ export default function SessionActions(ddpClient){
 
   function registerSession(sessionParams) {
     return (dispatch, getState) => {
+      const {session} = getState()
       // process ddp call
-      console.log('SESSION PARAMS', sessionParams);
+      // console.log('SESSION PARAMS', sessionParams);
+
+      const newSession = Object.assign({}, session, sessionParams)
+      console.log('NEW SESSION PARAMS', newSession);
+
+      // resubscribe based on session data
+      dispatch(connectActions.subscribeDDP(newSession, undefined));
+
       if(sessionParams.hasOwnProperty('smsToken') === false){
-        // dispatch a session clear to get make sure no lingering data exists
-        dispatch(receiveSession({
-          isAuthenticated: false,
-          authToken: "",
-          smsVerified: false,
-          smsSent: false,
-          username: null,
-          userId: null,
-          firstName: "",
-          lastName: "",
-          imageUrl: "",
-          teamId: null,
-          errors: null,
-          phoneNumber: sessionParams.phoneNumber,
-        }))
-
-        //--------------------------------------
-        // Re-connect DDP RESTRICTED channel
-        //--------------------------------------
-        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.RESTRICTED.channel)
-        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [sessionParams.phoneNumber]);
-
-        ddpClient.call('sendSMSCode', [sessionParams.phoneNumber])
+        // // dispatch a session clear to get make sure no lingering data exists
+        // dispatch(receiveSession({
+        //   isAuthenticated: false,
+        //   smsVerified: false,
+        //   smsSent: false,
+        //   errors: null,
+        //   phoneNumber: sessionParams.phoneNumber,
+        // }))
+        ddpClient.call('sendSMSCode', [sessionParams.phoneNumber, session.authToken])
       } else {
         ddpClient.call('loginWithSMS', [sessionParams.phoneNumber, sessionParams.smsToken])
-        let {session} = getState();
-        let messageAttributes = {
-          message: 'Welcome to Sous! This is your personal Notepad, but you can create a new team and start collaborating with your fellow cooks by tapping the icon in the top right.',
-          userId: session.userId,
-          author: 'Sous',
-          teamId: session.teamId,
-          createdAt: (new Date()).getTime(),
-          imageUrl: 'https://sous-assets-production.s3.amazonaws.com/uploads/89b217dc-4ec5-43e8-9569-8fc85e6fdd52/New+Sous+Logo+Circle+Small.png',
+        const {session, messages} = getState();
+        // console.log(messages);
+        if(messages.data.length == 0){
+          const messageAttributes = {
+            message: 'Welcome to Sous! This is your personal Notepad, but you can create a new team and start collaborating with your fellow cooks by tapping the icon in the top right.',
+            userId: session.userId,
+            author: 'Sous',
+            teamId: session.teamId,
+            createdAt: (new Date()).getTime(),
+            imageUrl: 'https://sous-assets-production.s3.amazonaws.com/uploads/89b217dc-4ec5-43e8-9569-8fc85e6fdd52/New+Sous+Logo+Circle+Small.png',
+          }
+          // console.log("SESSION", session, messageAttributes);
+          ddpClient.call('createMessage', [messageAttributes])
         }
-        console.log("SESSION", session, messageAttributes);
-        ddpClient.call('createMessage', [messageAttributes])
       }
       return dispatch(requestSession(sessionParams))
     }
@@ -81,11 +93,14 @@ export default function SessionActions(ddpClient){
   function updateSession(sessionParams) {
     return (dispatch, getState) => {
       const {session} = getState()
-      // ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel)
-      // ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel)
-      // ddpClient.subscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [sessionParams.teamId]);
-      // // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
-      ddpClient.call('updateUser', [session.userId, sessionParams])
+      const filteredSessionParams = {}
+      Object.keys(sessionParams).map((key) => {
+        if(allowedUserFields.hasOwnProperty(key) === true){
+          filteredSessionParams[key] = sessionParams[key];
+        }
+      })
+      ddpClient.call('updateUser', [session.userId, filteredSessionParams])
+      // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
       return dispatch(receiveSession(sessionParams))
     }
   }
@@ -105,7 +120,7 @@ export default function SessionActions(ddpClient){
       response.userId = response.id;
     }
     return (dispatch, getState) => {
-      const {session, teams} = getState();
+      const {session} = getState();
       var isAuthenticated = session.isAuthenticated;
       // console.log("AUTHENTICATE", isAuthenticated);
       //TODO: make this a bit more secure
@@ -113,35 +128,15 @@ export default function SessionActions(ddpClient){
         // console.log("SESSION", session, response);
         isAuthenticated = true;
       }
-      if(response.hasOwnProperty('userId') && response.userId){
-        // console.log(response);
-        // if local app state contains team, connect the messages
-        // let teamIds = teams.data.map((team) => {teamIds.push(team.id)})
-        // console.log('TEAM IDS', teamIds);
-        // if (teamIds.length > 0) {
-        //   ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel)
-        //   ddpClient.subscribe(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [teamIds]);
-        // }
-
-        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.TEAMS.channel)
-        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.TEAMS.channel, [response.userId]);
-        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.ERRORS.channel)
-        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.ERRORS.channel, [response.userId]);
-      }
-      if(response.hasOwnProperty('teamId') && response.teamId){
-        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel)
-        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [response.teamId]);
-        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.CATEGORIES.channel)
-        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.CATEGORIES.channel, [response.teamId]);
-        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.PRODUCTS.channel)
-        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.PRODUCTS.channel, [response.teamId]);
-      }
-      var action = Object.assign({}, session, response, {
-        type: RECEIVE_SESSION,
+      const newSession = Object.assign({}, session, response, {
         isAuthenticated: isAuthenticated
-      });
+      })
+      // resubscribe based on session data
+      dispatch(connectActions.subscribeDDP(newSession, undefined));
+      let action = newSession
+      action.type = RECEIVE_SESSION
       // console.log('isAuthenticated: ', action.type, action.isAuthenticated);
-      return dispatch(action);
+      return dispatch(newSession);
     }
   }
 

@@ -52,6 +52,7 @@ class App extends React.Component {
     this.state = {
       touchToClose: false,
       open: false,
+      teamCount: this.props.teams.data.length
     }
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
@@ -100,6 +101,12 @@ class App extends React.Component {
 
   componentWillMount() {
     this.props.dispatch(actions.connectApp())
+  }
+
+  componentWillReceiveProps(nextProps){
+    this.setState({
+      teamCount: nextProps.teams.data.length
+    })
   }
 
   authenticatedRoute(route){
@@ -291,11 +298,11 @@ class App extends React.Component {
             navigator={nav}
             session={session}
             onUpdateInfo={(data) => {
-              console.log("DATA", data);
+              // console.log("DATA", data);
               dispatch(actions.updateSession(data));
             }}
             onUpdateAvatar={(image) => {
-              console.log("IMAGE", image);
+              // console.log("IMAGE", image);
               dispatch(actions.updateSession({
                 imageUrl: image.uri
               }));
@@ -385,13 +392,18 @@ class App extends React.Component {
     const { dispatch, ui, teams, session } = this.props;
 
     // redirect to initial view
-    if (this.props.session.isAuthenticated){
+    if (session.isAuthenticated){
       if (route.name === 'Login' || route.name === 'Signup' || route.name == 'UserInfo') {
-        if (this.props.session.firstName === "" || this.props.session.lastName === "") {
+        if (session.firstName === "" || session.lastName === "") {
           route.name = 'UserInfo';
         } else {
-          // else send to Feed
-          route.name = 'Feed';
+          console.log('TEAM COUNT: ', teams.data.length)
+          if(this.state.teamCount > 0){
+            // else send to Feed
+            route.name = 'Feed';
+          } else {
+            route.name = 'Loading';
+          }
         }
       }
     }
@@ -537,7 +549,7 @@ class App extends React.Component {
     }
 
     var CustomSideView = SideMenu
-    if(this.props.session.isAuthenticated !== true){
+    if(session.isAuthenticated !== true){
       CustomSideView = View
     }
 
@@ -547,7 +559,7 @@ class App extends React.Component {
           <Menu
             nav={nav}
             teams={teams}
-            session={this.props.session}
+            session={session}
             open={this.state.open}
           />
         }

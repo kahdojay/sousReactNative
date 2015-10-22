@@ -7,7 +7,7 @@ import TeamActions from './team'
 import MessageActions from './message'
 import PurveyorActions from './purveyor'
 
-let ddpClient = new DDPClient({
+const ddpClient = new DDPClient({
   // host : "localhost",
   // port : 3000,
   // ssl  : false,
@@ -27,6 +27,7 @@ const sessionActions = SessionActions(ddpClient, {
 })
 const messageActions = MessageActions(ddpClient)
 const teamActions = TeamActions(ddpClient, {
+  'connectActions': connectActions,
   'messageActions': messageActions
 })
 const purveyorActions = PurveyorActions(ddpClient)
