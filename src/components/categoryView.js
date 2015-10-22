@@ -41,7 +41,7 @@ class CategoryView extends React.Component {
             this.props.onAddNewProduct(category.id, productName)
           }}
         />*/}
-        <TouchableHighlight
+        {/*<TouchableHighlight
           underlayColor='#eee'
           onPress={() => {
             this.props.navigator.push({
@@ -52,7 +52,7 @@ class CategoryView extends React.Component {
           style={styles.createButton}
         >
           <Text style={styles.createButtonText}>Create New Product...</Text>
-        </TouchableHighlight>
+        </TouchableHighlight>*/}
         <ProductList
           navigator={this.props.navigator}
           cart={cart}
