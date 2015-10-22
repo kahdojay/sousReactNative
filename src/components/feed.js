@@ -28,11 +28,13 @@ class Button extends React.Component {
 
   render() {
     return (
-      <TouchableOpacity
-        onPress={this.handlePress.bind(this)}
-        style={this.props.style}>
-        <Text>{this.props.children}</Text>
-      </TouchableOpacity>
+      <View>
+        <TouchableOpacity
+          onPress={this.handlePress.bind(this)}
+          style={this.props.style}>
+          <Text>{this.props.children}</Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 }

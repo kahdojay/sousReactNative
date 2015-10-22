@@ -1,5 +1,6 @@
 import { Icon } from 'react-native-icons';
 import React from 'react-native';
+import ErrorModal from './errorModal';
 import AddForm from './addForm';
 import { mainBackgroundColor } from '../utilities/colors';
 import TeamIndexRow from './teamIndexRow';
