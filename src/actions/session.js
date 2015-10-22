@@ -52,6 +52,13 @@ export default function SessionActions(ddpClient, allActions){
       const {session} = getState()
       // process ddp call
       // console.log('SESSION PARAMS', sessionParams);
+
+      const newSession = Object.assign({}, session, sessionParams)
+      console.log('NEW SESSION PARAMS', newSession);
+
+      // resubscribe based on session data
+      dispatch(connectActions.subscribeDDP(newSession, undefined));
+
       if(sessionParams.hasOwnProperty('smsToken') === false){
         // // dispatch a session clear to get make sure no lingering data exists
         // dispatch(receiveSession({
@@ -65,7 +72,7 @@ export default function SessionActions(ddpClient, allActions){
       } else {
         ddpClient.call('loginWithSMS', [sessionParams.phoneNumber, sessionParams.smsToken])
         const {session, messages} = getState();
-        console.log(messages);
+        // console.log(messages);
         if(messages.data.length == 0){
           const messageAttributes = {
             message: 'Welcome to Sous! This is your personal Notepad, but you can create a new team and start collaborating with your fellow cooks by tapping the icon in the top right.',
@@ -121,14 +128,15 @@ export default function SessionActions(ddpClient, allActions){
         // console.log("SESSION", session, response);
         isAuthenticated = true;
       }
-      // resubscribe based on session data
-      connectActions.subscribeDDP(Object.assign({}, session, response), undefined);
-      var action = Object.assign({}, session, response, {
-        type: RECEIVE_SESSION,
+      const newSession = Object.assign({}, session, response, {
         isAuthenticated: isAuthenticated
-      });
+      })
+      // resubscribe based on session data
+      dispatch(connectActions.subscribeDDP(newSession, undefined));
+      let action = newSession
+      action.type = RECEIVE_SESSION
       // console.log('isAuthenticated: ', action.type, action.isAuthenticated);
-      return dispatch(action);
+      return dispatch(newSession);
     }
   }
 

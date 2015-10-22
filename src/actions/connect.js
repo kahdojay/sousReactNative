@@ -33,7 +33,7 @@ export default function ConnectActions(ddpClient) {
 
       if(proceed === true){
         ddpClient.unsubscribe(channel)
-        // console.log('CONNECTING: ', channel, argsList);
+        console.log('CONNECTING: ', channel, argsList);
         ddpClient.subscribe(channel, argsList);
         dispatch({
           type: SUBSCRIBE_CONNECTION,
@@ -47,12 +47,13 @@ export default function ConnectActions(ddpClient) {
   function subscribeDDP(session, teamIds){
     return (dispatch, getState) => {
       const {connect} = getState();
-      if(teamIds !== undefined && teamIds.length > 0){
-        dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [teamIds]))
+      // console.log(session, teamIds)
+      if(session.phoneNumber !== ""){
+        dispatch(processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [session.phoneNumber]))
       }
-      if(session !== undefined){
-        if(session.phoneNumber !== ""){
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [session.phoneNumber]))
+      if(session.isAuthenticated === true){
+        if(teamIds !== undefined && teamIds.length > 0){
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [teamIds]))
         }
         if(session.userId !== null){
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS.channel, [session.userId]))

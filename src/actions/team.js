@@ -156,9 +156,9 @@ export default function TeamActions(ddpClient, allActions) {
       const {session, teams} = getState();
       let teamIds = _.pluck(teams.data, 'id');
 
-      if( teamIds.indexOf(team._id) === -1 ){
-        teamIds.push(team._id)
-        connectActions.subscribeDDP(undefined, teamIds);
+      if( teamIds.indexOf(team.id) === -1 ){
+        teamIds.push(team.id)
+        dispatch(connectActions.subscribeDDP(session, teamIds));
       }
       return dispatch({
         type: RECEIVE_TEAMS,
