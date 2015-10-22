@@ -52,7 +52,10 @@ class App extends React.Component {
     this.state = {
       touchToClose: false,
       open: false,
-      teamCount: this.props.teams.data.length
+      isAuthenticated: this.props.session.isAuthenticated,
+      firstName: this.props.session.firstName,
+      lastName: this.props.session.lastName,
+      teamCount: this.props.teams.data.length,
     }
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
@@ -105,7 +108,10 @@ class App extends React.Component {
 
   componentWillReceiveProps(nextProps){
     this.setState({
-      teamCount: nextProps.teams.data.length
+      teamCount: nextProps.teams.data.length,
+      isAuthenticated: nextProps.session.isAuthenticated,
+      firstName: nextProps.session.firstName,
+      lastName: nextProps.session.lastName,
     })
   }
 
@@ -392,9 +398,9 @@ class App extends React.Component {
     const { dispatch, ui, teams, session } = this.props;
 
     // redirect to initial view
-    if (session.isAuthenticated){
+    if (this.state.isAuthenticated){
       if (route.name === 'Login' || route.name === 'Signup' || route.name == 'UserInfo') {
-        if (session.firstName === "" || session.lastName === "") {
+        if (this.state.firstName === "" || this.state.lastName === "") {
           route.name = 'UserInfo';
         } else {
           console.log('TEAM COUNT: ', teams.data.length)
@@ -549,7 +555,7 @@ class App extends React.Component {
     }
 
     var CustomSideView = SideMenu
-    if(session.isAuthenticated !== true){
+    if(this.state.isAuthenticated !== true){
       CustomSideView = View
     }
 
