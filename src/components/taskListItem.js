@@ -1,6 +1,6 @@
 import { Icon } from 'react-native-icons';
 import React from 'react-native'
-import CheckBox from 'react-native-checkbox'
+import CheckBox from './checkbox'
 import { greyText, taskCompletedBackgroundColor } from '../utilities/colors';
 
 const {

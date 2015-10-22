@@ -1,6 +1,6 @@
 import React from 'react-native'
 import _ from 'lodash'
-import CheckBox from 'react-native-checkbox'
+import CheckBox from './checkbox'
 import { Icon } from 'react-native-icons'
 
 const {

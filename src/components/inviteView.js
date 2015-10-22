@@ -1,7 +1,7 @@
 import React from 'react-native';
 import _ from 'lodash';
 import AddressBook from 'react-native-addressbook';
-import CheckBox from 'react-native-checkbox'
+import CheckBox from './checkbox'
 import Colors from '../utilities/colors';
 const {
   ScrollView,
