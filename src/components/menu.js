@@ -49,7 +49,9 @@ module.exports = class Menu extends Component {
                           }}
                           style={styles.saveButton}
                         >
-                          <Text style={styles.saveText}>Invite to {team.name}</Text>
+                          <Text style={styles.saveText}>
+                            {team ? `Invite to ${team.name}` : ''}
+                          </Text>
                         </TouchableHighlight>
     let totalTasks = team.tasks.length
     let completeTasksCount = _.filter(team.tasks, function(task) {
