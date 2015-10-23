@@ -2,6 +2,7 @@ import { Icon } from 'react-native-icons';
 import React from 'react-native';
 import Colors from '../utilities/colors';
 import _ from 'lodash';
+import { nameSort } from '../utilities/utils';
 
 const {
   View,
@@ -37,17 +38,6 @@ class CartView extends React.Component {
     }
   }
 
-  nameSort(a, b) {
-    if (a.name > b.name) {
-      return 1;
-    }
-    if (a.name < b.name) {
-      return -1;
-    }
-    // a must be equal to b
-    return 0;
-  }
-
   renderPurveyorProducts(purveyorId) {
     //TODO dry this out by recieving necessary info from render()
     const {team, purveyors, appState} = this.props
@@ -59,7 +49,7 @@ class CartView extends React.Component {
     const cartPurveyorProducts = _.map(cartPurveyorProductIds, (productId) => {
       return _.filter(products, {id: productId})[0]
     })
-    cartPurveyorProducts.sort(this.nameSort)
+    cartPurveyorProducts.sort(nameSort)
 
     return cartPurveyorProducts.map((product) => {
       // console.log('PRODUCT', product)
@@ -93,8 +83,10 @@ class CartView extends React.Component {
   }
 
   render() {
-    const buttonStyle = this.state.numberOfOrders > 0 ? styles.button : [styles.button,styles.buttonDisabled];
-    const {team, purveyors, appState} = this.props
+    const buttonStyle = this.state.numberOfOrders > 0 ?
+                                    styles.button :
+                                    [styles.button, styles.buttonDisabled];
+    const { team, purveyors, appState } = this.props
     const cart = team.cart
     const products = appState.teams.products
 
@@ -102,14 +94,16 @@ class CartView extends React.Component {
     const cartPurveyors = _.map(cartPurveyorIds, (purveyorId) => {
       return _.filter(purveyors, {id: purveyorId})[0]
     })
-    cartPurveyors.sort(this.nameSort)
+    cartPurveyors.sort(nameSort)
 
     return (
       <ScrollView style={styles.scrollView}>
         {this.renderPurveyors(cartPurveyors)}
         <TouchableHighlight
           onPress={this.handleSubmitPress.bind(this, cartPurveyors)}
-          style={buttonStyle}>
+          style={buttonStyle}
+          underlayColor={Colors.disabled}
+        >
           <Text style={styles.buttonText}>Submit Order</Text>
         </TouchableHighlight>
       </ScrollView>
@@ -173,7 +167,7 @@ let styles = StyleSheet.create({
     borderRadius: 3,
   },
   buttonDisabled: {
-    backgroundColor: '#aaaaaa'
+    backgroundColor: Colors.disabled,
   },
   scrollView: {
     backgroundColor: '#f2f2f2',
