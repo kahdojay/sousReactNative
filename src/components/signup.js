@@ -145,7 +145,7 @@ class Signup extends React.Component {
               style={styles.input}
               value={this.state.smsToken}
               keyboardType='phone-pad'
-              placeholder='Verification Code'
+              textAlign='center'
               onChange={(e) => {
                 this.setState({smsToken: e.nativeEvent.text, invalid: false})
               }}
