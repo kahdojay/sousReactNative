@@ -52,7 +52,10 @@ class App extends React.Component {
     this.state = {
       touchToClose: false,
       open: false,
-      teamCount: this.props.teams.data.length
+      isAuthenticated: this.props.session.isAuthenticated,
+      firstName: this.props.session.firstName,
+      lastName: this.props.session.lastName,
+      teamCount: this.props.teams.data.length,
     }
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
@@ -103,10 +106,24 @@ class App extends React.Component {
     this.props.dispatch(actions.connectApp())
   }
 
-  componentWillReceiveProps(nextProps){
+  componentWillReceiveProps(nextProps) {
+    const teamCount = nextProps.teams.data.length
     this.setState({
-      teamCount: nextProps.teams.data.length
+      teamCount: teamCount,
+      isAuthenticated: nextProps.session.isAuthenticated,
+      firstName: nextProps.session.firstName,
+      lastName: nextProps.session.lastName,
     })
+  }
+
+  componentDidUpdate() {
+    if(this.refs.appNavigator && this.state.teamCount > 0 && this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
+      setTimeout(() => {
+        this.refs.appNavigator.replacePrevious({
+          name: 'Feed'
+        });
+      }, 1000)
+    }
   }
 
   authenticatedRoute(route){
@@ -360,6 +377,15 @@ class App extends React.Component {
             }}
           />
         );
+      case 'Loading':
+        return (
+          <View style={{flex: 1, backgroundColor: '#f2f2f2', alignItems: 'center'}}>
+            <View style={styles.logoContainer}>
+              <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+            </View>
+            <Text style={styles.loadingText}>SETTING UP YOUR WORKSPACE.</Text>
+          </View>
+        )
       default:
         return <View />;
     }
@@ -392,12 +418,12 @@ class App extends React.Component {
     const { dispatch, ui, teams, session } = this.props;
 
     // redirect to initial view
-    if (session.isAuthenticated){
+    if (this.state.isAuthenticated){
       if (route.name === 'Login' || route.name === 'Signup' || route.name == 'UserInfo') {
-        if (session.firstName === "" || session.lastName === "") {
+        if (this.state.firstName === "" || this.state.lastName === "") {
           route.name = 'UserInfo';
         } else {
-          console.log('TEAM COUNT: ', teams.data.length)
+          console.log('TEAM COUNT: ', this.state.teamCount)
           if(this.state.teamCount > 0){
             // else send to Feed
             route.name = 'Feed';
@@ -538,6 +564,10 @@ class App extends React.Component {
             // customNext: <ProductCreateRightCheckbox disabled={true} />,
           })
           break;
+        case 'UserInfo':
+        case 'Loading':
+          navBar = <View />;
+          break;
         default:
           navBar = React.addons.cloneWithProps(this.navBar, {
             hidePrev: false,
@@ -545,11 +575,12 @@ class App extends React.Component {
             route: route,
             onNext: null,
           })
+          break;
       }
     }
 
     var CustomSideView = SideMenu
-    if(session.isAuthenticated !== true){
+    if(this.state.isAuthenticated !== true){
       CustomSideView = View
     }
 
@@ -584,6 +615,7 @@ class App extends React.Component {
   render() {
     return (
       <Navigator
+        ref="appNavigator"
         initialRoute={{
           index: 0,
           name: this.initialRoute
@@ -595,7 +627,7 @@ class App extends React.Component {
   }
 }
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     marginTop: 20,
     flex: 1,
@@ -645,6 +677,13 @@ let styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: 'OpenSans'
   },
+  loadingText: {
+    alignSelf: 'center',
+    fontSize: 16,
+    color: '#cfcfcf',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans'
+  },
   buttonText: {
     alignSelf: 'center',
     fontSize: 27,
@@ -661,9 +700,25 @@ let styles = StyleSheet.create({
   leftBtn: {
     flex: 1,
   },
+  logoContainer: {
+    marginTop: 50,
+    marginBottom: 15,
+    borderRadius: 100/2,
+    backgroundColor: '#dfdfdf',
+    paddingLeft: 10,
+    paddingTop: 15,
+    width: 100,
+    height: 100,
+    alignSelf: 'center'
+  },
+  logoImage: {
+    borderRadius: 15,
+    width: 80,
+    height: 70
+  },
 })
 
-function select(state) {
+function mapStateToProps(state) {
   return {
     ui: state.ui,
     session: state.session,
@@ -674,4 +729,5 @@ function select(state) {
   }
 }
 
-export default connect(select)(App);
+// --// connect(mapStateToProps, mapDispatchToProps, mergeProps, options = {})
+export default connect(mapStateToProps)(App);

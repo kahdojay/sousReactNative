@@ -11,12 +11,45 @@ const {
   AsyncStorage,
   View,
   Text,
+  StyleSheet,
+  Image,
 } = React
 
 let store = compose(
   applyMiddleware(thunkMiddleware),
   autoRehydrate()
   )(createStore)(reducers);
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 20,
+    flex: 1,
+    backgroundColor: '#18008E',
+  },
+  scene: {
+    flex: 1
+  },
+  logoContainer: {
+    marginTop: 50,
+    marginBottom: 15,
+    borderRadius: 100/2,
+    backgroundColor: '#1825AD',
+    paddingLeft: 10,
+    paddingTop: 15,
+    width: 100,
+    height: 100,
+    alignSelf: 'center'
+  },
+  logoImage: {
+    borderRadius: 15,
+    width: 80,
+    height: 70
+  },
+  loadingText: {
+    color: 'white',
+    alignSelf: 'center'
+  }
+})
 
 class SousApp extends React.Component {
   constructor(props) {
@@ -41,12 +74,11 @@ class SousApp extends React.Component {
   render() {
     if (this.state.rehydrated === false) {
       return (
-        <View style={{
-          marginTop: 20,
-          flex: 1,
-          backgroundColor: '#18008E',
-        }}>
-          <Text style={{color: 'white', alignSelf: 'center'}}>LOADING</Text>
+        <View style={styles.container}>
+          <View style={styles.logoContainer}>
+            <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+          </View>
+          <Text style={styles.loadingText}>LOADING</Text>
         </View>
       )
     } else {
