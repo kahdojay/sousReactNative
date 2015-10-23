@@ -5,6 +5,7 @@ import _ from 'lodash';
 import { nameSort } from '../utilities/utils';
 
 const {
+  AlertIOS,
   View,
   Text,
   ScrollView,
@@ -29,13 +30,22 @@ class CartView extends React.Component {
   }
 
   handleSubmitPress(cartPurveyors) {
-    const cartPurveyorsString = _.pluck(cartPurveyors, 'name').join(', ');
-    if(this.state.numberOfOrders > 0){
-      this.props.onSubmitOrder('Order sent to ' + cartPurveyorsString);
-      this.props.navigator.replacePreviousAndPop({
-        name: 'Feed',
-      });
-    }
+    AlertIOS.alert(
+      'Confirm',
+      'Are you sure you want to send order?',
+      [
+        {text: 'No', onPress: () => console.log('Order not sent')},
+        {text: 'Yes', onPress: () => {
+          const cartPurveyorsString = _.pluck(cartPurveyors, 'name').join(', ');
+          if(this.state.numberOfOrders > 0){
+            this.props.onSubmitOrder('Order sent to ' + cartPurveyorsString);
+            this.props.navigator.replacePreviousAndPop({
+              name: 'Feed',
+            });
+          }
+        }}
+      ]
+    )
   }
 
   renderPurveyorProducts(purveyorId) {
