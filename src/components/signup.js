@@ -153,10 +153,12 @@ class Signup extends React.Component {
           </View>
           { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
           <TouchableHighlight
+            underlayColor='#C6861D'
             onPress={() => {
               this.onVerify()
             }}
-            style={styles.button}>
+            style={styles.button}
+          >
             <Text style={styles.buttonText}>Verify</Text>
           </TouchableHighlight>
         </View>
