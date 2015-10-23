@@ -229,13 +229,15 @@ let styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 100/2,
     backgroundColor: '#1825AD',
-    padding: 15,
+    paddingLeft: 10,
+    paddingTop: 15,
     width: 100,
     height: 100,
     alignSelf: 'center'
   },
   logoImage: {
-    width: 70,
+    borderRadius: 15,
+    width: 80,
     height: 70
   },
   login: {
