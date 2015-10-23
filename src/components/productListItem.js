@@ -28,7 +28,6 @@ class ProductListItem extends React.Component {
   }
 
   componentWillMount() {
-    // console.log(this.props);
     this.stateUpdateFromCart(this.props.cart.orders)
   }
 
@@ -48,7 +47,6 @@ class ProductListItem extends React.Component {
         purveyorId: cartPurveyorId,
         note: cartItem.note
       };
-      // console.log(newState)
       this.setState(newState);
     }
   }
@@ -60,7 +58,6 @@ class ProductListItem extends React.Component {
       quantity: this.state.quantity,
       note: this.state.note
     };
-    // console.log(cartAttributes)
     this.props.onUpdateProductInCart(
       (this.state.added === true ? CART.ADD : CART.REMOVE),
       cartAttributes
@@ -89,7 +86,6 @@ class ProductListItem extends React.Component {
   }
   render() {
     let {product} = this.props
-    // console.log('list item product', product)
     const purveyorString = _.find(this.props.purveyors.data, { id: this.state.selectedPurveyorId }).name;
 
     return (

@@ -3,6 +3,7 @@ import React from 'react-native';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
 import { mainBackgroundColor, navbarColor } from '../utilities/colors';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 let {
   AppRegistry,
   StyleSheet,
@@ -29,58 +30,51 @@ class UserInfo extends React.Component{
         keyboardShouldPersistTaps={false}
         automaticallyAdjustContentInsets={false}
       >
-        <View style={styles.wrapper}>
-          <View style={styles.userInfoContainer}>
-            <View style={styles.headerContainer}>
-              <View style={styles.infoField}>
-                <Text style={styles.title}>
-                  Great! Looks like this is your first time here.
-                </Text>
-              </View>
-            </View>
-            <View style={styles.userProfile}>
-              <View style={styles.headerContainer}>
-                <Text style={styles.question}>What's your <Text style={[styles.question, styles.bold]}>name?</Text></Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.userInfoContainer}>
-
-            <View style={styles.userProfile}>
-              <View style={styles.infoField}>
-                <TextInput
-                  style={styles.input}
-                  value={this.state.firstName}
-                  onChange={(e) => this.setState({firstName: e.nativeEvent.text})}
-                  placeholder={"First Name"}/>
-              </View>
-              <View style={styles.separator}></View>
-              <View style={styles.infoField}>
-                <TextInput
-                  style={styles.input}
-                  value={this.state.lastName}
-                  onChange={(e) => this.setState({lastName: e.nativeEvent.text})}
-                  placeholder={"Last Name"} />
-              </View>
-              <View style={styles.separator}></View>
-            </View>
-
-            <View style={styles.deactivateContainer}>
-              <TouchableHighlight
-                onPress={() => {
-                  let {firstName, lastName} = this.state;
-                  if (firstName != '' && lastName != '') {
-                    // console.log("REGISTER USER WITH FIRST/LAST NAME");
-                    this.props.onUpdateInfo({firstName: firstName, lastName: lastName});
-                  }
-                }}
-                style={styles.deactivateButton}>
-                <Text style={styles.deactivateText}>Login</Text>
-              </TouchableHighlight>
-            </View>
+        <View style={styles.headerContainer}>
+          <View style={styles.infoField}>
+            <Text style={styles.title}>
+              Great! Looks like this is your first time here.
+            </Text>
           </View>
         </View>
+        <View style={styles.userProfile}>
+          <View style={styles.headerContainer}>
+            <Text style={styles.question}>What is your <Text style={[styles.question, styles.bold]}>name?</Text></Text>
+          </View>
+        </View>
+
+        <View style={styles.userProfile}>
+          <View style={styles.infoField}>
+            <TextInput
+              style={styles.input}
+              value={this.state.firstName}
+              onChange={(e) => this.setState({firstName: e.nativeEvent.text})}
+              placeholder={"First Name"}/>
+          </View>
+          <View style={styles.separator}></View>
+          <View style={styles.infoField}>
+            <TextInput
+              style={styles.input}
+              value={this.state.lastName}
+              onChange={(e) => this.setState({lastName: e.nativeEvent.text})}
+              placeholder={"Last Name"} />
+          </View>
+          <View style={styles.separator}></View>
+        </View>
+
+        <View style={styles.deactivateContainer}>
+          <TouchableHighlight
+            onPress={() => {
+              let {firstName, lastName} = this.state;
+              if (firstName != '' && lastName != '') {
+                this.props.onUpdateInfo({firstName: firstName, lastName: lastName});
+              }
+            }}
+            style={styles.deactivateButton}>
+            <Text style={styles.deactivateText}>Login</Text>
+          </TouchableHighlight>
+        </View>
+        <KeyboardSpacer />
       </ScrollView>
     )
   }
@@ -157,12 +151,9 @@ let styles = StyleSheet.create({
     marginBottom: 5,
   },
   deactivateContainer: {
-    flex: 1,
     marginTop: 5,
     backgroundColor: 'transparent',
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
   },
   deactivateButton: {
     backgroundColor: '#ddd',
