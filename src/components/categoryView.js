@@ -7,6 +7,7 @@ import AddForm from './addForm';
 import { mainBackgroundColor, navbarColor } from '../utilities/colors';
 import Colors from '../utilities/colors';
 import _ from 'lodash'
+import { nameSort } from '../utilities/utils';
 
 const {
   StyleSheet,
@@ -29,6 +30,7 @@ class CategoryView extends React.Component {
       if (category.products.indexOf(product.id) !== -1)
         return product
     })
+    products.sort(nameSort); // sort in-place
 
     if(this.props.ui.keyboard.visible === true){
       // navBar = <View/>

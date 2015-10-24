@@ -145,7 +145,7 @@ class Signup extends React.Component {
               style={styles.input}
               value={this.state.smsToken}
               keyboardType='phone-pad'
-              placeholder='Verification Code'
+              textAlign='center'
               onChange={(e) => {
                 this.setState({smsToken: e.nativeEvent.text, invalid: false})
               }}
@@ -153,10 +153,12 @@ class Signup extends React.Component {
           </View>
           { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
           <TouchableHighlight
+            underlayColor='#C6861D'
             onPress={() => {
               this.onVerify()
             }}
-            style={styles.button}>
+            style={styles.button}
+          >
             <Text style={styles.buttonText}>Verify</Text>
           </TouchableHighlight>
         </View>

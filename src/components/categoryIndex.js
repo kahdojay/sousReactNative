@@ -4,6 +4,7 @@ import { Icon } from 'react-native-icons'
 import AddForm from './addForm'
 import { mainBackgroundColor } from '../utilities/colors'
 import CategoryIndexRow from './categoryIndexRow';
+import { nameSort } from '../utilities/utils';
 
 const {
   ActivityIndicatorIOS,
@@ -20,6 +21,7 @@ const {
 class CategoryIndex extends React.Component {
   render() {
     const { categories } = this.props
+    categories.sort(nameSort)
 
     let categoriesList = _.map(categories, (category) => {
       return (
