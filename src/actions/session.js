@@ -99,7 +99,9 @@ export default function SessionActions(ddpClient, allActions){
           filteredSessionParams[key] = sessionParams[key];
         }
       })
-      ddpClient.call('updateUser', [session.userId, filteredSessionParams])
+      dispatch(() => {
+        ddpClient.call('updateUser', [session.userId, filteredSessionParams])
+      })
       // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
       return dispatch(receiveSession(sessionParams))
     }
