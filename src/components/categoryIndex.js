@@ -20,10 +20,12 @@ const {
 
 class CategoryIndex extends React.Component {
   render() {
-    const { categories } = this.props
-    categories.sort(nameSort)
+    const { categories, products } = this.props
 
-    let categoriesList = _.map(categories, (category) => {
+    let categoriesList = _.map(_.sortBy(categories, 'name'), (category) => {
+      const categoryProducts = _.sortBy(_.filter(products, (product) => {
+        return category.products.indexOf(product.id) > -1
+      }), 'name')
       return (
         <CategoryIndexRow
           key={category.id}
@@ -31,7 +33,9 @@ class CategoryIndex extends React.Component {
           onPress={() => {
             this.props.navigator.push({
               name: 'CategoryView',
-              categoryId: category.id
+              categoryId: category.id,
+              category: category,
+              categoryProducts: categoryProducts
             })
           }}
         />
@@ -70,7 +74,7 @@ const styles = StyleSheet.create({
 CategoryIndex.propTypes = {
   // onAddCategory: React.PropTypes.func,
   navigator: React.PropTypes.object.isRequired,
-  categories: React.PropTypes.array.isRequired,
+  categories: React.PropTypes.object.isRequired,
 };
 
 export default CategoryIndex

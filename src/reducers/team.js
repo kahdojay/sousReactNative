@@ -18,8 +18,8 @@ const initialState = {
     isFetching: false,
     errors: null,
     data: [],
-    defaultCategories: [],
-    products: [],
+    defaultCategories: {},
+    products: {},
     lastUpdated: null
   }
 };
@@ -47,31 +47,23 @@ function teams(state = initialState.teams, action) {
       data: currentTeamsDataState,
       lastUpdated: (new Date()).getTime()
     });
-  case RECEIVE_CATEGORIES:
-    var defaultCategoriesState = Object.assign({}, state);
-    var currentDefaultCategoriesState = updateDataState(defaultCategoriesState.defaultCategories, action.category)
-    return Object.assign({}, state, {
-      defaultCategories: currentDefaultCategoriesState,
-    });
-  case RECEIVE_PRODUCTS:
-    var productsState = Object.assign({}, state);
-    var newProductsState = updateDataState(productsState.products, action.product)
-    return Object.assign({}, state, {
-      products: newProductsState,
-    });
 
   case RECEIVE_CATEGORIES:
     var defaultCategoriesState = Object.assign({}, state);
-    var currentDefaultCategoriesState = updateDataState(defaultCategoriesState.defaultCategories, action.category)
+    // var currentDefaultCategoriesState = updateDataState(defaultCategoriesState.defaultCategories, action.category)
+    defaultCategoriesState.defaultCategories[action.category.id] = action.category;
     return Object.assign({}, state, {
-      defaultCategories: currentDefaultCategoriesState,
+      // defaultCategories: currentDefaultCategoriesState,
+      defaultCategories: defaultCategoriesState.defaultCategories,
     });
 
   case RECEIVE_PRODUCTS:
     var newProductsState = Object.assign({}, state);
-    var currentProductsState = updateDataState(newProductsState.products, action.product)
+    // var currentProductsState = updateDataState(newProductsState.products, action.product)
+    newProductsState.products[action.product.id] = action.product;
     return Object.assign({}, state, {
-      products: currentProductsState,
+      // products: currentProductsState,
+      products: newProductsState.products
     });
 
   // delete the team

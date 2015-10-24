@@ -238,7 +238,7 @@ class App extends React.Component {
             purveyors={purveyors}
             session={session}
             onAddPurveyor={(name) => {
-              var purveyors = this.props.purveyors.data.map((purveyor) => {
+              const purveyors = this.props.purveyors.data.map((purveyor) => {
                 if (! purveyor.deleted)
                   return purveyor.name;
               });
@@ -261,7 +261,7 @@ class App extends React.Component {
             navigator={nav}
             purveyor={purveyor}
             onAddNewProduct={(purveyorId, productName) => {
-              let products = purveyor.products.map((product) => {
+              const products = purveyor.products.map((product) => {
                 if (! product.deleted)
                   return product.name;
               });
@@ -298,21 +298,22 @@ class App extends React.Component {
         return (
           <CategoryIndex
             navigator={nav}
+            products={teams.products}
             categories={teams.defaultCategories}
           />
         );
       case 'CategoryView':
         var team = _.filter(teams.data, { id: session.teamId })[0]
         // var category = _.filter(team.categories, { id: route.categoryId })[0]
-        var category = _.filter(teams.defaultCategories, { id: route.categoryId })[0]
-        // console.log(teams.products);
+        // var category = _.filter(teams.defaultCategories, { id: route.categoryId })[0]
+        // console.log(route);
         return (
           <CategoryView
             ui={ui}
             navigator={nav}
-            category={category}
+            category={route.category}
             cart={team.cart}
-            products={teams.products}
+            products={route.categoryProducts}
             purveyors={purveyors}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               dispatch(actions.updateProductInCart(cartAction, cartAttributes))
@@ -620,7 +621,10 @@ class App extends React.Component {
     if (route.sceneConfig) {
       return route.sceneConfig;
     }
-    return Navigator.SceneConfigs.FloatFromRight;
+    return Object.assign({}, Navigator.SceneConfigs.FloatFromRight, {
+      springTension: 100,
+      springFriction: 1,
+    });
   }
 
   render() {

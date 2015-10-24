@@ -16,11 +16,30 @@ class ProductList extends React.Component {
     super(props)
   }
   render() {
-    const {cart, products} = this.props
-    let productList = _.map(products, (product, idx) => {
+    const {cart, products, productsCount} = this.props
+    const productList = _.map(products, (product, idx) => {
+      let loadDelay = 50
+      // for everything off screen
+      // - index greater than 7
+      // - multiplied by fibonacci sequence
+      // - in multiples of 75
+      if(idx > 91){
+        loadDelay = 625
+      } else if(idx > 56){
+        loadDelay = 550
+      } else if(idx > 35){
+        loadDelay = 475
+      } else if(idx > 21){
+        loadDelay = 400
+      } else if(idx > 14) {
+        loadDelay = 325
+      } else {
+        loadDelay = 250
+      }
       return (
         <ProductListItem
           cart={cart}
+          loadDelay={loadDelay}
           product={product}
           key={idx}
           purveyors={this.props.purveyors}
