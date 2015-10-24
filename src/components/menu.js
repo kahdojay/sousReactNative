@@ -40,90 +40,101 @@ module.exports = class Menu extends Component {
                   source={{ uri: session.imageUrl }}
                 />;
     }
-    let inviteButton = <TouchableHighlight
-                          underlayColor='#eee'
-                          onPress={() => {
-                            this.props.nav.push({
-                              name: 'InviteView',
-                            })
-                          }}
-                          style={styles.saveButton}
-                        >
-                          <Text style={styles.saveText}>
-                            {team ? `Invite to ${team.name}` : ''}
-                          </Text>
-                        </TouchableHighlight>
-    let totalTasks = team.tasks.length
-    let completeTasksCount = _.filter(team.tasks, function(task) {
+    const totalTasks = team.tasks.length
+    const completeTasksCount = _.filter(team.tasks, function(task) {
       return (task.deleted == false && task.completed === true)
     }).length
-    let progress = Math.round((completeTasksCount / totalTasks)*100) || 0;
+    const progress = Math.round((completeTasksCount / totalTasks)*100) || 0;
+
+    let showInviteButton = true;
+    if(!team || (team && team.name === 'Notepad')){
+      showInviteButton = false;
+    }
+    let inviteContainerStyle = {};
+    if(showInviteButton === true){
+      inviteContainerStyle = {
+        flex: 2,
+      }
+    }
+
     return (
-      <View>
-        <ScrollView style={styles.menu}>
-          <View style={styles.avatarContainer}>
+      <View style={styles.menu}>
+        <View style={styles.avatarContainer}>
+          <TouchableHighlight
+            underlayColor={'#777'}
+            onPress={() => {
+              this.props.nav.push({
+                name: 'Profile',
+              })
+            }}
+          >
+            <View>
+              {avatar}
+              <Text style={styles.name}>{session.firstName} {session.lastName}</Text>
+            </View>
+          </TouchableHighlight>
+        </View>
+        <View style={styles.separator} />
+        <View style={[styles.inviteContainer, inviteContainerStyle]}>
+          <TouchableHighlight
+            underlayColor='#aaa'
+            onPress={() => {
+              this.props.nav.push({
+                name: 'Feed',
+              })
+            }}
+          >
+            <Text style={styles.teamText}>{team ? team.name : ''}</Text>
+          </TouchableHighlight>
+          {(showInviteButton === false) ? <View/> : (
             <TouchableHighlight
-              underlayColor={'#777'}
+              underlayColor='#eee'
               onPress={() => {
                 this.props.nav.push({
-                  name: 'Profile',
+                  name: 'InviteView',
                 })
               }}
+              style={styles.saveButton}
             >
-              <View>
-                {avatar}
-                <Text style={styles.name}>{session.firstName} {session.lastName}</Text>
+              <Text style={styles.saveText}>
+                {team ? `Invite to ${team.name}` : ''}
+              </Text>
+            </TouchableHighlight>
+          )}
+        </View>
+        <ScrollView style={styles.menuItems}>
+          <TouchableHighlight
+            style={styles.menuItemButton}
+            underlayColor='#ccc'
+            onPress={() => {
+              this.props.nav.push({
+                name: 'TeamView',
+              })
+            }}
+          >
+            <View style={styles.progressContainer}>
+              <View style={styles.progressRow}>
+                <Text style={styles.menuItemText}>Prep List</Text>
+                <Text style={styles.menuItemText}> {progress}%</Text>
               </View>
-            </TouchableHighlight>
-          </View>
-          <View style={styles.separator} />
-          <View style={styles.inviteContainer}>
-            <TouchableHighlight
-              underlayColor='#aaa'
-              onPress={() => {
-                this.props.nav.push({
-                  name: 'Feed',
-                })
-              }}
-            >
-              <Text style={styles.teamText}>{team ? team.name : ''}</Text>
-            </TouchableHighlight>
-            {team && team.name === 'Notepad' ? <View/> : inviteButton}
-          </View>
-          <View style={styles.menuItems}>
-            <TouchableHighlight
-              style={styles.menuItemButton}
-              underlayColor='#ccc'
-              onPress={() => {
-                this.props.nav.push({
-                  name: 'TeamView',
-                })
-              }}
-            >
-              <View style={styles.progressContainer}>
-                <View style={styles.progressRow}>
-                  <Text style={styles.menuItemText}>Prep List</Text>
-                  <Text style={styles.menuItemText}> {progress}%</Text>
-                </View>
-                <ProgressViewIOS
-                  style={styles.progressBar}
-                  progress={progress/100}
-                  trackTintColor='white'
-                />
-              </View>
-            </TouchableHighlight>
-            <TouchableHighlight
-              style={styles.menuItemButton}
-              underlayColor='#ccc'
-              onPress={() => {
-                this.props.nav.push({
-                  name: 'CategoryIndex',
-                })
-              }}
-            >
-              <Text style={styles.menuItemText}>Order Guide</Text>
-            </TouchableHighlight>
-          </View>
+              <ProgressViewIOS
+                style={styles.progressBar}
+                progress={progress/100}
+                trackTintColor='white'
+              />
+            </View>
+          </TouchableHighlight>
+          <TouchableHighlight
+            style={styles.menuItemButton}
+            underlayColor='#ccc'
+            onPress={() => {
+              this.props.nav.push({
+                name: 'CategoryIndex',
+              })
+            }}
+          >
+            <Text style={styles.menuItemText}>Order Guide</Text>
+          </TouchableHighlight>
         </ScrollView>
       </View>
     );
@@ -132,6 +143,7 @@ module.exports = class Menu extends Component {
 
 const styles = StyleSheet.create({
   menu: {
+    marginTop: 20,
     flex: 1,
     width: window.width,
     height: window.height,
@@ -139,7 +151,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   avatarContainer: {
-    flex: 1,
+    flex: 2,
     width: window.width * .7,
     flexDirection: 'column',
     justifyContent: 'center',
@@ -177,7 +189,6 @@ const styles = StyleSheet.create({
   inviteContainer: {
     flex: 1,
     width: window.width * .7,
-    flexDirection: 'column',
     alignItems: 'center',
   },
   saveButton: {
@@ -196,14 +207,17 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: 'white',
     fontFamily: 'OpenSans',
+    padding: 5,
+    marginTop: 5,
+    marginBottom: 5
   },
   menuItems: {
-    paddingLeft: 10,
-    marginTop: 10,
-    marginLeft: 15,
+    flex: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
   },
   menuItemButton: {
-    marginTop: 20,
+    marginBottom: 20
   },
   menuItemText: {
     fontFamily: 'OpenSans',

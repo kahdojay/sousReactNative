@@ -10,6 +10,7 @@ import Colors from '../utilities/colors';
 import Urls from '../resources/urls';
 import * as actions from '../actions';
 import * as Components from '../components';
+import Dimensions from 'Dimensions';
 
 const {
   PropTypes,
@@ -404,35 +405,10 @@ class App extends React.Component {
     });
   }
 
-  renderScene(route, nav) {
-    // console.log("PROPS", this.props);
+  getNavBar(route, nav) {
     const { dispatch, ui, teams, session } = this.props;
 
-    // redirect to initial view
-    if (this.state.isAuthenticated){
-      if (route.name === 'Login' || route.name === 'Signup' || route.name == 'UserInfo') {
-        if (this.state.firstName === "" || this.state.lastName === "") {
-          route.name = 'UserInfo';
-        } else {
-
-          if(this.state.gotData === true){
-            // else send to Feed
-            route.name = 'Feed';
-          } else {
-            route.name = 'Loading';
-          }
-        }
-      }
-    }
-    // redirect to login if requested view requires authentication
-    else if(route.name !== 'Login' && route.name !== 'Signup') {
-      route.name = 'Signup'
-    }
-
     let navBar = <View />;
-    let nextItem = <View />;
-    let scene = this.getScene(route, nav);
-
     // setup the header for unauthenticated routes
     if(this.authenticatedRoute(route) === false){
       navBar = <View />
@@ -570,6 +546,36 @@ class App extends React.Component {
           break;
       }
     }
+    return navBar;
+  }
+
+  renderScene(route, nav) {
+    // console.log("PROPS", this.props);
+    const { dispatch, ui, teams, session } = this.props;
+
+    // redirect to initial view
+    if (this.state.isAuthenticated){
+      if (route.name === 'Login' || route.name === 'Signup' || route.name == 'UserInfo') {
+        if (this.state.firstName === "" || this.state.lastName === "") {
+          route.name = 'UserInfo';
+        } else {
+
+          if(this.state.gotData === true){
+            // else send to Feed
+            route.name = 'Feed';
+          } else {
+            route.name = 'Loading';
+          }
+        }
+      }
+    }
+    // redirect to login if requested view requires authentication
+    else if(route.name !== 'Login' && route.name !== 'Signup') {
+      route.name = 'Signup'
+    }
+
+    let navBar = this.getNavBar(route, nav);
+    let scene = this.getScene(route, nav);
 
     let CustomSideView = SideMenu
     if(this.state.isAuthenticated !== true || this.state.gotData === false){
@@ -622,8 +628,12 @@ class App extends React.Component {
   }
 }
 
+const window = Dimensions.get('window');
+
 const styles = StyleSheet.create({
   container: {
+    height: window.height,
+    width: window.width,
     marginTop: 20,
     flex: 1,
     backgroundColor: 'white',
