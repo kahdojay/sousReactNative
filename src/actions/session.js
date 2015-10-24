@@ -62,31 +62,13 @@ export default function SessionActions(ddpClient, allActions){
       dispatch(connectActions.subscribeDDP(newSession, undefined));
 
       if(sessionParams.hasOwnProperty('smsToken') === false){
-        // // dispatch a session clear to get make sure no lingering data exists
-        // dispatch(receiveSession({
-        //   isAuthenticated: false,
-        //   smsVerified: false,
-        //   smsSent: false,
-        //   errors: null,
-        //   phoneNumber: sessionParams.phoneNumber,
-        // }))
-        ddpClient.call('sendSMSCode', [sessionParams.phoneNumber, session.authToken])
+        dispatch(() => {
+          ddpClient.call('sendSMSCode', [sessionParams.phoneNumber, session.authToken])
+        })
       } else {
-        ddpClient.call('loginWithSMS', [sessionParams.phoneNumber, sessionParams.smsToken])
-        const {session, messages} = getState();
-        // console.log(messages);
-        // if(messages.data.length == 0){
-        //   const messageAttributes = {
-        //     message: 'Welcome to Sous! This is your personal Notepad, but you can create a new team and start collaborating with your fellow cooks by tapping the icon in the top right.',
-        //     userId: session.userId,
-        //     author: 'Sous',
-        //     teamId: session.teamId,
-        //     createdAt: (new Date()).getTime(),
-        //     imageUrl: 'https://sous-assets-production.s3.amazonaws.com/uploads/89b217dc-4ec5-43e8-9569-8fc85e6fdd52/New+Sous+Logo+Circle+Small.png',
-        //   }
-        //   // console.log("SESSION", session, messageAttributes);
-        //   ddpClient.call('createMessage', [messageAttributes])
-        // }
+        dispatch(() => {
+          ddpClient.call('loginWithSMS', [sessionParams.phoneNumber, sessionParams.smsToken])
+        })
       }
       return dispatch(requestSession(sessionParams))
     }
