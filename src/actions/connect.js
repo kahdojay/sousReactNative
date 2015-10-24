@@ -88,7 +88,7 @@ export default function ConnectActions(ddpClient) {
       //--------------------------------------
       ddpClient.on('message', (msg) => {
         var log = JSON.parse(msg);
-        console.log("MAIN DDP MSG", log);
+        // console.log("MAIN DDP MSG", log);
         // var teamIds = getState().teams.data.map(function(team) {
         //   return team.id;
         // })
@@ -98,35 +98,23 @@ export default function ConnectActions(ddpClient) {
           data.id = log.id;
           switch(log.collection){
             case 'messages':
-              dispatch(() => {
-                messageActions.receiveMessages(data)
-              })
+              dispatch(messageActions.receiveMessages(data))
               break;
             case 'teams':
-              dispatch(() => {
-                teamActions.receiveTeams(data)
-              })
+              dispatch(teamActions.receiveTeams(data))
               break;
             case 'purveyors':
-              dispatch(() => {
-                purveyorActions.receivePurveyors(data)
-              })
+              dispatch(purveyorActions.receivePurveyors(data))
               break;
             case 'categories':
-              dispatch(() => {
-                teamActions.receiveCategories(data)
-              })
+              dispatch(teamActions.receiveCategories(data))
               break;
             case 'products':
-              dispatch(() => {
-                teamActions.receiveProducts(data)
-              })
+              dispatch(teamActions.receiveProducts(data))
               break;
             case 'users':
               // console.log("MAIN DDP WITH FIELDS MSG", log);
-              dispatch(() => {
-                sessionActions.receiveSession(data)
-              })
+              dispatch(sessionActions.receiveSession(data))
               break;
             default:
               // console.log("TODO: wire up collection: ", log.collection);
