@@ -4,34 +4,12 @@ import NavigationBar from 'react-native-navbar';
 import NavigationBarStyles from 'react-native-navbar/styles'
 import { connect } from 'react-redux/native';
 import { Icon } from 'react-native-icons';
-import Login from '../components/login';
-import Signup from '../components/signup';
-import TeamIndex from '../components/teamIndex';
-import TeamView from '../components/teamView';
-import UserInfo from '../components/userInfo';
-import TaskView from '../components/taskView';
 import SideMenu from 'react-native-side-menu';
-import Menu from '../components/menu';
-import Feed from '../components/feed';
-import CartView from '../components/cartView';
-import FeedViewLeftButton from '../components/feedViewLeftButton';
-import FeedViewRightButton from '../components/feedViewRightButton';
-import NavBackButton from '../components/navBackButton';
-import PurveyorIndex from '../components/purveyorIndex';
-import PurveyorView from '../components/purveyorView';
-import ProductView from '../components/productView';
-import CategoryIndex from '../components/categoryIndex';
-import CategoryView from '../components/categoryView';
-import CategoryViewRightButton from '../components/CategoryViewRightButton';
-import ProductCreate from '../components/productCreate';
-import ProductCreateRightCheckbox from '../components/ProductCreateRightCheckbox';
-import ProfileView from '../components/profileView';
-import InviteView from '../components/inviteView';
-import NavbarTitle from '../components/NavbarTitle';
 import { BackBtn } from '../utilities/navigation';
 import Colors from '../utilities/colors';
 import Urls from '../resources/urls';
 import * as actions from '../actions';
+import * as Components from '../components';
 
 const {
   PropTypes,
@@ -148,7 +126,7 @@ class App extends React.Component {
     switch (route.name) {
       case 'Signup':
         return (
-          <Signup
+          <Components.Signup
             navigator={nav}
             session={session}
             onRegisterSession={(sessionParams) => {
@@ -158,7 +136,7 @@ class App extends React.Component {
           />
         );
       case 'TeamIndex':
-        return <TeamIndex
+        return <Components.TeamIndex
                   navigator={nav}
                   teams={teams}
                   messages={messages}
@@ -187,7 +165,7 @@ class App extends React.Component {
       case 'TeamView':
         var team = _.filter(teams.data, { id: session.teamId })[0]
         return (
-          <TeamView
+          <Components.TeamView
             ui={ui}
             navigator={nav}
             team={team}
@@ -211,7 +189,7 @@ class App extends React.Component {
       case 'TaskView':
         var team = _.filter(teams.data, { id: session.teamId })[0]
         var task = _.filter(team.tasks, {recipeId: route.recipeId})[0]
-        return <TaskView
+        return <Components.TaskView
                   ui={ui}
                   task={task}
                   navigator={nav}
@@ -221,7 +199,7 @@ class App extends React.Component {
                 />;
       case 'Feed':
         return (
-          <Feed
+          <Components.Feed
             navigator={nav}
             messages={messages}
             userEmail={session.login}
@@ -233,7 +211,7 @@ class App extends React.Component {
         );
       case 'PurveyorIndex':
         return (
-          <PurveyorIndex
+          <Components.PurveyorIndex
             navigator={nav}
             purveyors={purveyors}
             session={session}
@@ -256,7 +234,7 @@ class App extends React.Component {
       case 'PurveyorView':
         var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
         return (
-          <PurveyorView
+          <Components.PurveyorView
             ui={ui}
             navigator={nav}
             purveyor={purveyor}
@@ -283,7 +261,7 @@ class App extends React.Component {
         let purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
         let product = _.filter(purveyor.products, { productId: route.productId })[0]
         return (
-          <ProductView
+          <Components.ProductView
             ui={ui}
             product={product}
             navigator={nav}
@@ -296,7 +274,7 @@ class App extends React.Component {
       case 'CategoryIndex':
         // var team = _.filter(teams.data, { id: session.teamId })[0]
         return (
-          <CategoryIndex
+          <Components.CategoryIndex
             navigator={nav}
             products={teams.products}
             categories={teams.defaultCategories}
@@ -308,7 +286,7 @@ class App extends React.Component {
         // var category = _.filter(teams.defaultCategories, { id: route.categoryId })[0]
         // console.log(route);
         return (
-          <CategoryView
+          <Components.CategoryView
             ui={ui}
             navigator={nav}
             category={route.category}
@@ -322,7 +300,7 @@ class App extends React.Component {
         );
       case 'Profile':
         return (
-          <ProfileView
+          <Components.ProfileView
             navigator={nav}
             session={session}
             onUpdateInfo={(data) => {
@@ -339,7 +317,7 @@ class App extends React.Component {
         );
       case 'ProductCreate':
         return (
-          <ProductCreate
+          <Components.ProductCreate
             appState={this.props}
             purveyors={this.props.purveyors}
             navigator={nav}
@@ -350,7 +328,7 @@ class App extends React.Component {
         )
       case 'UserInfo':
         return (
-          <UserInfo
+          <Components.UserInfo
             navigator={nav}
             onUpdateInfo={(data) => {
               dispatch(actions.updateSession(data));
@@ -359,7 +337,7 @@ class App extends React.Component {
         )
       case 'InviteView':
         return (
-          <InviteView
+          <Components.InviteView
             navigator={nav}
             onSMSInvite={(contactList) => dispatch(actions.inviteContacts(contactList))}
           />
@@ -371,7 +349,7 @@ class App extends React.Component {
             teamIndex = idx
         });
         return (
-          <CartView
+          <Components.CartView
             navigator={nav}
             team={this.props.teams.data[teamIndex]}
             purveyors={this.props.purveyors.data}
@@ -465,7 +443,7 @@ class App extends React.Component {
             route: route,
             hidePrev: false,
             buttonsColor: '#ccc',
-            customPrev: <NavBackButton iconFont={'fontawesome|times'} />,
+            customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} />,
             title: 'Switch Teams',
           })
           break;
@@ -478,15 +456,15 @@ class App extends React.Component {
             hidePrev: false,
             title: team.name || 'Sous',
             titleColor: 'black',
-            customPrev: <FeedViewLeftButton />,
-            customNext: <FeedViewRightButton />,
+            customPrev: <Components.FeedViewLeftButton />,
+            customNext: <Components.FeedViewRightButton />,
           })
           break;
         case 'PurveyorIndex':
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            customPrev: <FeedViewLeftButton />,
+            customPrev: <Components.FeedViewLeftButton />,
             onNext: null,
           })
           break;
@@ -496,7 +474,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             buttonsColor: '#ccc',
-            customPrev: <NavBackButton iconFont={'fontawesome|times'} />,
+            customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} />,
             title: team.name,
           })
           break;
@@ -516,9 +494,9 @@ class App extends React.Component {
             route: route,
             hidePrev: false,
             buttonsColor: '#ccc',
-            customPrev: <NavBackButton iconFont={'fontawesome|times'} />,
+            customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} />,
             title: 'Order Guide',
-            customNext: <CategoryViewRightButton cart={team.cart} />
+            customNext: <Components.CategoryViewRightButton cart={team.cart} />
           })
           break;
         case 'CategoryView':
@@ -528,9 +506,9 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            customPrev: <NavBackButton navName='CategoryIndex' iconFont={'fontawesome|chevron-left'} />,
+            customPrev: <Components.NavBackButton navName='CategoryIndex' iconFont={'fontawesome|chevron-left'} />,
             title: category.name,
-            customNext: <CategoryViewRightButton cart={team.cart} />
+            customNext: <Components.CategoryViewRightButton cart={team.cart} />
           })
           break;
         case 'ProductView':
@@ -546,7 +524,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             hidePrev: false,
-            customPrev: <NavBackButton iconFont={'fontawesome|chevron-left'}/>,
+            customPrev: <Components.NavBackButton iconFont={'fontawesome|chevron-left'}/>,
             title: 'Account',
           })
           break;
@@ -554,7 +532,7 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            customPrev: <NavBackButton iconFont={'fontawesome|times'} />,
+            customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} />,
             title: 'Invite Teammates',
           })
           break;
@@ -562,7 +540,7 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            customPrev: <NavBackButton navName='CategoryIndex' iconFont={'fontawesome|chevron-left'} />,
+            customPrev: <Components.NavBackButton navName='CategoryIndex' iconFont={'fontawesome|chevron-left'} />,
             title: 'Cart',
           })
           break;
@@ -571,7 +549,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             hideNext: true,
-            customPrev: <NavBackButton iconFont={'fontawesome|times'} pop={true} />,
+            customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} pop={true} />,
             title: 'Add New Product',
             // customNext: <ProductCreateRightCheckbox disabled={true} />,
           })
@@ -599,7 +577,7 @@ class App extends React.Component {
     return (
       <CustomSideView
         menu={
-          <Menu
+          <Components.Menu
             nav={nav}
             teams={teams}
             session={session}
