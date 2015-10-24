@@ -91,7 +91,7 @@ export default function ConnectActions(ddpClient) {
         //   return team.id;
         // })
         if (log.hasOwnProperty('fields')){
-          console.log("MAIN DDP WITH FIELDS MSG", log);
+          // console.log("MAIN DDP WITH FIELDS MSG", log);
           var data = log.fields;
           data.id = log.id;
           switch(log.collection){
