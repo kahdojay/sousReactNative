@@ -571,7 +571,7 @@ class App extends React.Component {
       }
     }
 
-    var CustomSideView = SideMenu
+    let CustomSideView = SideMenu
     if(this.state.isAuthenticated !== true || this.state.gotData === false){
       CustomSideView = View
     }

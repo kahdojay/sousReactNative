@@ -32,13 +32,15 @@ export default function ConnectActions(ddpClient) {
       }
 
       if(proceed === true){
-        ddpClient.unsubscribe(channel)
-        // console.log('CONNECTING: ', channel, argsList);
-        ddpClient.subscribe(channel, argsList);
-        dispatch({
-          type: SUBSCRIBE_CONNECTION,
-          channel: channel,
-          connectionId: connectionId,
+        dispatch(() => {
+          ddpClient.unsubscribe(channel)
+          // console.log('CONNECTING: ', channel, argsList);
+          ddpClient.subscribe(channel, argsList);
+          dispatch({
+            type: SUBSCRIBE_CONNECTION,
+            channel: channel,
+            connectionId: connectionId,
+          })
         })
       }
     }
@@ -49,7 +51,9 @@ export default function ConnectActions(ddpClient) {
       const {connect} = getState();
       // console.log(session, teamIds)
       if(session.phoneNumber !== ""){
-        dispatch(processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [session.phoneNumber]))
+        dispatch(() => {
+          processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [session.phoneNumber])
+        })
       }
       if(session.isAuthenticated === true){
         if(teamIds !== undefined && teamIds.length > 0){
@@ -96,23 +100,35 @@ export default function ConnectActions(ddpClient) {
           data.id = log.id;
           switch(log.collection){
             case 'messages':
-              dispatch(messageActions.receiveMessages(data))
+              dispatch(() => {
+                messageActions.receiveMessages(data)
+              })
               break;
             case 'teams':
-              dispatch(teamActions.receiveTeams(data))
+              dispatch(() => {
+                teamActions.receiveTeams(data)
+              })
               break;
             case 'purveyors':
-              dispatch(purveyorActions.receivePurveyors(data))
+              dispatch(() => {
+                purveyorActions.receivePurveyors(data)
+              })
               break;
             case 'categories':
-              dispatch(teamActions.receiveCategories(data))
+              dispatch(() => {
+                teamActions.receiveCategories(data)
+              })
               break;
             case 'products':
-              dispatch(teamActions.receiveProducts(data))
+              dispatch(() => {
+                teamActions.receiveProducts(data)
+              })
               break;
             case 'users':
               // console.log("MAIN DDP WITH FIELDS MSG", log);
-              dispatch(sessionActions.receiveSession(data))
+              dispatch(() => {
+                sessionActions.receiveSession(data)
+              })
               break;
             default:
               // console.log("TODO: wire up collection: ", log.collection);

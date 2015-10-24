@@ -152,7 +152,6 @@ const styles = StyleSheet.create({
     width: 75,
     height: 75,
     borderRadius: 34,
-    marginLeft: 20,
   },
   name: {
     fontFamily: 'OpenSans',
