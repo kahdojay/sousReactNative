@@ -11,6 +11,7 @@ import Urls from '../resources/urls';
 import * as actions from '../actions';
 import * as Components from '../components';
 import Dimensions from 'Dimensions';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 const {
   PropTypes,
@@ -599,6 +600,7 @@ class App extends React.Component {
         <View style={styles.container} >
           {navBar}
           {scene}
+          <KeyboardSpacer />
         </View>
       </CustomSideView>
     );

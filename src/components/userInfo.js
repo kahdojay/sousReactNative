@@ -3,7 +3,6 @@ import React from 'react-native';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
 import { mainBackgroundColor, navbarColor } from '../utilities/colors';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
 let {
   AppRegistry,
   StyleSheet,
@@ -74,7 +73,6 @@ class UserInfo extends React.Component{
             <Text style={styles.deactivateText}>Login</Text>
           </TouchableHighlight>
         </View>
-        <KeyboardSpacer />
       </ScrollView>
     )
   }
@@ -160,6 +158,7 @@ let styles = StyleSheet.create({
     padding: 10,
     width: 100,
     borderRadius: 7,
+    marginBottom: 20,
   },
   input: {
     flex: 1,
