@@ -37,14 +37,13 @@ class TeamIndex extends React.Component {
             automaticallyAdjustContentInsets={false}
           >
             { this.props.teams.data.map((team, index) => {
-              let lastMessage = _.filter(this.props.messages.data.sort((a, b) => {return a.createdAt > b.createdAt}), (msg) => {return msg.teamId === team.id})[0] || "";
-              console.log(lastMessage);
+              // let lastMessage = _.filter(this.props.messages.data.sort((a, b) => {return a.createdAt > b.createdAt}), (msg) => {return msg.teamId === team.id})[0] || "";
+              // console.log(lastMessage);
               if (team.deleted === false) {
                 return (
                   <TeamIndexRow
                     key={index}
                     team={team}
-                    lastMessage={lastMessage}
                     messages={this.props.messages}
                     onPress={() => {
                       this.props.onUpdateTeam(team.id);

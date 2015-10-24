@@ -49,13 +49,14 @@ const {
 class App extends React.Component {
   constructor(props, ctx) {
     super(props, ctx);
+    const gotData = this.teamDataExists(this.props.teams.data, this.props.session.teamId);
     this.state = {
       touchToClose: false,
       open: false,
       isAuthenticated: this.props.session.isAuthenticated,
       firstName: this.props.session.firstName,
       lastName: this.props.session.lastName,
-      teamCount: this.props.teams.data.length,
+      gotData: gotData,
     }
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
@@ -107,9 +108,9 @@ class App extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const teamCount = nextProps.teams.data.length
+    const gotData = this.teamDataExists(nextProps.teams.data, nextProps.session.teamId);
     this.setState({
-      teamCount: teamCount,
+      gotData: gotData,
       isAuthenticated: nextProps.session.isAuthenticated,
       firstName: nextProps.session.firstName,
       lastName: nextProps.session.lastName,
@@ -117,13 +118,20 @@ class App extends React.Component {
   }
 
   componentDidUpdate() {
-    if(this.refs.appNavigator && this.state.teamCount > 0 && this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
+    if(this.refs.appNavigator && this.state.gotData === true && this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
       setTimeout(() => {
         this.refs.appNavigator.replacePrevious({
           name: 'Feed'
         });
       }, 1000)
     }
+  }
+
+  teamDataExists(teamData, teamId) {
+    let gotData = false;
+    const teamIdx = _.findIndex(teamData, 'id', teamId);
+    // console.log('teamIdx ', teamIdx);
+    return teamIdx > -1 ? true : false
   }
 
   authenticatedRoute(route){
@@ -286,16 +294,18 @@ class App extends React.Component {
           />
         );
       case 'CategoryIndex':
-        var team = _.filter(teams.data, { id: session.teamId })[0]
+        // var team = _.filter(teams.data, { id: session.teamId })[0]
         return (
           <CategoryIndex
             navigator={nav}
-            categories={team.categories}
+            categories={teams.defaultCategories}
           />
         );
       case 'CategoryView':
         var team = _.filter(teams.data, { id: session.teamId })[0]
-        var category = _.filter(team.categories, { id: route.categoryId })[0]
+        // var category = _.filter(team.categories, { id: route.categoryId })[0]
+        var category = _.filter(teams.defaultCategories, { id: route.categoryId })[0]
+        // console.log(teams.products);
         return (
           <CategoryView
             ui={ui}
@@ -423,8 +433,8 @@ class App extends React.Component {
         if (this.state.firstName === "" || this.state.lastName === "") {
           route.name = 'UserInfo';
         } else {
-          console.log('TEAM COUNT: ', this.state.teamCount)
-          if(this.state.teamCount > 0){
+
+          if(this.state.gotData === true){
             // else send to Feed
             route.name = 'Feed';
           } else {
@@ -512,7 +522,8 @@ class App extends React.Component {
           break;
         case 'CategoryView':
           var team = _.filter(teams.data, { id: session.teamId })[0]
-          var category = _.filter(team.categories, { id: route.categoryId })[0];
+          // var category = _.filter(team.categories, { id: route.categoryId })[0];
+          var category = _.filter(teams.defaultCategories, { id: route.categoryId })[0];
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
@@ -580,7 +591,7 @@ class App extends React.Component {
     }
 
     var CustomSideView = SideMenu
-    if(this.state.isAuthenticated !== true){
+    if(this.state.isAuthenticated !== true || this.state.gotData === false){
       CustomSideView = View
     }
 

@@ -85,8 +85,13 @@ class ProductListItem extends React.Component {
     }, this.cartUpdateFromState.bind(this))
   }
   render() {
-    let {product} = this.props
-    const purveyorString = _.find(this.props.purveyors.data, { id: this.state.selectedPurveyorId }).name;
+    let {product, purveyors} = this.props
+    // console.log(this.state.selectedPurveyorId);
+    const purveyorIdx = _.findIndex(purveyors.data, { id: this.state.selectedPurveyorId }); //.name;
+    let purveyorString = ""
+    if(purveyorIdx > -1){
+      purveyorString = purveyors.data[purveyorIdx].name || '-NOT SET-'
+    }
 
     return (
       <View style={styles.container}>
@@ -95,7 +100,7 @@ class ProductListItem extends React.Component {
             <ProductToggle
               added={this.state.added}
               availablePurveyors={product.purveyors}
-              allPurveyors={this.props.purveyors}
+              allPurveyors={purveyors}
               currentlySelectedPurveyorId={this.state.selectedPurveyorId}
               onToggleCartProduct={(id) => {
                 this.handleToggleProduct(id)
