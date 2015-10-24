@@ -42,7 +42,9 @@ export default function SessionActions(ddpClient, allActions){
     return (dispatch, getState) => {
       const { session } = getState();
       contactList.forEach((contact) => {
-        ddpClient.call('sendSMSInvite', [contact, session.teamId, session.userId]);
+        dispatch(() => {
+          ddpClient.call('sendSMSInvite', [contact, session.teamId, session.userId]);
+        })
       })
     }
   }
