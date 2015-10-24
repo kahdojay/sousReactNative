@@ -97,6 +97,7 @@ class App extends React.Component {
   }
 
   componentDidUpdate() {
+    // console.log("Got data: ", this.state.gotData)
     if(this.refs.appNavigator && this.state.gotData === true && this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
       setTimeout(() => {
         this.refs.appNavigator.replacePrevious({
