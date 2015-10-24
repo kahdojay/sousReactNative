@@ -52,7 +52,7 @@ function session(state = initialState.session, action) {
       errors: null,
       lastUpdated: (new Date).getTime()
     })
-    // console.log(newSessionState);
+    console.log(newSessionState);
     return newSessionState;
   case UPDATE_SESSION:
     //TODO: prevent certain session vars from being updated (eg. userId, phoneNumber)

@@ -51,9 +51,7 @@ export default function ConnectActions(ddpClient) {
       const {connect} = getState();
       // console.log(session, teamIds)
       if(session.phoneNumber !== ""){
-        dispatch(() => {
-          processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [session.phoneNumber])
-        })
+        dispatch(processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [session.phoneNumber]))
       }
       if(session.isAuthenticated === true){
         if(teamIds !== undefined && teamIds.length > 0){
@@ -90,7 +88,7 @@ export default function ConnectActions(ddpClient) {
       //--------------------------------------
       ddpClient.on('message', (msg) => {
         var log = JSON.parse(msg);
-        // console.log("MAIN DDP MSG", log);
+        console.log("MAIN DDP MSG", log);
         // var teamIds = getState().teams.data.map(function(team) {
         //   return team.id;
         // })
