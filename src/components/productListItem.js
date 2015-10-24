@@ -30,7 +30,7 @@ class ProductListItem extends React.Component {
   }
 
   componentWillMount() {
-    // this.stateUpdateFromCart(this.props.cart.orders)
+    this.stateUpdateFromCart(this.props.cart.orders)
   }
 
   componentDidMount() {
@@ -95,6 +95,7 @@ class ProductListItem extends React.Component {
       selectedPurveyorId: id
     }, this.cartUpdateFromState.bind(this))
   }
+
   render() {
     let {product, purveyors} = this.state
     // console.log(this.state.selectedPurveyorId);
@@ -106,6 +107,7 @@ class ProductListItem extends React.Component {
       if(purveyorIdx > -1){
         purveyorString = purveyors.data[purveyorIdx].name || '-NOT SET-'
       }
+      // console.log(this.state.added)
       productInfo = (
         <View style={styles.row}>
           <View style={styles.checkboxContainer}>

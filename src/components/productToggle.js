@@ -46,7 +46,7 @@ class ProductToggle extends React.Component {
   }
 
   render() {
-    let checkbox = (
+    const checkbox = (
       <CheckBox
         label=''
         onChange={this._handlePurveyorSelect.bind(this, this.props.currentlySelectedPurveyorId)}
@@ -54,7 +54,9 @@ class ProductToggle extends React.Component {
       />
     );
 
-    let modalShowButton = (
+    // console.log(this.props.added)
+
+    const modalShowButton = (
       <ModalToggle onPress={this._setModalVisible.bind(this, true)} >
         <Icon
           name='fontawesome|ellipsis-h'
@@ -65,7 +67,7 @@ class ProductToggle extends React.Component {
       </ModalToggle>
     );
 
-    let purveyorsArray = this.props.availablePurveyors
+    const purveyorsArray = this.props.availablePurveyors
       .map((purveyorId, idx) => {
         const purveyorName = _.find(this.props.allPurveyors.data, { id: purveyorId }).name;
         return (

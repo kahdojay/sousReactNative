@@ -294,7 +294,9 @@ class App extends React.Component {
             products={route.categoryProducts}
             purveyors={purveyors}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
-              dispatch(actions.updateProductInCart(cartAction, cartAttributes))
+              _.debounce(() => {
+                dispatch(actions.updateProductInCart(cartAction, cartAttributes))
+              })()
             }}
           />
         );

@@ -162,7 +162,9 @@ export default function TeamActions(ddpClient, allActions) {
 
       if( teamIds.indexOf(team.id) === -1 ){
         teamIds.push(team.id)
-        dispatch(connectActions.subscribeDDP(session, teamIds));
+        dispatch(() => {
+          connectActions.subscribeDDP(session, teamIds)
+        });
       }
       return dispatch({
         type: RECEIVE_TEAMS,
@@ -197,7 +199,8 @@ export default function TeamActions(ddpClient, allActions) {
       // }
 
       let currentTeamIdx = getIdx(teams.data, session.teamId);
-      let updatedCart = Object.assign({}, teams.data[currentTeamIdx].cart);
+      let updatedTeam = Object.assign({}, teams.data[currentTeamIdx])
+      let updatedCart = updatedTeam.cart;
       let cartProductPurveyor = null;
       let currentTeam = _.filter(teams.data, { id: session.teamId });
       console.log('cartAttributes', cartAttributes)
@@ -297,9 +300,16 @@ export default function TeamActions(ddpClient, allActions) {
 
       console.log('Updated Cart: ', updatedCart);
 
-      return dispatch(updateTeam({
-        cart: updatedCart
-      }))
+      console.log('Dispatching updateTeam');
+      dispatch(() => {
+        ddpClient.call('updateTeam', [session.teamId, {
+          cart: updatedCart
+        }]);
+      })
+
+      console.log('Dispatching receiveTeams');
+      updatedTeam.cart = updatedCart;
+      return dispatch(receiveTeams(updatedTeam))
     }
   }
 
