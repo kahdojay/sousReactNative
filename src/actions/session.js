@@ -54,7 +54,7 @@ export default function SessionActions(ddpClient, allActions){
       // console.log('SESSION PARAMS', sessionParams);
 
       const newSession = Object.assign({}, session, sessionParams)
-      console.log('NEW SESSION PARAMS', newSession);
+      // console.log('NEW SESSION PARAMS', newSession);
 
       // resubscribe based on session data
       dispatch(connectActions.subscribeDDP(newSession, undefined));

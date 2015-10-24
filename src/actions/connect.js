@@ -33,7 +33,7 @@ export default function ConnectActions(ddpClient) {
 
       if(proceed === true){
         ddpClient.unsubscribe(channel)
-        console.log('CONNECTING: ', channel, argsList);
+        // console.log('CONNECTING: ', channel, argsList);
         ddpClient.subscribe(channel, argsList);
         dispatch({
           type: SUBSCRIBE_CONNECTION,
@@ -115,7 +115,7 @@ export default function ConnectActions(ddpClient) {
               dispatch(sessionActions.receiveSession(data))
               break;
             default:
-              console.log("TODO: wire up collection: ", log.collection);
+              // console.log("TODO: wire up collection: ", log.collection);
               break;
           }
         } else if(log){

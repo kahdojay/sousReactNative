@@ -27,10 +27,10 @@ class InviteView extends React.Component {
     AddressBook.getContacts( (err, contacts) => {
       if (err && err.type === 'permissionDenied') {
         // TODO: show error to user
-        console.log('error fetching contacts')
+        // console.log('error fetching contacts')
       }
       else {
-        console.log('contacts', contacts)
+        // console.log('contacts', contacts)
         contacts = _.chain(contacts)
           // filter contacts with no numbers vvv
           .filter(function(c) { return c.phoneNumbers[0]; })

@@ -50,7 +50,7 @@ class App extends React.Component {
       return React.addons.cloneWithProps((
         <TouchableOpacity
           onPress={() => {
-            console.log('Oops, need to specify function')
+            // console.log('Oops, need to specify function')
           }}>
           <View style={NavigationBarStyles.navBarRightButton}>
             {nextComponent}
@@ -155,7 +155,7 @@ class App extends React.Component {
                     if (teams.indexOf(name) === -1) {
                       dispatch(actions.addTeam(name))
                     } else {
-                      console.log("ERROR: team already exists");
+                      // console.log("ERROR: team already exists");
                     }
                   }}
                   onBack={() =>
@@ -223,7 +223,7 @@ class App extends React.Component {
               if (purveyors.indexOf(name) === -1) {
                 dispatch(actions.addPurveyor(name))
               } else {
-                console.log("ERROR: purveyor already exists");
+                // console.log("ERROR: purveyor already exists");
               }
             }}
             onBack={() => {
@@ -246,7 +246,7 @@ class App extends React.Component {
               if (products.indexOf(productName) === -1) {
                 dispatch(actions.addPurveyorProduct(purveyorId, {name: productName}))
               } else {
-                console.log("ERROR: Product already exists");
+                // console.log("ERROR: Product already exists");
               }
             }}
             onDeletePurveyor={(purveyorId) => {
@@ -324,7 +324,7 @@ class App extends React.Component {
             purveyors={this.props.purveyors}
             navigator={nav}
             onAddProduct={(productAttributes) => {
-              console.log('PRODUCT ADDED', productAttributes);
+              // console.log('PRODUCT ADDED', productAttributes);
             }}
             />
         )

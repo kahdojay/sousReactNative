@@ -16,7 +16,7 @@ const {
 class Signup extends React.Component {
   constructor(props) {
     super(props)
-    console.log(this.props.session)
+    // console.log(this.props.session)
     this.state = {
       invalid: false,
       phoneNumber: this.props.session.phoneNumber,

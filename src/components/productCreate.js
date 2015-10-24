@@ -37,7 +37,7 @@ class ProductCreate extends React.Component {
     }
   }
   componentWillUnmount(){
-    console.log('UPDATE', this.state)
+    // console.log('UPDATE', this.state)
   }
 
   componentDidMount(){
@@ -132,7 +132,7 @@ class ProductCreate extends React.Component {
         </MultiPickerIOS>
         <MultiPickerIOS style={styles.picker}>
           <Group selectedValue={this.state.amount} onChange={(e) => {
-              console.log(e)
+              // console.log(e)
               this.setState({amount: e.newValue, amountSelected: true}, () => {
                 this.submitReady();
               });
