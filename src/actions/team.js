@@ -104,7 +104,9 @@ export default function TeamActions(ddpClient, allActions) {
   function updateTeamTask(recipeId, taskAttributes){
     return (dispatch, getState) => {
       const {session} = getState();
-      ddpClient.call('updateTeamTask', [session.teamId, recipeId, taskAttributes]);
+      dispatch(() => {
+        ddpClient.call('updateTeamTask', [session.teamId, recipeId, taskAttributes]);
+      })
       return dispatch({
         type: UPDATE_TEAM,
         teamId: session.teamId,
@@ -117,7 +119,9 @@ export default function TeamActions(ddpClient, allActions) {
   function updateTeam(teamAttributes){
     return (dispatch, getState) => {
       const {session} = getState();
-      ddpClient.call('updateTeam', [session.teamId, teamAttributes]);
+      dispatch(() => {
+        ddpClient.call('updateTeam', [session.teamId, teamAttributes]);
+      })
       return dispatch({
         type: UPDATE_TEAM,
         teamId: session.teamId,
