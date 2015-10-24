@@ -4,34 +4,13 @@ import NavigationBar from 'react-native-navbar';
 import NavigationBarStyles from 'react-native-navbar/styles'
 import { connect } from 'react-redux/native';
 import { Icon } from 'react-native-icons';
-import Login from '../components/login';
-import Signup from '../components/signup';
-import TeamIndex from '../components/teamIndex';
-import TeamView from '../components/teamView';
-import UserInfo from '../components/userInfo';
-import TaskView from '../components/taskView';
 import SideMenu from 'react-native-side-menu';
-import Menu from '../components/menu';
-import Feed from '../components/feed';
-import CartView from '../components/cartView';
-import FeedViewLeftButton from '../components/feedViewLeftButton';
-import FeedViewRightButton from '../components/feedViewRightButton';
-import NavBackButton from '../components/navBackButton';
-import PurveyorIndex from '../components/purveyorIndex';
-import PurveyorView from '../components/purveyorView';
-import ProductView from '../components/productView';
-import CategoryIndex from '../components/categoryIndex';
-import CategoryView from '../components/categoryView';
-import CategoryViewRightButton from '../components/CategoryViewRightButton';
-import ProductCreate from '../components/productCreate';
-import ProductCreateRightCheckbox from '../components/ProductCreateRightCheckbox';
-import ProfileView from '../components/profileView';
-import InviteView from '../components/inviteView';
-import NavbarTitle from '../components/NavbarTitle';
 import { BackBtn } from '../utilities/navigation';
 import Colors from '../utilities/colors';
 import Urls from '../resources/urls';
 import * as actions from '../actions';
+import * as Components from '../components';
+import Dimensions from 'Dimensions';
 
 const {
   PropTypes,
@@ -72,7 +51,7 @@ class App extends React.Component {
       return React.addons.cloneWithProps((
         <TouchableOpacity
           onPress={() => {
-            console.log('Oops, need to specify function')
+            // console.log('Oops, need to specify function')
           }}>
           <View style={NavigationBarStyles.navBarRightButton}>
             {nextComponent}
@@ -118,6 +97,7 @@ class App extends React.Component {
   }
 
   componentDidUpdate() {
+    // console.log("Got data: ", this.state.gotData)
     if(this.refs.appNavigator && this.state.gotData === true && this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
       setTimeout(() => {
         this.refs.appNavigator.replacePrevious({
@@ -148,7 +128,7 @@ class App extends React.Component {
     switch (route.name) {
       case 'Signup':
         return (
-          <Signup
+          <Components.Signup
             navigator={nav}
             session={session}
             onRegisterSession={(sessionParams) => {
@@ -158,7 +138,7 @@ class App extends React.Component {
           />
         );
       case 'TeamIndex':
-        return <TeamIndex
+        return <Components.TeamIndex
                   navigator={nav}
                   teams={teams}
                   messages={messages}
@@ -177,7 +157,7 @@ class App extends React.Component {
                     if (teams.indexOf(name) === -1) {
                       dispatch(actions.addTeam(name))
                     } else {
-                      console.log("ERROR: team already exists");
+                      // console.log("ERROR: team already exists");
                     }
                   }}
                   onBack={() =>
@@ -187,7 +167,7 @@ class App extends React.Component {
       case 'TeamView':
         var team = _.filter(teams.data, { id: session.teamId })[0]
         return (
-          <TeamView
+          <Components.TeamView
             ui={ui}
             navigator={nav}
             team={team}
@@ -211,7 +191,7 @@ class App extends React.Component {
       case 'TaskView':
         var team = _.filter(teams.data, { id: session.teamId })[0]
         var task = _.filter(team.tasks, {recipeId: route.recipeId})[0]
-        return <TaskView
+        return <Components.TaskView
                   ui={ui}
                   task={task}
                   navigator={nav}
@@ -221,7 +201,7 @@ class App extends React.Component {
                 />;
       case 'Feed':
         return (
-          <Feed
+          <Components.Feed
             navigator={nav}
             messages={messages}
             userEmail={session.login}
@@ -233,19 +213,19 @@ class App extends React.Component {
         );
       case 'PurveyorIndex':
         return (
-          <PurveyorIndex
+          <Components.PurveyorIndex
             navigator={nav}
             purveyors={purveyors}
             session={session}
             onAddPurveyor={(name) => {
-              var purveyors = this.props.purveyors.data.map((purveyor) => {
+              const purveyors = this.props.purveyors.data.map((purveyor) => {
                 if (! purveyor.deleted)
                   return purveyor.name;
               });
               if (purveyors.indexOf(name) === -1) {
                 dispatch(actions.addPurveyor(name))
               } else {
-                console.log("ERROR: purveyor already exists");
+                // console.log("ERROR: purveyor already exists");
               }
             }}
             onBack={() => {
@@ -256,19 +236,19 @@ class App extends React.Component {
       case 'PurveyorView':
         var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
         return (
-          <PurveyorView
+          <Components.PurveyorView
             ui={ui}
             navigator={nav}
             purveyor={purveyor}
             onAddNewProduct={(purveyorId, productName) => {
-              let products = purveyor.products.map((product) => {
+              const products = purveyor.products.map((product) => {
                 if (! product.deleted)
                   return product.name;
               });
               if (products.indexOf(productName) === -1) {
                 dispatch(actions.addPurveyorProduct(purveyorId, {name: productName}))
               } else {
-                console.log("ERROR: Product already exists");
+                // console.log("ERROR: Product already exists");
               }
             }}
             onDeletePurveyor={(purveyorId) => {
@@ -283,7 +263,7 @@ class App extends React.Component {
         let purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
         let product = _.filter(purveyor.products, { productId: route.productId })[0]
         return (
-          <ProductView
+          <Components.ProductView
             ui={ui}
             product={product}
             navigator={nav}
@@ -296,32 +276,35 @@ class App extends React.Component {
       case 'CategoryIndex':
         // var team = _.filter(teams.data, { id: session.teamId })[0]
         return (
-          <CategoryIndex
+          <Components.CategoryIndex
             navigator={nav}
+            products={teams.products}
             categories={teams.defaultCategories}
           />
         );
       case 'CategoryView':
         var team = _.filter(teams.data, { id: session.teamId })[0]
         // var category = _.filter(team.categories, { id: route.categoryId })[0]
-        var category = _.filter(teams.defaultCategories, { id: route.categoryId })[0]
-        // console.log(teams.products);
+        // var category = _.filter(teams.defaultCategories, { id: route.categoryId })[0]
+        // console.log(route);
         return (
-          <CategoryView
+          <Components.CategoryView
             ui={ui}
             navigator={nav}
-            category={category}
+            category={route.category}
             cart={team.cart}
-            products={teams.products}
+            products={route.categoryProducts}
             purveyors={purveyors}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
-              dispatch(actions.updateProductInCart(cartAction, cartAttributes))
+              _.debounce(() => {
+                dispatch(actions.updateProductInCart(cartAction, cartAttributes))
+              })()
             }}
           />
         );
       case 'Profile':
         return (
-          <ProfileView
+          <Components.ProfileView
             navigator={nav}
             session={session}
             onUpdateInfo={(data) => {
@@ -338,18 +321,18 @@ class App extends React.Component {
         );
       case 'ProductCreate':
         return (
-          <ProductCreate
+          <Components.ProductCreate
             appState={this.props}
             purveyors={this.props.purveyors}
             navigator={nav}
             onAddProduct={(productAttributes) => {
-              console.log('PRODUCT ADDED', productAttributes);
+              // console.log('PRODUCT ADDED', productAttributes);
             }}
             />
         )
       case 'UserInfo':
         return (
-          <UserInfo
+          <Components.UserInfo
             navigator={nav}
             onUpdateInfo={(data) => {
               dispatch(actions.updateSession(data));
@@ -358,7 +341,7 @@ class App extends React.Component {
         )
       case 'InviteView':
         return (
-          <InviteView
+          <Components.InviteView
             navigator={nav}
             onSMSInvite={(contactList) => dispatch(actions.inviteContacts(contactList))}
           />
@@ -370,7 +353,7 @@ class App extends React.Component {
             teamIndex = idx
         });
         return (
-          <CartView
+          <Components.CartView
             navigator={nav}
             team={this.props.teams.data[teamIndex]}
             purveyors={this.props.purveyors.data}
@@ -423,6 +406,150 @@ class App extends React.Component {
     });
   }
 
+  getNavBar(route, nav) {
+    const { dispatch, ui, teams, session } = this.props;
+
+    let navBar = <View />;
+    // setup the header for unauthenticated routes
+    if(this.authenticatedRoute(route) === false){
+      navBar = <View />
+    } else {
+      switch(route.name) {
+        //TODO: remove cloneWithProps as it's deprecated
+        case 'TeamIndex':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            hidePrev: false,
+            buttonsColor: '#ccc',
+            customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} />,
+            title: 'Switch Teams',
+          })
+          break;
+        case 'Feed':
+          //TODO prevent FOUC
+          var team = _.filter(teams.data, { id: session.teamId })[0]
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            hidePrev: false,
+            title: team.name || 'Sous',
+            titleColor: 'black',
+            customPrev: <Components.FeedViewLeftButton />,
+            customNext: <Components.FeedViewRightButton />,
+          })
+          break;
+        case 'PurveyorIndex':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: <Components.FeedViewLeftButton />,
+            onNext: null,
+          })
+          break;
+        case 'TeamView':
+          var team = _.filter(teams.data, { id: session.teamId })[0]
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            buttonsColor: '#ccc',
+            customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} />,
+            title: team.name,
+          })
+          break;
+        case 'PurveyorView':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            hidePrev: false,
+            onNext: (navigator, route) => this.showActionSheetPurveyorView(navigator, route),
+            nextTitle: '...',
+          })
+          break;
+        case 'CategoryIndex':
+          var team = _.filter(teams.data, { id: session.teamId })[0]
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            hidePrev: false,
+            buttonsColor: '#ccc',
+            customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} />,
+            title: 'Order Guide',
+            customNext: <Components.CategoryViewRightButton cart={team.cart} />
+          })
+          break;
+        case 'CategoryView':
+          var team = _.filter(teams.data, { id: session.teamId })[0]
+          // var category = _.filter(team.categories, { id: route.categoryId })[0];
+          var category = _.filter(teams.defaultCategories, { id: route.categoryId })[0];
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: <Components.NavBackButton navName='CategoryIndex' iconFont={'fontawesome|chevron-left'} />,
+            title: category.name,
+            customNext: <Components.CategoryViewRightButton cart={team.cart} />
+          })
+          break;
+        case 'ProductView':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            onNext: null,
+            hidePrev: false,
+          })
+          break;
+        case 'Profile':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            hidePrev: false,
+            customPrev: <Components.NavBackButton iconFont={'fontawesome|chevron-left'}/>,
+            title: 'Account',
+          })
+          break;
+        case 'InviteView':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} />,
+            title: 'Invite Teammates',
+          })
+          break;
+        case 'CartView':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: <Components.NavBackButton navName='CategoryIndex' iconFont={'fontawesome|chevron-left'} />,
+            title: 'Cart',
+          })
+          break;
+        case 'ProductCreate':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            hideNext: true,
+            customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} pop={true} />,
+            title: 'Add New Product',
+            // customNext: <ProductCreateRightCheckbox disabled={true} />,
+          })
+          break;
+        case 'UserInfo':
+        case 'Loading':
+          navBar = <View />;
+          break;
+        default:
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            hidePrev: false,
+            navigator: nav,
+            route: route,
+            onNext: null,
+          })
+          break;
+      }
+    }
+    return navBar;
+  }
+
   renderScene(route, nav) {
     // console.log("PROPS", this.props);
     const { dispatch, ui, teams, session } = this.props;
@@ -448,149 +575,10 @@ class App extends React.Component {
       route.name = 'Signup'
     }
 
-    let navBar = <View />;
-    let nextItem = <View />;
+    let navBar = this.getNavBar(route, nav);
     let scene = this.getScene(route, nav);
 
-    // setup the header for unauthenticated routes
-    if(this.authenticatedRoute(route) === false){
-      navBar = <View />
-    } else {
-      switch(route.name) {
-        //TODO: remove cloneWithProps as it's deprecated
-        case 'TeamIndex':
-          navBar = React.addons.cloneWithProps(this.navBar, {
-            navigator: nav,
-            route: route,
-            hidePrev: false,
-            buttonsColor: '#ccc',
-            customPrev: <NavBackButton iconFont={'fontawesome|times'} />,
-            title: 'Switch Teams',
-          })
-          break;
-        case 'Feed':
-          //TODO prevent FOUC
-          var team = _.filter(teams.data, { id: session.teamId })[0]
-          navBar = React.addons.cloneWithProps(this.navBar, {
-            navigator: nav,
-            route: route,
-            hidePrev: false,
-            title: team.name || 'Sous',
-            titleColor: 'black',
-            customPrev: <FeedViewLeftButton />,
-            customNext: <FeedViewRightButton />,
-          })
-          break;
-        case 'PurveyorIndex':
-          navBar = React.addons.cloneWithProps(this.navBar, {
-            navigator: nav,
-            route: route,
-            customPrev: <FeedViewLeftButton />,
-            onNext: null,
-          })
-          break;
-        case 'TeamView':
-          var team = _.filter(teams.data, { id: session.teamId })[0]
-          navBar = React.addons.cloneWithProps(this.navBar, {
-            navigator: nav,
-            route: route,
-            buttonsColor: '#ccc',
-            customPrev: <NavBackButton iconFont={'fontawesome|times'} />,
-            title: team.name,
-          })
-          break;
-        case 'PurveyorView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
-            navigator: nav,
-            route: route,
-            hidePrev: false,
-            onNext: (navigator, route) => this.showActionSheetPurveyorView(navigator, route),
-            nextTitle: '...',
-          })
-          break;
-        case 'CategoryIndex':
-          var team = _.filter(teams.data, { id: session.teamId })[0]
-          navBar = React.addons.cloneWithProps(this.navBar, {
-            navigator: nav,
-            route: route,
-            hidePrev: false,
-            buttonsColor: '#ccc',
-            customPrev: <NavBackButton iconFont={'fontawesome|times'} />,
-            title: 'Order Guide',
-            customNext: <CategoryViewRightButton cart={team.cart} />
-          })
-          break;
-        case 'CategoryView':
-          var team = _.filter(teams.data, { id: session.teamId })[0]
-          // var category = _.filter(team.categories, { id: route.categoryId })[0];
-          var category = _.filter(teams.defaultCategories, { id: route.categoryId })[0];
-          navBar = React.addons.cloneWithProps(this.navBar, {
-            navigator: nav,
-            route: route,
-            customPrev: <NavBackButton navName='CategoryIndex' iconFont={'fontawesome|chevron-left'} />,
-            title: category.name,
-            customNext: <CategoryViewRightButton cart={team.cart} />
-          })
-          break;
-        case 'ProductView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
-            navigator: nav,
-            route: route,
-            onNext: null,
-            hidePrev: false,
-          })
-          break;
-        case 'Profile':
-          navBar = React.addons.cloneWithProps(this.navBar, {
-            navigator: nav,
-            route: route,
-            hidePrev: false,
-            customPrev: <NavBackButton iconFont={'fontawesome|chevron-left'}/>,
-            title: 'Account',
-          })
-          break;
-        case 'InviteView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
-            navigator: nav,
-            route: route,
-            customPrev: <NavBackButton iconFont={'fontawesome|times'} />,
-            title: 'Invite Teammates',
-          })
-          break;
-        case 'CartView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
-            navigator: nav,
-            route: route,
-            customPrev: <NavBackButton navName='CategoryIndex' iconFont={'fontawesome|chevron-left'} />,
-            title: 'Cart',
-          })
-          break;
-        case 'ProductCreate':
-          navBar = React.addons.cloneWithProps(this.navBar, {
-            navigator: nav,
-            route: route,
-            hideNext: true,
-            customPrev: <NavBackButton iconFont={'fontawesome|times'} pop={true} />,
-            title: 'Add New Product',
-            // customNext: <ProductCreateRightCheckbox disabled={true} />,
-          })
-          break;
-        case 'UserInfo':
-        case 'Loading':
-          navBar = <View />;
-          break;
-        default:
-          navBar = React.addons.cloneWithProps(this.navBar, {
-            hidePrev: false,
-            navigator: nav,
-            route: route,
-            onNext: null,
-          })
-          break;
-      }
-    }
-
-    var CustomSideView = SideMenu
+    let CustomSideView = SideMenu
     if(this.state.isAuthenticated !== true || this.state.gotData === false){
       CustomSideView = View
     }
@@ -598,7 +586,7 @@ class App extends React.Component {
     return (
       <CustomSideView
         menu={
-          <Menu
+          <Components.Menu
             nav={nav}
             teams={teams}
             session={session}
@@ -620,7 +608,10 @@ class App extends React.Component {
     if (route.sceneConfig) {
       return route.sceneConfig;
     }
-    return Navigator.SceneConfigs.FloatFromRight;
+    return Object.assign({}, Navigator.SceneConfigs.FloatFromRight, {
+      springTension: 100,
+      springFriction: 1,
+    });
   }
 
   render() {
@@ -638,8 +629,12 @@ class App extends React.Component {
   }
 }
 
+const window = Dimensions.get('window');
+
 const styles = StyleSheet.create({
   container: {
+    height: window.height,
+    width: window.width,
     marginTop: 20,
     flex: 1,
     backgroundColor: 'white',

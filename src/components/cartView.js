@@ -34,7 +34,9 @@ class CartView extends React.Component {
       'Confirm',
       'Are you sure you want to send order?',
       [
-        {text: 'No', onPress: () => console.log('Order not sent')},
+        {text: 'No', onPress: () => {
+          // console.log('Order not sent')
+        }},
         {text: 'Yes', onPress: () => {
           const cartPurveyorsString = _.pluck(cartPurveyors, 'name').join(', ');
           if(this.state.numberOfOrders > 0){

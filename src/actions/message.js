@@ -17,7 +17,8 @@ export default function MessageActions(ddpClient) {
     }
   }
 
-  function createMessage(messageText, author, imageUrl) {      console.log('imageUrl', imageUrl)
+  function createMessage(messageText, author, imageUrl) {
+    // console.log('imageUrl', imageUrl)
     return (dispatch, getState) => {
       const {session} = getState()
       author = author ? author : `${session.firstName} ${session.lastName.substring(0,1)}`;
@@ -34,7 +35,7 @@ export default function MessageActions(ddpClient) {
         imageUrl: imageUrl,
         delete: false
       };
-      console.log('newMessage', newMessage);
+      // console.log('newMessage', newMessage);
       ddpClient.call('createMessage', [newMessage])
       return dispatch({
         type: CREATE_MESSAGE,

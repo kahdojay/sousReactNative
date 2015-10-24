@@ -20,6 +20,8 @@ class ProductListItem extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      product: null,
+      purveyors: null,
       added: false,
       quantity: 1,
       selectedPurveyorId: this.props.product.purveyors[0],
@@ -29,6 +31,15 @@ class ProductListItem extends React.Component {
 
   componentWillMount() {
     this.stateUpdateFromCart(this.props.cart.orders)
+  }
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({
+        product: this.props.product,
+        purveyors: this.props.purveyors,
+      })
+    }, this.props.loadDelay)
   }
 
   stateUpdateFromCart(cartOrders) {
@@ -84,17 +95,20 @@ class ProductListItem extends React.Component {
       selectedPurveyorId: id
     }, this.cartUpdateFromState.bind(this))
   }
-  render() {
-    let {product, purveyors} = this.props
-    // console.log(this.state.selectedPurveyorId);
-    const purveyorIdx = _.findIndex(purveyors.data, { id: this.state.selectedPurveyorId }); //.name;
-    let purveyorString = ""
-    if(purveyorIdx > -1){
-      purveyorString = purveyors.data[purveyorIdx].name || '-NOT SET-'
-    }
 
-    return (
-      <View style={styles.container}>
+  render() {
+    let {product, purveyors} = this.state
+    // console.log(this.state.selectedPurveyorId);
+
+    let productInfo = (<View style={styles.row}><View style={styles.main}><Text style={[styles.productText, {padding: 12}]}>Loading...</Text></View></View>);
+    if(this.state.product !== null){
+      let purveyorString = ""
+      const purveyorIdx = _.findIndex(purveyors.data, { id: this.state.selectedPurveyorId }); //.name;
+      if(purveyorIdx > -1){
+        purveyorString = purveyors.data[purveyorIdx].name || '-NOT SET-'
+      }
+      // console.log(this.state.added)
+      productInfo = (
         <View style={styles.row}>
           <View style={styles.checkboxContainer}>
             <ProductToggle
@@ -107,7 +121,7 @@ class ProductListItem extends React.Component {
               }}
             />
           </View>
-          <View style={styles.main} >
+          <View style={styles.main}>
             <Text style={styles.productText}>
               {product.name}
             </Text>
@@ -132,6 +146,13 @@ class ProductListItem extends React.Component {
             <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
           </TouchableHighlight>
         </View>
+      )
+    }
+
+
+    return (
+      <View style={styles.container}>
+        {productInfo}
       </View>
     )
   }

@@ -14,20 +14,77 @@ const {
 class ProductList extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      products: null
+    }
   }
-  render() {
-    const {cart, products} = this.props
-    let productList = _.map(products, (product, idx) => {
-      return (
-        <ProductListItem
-          cart={cart}
-          product={product}
-          key={idx}
-          purveyors={this.props.purveyors}
-          onUpdateProductInCart={this.props.onUpdateProductInCart}
-        />
-      )
+
+  componentWillMount() {
+    this.setState({
+      products: this.props.products.slice(0,7)
     })
+  }
+
+  componentDidMount() {
+    if(this.props.products.length > 7){
+      setTimeout(() => {
+        this.setState({
+          products: this.props.products.slice(0,21)
+        })
+      }, 200)
+    }
+    if(this.props.products.length > 21){
+      setTimeout(() => {
+        this.setState({
+          products: this.props.products.slice(0,50)
+        })
+      }, 400)
+    }
+    if(this.props.products.length > 50){
+      setTimeout(() => {
+        this.setState({
+          products: this.props.products
+        })
+      }, 800)
+    }
+  }
+
+  render() {
+    const {cart} = this.props
+    let productList = []
+    if(this.state.products !== null){
+      productList = _.map(this.state.products, (product, idx) => {
+        let loadDelay = 50
+        // for everything off screen
+        // - index greater than 7
+        // - multiplied by fibonacci sequence
+        if(idx > 91){
+          loadDelay = 900
+        } else if(idx > 56){
+          loadDelay = 800
+        } else if(idx > 35){
+          loadDelay = 700
+        } else if(idx > 21){
+          loadDelay = 600
+        } else if(idx > 14) {
+          loadDelay = 500
+        } else {
+          loadDelay = 300
+        }
+        return (
+          <ProductListItem
+            cart={cart}
+            loadDelay={loadDelay}
+            product={product}
+            key={idx}
+            purveyors={this.props.purveyors}
+            onUpdateProductInCart={(cartAction, cartAttributes) => {
+              this.props.onUpdateProductInCart(cartAction, cartAttributes)
+            }}
+          />
+        )
+      })
+    }
     return (
       <ScrollView keyboardShouldPersistTaps={false} >
         {productList}

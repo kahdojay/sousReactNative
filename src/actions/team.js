@@ -104,7 +104,9 @@ export default function TeamActions(ddpClient, allActions) {
   function updateTeamTask(recipeId, taskAttributes){
     return (dispatch, getState) => {
       const {session} = getState();
-      ddpClient.call('updateTeamTask', [session.teamId, recipeId, taskAttributes]);
+      dispatch(() => {
+        ddpClient.call('updateTeamTask', [session.teamId, recipeId, taskAttributes]);
+      })
       return dispatch({
         type: UPDATE_TEAM,
         teamId: session.teamId,
@@ -117,7 +119,9 @@ export default function TeamActions(ddpClient, allActions) {
   function updateTeam(teamAttributes){
     return (dispatch, getState) => {
       const {session} = getState();
-      ddpClient.call('updateTeam', [session.teamId, teamAttributes]);
+      dispatch(() => {
+        ddpClient.call('updateTeam', [session.teamId, teamAttributes]);
+      })
       return dispatch({
         type: UPDATE_TEAM,
         teamId: session.teamId,
@@ -193,15 +197,16 @@ export default function TeamActions(ddpClient, allActions) {
       // }
 
       let currentTeamIdx = getIdx(teams.data, session.teamId);
-      let updatedCart = Object.assign({}, teams.data[currentTeamIdx].cart);
+      let updatedTeam = Object.assign({}, teams.data[currentTeamIdx])
+      let updatedCart = updatedTeam.cart;
       let cartProductPurveyor = null;
       let currentTeam = _.filter(teams.data, { id: session.teamId });
-      console.log('cartAttributes', cartAttributes)
+      // console.log('cartAttributes', cartAttributes)
 
       switch (cartAction) {
       case CART.ADD:
 
-        console.log('cart.ADD:')
+        // console.log('cart.ADD:')
 
         // add the date
         if (updatedCart.date === null) {
@@ -237,7 +242,7 @@ export default function TeamActions(ddpClient, allActions) {
 
       case CART.REMOVE:
         // TODO: decrement cart total on delete
-        console.log('cart.REMOVE:', currentTeam)
+        // console.log('cart.REMOVE:', currentTeam)
         // delete updatedCart
         //         .orders[cartAttributes.purveyorId]
         //         .products[cartAttributes.productId];
@@ -278,7 +283,7 @@ export default function TeamActions(ddpClient, allActions) {
       //   break;
 
       case CART.RESET:
-        console.log('cart.RESET:', currentTeam.data)
+        // console.log('cart.RESET:', currentTeam.data)
         updatedCart = {
           date: null,
           total: 0.0,
@@ -291,11 +296,18 @@ export default function TeamActions(ddpClient, allActions) {
 
       }
 
-      console.log('Updated Cart: ', updatedCart);
+      // console.log('Updated Cart: ', updatedCart);
 
-      return dispatch(updateTeam({
-        cart: updatedCart
-      }))
+      // console.log('Dispatching updateTeam');
+      dispatch(() => {
+        ddpClient.call('updateTeam', [session.teamId, {
+          cart: updatedCart
+        }]);
+      })
+
+      // console.log('Dispatching receiveTeams');
+      updatedTeam.cart = updatedCart;
+      return dispatch(receiveTeams(updatedTeam))
     }
   }
 
