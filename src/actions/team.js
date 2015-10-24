@@ -162,9 +162,7 @@ export default function TeamActions(ddpClient, allActions) {
 
       if( teamIds.indexOf(team.id) === -1 ){
         teamIds.push(team.id)
-        dispatch(() => {
-          connectActions.subscribeDDP(session, teamIds)
-        });
+        dispatch(connectActions.subscribeDDP(session, teamIds));
       }
       return dispatch({
         type: RECEIVE_TEAMS,

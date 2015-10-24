@@ -36,11 +36,11 @@ export default function ConnectActions(ddpClient) {
           ddpClient.unsubscribe(channel)
           // console.log('CONNECTING: ', channel, argsList);
           ddpClient.subscribe(channel, argsList);
-          dispatch({
-            type: SUBSCRIBE_CONNECTION,
-            channel: channel,
-            connectionId: connectionId,
-          })
+        })
+        dispatch({
+          type: SUBSCRIBE_CONNECTION,
+          channel: channel,
+          connectionId: connectionId,
         })
       }
     }
