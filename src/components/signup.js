@@ -296,6 +296,7 @@ let styles = StyleSheet.create({
     alignSelf: 'center',
     width: 150,
     marginTop: 20,
+    marginBottom: 50,
     justifyContent: 'center',
     borderRadius: 3,
   },

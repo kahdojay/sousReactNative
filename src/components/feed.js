@@ -3,7 +3,6 @@ import React from 'react-native';
 import AddMessageForm from './addMessageForm';
 import { mainBackgroundColor } from '../utilities/colors';
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
 let SideMenu = require('react-native-side-menu');
 import Menu from './menu';
 const {
@@ -136,7 +135,6 @@ class Feed extends React.Component {
             onSubmit={this.onHandleSubmit.bind(this)}
           />
         </View>
-        <KeyboardSpacer />
       </View>
     );
   }
