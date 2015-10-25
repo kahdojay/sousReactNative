@@ -133,7 +133,7 @@ export default function TeamActions(ddpClient, allActions) {
   function deleteTeam() {
     return (dispatch, getState) => {
       const {session} = getState();
-      ddpClient.call('deleteTeam', [session.teamId])
+      ddpClient.call('deleteTeam', [session.teamId, session.userId])
       return dispatch({
         type: DELETE_TEAM,
         teamId: session.teamId
@@ -210,7 +210,7 @@ export default function TeamActions(ddpClient, allActions) {
 
         // add the date
         if (updatedCart.date === null) {
-          updatedCart.date = (new Date()).getTime()
+          updatedCart.date = (new Date()).toISOString()
         }
 
         // add the product purveyor

@@ -41,7 +41,7 @@ function messages(state = initialState.messages, action) {
       isFetching: false, // do we need to phase this out?
       errors: null,
       data: currentMessagesDataState,
-      lastUpdated: (new Date()).getTime()
+      lastUpdated: (new Date()).toISOString()
     });
 
   // create message
@@ -51,7 +51,7 @@ function messages(state = initialState.messages, action) {
     // console.log(action.type, action.message.id)
     return Object.assign({}, state, {
       data: currentMessagesDataState,
-      lastUpdated: (new Date()).getTime()
+      lastUpdated: (new Date()).toISOString()
     });
 
   // delete message
@@ -61,7 +61,7 @@ function messages(state = initialState.messages, action) {
     var currentMessagesDataState = updateByIdx(newMessageState.data, messageIdx, { deleted: true });
     return Object.assign({}, state, {
       data: currentMessagesDataState,
-      lastUpdated: (new Date()).getTime()
+      lastUpdated: (new Date()).toISOString()
     });
 
   // everything else

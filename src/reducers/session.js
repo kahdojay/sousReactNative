@@ -50,7 +50,7 @@ function session(state = initialState.session, action) {
   case RECEIVE_SESSION:
     var newSessionState = Object.assign({}, state, action, {
       errors: null,
-      lastUpdated: (new Date).getTime()
+      lastUpdated: (new Date).toISOString()
     })
     // console.log(newSessionState);
     return newSessionState;

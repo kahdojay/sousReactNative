@@ -42,7 +42,7 @@ function purveyors(state = initialState.purveyors, action) {
       isFetching: false, // do we need to phase this out?
       errors: null,
       data: currentPurveyorsDataState,
-      lastUpdated: (new Date()).getTime()
+      lastUpdated: (new Date()).toISOString()
     });
 
   // delete the purveyor
@@ -52,7 +52,7 @@ function purveyors(state = initialState.purveyors, action) {
     var currentPurveyorsDataState = updateByIdx(newPurveyorState.data, purveyorIdx, { deleted: true });
     return Object.assign({}, state, {
       data: currentPurveyorsDataState,
-      lastUpdated: (new Date()).getTime()
+      lastUpdated: (new Date()).toISOString()
     });
 
   // add purveyor
@@ -62,7 +62,7 @@ function purveyors(state = initialState.purveyors, action) {
     // console.log(action.type, action.purveyor.id)
     return Object.assign({}, state, {
       data: currentPurveyorsDataState,
-      lastUpdated: (new Date()).getTime()
+      lastUpdated: (new Date()).toISOString()
     });
 
   // update purveyor
@@ -95,7 +95,7 @@ function purveyors(state = initialState.purveyors, action) {
 
     return Object.assign({}, state, {
       data: currentPurveyorsDataState,
-      lastUpdated: (new Date()).getTime()
+      lastUpdated: (new Date()).toISOString()
     });
 
   // everything else
