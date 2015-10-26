@@ -22,7 +22,7 @@ function errors(state = initialState.errors, action) {
   // receive the errors
   case RECEIVE_ERRORS:
     var newErrorState = Object.assign({}, state);
-    console.log('receive errors', newErrorState)
+    // console.log('receive errors', newErrorState)
     var currentErrorsDataState = updateDataState(newErrorState.data, action.error)
     return Object.assign({}, state, {
       data: currentErrorsDataState,
@@ -43,7 +43,7 @@ function errors(state = initialState.errors, action) {
   case DELETE_ERRORS:
     var newErrorState = Object.assign({}, state);
     action.errorIdList.forEach(function(errorId) {
-      console.log('errorId: ', errorId)
+      // console.log('errorId: ', errorId)
       var errorIdx = getIdx(newErrorState.data, errorId);
       newErrorState.data = [
         ...newErrorState.data.slice(0, errorIdx),

@@ -1,9 +1,9 @@
 import _ from 'lodash'
 
 function getIdx(currentDataState, findId){
-  console.log('getIdx currentDataState: ', currentDataState)
+  // console.log('getIdx currentDataState: ', currentDataState)
   return _.findIndex(currentDataState, (item, idx) => {
-    console.log('getIdx item: ', item)
+    // console.log('getIdx item: ', item)
     if (item !== undefined) {
       return item.id == findId;
     } else {

@@ -368,7 +368,14 @@ class App extends React.Component {
             }}
             onSubmitOrder={(msg) => {
               dispatch(actions.sendCart());
-              dispatch(actions.createMessage(msg, 'Sous', Urls.sousLogo));
+
+              // TODO: need to verify that the order was sent successfully
+              // if(orderingWasSuccessful){
+              //   dispatch(actions.createMessage(msg, 'Sous', Urls.sousLogo));
+              //   this.props.navigator.replacePreviousAndPop({
+              //     name: 'Feed',
+              //   });
+              // }
             }}
           />
         );
@@ -599,8 +606,8 @@ class App extends React.Component {
     if(this.state.isAuthenticated !== true || this.state.gotData === false){
       CustomSideView = View
     }
-    console.log('app.js', this.props)
-    console.log('app.js render, errors:', this.props.errors.data)
+    // console.log('app.js', this.props)
+    // console.log('app.js render, errors:', this.props.errors.data)
     return (
       <CustomSideView
         menu={
