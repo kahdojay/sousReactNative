@@ -30,24 +30,27 @@ class CartView extends React.Component {
   }
 
   handleSubmitPress(cartPurveyors) {
-    AlertIOS.alert(
-      'Confirm',
-      'Are you sure you want to send order?',
-      [
-        {text: 'No', onPress: () => {
-          // console.log('Order not sent')
-        }},
-        {text: 'Yes', onPress: () => {
-          const cartPurveyorsString = _.pluck(cartPurveyors, 'name').join(', ');
-          if(this.state.numberOfOrders > 0){
-            this.props.onSubmitOrder('Order sent to ' + cartPurveyorsString);
-            this.props.navigator.replacePreviousAndPop({
-              name: 'Feed',
-            });
-          }
-        }}
-      ]
-    )
+    if (this.state.numberOfOrders > 0) {
+      AlertIOS.alert(
+        'Confirm',
+        'Are you sure you want to send order?',
+        [
+          {text: 'No', onPress: () => {
+            // console.log('Order not sent')
+          }},
+          {text: 'Yes', onPress: () => {
+            const cartPurveyorsString = _.pluck(cartPurveyors, 'name').join(', ');
+            if(this.state.numberOfOrders > 0){
+              this.props.onSubmitOrder('Order sent to ' + cartPurveyorsString);
+              this.props.navigator.replacePreviousAndPop({
+                name: 'Feed',
+              });
+            }
+          }}
+        ]
+      )
+    } 
+    // TODO: handle empty cart error
   }
 
   renderPurveyorProducts(purveyorId) {

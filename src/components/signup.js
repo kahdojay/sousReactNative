@@ -16,12 +16,12 @@ const {
 class Signup extends React.Component {
   constructor(props) {
     super(props)
-    // console.log(this.props.session)
     this.state = {
       invalid: false,
       phoneNumber: this.props.session.phoneNumber,
       smsToken: '',
-      smsSent: this.props.session.smsSent
+      smsSent: this.props.session.smsSent,
+      submitting: false
     }
   }
 
@@ -32,14 +32,24 @@ class Signup extends React.Component {
     })
   }
 
+  setFetching() {
+    this.setState({ submitting: true })
+    let that = this
+    // TODO: use react native timer mixin
+    window.setTimeout(function(){ that.setState({ submitting: false }); }, 2000);
+  }
+
   onSignup() {
+    // disable submit for 5 seconds
+    this.setFetching()
+
     if(this.refs.phone){
       this.refs.phone.blur();
     }
     if(this.refs.code){
       this.refs.code.blur();
     }
-    if(this.state.phoneNumber == ''){
+    if(this.state.phoneNumber === null || this.state.phoneNumber ===  ''){
       this.setState({invalid: true});
     } else {
       this.props.onRegisterSession(Object.assign({}, {
@@ -49,6 +59,7 @@ class Signup extends React.Component {
   }
 
   onVerify() {
+    this.setFetching()
     if(this.refs.phone){
       this.refs.phone.blur();
     }
@@ -89,11 +100,14 @@ class Signup extends React.Component {
 
   render() {
     const {session} = this.props;
-    const fetching =  <ActivityIndicatorIOS
-                        animating={true}
-                        color={'#808080'}
-                        style={styles.activity}
-                        size={'small'} />
+    const fetching =  <View style={styles.activityContainer}>
+                        <ActivityIndicatorIOS
+                          animating={true}
+                          color={'#808080'}
+                          style={styles.activity}
+                          size={'small'} 
+                        />
+                      </View>
     const errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
     let signup = (
       <View style={styles.login}>
@@ -120,7 +134,7 @@ class Signup extends React.Component {
           onPress={() => {
             this.onSignup()
           }}
-          style={styles.button}>
+          style={styles.buttonActive}>
           <Text style={styles.buttonText}>Send SMS</Text>
         </TouchableHighlight>
       </View>
@@ -157,7 +171,7 @@ class Signup extends React.Component {
             onPress={() => {
               this.onVerify()
             }}
-            style={styles.button}
+            style={styles.buttonActive}
           >
             <Text style={styles.buttonText}>Verify</Text>
           </TouchableHighlight>
@@ -180,15 +194,13 @@ class Signup extends React.Component {
         <View style={styles.logoContainer}>
           <Image source={require('image!Logo')} style={styles.logoImage}></Image>
         </View>
-        {signup}
+        {this.state.submitting ? fetching : signup}
       </ScrollView>
     );
   }
 };
 
 let styles = StyleSheet.create({
-  container: {
-  },
   navbar: {
     height: 40,
     backgroundColor: '#1825AD',
@@ -290,7 +302,7 @@ let styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center'
   },
-  button: {
+  buttonActive: {
     height: 56,
     backgroundColor: '#F5A623',
     alignSelf: 'center',
@@ -342,7 +354,9 @@ let styles = StyleSheet.create({
     fontFamily: 'OpenSans'
   },
   activity: {
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center'
   },
   activityContainer: {
     paddingTop: 50,
