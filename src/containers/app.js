@@ -366,7 +366,7 @@ class App extends React.Component {
                 {purveyorId: purveyorId, productId: productId}
               ))
             }}
-            onSubmitOrder={(msg) => {
+            onSubmitOrder={() => {
               dispatch(actions.sendCart());
 
               // TODO: need to verify that the order was sent successfully
