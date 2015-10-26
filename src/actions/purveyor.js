@@ -89,10 +89,13 @@ export default function PurveyorActions(ddpClient){
   }
 
   function deletePurveyor(purveyorId) {
-    ddpClient.call('deletePurveyor', [purveyorId])
-    return {
-      type: DELETE_PURVEYOR,
-      purveyorId: purveyorId
+    return (dispatch, getState) => {
+      const {session} = getState()
+      ddpClient.call('deletePurveyor', [purveyorId, session.userId])
+      return {
+        type: DELETE_PURVEYOR,
+        purveyorId: purveyorId
+      }
     }
   }
 

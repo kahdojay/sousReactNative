@@ -45,7 +45,7 @@ function teams(state = initialState.teams, action) {
       isFetching: false, // TODO: do we need to phase this out?
       errors: null,
       data: currentTeamsDataState,
-      lastUpdated: (new Date()).getTime()
+      lastUpdated: (new Date()).toISOString()
     });
 
   case RECEIVE_CATEGORIES:
@@ -73,7 +73,7 @@ function teams(state = initialState.teams, action) {
     var currentTeamsDataState = updateByIdx(newTeamState.data, teamIdx, { deleted: true });
     return Object.assign({}, state, {
       data: currentTeamsDataState,
-      lastUpdated: (new Date()).getTime()
+      lastUpdated: (new Date()).toISOString()
     });
 
   // add team
@@ -83,7 +83,7 @@ function teams(state = initialState.teams, action) {
     // console.log(action.type, action.team.id)
     return Object.assign({}, state, {
       data: currentTeamsDataState,
-      lastUpdated: (new Date()).getTime()
+      lastUpdated: (new Date()).toISOString()
     });
 
   // update team
@@ -116,7 +116,7 @@ function teams(state = initialState.teams, action) {
 
     return Object.assign({}, state, {
       data: currentTeamsDataState,
-      lastUpdated: (new Date()).getTime()
+      lastUpdated: (new Date()).toISOString()
     });
 
   // everything else

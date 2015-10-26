@@ -31,7 +31,7 @@ export default function MessageActions(ddpClient) {
         userId: session.userId,
         author: author || "Default",
         teamId: session.teamId,
-        createdAt: (new Date()).getTime(),
+        createdAt: (new Date()).toISOString(),
         imageUrl: imageUrl,
         delete: false
       };
