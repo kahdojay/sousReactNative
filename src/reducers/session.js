@@ -10,22 +10,23 @@ import {
 
 const initialState = {
   session: {
-    version: 0,
-    isAuthenticated: false,
     authToken: "",
+    email: null,
+    errors: null,
+    firstName: "",
+    inviteModalVisible: false,
+    imageUrl: "",
+    isAuthenticated: false,
+    lastName: "",
+    lastUpdated: null,
+    notifications: false,
+    phoneNumber: null,
     smsSent: false,
     smsVerified: false,
-    phoneNumber: null,
-    username: null,
-    email: null,
-    userId: null,
-    firstName: "",
-    lastName: "",
-    imageUrl: "",
-    notifications: false,
     teamId: null,
-    errors: null,
-    lastUpdated: null
+    username: null,
+    userId: null,
+    version: 0,
   }
 };
 

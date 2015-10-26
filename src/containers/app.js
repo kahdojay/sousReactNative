@@ -6,6 +6,7 @@ import { connect } from 'react-redux/native';
 import { Icon } from 'react-native-icons';
 import SideMenu from 'react-native-side-menu';
 import ErrorModal from '../components/errorModal';
+import InviteModal from '../components/inviteModal';
 import { BackBtn } from '../utilities/navigation';
 import Colors from '../utilities/colors';
 import Urls from '../resources/urls';
@@ -603,6 +604,17 @@ class App extends React.Component {
       />
     )
 
+    let inviteModal = (
+      <InviteModal
+        navigator={nav}
+        modalVisible={session.inviteModalVisible}
+        toggleInviteModal={(value) => {
+          dispatch(actions.updateSession({ inviteModalVisible: value }))
+        }}
+        onSMSInvite={(contactList) => dispatch(actions.inviteContacts(contactList))}
+      />
+    )
+
     let CustomSideView = SideMenu
     if(this.state.isAuthenticated !== true || this.state.gotData === false){
       CustomSideView = View
@@ -617,6 +629,9 @@ class App extends React.Component {
             teams={teams}
             session={session}
             open={this.state.open}
+            toggleInviteModal={(value) => {
+              dispatch(actions.updateSession({ inviteModalVisible: value }))
+            }}
           />
         }
         touchToClose={this.state.touchToClose}
@@ -625,6 +640,7 @@ class App extends React.Component {
         <View style={styles.container} >
           {navBar}
           {errorModal}
+          {inviteModal}
           {scene}
           <KeyboardSpacer />
         </View>

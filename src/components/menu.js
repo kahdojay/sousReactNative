@@ -15,6 +15,9 @@ const {
 
 const window = Dimensions.get('window');
 
+/*
+* Modal for side bar Modal for side bar
+*/
 module.exports = class Menu extends Component {
   constructor(props) {
     super(props);
@@ -78,22 +81,14 @@ module.exports = class Menu extends Component {
         <View style={[styles.inviteContainer, inviteContainerStyle]}>
           <TouchableHighlight
             underlayColor='#aaa'
-            onPress={() => {
-              this.props.nav.push({
-                name: 'Feed',
-              })
-            }}
+            onPress={this.props.toggleInviteModal}
           >
             <Text style={styles.teamText}>{team ? team.name : ''}</Text>
           </TouchableHighlight>
           {(showInviteButton === false) ? <View/> : (
             <TouchableHighlight
               underlayColor='#eee'
-              onPress={() => {
-                this.props.nav.push({
-                  name: 'InviteView',
-                })
-              }}
+              onPress={() => this.props.toggleInviteModal(true)}
               style={styles.saveButton}
             >
               <Text style={styles.saveText}>
