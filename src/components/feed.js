@@ -5,6 +5,7 @@ import { mainBackgroundColor } from '../utilities/colors';
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
 let SideMenu = require('react-native-side-menu');
 import Menu from './menu';
+import moment from 'moment';
 const {
   ScrollView,
   ActivityIndicatorIOS,
@@ -84,11 +85,18 @@ class Feed extends React.Component {
 
   render() {
     let { messages, session } = this.props;
-    let fetching =  <ActivityIndicatorIOS
-                        animating={true}
-                        color={'#808080'}
-                        style={styles.activity}
-                        size={'large'} />
+    let fetching =  (
+      <ActivityIndicatorIOS
+        animating={true}
+        color={'#808080'}
+        style={styles.activity}
+        size={'large'}
+      />
+    )
+    // sort at runtime
+    messages.data.sort(function(a, b) {
+      return moment(a.createdAt).isBefore(b.createdAt) ? 1 : -1;
+    })
     return (
       <View style={styles.container}>
         <View style={styles.messageContainer}>
@@ -129,7 +137,7 @@ class Feed extends React.Component {
                     </View>
                   )
                 }
-              ).reverse()
+              )
             }
           </InvertibleScrollView>
           <AddMessageForm
