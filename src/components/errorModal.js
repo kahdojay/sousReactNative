@@ -24,7 +24,7 @@ class ErrorModal extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('cwrp args: ', arguments)
+    // console.log('cwrp args: ', arguments)
     if (nextProps.errors.length > 0) {
       this.setState({
         errors: nextProps.errors,
@@ -36,17 +36,17 @@ class ErrorModal extends React.Component {
   handleDismiss(errorId) {
     const errorIdList = _.pluck(this.state.errors, 'id')
     this.props.onDeleteError(errorIdList)
-    this.setState({ 
+    this.setState({
       errors: [],
       modalVisible: false
     })
   }
 
   render() {
-    console.log('error modal')
+    // console.log('error modal')
     let errorsArray = <View />
     if (this.state.errors.length > 0) {
-      console.log('errors: ', this.state.errors)
+      // console.log('errors: ', this.state.errors)
       errorsArray = this.state.errors
         .map((error, idx) => {
           return (
@@ -71,7 +71,7 @@ class ErrorModal extends React.Component {
               <ScrollView style={styles.errorsContainer}>
                 {errorsArray}
               </ScrollView>
-              <TouchableHighlight 
+              <TouchableHighlight
                 style={styles.button}
                 onPress={::this.handleDismiss}
                 underlayColor={'#fff'}
