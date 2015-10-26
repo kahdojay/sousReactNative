@@ -6,6 +6,7 @@ import SessionActions from './session'
 import TeamActions from './team'
 import MessageActions from './message'
 import PurveyorActions from './purveyor'
+import ErrorActions from './error'
 
 const ddpClient = new DDPClient({
   // host : "localhost",
@@ -31,6 +32,7 @@ const teamActions = TeamActions(ddpClient, {
   'messageActions': messageActions
 })
 const purveyorActions = PurveyorActions(ddpClient)
+const errorActions = ErrorActions(ddpClient)
 
 function connectApp(){
   return (dispatch) => {
@@ -59,7 +61,8 @@ function connectApp(){
       'sessionActions': sessionActions,
       'teamActions': teamActions,
       'messageActions': messageActions,
-      'purveyorActions': purveyorActions
+      'purveyorActions': purveyorActions,
+      'errorActions': errorActions
     }));
   }
 }
@@ -72,5 +75,6 @@ export default Object.assign({
   sessionActions,
   teamActions,
   messageActions,
-  purveyorActions
+  purveyorActions,
+  errorActions
 )

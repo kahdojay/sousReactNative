@@ -1,8 +1,14 @@
 import _ from 'lodash'
 
 function getIdx(currentDataState, findId){
+  // console.log('getIdx currentDataState: ', currentDataState)
   return _.findIndex(currentDataState, (item, idx) => {
-    return item.id == findId;
+    // console.log('getIdx item: ', item)
+    if (item !== undefined) {
+      return item.id == findId;
+    } else {
+      return false
+    }
   });
 }
 

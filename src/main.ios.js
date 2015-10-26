@@ -24,7 +24,6 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 20,
     flex: 1,
-    backgroundColor: '#18008E',
   },
   scene: {
     flex: 1
@@ -78,7 +77,6 @@ class SousApp extends React.Component {
           <View style={styles.logoContainer}>
             <Image source={require('image!Logo')} style={styles.logoImage}></Image>
           </View>
-          <Text style={styles.loadingText}>LOADING</Text>
         </View>
       )
     } else {

@@ -41,9 +41,6 @@ class CartView extends React.Component {
           const cartPurveyorsString = _.pluck(cartPurveyors, 'name').join(', ');
           if(this.state.numberOfOrders > 0){
             this.props.onSubmitOrder('Order sent to ' + cartPurveyorsString);
-            this.props.navigator.replacePreviousAndPop({
-              name: 'Feed',
-            });
           }
         }}
       ]
@@ -53,6 +50,9 @@ class CartView extends React.Component {
   renderPurveyorProducts(purveyorId) {
     //TODO dry this out by recieving necessary info from render()
     const {team, purveyors, appState} = this.props
+
+    console.log('TEAM ORDERS ', team.orders);
+
     const cart = team.cart
     const products = appState.teams.products
     const purveyorProducts = cart.orders[purveyorId].products

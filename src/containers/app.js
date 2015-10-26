@@ -5,6 +5,7 @@ import NavigationBarStyles from 'react-native-navbar/styles'
 import { connect } from 'react-redux/native';
 import { Icon } from 'react-native-icons';
 import SideMenu from 'react-native-side-menu';
+import ErrorModal from '../components/errorModal';
 import { BackBtn } from '../utilities/navigation';
 import Colors from '../utilities/colors';
 import Urls from '../resources/urls';
@@ -299,7 +300,7 @@ class App extends React.Component {
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(cartAction, cartAttributes))
-              })()
+              }, 5)()
             }}
           />
         );
@@ -367,7 +368,14 @@ class App extends React.Component {
             }}
             onSubmitOrder={(msg) => {
               dispatch(actions.sendCart());
-              dispatch(actions.createMessage(msg, 'Sous', Urls.sousLogo));
+
+              // TODO: need to verify that the order was sent successfully
+              // if(orderingWasSuccessful){
+              //   dispatch(actions.createMessage(msg, 'Sous', Urls.sousLogo));
+              //   this.props.navigator.replacePreviousAndPop({
+              //     name: 'Feed',
+              //   });
+              // }
             }}
           />
         );
@@ -408,9 +416,13 @@ class App extends React.Component {
   }
 
   getNavBar(route, nav) {
+    // console.log("PROPS", this.props);
     const { dispatch, ui, teams, session } = this.props;
 
     let navBar = <View />;
+    let nextItem = <View />;
+    let scene = this.getScene(route, nav);
+
     // setup the header for unauthenticated routes
     if(this.authenticatedRoute(route) === false){
       navBar = <View />
@@ -434,7 +446,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             hidePrev: false,
-            title: team.name || 'Sous',
+            title: team ? team.name : 'Sous',
             titleColor: 'black',
             customPrev: <Components.FeedViewLeftButton />,
             customNext: <Components.FeedViewRightButton />,
@@ -553,7 +565,7 @@ class App extends React.Component {
 
   renderScene(route, nav) {
     // console.log("PROPS", this.props);
-    const { dispatch, ui, teams, session } = this.props;
+    const { dispatch, ui, teams, session, errors } = this.props;
 
     // redirect to initial view
     if (this.state.isAuthenticated){
@@ -578,12 +590,24 @@ class App extends React.Component {
 
     let navBar = this.getNavBar(route, nav);
     let scene = this.getScene(route, nav);
+    let errorModal = (
+      <ErrorModal
+        onDeleteError={(errorIdList) => {
+          _.debounce(() => {
+            dispatch(actions.deleteErrors(errorIdList))
+          }, 5)()
+        }}
+        errors={errors.data}
+        navigator={nav}
+      />
+    )
 
     let CustomSideView = SideMenu
     if(this.state.isAuthenticated !== true || this.state.gotData === false){
       CustomSideView = View
     }
-
+    // console.log('app.js', this.props)
+    // console.log('app.js render, errors:', this.props.errors.data)
     return (
       <CustomSideView
         menu={
@@ -599,6 +623,7 @@ class App extends React.Component {
       >
         <View style={styles.container} >
           {navBar}
+          {errorModal}
           {scene}
           <KeyboardSpacer />
         </View>
@@ -734,6 +759,7 @@ function mapStateToProps(state) {
     messages: state.messages,
     purveyors: state.purveyors,
     products: state.products,
+    errors: state.errors
   }
 }
 

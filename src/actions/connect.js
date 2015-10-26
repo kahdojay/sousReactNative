@@ -53,13 +53,17 @@ export default function ConnectActions(ddpClient) {
       if(session.phoneNumber !== ""){
         dispatch(processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [session.phoneNumber]))
       }
+
+      if(session.userId !== null){
+        dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ERRORS.channel, [session.userId]))
+      }
+      
       if(session.isAuthenticated === true){
         if(teamIds !== undefined && teamIds.length > 0){
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [teamIds]))
         }
         if(session.userId !== null){
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS.channel, [session.userId]))
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ERRORS.channel, [session.userId]))
         }
         if(session.teamId !== null){
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [session.teamId]))
@@ -76,7 +80,8 @@ export default function ConnectActions(ddpClient) {
       sessionActions,
       teamActions,
       messageActions,
-      purveyorActions
+      purveyorActions,
+      errorActions
     } = allActions
     return (dispatch, getState) => {
       const {session, teams} = getState();
@@ -115,6 +120,9 @@ export default function ConnectActions(ddpClient) {
             case 'users':
               // console.log("MAIN DDP WITH FIELDS MSG", log);
               dispatch(sessionActions.receiveSession(data))
+              break;
+            case 'errors':
+              dispatch(errorActions.receiveErrors(data))              
               break;
             default:
               // console.log("TODO: wire up collection: ", log.collection);
