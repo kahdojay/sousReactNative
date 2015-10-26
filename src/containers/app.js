@@ -566,6 +566,7 @@ class App extends React.Component {
   renderScene(route, nav) {
     // console.log("PROPS", this.props);
     const { dispatch, ui, teams, session, errors } = this.props;
+    console.log('rendersene errors: ', errors)
 
     // redirect to initial view
     if (this.state.isAuthenticated){
