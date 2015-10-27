@@ -145,40 +145,53 @@ export default function ConnectActions(ddpClient) {
       //--------------------------------------
       // Connect the DDP client
       //--------------------------------------
-      ddpClient.connect((error, reconnectAttempt) => {
-        if (error) {
-          // return dispatch(errorTeams([{
-          //   id: 'error_feed_connection',
-          //   message: 'Feed connection error!'
-          // }]));
-          // console.log('ERROR: ', error);
-          // TODO: create a generic error action and reducer
-        }
-        if (reconnectAttempt) {
-          console.log('RECONNECT ATTEMPT: Reestablishment of a connection.');
-          // TODO: what happens on reconnect?
-          dispatch({
-            type: CREATE_CONNECTION,
-            status: CONNECT.OFFLINE
-          })
-        } else {
-          console.log('CONNECT: app connect.')
-          dispatch({
-            type: CREATE_CONNECTION,
-            status: CONNECT.CONNECTED
-          })
-          // console.log('TEAMS', teams);
-          // console.log('TEAM IDS', teamIds);
-          const teamIds = _.pluck(teams.data, 'id')
-          dispatch(subscribeDDP(session, teamIds))
-        }
-      });
+      var timerID;
+      var attemptConnect = function() {
+        ddpClient.connect((error, reconnectAttempt) => {
+          console.log('attemptConnect called')
+          if (error) {
+            // return dispatch(errorTeams([{
+            //   id: 'error_feed_connection',
+            //   message: 'Feed connection error!'
+            // }]));
+            console.log('ERROR: ', error);
+            // TODO: create a generic error action and reducer
+          }
+          if (reconnectAttempt) {
+            console.log('RECONNECT ATTEMPT: Reestablishment of a connection.');
+            // TODO: what happens on reconnect?
+            dispatch({
+              type: CREATE_CONNECTION,
+              status: CONNECT.OFFLINE
+            })
+          } else {
+            console.log('CONNECT: app connect.')
+            stopAutoReconnect();
+            dispatch({
+              type: CREATE_CONNECTION,
+              status: CONNECT.CONNECTED
+            })
+            // console.log('TEAMS', teams);
+            // console.log('TEAM IDS', teamIds);
+            const teamIds = _.pluck(teams.data, 'id')
+            dispatch(subscribeDDP(session, teamIds))
+          }
+        });
+      }
+      attemptConnect();
+      function autoReconnect() {
+        timerID = setInterval(attemptConnect, 5000);
+      }
+      function stopAutoReconnect() {
+        clearInterval(timerID);
+      }
       ddpClient.on('socket-close', function(code, message) {
         console.log("Close: %s %s", code, message);
         dispatch({
           type: CREATE_CONNECTION,
           status: CONNECT.OFFLINE
         })
+        autoReconnect();
       });
     }
   }
