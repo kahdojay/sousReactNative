@@ -3,12 +3,14 @@ import {
   RESET_CONNECTIONS,
   SUBSCRIBE_CONNECTION,
   UNSUBSCRIBE_CONNECTION,
-  ERROR_CONNECTION
+  ERROR_CONNECTION,
+  CONNECT
 } from '../actions'
 
 const initialState = {
   connect: {
-    channels: {}
+    channels: {},
+    status: null,
   }
 }
 
@@ -18,7 +20,9 @@ function connect(state = initialState.connect, action) {
     // TODO: re-subscribe
     return Object.assign({}, initialState.connect);
   case CREATE_CONNECTION:
-    return state;
+    return Object.assign({}, state, {
+      status: action.status
+    });
   case SUBSCRIBE_CONNECTION:
     const newConnectState = Object.assign({}, state);
     newConnectState.channels[action.channel] = action.connectionId;
