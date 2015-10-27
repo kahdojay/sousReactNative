@@ -4,7 +4,8 @@ import {
   RESET_CONNECTIONS,
   SUBSCRIBE_CONNECTION,
   UNSUBSCRIBE_CONNECTION,
-  ERROR_CONNECTION
+  ERROR_CONNECTION,
+  CONNECT
 } from './actionTypes'
 
 export default function ConnectActions(ddpClient) {
@@ -93,10 +94,18 @@ export default function ConnectActions(ddpClient) {
       //--------------------------------------
       ddpClient.on('message', (msg) => {
         var log = JSON.parse(msg);
-        // console.log("MAIN DDP MSG", log);
+        console.log(`[${new Date()}] MAIN DDP MSG`, log);
         // var teamIds = getState().teams.data.map(function(team) {
         //   return team.id;
         // })
+
+        // Treat an message as a "ping"
+        dispatch({
+          type: CREATE_CONNECTION,
+          status: CONNECT.CONNECTED
+        })
+
+        // process the subscribe events to collections and their fields
         if (log.hasOwnProperty('fields')){
           // console.log("MAIN DDP WITH FIELDS MSG", log);
           var data = log.fields;
@@ -136,7 +145,7 @@ export default function ConnectActions(ddpClient) {
       //--------------------------------------
       // Connect the DDP client
       //--------------------------------------
-      ddpClient.connect((error, wasReconnected) => {
+      ddpClient.connect((error, reconnectAttempt) => {
         if (error) {
           // return dispatch(errorTeams([{
           //   id: 'error_feed_connection',
@@ -145,12 +154,18 @@ export default function ConnectActions(ddpClient) {
           // console.log('ERROR: ', error);
           // TODO: create a generic error action and reducer
         }
-        if (wasReconnected) {
-          // console.log('RECONNECT: Reestablishment of a connection.');
+        if (reconnectAttempt) {
+          console.log('RECONNECT ATTEMPT: Reestablishment of a connection.');
           // TODO: what happens on reconnect?
-        } else {
           dispatch({
-            type: CREATE_CONNECTION
+            type: CREATE_CONNECTION,
+            status: CONNECT.OFFLINE
+          })
+        } else {
+          console.log('CONNECT: app connect.')
+          dispatch({
+            type: CREATE_CONNECTION,
+            status: CONNECT.CONNECTED
           })
           // console.log('TEAMS', teams);
           // console.log('TEAM IDS', teamIds);
@@ -169,6 +184,7 @@ export default function ConnectActions(ddpClient) {
     SUBSCRIBE_CONNECTION,
     UNSUBSCRIBE_CONNECTION,
     ERROR_CONNECTION,
+    CONNECT,
     // 'connectSingleChannel': connectSingleChannel,
     // 'connectChannels': connectChannels,
     'connectDDP': connectDDP,
