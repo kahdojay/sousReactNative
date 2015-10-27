@@ -24,7 +24,6 @@ class ErrorModal extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('nextProps', nextProps)
     if (nextProps.errors.length > 0 || nextProps.connectionState.status === 'OFFLINE') {
       this.setState({
         errors: nextProps.errors,
