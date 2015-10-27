@@ -20,6 +20,7 @@ function connect(state = initialState.connect, action) {
     // TODO: re-subscribe
     return Object.assign({}, initialState.connect);
   case CREATE_CONNECTION:
+    console.log('reducer: action:', action)
     return Object.assign({}, state, {
       status: action.status
     });
@@ -31,7 +32,6 @@ function connect(state = initialState.connect, action) {
     return state;
   }
 }
-
 
 const connectReducers = {
   'connect': connect

@@ -18,7 +18,7 @@ const {
 let store = compose(
   applyMiddleware(thunkMiddleware),
   autoRehydrate()
-  )(createStore)(reducers);
+)(createStore)(reducers);
 
 const styles = StyleSheet.create({
   container: {

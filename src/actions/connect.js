@@ -94,7 +94,7 @@ export default function ConnectActions(ddpClient) {
       //--------------------------------------
       ddpClient.on('message', (msg) => {
         var log = JSON.parse(msg);
-        console.log(`[${new Date()}] MAIN DDP MSG`, log);
+        // console.log(`[${new Date()}] MAIN DDP MSG`, log);
         // var teamIds = getState().teams.data.map(function(team) {
         //   return team.id;
         // })
@@ -172,6 +172,13 @@ export default function ConnectActions(ddpClient) {
           const teamIds = _.pluck(teams.data, 'id')
           dispatch(subscribeDDP(session, teamIds))
         }
+      });
+      ddpClient.on('socket-close', function(code, message) {
+        console.log("Close: %s %s", code, message);
+        dispatch({
+          type: CREATE_CONNECTION,
+          status: CONNECT.OFFLINE
+        })
       });
     }
   }

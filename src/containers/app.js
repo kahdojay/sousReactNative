@@ -567,7 +567,7 @@ class App extends React.Component {
 
   renderScene(route, nav) {
     // console.log("PROPS", this.props);
-    const { dispatch, ui, teams, session, errors } = this.props;
+    const { dispatch, ui, teams, session, errors, connect } = this.props;
 
     // redirect to initial view
     if (this.state.isAuthenticated){
@@ -600,6 +600,7 @@ class App extends React.Component {
           }, 5)()
         }}
         errors={errors.data}
+        connectionState={connect}
         navigator={nav}
       />
     )
@@ -776,7 +777,8 @@ function mapStateToProps(state) {
     messages: state.messages,
     purveyors: state.purveyors,
     products: state.products,
-    errors: state.errors
+    errors: state.errors,
+    connect: state.connect,
   }
 }
 
