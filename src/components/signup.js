@@ -21,7 +21,8 @@ class Signup extends React.Component {
       phoneNumber: this.props.session.phoneNumber,
       smsToken: '',
       smsSent: this.props.session.smsSent,
-      submitting: false
+      submitting: false,
+      timeout: null,
     }
   }
 
@@ -32,11 +33,21 @@ class Signup extends React.Component {
     })
   }
 
+  componentWillUnmount() {
+    if(this.state.timeout !== null)
+      window.clearTimeout(this.state.timeout);
+  }
+
   setFetching() {
     this.setState({ submitting: true })
     let that = this
     // TODO: use react native timer mixin
-    window.setTimeout(function(){ that.setState({ submitting: false }); }, 2000);
+    const timeout = window.setTimeout(() => {
+      this.setState({ submitting: false, timeout: null });
+    }, 2000);
+    this.setState({
+      timeout: timeout
+    });
   }
 
   onSignup() {
@@ -60,6 +71,7 @@ class Signup extends React.Component {
 
   onVerify() {
     this.setFetching()
+
     if(this.refs.phone){
       this.refs.phone.blur();
     }
@@ -105,7 +117,7 @@ class Signup extends React.Component {
                           animating={true}
                           color={'#808080'}
                           style={styles.activity}
-                          size={'small'} 
+                          size={'small'}
                         />
                       </View>
     const errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>

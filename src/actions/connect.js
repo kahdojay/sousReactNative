@@ -57,7 +57,7 @@ export default function ConnectActions(ddpClient) {
       if(session.userId !== null){
         dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ERRORS.channel, [session.userId]))
       }
-      
+
       if(session.isAuthenticated === true){
         if(teamIds !== undefined && teamIds.length > 0){
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [teamIds]))
@@ -122,7 +122,7 @@ export default function ConnectActions(ddpClient) {
               dispatch(sessionActions.receiveSession(data))
               break;
             case 'errors':
-              dispatch(errorActions.receiveErrors(data))              
+              dispatch(errorActions.receiveErrors(data))
               break;
             default:
               // console.log("TODO: wire up collection: ", log.collection);
@@ -133,21 +133,9 @@ export default function ConnectActions(ddpClient) {
         }
       });
 
-
-      // console.log('TEAMS', teams);
-      // console.log('TEAM IDS', teamIds);
-      ddpClient.on('connected', () => {
-        dispatch({
-          type: CREATE_CONNECTION
-        })
-        const teamIds = _.pluck(teams.data, 'id')
-        dispatch(subscribeDDP(session, teamIds))
-      });
-
       //--------------------------------------
       // Connect the DDP client
       //--------------------------------------
-
       ddpClient.connect((error, wasReconnected) => {
         if (error) {
           // return dispatch(errorTeams([{
@@ -159,6 +147,15 @@ export default function ConnectActions(ddpClient) {
         }
         if (wasReconnected) {
           // console.log('RECONNECT: Reestablishment of a connection.');
+          // TODO: what happens on reconnect?
+        } else {
+          dispatch({
+            type: CREATE_CONNECTION
+          })
+          // console.log('TEAMS', teams);
+          // console.log('TEAM IDS', teamIds);
+          const teamIds = _.pluck(teams.data, 'id')
+          dispatch(subscribeDDP(session, teamIds))
         }
       });
     }

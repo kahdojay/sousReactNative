@@ -62,6 +62,9 @@ export default function SessionActions(ddpClient, allActions){
       dispatch(connectActions.subscribeDDP(newSession, undefined));
 
       if(sessionParams.hasOwnProperty('smsToken') === false){
+        // dispatch(receiveSession({
+        //   teamId: null
+        // }))
         dispatch(() => {
           ddpClient.call('sendSMSCode', [sessionParams.phoneNumber, session.authToken])
         })
@@ -109,6 +112,7 @@ export default function SessionActions(ddpClient, allActions){
       const {session} = getState();
       var isAuthenticated = session.isAuthenticated;
       // console.log("AUTHENTICATE", isAuthenticated);
+      // console.log(response, session);
       //TODO: make this a bit more secure
       if(response.hasOwnProperty('smsVerified') && response.smsVerified === true && response.authToken){
         // console.log("SESSION", session, response);

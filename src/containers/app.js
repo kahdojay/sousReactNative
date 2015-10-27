@@ -110,6 +110,7 @@ class App extends React.Component {
   }
 
   teamDataExists(teamData, teamId) {
+    // console.log(teamData, teamId);
     let gotData = false;
     const teamIdx = _.findIndex(teamData, 'id', teamId);
     // console.log('teamIdx ', teamIdx);
