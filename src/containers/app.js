@@ -85,9 +85,9 @@ class App extends React.Component {
     }
   }}
 
-  componentWillMount() {
-    this.props.dispatch(actions.connectApp())
-  }
+  // componentWillMount() {
+  //   // this.props.dispatch(actions.connectApp())
+  // }
 
   componentWillReceiveProps(nextProps) {
     const gotData = this.teamDataExists(nextProps.teams.data, nextProps.session.teamId);
@@ -106,7 +106,7 @@ class App extends React.Component {
         this.refs.appNavigator.replacePrevious({
           name: 'Feed'
         });
-      }, 1000)
+      }, 100)
     }
   }
 
@@ -784,3 +784,4 @@ function mapStateToProps(state) {
 
 // --// connect(mapStateToProps, mapDispatchToProps, mergeProps, options = {})
 export default connect(mapStateToProps)(App);
+// export default App;

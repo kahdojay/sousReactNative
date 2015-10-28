@@ -1,6 +1,9 @@
 import React from 'react-native'
 import _ from 'lodash'
 import { Icon } from 'react-native-icons'
+import {
+  CONNECT
+} from '../actions/actionTypes'
 
 const {
   Modal,
@@ -23,11 +26,24 @@ class ErrorModal extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this.handleVisibility(this.props)
+  }
+
   componentWillReceiveProps(nextProps) {
-    if (nextProps.errors.length > 0 || nextProps.connectionState.status === 'OFFLINE') {
+    this.handleVisibility(nextProps)
+  }
+
+  handleVisibility(props) {
+    if (props.errors.length > 0 || props.connectionState.status === CONNECT.OFFLINE) {
       this.setState({
-        errors: nextProps.errors,
+        errors: props.errors,
         modalVisible: true
+      })
+    } else if (props.errors.length === 0 && props.connectionState.status === CONNECT.CONNECTED) {
+      this.setState({
+        errors: [],
+        modalVisible: false
       })
     }
   }
