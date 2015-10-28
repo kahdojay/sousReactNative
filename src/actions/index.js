@@ -12,9 +12,9 @@ const ddpClient = new DDPClient({
   // host : "localhost",
   // port : 3000,
   // ssl  : false,
-  // autoReconnect : true,
+  autoReconnect : false, // default: true,
   // autoReconnectTimer : 500,
-  // maintainCollections : true,
+  maintainCollections : false, // default: true,
   // ddpVersion : '1',  // ['1', 'pre2', 'pre1'] available
   // Use a full url instead of a set of `host`, `port` and `ssl`
   url: DDP.ENDPOINT_WS,

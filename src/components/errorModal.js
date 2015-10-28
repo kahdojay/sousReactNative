@@ -1,6 +1,9 @@
 import React from 'react-native'
 import _ from 'lodash'
 import { Icon } from 'react-native-icons'
+import {
+  CONNECT
+} from '../actions/actionTypes'
 
 const {
   Modal,
@@ -23,12 +26,24 @@ class ErrorModal extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this.handleVisibility(this.props)
+  }
+
   componentWillReceiveProps(nextProps) {
-    // console.log('cwrp args: ', arguments)
-    if (nextProps.errors.length > 0) {
+    this.handleVisibility(nextProps)
+  }
+
+  handleVisibility(props) {
+    if (props.errors.length > 0 || props.connectionState.status === CONNECT.OFFLINE) {
       this.setState({
-        errors: nextProps.errors,
+        errors: props.errors,
         modalVisible: true
+      })
+    } else if (props.errors.length === 0 && props.connectionState.status === CONNECT.CONNECTED) {
+      this.setState({
+        errors: [],
+        modalVisible: false
       })
     }
   }
@@ -59,6 +74,25 @@ class ErrorModal extends React.Component {
           )
         })
     }
+    let dismissButton =  (
+      <TouchableHighlight
+        style={styles.button}
+        onPress={::this.handleDismiss}
+        underlayColor={'#fff'}
+      >
+        <Text style={styles.buttonText}>Dismiss</Text>
+      </TouchableHighlight>
+    )
+    if (this.props.connectionState.status === 'OFFLINE') {
+      errorsArray = (
+        <View>
+          <Text style={styles.offlineHeader} >No Internet Connection</Text>
+          <Text style={styles.offlineText} >Please reconnect to re-enable Sous</Text>
+        </View>
+      )
+      dismissButton = null;
+    }
+
     return (
       <View>
         <Modal
@@ -71,13 +105,7 @@ class ErrorModal extends React.Component {
               <ScrollView style={styles.errorsContainer}>
                 {errorsArray}
               </ScrollView>
-              <TouchableHighlight
-                style={styles.button}
-                onPress={::this.handleDismiss}
-                underlayColor={'#fff'}
-              >
-                <Text style={styles.buttonText}>Dismiss</Text>
-              </TouchableHighlight>
+              {dismissButton}
             </View>
           </View>
         </Modal>
@@ -100,7 +128,6 @@ var styles = StyleSheet.create({
     padding: 20,
   },
   errorsContainer: {
-    height: 300,
     paddingBottom: 40,
   },
   modalHeader: {
@@ -125,6 +152,16 @@ var styles = StyleSheet.create({
     width: 40,
     height: 40,
   },
+  offlineHeader: {
+    fontSize: 18,
+    fontWeight: '800',
+    alignSelf: 'center',
+  },
+  offlineText: {
+    fontSize: 14,
+    fontWeight: '500',
+    alignSelf: 'center',
+  }
 });
 
 var { height: deviceHeight } = Dimensions.get('window');

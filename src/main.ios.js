@@ -1,9 +1,11 @@
-import React from 'react-native'
+import _ from 'lodash';
+import React from 'react-native';
 import { createStore, compose, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import { Provider } from 'react-redux/native';
-import { persistStore, autoRehydrate } from 'redux-persist'
-import App from './containers/app'
+import { Provider, connect } from 'react-redux/native';
+import { persistStore, autoRehydrate } from 'redux-persist';
+import App from './containers/app';
+import * as actions from './actions';
 import reducers from './reducers';
 
 const {
@@ -18,7 +20,7 @@ const {
 let store = compose(
   applyMiddleware(thunkMiddleware),
   autoRehydrate()
-  )(createStore)(reducers);
+)(createStore)(reducers);
 
 const styles = StyleSheet.create({
   container: {
@@ -50,7 +52,7 @@ const styles = StyleSheet.create({
   }
 })
 
-class SousApp extends React.Component {
+class SousAppBase extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -58,16 +60,33 @@ class SousApp extends React.Component {
     }
   }
 
-  componentWillMount(){
+  componentWillMount() {
+    // connect the app with server
+    var timeoutId = setTimeout(() => {
+      // connect the app with server
+      store.dispatch(actions.connectApp())
+    }, 1000)
+    store.dispatch(actions.connectDDPTimeoutId(timeoutId))
+    // persist the store
     persistStore(
       store,
       {storage: AsyncStorage},
       () => {
-        // TODO: move action.connectApp here:
-          // dispatch(actions.connectApp())
+        // dispatch(actions.connectApp())
         this.setState({ rehydrated: true })
       }
     )
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.connect.status === actions.CONNECT.OFFLINE && nextProps.connect.timeoutId === null){
+      var timeoutId = setTimeout(() => {
+        // connect the app with server
+        store.dispatch(actions.connectDDPClient())
+      }, 10000)
+      console.log('dispatch connect timeoutId')
+      store.dispatch(actions.connectDDPTimeoutId(timeoutId))
+    }
   }
 
   render() {
@@ -89,4 +108,19 @@ class SousApp extends React.Component {
   }
 }
 
-AppRegistry.registerComponent('sousmobile', () => SousApp)
+class ConnectedSousApp extends React.Component {
+  render() {
+    const SousApp = connect((state) => {
+      return { connect: state.connect }
+    })(SousAppBase)
+    return (
+      <Provider store={store} >
+        {() => <SousApp />}
+      </Provider>
+    )
+  }
+}
+
+AppRegistry.registerComponent('sousmobile', () => {
+  return ConnectedSousApp
+})
