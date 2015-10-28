@@ -50,7 +50,6 @@ export default function ConnectActions(ddpClient) {
   function subscribeDDP(session, teamIds){
     return (dispatch, getState) => {
       const {connect} = getState()
-      // console.log(session, teamIds)
       if(session.phoneNumber !== ""){
         dispatch(processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [session.phoneNumber]))
       }
@@ -150,7 +149,6 @@ export default function ConnectActions(ddpClient) {
     return (dispatch, getState) => {
       const {connect, session, teams} = getState()
       ddpClient.on('connected', () => {
-        console.log('CONNECT: app connect.')
         clearTimeout(connect.timeoutId)
         dispatch({
           type: CONNECTION_STATUS,
@@ -179,6 +177,20 @@ export default function ConnectActions(ddpClient) {
           error: 'Socket connection was closed, attempting to reconnect.'
         })
         // autoReconnect();
+      })
+    }
+  }
+  function subscribeDDPSocketError() {
+    return (dispatch, getState) => {
+      const {connect} = getState()
+      ddpClient.on('socket-error', (code, message) => {
+        clearTimeout(connect.timeoutId)
+        dispatch({
+          type: CONNECTION_STATUS,
+          timeoutId: null,
+          status: CONNECT.OFFLINE,
+          error: 'Socket connnection errored out, attempting to reconnect.',
+        })
       })
     }
   }
@@ -212,6 +224,7 @@ export default function ConnectActions(ddpClient) {
       dispatch(subscribeDDPMessage(allActions))
       dispatch(subscribeDDPConnected())
       dispatch(subscribeDDPSocketClose())
+      dispatch(subscribeDDPSocketError())
 
       //--------------------------------------
       // Connect the DDP client

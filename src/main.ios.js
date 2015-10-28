@@ -66,7 +66,7 @@ class SousAppBase extends React.Component {
       // connect the app with server
       store.dispatch(actions.connectApp())
     }, 1000)
-    // store.dispatch(actions.connectDDPTimeoutId(timeoutId)) // TODO remove?
+    store.dispatch(actions.connectDDPTimeoutId(timeoutId))
     // persist the store
     persistStore(
       store,
@@ -83,7 +83,7 @@ class SousAppBase extends React.Component {
       var timeoutId = setTimeout(() => {
         // connect the app with server
         store.dispatch(actions.connectDDPClient())
-      }, 10000)
+      }, 1500)
       console.log('dispatch connect timeoutId')
       store.dispatch(actions.connectDDPTimeoutId(timeoutId))
     }

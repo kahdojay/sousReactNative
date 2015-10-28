@@ -35,6 +35,7 @@ class ErrorModal extends React.Component {
   }
 
   handleVisibility(props) {
+      console.log('modal props', props)
     if (props.errors.length > 0 || props.connectionState.status === CONNECT.OFFLINE) {
       this.setState({
         errors: props.errors,
