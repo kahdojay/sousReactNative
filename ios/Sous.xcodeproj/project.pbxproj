@@ -501,7 +501,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = UH5W8JH3GF;
+						DevelopmentTeam = QXC764RXA5;
 					};
 				};
 			};
@@ -768,6 +768,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Don Kahn (YVZ463JPF5)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -779,9 +780,9 @@
 				INFOPLIST_FILE = SousTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.sousapp.sousRN;
+				PRODUCT_BUNDLE_IDENTIFIER = com.enterprise.sousapp.sousRN;
 				PRODUCT_NAME = Sous;
-				PROVISIONING_PROFILE = "abce62c7-9ac0-49ec-819c-79e9a5ab772b";
+				PROVISIONING_PROFILE = "427ab52b-611d-4e84-b083-2ff813aaad0a";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sous.app/Sous";
 			};
 			name = Debug;
@@ -798,7 +799,7 @@
 				INFOPLIST_FILE = SousTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.sousapp.sousRN;
+				PRODUCT_BUNDLE_IDENTIFIER = com.enterprise.sousapp.sousRN;
 				PRODUCT_NAME = Sous;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sous.app/Sous";
 			};
@@ -808,7 +809,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Don Kahn (ZXGDLAS9W4)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Don Kahn (YVZ463JPF5)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Don Kahn (YVZ463JPF5)";
 				DEAD_CODE_STRIPPING = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -819,9 +821,9 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.sousapp.sousRN;
+				PRODUCT_BUNDLE_IDENTIFIER = com.enterprise.sousapp.sousRN;
 				PRODUCT_NAME = Sous;
-				PROVISIONING_PROFILE = "abce62c7-9ac0-49ec-819c-79e9a5ab772b";
+				PROVISIONING_PROFILE = "427ab52b-611d-4e84-b083-2ff813aaad0a";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -830,7 +832,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Sous Inc. (QXC764RXA5)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Sous Inc.";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Sous Inc.";
 				DEAD_CODE_STRIPPING = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -841,9 +844,9 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = com.sousapp.sousRN;
+				PRODUCT_BUNDLE_IDENTIFIER = com.enterprise.sousapp.sousRN;
 				PRODUCT_NAME = Sous;
-				PROVISIONING_PROFILE = "71f088bb-1788-44ec-8693-1694c0a225f2";
+				PROVISIONING_PROFILE = "59d09327-0edb-42a6-8143-9a5b0de55e54";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -892,7 +895,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "b62df2eb-ed06-40dc-b6e8-8f979418e16e";
+				PROVISIONING_PROFILE = "427ab52b-611d-4e84-b083-2ff813aaad0a";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -914,8 +917,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Sous Inc. (QXC764RXA5)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Sous Inc. (QXC764RXA5)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Sous Inc.";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Sous Inc.";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -933,7 +936,7 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PROVISIONING_PROFILE = "71f088bb-1788-44ec-8693-1694c0a225f2";
+				PROVISIONING_PROFILE = "59d09327-0edb-42a6-8143-9a5b0de55e54";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
