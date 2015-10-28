@@ -66,7 +66,7 @@ class SousAppBase extends React.Component {
       // connect the app with server
       store.dispatch(actions.connectApp())
     }, 1000)
-    store.dispatch(actions.connectDDPTimeoutId(timeoutId))
+    // store.dispatch(actions.connectDDPTimeoutId(timeoutId)) // TODO remove?
     // persist the store
     persistStore(
       store,

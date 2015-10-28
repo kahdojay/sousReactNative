@@ -11,7 +11,7 @@ const initialState = {
   connect: {
     channels: {},
     timeoutId: null,
-    status: null,
+    status: CONNECT.CONNECTED,
     error: null
   }
 }
@@ -20,7 +20,8 @@ function connect(state = initialState.connect, action) {
   switch (action.type) {
   case RESET_CHANNELS:
     return Object.assign({}, {
-      channels: initialState.connect.channels
+      channels: initialState.connect.channels,
+      status: CONNECT.CONNECTED,
     });
   case CONNECTION_STATUS:
     return Object.assign({}, state, {
