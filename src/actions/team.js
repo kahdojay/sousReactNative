@@ -51,6 +51,12 @@ export default function TeamActions(ddpClient, allActions) {
         deleted: false
       }
       ddpClient.call('createTeam', [newTeamAttributes]);
+
+      // subscribe to newly-added team
+      let teamIds = _.pluck(teams.data, 'id');
+      teamIds.push(newTeamAttributes._id)
+      dispatch(connectActions.subscribeDDP(session, teamIds))
+
       return dispatch({
         type: ADD_TEAM,
         team: newTeamAttributes

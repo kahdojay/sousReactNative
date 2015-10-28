@@ -77,7 +77,7 @@ export default function ConnectActions(ddpClient) {
 
   /*
   * subscribes client to all backend messages,
-  * introspects on messages and routes them to the appropriate modal reducer
+  * introspects on messages and routes them to the appropriate reducer
   */
   function subscribeDDPMessage(allActions){
     const {
