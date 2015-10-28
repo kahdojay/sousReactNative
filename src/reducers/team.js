@@ -37,10 +37,10 @@ function teams(state = initialState.teams, action) {
     });
   // receive the teams
   case RECEIVE_TEAMS:
+    // console.log('team action received: ', action)
     var newTeamState = Object.assign({}, state);
     var currentTeamsDataState = updateDataState(newTeamState.data, action.team)
     // console.log(action.type, action.team.id)
-    // console.log('TEAM REDUCER: ', currentTeamsDataState)
     return Object.assign({}, state, {
       isFetching: false, // TODO: do we need to phase this out?
       errors: null,

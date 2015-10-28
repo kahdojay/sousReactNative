@@ -33,6 +33,7 @@ function messages(state = initialState.messages, action) {
 
   // receive the messages
   case RECEIVE_MESSAGES:
+    // console.log('message action received: ', action)
     var newMessageState = Object.assign({}, state);
     var currentMessagesDataState = updateDataState(newMessageState.data, action.message)
     // console.log(action.type, action.message.id)
