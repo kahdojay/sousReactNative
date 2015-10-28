@@ -75,6 +75,10 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
+  /*
+  * subscribes client to all backend messages,
+  * introspects on messages and routes them to the appropriate modal reducer
+  */
   function subscribeDDPMessage(allActions){
     const {
       uiActions,
@@ -203,7 +207,7 @@ export default function ConnectActions(ddpClient) {
     return (dispatch, getState) => {
       const {connect} = getState()
       dispatch({
-        type: RESET_CHANNELS
+        type: RESET_CHANNELS,
       })
       dispatch(subscribeDDPMessage(allActions))
       dispatch(subscribeDDPConnected())
@@ -222,8 +226,6 @@ export default function ConnectActions(ddpClient) {
             error: error
           })
         }
-        //
-        console.log('connect callback called');
       });
     }
   }
