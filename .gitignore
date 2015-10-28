@@ -30,4 +30,4 @@ npm-debug.log
 # ignore secrets.js
 src/secrets.js
 
-main.jsbundle
+ios/main.jsbundle
