@@ -28,17 +28,17 @@
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		8918EAB21BD801C20068EBBA /* libRNMultiPickerIOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8918EAB11BD801AF0068EBBA /* libRNMultiPickerIOS.a */; };
 		8918EB061BD8227C0068EBBA /* libRNOverlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8918EB051BD822690068EBBA /* libRNOverlay.a */; };
-		899803FF1BCEC7E00011F96A /* UIImagePickerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 899803FE1BCEC7E00011F96A /* UIImagePickerManager.m */; settings = {ASSET_TAGS = (); }; };
-		89A667011BC2F38A00F45CFD /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89A667001BC2F38A00F45CFD /* OpenSans-Regular.ttf */; settings = {ASSET_TAGS = (); }; };
-		89EFDE591BCC097F001FBBEF /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE501BCC097F001FBBEF /* OpenSans-Bold.ttf */; settings = {ASSET_TAGS = (); }; };
-		89EFDE5A1BCC097F001FBBEF /* OpenSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE511BCC097F001FBBEF /* OpenSans-BoldItalic.ttf */; settings = {ASSET_TAGS = (); }; };
-		89EFDE5B1BCC097F001FBBEF /* OpenSans-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE521BCC097F001FBBEF /* OpenSans-ExtraBold.ttf */; settings = {ASSET_TAGS = (); }; };
-		89EFDE5C1BCC097F001FBBEF /* OpenSans-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE531BCC097F001FBBEF /* OpenSans-ExtraBoldItalic.ttf */; settings = {ASSET_TAGS = (); }; };
-		89EFDE5D1BCC097F001FBBEF /* OpenSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE541BCC097F001FBBEF /* OpenSans-Italic.ttf */; settings = {ASSET_TAGS = (); }; };
-		89EFDE5E1BCC097F001FBBEF /* OpenSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE551BCC097F001FBBEF /* OpenSans-Light.ttf */; settings = {ASSET_TAGS = (); }; };
-		89EFDE5F1BCC097F001FBBEF /* OpenSans-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE561BCC097F001FBBEF /* OpenSans-LightItalic.ttf */; settings = {ASSET_TAGS = (); }; };
-		89EFDE601BCC097F001FBBEF /* OpenSans-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE571BCC097F001FBBEF /* OpenSans-Semibold.ttf */; settings = {ASSET_TAGS = (); }; };
-		89EFDE611BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE581BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf */; settings = {ASSET_TAGS = (); }; };
+		899803FF1BCEC7E00011F96A /* UIImagePickerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 899803FE1BCEC7E00011F96A /* UIImagePickerManager.m */; };
+		89A667011BC2F38A00F45CFD /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89A667001BC2F38A00F45CFD /* OpenSans-Regular.ttf */; };
+		89EFDE591BCC097F001FBBEF /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE501BCC097F001FBBEF /* OpenSans-Bold.ttf */; };
+		89EFDE5A1BCC097F001FBBEF /* OpenSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE511BCC097F001FBBEF /* OpenSans-BoldItalic.ttf */; };
+		89EFDE5B1BCC097F001FBBEF /* OpenSans-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE521BCC097F001FBBEF /* OpenSans-ExtraBold.ttf */; };
+		89EFDE5C1BCC097F001FBBEF /* OpenSans-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE531BCC097F001FBBEF /* OpenSans-ExtraBoldItalic.ttf */; };
+		89EFDE5D1BCC097F001FBBEF /* OpenSans-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE541BCC097F001FBBEF /* OpenSans-Italic.ttf */; };
+		89EFDE5E1BCC097F001FBBEF /* OpenSans-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE551BCC097F001FBBEF /* OpenSans-Light.ttf */; };
+		89EFDE5F1BCC097F001FBBEF /* OpenSans-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE561BCC097F001FBBEF /* OpenSans-LightItalic.ttf */; };
+		89EFDE601BCC097F001FBBEF /* OpenSans-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE571BCC097F001FBBEF /* OpenSans-Semibold.ttf */; };
+		89EFDE611BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE581BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf */; };
 		C430DDA41BCEC67100962F41 /* libRCTAddressBook.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C430DD971BCEC63F00962F41 /* libRCTAddressBook.a */; };
 /* End PBXBuildFile section */
 
@@ -164,7 +164,7 @@
 		00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = "../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; };
 		00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTNetwork.xcodeproj; path = "../node_modules/react-native/Libraries/Network/RCTNetwork.xcodeproj"; sourceTree = "<group>"; };
 		00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTVibration.xcodeproj; path = "../node_modules/react-native/Libraries/Vibration/RCTVibration.xcodeproj"; sourceTree = "<group>"; };
-		00E356EE1AD99517003FC87E /* sousmobileTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = sousmobileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356EE1AD99517003FC87E /* Sous.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Sous.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* sousmobileTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = sousmobileTests.m; sourceTree = "<group>"; };
 		110F5EC91BCF2D4900234ED6 /* ReactNativeIcons.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeIcons.xcodeproj; path = "../node_modules/react-native-icons/ios/ReactNativeIcons.xcodeproj"; sourceTree = "<group>"; };
@@ -172,7 +172,7 @@
 		117817971BCDD8EE009F23E6 /* FontAwesome.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome.otf; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* sousmobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sousmobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07F961A680F5B00A75B9A /* Sous.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sous.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = sousmobile/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = sousmobile/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
@@ -388,8 +388,8 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* sousmobile.app */,
-				00E356EE1AD99517003FC87E /* sousmobileTests.xctest */,
+				13B07F961A680F5B00A75B9A /* Sous.app */,
+				00E356EE1AD99517003FC87E /* Sous.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -451,9 +451,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* sousmobileTests */ = {
+		00E356ED1AD99517003FC87E /* SousTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "sousmobileTests" */;
+			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "SousTests" */;
 			buildPhases = (
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
@@ -464,14 +464,14 @@
 			dependencies = (
 				00E356F51AD99517003FC87E /* PBXTargetDependency */,
 			);
-			name = sousmobileTests;
+			name = SousTests;
 			productName = sousmobileTests;
-			productReference = 00E356EE1AD99517003FC87E /* sousmobileTests.xctest */;
+			productReference = 00E356EE1AD99517003FC87E /* Sous.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		13B07F861A680F5B00A75B9A /* sousmobile */ = {
+		13B07F861A680F5B00A75B9A /* Sous */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "sousmobile" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Sous" */;
 			buildPhases = (
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
@@ -481,9 +481,9 @@
 			);
 			dependencies = (
 			);
-			name = sousmobile;
+			name = Sous;
 			productName = "Hello World";
-			productReference = 13B07F961A680F5B00A75B9A /* sousmobile.app */;
+			productReference = 13B07F961A680F5B00A75B9A /* Sous.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -501,7 +501,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "sousmobile" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Sous" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -572,8 +572,8 @@
 			);
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* sousmobile */,
-				00E356ED1AD99517003FC87E /* sousmobileTests */,
+				13B07F861A680F5B00A75B9A /* Sous */,
+				00E356ED1AD99517003FC87E /* SousTests */,
 			);
 		};
 /* End PBXProject section */
@@ -742,7 +742,7 @@
 /* Begin PBXTargetDependency section */
 		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* sousmobile */;
+			target = 13B07F861A680F5B00A75B9A /* Sous */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -776,8 +776,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/sousmobile.app/sousmobile";
+				PRODUCT_NAME = Sous;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sous.app/Sous";
 			};
 			name = Debug;
 		};
@@ -794,8 +794,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/sousmobile.app/sousmobile";
+				PRODUCT_NAME = Sous;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sous.app/Sous";
 			};
 			name = Release;
 		};
@@ -811,10 +811,12 @@
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
 				INFOPLIST_FILE = sousmobile/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sousapp.sousRN;
-				PRODUCT_NAME = sousmobile;
+				PRODUCT_NAME = Sous;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -830,10 +832,12 @@
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
 				INFOPLIST_FILE = sousmobile/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sousapp.sousRN;
-				PRODUCT_NAME = sousmobile;
+				PRODUCT_NAME = Sous;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -877,7 +881,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -917,7 +921,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -927,7 +931,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "sousmobileTests" */ = {
+		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "SousTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00E356F61AD99517003FC87E /* Debug */,
@@ -936,7 +940,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "sousmobile" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Sous" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -945,7 +949,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "sousmobile" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Sous" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
