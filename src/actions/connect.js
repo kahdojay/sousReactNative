@@ -222,6 +222,7 @@ export default function ConnectActions(ddpClient) {
             error: error
           })
         }
+        //
         console.log('connect callback called');
       });
     }
