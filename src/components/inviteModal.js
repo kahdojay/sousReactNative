@@ -60,10 +60,10 @@ class InviteModal extends React.Component {
       >
         <View style={styles.container}>
           <View style={styles.innerContainer}>
-            <Text style={styles.header}>Let Sous Access Contacts?</Text>
-            <Text>We will help you find friends to choose from. We never contact anyone without your permission.</Text>
+            <Text style={[styles.header]}>{`Invite to ${this.props.currentTeam ? this.props.currentTeam.name : 'Team'}`}</Text>
+            <Text style={styles.text}>{`Add someone to your team by sending them an SMS:`}</Text>
             <TextInput
-              style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+              style={styles.input}
               keyboardType='numeric'
               textAlign='center'
               onChangeText={(text) => this.setState({text})}
@@ -71,25 +71,25 @@ class InviteModal extends React.Component {
               />
             <View style={styles.row}>
               <TouchableHighlight
-                onPress={() => this.handleDismiss()}
-                style={styles.option}
-                underlayColor='grey'
-              >
-                <Text style={styles.optionText}>No</Text>
-              </TouchableHighlight>
-              <TouchableHighlight
                 onPress={() => this.handleSubmit()}
                 style={styles.option}
                 underlayColor='grey'
               >
-                <Text style={styles.optionText}>Submit</Text>
+                <Text style={styles.buttonText}>Send</Text>
               </TouchableHighlight>
               <TouchableHighlight
                 onPress={() => this.navigateToInviteView()}
                 style={styles.option}
                 underlayColor='grey'
               >
-                <Text style={styles.optionText}>Yes</Text>
+                <Text style={styles.buttonText}>Find in Contacts</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                onPress={() => this.handleDismiss()}
+                style={styles.option}
+                underlayColor='grey'
+              >
+                <Text style={styles.buttonText}>Dismiss</Text>
               </TouchableHighlight>
             </View>
           </View>
@@ -120,18 +120,42 @@ var styles = StyleSheet.create({
     alignItems: 'center'
   },
   header: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
+    textAlign: 'center',
+    marginTop: 20,
     paddingBottom: 10,
+    fontFamily: 'OpenSans',
+    color: '#555',
+  },
+  text: {
+    fontSize: 14,
+    fontFamily: 'OpenSans',
+    marginLeft: 5,
+    marginBottom: 10
+  },
+  input: {
+    height: 40, 
+    borderColor: 'gray', 
+    borderWidth: 1,
+    marginTop: 5,
+    marginBottom: 5,
   },
   row: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 10,
+    alignItems: 'center'
   },
-  option: {
+  option: { 
+    marginLeft: 5,
+    marginRight: 5,
     flex: 1,
+  },
+  buttonText: {
+    flex: 1,
+    fontWeight: 'bold',
     paddingLeft: 10,
     paddingRight: 10,
     height: 35,
