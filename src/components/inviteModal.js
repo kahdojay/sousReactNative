@@ -129,6 +129,7 @@ var styles = StyleSheet.create({
     color: '#555',
   },
   text: {
+    textAlign: 'center',
     fontSize: 14,
     fontFamily: 'OpenSans',
     marginLeft: 5,
