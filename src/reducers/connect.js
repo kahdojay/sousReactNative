@@ -17,7 +17,6 @@ const initialState = {
 }
 
 function connect(state = initialState.connect, action) {
-  console.log('message: reducer:', state, action)
   switch (action.type) {
   case RESET_CHANNELS:
     return Object.assign({}, {
