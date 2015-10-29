@@ -600,7 +600,6 @@ class App extends React.Component {
           }, 5)()
         }}
         errors={errors.data}
-        connectionState={connect}
         navigator={nav}
       />
     )
