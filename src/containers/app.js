@@ -181,7 +181,7 @@ class App extends React.Component {
             }}
             onTaskCompletionNotification={(task) => {
               // console.log("TASK: ", task);
-              var msg = `{{author}} completed task ${task.name}`;
+              var msg = `{{author}} completed ${task.name}`;
               dispatch(actions.completeTeamTask(msg))
             }}
             onDeleteTeam={() => {
