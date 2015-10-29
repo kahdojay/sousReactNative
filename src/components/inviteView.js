@@ -55,14 +55,31 @@ class InviteView extends React.Component {
   }
 
   render() {
+    const submitButton = (
+      <TouchableHighlight
+        style={styles.button}
+        underlayColor={Colors.buttonPress}
+        onPress={() => {
+          this.sendSMS();
+          this.props.navigator.replacePreviousAndPop({
+            name: 'Feed',
+          });
+        }}>
+        <Text style={styles.buttonText}>Send SMS</Text>
+      </TouchableHighlight>
+    );
     return (
       <ScrollView style={styles.container}>
+        {submitButton}
         {
           this.state.contacts.map(function(contact, idx) {
             return (
               <TouchableHighlight key={idx} underlayColor="#eee" style={{paddingTop: 10,}}>
                 <View style={styles.contactRow} >
-                  <Text style={styles.contactText}>{contact.firstName} {contact.lastName}</Text>
+                  <View style={styles.row} >
+                    <Text style={styles.contactFirstName}>{contact.firstName} </Text>
+                    <Text style={styles.contactLastName}>{contact.lastName}</Text>
+                  </View>
                   <CheckBox
                     label=''
                     onChange={(checked) => {
@@ -80,18 +97,7 @@ class InviteView extends React.Component {
             );
           }, this)
         }
-        <TouchableHighlight
-          style={styles.button}
-          underlayColor={Colors.buttonPress}
-          onPress={() => {
-
-            this.sendSMS();
-            this.props.navigator.replacePreviousAndPop({
-              name: 'Feed',
-            });
-          }}>
-          <Text style={styles.buttonText}>Send SMS</Text>
-        </TouchableHighlight>
+        {submitButton}
       </ScrollView>
     );
   }
@@ -107,20 +113,25 @@ let styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#eee'
   },
+  row: {
+    flexDirection: 'row',
+  },
   container: {
     flex: 1,
     backgroundColor: 'white',
   },
-  contactText: {
+  contactFirstName: {
     fontFamily: 'OpenSans',
     fontWeight: 'bold',
+  },
+  contactLastName: {
+    fontFamily: 'OpenSans',
   },
   button: {
     height: 56,
     backgroundColor: '#F5A623',
     alignSelf: 'center',
     width: 150,
-    marginTop: 20,
     justifyContent: 'center',
     borderRadius: 3,
   },

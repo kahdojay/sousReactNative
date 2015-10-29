@@ -42,7 +42,6 @@ function ui(state = initialState.ui, action) {
   }
 }
 
-
 const uiReducers = {
   'ui': ui
 }
