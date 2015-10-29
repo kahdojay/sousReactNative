@@ -22,36 +22,6 @@ let store = compose(
   autoRehydrate()
 )(createStore)(reducers);
 
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 20,
-    flex: 1,
-  },
-  scene: {
-    flex: 1
-  },
-  logoContainer: {
-    marginTop: 50,
-    marginBottom: 15,
-    borderRadius: 100/2,
-    backgroundColor: '#1825AD',
-    paddingLeft: 10,
-    paddingTop: 15,
-    width: 100,
-    height: 100,
-    alignSelf: 'center'
-  },
-  logoImage: {
-    borderRadius: 15,
-    width: 80,
-    height: 70
-  },
-  loadingText: {
-    color: 'white',
-    alignSelf: 'center'
-  }
-})
-
 class SousAppBase extends React.Component {
   constructor(props) {
     super(props)
@@ -90,12 +60,13 @@ class SousAppBase extends React.Component {
   }
 
   render() {
-    if (this.state.rehydrated === false) {
+    if (this.state.rehydrated === false || this.props.connect.status === actions.CONNECT.OFFLINE) {
       return (
         <View style={styles.container}>
           <View style={styles.logoContainer}>
             <Image source={require('image!Logo')} style={styles.logoImage}></Image>
           </View>
+          <Text style={styles.connecting}>Connecting</Text>
         </View>
       )
     } else {
@@ -120,6 +91,44 @@ class ConnectedSousApp extends React.Component {
     )
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    marginTop: 20,
+    flex: 1,
+  },
+  scene: {
+    flex: 1
+  },
+  logoContainer: {
+    marginTop: 50,
+    marginBottom: 15,
+    borderRadius: 100/2,
+    backgroundColor: '#1825AD',
+    paddingLeft: 10,
+    paddingTop: 15,
+    width: 100,
+    height: 100,
+    alignSelf: 'center'
+  },
+  connecting: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 20,
+    fontFamily: 'OpenSans',
+    fontWeight: 'bold',
+    color: '#555',
+  },
+  logoImage: {
+    borderRadius: 15,
+    width: 80,
+    height: 70
+  },
+  loadingText: {
+    color: 'white',
+    alignSelf: 'center'
+  }
+})
 
 AppRegistry.registerComponent('sousmobile', () => {
   return ConnectedSousApp

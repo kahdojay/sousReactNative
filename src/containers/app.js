@@ -418,7 +418,6 @@ class App extends React.Component {
   }
 
   getNavBar(route, nav) {
-    // console.log("PROPS", this.props);
     const { dispatch, ui, teams, session } = this.props;
 
     let navBar = <View />;
@@ -566,8 +565,9 @@ class App extends React.Component {
   }
 
   renderScene(route, nav) {
-    // console.log("PROPS", this.props);
+    console.log("PROPS", this.props);
     const { dispatch, ui, teams, session, errors, connect } = this.props;
+    const currentTeam = _.filter(teams.data, { id: session.teamId })[0]
 
     // redirect to initial view
     if (this.state.isAuthenticated){
@@ -600,7 +600,6 @@ class App extends React.Component {
           }, 5)()
         }}
         errors={errors.data}
-        connectionState={connect}
         navigator={nav}
       />
     )
@@ -608,6 +607,7 @@ class App extends React.Component {
     let inviteModal = (
       <InviteModal
         navigator={nav}
+        currentTeam={currentTeam}
         modalVisible={session.inviteModalVisible}
         toggleInviteModal={(value) => {
           dispatch(actions.updateSession({ inviteModalVisible: value }))

@@ -2,6 +2,8 @@ import _ from 'lodash'
 import { Icon } from 'react-native-icons';
 import React from 'react-native';
 import Dimensions from 'Dimensions';
+import Colors from '../utilities/colors';
+
 const {
   StyleSheet,
   ScrollView,
@@ -53,18 +55,12 @@ module.exports = class Menu extends Component {
     if(!team || (team && team.name === 'Notepad')){
       showInviteButton = false;
     }
-    let inviteContainerStyle = {};
-    if(showInviteButton === true){
-      inviteContainerStyle = {
-        flex: 2,
-      }
-    }
 
     return (
       <View style={styles.menu}>
         <View style={styles.avatarContainer}>
           <TouchableHighlight
-            underlayColor={'#777'}
+            underlayColor={'#5f697a'}
             onPress={() => {
               this.props.nav.push({
                 name: 'Profile',
@@ -78,59 +74,61 @@ module.exports = class Menu extends Component {
           </TouchableHighlight>
         </View>
         <View style={styles.separator} />
-        <View style={[styles.inviteContainer, inviteContainerStyle]}>
+        <View style={[styles.teamNameContainer]}>
           <TouchableHighlight
-            underlayColor='#aaa'
+            underlayColor='#3e444f'
             onPress={this.props.toggleInviteModal}
           >
-            <Text style={styles.teamText}>{team ? team.name : ''}</Text>
+            <Text style={styles.teamName}>{team ? team.name : ''}</Text>
           </TouchableHighlight>
-          {(showInviteButton === false) ? <View/> : (
-            <TouchableHighlight
-              underlayColor='#eee'
-              onPress={() => this.props.toggleInviteModal(true)}
-              style={styles.saveButton}
-            >
-              <Text style={styles.saveText}>
-                {team ? `Invite to ${team.name}` : ''}
-              </Text>
-            </TouchableHighlight>
-          )}
         </View>
-        <ScrollView style={styles.menuItems}>
-          <TouchableHighlight
-            style={styles.menuItemButton}
-            underlayColor='#ccc'
-            onPress={() => {
-              this.props.nav.push({
-                name: 'TeamView',
-              })
-            }}
-          >
-            <View style={styles.progressContainer}>
-              <View style={styles.progressRow}>
+        <View style={styles.menuBody}>
+          <ScrollView>
+            <TouchableHighlight
+              style={styles.menuItemButton}
+              underlayColor='#3e444f'
+              onPress={() => {
+                this.props.nav.push({
+                  name: 'TeamView',
+                })
+              }}
+            >
+              <View style={styles.progressContainer}>
                 <Text style={styles.menuItemText}>Prep List</Text>
-                <Text style={styles.menuItemText}> {progress}%</Text>
+                <View style={styles.progressRow}>
+                  <ProgressViewIOS
+                    style={styles.progressBar}
+                    progress={progress/100}
+                    trackTintColor='white'
+                  />
+                  <Text style={styles.progressText}> {progress}%</Text>
+                </View>
               </View>
-              <ProgressViewIOS
-                style={styles.progressBar}
-                progress={progress/100}
-                trackTintColor='white'
-              />
-            </View>
-          </TouchableHighlight>
-          <TouchableHighlight
-            style={styles.menuItemButton}
-            underlayColor='#ccc'
-            onPress={() => {
-              this.props.nav.push({
-                name: 'CategoryIndex',
-              })
-            }}
-          >
-            <Text style={styles.menuItemText}>Order Guide</Text>
-          </TouchableHighlight>
-        </ScrollView>
+            </TouchableHighlight>
+            <TouchableHighlight
+              style={styles.menuItemButton}
+              underlayColor='#3e444f'
+              onPress={() => {
+                this.props.nav.push({
+                  name: 'CategoryIndex',
+                })
+              }}
+            >
+              <Text style={styles.menuItemText}>Order Guide</Text>
+            </TouchableHighlight>
+            {(showInviteButton === false) ? <View/> : (
+              <TouchableHighlight
+                underlayColor='#3e444f'
+                onPress={() => this.props.toggleInviteModal(true)}
+                style={styles.menuItemButton}
+              >
+                <Text style={styles.menuItemText}>
+                  {team ? `Invite to ${team.name}` : ''}
+                </Text>
+              </TouchableHighlight>
+            )}
+          </ScrollView>
+        </View>
       </View>
     );
   }
@@ -142,18 +140,17 @@ const styles = StyleSheet.create({
     flex: 1,
     width: window.width,
     height: window.height,
-    backgroundColor: '#aaa',
-    flexDirection: 'column',
+    backgroundColor: '#5f697a',
   },
   avatarContainer: {
-    flex: 2,
+    flex: 1,
     width: window.width * .7,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#777',
+    backgroundColor: '#3e444f',
     paddingTop: 15,
-    paddingBottom: 15
+    paddingBottom: 15,
   },
   avatar: {
     width: 75,
@@ -181,10 +178,14 @@ const styles = StyleSheet.create({
     borderColor: '#eee',
     borderWidth: 1,
   },
-  inviteContainer: {
-    flex: 1,
+  teamNameContainer: {
     width: window.width * .7,
     alignItems: 'center',
+  },
+  teamName: {
+    fontSize: 25,
+    color: 'white',
+    fontFamily: 'OpenSans',
   },
   saveButton: {
     backgroundColor: 'white',
@@ -195,35 +196,44 @@ const styles = StyleSheet.create({
   saveText:{
     fontSize: 14,
     fontWeight: 'bold',
-    color: 'blue',
+    color: Colors.blue,
     textAlign: 'center',
   },
-  teamText: {
-    fontSize: 20,
-    color: 'white',
-    fontFamily: 'OpenSans',
-    padding: 5,
-    marginTop: 5,
-    marginBottom: 5
+  menuBody: {
+    flex: 4,
+    paddingRight: 10,
+    paddingLeft: 10,
   },
   menuItems: {
-    flex: 5,
-    paddingLeft: 15,
-    paddingRight: 15,
   },
   menuItemButton: {
-    marginBottom: 20
+    flex: 1,
+    marginBottom: 15,
   },
   menuItemText: {
     fontFamily: 'OpenSans',
-    fontWeight: 'bold',
+    fontSize: 18,
     color: 'white',
   },
   progressContainer: {
-    width: window.width * .5
+    width: window.width * .6,
   },
   progressRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 5,
+    marginBottom: 5
   },
+  progressBar: {
+    flex: 5,
+    marginTop: 5,
+    marginBottom: 5
+  },
+  progressText: {
+    flex: 1,
+    fontFamily: 'OpenSans',
+    fontSize: 15,
+    color: 'white',
+  }
 });
