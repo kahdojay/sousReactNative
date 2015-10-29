@@ -54,7 +54,6 @@ class SousAppBase extends React.Component {
         // connect the app with server
         store.dispatch(actions.connectDDPClient())
       }, 1500)
-      console.log('dispatch connect timeoutId')
       store.dispatch(actions.connectDDPTimeoutId(timeoutId))
     }
   }

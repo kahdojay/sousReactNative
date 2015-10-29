@@ -565,7 +565,6 @@ class App extends React.Component {
   }
 
   renderScene(route, nav) {
-    console.log("PROPS", this.props);
     const { dispatch, ui, teams, session, errors, connect } = this.props;
     const currentTeam = _.filter(teams.data, { id: session.teamId })[0]
 
