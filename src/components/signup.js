@@ -133,7 +133,6 @@ class Signup extends React.Component {
             style={styles.input}
             value={this.state.phoneNumber}
             keyboardType='phone-pad'
-            placeholder='Phone Number'
             onChange={(e) => {
 
               this.setState({phoneNumber: e.nativeEvent.text, invalid: false})
@@ -213,6 +212,9 @@ class Signup extends React.Component {
 };
 
 let styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
   navbar: {
     height: 40,
     backgroundColor: '#1825AD',
@@ -251,8 +253,8 @@ let styles = StyleSheet.create({
     alignSelf: 'center'
   },
   logoContainer: {
-    marginTop: 10,
-    marginBottom: 15,
+    marginTop: 25,
+    marginBottom: 25,
     borderRadius: 100/2,
     backgroundColor: '#1825AD',
     paddingLeft: 10,
@@ -267,6 +269,7 @@ let styles = StyleSheet.create({
     height: 70
   },
   login: {
+    flex: 1,
     paddingLeft: 5,
     paddingRight: 5,
     flexDirection: 'column',
@@ -278,7 +281,7 @@ let styles = StyleSheet.create({
     justifyContent: 'flex-start',
     borderBottomWidth: 1,
     borderColor: '#777',
-    marginLeft: 10,
+    // marginLeft: 10,
   },
   errorPlaceholder: {
     height: 0
@@ -301,14 +304,17 @@ let styles = StyleSheet.create({
   input: {
     flex: 1,
     height: 50,
-    padding: 4,
-    marginRight: 5,
-    marginTop: 10,
+    padding: 10,
+    marginTop: 20,
+    marginBottom: 20,
     fontSize: 20,
     borderRadius: 8,
     color: '#333',
     fontWeight: 'bold',
-    fontFamily: 'OpenSans'
+    fontFamily: 'OpenSans',
+    alignItems: 'center',
+    alignSelf: 'center',
+    textAlign: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',
