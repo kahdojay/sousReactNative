@@ -27,10 +27,14 @@ class Signup extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      phoneNumber: nextProps.session.phoneNumber,
-      smsSent: nextProps.session.smsSent,
-    })
+    if (nextProps.session.phoneNumber) { // prevents user input from being cleared
+      this.setState({
+        phoneNumber: nextProps.session.phoneNumber,
+        smsSent: nextProps.session.smsSent,
+      })
+    } else {
+      this.setState({ smsSent: nextProps.session.smsSent, })
+    }
   }
 
   componentWillUnmount() {
@@ -276,7 +280,7 @@ let styles = StyleSheet.create({
   inputContainer: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignItems: 'center',
     borderBottomWidth: 1,
     borderColor: '#777',
@@ -300,16 +304,9 @@ let styles = StyleSheet.create({
     width: 70,
     height: 70,
   },
-  underline: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e6e6e6',
-    marginLeft: 10
-  },
   input: {
-    flex: 1,
     height: 60,
+    width: 200, //TODO determine dynamically
     fontSize: 20,
     borderRadius: 8,
     color: '#333',
