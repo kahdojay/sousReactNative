@@ -55,8 +55,22 @@ class InviteView extends React.Component {
   }
 
   render() {
+    const submitButton = (
+      <TouchableHighlight
+        style={styles.button}
+        underlayColor={Colors.buttonPress}
+        onPress={() => {
+          this.sendSMS();
+          this.props.navigator.replacePreviousAndPop({
+            name: 'Feed',
+          });
+        }}>
+        <Text style={styles.buttonText}>Send SMS</Text>
+      </TouchableHighlight>
+    );
     return (
       <ScrollView style={styles.container}>
+        {submitButton}
         {
           this.state.contacts.map(function(contact, idx) {
             return (
@@ -83,18 +97,7 @@ class InviteView extends React.Component {
             );
           }, this)
         }
-        <TouchableHighlight
-          style={styles.button}
-          underlayColor={Colors.buttonPress}
-          onPress={() => {
-
-            this.sendSMS();
-            this.props.navigator.replacePreviousAndPop({
-              name: 'Feed',
-            });
-          }}>
-          <Text style={styles.buttonText}>Send SMS</Text>
-        </TouchableHighlight>
+        {submitButton}
       </ScrollView>
     );
   }
@@ -129,7 +132,6 @@ let styles = StyleSheet.create({
     backgroundColor: '#F5A623',
     alignSelf: 'center',
     width: 150,
-    marginTop: 20,
     justifyContent: 'center',
     borderRadius: 3,
   },
