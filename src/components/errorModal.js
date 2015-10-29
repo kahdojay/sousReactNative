@@ -1,9 +1,6 @@
 import React from 'react-native'
 import _ from 'lodash'
 import { Icon } from 'react-native-icons'
-import {
-  CONNECT
-} from '../actions/actionTypes'
 
 const {
   Modal,
@@ -35,12 +32,12 @@ class ErrorModal extends React.Component {
   }
 
   handleVisibility(props) {
-    if (props.errors.length > 0 || props.connectionState.status === CONNECT.OFFLINE) {
+    if (props.errors.length > 0) {
       this.setState({
         errors: props.errors,
         modalVisible: true
       })
-    } else if (props.errors.length === 0 && props.connectionState.status === CONNECT.CONNECTED) {
+    } else if (props.errors.length === 0) {
       this.setState({
         errors: [],
         modalVisible: false
@@ -83,15 +80,6 @@ class ErrorModal extends React.Component {
         <Text style={styles.buttonText}>Dismiss</Text>
       </TouchableHighlight>
     )
-    if (this.props.connectionState.status === 'OFFLINE') {
-      errorsArray = (
-        <View>
-          <Text style={styles.offlineHeader} >No Internet Connection</Text>
-          <Text style={styles.offlineText} >Please reconnect to re-enable Sous</Text>
-        </View>
-      )
-      dismissButton = null;
-    }
 
     return (
       <View>
