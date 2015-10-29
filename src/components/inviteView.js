@@ -62,7 +62,10 @@ class InviteView extends React.Component {
             return (
               <TouchableHighlight key={idx} underlayColor="#eee" style={{paddingTop: 10,}}>
                 <View style={styles.contactRow} >
-                  <Text style={styles.contactText}>{contact.firstName} {contact.lastName}</Text>
+                  <View style={styles.row} >
+                    <Text style={styles.contactFirstName}>{contact.firstName} </Text>
+                    <Text style={styles.contactLastName}>{contact.lastName}</Text>
+                  </View>
                   <CheckBox
                     label=''
                     onChange={(checked) => {
@@ -107,13 +110,19 @@ let styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#eee'
   },
+  row: {
+    flexDirection: 'row',
+  },
   container: {
     flex: 1,
     backgroundColor: 'white',
   },
-  contactText: {
+  contactFirstName: {
     fontFamily: 'OpenSans',
     fontWeight: 'bold',
+  },
+  contactLastName: {
+    fontFamily: 'OpenSans',
   },
   button: {
     height: 56,
