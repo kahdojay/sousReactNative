@@ -41,6 +41,14 @@ const styles = StyleSheet.create({
     height: 100,
     alignSelf: 'center'
   },
+  connecting: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 20,
+    fontFamily: 'OpenSans',
+    fontWeight: 'bold',
+    color: '#555',
+  },
   logoImage: {
     borderRadius: 15,
     width: 80,
@@ -90,12 +98,13 @@ class SousAppBase extends React.Component {
   }
 
   render() {
-    if (this.state.rehydrated === false) {
+    if (this.state.rehydrated === false || this.props.connect.status === actions.CONNECT.OFFLINE) {
       return (
         <View style={styles.container}>
           <View style={styles.logoContainer}>
             <Image source={require('image!Logo')} style={styles.logoImage}></Image>
           </View>
+          <Text style={styles.connecting}>Connecting</Text>
         </View>
       )
     } else {
