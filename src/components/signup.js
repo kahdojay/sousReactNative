@@ -3,6 +3,7 @@ import _ from 'lodash'
 import React from 'react-native'
 
 const {
+  Dimensions,
   StyleSheet,
   View,
   Text,
@@ -13,6 +14,7 @@ const {
   ActivityIndicatorIOS,
 } = React;
 
+const runTimeDimensions = Dimensions.get('window')
 class Signup extends React.Component {
   constructor(props) {
     super(props)
@@ -116,14 +118,16 @@ class Signup extends React.Component {
 
   render() {
     const {session} = this.props;
-    const fetching =  <View style={styles.activityContainer}>
-                        <ActivityIndicatorIOS
-                          animating={true}
-                          color={'#808080'}
-                          style={styles.activity}
-                          size={'small'}
-                        />
-                      </View>
+    const fetching =  (
+      <View style={styles.activityContainer}>
+        <ActivityIndicatorIOS
+          animating={true}
+          color={'#808080'}
+          style={styles.activity}
+          size={'small'}
+        />
+      </View>
+    );
     const errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
     let signup = (
       <View style={styles.login}>
@@ -306,7 +310,7 @@ let styles = StyleSheet.create({
   },
   input: {
     height: 60,
-    width: 200, //TODO determine dynamically
+    width: runTimeDimensions.width * .5,
     fontSize: 20,
     borderRadius: 8,
     color: '#333',
