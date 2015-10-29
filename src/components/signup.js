@@ -134,7 +134,6 @@ class Signup extends React.Component {
             value={this.state.phoneNumber}
             keyboardType='phone-pad'
             onChange={(e) => {
-
               this.setState({phoneNumber: e.nativeEvent.text, invalid: false})
             }}
           />
