@@ -18,8 +18,8 @@ const {
 const window = Dimensions.get('window');
 
 /*
-* Modal for side bar Modal for side bar
-*/
+ * Modal for side bar Modal for side bar
+ */
 module.exports = class Menu extends Component {
   constructor(props) {
     super(props);
@@ -219,6 +219,7 @@ const styles = StyleSheet.create({
     width: window.width * .6,
   },
   progressRow: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -226,12 +227,11 @@ const styles = StyleSheet.create({
     marginBottom: 5
   },
   progressBar: {
-    flex: 5,
+    flex: 4,
     marginTop: 5,
     marginBottom: 5
   },
   progressText: {
-    flex: 1,
     fontFamily: 'OpenSans',
     fontSize: 15,
     color: 'white',
