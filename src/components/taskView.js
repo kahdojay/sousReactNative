@@ -89,7 +89,7 @@ class TaskView extends React.Component {
           style={styles.scrollView}
           automaticallyAdjustContentInsets={false}
         >
-          <View style={styles.headerContainer}>
+          {/*<View style={styles.headerContainer}>
             <Icon
               name='material|assignment'
               size={100}
@@ -106,7 +106,7 @@ class TaskView extends React.Component {
                 <Icon name='fontawesome|check-square' size={50} color='#aaa' style={styles.iconSide}/>
               </View>
             </View>
-          </View>
+          </View>*/}
 
           <View style={styles.mainContainer}>
             <TextInput
