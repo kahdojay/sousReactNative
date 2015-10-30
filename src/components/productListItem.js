@@ -24,13 +24,18 @@ class ProductListItem extends React.Component {
       purveyors: null,
       added: false,
       quantity: 1,
+      purveyorId: '',
       selectedPurveyorId: this.props.product.purveyors[0],
       note: ''
     }
   }
 
   componentWillMount() {
-    this.stateUpdateFromCart(this.props.cart.orders)
+    this.stateUpdateFromCart(this.props.cartItem, this.props.cartPurveyorId)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.stateUpdateFromCart(nextProps.cartItem, nextProps.cartPurveyorId)
   }
 
   componentDidMount() {
@@ -42,24 +47,24 @@ class ProductListItem extends React.Component {
     }, this.props.loadDelay)
   }
 
-  stateUpdateFromCart(cartOrders) {
-    let cartItem = null
-    let cartPurveyorId = ''
-    this.props.product.purveyors.map((purveyorId) => {
-      if (cartOrders.hasOwnProperty(purveyorId) === true && cartOrders[purveyorId].products.hasOwnProperty(this.props.product.id)) {
-        cartPurveyorId = purveyorId
-        cartItem = cartOrders[purveyorId].products[this.props.product.id]
-      }
-    })
+  stateUpdateFromCart(cartItem, cartPurveyorId) {
+    let newState = {}
     if (cartItem !== null) {
-      const newState = {
+      newState = {
         added: true,
         quantity: cartItem.quantity,
         purveyorId: cartPurveyorId,
         note: cartItem.note
       };
-      this.setState(newState);
+    } else {
+      newState = {
+        added: false,
+        quantity: 1,
+        purveyorId: cartPurveyorId,
+        note: ''
+      };
     }
+    this.setState(newState);
   }
 
   cartUpdateFromState() {
@@ -132,19 +137,24 @@ class ProductListItem extends React.Component {
               {purveyorString}
             </Text>
           </View>
-          <Text style={styles.quantity}>
+
+          { this.state.added === true ?
+          [<Text style={styles.quantity}>
             {this.state.quantity > 1 ? ('X' + this.state.quantity) : ''}
-          </Text>
+          </Text>,
           <TouchableHighlight
             underlayColor="transparent"
-            onPress={this.decrement.bind(this)}>
+            onPress={this.decrement.bind(this)}
+            style={{flex: 1}}>
             <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
-          </TouchableHighlight>
+          </TouchableHighlight>,
           <TouchableHighlight
             underlayColor='transparent'
-            onPress={this.increment.bind(this)}>
+            onPress={this.increment.bind(this)}
+            style={{flex: 1}}>
             <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
-          </TouchableHighlight>
+          </TouchableHighlight>]
+          : [<View style={{flex: 1}} />, <View style={{flex: 1}} />, <View style={{flex:1}} />] }
         </View>
       )
     }
@@ -170,6 +180,7 @@ let styles = StyleSheet.create({
     height: 40,
   },
   quantity: {
+    flex: 1,
     fontSize: 16
   },
   row: {
@@ -182,6 +193,7 @@ let styles = StyleSheet.create({
   checkboxContainer: {
     flex: 1,
     alignItems: 'center',
+    width: 40
   },
   main: {
     flex: 4,

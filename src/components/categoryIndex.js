@@ -31,12 +31,7 @@ class CategoryIndex extends React.Component {
           key={category.id}
           category={category}
           onPress={() => {
-            this.props.navigator.push({
-              name: 'CategoryView',
-              categoryId: category.id,
-              category: category,
-              categoryProducts: categoryProducts
-            })
+            this.props.onNavigateToCategory(category, categoryProducts)
           }}
         />
       )
@@ -72,8 +67,7 @@ const styles = StyleSheet.create({
 });
 
 CategoryIndex.propTypes = {
-  // onAddCategory: React.PropTypes.func,
-  navigator: React.PropTypes.object.isRequired,
+  onNavigateToCategory: React.PropTypes.func,
   categories: React.PropTypes.object.isRequired,
 };
 

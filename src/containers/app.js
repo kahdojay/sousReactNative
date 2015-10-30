@@ -39,6 +39,8 @@ class App extends React.Component {
       firstName: this.props.session.firstName,
       lastName: this.props.session.lastName,
       gotData: gotData,
+      category: null,
+      categoryProducts: null
     }
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
@@ -281,9 +283,21 @@ class App extends React.Component {
         // var team = _.filter(teams.data, { id: session.teamId })[0]
         return (
           <Components.CategoryIndex
-            navigator={nav}
             products={teams.products}
             categories={teams.defaultCategories}
+            onNavigateToCategory={(category, categoryProducts) => {
+              this.setState({
+                category: category,
+                categoryProducts: categoryProducts
+              }, () => {
+                nav.push({
+                  name: 'CategoryView',
+                  categoryId: category.id,
+                  // category: category,
+                  // categoryProducts: categoryProducts
+                })
+              })
+            }}
           />
         );
       case 'CategoryView':
@@ -295,9 +309,9 @@ class App extends React.Component {
           <Components.CategoryView
             ui={ui}
             navigator={nav}
-            category={route.category}
+            category={this.state.category}
             cart={team.cart}
-            products={route.categoryProducts}
+            products={this.state.categoryProducts}
             purveyors={purveyors}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               _.debounce(() => {
