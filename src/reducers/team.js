@@ -1,5 +1,6 @@
 import { getIdx, updateByIdx, updateDataState } from '../utilities/reducer'
 import {
+  SET_TASK_TIMEOUT_ID,
   SET_CART_TIMEOUT_ID,
   SET_CURRENT_TEAM,
   RESET_TEAMS,
@@ -23,6 +24,7 @@ const initialState = {
     defaultCategories: {},
     currentTeam: null,
     cartTimeoutId: null,
+    taskTimeoutId: null,
     products: {},
     lastUpdated: null
   }
@@ -151,6 +153,11 @@ function teams(state = initialState.teams, action) {
   case SET_CART_TIMEOUT_ID:
     return Object.assign({}, state, {
       cartTimeoutId: action.cartTimeoutId
+    });
+
+  case SET_TASK_TIMEOUT_ID:
+    return Object.assign({}, state, {
+      taskTimeoutId: action.taskTimeoutId
     });
 
   // everything else

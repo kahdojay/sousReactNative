@@ -4,6 +4,7 @@ import Shortid from 'shortid'
 import MessageActions from './message'
 import { getIdx, updateByIdx, updateDataState } from '../utilities/reducer'
 import {
+  SET_TASK_TIMEOUT_ID,
   SET_CART_TIMEOUT_ID,
   SET_CURRENT_TEAM,
   RESET_TEAMS,
@@ -142,17 +143,29 @@ export default function TeamActions(ddpClient, allActions) {
         team: currentTeam
       })
 
-      dispatch(() => {
-        ddpClient.call('updateTeamTask', [session.teamId, recipeId, taskAttributes]);
+      clearTimeout(teams.taskTimeoutId);
+      const taskTimeoutId = setTimeout(() => {
+        dispatch(() => {
+          // ddpClient.call('updateTeamTask', [session.teamId, recipeId, taskAttributes]);
+          ddpClient.call('updateTeam', [session.teamId, {
+            tasks: currentTeam.tasks
+          }]);
+        })
+        
+        // dispatch({
+        //   type: UPDATE_TEAM,
+        //   teamId: session.teamId,
+        //   recipeId: recipeId,
+        //   task: taskAttributes,
+        //   sessionTeamId: session.teamId
+        // })
+      }, 1500);
+
+      return dispatch({
+        type: SET_TASK_TIMEOUT_ID,
+        taskTimeoutId: taskTimeoutId
       })
 
-      // return dispatch({
-      //   type: UPDATE_TEAM,
-      //   teamId: session.teamId,
-      //   recipeId: recipeId,
-      //   task: taskAttributes,
-      //   sessionTeamId: session.teamId
-      // })
     }
   }
 
@@ -400,6 +413,7 @@ export default function TeamActions(ddpClient, allActions) {
   }
 
   return {
+    SET_TASK_TIMEOUT_ID,
     SET_CART_TIMEOUT_ID,
     SET_CURRENT_TEAM,
     RESET_TEAMS,

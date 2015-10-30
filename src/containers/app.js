@@ -455,7 +455,7 @@ class App extends React.Component {
         //   })
         //   break;
         case 'TeamView':
-          console.log(this.state.currentTeam)
+          // console.log(this.state.currentTeam)
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
