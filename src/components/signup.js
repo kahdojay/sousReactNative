@@ -134,16 +134,18 @@ class Signup extends React.Component {
         <Text style={styles.headerText}>Use your phone number to log in to Sous.</Text>
         <Text style={styles.centered}>First, we will send you a <Text style={styles.boldText}>text message</Text> to verify your account.</Text>
         <View style={styles.inputContainer}>
-          <Icon name='material|phone' size={30} color='#aaa' style={styles.iconPhone}/>
-          <TextInput
-            ref='phone'
-            style={styles.input}
-            value={this.state.phoneNumber}
-            keyboardType='phone-pad'
-            onChange={(e) => {
-              this.setState({phoneNumber: e.nativeEvent.text, invalid: false})
-            }}
-          />
+          <View style={{borderBottomWidth: 1, borderBottomColor: 'black'}}>
+            <Icon name='material|phone' size={30} color='#aaa' style={styles.iconPhone}/>
+            <TextInput
+              ref='phone'
+              style={styles.input}
+              value={this.state.phoneNumber}
+              keyboardType='phone-pad'
+              onChange={(e) => {
+                this.setState({phoneNumber: e.nativeEvent.text, invalid: false})
+              }}
+            />
+          </View>
         </View>
         { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
         <TouchableHighlight
@@ -171,16 +173,18 @@ class Signup extends React.Component {
           </TouchableHighlight>
           <Text style={styles.centered}>Enter the verification code below to sign in.</Text>
           <View style={styles.inputContainer}>
-            <TextInput
-              ref='code'
-              style={styles.input}
-              value={this.state.smsToken}
-              keyboardType='phone-pad'
-              textAlign='center'
-              onChange={(e) => {
-                this.setState({smsToken: e.nativeEvent.text, invalid: false})
-              }}
-            />
+            <View style={{borderBottomWidth: 1, borderBottomColor: 'black'}}>
+              <TextInput
+                ref='code'
+                style={styles.input}
+                value={this.state.smsToken}
+                keyboardType='phone-pad'
+                textAlign='center'
+                onChange={(e) => {
+                  this.setState({smsToken: e.nativeEvent.text, invalid: false})
+                }}
+              />
+            </View>
           </View>
           { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
           <TouchableHighlight
@@ -286,8 +290,6 @@ let styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderBottomWidth: 1,
-    borderColor: '#777',
     backgroundColor: 'transparent',
   },
   errorPlaceholder: {
@@ -299,8 +301,8 @@ let styles = StyleSheet.create({
   },
   iconPhone: {
     position: 'absolute',
-    top: 5,
-    left: 5,
+    top: 10,
+    left: -40,
     width: 70,
     height: 50,
   },
@@ -312,7 +314,6 @@ let styles = StyleSheet.create({
     height: 60,
     width: runTimeDimensions.width * .5,
     fontSize: 20,
-    borderRadius: 8,
     color: '#333',
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
