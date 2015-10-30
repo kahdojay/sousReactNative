@@ -12,72 +12,113 @@ const {
 } = React;
 
 class TaskListItem extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      task: null
+    }
+  }
+
+  componentWillMount() {
+    this.setState({
+      task: this.props.task
+    })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      task: nextProps.task
+    })
+  }
+
   increment() {
-    this.props.onUpdateTask({quantity: (this.props.task.quantity + 1)})
+    this.setState({
+      task: Object.assign({}, this.state.task, {
+        quantity: (this.state.task.quantity + 1)
+      })
+    }, ::this.taskUpdateFromLocalState)
   }
+
   decrement() {
-    if (this.props.task.quantity > 1 ) {
-      this.props.onUpdateTask({quantity: (this.props.task.quantity - 1)})
+    if (this.state.task.quantity > 1 ) {
+      this.setState({
+        task: Object.assign({}, this.state.task, {
+          quantity: (this.state.task.quantity - 1)
+        })
+      }, ::this.taskUpdateFromLocalState)
     }
   }
+
   handleCompleteTask() {
-    if (! this.props.task.completed) {
-      this.props.onTaskCompletionNotification(this.props.task);
-    }
-    this.props.onUpdateTask({completed: !this.props.task.completed});
+    const newTask = Object.assign({}, this.state.task, {
+      completed: !this.state.task.completed
+    });
+    this.setState({
+      task: newTask
+    }, ::this.taskUpdateFromLocalState)
   }
+
+  taskUpdateFromLocalState() {
+    if(this.state.task.completed === true) {
+      this.props.onTaskCompletionNotification(this.state.task);
+    }
+    this.props.onUpdateTask({
+      quantity: this.state.task.quantity,
+      completed: this.state.task.completed
+    });
+  }
+
   render() {
+    const {task} = this.state;
     var taskStyle;
-    if (this.props.task.completed) {
+    if (task.completed) {
       taskStyle = styles.taskCompletedText;
     } else {
       taskStyle = styles.taskIncompleteText;
     }
 
+    // console.log(task.completed)
+
     return (
       <View style={styles.container}>
         <View style={[
           styles.row,
-          this.props.task.completed && styles.rowCompleted
+          task.completed && styles.rowCompleted
         ]}>
           <View style={styles.checkboxContainer}>
             <CheckBox
-              checked={this.props.task.completed}
+              checked={task.completed}
               label=''
-              onChange={this.handleCompleteTask.bind(this)}
+              onChange={::this.handleCompleteTask}
             />
           </View>
           <TouchableHighlight
             underlayColor='#eee'
             onPress={() => {
-              this.props.navigator.push({
-                name: 'TaskView',
-                recipeId: this.props.task.recipeId,
-                navigationBar: this.props.navBar,
-              })
+              this.props.onNavToTask()
             }}
             style={styles.main}
           >
             <View style={{padding: 10, borderRadius: 2,}}>
               <Text style={[
                 styles.text,
-                this.props.task.completed && styles.textCompleted
+                task.completed && styles.textCompleted
               ]}>
-                {this.props.task.name}
+                {task.name}
               </Text>
             </View>
           </TouchableHighlight>
           <Text style={styles.quantity}>
-            {this.props.task.quantity > 1 ? ('X' + this.props.task.quantity) : ''}
+            {task.quantity > 1 ? ('X' + task.quantity) : ''}
           </Text>
           <TouchableHighlight
             underlayColor='transparent'
-            onPress={this.decrement.bind(this)}>
+            onPress={::this.decrement}>
             <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
           </TouchableHighlight>
           <TouchableHighlight
             underlayColor='transparent'
-            onPress={this.increment.bind(this)}>
+            onPress={::this.increment}>
             <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
           </TouchableHighlight>
         </View>

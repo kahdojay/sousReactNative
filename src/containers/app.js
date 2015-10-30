@@ -152,29 +152,36 @@ class App extends React.Component {
             }
           />
         );
-      // case 'TeamView':
-      //   return (
-      //     <Components.TeamView
-      //       ui={ui}
-      //       navigator={nav}
-      //       team={this.state.currentTeam}
-      //       onAddNewTask={(taskName) => {
-      //         // console.log(taskName);
-      //         dispatch(actions.addTeamTask({name: taskName}))
-      //       }}
-      //       onTaskCompletionNotification={(task) => {
-      //         // console.log("TASK: ", task);
-      //         var msg = `{{author}} completed ${task.name}`;
-      //         dispatch(actions.completeTeamTask(msg))
-      //       }}
-      //       onDeleteTeam={() => {
-      //         dispatch(actions.deleteTeam())
-      //       }}
-      //       onUpdateTeamTask={(taskId, taskAttributes) => {
-      //         dispatch(actions.updateTeamTask(taskId, taskAttributes))
-      //       }}
-      //     />
-      //   );
+      case 'TeamView':
+        return (
+          <Components.TeamView
+            ui={ui}
+            navigator={nav}
+            team={this.state.currentTeam}
+            onNavToTask={(recipeId) => {
+              // console.log(recipeId)
+              nav.push({
+                name: 'TaskView',
+                recipeId: recipeId,
+              })
+            }}
+            onAddNewTask={(taskName) => {
+              // console.log(taskName);
+              dispatch(actions.addTeamTask({name: taskName}))
+            }}
+            onTaskCompletionNotification={(task) => {
+              // console.log("TASK: ", task);
+              var msg = `{{author}} completed ${task.name}`;
+              dispatch(actions.completeTeamTask(msg))
+            }}
+            onDeleteTeam={() => {
+              dispatch(actions.deleteTeam())
+            }}
+            onUpdateTeamTask={(taskId, taskAttributes) => {
+              dispatch(actions.updateTeamTask(taskId, taskAttributes))
+            }}
+          />
+        );
       case 'TaskView':
         var task = _.filter(this.state.currentTeam.tasks, {recipeId: route.recipeId})[0]
         return <Components.TaskView
@@ -447,15 +454,16 @@ class App extends React.Component {
         //     onNext: null,
         //   })
         //   break;
-        // case 'TeamView':
-        //   navBar = React.addons.cloneWithProps(this.navBar, {
-        //     navigator: nav,
-        //     route: route,
-        //     buttonsColor: '#ccc',
-        //     customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} />,
-        //     title: this.state.currentTeam.name,
-        //   })
-        //   break;
+        case 'TeamView':
+          console.log(this.state.currentTeam)
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            buttonsColor: '#ccc',
+            title: this.state.currentTeam.name,
+            customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} />,
+          })
+          break;
         // case 'PurveyorView':
         //   navBar = React.addons.cloneWithProps(this.navBar, {
         //     navigator: nav,

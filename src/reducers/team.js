@@ -21,7 +21,7 @@ const initialState = {
     errors: null,
     data: [],
     defaultCategories: {},
-    currentTeam: {},
+    currentTeam: null,
     cartTimeoutId: null,
     products: {},
     lastUpdated: null
@@ -133,7 +133,7 @@ function teams(state = initialState.teams, action) {
     }
 
     // let updateCurrentTeam = updateTeamState.currentTeam;
-    // if(action.sessionTeamId === action.team.id){
+    // if(action.sessionTeamId === action.teamId){
     //   updateCurrentTeam = updateTeamsDataState[updateTeamIdx];
     // }
 

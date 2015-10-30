@@ -124,17 +124,35 @@ export default function TeamActions(ddpClient, allActions) {
 
   function updateTeamTask(recipeId, taskAttributes){
     return (dispatch, getState) => {
-      const {session} = getState();
+      const {session, teams} = getState();
+      // console.log(teams.currentTeam)
+      const currentTeam = Object.assign({}, teams.currentTeam)
+      const taskIdx = _.findIndex(currentTeam.tasks, (item, idx) => {
+        // console.log('getIdx item: ', item)
+        if (item !== undefined) {
+          return item.recipeId == recipeId;
+        } else {
+          return false
+        }
+      })
+      currentTeam.tasks[taskIdx] = Object.assign({}, currentTeam.tasks[taskIdx], taskAttributes);
+      // console.log(currentTeam)
+      dispatch({
+        type: SET_CURRENT_TEAM,
+        team: currentTeam
+      })
+
       dispatch(() => {
         ddpClient.call('updateTeamTask', [session.teamId, recipeId, taskAttributes]);
       })
-      return dispatch({
-        type: UPDATE_TEAM,
-        teamId: session.teamId,
-        recipeId: recipeId,
-        task: taskAttributes,
-        sessionTeamId: session.teamId
-      })
+
+      // return dispatch({
+      //   type: UPDATE_TEAM,
+      //   teamId: session.teamId,
+      //   recipeId: recipeId,
+      //   task: taskAttributes,
+      //   sessionTeamId: session.teamId
+      // })
     }
   }
 
@@ -186,6 +204,13 @@ export default function TeamActions(ddpClient, allActions) {
       if( teamIds.indexOf(team.id) === -1 ){
         teamIds.push(team.id)
         dispatch(connectActions.subscribeDDP(session, teamIds));
+      }
+
+      if(team.id === session.teamId){
+        dispatch({
+          type: SET_CURRENT_TEAM,
+          team: Object.assign({}, teams.currentTeam, team)
+        })
       }
 
       return dispatch({
@@ -365,8 +390,8 @@ export default function TeamActions(ddpClient, allActions) {
 
   function setCurrentTeam(teamId){
     return (dispatch, getState) => {
-      const {session, teams} = getState()
-      var team = _.filter(teams.data, { id: session.teamId })[0]
+      const {teams} = getState()
+      var team = _.filter(teams.data, { id: teamId })[0]
       return dispatch({
         type: SET_CURRENT_TEAM,
         team: team

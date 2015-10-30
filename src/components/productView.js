@@ -80,9 +80,6 @@ class ProductView extends React.Component {
   }
 
   render() {
-    if(this.props.ui.keyboard.visible === true){
-      // navBar = <View/>
-    }
     return (
       <View style={styles.container}>
         <ScrollView
