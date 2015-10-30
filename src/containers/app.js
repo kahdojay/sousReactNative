@@ -623,6 +623,7 @@ class App extends React.Component {
           />
         }
         touchToClose={true}
+        // openMenuOffset={500} // changes menu width
         onChange={this.handleChange.bind(this)}
       >
         <View style={styles.container} >

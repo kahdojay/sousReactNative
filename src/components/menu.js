@@ -64,7 +64,7 @@ module.exports = class Menu extends Component {
               })
             }}
           >
-            <View>
+            <View style={{alignItems: 'center'}}>
               {avatar}
               <Text style={styles.name}>{session.firstName} {session.lastName}</Text>
             </View>
@@ -143,12 +143,11 @@ module.exports = class Menu extends Component {
 const styles = StyleSheet.create({
   menu: {
     marginTop: 20,
-    flex: 1,
-    width: window.width,
+    width: window.width * (2/3), // See react-native-side-menu source
     height: window.height,
   },
   avatarContainer: {
-    width: window.width * .7,
+    flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
@@ -174,7 +173,6 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   menuItem: {
-
   },
   menuTextContainer: {
     flexDirection: 'row',
@@ -231,7 +229,6 @@ const styles = StyleSheet.create({
   },
   teamNameContainer: {
     flex: 1,
-    width: window.width * .7,
     alignItems: 'center',
     backgroundColor: '#3e444f',
     justifyContent: 'center'
