@@ -33,11 +33,11 @@ module.exports = class Menu extends Component {
     }, 100)
   }
   render() {
-    const {teams, session} = this.props
-    if(teams.data.length === 0){
+    const {team, session} = this.props
+    if(!session.teamId || !team){
       return <View />;
     }
-    const team = _.filter(teams.data, { id: session.teamId })[0]
+
     let avatar = <Icon name='material|account-circle' size={80} color='white' style={styles.avatar} />
     if (session.imageUrl) {
       avatar = <Image

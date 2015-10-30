@@ -14,7 +14,7 @@ export default function ErrorActions(ddpClient) {
     }
   }
 
-  // function createError(errorText) {      
+  // function createError(errorText) {
   //   console.log('errorText', errorText)
   //   return (dispatch, getState) => {
   //     var newError = {

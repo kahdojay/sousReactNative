@@ -21,6 +21,8 @@ export const RECEIVE_SESSION = 'RECEIVE_SESSION';
 export const ERROR_SESSION = 'ERROR_SESSION';
 export const UPDATE_SESSION = 'UPDATE_SESSION';
 
+export const SET_CART_TIMEOUT_ID = 'SET_CART_TIMEOUT_ID';
+export const SET_CURRENT_TEAM = 'SET_CURRENT_TEAM';
 export const RESET_TEAMS = 'RESET_TEAMS';
 export const GET_TEAMS = 'GET_TEAMS';
 export const ADD_TEAM = 'ADD_TEAM';
@@ -30,7 +32,6 @@ export const REQUEST_TEAMS = 'REQUEST_TEAMS';
 export const RECEIVE_TEAMS = 'RECEIVE_TEAMS';
 export const RECEIVE_CATEGORIES = 'RECEIVE_CATEGORIES';
 export const RECEIVE_PRODUCTS = 'RECEIVE_PRODUCTS';
-export const UPDATE_TEAM_CART = 'UPDATE_TEAM_CART';
 export const ERROR_TEAMS = 'ERROR_TEAMS';
 export const COMPLETE_TEAM_TASK = 'COMPLETE_TEAM_TASK';
 export const CART = {
