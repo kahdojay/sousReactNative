@@ -609,6 +609,7 @@ class App extends React.Component {
             team={this.state.currentTeam}
             session={session}
             open={this.state.open}
+            touchToClose={true}
             toggleInviteModal={(value) => {
               dispatch(actions.updateSession({ inviteModalVisible: value }))
             }}
