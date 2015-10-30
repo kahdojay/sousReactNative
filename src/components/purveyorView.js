@@ -24,9 +24,6 @@ class PurveyorView extends React.Component {
   render() {
     let purveyor = this.props.purveyor
 
-    if(this.props.ui.keyboard.visible === true){
-      // navBar = <View/>
-    }
     return (
       <View style={styles.container}>
         <AddForm
@@ -37,7 +34,6 @@ class PurveyorView extends React.Component {
         />
         <ProductList
           navigator={this.props.navigator}
-          navBar={this.props.navBar}
           purveyor={purveyor}
           onUpdatePurveyorProduct={this.props.onUpdatePurveyorProduct}
         />

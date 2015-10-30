@@ -24,13 +24,14 @@ class ProductListItem extends React.Component {
       purveyors: null,
       added: false,
       quantity: 1,
-      selectedPurveyorId: this.props.product.purveyors[0],
+      purveyorId: '',
+      selectedPurveyorId: null,
       note: ''
     }
   }
 
-  componentWillMount() {
-    this.stateUpdateFromCart(this.props.cart.orders)
+  componentWillReceiveProps(nextProps) {
+    this.localStateUpdateFromCart(nextProps.cartItem, nextProps.cartPurveyorId)
   }
 
   componentDidMount() {
@@ -38,34 +39,37 @@ class ProductListItem extends React.Component {
       this.setState({
         product: this.props.product,
         purveyors: this.props.purveyors,
+        selectedPurveyorId: this.props.product.purveyors[0],
+      }, () => {
+        this.localStateUpdateFromCart(this.props.cartItem, this.props.cartPurveyorId)
       })
     }, this.props.loadDelay)
   }
 
-  stateUpdateFromCart(cartOrders) {
-    let cartItem = null
-    let cartPurveyorId = ''
-    this.props.product.purveyors.map((purveyorId) => {
-      if (cartOrders.hasOwnProperty(purveyorId) === true && cartOrders[purveyorId].products.hasOwnProperty(this.props.product.id)) {
-        cartPurveyorId = purveyorId
-        cartItem = cartOrders[purveyorId].products[this.props.product.id]
-      }
-    })
+  localStateUpdateFromCart(cartItem, cartPurveyorId) {
+    let newState = {}
     if (cartItem !== null) {
-      const newState = {
+      newState = {
         added: true,
         quantity: cartItem.quantity,
         purveyorId: cartPurveyorId,
         note: cartItem.note
       };
-      this.setState(newState);
+    } else {
+      newState = {
+        added: false,
+        quantity: 1,
+        purveyorId: cartPurveyorId,
+        note: ''
+      };
     }
+    this.setState(newState);
   }
 
-  cartUpdateFromState() {
+  cartUpdateFromLocalState() {
     const cartAttributes = {
       purveyorId: this.state.selectedPurveyorId,
-      productId: this.props.product.id,
+      productId: this.state.product.id,
       quantity: this.state.quantity,
       note: this.state.note
     };
@@ -78,22 +82,22 @@ class ProductListItem extends React.Component {
   increment() {
     this.setState({
       quantity: this.state.quantity + 1
-    }, this.cartUpdateFromState.bind(this))
+    }, this.cartUpdateFromLocalState.bind(this))
   }
 
   decrement() {
     if (this.state.quantity > 1 ) {
       this.setState({
         quantity: this.state.quantity - 1
-      }, this.cartUpdateFromState.bind(this))
+      }, this.cartUpdateFromLocalState.bind(this))
     }
   }
 
-  handleToggleProduct(id) {
+  handleToggleProduct(purveyorId) {
     this.setState({
       added: !this.state.added,
-      selectedPurveyorId: id
-    }, this.cartUpdateFromState.bind(this))
+      selectedPurveyorId: purveyorId
+    }, this.cartUpdateFromLocalState.bind(this))
   }
 
   render() {
@@ -116,8 +120,8 @@ class ProductListItem extends React.Component {
               availablePurveyors={product.purveyors}
               allPurveyors={purveyors}
               currentlySelectedPurveyorId={this.state.selectedPurveyorId}
-              onToggleCartProduct={(id) => {
-                this.handleToggleProduct(id)
+              onToggleCartProduct={(purveyorId) => {
+                this.handleToggleProduct(purveyorId)
               }}
             />
           </View>
@@ -132,19 +136,30 @@ class ProductListItem extends React.Component {
               {purveyorString}
             </Text>
           </View>
-          <Text style={styles.quantity}>
-            {this.state.quantity > 1 ? ('X' + this.state.quantity) : ''}
-          </Text>
-          <TouchableHighlight
-            underlayColor="transparent"
-            onPress={this.decrement.bind(this)}>
-            <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
-          </TouchableHighlight>
-          <TouchableHighlight
-            underlayColor='transparent'
-            onPress={this.increment.bind(this)}>
-            <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
-          </TouchableHighlight>
+          { this.state.added === true ?
+          [
+            <Text key={'quantity'} style={styles.quantity}>
+              {this.state.quantity > 1 ? ('X' + this.state.quantity) : ''}
+            </Text>,
+            <TouchableHighlight
+              key={'decrement'}
+              underlayColor="transparent"
+              onPress={this.decrement.bind(this)}
+              style={{flex: 1}}>
+              <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
+            </TouchableHighlight>,
+            <TouchableHighlight
+              key={'increment'}
+              underlayColor='transparent'
+              onPress={this.increment.bind(this)}
+              style={{flex: 1}}>
+              <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
+            </TouchableHighlight>
+          ] : [
+            <View key={'quantity'} style={{flex: 1}} />,
+            <View key={'decrement'} style={{flex: 1}} />,
+            <View key={'increment'} style={{flex:1}} />
+          ] }
         </View>
       )
     }
@@ -170,6 +185,7 @@ let styles = StyleSheet.create({
     height: 40,
   },
   quantity: {
+    flex: 1,
     fontSize: 16
   },
   row: {
@@ -182,6 +198,7 @@ let styles = StyleSheet.create({
   checkboxContainer: {
     flex: 1,
     alignItems: 'center',
+    width: 40
   },
   main: {
     flex: 4,

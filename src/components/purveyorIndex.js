@@ -33,8 +33,7 @@ class PurveyorIndex extends React.Component {
                 onPress={() => {
                   self.props.navigator.push({
                     name: 'PurveyorView',
-                    purveyorId: purveyor.id,
-                    navigationBar: self.props.navBar
+                    purveyorId: purveyor.id
                   })
                 }}
               />

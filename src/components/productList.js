@@ -71,9 +71,20 @@ class ProductList extends React.Component {
         } else {
           loadDelay = 300
         }
+
+        let cartItem = null
+        let cartPurveyorId = ''
+        product.purveyors.map((purveyorId) => {
+          if (cart.orders.hasOwnProperty(purveyorId) === true && cart.orders[purveyorId].products.hasOwnProperty(product.id)) {
+            cartPurveyorId = purveyorId
+            cartItem = cart.orders[purveyorId].products[product.id]
+          }
+        })
+
         return (
           <ProductListItem
-            cart={cart}
+            cartItem={cartItem}
+            cartPurveyorId={cartPurveyorId}
             loadDelay={loadDelay}
             product={product}
             key={idx}

@@ -31,7 +31,8 @@ export default function ConnectActions(ddpClient) {
           proceed = true
         }
       }
-
+      // console.log('ALL CHANNELS ', connect.channels);
+      // console.log('PROCEED to connect? '+proceed+' ', channel, argsList);
       if(proceed === true){
         dispatch(() => {
           ddpClient.unsubscribe(channel)
@@ -48,6 +49,7 @@ export default function ConnectActions(ddpClient) {
   }
 
   function subscribeDDP(session, teamIds){
+    // console.log('subscribeDDP called for session: ', session)
     return (dispatch, getState) => {
       const {connect} = getState()
       if(session.phoneNumber !== ""){
@@ -147,8 +149,8 @@ export default function ConnectActions(ddpClient) {
 
   function subscribeDDPConnected(){
     return (dispatch, getState) => {
-      const {connect, session, teams} = getState()
       ddpClient.on('connected', () => {
+        const {connect, session, teams} = getState()
         clearTimeout(connect.timeoutId)
         dispatch({
           type: CONNECTION_STATUS,

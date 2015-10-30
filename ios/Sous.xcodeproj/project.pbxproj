@@ -39,7 +39,6 @@
 		A5380FEC1BE05E2E00FADB96 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A5380FE91BE05E2E00FADB96 /* main.m */; };
 		A5380FEF1BE05E4400FADB96 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A5380FED1BE05E4400FADB96 /* LaunchScreen.xib */; };
 		A5380FF11BE05F0D00FADB96 /* SousTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A5380FF01BE05F0D00FADB96 /* SousTests.m */; };
-		A55AF2D01BE1BFB700F9847B /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = A55AF2CF1BE1BFB700F9847B /* main.jsbundle */; };
 		C430DDA41BCEC67100962F41 /* libRCTAddressBook.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C430DD971BCEC63F00962F41 /* libRCTAddressBook.a */; };
 /* End PBXBuildFile section */
 
@@ -196,7 +195,6 @@
 		A5380FE91BE05E2E00FADB96 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A5380FEE1BE05E4400FADB96 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		A5380FF01BE05F0D00FADB96 /* SousTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SousTests.m; sourceTree = "<group>"; };
-		A55AF2CF1BE1BFB700F9847B /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = SOURCE_ROOT; };
 		C430DD901BCEC63F00962F41 /* RCTAddressBook.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAddressBook.xcodeproj; path = "../node_modules/react-native-addressbook/RCTAddressBook.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -316,7 +314,6 @@
 		13B07FAE1A68108700A75B9A /* Sous */ = {
 			isa = PBXGroup;
 			children = (
-				A55AF2CF1BE1BFB700F9847B /* main.jsbundle */,
 				A5380FE41BE05DFA00FADB96 /* AppDelegate.h */,
 				A5380FE51BE05DFA00FADB96 /* AppDelegate.m */,
 				A5380FED1BE05E4400FADB96 /* LaunchScreen.xib */,
@@ -709,7 +706,6 @@
 				89EFDE5D1BCC097F001FBBEF /* OpenSans-Italic.ttf in Resources */,
 				89EFDE591BCC097F001FBBEF /* OpenSans-Bold.ttf in Resources */,
 				89EFDE5B1BCC097F001FBBEF /* OpenSans-ExtraBold.ttf in Resources */,
-				A55AF2D01BE1BFB700F9847B /* main.jsbundle in Resources */,
 				89EFDE5E1BCC097F001FBBEF /* OpenSans-Light.ttf in Resources */,
 				A5380FEB1BE05E2E00FADB96 /* Info.plist in Resources */,
 				89A667011BC2F38A00F45CFD /* OpenSans-Regular.ttf in Resources */,

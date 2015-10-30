@@ -58,9 +58,6 @@ export default function SessionActions(ddpClient, allActions){
       const newSession = Object.assign({}, session, sessionParams)
       // console.log('NEW SESSION PARAMS', newSession);
 
-      // resubscribe based on session data
-      dispatch(connectActions.subscribeDDP(newSession, undefined));
-
       if(sessionParams.hasOwnProperty('smsToken') === false){
         // dispatch(receiveSession({
         //   teamId: null
@@ -73,6 +70,8 @@ export default function SessionActions(ddpClient, allActions){
           ddpClient.call('loginWithSMS', [sessionParams.phoneNumber, sessionParams.smsToken])
         })
       }
+      // resubscribe based on session data
+      dispatch(connectActions.subscribeDDP(newSession, undefined));
       return dispatch(requestSession(sessionParams))
     }
   }

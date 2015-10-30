@@ -25,13 +25,18 @@ class TaskList extends React.Component {
     let {team} = this.props
     let tasksCompleted = _.filter(team.tasks, { completed: true, deleted: false })
       .map((task, idx) => {
+        /**
+         * NOTE: If you are editing this <TaskListItem...>
+         *     DONT FORGET ABOUT THE ONE BELOW IT...
+         */
         return (
           <TaskListItem
             task={task}
             key={idx}
             onTaskCompletionNotification={this.props.onTaskCompletionNotification}
-            navigator={this.props.navigator}
-            navBar={this.props.navBar}
+            onNavToTask={() => {
+              this.props.onNavToTask(task.recipeId)
+            }}
             onUpdateTask={(taskAttributes) => {
               this.props.onUpdateTeamTask(task.recipeId, taskAttributes);
             }}
@@ -45,8 +50,9 @@ class TaskList extends React.Component {
               task={task}
               key={idx}
               onTaskCompletionNotification={this.props.onTaskCompletionNotification}
-              navigator={this.props.navigator}
-              navBar={this.props.navBar}
+              onNavToTask={() => {
+                this.props.onNavToTask(task.recipeId)
+              }}
               onUpdateTask={(taskAttributes) => {
                 this.props.onUpdateTeamTask(task.recipeId, taskAttributes);
               }}

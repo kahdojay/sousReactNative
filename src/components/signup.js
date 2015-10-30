@@ -3,6 +3,7 @@ import _ from 'lodash'
 import React from 'react-native'
 
 const {
+  Dimensions,
   StyleSheet,
   View,
   Text,
@@ -13,6 +14,7 @@ const {
   ActivityIndicatorIOS,
 } = React;
 
+const runTimeDimensions = Dimensions.get('window')
 class Signup extends React.Component {
   constructor(props) {
     super(props)
@@ -27,10 +29,14 @@ class Signup extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      phoneNumber: nextProps.session.phoneNumber,
-      smsSent: nextProps.session.smsSent,
-    })
+    if (nextProps.session.phoneNumber) { // prevents user input from being cleared
+      this.setState({
+        phoneNumber: nextProps.session.phoneNumber,
+        smsSent: nextProps.session.smsSent,
+      })
+    } else {
+      this.setState({ smsSent: nextProps.session.smsSent, })
+    }
   }
 
   componentWillUnmount() {
@@ -112,30 +118,29 @@ class Signup extends React.Component {
 
   render() {
     const {session} = this.props;
-    const fetching =  <View style={styles.activityContainer}>
-                        <ActivityIndicatorIOS
-                          animating={true}
-                          color={'#808080'}
-                          style={styles.activity}
-                          size={'small'}
-                        />
-                      </View>
+    const fetching =  (
+      <View style={styles.activityContainer}>
+        <ActivityIndicatorIOS
+          animating={true}
+          color={'#808080'}
+          style={styles.activity}
+          size={'small'}
+        />
+      </View>
+    );
     const errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
     let signup = (
       <View style={styles.login}>
-
         <Text style={styles.headerText}>Use your phone number to log in to Sous.</Text>
         <Text style={styles.centered}>First, we will send you a <Text style={styles.boldText}>text message</Text> to verify your account.</Text>
         <View style={styles.inputContainer}>
-          <Icon name='material|phone' size={30} color='#aaa' style={styles.iconFace}/>
+          <Icon name='material|phone' size={30} color='#aaa' style={styles.iconPhone}/>
           <TextInput
             ref='phone'
             style={styles.input}
             value={this.state.phoneNumber}
             keyboardType='phone-pad'
-            placeholder='Phone Number'
             onChange={(e) => {
-
               this.setState({phoneNumber: e.nativeEvent.text, invalid: false})
             }}
           />
@@ -213,6 +218,9 @@ class Signup extends React.Component {
 };
 
 let styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
   navbar: {
     height: 40,
     backgroundColor: '#1825AD',
@@ -251,8 +259,8 @@ let styles = StyleSheet.create({
     alignSelf: 'center'
   },
   logoContainer: {
-    marginTop: 10,
-    marginBottom: 15,
+    marginTop: 25,
+    marginBottom: 25,
     borderRadius: 100/2,
     backgroundColor: '#1825AD',
     paddingLeft: 10,
@@ -267,6 +275,7 @@ let styles = StyleSheet.create({
     height: 70
   },
   login: {
+    flex: 1,
     paddingLeft: 5,
     paddingRight: 5,
     flexDirection: 'column',
@@ -275,40 +284,41 @@ let styles = StyleSheet.create({
   inputContainer: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
+    alignItems: 'center',
     borderBottomWidth: 1,
     borderColor: '#777',
-    marginLeft: 10,
+    backgroundColor: 'transparent',
   },
   errorPlaceholder: {
     height: 0
   },
   iconFace: {
     width: 70,
-    height: 70,
+    height: 50,
+  },
+  iconPhone: {
+    position: 'absolute',
+    top: 5,
+    left: 5,
+    width: 70,
+    height: 50,
   },
   iconLock: {
     width: 70,
     height: 70,
   },
-  underline: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e6e6e6',
-    marginLeft: 10
-  },
   input: {
-    flex: 1,
-    height: 50,
-    padding: 4,
-    marginRight: 5,
-    marginTop: 10,
+    height: 60,
+    width: runTimeDimensions.width * .5,
     fontSize: 20,
     borderRadius: 8,
     color: '#333',
     fontWeight: 'bold',
-    fontFamily: 'OpenSans'
+    fontFamily: 'OpenSans',
+    alignItems: 'center',
+    alignSelf: 'center',
+    textAlign: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',

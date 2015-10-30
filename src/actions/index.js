@@ -21,6 +21,7 @@ const ddpClient = new DDPClient({
   // socketConstructor: WebSocket // Another constructor to create new WebSockets
 });
 
+const errorActions = ErrorActions(ddpClient)
 const connectActions = ConnectActions(ddpClient)
 const uiActions = UIActions(ddpClient)
 const sessionActions = SessionActions(ddpClient, {
@@ -32,7 +33,6 @@ const teamActions = TeamActions(ddpClient, {
   'messageActions': messageActions
 })
 const purveyorActions = PurveyorActions(ddpClient)
-const errorActions = ErrorActions(ddpClient)
 
 function connectApp(){
   return (dispatch) => {

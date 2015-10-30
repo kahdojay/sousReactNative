@@ -31,14 +31,15 @@ const {
 class App extends React.Component {
   constructor(props, ctx) {
     super(props, ctx);
-    const gotData = this.teamDataExists(this.props.teams.data, this.props.session.teamId);
     this.state = {
       touchToClose: false,
       open: false,
       isAuthenticated: this.props.session.isAuthenticated,
       firstName: this.props.session.firstName,
       lastName: this.props.session.lastName,
-      gotData: gotData,
+      category: null,
+      categoryProducts: null,
+      currentTeam: this.props.teams.currentTeam,
     }
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
@@ -90,32 +91,22 @@ class App extends React.Component {
   // }
 
   componentWillReceiveProps(nextProps) {
-    const gotData = this.teamDataExists(nextProps.teams.data, nextProps.session.teamId);
     this.setState({
-      gotData: gotData,
       isAuthenticated: nextProps.session.isAuthenticated,
       firstName: nextProps.session.firstName,
       lastName: nextProps.session.lastName,
+      currentTeam: nextProps.teams.currentTeam
     })
   }
 
   componentDidUpdate() {
-    // console.log("Got data: ", this.state.gotData)
-    if(this.refs.appNavigator && this.state.gotData === true && this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
+    if(this.refs.appNavigator && this.state.currentTeam !== null && this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
       setTimeout(() => {
         this.refs.appNavigator.replacePrevious({
           name: 'Feed'
         });
       }, 100)
     }
-  }
-
-  teamDataExists(teamData, teamId) {
-    // console.log(teamData, teamId);
-    let gotData = false;
-    const teamIdx = _.findIndex(teamData, 'id', teamId);
-    // console.log('teamIdx ', teamIdx);
-    return teamIdx > -1 ? true : false
   }
 
   authenticatedRoute(route){
@@ -142,46 +133,45 @@ class App extends React.Component {
           />
         );
       case 'TeamIndex':
-        return <Components.TeamIndex
-                  navigator={nav}
-                  teams={teams}
-                  messages={messages}
-                  onUpdateTeam={(teamId) => {
-                    dispatch(actions.updateSession({
-                      teamId: teamId
-                    }));
-                    dispatch(actions.resetMessages());
-                    dispatch(actions.resetPurveyors());
-                  }}
-                  onAddTeam={(name) => {
-                    var teams = this.props.teams.data.map((team) => {
-                      if (! team.deleted)
-                        return team.name;
-                    });
-                    if (teams.indexOf(name) === -1) {
-                      dispatch(actions.addTeam(name))
-                    } else {
-                      // console.log("ERROR: team already exists");
-                    }
-                  }}
-                  onBack={() =>
-                    this._back.bind(this)
-                  }
-                />;
+        return (
+          <Components.TeamIndex
+            navigator={nav}
+            teams={teams}
+            messages={messages}
+            onUpdateTeam={(teamId) => {
+              // dispatch(actions.resetPurveyors());
+              dispatch(actions.resetMessages());
+              dispatch(actions.setCurrentTeam(teamId));
+              dispatch(actions.updateSession({ teamId: teamId }));
+            }}
+            onAddTeam={(name) => {
+              dispatch(actions.addTeam(name))
+            }}
+            onBack={() =>
+              this._back.bind(this)
+            }
+          />
+        );
       case 'TeamView':
-        var team = _.filter(teams.data, { id: session.teamId })[0]
         return (
           <Components.TeamView
             ui={ui}
             navigator={nav}
-            team={team}
+            team={this.state.currentTeam}
+            onNavToTask={(recipeId) => {
+              // console.log(recipeId)
+              nav.push({
+                name: 'TaskView',
+                recipeId: recipeId,
+              })
+            }}
             onAddNewTask={(taskName) => {
               // console.log(taskName);
               dispatch(actions.addTeamTask({name: taskName}))
             }}
             onTaskCompletionNotification={(task) => {
               // console.log("TASK: ", task);
-              var msg = `{{author}} completed task ${task.name}`;
+              var msg = `{{author}} completed ${task.name}`;
               dispatch(actions.completeTeamTask(msg))
             }}
             onDeleteTeam={() => {
@@ -193,8 +183,7 @@ class App extends React.Component {
           />
         );
       case 'TaskView':
-        var team = _.filter(teams.data, { id: session.teamId })[0]
-        var task = _.filter(team.tasks, {recipeId: route.recipeId})[0]
+        var task = _.filter(this.state.currentTeam.tasks, {recipeId: route.recipeId})[0]
         return <Components.TaskView
                   ui={ui}
                   task={task}
@@ -215,94 +204,103 @@ class App extends React.Component {
             }}
           />
         );
-      case 'PurveyorIndex':
-        return (
-          <Components.PurveyorIndex
-            navigator={nav}
-            purveyors={purveyors}
-            session={session}
-            onAddPurveyor={(name) => {
-              const purveyors = this.props.purveyors.data.map((purveyor) => {
-                if (! purveyor.deleted)
-                  return purveyor.name;
-              });
-              if (purveyors.indexOf(name) === -1) {
-                dispatch(actions.addPurveyor(name))
-              } else {
-                // console.log("ERROR: purveyor already exists");
-              }
-            }}
-            onBack={() => {
-              this._back()
-            }}
-          />
-        );
-      case 'PurveyorView':
-        var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
-        return (
-          <Components.PurveyorView
-            ui={ui}
-            navigator={nav}
-            purveyor={purveyor}
-            onAddNewProduct={(purveyorId, productName) => {
-              const products = purveyor.products.map((product) => {
-                if (! product.deleted)
-                  return product.name;
-              });
-              if (products.indexOf(productName) === -1) {
-                dispatch(actions.addPurveyorProduct(purveyorId, {name: productName}))
-              } else {
-                // console.log("ERROR: Product already exists");
-              }
-            }}
-            onDeletePurveyor={(purveyorId) => {
-              dispatch(actions.deletePurveyor(purveyorId))
-            }}
-            onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
-              dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
-            }}
-          />
-        );
-      case 'ProductView':
-        let purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
-        let product = _.filter(purveyor.products, { productId: route.productId })[0]
-        return (
-          <Components.ProductView
-            ui={ui}
-            product={product}
-            navigator={nav}
-            purveyorId={route.purveyorId}
-            onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
-              dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
-            }}
-          />
-        );
+      // case 'PurveyorIndex':
+      //   return (
+      //     <Components.PurveyorIndex
+      //       navigator={nav}
+      //       purveyors={purveyors}
+      //       session={session}
+      //       onAddPurveyor={(name) => {
+      //         const purveyors = this.props.purveyors.data.map((purveyor) => {
+      //           if (! purveyor.deleted)
+      //             return purveyor.name;
+      //         });
+      //         if (purveyors.indexOf(name) === -1) {
+      //           dispatch(actions.addPurveyor(name))
+      //         } else {
+      //           // console.log("ERROR: purveyor already exists");
+      //         }
+      //       }}
+      //       onBack={() => {
+      //         this._back()
+      //       }}
+      //     />
+      //   );
+      // case 'PurveyorView':
+      //   var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
+      //   return (
+      //     <Components.PurveyorView
+      //       ui={ui}
+      //       navigator={nav}
+      //       purveyor={purveyor}
+      //       onAddNewProduct={(purveyorId, productName) => {
+      //         const products = purveyor.products.map((product) => {
+      //           if (! product.deleted)
+      //             return product.name;
+      //         });
+      //         if (products.indexOf(productName) === -1) {
+      //           dispatch(actions.addPurveyorProduct(purveyorId, {name: productName}))
+      //         } else {
+      //           // console.log("ERROR: Product already exists");
+      //         }
+      //       }}
+      //       onDeletePurveyor={(purveyorId) => {
+      //         dispatch(actions.deletePurveyor(purveyorId))
+      //       }}
+      //       onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
+      //         dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
+      //       }}
+      //     />
+      //   );
+      // case 'ProductView':
+      //   let purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
+      //   let product = _.filter(purveyor.products, { productId: route.productId })[0]
+      //   return (
+      //     <Components.ProductView
+      //       ui={ui}
+      //       product={product}
+      //       navigator={nav}
+      //       purveyorId={route.purveyorId}
+      //       onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
+      //         dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
+      //       }}
+      //     />
+      //   );
       case 'CategoryIndex':
-        // var team = _.filter(teams.data, { id: session.teamId })[0]
         return (
           <Components.CategoryIndex
-            navigator={nav}
             products={teams.products}
             categories={teams.defaultCategories}
+            onNavigateToCategory={(category, categoryProducts) => {
+              this.setState({
+                category: category,
+                categoryProducts: categoryProducts
+              }, () => {
+                nav.push({
+                  name: 'CategoryView',
+                  categoryId: category.id
+                })
+              })
+            }}
           />
         );
       case 'CategoryView':
-        var team = _.filter(teams.data, { id: session.teamId })[0]
-        // var category = _.filter(team.categories, { id: route.categoryId })[0]
+        // var category = _.filter(this.state.currentTeam.categories, { id: route.categoryId })[0]
         // var category = _.filter(teams.defaultCategories, { id: route.categoryId })[0]
         // console.log(route);
         return (
           <Components.CategoryView
             ui={ui}
             navigator={nav}
-            category={route.category}
-            cart={team.cart}
-            products={route.categoryProducts}
+            category={this.state.category}
+            cart={this.state.currentTeam.cart}
+            products={this.state.categoryProducts}
             purveyors={purveyors}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(cartAction, cartAttributes))
-              }, 5)()
+              }, 25)()
+
             }}
           />
         );
@@ -323,17 +321,17 @@ class App extends React.Component {
             }}
           />
         );
-      case 'ProductCreate':
-        return (
-          <Components.ProductCreate
-            appState={this.props}
-            purveyors={this.props.purveyors}
-            navigator={nav}
-            onAddProduct={(productAttributes) => {
-              // console.log('PRODUCT ADDED', productAttributes);
-            }}
-            />
-        )
+      // case 'ProductCreate':
+      //   return (
+      //     <Components.ProductCreate
+      //       appState={this.props}
+      //       purveyors={this.props.purveyors}
+      //       navigator={nav}
+      //       onAddProduct={(productAttributes) => {
+      //         // console.log('PRODUCT ADDED', productAttributes);
+      //       }}
+      //       />
+      //   )
       case 'UserInfo':
         return (
           <Components.UserInfo
@@ -351,22 +349,19 @@ class App extends React.Component {
           />
         );
       case 'CartView':
-        let teamIndex;
-        teams.data.forEach((team, idx) => {
-          if (team.id == session.teamId)
-            teamIndex = idx
-        });
         return (
           <Components.CartView
             navigator={nav}
-            team={this.props.teams.data[teamIndex]}
+            team={this.state.currentTeam}
             purveyors={this.props.purveyors.data}
             appState={this.props}
             onDeleteProduct={(purveyorId, productId) => {
-              dispatch(actions.updateProductInCart(
-                'REMOVE_FROM_CART',
-                {purveyorId: purveyorId, productId: productId}
-              ))
+              _.debounce(() => {
+                dispatch(actions.updateProductInCart(
+                  'REMOVE_FROM_CART',
+                  {purveyorId: purveyorId, productId: productId}
+                ))
+              }, 25)()
             }}
             onSubmitOrder={() => {
               dispatch(actions.sendCart());
@@ -395,30 +390,29 @@ class App extends React.Component {
     }
   }
 
-  showActionSheetPurveyorView(navigator, route) {
-    const { dispatch } = this.props;
-    let buttons = [
-      'Delete Purveyor',
-      // 'Rename Purveyor',
-      'Cancel'
-    ]
-    let deleteAction = 0;
-    let cancelAction = 2;
-    ActionSheetIOS.showActionSheetWithOptions({
-      options: buttons,
-      cancelButtonIndex: cancelAction,
-      destructiveButtonIndex: deleteAction,
-    },
-    (buttonIndex) => {
-      if (deleteAction === buttonIndex) {
-        dispatch(actions.deletePurveyor(route.purveyorId));
-        navigator.pop();
-      }
-    });
-  }
+  // showActionSheetPurveyorView(navigator, route) {
+  //   const { dispatch } = this.props;
+  //   let buttons = [
+  //     'Delete Purveyor',
+  //     // 'Rename Purveyor',
+  //     'Cancel'
+  //   ]
+  //   let deleteAction = 0;
+  //   let cancelAction = 2;
+  //   ActionSheetIOS.showActionSheetWithOptions({
+  //     options: buttons,
+  //     cancelButtonIndex: cancelAction,
+  //     destructiveButtonIndex: deleteAction,
+  //   },
+  //   (buttonIndex) => {
+  //     if (deleteAction === buttonIndex) {
+  //       dispatch(actions.deletePurveyor(route.purveyorId));
+  //       navigator.pop();
+  //     }
+  //   });
+  // }
 
   getNavBar(route, nav) {
-    // console.log("PROPS", this.props);
     const { dispatch, ui, teams, session } = this.props;
 
     let navBar = <View />;
@@ -442,47 +436,44 @@ class App extends React.Component {
           })
           break;
         case 'Feed':
-          //TODO prevent FOUC
-          var team = _.filter(teams.data, { id: session.teamId })[0]
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
             hidePrev: false,
-            title: team ? team.name : 'Sous',
+            title: this.state.currentTeam ? this.state.currentTeam.name : 'Sous',
             titleColor: 'black',
             customPrev: <Components.FeedViewLeftButton />,
             customNext: <Components.FeedViewRightButton />,
           })
           break;
-        case 'PurveyorIndex':
-          navBar = React.addons.cloneWithProps(this.navBar, {
-            navigator: nav,
-            route: route,
-            customPrev: <Components.FeedViewLeftButton />,
-            onNext: null,
-          })
-          break;
+        // case 'PurveyorIndex':
+        //   navBar = React.addons.cloneWithProps(this.navBar, {
+        //     navigator: nav,
+        //     route: route,
+        //     customPrev: <Components.FeedViewLeftButton />,
+        //     onNext: null,
+        //   })
+        //   break;
         case 'TeamView':
-          var team = _.filter(teams.data, { id: session.teamId })[0]
+          // console.log(this.state.currentTeam)
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
             buttonsColor: '#ccc',
+            title: this.state.currentTeam.name,
             customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} />,
-            title: team.name,
           })
           break;
-        case 'PurveyorView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
-            navigator: nav,
-            route: route,
-            hidePrev: false,
-            onNext: (navigator, route) => this.showActionSheetPurveyorView(navigator, route),
-            nextTitle: '...',
-          })
-          break;
+        // case 'PurveyorView':
+        //   navBar = React.addons.cloneWithProps(this.navBar, {
+        //     navigator: nav,
+        //     route: route,
+        //     hidePrev: false,
+        //     onNext: (navigator, route) => this.showActionSheetPurveyorView(navigator, route),
+        //     nextTitle: '...',
+        //   })
+        //   break;
         case 'CategoryIndex':
-          var team = _.filter(teams.data, { id: session.teamId })[0]
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
@@ -490,29 +481,26 @@ class App extends React.Component {
             buttonsColor: '#ccc',
             customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} />,
             title: 'Order Guide',
-            customNext: <Components.CategoryViewRightButton cart={team.cart} />
+            customNext: <Components.CategoryViewRightButton cart={this.state.currentTeam.cart} />
           })
           break;
         case 'CategoryView':
-          var team = _.filter(teams.data, { id: session.teamId })[0]
-          // var category = _.filter(team.categories, { id: route.categoryId })[0];
-          var category = _.filter(teams.defaultCategories, { id: route.categoryId })[0];
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: <Components.NavBackButton navName='CategoryIndex' iconFont={'fontawesome|chevron-left'} />,
-            title: category.name,
-            customNext: <Components.CategoryViewRightButton cart={team.cart} />
+            title: this.state.category.name,
+            customNext: <Components.CategoryViewRightButton cart={this.state.currentTeam.cart} />
           })
           break;
-        case 'ProductView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
-            navigator: nav,
-            route: route,
-            onNext: null,
-            hidePrev: false,
-          })
-          break;
+        // case 'ProductView':
+        //   navBar = React.addons.cloneWithProps(this.navBar, {
+        //     navigator: nav,
+        //     route: route,
+        //     onNext: null,
+        //     hidePrev: false,
+        //   })
+        //   break;
         case 'Profile':
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
@@ -538,16 +526,16 @@ class App extends React.Component {
             title: 'Cart',
           })
           break;
-        case 'ProductCreate':
-          navBar = React.addons.cloneWithProps(this.navBar, {
-            navigator: nav,
-            route: route,
-            hideNext: true,
-            customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} pop={true} />,
-            title: 'Add New Product',
-            // customNext: <ProductCreateRightCheckbox disabled={true} />,
-          })
-          break;
+        // case 'ProductCreate':
+        //   navBar = React.addons.cloneWithProps(this.navBar, {
+        //     navigator: nav,
+        //     route: route,
+        //     hideNext: true,
+        //     customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} pop={true} />,
+        //     title: 'Add New Product',
+        //     // customNext: <ProductCreateRightCheckbox disabled={true} />,
+        //   })
+        //   break;
         case 'UserInfo':
         case 'Loading':
           navBar = <View />;
@@ -566,7 +554,6 @@ class App extends React.Component {
   }
 
   renderScene(route, nav) {
-    // console.log("PROPS", this.props);
     const { dispatch, ui, teams, session, errors, connect } = this.props;
 
     // redirect to initial view
@@ -576,7 +563,7 @@ class App extends React.Component {
           route.name = 'UserInfo';
         } else {
 
-          if(this.state.gotData === true){
+          if(this.state.currentTeam !== null){
             // else send to Feed
             route.name = 'Feed';
           } else {
@@ -600,7 +587,6 @@ class App extends React.Component {
           }, 5)()
         }}
         errors={errors.data}
-        connectionState={connect}
         navigator={nav}
       />
     )
@@ -608,6 +594,7 @@ class App extends React.Component {
     let inviteModal = (
       <InviteModal
         navigator={nav}
+        currentTeam={this.state.currentTeam}
         modalVisible={session.inviteModalVisible}
         toggleInviteModal={(value) => {
           dispatch(actions.updateSession({ inviteModalVisible: value }))
@@ -617,7 +604,7 @@ class App extends React.Component {
     )
 
     let CustomSideView = SideMenu
-    if(this.state.isAuthenticated !== true || this.state.gotData === false){
+    if(this.state.isAuthenticated !== true || this.state.currentTeam === null){
       CustomSideView = View
     }
     // console.log('app.js', this.props)
@@ -627,7 +614,7 @@ class App extends React.Component {
         menu={
           <Components.Menu
             nav={nav}
-            teams={teams}
+            team={this.state.currentTeam}
             session={session}
             open={this.state.open}
             toggleInviteModal={(value) => {
@@ -635,7 +622,7 @@ class App extends React.Component {
             }}
           />
         }
-        touchToClose={this.state.touchToClose}
+        touchToClose={true}
         onChange={this.handleChange.bind(this)}
       >
         <View style={styles.container} >
