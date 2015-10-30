@@ -609,13 +609,12 @@ class App extends React.Component {
             team={this.state.currentTeam}
             session={session}
             open={this.state.open}
-            touchToClose={true}
             toggleInviteModal={(value) => {
               dispatch(actions.updateSession({ inviteModalVisible: value }))
             }}
           />
         }
-        touchToClose={this.state.touchToClose}
+        touchToClose={true}
         onChange={this.handleChange.bind(this)}
       >
         <View style={styles.container} >
