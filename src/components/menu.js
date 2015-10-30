@@ -44,10 +44,8 @@ module.exports = class Menu extends Component {
                   source={{ uri: session.imageUrl }}
                 />;
     }
-    const totalTasks = team.tasks.length
-    const completeTasksCount = _.filter(team.tasks, function(task) {
-      return (task.deleted == false && task.completed === true)
-    }).length
+    const totalTasks = _.filter(team.tasks, { deleted: false } ).length
+    const completeTasksCount = _.filter(team.tasks, { deleted: false, completed: true }).length
     const progress = Math.round((completeTasksCount / totalTasks)*100) || 0;
 
     let showInviteButton = true;
