@@ -125,6 +125,7 @@ export default function TeamActions(ddpClient, allActions) {
 
   function updateTeamTask(recipeId, taskAttributes){
     return (dispatch, getState) => {
+      // TODO: explore moving this logic into the set timeout in order to send localState at the time timeOut expires instead of an outdated localState (at the time timeOut is setup)
       const {session, teams} = getState();
       // console.log(teams.currentTeam)
       const currentTeam = Object.assign({}, teams.currentTeam)
@@ -145,6 +146,9 @@ export default function TeamActions(ddpClient, allActions) {
 
       clearTimeout(teams.taskTimeoutId);
       const taskTimeoutId = setTimeout(() => {
+        // 
+
+
         dispatch(() => {
           // ddpClient.call('updateTeamTask', [session.teamId, recipeId, taskAttributes]);
           ddpClient.call('updateTeam', [session.teamId, {
