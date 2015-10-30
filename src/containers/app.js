@@ -292,9 +292,7 @@ class App extends React.Component {
               }, () => {
                 nav.push({
                   name: 'CategoryView',
-                  categoryId: category.id,
-                  // category: category,
-                  // categoryProducts: categoryProducts
+                  categoryId: category.id
                 })
               })
             }}
