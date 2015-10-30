@@ -36,7 +36,7 @@ module.exports = class Menu extends Component {
     if(!session.teamId || !team){
       return <View />;
     }
-    const team = _.filter(teams.data, { id: session.teamId })[0]
+
     let avatar = <Icon name='fontawesome|user' size={40} color='white' style={styles.avatar} />
     if (session.imageUrl) {
       avatar = <Image

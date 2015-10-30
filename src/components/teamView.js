@@ -24,10 +24,6 @@ class TeamView extends React.Component {
 
   render() {
     let team = this.props.team
-    if(this.props.ui.keyboard.visible === true){
-      // navBar = <View/>
-    }
-
     return (
       <View style={styles.container}>
         <AddForm
@@ -35,9 +31,8 @@ class TeamView extends React.Component {
           onSubmit={this.props.onAddNewTask}
         />
         <TaskList
-          navigator={this.props.navigator}
-          navBar={this.props.navBar}
           team={team}
+          onNavToTask={this.props.onNavToTask}
           onTaskCompletionNotification={this.props.onTaskCompletionNotification}
           onUpdateTeamTask={this.props.onUpdateTeamTask}
         />

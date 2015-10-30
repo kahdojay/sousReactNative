@@ -31,7 +31,7 @@ class ProductListItem extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.stateUpdateFromCart(nextProps.cartItem, nextProps.cartPurveyorId)
+    this.localStateUpdateFromCart(nextProps.cartItem, nextProps.cartPurveyorId)
   }
 
   componentDidMount() {
@@ -41,12 +41,12 @@ class ProductListItem extends React.Component {
         purveyors: this.props.purveyors,
         selectedPurveyorId: this.props.product.purveyors[0],
       }, () => {
-        this.stateUpdateFromCart(this.props.cartItem, this.props.cartPurveyorId)
+        this.localStateUpdateFromCart(this.props.cartItem, this.props.cartPurveyorId)
       })
     }, this.props.loadDelay)
   }
 
-  stateUpdateFromCart(cartItem, cartPurveyorId) {
+  localStateUpdateFromCart(cartItem, cartPurveyorId) {
     let newState = {}
     if (cartItem !== null) {
       newState = {
@@ -66,7 +66,7 @@ class ProductListItem extends React.Component {
     this.setState(newState);
   }
 
-  cartUpdateFromState() {
+  cartUpdateFromLocalState() {
     const cartAttributes = {
       purveyorId: this.state.selectedPurveyorId,
       productId: this.state.product.id,
@@ -82,14 +82,14 @@ class ProductListItem extends React.Component {
   increment() {
     this.setState({
       quantity: this.state.quantity + 1
-    }, this.cartUpdateFromState.bind(this))
+    }, this.cartUpdateFromLocalState.bind(this))
   }
 
   decrement() {
     if (this.state.quantity > 1 ) {
       this.setState({
         quantity: this.state.quantity - 1
-      }, this.cartUpdateFromState.bind(this))
+      }, this.cartUpdateFromLocalState.bind(this))
     }
   }
 
@@ -97,7 +97,7 @@ class ProductListItem extends React.Component {
     this.setState({
       added: !this.state.added,
       selectedPurveyorId: purveyorId
-    }, this.cartUpdateFromState.bind(this))
+    }, this.cartUpdateFromLocalState.bind(this))
   }
 
   render() {

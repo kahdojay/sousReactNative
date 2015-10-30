@@ -22,6 +22,7 @@ export const ERROR_SESSION = 'ERROR_SESSION';
 export const UPDATE_SESSION = 'UPDATE_SESSION';
 
 export const SET_CART_TIMEOUT_ID = 'SET_CART_TIMEOUT_ID';
+export const SET_TASK_TIMEOUT_ID = 'SET_TASK_TIMEOUT_ID';
 export const SET_CURRENT_TEAM = 'SET_CURRENT_TEAM';
 export const RESET_TEAMS = 'RESET_TEAMS';
 export const GET_TEAMS = 'GET_TEAMS';
