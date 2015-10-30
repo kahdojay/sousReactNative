@@ -116,14 +116,19 @@ var styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   button: {
-    borderRadius: 5,
     flex: 1,
     height: 44,
+    width: 190,
     justifyContent: 'center',
+    alignItems: 'center',
     overflow: 'hidden',
   },
   modalButton: {
+    paddingLeft: 10,
+    paddingRight: 10,
     marginTop: 10,
+    borderTopColor: 'black',
+    borderTopWidth: 1,
   },
   icon: {
     width: 40,
