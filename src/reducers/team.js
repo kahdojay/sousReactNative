@@ -1,5 +1,6 @@
 import { getIdx, updateByIdx, updateDataState } from '../utilities/reducer'
 import {
+  SET_CURRENT_TEAM,
   RESET_TEAMS,
   GET_TEAMS,
   REQUEST_TEAMS,
@@ -19,6 +20,7 @@ const initialState = {
     errors: null,
     data: [],
     defaultCategories: {},
+    currentTeam: {},
     products: {},
     lastUpdated: null
   }
@@ -47,6 +49,7 @@ function teams(state = initialState.teams, action) {
       data: currentTeamsDataState,
       lastUpdated: (new Date()).toISOString()
     });
+
   case RECEIVE_CATEGORIES:
     var defaultCategoriesState = Object.assign({}, state);
     // var currentDefaultCategoriesState = updateDataState(defaultCategoriesState.defaultCategories, action.category)
@@ -116,6 +119,11 @@ function teams(state = initialState.teams, action) {
     return Object.assign({}, state, {
       data: currentTeamsDataState,
       lastUpdated: (new Date()).toISOString()
+    });
+
+  case SET_CURRENT_TEAM:
+    return Object.assign({}, state, {
+      currentTeam: action.team
     });
 
   // everything else

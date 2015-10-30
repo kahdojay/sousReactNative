@@ -4,6 +4,7 @@ import Shortid from 'shortid'
 import MessageActions from './message'
 import { getIdx, updateByIdx, updateDataState } from '../utilities/reducer'
 import {
+  SET_CURRENT_TEAM,
   RESET_TEAMS,
   GET_TEAMS,
   REQUEST_TEAMS,
@@ -36,31 +37,42 @@ export default function TeamActions(ddpClient, allActions) {
   function addTeam(name) {
     return (dispatch, getState) => {
       const {session, teams} = getState();
-      var newTeamAttributes = {
-        _id: Shortid.generate(),
-        name: name,
-        tasks: [],
-        categories: teams.defaultCategories,
-        users: [session.userId],
-        cart: {
-          date: null,
-          total: 0.0,
-          orders: {}
-        },
-        orders: [],
-        deleted: false
-      }
-      ddpClient.call('createTeam', [newTeamAttributes]);
 
-      // subscribe to newly-added team
-      let teamIds = _.pluck(teams.data, 'id');
-      teamIds.push(newTeamAttributes._id)
-      dispatch(connectActions.subscribeDDP(session, teamIds))
-
-      return dispatch({
-        type: ADD_TEAM,
-        team: newTeamAttributes
+      const teamNames = teams.data.map((team) => {
+        if (! team.deleted)
+          return team.name;
       });
+      if (teamNames.indexOf(name) !== -1) {
+        return dispatch(errorTeams([{
+          message: 'Team already exists',
+        }]));
+      } else {
+        var newTeamAttributes = {
+          _id: Shortid.generate(),
+          name: name,
+          tasks: [],
+          categories: teams.defaultCategories,
+          users: [session.userId],
+          cart: {
+            date: null,
+            total: 0.0,
+            orders: {}
+          },
+          orders: [],
+          deleted: false
+        }
+        ddpClient.call('createTeam', [newTeamAttributes]);
+
+        // subscribe to newly-added team
+        let teamIds = _.pluck(teams.data, 'id');
+        teamIds.push(newTeamAttributes._id)
+        dispatch(connectActions.subscribeDDP(session, teamIds))
+
+        return dispatch({
+          type: ADD_TEAM,
+          team: newTeamAttributes
+        });
+      }
     }
   }
 
@@ -92,6 +104,7 @@ export default function TeamActions(ddpClient, allActions) {
           unit: 0 // for future use
         }
         ddpClient.call('addTeamTask', [session.userId, session.teamId, newTaskAttributes]);
+        dispatch(setCurrentTeam(session.teamId));
         return dispatch({
           type: UPDATE_TEAM,
           teamId: session.teamId,
@@ -113,6 +126,7 @@ export default function TeamActions(ddpClient, allActions) {
       dispatch(() => {
         ddpClient.call('updateTeamTask', [session.teamId, recipeId, taskAttributes]);
       })
+      dispatch(setCurrentTeam(session.teamId));
       return dispatch({
         type: UPDATE_TEAM,
         teamId: session.teamId,
@@ -128,6 +142,7 @@ export default function TeamActions(ddpClient, allActions) {
       dispatch(() => {
         ddpClient.call('updateTeam', [session.teamId, teamAttributes]);
       })
+      dispatch(setCurrentTeam(session.teamId));
       return dispatch({
         type: UPDATE_TEAM,
         teamId: session.teamId,
@@ -170,6 +185,11 @@ export default function TeamActions(ddpClient, allActions) {
         teamIds.push(team.id)
         dispatch(connectActions.subscribeDDP(session, teamIds));
       }
+
+      if(team.id === session.teamId){
+        dispatch(setCurrentTeam(session.teamId));
+      }
+
       return dispatch({
         type: RECEIVE_TEAMS,
         team: team
@@ -329,7 +349,19 @@ export default function TeamActions(ddpClient, allActions) {
     }
   }
 
+  function setCurrentTeam(teamId){
+    return (dispatch, getState) => {
+      const {session, teams} = getState()
+      var team = _.filter(teams.data, { id: session.teamId })[0]
+      return dispatch({
+        type: SET_CURRENT_TEAM,
+        team: team
+      })
+    }
+  }
+
   return {
+    SET_CURRENT_TEAM,
     RESET_TEAMS,
     GET_TEAMS,
     REQUEST_TEAMS,
@@ -353,6 +385,7 @@ export default function TeamActions(ddpClient, allActions) {
     updateProductInCart,
     sendCart,
     resetTeams,
+    setCurrentTeam,
     completeTeamTask,
   }
 }

@@ -21,6 +21,7 @@ export const RECEIVE_SESSION = 'RECEIVE_SESSION';
 export const ERROR_SESSION = 'ERROR_SESSION';
 export const UPDATE_SESSION = 'UPDATE_SESSION';
 
+export const SET_CURRENT_TEAM = 'SET_CURRENT_TEAM';
 export const RESET_TEAMS = 'RESET_TEAMS';
 export const GET_TEAMS = 'GET_TEAMS';
 export const ADD_TEAM = 'ADD_TEAM';
