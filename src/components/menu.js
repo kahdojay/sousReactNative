@@ -2,7 +2,6 @@ import _ from 'lodash'
 import { Icon } from 'react-native-icons';
 import React from 'react-native';
 import Dimensions from 'Dimensions';
-import Colors from '../utilities/colors';
 
 const {
   StyleSheet,
@@ -37,8 +36,8 @@ module.exports = class Menu extends Component {
     if(!session.teamId || !team){
       return <View />;
     }
-
-    let avatar = <Icon name='material|account-circle' size={80} color='white' style={styles.avatar} />
+    const team = _.filter(teams.data, { id: session.teamId })[0]
+    let avatar = <Icon name='fontawesome|user' size={40} color='white' style={styles.avatar} />
     if (session.imageUrl) {
       avatar = <Image
                   style={styles.avatar}
@@ -74,14 +73,6 @@ module.exports = class Menu extends Component {
           </TouchableHighlight>
         </View>
         <View style={styles.separator} />
-        <View style={[styles.teamNameContainer]}>
-          <TouchableHighlight
-            underlayColor='#3e444f'
-            onPress={this.props.toggleInviteModal}
-          >
-            <Text style={styles.teamName}>{team ? team.name : ''}</Text>
-          </TouchableHighlight>
-        </View>
         <View style={styles.menuBody}>
           <ScrollView>
             <TouchableHighlight
@@ -93,18 +84,24 @@ module.exports = class Menu extends Component {
                 })
               }}
             >
-              <View style={styles.progressContainer}>
-                <Text style={styles.menuItemText}>Prep List</Text>
-                <View style={styles.progressRow}>
-                  <ProgressViewIOS
-                    style={styles.progressBar}
-                    progress={progress/100}
-                    trackTintColor='white'
-                  />
-                  <Text style={styles.progressText}> {progress}%</Text>
+              <View>
+                <View style={styles.menuTextContainer}>
+                  <Icon name='fontawesome|table' size={20} color='white' style={styles.menuIcon}/>
+                  <Text style={styles.menuItemText}>Prep List</Text>
+                </View>
+                <View style={styles.progressContainer}>
+                  <View style={styles.progressRow}>
+                    <ProgressViewIOS
+                      style={styles.progressBar}
+                      progress={progress/100}
+                      trackTintColor='white'
+                    />
+                    <Text style={styles.progressText}> {progress}%</Text>
+                  </View>
                 </View>
               </View>
             </TouchableHighlight>
+
             <TouchableHighlight
               style={styles.menuItemButton}
               underlayColor='#3e444f'
@@ -114,20 +111,31 @@ module.exports = class Menu extends Component {
                 })
               }}
             >
-              <Text style={styles.menuItemText}>Order Guide</Text>
+              <View style={styles.menuTextContainer}>
+                <Icon name='fontawesome|clipboard' size={20} color='white' style={styles.menuIcon}/>
+                <Text style={styles.menuItemText}>Order Guide</Text>
+              </View>
             </TouchableHighlight>
+
             {(showInviteButton === false) ? <View/> : (
-              <TouchableHighlight
-                underlayColor='#3e444f'
-                onPress={() => this.props.toggleInviteModal(true)}
-                style={styles.menuItemButton}
-              >
+            <TouchableHighlight
+              underlayColor='#3e444f'
+              onPress={() => this.props.toggleInviteModal(true)}
+              style={styles.menuItemButton}
+            >
+              <View style={styles.menuTextContainer}>
+                <Icon name='fontawesome|user-plus' size={20} color='white' style={styles.menuIcon}/>
                 <Text style={styles.menuItemText}>
-                  {team ? `Invite to ${team.name}` : ''}
+                  {team ? `Invite to Team` : ''}
                 </Text>
-              </TouchableHighlight>
+              </View>
+            </TouchableHighlight>
             )}
           </ScrollView>
+        </View>
+        <View style={styles.separator} />
+        <View style={styles.teamNameContainer}>
+          <Text style={styles.teamName}>{team ? team.name : ''}</Text>
         </View>
       </View>
     );
@@ -140,26 +148,25 @@ const styles = StyleSheet.create({
     flex: 1,
     width: window.width,
     height: window.height,
-    backgroundColor: '#5f697a',
   },
   avatarContainer: {
-    flex: 1,
     width: window.width * .7,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#3e444f',
-    paddingTop: 15,
-    paddingBottom: 15,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   avatar: {
-    width: 75,
-    height: 75,
+    width: 55,
+    height: 55,
     borderRadius: 34,
   },
   name: {
+    flex: 1,
+    fontSize: 18,
     fontFamily: 'OpenSans',
-    fontWeight: 'bold',
     textAlign: 'center',
     color: 'white',
   },
@@ -168,49 +175,37 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'white',
   },
-  item: {
-    fontSize: 14,
-    fontWeight: '300',
-    paddingTop: 5,
+  menuItem: {
+
+  },
+  menuTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
   separator: {
     height: 1,
     borderColor: '#eee',
     borderWidth: 1,
   },
-  teamNameContainer: {
-    width: window.width * .7,
-    alignItems: 'center',
-  },
-  teamName: {
-    fontSize: 25,
-    color: 'white',
-    fontFamily: 'OpenSans',
-  },
-  saveButton: {
-    backgroundColor: 'white',
-    padding: 10,
-    width: 150,
-    borderRadius: 7,
-  },
-  saveText:{
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: Colors.blue,
-    textAlign: 'center',
-  },
   menuBody: {
-    flex: 4,
+    flex: 5,
+    width: window.width * .7,
+    backgroundColor: '#5f697a',
     paddingRight: 10,
     paddingLeft: 10,
   },
-  menuItems: {
-  },
   menuItemButton: {
     flex: 1,
-    marginBottom: 15,
+    marginBottom: 25,
+  },
+  menuIcon: {
+    width: 20,
+    height: 20,
   },
   menuItemText: {
+    marginLeft: 10,
+    flex: 2,
     fontFamily: 'OpenSans',
     fontSize: 18,
     color: 'white',
@@ -235,5 +230,16 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     fontSize: 15,
     color: 'white',
-  }
+  },
+  teamNameContainer: {
+    flex: 1,
+    width: window.width * .7,
+    alignItems: 'center',
+    backgroundColor: '#3e444f',
+    justifyContent: 'center'
+  },
+  teamName: {
+    color: 'white',
+    fontFamily: 'OpenSans',
+  },
 });

@@ -614,7 +614,7 @@ class App extends React.Component {
             }}
           />
         }
-        touchToClose={this.state.touchToClose}
+        touchToClose={true}
         onChange={this.handleChange.bind(this)}
       >
         <View style={styles.container} >

@@ -2,6 +2,7 @@ import React from 'react-native'
 import _ from 'lodash'
 import { Icon } from 'react-native-icons'
 import KeyboardSpacer from 'react-native-keyboard-spacer';
+import Colors from '../utilities/colors';
 
 const {
   Modal,
@@ -71,27 +72,27 @@ class InviteModal extends React.Component {
               />
             <View style={styles.row}>
               <TouchableHighlight
-                onPress={() => this.handleSubmit()}
-                style={styles.option}
-                underlayColor='grey'
-              >
-                <Text style={styles.buttonText}>Send</Text>
-              </TouchableHighlight>
-              <TouchableHighlight
-                onPress={() => this.navigateToInviteView()}
-                style={styles.option}
-                underlayColor='grey'
-              >
-                <Text style={styles.buttonText}>Find in Contacts</Text>
-              </TouchableHighlight>
-              <TouchableHighlight
                 onPress={() => this.handleDismiss()}
                 style={styles.option}
                 underlayColor='grey'
               >
                 <Text style={styles.buttonText}>Dismiss</Text>
               </TouchableHighlight>
+              <TouchableHighlight
+                onPress={() => this.handleSubmit()}
+                style={styles.option}
+                underlayColor='grey'
+              >
+                <Text style={styles.buttonText}>Send</Text>
+              </TouchableHighlight>
             </View>
+            <TouchableHighlight
+              onPress={() => this.navigateToInviteView()}
+              style={styles.option}
+              underlayColor='grey'
+            >
+              <Text style={styles.buttonText}>Search Contacts</Text>
+            </TouchableHighlight>
           </View>
         </View>
         <KeyboardSpacer />
@@ -126,7 +127,7 @@ var styles = StyleSheet.create({
     marginTop: 20,
     paddingBottom: 10,
     fontFamily: 'OpenSans',
-    color: '#555',
+    color: Colors.blue,
   },
   text: {
     textAlign: 'center',
@@ -161,11 +162,8 @@ var styles = StyleSheet.create({
     paddingRight: 10,
     height: 35,
     justifyContent: 'center',
+    color: Colors.blue,
   },
-  optionText: {
-    fontSize: 16,
-    fontWeight: '500',
-  }
 });
 
 export default InviteModal
