@@ -25,13 +25,9 @@ class ProductListItem extends React.Component {
       added: false,
       quantity: 1,
       purveyorId: '',
-      selectedPurveyorId: this.props.product.purveyors[0],
+      selectedPurveyorId: null,
       note: ''
     }
-  }
-
-  componentWillMount() {
-    this.stateUpdateFromCart(this.props.cartItem, this.props.cartPurveyorId)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -43,6 +39,9 @@ class ProductListItem extends React.Component {
       this.setState({
         product: this.props.product,
         purveyors: this.props.purveyors,
+        selectedPurveyorId: this.props.product.purveyors[0],
+      }, () => {
+        this.stateUpdateFromCart(this.props.cartItem, this.props.cartPurveyorId)
       })
     }, this.props.loadDelay)
   }
@@ -70,7 +69,7 @@ class ProductListItem extends React.Component {
   cartUpdateFromState() {
     const cartAttributes = {
       purveyorId: this.state.selectedPurveyorId,
-      productId: this.props.product.id,
+      productId: this.state.product.id,
       quantity: this.state.quantity,
       note: this.state.note
     };
@@ -94,10 +93,10 @@ class ProductListItem extends React.Component {
     }
   }
 
-  handleToggleProduct(id) {
+  handleToggleProduct(purveyorId) {
     this.setState({
       added: !this.state.added,
-      selectedPurveyorId: id
+      selectedPurveyorId: purveyorId
     }, this.cartUpdateFromState.bind(this))
   }
 
@@ -121,8 +120,8 @@ class ProductListItem extends React.Component {
               availablePurveyors={product.purveyors}
               allPurveyors={purveyors}
               currentlySelectedPurveyorId={this.state.selectedPurveyorId}
-              onToggleCartProduct={(id) => {
-                this.handleToggleProduct(id)
+              onToggleCartProduct={(purveyorId) => {
+                this.handleToggleProduct(purveyorId)
               }}
             />
           </View>
