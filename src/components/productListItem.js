@@ -136,24 +136,30 @@ class ProductListItem extends React.Component {
               {purveyorString}
             </Text>
           </View>
-
           { this.state.added === true ?
-          [<Text style={styles.quantity}>
-            {this.state.quantity > 1 ? ('X' + this.state.quantity) : ''}
-          </Text>,
-          <TouchableHighlight
-            underlayColor="transparent"
-            onPress={this.decrement.bind(this)}
-            style={{flex: 1}}>
-            <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
-          </TouchableHighlight>,
-          <TouchableHighlight
-            underlayColor='transparent'
-            onPress={this.increment.bind(this)}
-            style={{flex: 1}}>
-            <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
-          </TouchableHighlight>]
-          : [<View style={{flex: 1}} />, <View style={{flex: 1}} />, <View style={{flex:1}} />] }
+          [
+            <Text key={'quantity'} style={styles.quantity}>
+              {this.state.quantity > 1 ? ('X' + this.state.quantity) : ''}
+            </Text>,
+            <TouchableHighlight
+              key={'decrement'}
+              underlayColor="transparent"
+              onPress={this.decrement.bind(this)}
+              style={{flex: 1}}>
+              <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
+            </TouchableHighlight>,
+            <TouchableHighlight
+              key={'increment'}
+              underlayColor='transparent'
+              onPress={this.increment.bind(this)}
+              style={{flex: 1}}>
+              <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
+            </TouchableHighlight>
+          ] : [
+            <View key={'quantity'} style={{flex: 1}} />,
+            <View key={'decrement'} style={{flex: 1}} />,
+            <View key={'increment'} style={{flex:1}} />
+          ] }
         </View>
       )
     }

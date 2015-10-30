@@ -292,7 +292,8 @@ class App extends React.Component {
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(cartAction, cartAttributes))
-              }, 100)()
+              }, 25)()
+
             }}
           />
         );
@@ -353,7 +354,7 @@ class App extends React.Component {
                   'REMOVE_FROM_CART',
                   {purveyorId: purveyorId, productId: productId}
                 ))
-              }, 100)()
+              }, 25)()
             }}
             onSubmitOrder={() => {
               dispatch(actions.sendCart());
