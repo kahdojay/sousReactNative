@@ -133,7 +133,7 @@ export default function ConnectActions(ddpClient) {
               // console.log("MAIN DDP WITH FIELDS MSG", log);
               dispatch(sessionActions.receiveSession(data))
               break;
-            case 'error':
+            case 'errors':
               dispatch(errorActions.receiveErrors(data))
               break;
             default:

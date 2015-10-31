@@ -39,6 +39,7 @@ export default function ErrorActions(ddpClient) {
   }
 
   function deleteErrors(errorIdList) {
+    ddpClient.call('deleteErrors', [errorIdList])
     return {
       type: DELETE_ERRORS,
       errorIdList: errorIdList

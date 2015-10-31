@@ -45,7 +45,7 @@ class ErrorModal extends React.Component {
     }
   }
 
-  handleDismiss(errorId) {
+  handleDismiss() {
     const errorIdList = _.pluck(this.state.errors, 'id')
     this.props.onDeleteError(errorIdList)
     this.setState({
@@ -55,7 +55,6 @@ class ErrorModal extends React.Component {
   }
 
   render() {
-    // console.log('error modal')
     let errorsArray = <View />
     if (this.state.errors.length > 0) {
       // console.log('errors: ', this.state.errors)
