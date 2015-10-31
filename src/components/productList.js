@@ -21,12 +21,12 @@ class ProductList extends React.Component {
 
   componentWillMount() {
     this.setState({
-      products: this.props.products.slice(0,7)
+      products: this.props.products.slice(0,10)
     })
   }
 
   componentDidMount() {
-    if(this.props.products.length > 7){
+    if(this.props.products.length > 10){
       setTimeout(() => {
         this.setState({
           products: this.props.products.slice(0,21)
@@ -56,19 +56,19 @@ class ProductList extends React.Component {
       productList = _.map(this.state.products, (product, idx) => {
         let loadDelay = 50
         // for everything off screen
-        // - index greater than 7
+        // - index greater than 10
         // - multiplied by fibonacci sequence
-        if(idx > 91){
+        if(idx > 130){
           loadDelay = 900
-        } else if(idx > 56){
+        } else if(idx > 80){
           loadDelay = 800
-        } else if(idx > 35){
+        } else if(idx > 50){
           loadDelay = 700
-        } else if(idx > 21){
+        } else if(idx > 30){
           loadDelay = 600
-        } else if(idx > 14) {
+        } else if(idx > 20) {
           loadDelay = 500
-        } else {
+        } else if(idx > 10) {
           loadDelay = 300
         }
 

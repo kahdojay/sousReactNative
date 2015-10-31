@@ -28,14 +28,20 @@ class ProductListItem extends React.Component {
       selectedPurveyorId: null,
       note: ''
     }
+    this.timeoutId = null
+    this.loadTimeoutId = null
   }
 
   componentWillReceiveProps(nextProps) {
-    this.localStateUpdateFromCart(nextProps.cartItem, nextProps.cartPurveyorId)
+    // delay update from receiving props
+    clearTimeout(this.timeoutId);
+    this.timeoutId = setTimeout(() => {
+      this.localStateUpdateFromCart(nextProps.cartItem, nextProps.cartPurveyorId)
+    }, 1000);
   }
 
   componentDidMount() {
-    setTimeout(() => {
+    this.loadTimeoutId = setTimeout(() => {
       this.setState({
         product: this.props.product,
         purveyors: this.props.purveyors,
@@ -44,6 +50,11 @@ class ProductListItem extends React.Component {
         this.localStateUpdateFromCart(this.props.cartItem, this.props.cartPurveyorId)
       })
     }, this.props.loadDelay)
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timeoutId)
+    clearTimeout(this.loadTimeoutId)
   }
 
   localStateUpdateFromCart(cartItem, cartPurveyorId) {
