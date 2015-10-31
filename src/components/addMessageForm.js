@@ -81,7 +81,6 @@ let styles = StyleSheet.create({
     color: 'black',
     fontFamily: 'OpenSans',
     borderRadius: 5,
-    fontWeight: 'bold',
     paddingLeft: 10,
     borderWidth: 1,
     borderColor: '#ddd'
