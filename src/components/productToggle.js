@@ -67,19 +67,18 @@ class ProductToggle extends React.Component {
       </ModalToggle>
     );
 
-    const purveyorsArray = this.props.availablePurveyors
-      .map((purveyorId, idx) => {
-        const purveyorName = _.find(this.props.allPurveyors.data, { id: purveyorId }).name;
-        return (
-          <ModalToggle
-            key={idx}
-            style={styles.modalButton}
-            onPress={this._handlePurveyorSelect.bind(this, purveyorId)}
-          >
-            <Text>{purveyorName}</Text>
-          </ModalToggle>
-        )
-      })
+    const purveyorsArray = this.props.availablePurveyors.map((purveyorId, idx) => {
+      const purveyorName = _.find(this.props.allPurveyors.data, { id: purveyorId }).name;
+      return (
+        <ModalToggle
+          key={idx}
+          style={styles.modalButton}
+          onPress={this._handlePurveyorSelect.bind(this, purveyorId)}
+        >
+          <Text>{purveyorName}</Text>
+        </ModalToggle>
+      )
+    })
     return (
       <View>
         <Modal

@@ -11,72 +11,103 @@ const {
   TouchableHighlight,
 } = React;
 
+class TaskFilteredList extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      showList: true,
+      enableShowHideToggle: this.props.enableShowHideToggle,
+      tasks: this.props.tasks
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      tasks: nextProps.tasks
+    })
+  }
+
+  handlePress() {
+    this.setState({showList: !this.state.showList})
+  }
+
+  render() {
+    const taskList = this.state.tasks.map((task, idx) => {
+      return (
+        <TaskListItem
+          task={task}
+          key={task.recipeId}
+          onTaskCompletionNotification={this.props.onTaskCompletionNotification}
+          onNavToTask={() => {
+            this.props.onNavToTask(task.recipeId)
+          }}
+          onUpdateTeamTask={(taskAttributes) => {
+            this.props.onUpdateTeamTask(task.recipeId, taskAttributes);
+          }}
+        />
+      )
+    })
+    return (
+      <View>
+        {this.state.enableShowHideToggle === true ? (
+          <TouchableHighlight
+            underlayColor='transparent'
+            onPress={this.handlePress.bind(this)}
+          >
+            <View style={styles.container}>
+              <View style={styles.roundedCorners}>
+                <Text style={styles.text}>{this.state.tasks.length} {this.props.toggleLabel}</Text>
+              </View>
+            </View>
+          </TouchableHighlight>
+        ) : <View /> }
+        <View>
+          {this.state.showList === true ? taskList : <View />}
+        </View>
+      </View>
+    )
+  }
+}
+
 class TaskList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      showCompleted: true
+      showCompleted: true,
+      incompleteTasks: _.filter(this.props.tasks, { completed: false, deleted: false }),
+      completeTasks: _.filter(this.props.tasks, { completed: true, deleted: false }),
     }
   }
-  handlePress() {
-    this.setState({showCompleted: !this.state.showCompleted})
+
+  componentWillReceiveProps(nextProps) {
+    // console.log(nextProps.tasks)
+    this.setState({
+      incompleteTasks: _.filter(nextProps.tasks, { completed: false, deleted: false }),
+      completeTasks: _.filter(nextProps.tasks, { completed: true, deleted: false }),
+    })
   }
+
   render() {
-    let {team} = this.props
-    let tasksCompleted = _.filter(team.tasks, { completed: true, deleted: false })
-      .map((task, idx) => {
-        /**
-         * NOTE: If you are editing this <TaskListItem...>
-         *     DONT FORGET ABOUT THE ONE BELOW IT...
-         */
-        return (
-          <TaskListItem
-            task={task}
-            key={idx}
-            onTaskCompletionNotification={this.props.onTaskCompletionNotification}
-            onNavToTask={() => {
-              this.props.onNavToTask(task.recipeId)
-            }}
-            onUpdateTask={(taskAttributes) => {
-              this.props.onUpdateTeamTask(task.recipeId, taskAttributes);
-            }}
-          />
-        )
-      })
-    let tasksIncomplete = _.filter(team.tasks, { completed: false, deleted: false })
-      .map((task, idx) => {
-          return (
-            <TaskListItem
-              task={task}
-              key={idx}
-              onTaskCompletionNotification={this.props.onTaskCompletionNotification}
-              onNavToTask={() => {
-                this.props.onNavToTask(task.recipeId)
-              }}
-              onUpdateTask={(taskAttributes) => {
-                this.props.onUpdateTeamTask(task.recipeId, taskAttributes);
-              }}
-            />
-          )
-        })
     return (
       <ScrollView
         keyboardShouldPersistTaps={false}
         contentInset={{bottom:49}}
         automaticallyAdjustContentInsets={false}
-        >
-        {tasksIncomplete}
-        <TouchableHighlight
-          underlayColor='transparent'
-          onPress={this.handlePress.bind(this)}
-        >
-          <View style={styles.container}>
-            <View style={styles.roundedCorners}>
-              <Text style={styles.text}>{tasksCompleted.length} Completed</Text>
-            </View>
-          </View>
-        </TouchableHighlight>
-        {this.state.showCompleted ? tasksCompleted : <View />}
+      >
+        <TaskFilteredList
+          tasks={this.state.incompleteTasks}
+          onTaskCompletionNotification={this.props.onTaskCompletionNotification}
+          onNavToTask={this.props.onNavToTask}
+          onUpdateTeamTask={this.props.onUpdateTeamTask}
+        />
+        <TaskFilteredList
+          tasks={this.state.completeTasks}
+          enableShowHideToggle={true}
+          toggleLabel={'Completed'}
+          onTaskCompletionNotification={this.props.onTaskCompletionNotification}
+          onNavToTask={this.props.onNavToTask}
+          onUpdateTeamTask={this.props.onUpdateTeamTask}
+        />
       </ScrollView>
     );
   }

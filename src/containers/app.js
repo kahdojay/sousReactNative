@@ -162,7 +162,7 @@ class App extends React.Component {
         return (
           <Components.TeamView
             ui={ui}
-            team={this.state.currentTeam}
+            teamTasks={this.state.currentTeam.tasks}
             onNavToTask={(recipeId) => {
               // console.log(recipeId)
               nav.push({
