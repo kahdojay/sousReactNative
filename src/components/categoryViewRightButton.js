@@ -15,12 +15,13 @@ class CategoryViewRightButton extends React.Component {
   constructor(props) {
     super(props)
   }
+
   handlePress(e) {
-    this.props.navigator.push({ name: 'CartView', });
+    this.props.onNavToCart()
   }
 
   render() {
-    const { navigator, route, cart } = this.props;
+    const { cart } = this.props;
     const badgeValue = (Object.keys(cart.orders).length > 0 ?
                           _.sum(cart.orders, function (cartPurveyor) {
                             return Object.keys(cartPurveyor.products).length
@@ -30,7 +31,7 @@ class CategoryViewRightButton extends React.Component {
     return (
       <TouchableHighlight
         underlayColor='white'
-        onPress={this.handlePress.bind(this)} >
+        onPress={::this.handlePress} >
         <Icon name='fontawesome|shopping-cart' size={30} color={Colors.navbarIconColor} style={styles.cart}>
           {badgeValue !== '' ? <Icon name='fontawesome|circle' size={24} color={Colors.red} style={styles.badge}><Text style={styles.badgeText}>{badgeValue}</Text></Icon> : <View/> }
         </Icon>

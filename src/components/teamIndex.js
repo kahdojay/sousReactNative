@@ -48,10 +48,6 @@ class TeamIndex extends React.Component {
                     messages={this.props.messages}
                     onPress={() => {
                       this.props.onUpdateTeam(team.id);
-                      this.props.navigator.push({
-                        name: 'Feed',
-                        teamId: team.id,
-                      })
                     }}
                   />
                 );

@@ -35,6 +35,7 @@ class InviteModal extends React.Component {
   handleDismiss() {
     this.props.toggleInviteModal(false)
   }
+  
   handleSubmit() {
     if (this.state.text === null || this.state.text === '') {
       this.setState({text: ''});
@@ -45,11 +46,9 @@ class InviteModal extends React.Component {
       this.props.toggleInviteModal(false)
     }
   }
+
   navigateToInviteView() {
     this.props.toggleInviteModal(false)
-    this.props.navigator.push({
-      name: 'InviteView',
-    })
   }
 
   render() {
@@ -137,8 +136,8 @@ var styles = StyleSheet.create({
     marginBottom: 10
   },
   input: {
-    height: 40, 
-    borderColor: 'gray', 
+    height: 40,
+    borderColor: 'gray',
     borderWidth: 1,
     marginTop: 5,
     marginBottom: 5,
@@ -150,7 +149,7 @@ var styles = StyleSheet.create({
     marginTop: 10,
     alignItems: 'center'
   },
-  option: { 
+  option: {
     marginLeft: 5,
     marginRight: 5,
     flex: 1,

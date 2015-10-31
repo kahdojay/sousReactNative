@@ -116,18 +116,18 @@ module.exports = class Menu extends Component {
             </TouchableHighlight>
 
             {(showInviteButton === false) ? <View/> : (
-            <TouchableHighlight
-              underlayColor='#3e444f'
-              onPress={() => this.props.toggleInviteModal(true)}
-              style={styles.menuItemButton}
-            >
-              <View style={styles.menuTextContainer}>
-                <Icon name='fontawesome|user-plus' size={20} color='white' style={styles.menuIcon}/>
-                <Text style={styles.menuItemText}>
-                  {team ? `Invite to Team` : ''}
-                </Text>
-              </View>
-            </TouchableHighlight>
+              <TouchableHighlight
+                underlayColor='#3e444f'
+                onPress={() => this.props.toggleInviteModal(true)}
+                style={styles.menuItemButton}
+              >
+                <View style={styles.menuTextContainer}>
+                  <Icon name='fontawesome|user-plus' size={20} color='white' style={styles.menuIcon}/>
+                  <Text style={styles.menuItemText}>
+                    {team ? `Invite to Team` : ''}
+                  </Text>
+                </View>
+              </TouchableHighlight>
             )}
           </ScrollView>
         </View>
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#3e444f',
     paddingTop: 10,
-    paddingBottom: 10,
+    paddingBottom: 20,
   },
   avatar: {
     width: 55,
@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   },
   menuBody: {
     flex: 5,
-    width: window.width * .7,
+    width: window.width * (2/3),
     backgroundColor: '#5f697a',
     paddingRight: 10,
     paddingLeft: 10,
@@ -231,7 +231,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#3e444f',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingBottom: 20
   },
   teamName: {
     color: 'white',

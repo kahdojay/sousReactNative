@@ -60,11 +60,11 @@ class TaskView extends React.Component {
     let newTask = this.props.task
     newTask.deleted = true
     this.props.onUpdateTeamTask(task.recipeId, newTask)
-    this.props.navigator.pop()
+    this.onDeleteTaskPop()
   }
   componentWillReceiveProps(nextProps){
     if(nextProps.task.deleted === true){
-      this.props.navigator.pop()
+      this.props.onDeleteTaskPop()
     } else {
       this.setState({
         textInputDescription: nextProps.task.description,
@@ -72,7 +72,7 @@ class TaskView extends React.Component {
         saved: true,
       });
     }
-    if(nextProps.ui.keyboard.visible === true){
+    if(nextProps.keyboardVisible === true){
       this.scrollToBottom();
     } else {
       this.scrollToTop();

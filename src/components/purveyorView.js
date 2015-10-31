@@ -33,7 +33,6 @@ class PurveyorView extends React.Component {
           }}
         />
         <ProductList
-          navigator={this.props.navigator}
           purveyor={purveyor}
           onUpdatePurveyorProduct={this.props.onUpdatePurveyorProduct}
         />
