@@ -52,7 +52,11 @@ export default function TeamActions(ddpClient, allActions) {
         var newTeamAttributes = {
           _id: Shortid.generate(),
           name: name,
-          tasks: [],
+          tasks: {
+            added: [],
+            completed: [],
+            deleted: []
+          },
           categories: teams.defaultCategories,
           users: [session.userId],
           cart: {
@@ -63,7 +67,9 @@ export default function TeamActions(ddpClient, allActions) {
           orders: [],
           deleted: false
         }
-        ddpClient.call('createTeam', [newTeamAttributes]);
+        dispatch(() => {
+          ddpClient.call('createTeam', [newTeamAttributes]);
+        })
 
         // subscribe to newly-added team
         let teamIds = _.pluck(teams.data, 'id');
@@ -91,8 +97,7 @@ export default function TeamActions(ddpClient, allActions) {
   function addTeamTask(taskAttributes){
     return (dispatch, getState) => {
       const {session, teams} = getState();
-      var team = _.filter(teams.data, { id: session.teamId })[0]
-      let tasks = team.tasks.map((task) => {
+      let tasks = teams.currentTeam.tasks.map((task) => {
         if (! task.deleted)
           return task.name;
       });
@@ -106,7 +111,9 @@ export default function TeamActions(ddpClient, allActions) {
           quantity: 1,
           unit: 0 // for future use
         }
-        ddpClient.call('addTeamTask', [session.userId, session.teamId, newTaskAttributes]);
+        dispatch(() => {
+          ddpClient.call('addTeamTask', [session.userId, session.teamId, newTaskAttributes]);
+        })
         return dispatch({
           type: UPDATE_TEAM,
           teamId: session.teamId,
@@ -138,7 +145,7 @@ export default function TeamActions(ddpClient, allActions) {
         }
       })
       currentTeam.tasks[taskIdx] = Object.assign({}, currentTeam.tasks[taskIdx], taskAttributes);
-      // console.log(currentTeam)
+      // console.log(currentTeam.tasks)
       dispatch({
         type: SET_CURRENT_TEAM,
         team: currentTeam
@@ -146,16 +153,13 @@ export default function TeamActions(ddpClient, allActions) {
 
       clearTimeout(teams.taskTimeoutId);
       const taskTimeoutId = setTimeout(() => {
-        // 
-
-
         dispatch(() => {
           // ddpClient.call('updateTeamTask', [session.teamId, recipeId, taskAttributes]);
           ddpClient.call('updateTeam', [session.teamId, {
             tasks: currentTeam.tasks
           }]);
         })
-        
+
         // dispatch({
         //   type: UPDATE_TEAM,
         //   teamId: session.teamId,
