@@ -698,13 +698,15 @@ class App extends React.Component {
       <InviteModal
         currentTeam={this.state.currentTeam}
         modalVisible={session.inviteModalVisible}
-        toggleInviteModal={(value) => {
+        toggleInviteModal={(value, doNav) => {
           _.debounce(() => {
             dispatch(actions.updateSession({ inviteModalVisible: value }))
           }, 25)()
-          nav.push({
-            name: 'InviteView',
-          })
+          if(doNav === true){
+            nav.push({
+              name: 'InviteView',
+            })
+          }
         }}
         onSMSInvite={(contactList) => {
           _.debounce(() => {

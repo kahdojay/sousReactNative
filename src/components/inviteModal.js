@@ -33,9 +33,10 @@ class InviteModal extends React.Component {
   }
 
   handleDismiss() {
-    this.props.toggleInviteModal(false)
+    const doNav = false
+    this.props.toggleInviteModal(false, doNav)
   }
-  
+
   handleSubmit() {
     if (this.state.text === null || this.state.text === '') {
       this.setState({text: ''});
@@ -47,8 +48,9 @@ class InviteModal extends React.Component {
     }
   }
 
-  navigateToInviteView() {
-    this.props.toggleInviteModal(false)
+ doNavigateToInviteView() {
+    const doNav = true
+    this.props.toggleInviteModal(false, doNav)
   }
 
   render() {
