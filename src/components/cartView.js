@@ -42,14 +42,11 @@ class CartView extends React.Component {
             const cartPurveyorsString = _.pluck(cartPurveyors, 'name').join(', ');
             if(this.state.numberOfOrders > 0){
               this.props.onSubmitOrder('Order sent to ' + cartPurveyorsString);
-              this.props.navigator.replacePreviousAndPop({
-                name: 'Feed',
-              });
             }
           }}
         ]
       )
-    } 
+    }
     // TODO: handle empty cart error
   }
 

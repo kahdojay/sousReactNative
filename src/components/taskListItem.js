@@ -17,6 +17,7 @@ class TaskListItem extends React.Component {
     this.state = {
       task: null
     }
+    this.timeoutId = null
   }
 
   componentWillMount() {
@@ -26,9 +27,16 @@ class TaskListItem extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      task: nextProps.task
-    })
+    clearTimeout(this.timeoutId)
+    this.timeoutId = setTimeout(() => {
+      this.setState({
+        task: nextProps.task
+      })
+    }, 1000)
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timeoutId)
   }
 
   increment() {

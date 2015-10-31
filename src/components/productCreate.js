@@ -65,26 +65,26 @@ class ProductCreate extends React.Component {
     let teams = this.props.appState.teams.data;
     let categories = _.find(teams, (team) => {return team.id == currentTeamId}).categories;
     let units = ['bag', 'bunch', 'cs', 'dozen', 'ea', 'g', 'kg', 'lb', 'oz', 'pack', 'tub']
-    let button = <Overlay isVisible={true} style={{flex: 1, alignItems: 'stretch', width: 400}}>
-                  <TouchableOpacity underlayColor='#eee'
-                    style={{position: 'absolute', right: 5, top: 30}}
-                    onPress={()=> {
-                      if (this.state.ready) {
-
-                        let productAttributes = {
-                          name: this.state.name,
-                          purveyorId: this.state.purveyor.id,
-                          amount: `${this.state.amount} ${this.state.unit}` ,
-                          categoryId: this.state.category.id,
-                        }
-                        this.props.onAddProduct(productAttributes);
-                        this.props.navigator.pop();
-                      }
-                    }}>
-                    <Icon name='fontawesome|check-square'
-                      size={40} color={this.state.ready ? 'green' : '#ccc'} style={{height: 40, width: 40, }} />
-                  </TouchableOpacity>
-                </Overlay>
+    let button = (
+      <Overlay isVisible={true} style={{flex: 1, alignItems: 'stretch', width: 400}}>
+        <TouchableOpacity underlayColor='#eee'
+          style={{position: 'absolute', right: 5, top: 30}}
+          onPress={()=> {
+            if (this.state.ready) {
+              let productAttributes = {
+                name: this.state.name,
+                purveyorId: this.state.purveyor.id,
+                amount: `${this.state.amount} ${this.state.unit}` ,
+                categoryId: this.state.category.id,
+              }
+              this.props.onAddProduct(productAttributes);  
+            }
+          }}>
+          <Icon name='fontawesome|check-square'
+            size={40} color={this.state.ready ? 'green' : '#ccc'} style={{height: 40, width: 40, }} />
+        </TouchableOpacity>
+      </Overlay>
+    )
     return (
       <ScrollView style={styles.scrollView}>
         {this.state.loaded ? button : <View></View>}

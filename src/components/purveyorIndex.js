@@ -30,12 +30,7 @@ class PurveyorIndex extends React.Component {
               <PurveyorIndexRow
                 key={idx}
                 purveyor={purveyor}
-                onPress={() => {
-                  self.props.navigator.push({
-                    name: 'PurveyorView',
-                    purveyorId: purveyor.id
-                  })
-                }}
+                onPress={this.props.navToPurveyor}
               />
             )
           }
@@ -72,7 +67,6 @@ const styles = StyleSheet.create({
 
 PurveyorIndex.propTypes = {
   onAddPurveyor: React.PropTypes.func,
-  navigator: React.PropTypes.object.isRequired,
   purveyors: React.PropTypes.object,
 };
 
