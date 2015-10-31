@@ -570,6 +570,9 @@ class App extends React.Component {
             title: this.state.category.name,
             customNext: (
               <Components.CategoryViewRightButton
+                onNavToCart={() => {
+                  nav.push({ name: 'CartView', });
+                }}
                 cart={this.state.currentTeam.cart}
               />
             )
