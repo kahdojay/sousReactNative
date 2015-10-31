@@ -724,7 +724,6 @@ class App extends React.Component {
       <CustomSideView
         menu={(
           <Components.Menu
-            nav={nav}
             team={this.state.currentTeam}
             session={session}
             open={this.state.open}
@@ -732,6 +731,21 @@ class App extends React.Component {
               _.debounce(() => {
                 dispatch(actions.updateSession({ inviteModalVisible: value }))
               }, 25)()
+            }}
+            onNavToCategory={() => {
+              nav.push({
+                name: 'CategoryIndex',
+              })
+            }}
+            onNavToProfile={() => {
+              nav.push({
+                name: 'Profile',
+              })
+            }}
+            onNavToTeam={() => {
+              nav.push({
+                name: 'TeamView',
+              })
             }}
           />
         )}

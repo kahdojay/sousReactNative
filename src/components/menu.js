@@ -58,11 +58,7 @@ module.exports = class Menu extends Component {
         <View style={styles.avatarContainer}>
           <TouchableHighlight
             underlayColor={'#5f697a'}
-            onPress={() => {
-              this.props.nav.push({
-                name: 'Profile',
-              })
-            }}
+            onPress={this.onNavToProfile}
           >
             <View style={{alignItems: 'center'}}>
               {avatar}
@@ -76,11 +72,7 @@ module.exports = class Menu extends Component {
             <TouchableHighlight
               style={styles.menuItemButton}
               underlayColor='#3e444f'
-              onPress={() => {
-                this.props.nav.push({
-                  name: 'TeamView',
-                })
-              }}
+              onPress={this.props.onNavToTeam}
             >
               <View>
                 <View style={styles.menuTextContainer}>
@@ -103,11 +95,7 @@ module.exports = class Menu extends Component {
             <TouchableHighlight
               style={styles.menuItemButton}
               underlayColor='#3e444f'
-              onPress={() => {
-                this.props.nav.push({
-                  name: 'CategoryIndex',
-                })
-              }}
+              onPress={this.props.onNavToCategory}
             >
               <View style={styles.menuTextContainer}>
                 <Icon name='fontawesome|clipboard' size={20} color='white' style={styles.menuIcon}/>
