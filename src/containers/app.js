@@ -313,6 +313,11 @@ class App extends React.Component {
                 })
               })
             }}
+            onCreateProduct={() => {
+              nav.push({
+                name: 'ProductCreate'
+              })
+            }}
           />
         )
       case 'CategoryView':
@@ -326,12 +331,6 @@ class App extends React.Component {
             cart={this.state.currentTeam.cart}
             products={this.state.categoryProducts}
             purveyors={purveyors}
-            onCreateProduct={(categoryId) => {
-              nav.push({
-                name: 'ProductCreate',
-                categoryId: categoryId,
-              })
-            }}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(cartAction, cartAttributes))
@@ -365,19 +364,19 @@ class App extends React.Component {
             }}
           />
         )
-      // case 'ProductCreate':
-      //   return (
-      //     <Components.ProductCreate
-      //       appState={this.props}
-      //       purveyors={this.props.purveyors}
-      //       onAddProduct={(productAttributes) => {
-      //         _.debounce(() => {
-      //           // console.log('PRODUCT ADDED', productAttributes);
-      //         }, 25)()
-      //         nav.pop();
-      //       }}
-      //     />
-      //   )
+      case 'ProductCreate':
+        return (
+          <Components.ProductCreate
+            appState={this.props}
+            purveyors={this.props.purveyors}
+            onAddProduct={(productAttributes) => {
+              _.debounce(() => {
+                // console.log('PRODUCT ADDED', productAttributes);
+              }, 25)()
+              nav.pop();
+            }}
+          />
+        )
       case 'UserInfo':
         return (
           <Components.UserInfo
@@ -624,25 +623,25 @@ class App extends React.Component {
             title: 'Cart',
           })
           break;
-        // case 'ProductCreate':
-        //   navBar = React.addons.cloneWithProps(this.navBar, {
-        //     navigator: nav,
-        //     route: route,
-        //     hideNext: true,
-        //     customPrev: (
-        //       <Components.NavBackButton
-        //         iconFont={'fontawesome|times'}
-        //         pop={true}
-        //       />
-        //     ),
-        //     title: 'Add New Product',
-        //     // customNext: (
-        //       <ProductCreateRightCheckbox
-        //         disabled={true}
-        //       />
-        //     ),
-        //   })
-        //   break;
+        case 'ProductCreate':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            hideNext: true,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'fontawesome|times'}
+                pop={true}
+              />
+            ),
+            title: 'Add New Product',
+            customNext: (
+              <Components.ProductCreateRightCheckbox
+                disabled={true}
+              />
+            ),
+          })
+          break;
         case 'UserInfo':
         case 'Loading':
           navBar = <View />;
