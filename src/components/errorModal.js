@@ -37,7 +37,7 @@ class ErrorModal extends React.Component {
         errors: props.errors,
         modalVisible: true
       })
-    } else if (props.errors.length === 0) {
+    } else if (props.errors.length === 0 && this.state.modalVisible === true) {
       this.setState({
         errors: [],
         modalVisible: false

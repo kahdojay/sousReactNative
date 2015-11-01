@@ -21,7 +21,7 @@ class InviteView extends React.Component {
   }
 
   /* fetches contacts after user approval,
-   * ignore contacts with not phoneNumber
+   * ignore contacts with no phoneNumber
    */
   componentDidMount() {
     AddressBook.getContacts( (err, contacts) => {
@@ -47,7 +47,7 @@ class InviteView extends React.Component {
 
   /* returns first phone number for selected contacts */
   sendSMS() {
-    let resultSet = _.chain(this.state.contacts)
+    const resultSet = _.chain(this.state.contacts)
       .filter(function(c) { return c.selected; })
       .map('phoneNumbers[0].number')
       .value();
@@ -59,39 +59,43 @@ class InviteView extends React.Component {
       <TouchableHighlight
         style={styles.button}
         underlayColor={Colors.buttonPress}
-        onPress={::this.sendSMS()}>
+        onPress={::this.sendSMS}>
         <Text style={styles.buttonText}>Send SMS</Text>
       </TouchableHighlight>
     );
+
+    let contacts = <View />;
+    if(this.state.contacts.length > 0) {
+      contacts = this.state.contacts.forEach((contact, idx) => {
+        return (
+          <TouchableHighlight key={idx} underlayColor="#eee" style={{paddingTop: 10,}}>
+            <View style={styles.contactRow} >
+              <View style={styles.row} >
+                <Text style={styles.contactFirstName}>{contact.firstName} </Text>
+                <Text style={styles.contactLastName}>{contact.lastName}</Text>
+              </View>
+              <CheckBox
+                label=''
+                onChange={(checked) => {
+                  this.setState({ contacts: this.state.contacts.map(function(c) {
+                    if (c.recordID === contact.recordID) {
+                      c.selected = !c.selected;
+                    }
+                    return c;
+                  })})
+                }}
+                checked={contact.selected}
+              />
+            </View>
+          </TouchableHighlight>
+        );
+      })
+    }
+
     return (
       <ScrollView style={styles.container}>
         {submitButton}
-        {
-          this.state.contacts.map(function(contact, idx) {
-            return (
-              <TouchableHighlight key={idx} underlayColor="#eee" style={{paddingTop: 10,}}>
-                <View style={styles.contactRow} >
-                  <View style={styles.row} >
-                    <Text style={styles.contactFirstName}>{contact.firstName} </Text>
-                    <Text style={styles.contactLastName}>{contact.lastName}</Text>
-                  </View>
-                  <CheckBox
-                    label=''
-                    onChange={(checked) => {
-                      this.setState({ contacts: this.state.contacts.map(function(c) {
-                        if (c.recordID === contact.recordID) {
-                          c.selected = !c.selected;
-                        }
-                        return c;
-                      })})
-                    }}
-                    checked={contact.selected}
-                  />
-                </View>
-              </TouchableHighlight>
-            );
-          }, this)
-        }
+        {contacts}
         {submitButton}
       </ScrollView>
     );

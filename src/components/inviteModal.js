@@ -1,8 +1,8 @@
-import React from 'react-native'
-import _ from 'lodash'
-import { Icon } from 'react-native-icons'
-import KeyboardSpacer from 'react-native-keyboard-spacer';
+import React from 'react-native';
+import _ from 'lodash';
+import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 const {
   Modal,
@@ -34,23 +34,27 @@ class InviteModal extends React.Component {
 
   handleDismiss() {
     const doNav = false
-    this.props.toggleInviteModal(false, doNav)
+    this.props.toggleInviteModal(doNav)
   }
 
   handleSubmit() {
+    const doNav = false
     if (this.state.text === null || this.state.text === '') {
       this.setState({text: ''});
-      this.props.toggleInviteModal(false)
+      this.props.toggleInviteModal(doNav)
     } else {
       this.props.onSMSInvite([this.state.text]);
       this.setState({text: ''});
-      this.props.toggleInviteModal(false)
+      this.props.toggleInviteModal(doNav)
     }
   }
 
- doNavigateToInviteView() {
+  navigateToInviteView() {
+    this.setState({
+      modalVisible: false,
+    })
     const doNav = true
-    this.props.toggleInviteModal(false, doNav)
+    this.props.toggleInviteModal(doNav)
   }
 
   render() {
@@ -75,14 +79,14 @@ class InviteModal extends React.Component {
               <TouchableHighlight
                 onPress={() => this.handleDismiss()}
                 style={styles.option}
-                underlayColor='grey'
+                underlayColor='transparent'
               >
                 <Text style={styles.buttonText}>Dismiss</Text>
               </TouchableHighlight>
               <TouchableHighlight
                 onPress={() => this.handleSubmit()}
                 style={styles.option}
-                underlayColor='grey'
+                underlayColor='transparent'
               >
                 <Text style={styles.buttonText}>Send</Text>
               </TouchableHighlight>
@@ -90,13 +94,13 @@ class InviteModal extends React.Component {
             <TouchableHighlight
               onPress={() => this.navigateToInviteView()}
               style={styles.option}
-              underlayColor='grey'
+              underlayColor='transparent'
             >
               <Text style={styles.buttonText}>Search Contacts</Text>
             </TouchableHighlight>
           </View>
+          <KeyboardSpacer />
         </View>
-        <KeyboardSpacer />
       </Modal>
     );
   }

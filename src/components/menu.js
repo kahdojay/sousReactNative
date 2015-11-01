@@ -10,7 +10,6 @@ const {
   Image,
   Text,
   TouchableHighlight,
-  Component,
   ProgressViewIOS
 } = React;
 
@@ -19,18 +18,7 @@ const window = Dimensions.get('window');
 /*
  * Modal for side bar Modal for side bar
  */
-module.exports = class Menu extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ready: false
-    }
-  }
-  componentDidMount(){
-    setTimeout(()=> {
-      this.setState({ready: true})
-    }, 100)
-  }
+module.exports = class Menu extends React.Component {  
   render() {
     const {team, session} = this.props
     if(!session.teamId || !team){
