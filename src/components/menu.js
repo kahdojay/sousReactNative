@@ -18,7 +18,7 @@ const window = Dimensions.get('window');
 /*
  * Modal for side bar Modal for side bar
  */
-module.exports = class Menu extends React.Component {  
+module.exports = class Menu extends React.Component {
   render() {
     const {team, session} = this.props
     if(!session.teamId || !team){
@@ -46,7 +46,7 @@ module.exports = class Menu extends React.Component {
         <View style={styles.avatarContainer}>
           <TouchableHighlight
             underlayColor={'#5f697a'}
-            onPress={this.onNavToProfile}
+            onPress={this.props.onNavToProfile}
           >
             <View style={{alignItems: 'center'}}>
               {avatar}
