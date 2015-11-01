@@ -62,23 +62,7 @@ class TaskView extends React.Component {
     this.props.onUpdateTeamTask(task.recipeId, newTask)
     this.onDeleteTaskPop()
   }
-  componentWillReceiveProps(nextProps){
-    if(nextProps.task.deleted === true){
-      this.props.onDeleteTaskPop()
-    } else {
-      this.setState({
-        textInputDescription: nextProps.task.description,
-        textInputName: nextProps.task.name,
-        saved: true,
-      });
-    }
-    if(nextProps.keyboardVisible === true){
-      this.scrollToBottom();
-    } else {
-      this.scrollToTop();
-    }
-  }
-
+  
   render() {
     return (
       <View style={styles.container}>
