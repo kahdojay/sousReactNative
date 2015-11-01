@@ -91,22 +91,24 @@ export default function ConnectActions(ddpClient) {
     } = allActions
 
     return (dispatch, getState) => {
-      const {connect} = getState()
       //--------------------------------------
       // Bind DDP client events
       //--------------------------------------
       ddpClient.on('message', (msg) => {
+        const {connect} = getState()
         var log = JSON.parse(msg);
         // console.log(`[${new Date()}] MAIN DDP MSG`, log);
 
-        // Treat an message as a "ping"
-        clearTimeout(connect.timeoutId)
-        dispatch({
-          type: CONNECTION_STATUS,
-          timeoutId: null,
-          status: CONNECT.CONNECTED,
-          error: null
-        })
+        if(connect.status !== CONNECT.CONNECTED){
+          // Treat an message as a "ping"
+          clearTimeout(connect.timeoutId)
+          dispatch({
+            type: CONNECTION_STATUS,
+            timeoutId: null,
+            status: CONNECT.CONNECTED,
+            error: null
+          })
+        }
 
         // process the subscribe events to collections and their fields
         if (log.hasOwnProperty('fields')){

@@ -39,6 +39,12 @@ class App extends React.Component {
       categoryProducts: null,
       currentTeam: this.props.teams.currentTeam,
       contactList: [],
+      sceneState: {
+        ProductCreate: {
+          submitReady: false,
+          productAttributes: {}
+        }
+      },
     }
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
@@ -86,10 +92,6 @@ class App extends React.Component {
     }
   }}
 
-  // componentWillMount() {
-  //   // this.props.dispatch(actions.connectApp())
-  // }
-
   componentWillReceiveProps(nextProps) {
     this.setState({
       isAuthenticated: nextProps.session.isAuthenticated,
@@ -100,12 +102,14 @@ class App extends React.Component {
   }
 
   componentDidUpdate() {
-    if(this.refs.appNavigator && this.state.currentTeam !== null && this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
-      setTimeout(() => {
-        this.refs.appNavigator.replacePrevious({
-          name: 'Feed'
-        });
-      }, 100)
+    if(this.refs.appNavigator){
+      if(this.state.currentTeam !== null && this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
+        setTimeout(() => {
+          this.refs.appNavigator.replacePrevious({
+            name: 'Feed'
+          });
+        }, 100)
+      }
     }
   }
 
@@ -370,10 +374,19 @@ class App extends React.Component {
             appState={this.props}
             purveyors={this.props.purveyors}
             onAddProduct={(productAttributes) => {
-              _.debounce(() => {
-                // console.log('PRODUCT ADDED', productAttributes);
-              }, 25)()
-              nav.pop();
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductCreate.submitReady = true;
+              sceneState.ProductCreate.productAttributes = productAttributes
+              this.setState({
+                sceneState: sceneState
+              })
+            }}
+            onProductNotReady={() => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductCreate.submitReady = false;
+              this.setState({
+                sceneState: sceneState
+              })
             }}
           />
         )
@@ -625,6 +638,7 @@ class App extends React.Component {
           break;
         case 'ProductCreate':
           navBar = React.addons.cloneWithProps(this.navBar, {
+            ref: 'navBar',
             navigator: nav,
             route: route,
             hideNext: true,
@@ -637,7 +651,15 @@ class App extends React.Component {
             title: 'Add New Product',
             customNext: (
               <Components.ProductCreateRightCheckbox
-                disabled={true}
+                submitReady={this.state.sceneState.ProductCreate.submitReady}
+                onAddProduct={() => {
+                  _.debounce(() => {
+                    dispatch(actions.addProduct(this.state.sceneState.ProductCreate.productAttributes))
+                  }, 5)()
+                  nav.replacePreviousAndPop({
+                    name: 'CategoryIndex',
+                  });
+                }}
               />
             ),
           })

@@ -12,6 +12,7 @@ const initialState = {
     channels: {},
     timeoutId: null,
     status: CONNECT.CONNECTED,
+
     error: null
   }
 }
@@ -26,9 +27,11 @@ function connect(state = initialState.connect, action) {
     });
   case CONNECTION_STATUS:
     let channels = state.channels;
-    if(action.status === CONNECT.OFFLINE){
+    if( action.status === CONNECT.OFFLINE ){
      channels = []
-    }
+   } else if( action.status === CONNECT.CONNECTED ){
+
+   }
     return Object.assign({}, state, {
       timeoutId: action.timeoutId,
       status: action.status,
