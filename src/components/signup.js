@@ -24,7 +24,7 @@ class Signup extends React.Component {
       smsToken: '',
       smsSent: this.props.session.smsSent,
       submitting: false,
-      timeout: null,
+      // timeout: null,
     }
   }
 
@@ -46,18 +46,12 @@ class Signup extends React.Component {
 
   setFetching() {
     this.setState({ submitting: true })
-    let that = this
-    // TODO: use react native timer mixin
-    const timeout = window.setTimeout(() => {
-      this.setState({ submitting: false, timeout: null });
-    }, 2000);
-    this.setState({
-      timeout: timeout
-    });
+    let timeout = window.setTimeout(() => {
+      this.setState({ submitting: false });
+    }, 1500);
   }
 
   onSignup() {
-    // disable submit for 5 seconds
     this.setFetching()
 
     if(this.refs.phone){
@@ -67,8 +61,9 @@ class Signup extends React.Component {
       this.refs.code.blur();
     }
     if(this.state.phoneNumber === null || this.state.phoneNumber ===  ''){
-      this.setState({invalid: true});
+      this.setState({ invalid: true });
     } else {
+      this.setState({ smsToken: '' })
       this.props.onRegisterSession(Object.assign({}, {
         phoneNumber: this.state.phoneNumber
       }));
@@ -166,7 +161,7 @@ class Signup extends React.Component {
           <Text style={[styles.boldText, styles.centered, styles.largeText]}>{formattedPhoneNumber}</Text>
           <TouchableHighlight
             onPress={() => {
-              this.onSignup()
+              this.setState({ smsSent: false, smsToken: '' })
             }}
             style={[styles.smallButton, styles.buttonLinkWrap]}>
             <Text style={styles.buttonLink}>Send again</Text>
