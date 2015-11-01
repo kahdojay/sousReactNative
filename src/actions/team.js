@@ -52,11 +52,7 @@ export default function TeamActions(ddpClient, allActions) {
         var newTeamAttributes = {
           _id: Shortid.generate(),
           name: name,
-          tasks: {
-            added: [],
-            completed: [],
-            deleted: []
-          },
+          tasks: [],
           categories: teams.defaultCategories,
           users: [session.userId],
           cart: {
