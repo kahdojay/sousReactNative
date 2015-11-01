@@ -200,18 +200,17 @@ class Signup extends React.Component {
       );
     }
 
-    //TODO refactor entire view to use flexbox so we can depend on
-    //KeyboardSpacer instead of doing this
-    if (this.props.ui.keyboard.visible) {
-      // console.log(runTimeDimensions)
-      if (runTimeDimensions.height < 500) {
-        this.refs.scrollView.scrollTo(200)
-      } else if (runTimeDimensions.height < 600) {
-        this.refs.scrollView.scrollTo(100)
-      }
-    } else if (this.refs.scrollView){
-      this.refs.scrollView.scrollTo(0)
-    }
+    // //TODO refactor entire view to use flexbox so we can depend on
+    // if (this.props.ui.keyboard.visible) {
+    //   // console.log(runTimeDimensions)
+    //   if (runTimeDimensions.height < 500) {
+    //     this.refs.scrollView.scrollTo(200)
+    //   } else if (runTimeDimensions.height < 600) {
+    //     this.refs.scrollView.scrollTo(100)
+    //   }
+    // } else if (this.refs.scrollView){
+    //   this.refs.scrollView.scrollTo(0)
+    // }
     return (
       <ScrollView
         automaticallyAdjustContentInsets={false}

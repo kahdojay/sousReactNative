@@ -5,8 +5,6 @@ import NavigationBarStyles from 'react-native-navbar/styles'
 import { connect } from 'react-redux/native';
 import { Icon } from 'react-native-icons';
 import SideMenu from 'react-native-side-menu';
-import ErrorModal from '../components/errorModal';
-import InviteModal from '../components/inviteModal';
 import { BackBtn } from '../utilities/navigation';
 import Colors from '../utilities/colors';
 import Urls from '../resources/urls';
@@ -40,6 +38,7 @@ class App extends React.Component {
       category: null,
       categoryProducts: null,
       currentTeam: this.props.teams.currentTeam,
+      contactList: [],
     }
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
@@ -392,6 +391,7 @@ class App extends React.Component {
       case 'InviteView':
         return (
           <Components.InviteView
+            contacts={this.state.contactList}
             onSMSInvite={(contactList) => {
               _.debounce(() => {
                 dispatch(actions.inviteContacts(contactList))
@@ -687,7 +687,7 @@ class App extends React.Component {
     let navBar = this.getNavBar(route, nav);
     let scene = this.getScene(route, nav);
     let errorModal = (
-      <ErrorModal
+      <Components.ErrorModal
         onDeleteError={(errorIdList) => {
           _.debounce(() => {
             dispatch(actions.deleteErrors(errorIdList))
@@ -697,19 +697,24 @@ class App extends React.Component {
       />
     )
 
-    let inviteModal = (
-      <InviteModal
+    const inviteModal = (
+      <Components.InviteModal
+        ref='inviteModal'
         currentTeam={this.state.currentTeam}
         modalVisible={session.inviteModalVisible}
-        toggleInviteModal={(value, doNav) => {
-          _.debounce(() => {
-            dispatch(actions.updateSession({ inviteModalVisible: value }))
-          }, 25)()
-          if(doNav === true){
+        hideInviteModal={() => {
+          // nav.refs.inviteModal.setState({ modalVisible: true });
+          dispatch(actions.updateSession({ inviteModalVisible: false }))
+        }}
+        navigateToInviteView={(contactList) => {
+          this.setState({
+            contactList: contactList
+          }, () => {
+            // console.log('going to InviteView')
             nav.push({
               name: 'InviteView',
             })
-          }
+          });
         }}
         onSMSInvite={(contactList) => {
           _.debounce(() => {
@@ -725,35 +730,40 @@ class App extends React.Component {
     }
     // console.log('app.js', this.props)
     // console.log('app.js render, errors:', this.props.errors.data)
+
+    const menu = (
+      <Components.Menu
+        ref='menu'
+        team={this.state.currentTeam}
+        session={session}
+        open={this.state.open}
+        toggleInviteModal={(value) => {
+          _.debounce(() => {
+            dispatch(actions.updateSession({ inviteModalVisible: value }))
+          }, 25)()
+        }}
+        onNavToCategory={() => {
+          nav.push({
+            name: 'CategoryIndex',
+          })
+        }}
+        onNavToProfile={() => {
+          nav.push({
+            name: 'Profile',
+          })
+        }}
+        onNavToTeam={() => {
+          nav.push({
+            name: 'TeamView',
+          })
+        }}
+      />
+    );
+
     return (
       <CustomSideView
-        menu={(
-          <Components.Menu
-            team={this.state.currentTeam}
-            session={session}
-            open={this.state.open}
-            toggleInviteModal={(value) => {
-              _.debounce(() => {
-                dispatch(actions.updateSession({ inviteModalVisible: value }))
-              }, 25)()
-            }}
-            onNavToCategory={() => {
-              nav.push({
-                name: 'CategoryIndex',
-              })
-            }}
-            onNavToProfile={() => {
-              nav.push({
-                name: 'Profile',
-              })
-            }}
-            onNavToTeam={() => {
-              nav.push({
-                name: 'TeamView',
-              })
-            }}
-          />
-        )}
+        ref='customSideView'
+        menu={menu}
         touchToClose={true}
         // openMenuOffset={500} // changes menu width
         onChange={::this.handleChange}
@@ -763,7 +773,7 @@ class App extends React.Component {
           {errorModal}
           {inviteModal}
           {scene}
-          <KeyboardSpacer />
+          {session.inviteModalVisible === false ? <KeyboardSpacer /> : <View />}
         </View>
       </CustomSideView>
     );
@@ -782,7 +792,7 @@ class App extends React.Component {
   render() {
     return (
       <Navigator
-        ref="appNavigator"
+        ref='appNavigator'
         initialRoute={{
           index: 0,
           name: this.initialRoute
