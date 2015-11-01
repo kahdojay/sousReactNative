@@ -21,15 +21,19 @@ import ProductCreateRightCheckbox from './ProductCreateRightCheckbox';
 import ProfileView from './profileView';
 import InviteView from './inviteView';
 import NavbarTitle from './NavbarTitle';
+import ErrorModal from '../components/errorModal';
+import InviteModal from '../components/inviteModal';
 
 export default {
    CartView,
    CategoryIndex,
    CategoryView,
    CategoryViewRightButton,
+   ErrorModal,
    Feed,
    FeedViewLeftButton,
    FeedViewRightButton,
+   InviteModal,
    InviteView,
    Login,
    Menu,

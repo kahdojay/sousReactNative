@@ -1,8 +1,9 @@
-import React from 'react-native'
-import _ from 'lodash'
-import { Icon } from 'react-native-icons'
-import KeyboardSpacer from 'react-native-keyboard-spacer';
+import React from 'react-native';
+import _ from 'lodash';
+import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
+import AddressBook from 'react-native-addressbook';
 
 const {
   Modal,
@@ -33,24 +34,41 @@ class InviteModal extends React.Component {
   }
 
   handleDismiss() {
-    const doNav = false
-    this.props.toggleInviteModal(false, doNav)
+    this.props.hideInviteModal()
   }
 
   handleSubmit() {
     if (this.state.text === null || this.state.text === '') {
       this.setState({text: ''});
-      this.props.toggleInviteModal(false)
+      this.props.hideInviteModal()
     } else {
       this.props.onSMSInvite([this.state.text]);
       this.setState({text: ''});
-      this.props.toggleInviteModal(false)
+      this.props.hideInviteModal()
     }
   }
 
- doNavigateToInviteView() {
-    const doNav = true
-    this.props.toggleInviteModal(false, doNav)
+  navigateToInviteView() {
+    AddressBook.getContacts( (err, contacts) => {
+      if (err && err.type === 'permissionDenied') {
+        // TODO: show error to user
+        // console.log('error fetching contacts')
+      }
+      else {
+        // console.log('contacts', contacts)
+        contacts = _.chain(contacts)
+          // filter contacts with no numbers
+          .filter(function(c) { return c.phoneNumbers[0]; })
+          // slip checkbox state into contact
+          .map(function(c) {
+            c.selected = false;
+            return c;
+          })
+          .value();
+        this.props.hideInviteModal()
+        this.props.navigateToInviteView(contacts)
+      }
+    })
   }
 
   render() {
@@ -75,14 +93,14 @@ class InviteModal extends React.Component {
               <TouchableHighlight
                 onPress={() => this.handleDismiss()}
                 style={styles.option}
-                underlayColor='grey'
+                underlayColor='transparent'
               >
                 <Text style={styles.buttonText}>Dismiss</Text>
               </TouchableHighlight>
               <TouchableHighlight
                 onPress={() => this.handleSubmit()}
                 style={styles.option}
-                underlayColor='grey'
+                underlayColor='transparent'
               >
                 <Text style={styles.buttonText}>Send</Text>
               </TouchableHighlight>
@@ -90,13 +108,13 @@ class InviteModal extends React.Component {
             <TouchableHighlight
               onPress={() => this.navigateToInviteView()}
               style={styles.option}
-              underlayColor='grey'
+              underlayColor='transparent'
             >
               <Text style={styles.buttonText}>Search Contacts</Text>
             </TouchableHighlight>
           </View>
+          <KeyboardSpacer />
         </View>
-        <KeyboardSpacer />
       </Modal>
     );
   }
