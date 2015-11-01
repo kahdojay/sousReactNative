@@ -38,14 +38,17 @@ class ProductCreate extends React.Component {
   }
   componentWillUnmount(){
     // console.log('UPDATE', this.state)
+    this.setState({
+      loaded: false
+    })
   }
 
   componentDidMount(){
-    let self = this;
-    function changeCheckbox() {
-      self.setState({loaded: true})
-    }
-    setTimeout(changeCheckbox, 500);
+    setTimeout(() => {
+      this.setState({
+        loaded: true
+      })
+    }, 500);
   }
 
   submitReady(){
@@ -56,38 +59,25 @@ class ProductCreate extends React.Component {
       this.state.unitSelected &&
       this.state.name != ''
     ) {
-      this.setState({ready: true})
+      const productAttributes = {
+        name: this.state.name,
+        purveyorId: null, //this.state.purveyor.id,
+        amount: null, //`${this.state.amount} ${this.state.unit}` ,
+        categoryId: null, // this.state.category.id,
+      }
+      this.props.onAddProduct(productAttributes);
+    } else {
+      this.props.onProductNotReady();
     }
   }
   render() {
-    let purveyors = this.props.purveyors.data;
-    let currentTeamId = this.props.appState.session.teamId;
-    let teams = this.props.appState.teams.data;
-    let categories = _.find(teams, (team) => {return team.id == currentTeamId}).categories;
-    let units = ['bag', 'bunch', 'cs', 'dozen', 'ea', 'g', 'kg', 'lb', 'oz', 'pack', 'tub']
-    let button = (
-      <Overlay isVisible={true} style={{flex: 1, alignItems: 'stretch', width: 400}}>
-        <TouchableOpacity underlayColor='#eee'
-          style={{position: 'absolute', right: 5, top: 30}}
-          onPress={()=> {
-            if (this.state.ready) {
-              let productAttributes = {
-                name: this.state.name,
-                purveyorId: this.state.purveyor.id,
-                amount: `${this.state.amount} ${this.state.unit}` ,
-                categoryId: this.state.category.id,
-              }
-              this.props.onAddProduct(productAttributes);  
-            }
-          }}>
-          <Icon name='fontawesome|check-square'
-            size={40} color={this.state.ready ? 'green' : '#ccc'} style={{height: 40, width: 40, }} />
-        </TouchableOpacity>
-      </Overlay>
-    )
+    const purveyors = this.props.purveyors.data;
+    const currentTeamId = this.props.appState.session.teamId;
+    const teams = this.props.appState.teams.data;
+    const categories = _.find(teams, (team) => {return team.id == currentTeamId}).categories;
+    const units = ['bag', 'bunch', 'cs', 'dozen', 'ea', 'g', 'kg', 'lb', 'oz', 'pack', 'tub']
     return (
       <ScrollView style={styles.scrollView}>
-        {this.state.loaded ? button : <View></View>}
         <View style={styles.inputContainer}>
           <Text style={styles.inputTitle}>Name</Text>
           <TextInput style={styles.inputField} placeholder='Name'onChange={(e) => {
