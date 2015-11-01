@@ -1,6 +1,5 @@
 import React from 'react-native';
 import _ from 'lodash';
-import AddressBook from 'react-native-addressbook';
 import CheckBox from './checkbox'
 import Colors from '../utilities/colors';
 const {
@@ -16,33 +15,8 @@ class InviteView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      contacts: [],
+      contacts: this.props.contacts,
     }
-  }
-
-  /* fetches contacts after user approval,
-   * ignore contacts with no phoneNumber
-   */
-  componentDidMount() {
-    AddressBook.getContacts( (err, contacts) => {
-      if (err && err.type === 'permissionDenied') {
-        // TODO: show error to user
-        // console.log('error fetching contacts')
-      }
-      else {
-        // console.log('contacts', contacts)
-        contacts = _.chain(contacts)
-          // filter contacts with no numbers vvv
-          .filter(function(c) { return c.phoneNumbers[0]; })
-          // slip checkbox state into contact
-          .map(function(c) {
-            c.selected = false;
-            return c;
-          })
-          .value();
-        this.setState({ contacts: contacts });
-      }
-    })
   }
 
   /* returns first phone number for selected contacts */
@@ -55,19 +29,12 @@ class InviteView extends React.Component {
   }
 
   render() {
-    const submitButton = (
-      <TouchableHighlight
-        style={styles.button}
-        underlayColor={Colors.buttonPress}
-        onPress={::this.sendSMS}>
-        <Text style={styles.buttonText}>Send SMS</Text>
-      </TouchableHighlight>
-    );
-
+    let submitButton = <View />;
     let contacts = <View />;
     if(this.state.contacts.length > 0) {
-      contacts = this.state.contacts.forEach((contact, idx) => {
-        return (
+      contacts = []
+      this.state.contacts.forEach((contact, idx) => {
+        contacts.push(
           <TouchableHighlight key={idx} underlayColor="#eee" style={{paddingTop: 10,}}>
             <View style={styles.contactRow} >
               <View style={styles.row} >
@@ -89,7 +56,15 @@ class InviteView extends React.Component {
             </View>
           </TouchableHighlight>
         );
-      })
+      });
+      submitButton = (
+        <TouchableHighlight
+          style={styles.button}
+          underlayColor={Colors.buttonPress}
+          onPress={::this.sendSMS}>
+          <Text style={styles.buttonText}>Send SMS</Text>
+        </TouchableHighlight>
+      );
     }
 
     return (

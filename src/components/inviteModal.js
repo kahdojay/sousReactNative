@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
+import AddressBook from 'react-native-addressbook';
 
 const {
   Modal,
@@ -33,28 +34,41 @@ class InviteModal extends React.Component {
   }
 
   handleDismiss() {
-    const doNav = false
-    this.props.toggleInviteModal(doNav)
+    this.props.hideInviteModal()
   }
 
   handleSubmit() {
-    const doNav = false
     if (this.state.text === null || this.state.text === '') {
       this.setState({text: ''});
-      this.props.toggleInviteModal(doNav)
+      this.props.hideInviteModal()
     } else {
       this.props.onSMSInvite([this.state.text]);
       this.setState({text: ''});
-      this.props.toggleInviteModal(doNav)
+      this.props.hideInviteModal()
     }
   }
 
   navigateToInviteView() {
-    this.setState({
-      modalVisible: false,
+    AddressBook.getContacts( (err, contacts) => {
+      if (err && err.type === 'permissionDenied') {
+        // TODO: show error to user
+        // console.log('error fetching contacts')
+      }
+      else {
+        // console.log('contacts', contacts)
+        contacts = _.chain(contacts)
+          // filter contacts with no numbers
+          .filter(function(c) { return c.phoneNumbers[0]; })
+          // slip checkbox state into contact
+          .map(function(c) {
+            c.selected = false;
+            return c;
+          })
+          .value();
+        this.props.hideInviteModal()
+        this.props.navigateToInviteView(contacts)
+      }
     })
-    const doNav = true
-    this.props.toggleInviteModal(doNav)
   }
 
   render() {

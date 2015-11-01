@@ -38,6 +38,7 @@ class App extends React.Component {
       category: null,
       categoryProducts: null,
       currentTeam: this.props.teams.currentTeam,
+      contactList: [],
     }
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
@@ -390,6 +391,7 @@ class App extends React.Component {
       case 'InviteView':
         return (
           <Components.InviteView
+            contacts={this.state.contactList}
             onSMSInvite={(contactList) => {
               _.debounce(() => {
                 dispatch(actions.inviteContacts(contactList))
@@ -700,17 +702,19 @@ class App extends React.Component {
         ref='inviteModal'
         currentTeam={this.state.currentTeam}
         modalVisible={session.inviteModalVisible}
-        toggleInviteModal={(doNav) => {
+        hideInviteModal={() => {
           // nav.refs.inviteModal.setState({ modalVisible: true });
-          _.debounce(() => {
-            dispatch(actions.updateSession({ inviteModalVisible: false }))
-          }, 25)()
-          if(doNav === true){
-            console.log('going to InviteView')
-            nav.replacePreviousAndPop({
+          dispatch(actions.updateSession({ inviteModalVisible: false }))
+        }}
+        navigateToInviteView={(contactList) => {
+          this.setState({
+            contactList: contactList
+          }, () => {
+            // console.log('going to InviteView')
+            nav.push({
               name: 'InviteView',
             })
-          }
+          });
         }}
         onSMSInvite={(contactList) => {
           _.debounce(() => {
