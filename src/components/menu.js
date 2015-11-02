@@ -164,12 +164,15 @@ const styles = StyleSheet.create({
     flex: 5,
     width: window.width * (2/3),
     backgroundColor: '#5f697a',
-    paddingRight: 10,
-    paddingLeft: 10,
   },
   menuItemButton: {
     flex: 1,
-    marginBottom: 25,
+    height: 50,
+    justifyContent: 'center',
+    // alignItems: 'center',
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingLeft: 10,
   },
   menuIcon: {
     width: 20,
