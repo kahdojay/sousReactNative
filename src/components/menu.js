@@ -36,9 +36,9 @@ module.exports = class Menu extends React.Component {
     const completeTasksCount = _.filter(team.tasks, { deleted: false, completed: true }).length
     const progress = Math.round((completeTasksCount / totalTasks)*100) || 0;
 
-    let showInviteButton = true;
+    let nonNotepadTeam = true;
     if(!team || (team && team.name === 'Notepad')){
-      showInviteButton = false;
+      nonNotepadTeam = false;
     }
 
     return (
@@ -79,23 +79,35 @@ module.exports = class Menu extends React.Component {
                 </View>
               </View>
             </TouchableHighlight>
-
-            <TouchableHighlight
-              style={styles.menuItemButton}
-              underlayColor='#3e444f'
-              onPress={this.props.onNavToCategory}
-            >
-              <View style={styles.menuTextContainer}>
-                <Icon name='fontawesome|clipboard' size={20} color='white' style={styles.menuIcon}/>
-                <Text style={styles.menuItemText}>Order Guide</Text>
-              </View>
-            </TouchableHighlight>
-
-            {(showInviteButton === false) ? <View/> : (
+            {(nonNotepadTeam === false) ? <View/> : (
               <TouchableHighlight
+                onPress={this.props.onNavToCategory}
+                style={styles.menuItemButton}
                 underlayColor='#3e444f'
+              >
+                <View style={styles.menuTextContainer}>
+                  <Icon name='fontawesome|clipboard' size={20} color='white' style={styles.menuIcon}/>
+                  <Text style={styles.menuItemText}>Order Guide</Text>
+                </View>
+              </TouchableHighlight>
+            )}
+            {(nonNotepadTeam === false) ? <View/> : (
+              <TouchableHighlight
+                onPress={this.props.onNavToTeamMemberListing}
+                style={styles.menuItemButton}
+                underlayColor='#3e444f'
+              >
+                <View style={styles.menuTextContainer}>
+                  <Icon name='fontawesome|users' size={20} color='white' style={styles.menuIcon}/>
+                  <Text style={styles.menuItemText}>Team Members</Text>
+                </View>
+              </TouchableHighlight>
+            )}
+            {(nonNotepadTeam === false) ? <View/> : (
+              <TouchableHighlight
                 onPress={() => this.props.toggleInviteModal(true)}
                 style={styles.menuItemButton}
+                underlayColor='#3e444f'
               >
                 <View style={styles.menuTextContainer}>
                   <Icon name='fontawesome|user-plus' size={20} color='white' style={styles.menuIcon}/>
