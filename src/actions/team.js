@@ -13,6 +13,7 @@ import {
   RECEIVE_TEAMS,
   RECEIVE_CATEGORIES,
   RECEIVE_PRODUCTS,
+  RECEIVE_TEAMS_USERS,
   ERROR_TEAMS,
   ADD_TEAM,
   UPDATE_TEAM,
@@ -256,6 +257,13 @@ export default function TeamActions(ddpClient, allActions) {
     }
   }
 
+  function receiveTeamsUsers(user) {
+    return {
+      type: RECEIVE_TEAMS_USERS,
+      user: user
+    }
+  }
+
   function updateProductInCart(cartAction, cartAttributes) {
     return (dispatch, getState) => {
       const {session, teams} = getState();
@@ -429,6 +437,7 @@ export default function TeamActions(ddpClient, allActions) {
     REQUEST_TEAMS,
     RECEIVE_TEAMS,
     RECEIVE_CATEGORIES,
+    RECEIVE_TEAMS_USERS,
     RECEIVE_PRODUCTS,
     ERROR_TEAMS,
     ADD_TEAM,

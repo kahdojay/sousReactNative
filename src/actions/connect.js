@@ -63,6 +63,7 @@ export default function ConnectActions(ddpClient) {
       if(session.isAuthenticated === true){
         if(teamIds !== undefined && teamIds.length > 0){
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [teamIds]))
+          // dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS_USERS.channel, [teamIds]))
         }
         if(session.userId !== null){
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS.channel, [session.userId]))
@@ -132,6 +133,7 @@ export default function ConnectActions(ddpClient) {
             case 'users':
               // console.log("MAIN DDP WITH FIELDS MSG", log);
               dispatch(sessionActions.receiveSession(data))
+              // dispatch(teamActions.receiveTeamsUsers(data))
               break;
             case 'errors':
               dispatch(errorActions.receiveErrors(data))
