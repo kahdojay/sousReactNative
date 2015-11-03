@@ -92,7 +92,7 @@ export default function ConnectActions(ddpClient) {
     } = allActions
 
     return (dispatch, getState) => {
-      const {connect} = getState()
+      const {connect, session} = getState()
       //--------------------------------------
       // Bind DDP client events
       //--------------------------------------
@@ -133,7 +133,7 @@ export default function ConnectActions(ddpClient) {
             case 'users':
               // console.log("MAIN DDP WITH FIELDS MSG", log);
               // TODO: Revisit this to see if there is a better way to handle the data for users
-              if(data.hasOwnProperty('authToken')){
+              if(data.hasOwnProperty('authToken') || (session.userId !== null && session.userId === data.id)){
                 dispatch(sessionActions.receiveSession(data))
               } else {
                 dispatch(teamActions.receiveTeamsUsers(data))
