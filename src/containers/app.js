@@ -745,6 +745,9 @@ class App extends React.Component {
         onNavToTeamMemberListing={() => {
           nav.push({ name: 'TeamMemberListing', })
         }}
+        onNavToTeamIndex={() => {
+          nav.push({ name: 'TeamIndex', })
+        }}
       />
     );
 
