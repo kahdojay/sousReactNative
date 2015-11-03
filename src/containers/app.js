@@ -371,8 +371,8 @@ class App extends React.Component {
       case 'ProductCreate':
         return (
           <Components.ProductCreate
-            appState={this.props}
-            purveyors={this.props.purveyors}
+            team={this.state.currentTeam}
+            purveyors={purveyors.data}
             onAddProduct={(productAttributes) => {
               const sceneState = Object.assign({}, this.state.sceneState);
               sceneState.ProductCreate.submitReady = true;

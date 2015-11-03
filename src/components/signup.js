@@ -26,29 +26,30 @@ class Signup extends React.Component {
       submitting: false,
       // timeout: null,
     }
+    this.timeout = null
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.session.phoneNumber) { // prevents user input from being cleared
-      this.setState({
-        phoneNumber: nextProps.session.phoneNumber,
-        smsSent: nextProps.session.smsSent,
-      })
-    } else {
-      this.setState({ smsSent: nextProps.session.smsSent, })
+    let newState = {
+      phoneNumber: nextProps.session.phoneNumber,
+      smsSent: nextProps.session.smsSent,
     }
+    if(this.state.submitting === true && nextProps.smsSent === true){
+      newState.submitting = false
+    }
+    this.setState(newState)
   }
 
   componentWillUnmount() {
-    if(this.state.timeout !== null)
-      window.clearTimeout(this.state.timeout);
+    if(this.timeout !== null)
+      window.clearTimeout(this.timeout);
   }
 
   setFetching() {
     this.setState({ submitting: true })
-    let timeout = window.setTimeout(() => {
-      this.setState({ submitting: false });
-    }, 1500);
+    // this.timeout = window.setTimeout(() => {
+    //   this.setState({ submitting: false });
+    // }, 1500);
   }
 
   onSignup() {
@@ -160,6 +161,7 @@ class Signup extends React.Component {
           <Text style={styles.headerText}>We just sent a text to</Text>
           <Text style={[styles.boldText, styles.centered, styles.largeText]}>{formattedPhoneNumber}</Text>
           <TouchableHighlight
+            underlayColor='transparent'
             onPress={() => {
               this.setState({ smsSent: false, smsToken: '' })
             }}
