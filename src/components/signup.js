@@ -48,7 +48,7 @@ class Signup extends React.Component {
     this.setState({ submitting: true })
     let timeout = window.setTimeout(() => {
       this.setState({ submitting: false });
-    }, 1500);
+    }, 2500);
   }
 
   onSignup() {
@@ -136,6 +136,7 @@ class Signup extends React.Component {
               style={styles.input}
               value={this.state.phoneNumber}
               keyboardType='phone-pad'
+              onSubmitEditing={() => {this.onSignup()}}
               onChange={(e) => {
                 this.setState({phoneNumber: e.nativeEvent.text, invalid: false})
               }}
@@ -175,6 +176,7 @@ class Signup extends React.Component {
                 value={this.state.smsToken}
                 keyboardType='phone-pad'
                 textAlign='center'
+                onSubmitEditing={() => {this.onVerify()}}
                 onChange={(e) => {
                   this.setState({smsToken: e.nativeEvent.text, invalid: false})
                 }}
