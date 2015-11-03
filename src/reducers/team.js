@@ -84,7 +84,7 @@ function teams(state = initialState.teams, action) {
   case RECEIVE_TEAMS_USERS:
     const teamsUsersState = Object.assign({}, state);
     // const currentDefaultCategoriesState = updateDataState(defaultCategoriesState.defaultCategories, action.category)
-    defaultCategoriesState.teamsUsers[action.user.id] = action.user;
+    teamsUsersState.teamsUsers[action.user.id] = action.user;
     return Object.assign({}, state, {
       // defaultCategories: currentDefaultCategoriesState,
       teamsUsers: teamsUsersState.teamsUsers,
