@@ -453,6 +453,7 @@ export default function TeamActions(ddpClient, allActions) {
     receiveTeams,
     receiveCategories,
     receiveProducts,
+    receiveTeamsUsers,
     updateProductInCart,
     sendCart,
     resetTeams,
