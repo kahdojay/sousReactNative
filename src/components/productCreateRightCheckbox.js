@@ -25,14 +25,16 @@ class ProductCreateRightCheckbox extends React.Component {
         onPress={()=> {
           if (this.props.submitReady) {
             this.props.onAddProduct();
+          } else {
+            // trigger error: Please fill out all the fields below
           }
         }}
       >
         <Icon
           name={this.state.iconFont}
-          size={40}
+          size={30}
           color={this.props.submitReady ? 'green' : '#ccc'}
-          style={{height: 40, width: 40, }}
+          style={styles.icon}
         />
       </TouchableHighlight>
     );
@@ -40,10 +42,10 @@ class ProductCreateRightCheckbox extends React.Component {
 }
 
 let styles = StyleSheet.create({
-  hamburger: {
-    width: 50,
+  icon: {
     height: 50,
-    marginTop: 6,
+    width: 50,
+    marginTop: 6
   }
 })
 
