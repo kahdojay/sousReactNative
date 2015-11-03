@@ -135,6 +135,10 @@ export default function ConnectActions(ddpClient) {
               // TODO: Revisit this to see if there is a better way to handle the data for users
               if(data.hasOwnProperty('authToken') || (session.userId !== null && session.userId === data.id)){
                 dispatch(sessionActions.receiveSession(data))
+                // TODO: do we need to limit the data coming through?
+                if(data.hasOwnProperty('firstName') && data.hasOwnProperty('lastName') && data.hasOwnProperty('username')){
+                  dispatch(teamActions.receiveTeamsUsers(data))
+                }
               } else {
                 dispatch(teamActions.receiveTeamsUsers(data))
               }
