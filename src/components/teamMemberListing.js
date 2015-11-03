@@ -17,10 +17,9 @@ class TeamMemberListing extends React.Component {
     return (
       <ScrollView style={styles.container}>
       {
-        this.props.team.currentTeamUsers.map((userId) => {
-          const u = this.props.teamsUsers[userId]
+        this.props.currentTeamUsers.map((user) => {
           return (
-            <Text style={styles.member}>{u.firstName} {u.lastName}</Text>
+            <Text style={styles.member}>{user.firstName} {user.lastName}</Text>
           );
         })
       }
