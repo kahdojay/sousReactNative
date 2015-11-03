@@ -392,6 +392,7 @@ class App extends React.Component {
         return (
           <Components.InviteView
             contacts={this.state.contactList}
+            denied={this.state.contactsPermissionDenied}
             onSMSInvite={(contactList) => {
               _.debounce(() => {
                 dispatch(actions.inviteContacts(contactList))
@@ -697,9 +698,10 @@ class App extends React.Component {
           // nav.refs.inviteModal.setState({ modalVisible: true });
           dispatch(actions.updateSession({ inviteModalVisible: false }))
         }}
-        navigateToInviteView={(contactList) => {
+        navigateToInviteView={(contactList, denied) => {
           this.setState({
-            contactList: contactList
+            contactList: contactList,
+            contactsPermissionDenied: denied,
           }, () => {
             // console.log('going to InviteView')
             nav.push({
