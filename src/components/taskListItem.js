@@ -20,12 +20,6 @@ class TaskListItem extends React.Component {
     this.timeoutId = null
   }
 
-  // componentWillMount() {
-  //   this.setState({
-  //     task: this.props.task
-  //   })
-  // }
-
   componentWillReceiveProps(nextProps) {
     // clearTimeout(this.timeoutId)
     // this.timeoutId = setTimeout(() => {
@@ -85,8 +79,6 @@ class TaskListItem extends React.Component {
       taskStyle = styles.taskIncompleteText;
     }
 
-    // console.log(task.completed)
-
     return (
       <View style={styles.container}>
         <View style={[
@@ -123,18 +115,20 @@ class TaskListItem extends React.Component {
             <TouchableHighlight
               key={'decrement'}
               underlayColor='transparent'
-              onPress={::this.decrement}>
+              onPress={::this.decrement}
+              style={{flex: 1}}>
               <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
             </TouchableHighlight>,
             <TouchableHighlight
               key={'increment'}
               underlayColor='transparent'
-              onPress={::this.increment}>
+              onPress={::this.increment}
+              style={{flex: 1}}>
               <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
             </TouchableHighlight>
           ] : [
             <View key={'decrement'} style={{flex: 1}} />,
-            <View key={'increment'} style={{flex:1}} />
+            <View key={'increment'} style={{flex: 1}} />
           ]}
         </View>
       </View>
@@ -165,6 +159,7 @@ let styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: 'white',
     padding: 5,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   rowCompleted: {
@@ -175,7 +170,7 @@ let styles = StyleSheet.create({
     alignItems: 'center',
   },
   main: {
-    flex: 4,
+    flex: 7,
   },
   text: {
     fontWeight: 'bold',

@@ -50,16 +50,19 @@ class TaskFilteredList extends React.Component {
     return (
       <View>
         {this.state.enableShowHideToggle === true ? (
-          <TouchableHighlight
-            underlayColor='transparent'
-            onPress={this.handlePress.bind(this)}
-          >
-            <View style={styles.container}>
-              <View style={styles.roundedCorners}>
-                <Text style={styles.text}>{this.state.tasks.length} {this.props.toggleLabel}</Text>
+          <View style={{alignItems: 'center'}}>
+            <TouchableHighlight
+              underlayColor='transparent'
+              style={{width: 100}}
+              onPress={this.handlePress.bind(this)}
+            >
+              <View style={styles.container}>
+                <View style={styles.roundedCorners}>
+                  <Text style={styles.text}>{this.state.tasks.length} {this.props.toggleLabel}</Text>
+                </View>
               </View>
-            </View>
-          </TouchableHighlight>
+            </TouchableHighlight>
+          </View>
         ) : <View /> }
         <View>
           {this.state.showList === true ? taskList : <View />}
