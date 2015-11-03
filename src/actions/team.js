@@ -55,11 +55,7 @@ export default function TeamActions(ddpClient, allActions) {
           name: name,
           tasks: [],
           categories: teams.defaultCategories,
-          users: [{  // push in enough info to render member listing
-            _id: session.userId,
-            firstName: session.firstName,
-            lastName: session.lastName
-          }],
+          users: [session.userId],
           cart: {
             date: null,
             total: 0.0,
