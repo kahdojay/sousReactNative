@@ -16,6 +16,7 @@ class InviteView extends React.Component {
     super(props)
     this.state = {
       contacts: this.props.contacts,
+      denied: this.props.denied,
     }
   }
 
@@ -29,51 +30,63 @@ class InviteView extends React.Component {
   }
 
   render() {
-    let submitButton = <View />;
-    let contacts = <View />;
-    if(this.state.contacts.length > 0) {
-      contacts = []
-      this.state.contacts.forEach((contact, idx) => {
-        contacts.push(
-          <TouchableHighlight key={idx} underlayColor="#eee" style={{paddingTop: 10,}}>
-            <View style={styles.contactRow} >
-              <View style={styles.row} >
-                <Text style={styles.contactFirstName}>{contact.firstName} </Text>
-                <Text style={styles.contactLastName}>{contact.lastName}</Text>
+    if (this.state.denied) {
+      return (
+        <View style={styles.messageContainer}>
+          <View style={styles.message}>
+            <Text style={styles.centerText}>To invite your contacts, please visit</Text>
+            <Text style={styles.centerText}>Settings > Sous > Toggle Contacts</Text>
+            <Text style={styles.centerText}>And enable contacts for Sous.</Text>
+          </View>
+        </View>
+      );
+    } else {
+      let submitButton = <View />;
+      let contacts = <View />;
+      if(this.state.contacts.length > 0) {
+        contacts = []
+        this.state.contacts.forEach((contact, idx) => {
+          contacts.push(
+            <TouchableHighlight key={idx} underlayColor="#eee" style={{paddingTop: 10,}}>
+              <View style={styles.contactRow} >
+                <View style={styles.row} >
+                  <Text style={styles.contactFirstName}>{contact.firstName} </Text>
+                  <Text style={styles.contactLastName}>{contact.lastName}</Text>
+                </View>
+                <CheckBox
+                  label=''
+                  onChange={(checked) => {
+                    this.setState({ contacts: this.state.contacts.map(function(c) {
+                      if (c.recordID === contact.recordID) {
+                        c.selected = !c.selected;
+                      }
+                      return c;
+                    })})
+                  }}
+                  checked={contact.selected}
+                />
               </View>
-              <CheckBox
-                label=''
-                onChange={(checked) => {
-                  this.setState({ contacts: this.state.contacts.map(function(c) {
-                    if (c.recordID === contact.recordID) {
-                      c.selected = !c.selected;
-                    }
-                    return c;
-                  })})
-                }}
-                checked={contact.selected}
-              />
-            </View>
+            </TouchableHighlight>
+          );
+        });
+        submitButton = (
+          <TouchableHighlight
+            style={styles.button}
+            underlayColor={Colors.buttonPress}
+            onPress={::this.sendSMS}>
+            <Text style={styles.buttonText}>Send SMS</Text>
           </TouchableHighlight>
         );
-      });
-      submitButton = (
-        <TouchableHighlight
-          style={styles.button}
-          underlayColor={Colors.buttonPress}
-          onPress={::this.sendSMS}>
-          <Text style={styles.buttonText}>Send SMS</Text>
-        </TouchableHighlight>
+      }
+
+      return (
+        <ScrollView style={styles.container}>
+          {submitButton}
+          {contacts}
+          {submitButton}
+        </ScrollView>
       );
     }
-
-    return (
-      <ScrollView style={styles.container}>
-        {submitButton}
-        {contacts}
-        {submitButton}
-      </ScrollView>
-    );
   }
 }
 
@@ -115,6 +128,20 @@ let styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontFamily: 'OpenSans'
+  },
+  messageContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  message: {
+    width: 250,
+    borderRadius: 5,
+    backgroundColor: Colors.mainBackgroundColor,
+  },
+  centerText: {
+    padding: 5,
+    textAlign: 'center',
   },
 })
 

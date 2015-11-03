@@ -51,10 +51,9 @@ class InviteModal extends React.Component {
   navigateToInviteView() {
     AddressBook.getContacts( (err, contacts) => {
       if (err && err.type === 'permissionDenied') {
-        // TODO: show error to user
-        // console.log('error fetching contacts')
-      }
-      else {
+        this.props.hideInviteModal()
+        this.props.navigateToInviteView([], true)
+      } else {
         // console.log('contacts', contacts)
         contacts = _.chain(contacts)
           // filter contacts with no numbers
@@ -66,7 +65,7 @@ class InviteModal extends React.Component {
           })
           .value();
         this.props.hideInviteModal()
-        this.props.navigateToInviteView(contacts)
+        this.props.navigateToInviteView(contacts, false)
       }
     })
   }

@@ -21,16 +21,15 @@ const window = Dimensions.get('window');
 module.exports = class Menu extends React.Component {
   render() {
     const {team, session} = this.props
-    if(!session.teamId || !team){
+    if (!session.teamId || !team) {
       return <View />;
     }
 
     let avatar = <Icon name='fontawesome|user' size={40} color='white' style={styles.avatar} />
     if (session.imageUrl) {
-      avatar = <Image
-                  style={styles.avatar}
-                  source={{ uri: session.imageUrl }}
-                />;
+      avatar = (
+        <Image style={styles.avatar} source={{ uri: session.imageUrl }} />
+      );
     }
     const totalTasks = _.filter(team.tasks, { deleted: false } ).length
     const completeTasksCount = _.filter(team.tasks, { deleted: false, completed: true }).length
@@ -100,6 +99,20 @@ module.exports = class Menu extends React.Component {
                 <View style={styles.menuTextContainer}>
                   <Icon name='fontawesome|users' size={20} color='white' style={styles.menuIcon}/>
                   <Text style={styles.menuItemText}>Team Members</Text>
+                </View>
+              </TouchableHighlight>
+            )}
+            {(nonNotepadTeam === false) ? <View/> : (
+              <TouchableHighlight
+                onPress={this.props.onNavToTeamIndex}
+                style={styles.menuItemButton}
+                underlayColor='#3e444f'
+              >
+                <View style={styles.menuTextContainer}>
+                  <Icon name='fontawesome|random' size={20} color='white' style={styles.menuIcon}/>
+                  <Text style={styles.menuItemText}>
+                    Switch Teams
+                  </Text>
                 </View>
               </TouchableHighlight>
             )}
