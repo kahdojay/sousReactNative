@@ -435,32 +435,14 @@ class App extends React.Component {
             <Text style={styles.loadingText}>SETTING UP YOUR WORKSPACE.</Text>
           </View>
         )
+      case 'TeamMemberListing':
+        return (
+          <Components.TeamMemberListing team={this.state.currentTeam} />
+        )
       default:
         return <View />;
     }
   }
-
-  // showActionSheetPurveyorView(nav, route) {
-  //   const { dispatch } = this.props;
-  //   let buttons = [
-  //     'Delete Purveyor',
-  //     // 'Rename Purveyor',
-  //     'Cancel'
-  //   ]
-  //   let deleteAction = 0;
-  //   let cancelAction = 2;
-  //   ActionSheetIOS.showActionSheetWithOptions({
-  //     options: buttons,
-  //     cancelButtonIndex: cancelAction,
-  //     destructiveButtonIndex: deleteAction,
-  //   },
-  //   (buttonIndex) => {
-  //     if (deleteAction === buttonIndex) {
-  //       dispatch(actions.deletePurveyor(route.purveyorId));
-  //       nav.pop();
-  //     }
-  //   });
-  // }
 
   getNavBar(route, nav) {
     const { dispatch, ui, teams, session } = this.props;
@@ -647,6 +629,15 @@ class App extends React.Component {
         case 'Loading':
           navBar = <View />;
           break;
+        case 'TeamMemberListing':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            hidePrev: false,
+            navigator: nav,
+            title: 'Team Directory',
+            route: route,
+            onNext: null,
+          })
+          break;
         default:
           navBar = React.addons.cloneWithProps(this.navBar, {
             hidePrev: false,
@@ -743,19 +734,16 @@ class App extends React.Component {
           }, 25)()
         }}
         onNavToCategory={() => {
-          nav.push({
-            name: 'CategoryIndex',
-          })
+          nav.push({ name: 'CategoryIndex', })
         }}
         onNavToProfile={() => {
-          nav.push({
-            name: 'Profile',
-          })
+          nav.push({ name: 'Profile', })
         }}
         onNavToTeam={() => {
-          nav.push({
-            name: 'TeamView',
-          })
+          nav.push({ name: 'TeamView', })
+        }}
+        onNavToTeamMemberListing={() => {
+          nav.push({ name: 'TeamMemberListing', })
         }}
       />
     );
