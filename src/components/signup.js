@@ -15,6 +15,7 @@ const {
 } = React;
 
 const runTimeDimensions = Dimensions.get('window')
+
 class Signup extends React.Component {
   constructor(props) {
     super(props)
@@ -52,8 +53,6 @@ class Signup extends React.Component {
   }
 
   onSignup() {
-    this.setFetching()
-
     if(this.refs.phone){
       this.refs.phone.blur();
     }
@@ -64,6 +63,7 @@ class Signup extends React.Component {
       this.setState({ invalid: true });
     } else {
       this.setState({ smsToken: '' })
+      this.setFetching()
       this.props.onRegisterSession(Object.assign({}, {
         phoneNumber: this.state.phoneNumber
       }));
@@ -71,17 +71,16 @@ class Signup extends React.Component {
   }
 
   onVerify() {
-    this.setFetching()
-
     if(this.refs.phone){
       this.refs.phone.blur();
     }
     if(this.refs.code){
       this.refs.code.blur();
     }
-    if(this.state.smsToken == ''){
+    if(this.state.smsToken === ''){
       this.setState({invalid: true});
     } else {
+      this.setFetching()
       this.props.onRegisterSession(Object.assign({}, {
         phoneNumber: this.state.phoneNumber,
         smsToken: this.state.smsToken,
@@ -123,7 +122,7 @@ class Signup extends React.Component {
         />
       </View>
     );
-    const errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
+    const errorMessage = <Text style={styles.errorText}>Invalid entry, please try again.</Text>
     let signup = (
       <View style={styles.login}>
         <Text style={styles.headerText}>Use your phone number to log in to Sous.</Text>
@@ -162,7 +161,9 @@ class Signup extends React.Component {
           <Text style={[styles.boldText, styles.centered, styles.largeText]}>{formattedPhoneNumber}</Text>
           <TouchableHighlight
             onPress={() => {
-              this.setState({ smsSent: false, smsToken: '' })
+              this.setState({ smsSent: true, smsToken: null }, () => {
+                this.onSignup()
+              })
             }}
             style={[styles.smallButton, styles.buttonLinkWrap]}>
             <Text style={styles.buttonLink}>Send again</Text>
