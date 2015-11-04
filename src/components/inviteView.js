@@ -34,9 +34,9 @@ class InviteView extends React.Component {
       return (
         <View style={styles.messageContainer}>
           <View style={styles.message}>
-            <Text style={styles.centerText}>To invite your contacts, please visit</Text>
-            <Text style={styles.centerText}>Settings > Sous > Toggle Contacts</Text>
-            <Text style={styles.centerText}>And enable contacts for Sous.</Text>
+            <Text style={styles.centerText}>To invite your contacts, please go to:</Text>
+            <Text style={styles.centerText}>Settings > Sous > Enable "Contacts"</Text>
+            <Text style={styles.centerText}>In the "ALLOW SOUS TO ACCESS" area.</Text>
           </View>
         </View>
       );
@@ -132,10 +132,11 @@ let styles = StyleSheet.create({
   messageContainer: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   message: {
-    width: 250,
+    marginTop: -40,
+    width: 280,
     borderRadius: 5,
     backgroundColor: Colors.mainBackgroundColor,
   },
