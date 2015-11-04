@@ -135,7 +135,7 @@ class Feed extends React.Component {
                   );
                 } else {
                   messageString = (
-                    <Text style={styles.messageText} > {msg.message} </Text>
+                    <Text style={styles.messageText} >{msg.message}</Text>
                   );
                 }
                 return (
