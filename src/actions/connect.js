@@ -134,8 +134,8 @@ export default function ConnectActions(ddpClient) {
               dispatch(teamActions.receiveProducts(data))
               break;
             case 'users':
-              console.log("MAIN DDP WITH FIELDS MSG: ", log);
-              console.log("SESSION USERID: ", session.userId)
+              // console.log("MAIN DDP WITH FIELDS MSG: ", log);
+              // console.log("SESSION USERID: ", session.userId)
 
               let profileData = false
               if(data.hasOwnProperty('authToken') === true){

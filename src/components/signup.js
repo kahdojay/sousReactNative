@@ -146,7 +146,7 @@ class Signup extends React.Component {
         <TouchableHighlight
           underlayColor='#C6861D'
           onPress={() => {
-            this.setState({ smsSent: true }, () => {
+            this.setState({ smsSent: false }, () => {
               this.onSignup()
             })
           }}
@@ -163,15 +163,11 @@ class Signup extends React.Component {
           <Text style={[styles.boldText, styles.centered, styles.largeText]}>{formattedPhoneNumber}</Text>
           <TouchableHighlight
             underlayColor='transparent'
-<<<<<<< HEAD
             onPress={() => {
               this.setState({ smsSent: true, smsToken: null }, () => {
                 this.onSignup()
               })
             }}
-=======
-            onPress={() => {this.onSignup()}}
->>>>>>> development
             style={[styles.smallButton, styles.buttonLinkWrap]}>
             <Text style={styles.buttonLink}>Send again</Text>
           </TouchableHighlight>

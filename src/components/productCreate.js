@@ -74,13 +74,13 @@ class ProductCreate extends React.Component {
   getPicker() {
     let picker = <View />;
     let selectedValue = null;
+    const pickerItems = []
     switch(this.state.picker) {
       case 'purveyor':
         const {purveyors} = this.props;
         if(this.state.purveyorIdList[this.state.pickerIdx] !== null && this.state.purveyorIdList[this.state.pickerIdx].hasOwnProperty('idx')){
           selectedValue = this.state.purveyorIdList[this.state.pickerIdx].idx;
         }
-        const pickerItems = []
         pickerItems.push(
           <PickerIOS.Item
             key={null}
@@ -124,40 +124,47 @@ class ProductCreate extends React.Component {
           </PickerIOS>
         );
         break;
-      // case 'category':
-      //   const categories = this.props.team.categories;
-      //   if(this.state.category !== null && this.state.category.hasOwnProperty('id')){
-      //     selectedValue = this.state.category.id;
-      //   }
-      //   picker = (
-      //     <PickerIOS
-      //       selectedValue={selectedValue}
-      //       onValueChange={(categoryIdx) => {
-      //         let purveyorIdList = this.state.purveyorIdList
-      //         if(purveyorIdx === null){
-      //           purveyorIdList = [
-      //             ...purveyorIdList.slice(0, this.state.pickerIdx),
-      //             ...purveyorIdList.slice(this.state.pickerIdx + 1)
-      //           ]
-      //           if(purveyorIdList.length === 0){
-      //             purveyorIdList.push(null)
-      //           }
-      //         } else {
-      //           const purveyor = purveyors[purveyorIdx]
-      //           purveyorIdList[this.state.pickerIdx] = {idx: purveyorIdx, id: purveyor.id, name: purveyor.name}
-      //         }
-      //         this.setState({
-      //           purveyorSelected: (purveyorIdList.length > 0 && purveyorIdList[0] !== null ? false : true),
-      //           purveyorIdList: purveyorIdList,
-      //           picker: null,
-      //           pickerIdx: null
-      //         })
-      //       }}
-      //     >
-      //     {pickerItems}
-      //     </PickerIOS>
-      //   );
-      //   break;
+      case 'category':
+        const categories = this.props.team.categories;
+        if(this.state.category !== null && this.state.category.hasOwnProperty('id')){
+          selectedValue = this.state.category.id;
+        }
+        pickerItems.push(
+          <PickerIOS.Item
+            key={null}
+            value={null}
+            label={'Select Category ...'}
+          />
+        )
+        Object.keys(categories).forEach((categoryId) => {
+          const category = categories[categoryId]
+          pickerItems.push(
+            <PickerIOS.Item
+              key={category.id}
+              value={category.id}
+              label={category.name}
+            />
+          )
+        })
+        picker = (
+          <PickerIOS
+            selectedValue={selectedValue}
+            onValueChange={(categoryId) => {
+              let category = null
+              if(categoryId !== null){
+                category = categories[categoryId]
+              }
+              this.setState({
+                category: category,
+                picker: null,
+                pickerIdx: null
+              })
+            }}
+          >
+          {pickerItems}
+          </PickerIOS>
+        );
+        break;
       case 'amount':
         const units = ['bag', 'bunch', 'cs', 'dozen', 'ea', 'g', 'kg', 'lb', 'oz', 'pack', 'tub']
         break;
@@ -178,7 +185,7 @@ class ProductCreate extends React.Component {
     }
     purveyorIdList.forEach((selectedPurveyor, idx) => {
       purveyorInputs.push((
-        <View style={styles.inputContainer}>
+        <View key={`purveyor-${idx}`} style={styles.inputContainer}>
           <Text style={styles.inputTitle}>{idx > 0 ? 'Additional Purveyor' : 'Purveyor'}</Text>
           <TouchableHighlight
             underlayColor='transparent'
@@ -210,7 +217,7 @@ class ProductCreate extends React.Component {
     const purveyorInputs = this.getPurveyorInputs()
     return (
       <ScrollView style={styles.scrollView}>
-        <View style={styles.inputContainer}>
+        <View key={'name'} style={styles.inputContainer}>
           <Text style={styles.inputTitle}>Name</Text>
           <TextInput
             ref='name'
