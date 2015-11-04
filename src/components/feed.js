@@ -119,48 +119,42 @@ class Feed extends React.Component {
                 if (msg.imageUrl) {
                   icon = <Image source={{uri: msg.imageUrl}} style={styles.avatarImage} />
                 }
+                let messageString = '';
                 if (msg.type === 'taskCompletion') {
                   // msg.message is task name
-                  return (
-                    <View key={index} style={styles.messageContainer}>
-                      <View style={styles.message}>
-                        {icon}
-                        <View style={styles.messageContentContainer}>
-                          <View style={styles.messageTextContainer}>
-                            <Text style={styles.messageAuthor}>{msg.author}</Text>
-                            <Text style={styles.messageTimestamp}>
-                              {date.substring(0, date.length-6)}{time}
-                            </Text>
-                          </View>
-                          <View style={styles.messageTextContainer}>
-                            <Text>{msg.author}</Text>
-                            <Text> completed </Text>
-                            <Text style={{fontWeight: 'bold'}}>{msg.message}</Text>
-                          </View>
-                        </View>
-                      </View>
-                      <View style={styles.separator} />
-                    </View>
-                  )
+                  messageString = (
+                    <Text style={styles.messageText}>{msg.author} completed
+                      <Text style={{fontWeight: 'bold'}}> {msg.message}</Text>
+                    </Text>
+                  );
+                } else if (msg.type === 'order') {
+                  messageString = (
+                    <Text style={styles.messageText}>Order has been sent to
+                      <Text style={{fontWeight: 'bold'}}> {msg.purveyor}</Text>
+                    </Text>
+                  );
                 } else {
-                  return (
-                    <View key={index} style={styles.messageContainer}>
-                      <View style={styles.message}>
-                        {icon}
-                        <View style={styles.messageContentContainer}>
-                          <View style={styles.messageTextContainer}>
-                            <Text style={styles.messageAuthor}>{msg.author}</Text>
-                            <Text style={styles.messageTimestamp}>
-                              {date.substring(0, date.length-6)}{time}
-                            </Text>
-                          </View>
-                          <Text style={styles.messageText} key={index}>{msg.message}</Text>
-                        </View>
-                      </View>
-                      <View style={styles.separator} />
-                    </View>
-                  )
+                  messageString = (
+                    <Text style={styles.messageText} > {msg.message} </Text>
+                  );
                 }
+                return (
+                  <View key={index} style={styles.messageContainer}>
+                    <View style={styles.message}>
+                      {icon}
+                      <View style={styles.messageContentContainer}>
+                        <View style={styles.messageTextContainer}>
+                          <Text style={styles.messageAuthor}>{msg.author}</Text>
+                          <Text style={styles.messageTimestamp}>
+                            {date.substring(0, date.length-6)}{time}
+                          </Text>
+                        </View>
+                        {messageString}
+                      </View>
+                    </View>
+                    <View style={styles.separator} />
+                  </View>
+                )
               })
             }
           </InvertibleScrollView>

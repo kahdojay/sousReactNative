@@ -27,7 +27,7 @@ export default class AddForm extends React.Component {
         <View style={styles.inputContainer}>
           <TextInput
             style={styles.input}
-            value={this.state.message}
+            value={this.state.message.text}
             placeholder={this.props.placeholder}
             onChangeText={this.handleChangeMessage.bind(this)}
             onSubmitEditing={this.handleSubmit.bind(this)}
