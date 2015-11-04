@@ -438,7 +438,10 @@ class App extends React.Component {
         )
       case 'TeamMemberListing':
         return (
-          <Components.TeamMemberListing team={this.state.currentTeam} />
+          <Components.TeamMemberListing
+            teamsUsers={teams.teamsUsers}
+            currentTeamUsers={this.state.currentTeam.users}
+          />
         )
       default:
         return <View />;

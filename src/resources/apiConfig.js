@@ -9,6 +9,7 @@ export const DDP = {
     TEAMS: {channel: 'teams'},
     PURVEYORS: {channel: 'purveyors'},
     CATEGORIES: {channel: 'categories'},
+    TEAMS_USERS: {channel: 'teams-users'},
     PRODUCTS: {channel: 'products'},
     ERRORS: {channel: 'errors'}
   },

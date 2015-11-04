@@ -63,6 +63,7 @@ export default function ConnectActions(ddpClient) {
       if(session.isAuthenticated === true){
         if(teamIds !== undefined && teamIds.length > 0){
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [teamIds]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS_USERS.channel, [teamIds]))
         }
         if(session.userId !== null){
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS.channel, [session.userId]))
@@ -91,7 +92,7 @@ export default function ConnectActions(ddpClient) {
     } = allActions
 
     return (dispatch, getState) => {
-      const {connect} = getState()
+      const {connect, session} = getState()
       //--------------------------------------
       // Bind DDP client events
       //--------------------------------------
@@ -131,7 +132,16 @@ export default function ConnectActions(ddpClient) {
               break;
             case 'users':
               // console.log("MAIN DDP WITH FIELDS MSG", log);
-              dispatch(sessionActions.receiveSession(data))
+              // TODO: Revisit this to see if there is a better way to handle the data for users
+              if(data.hasOwnProperty('authToken') || (session.userId !== null && session.userId === data.id)){
+                dispatch(sessionActions.receiveSession(data))
+                // TODO: do we need to limit the data coming through?
+                if(data.hasOwnProperty('firstName') && data.hasOwnProperty('lastName') && data.hasOwnProperty('username')){
+                  dispatch(teamActions.receiveTeamsUsers(data))
+                }
+              } else {
+                dispatch(teamActions.receiveTeamsUsers(data))
+              }
               break;
             case 'errors':
               dispatch(errorActions.receiveErrors(data))
