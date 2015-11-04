@@ -35,8 +35,13 @@ class Signup extends React.Component {
       phoneNumber: nextProps.session.phoneNumber,
       smsSent: nextProps.session.smsSent,
     }
-    if(this.state.submitting === true && nextProps.smsSent === true){
-      newState.submitting = false
+    if(this.state.submitting === true){
+      if(nextProps.session.smsSent === true){
+        newState.submitting = false
+      }
+      if(nextProps.errors.length > 0 && nextProps.errors[0].machineKey === 'technical-error:sms'){
+        newState.submitting = false
+      }
     }
     this.setState(newState)
   }
@@ -57,9 +62,6 @@ class Signup extends React.Component {
     if(this.refs.phone){
       this.refs.phone.blur();
     }
-    if(this.refs.code){
-      this.refs.code.blur();
-    }
     if(this.state.phoneNumber === null || this.state.phoneNumber ===  ''){
       this.setState({ invalid: true });
     } else {
@@ -72,9 +74,6 @@ class Signup extends React.Component {
   }
 
   onVerify() {
-    if(this.refs.phone){
-      this.refs.phone.blur();
-    }
     if(this.refs.code){
       this.refs.code.blur();
     }
@@ -147,7 +146,9 @@ class Signup extends React.Component {
         <TouchableHighlight
           underlayColor='#C6861D'
           onPress={() => {
-            this.onSignup()
+            this.setState({ smsSent: true }, () => {
+              this.onSignup()
+            })
           }}
           style={styles.buttonActive}>
           <Text style={styles.buttonText}>Send SMS</Text>
@@ -162,11 +163,15 @@ class Signup extends React.Component {
           <Text style={[styles.boldText, styles.centered, styles.largeText]}>{formattedPhoneNumber}</Text>
           <TouchableHighlight
             underlayColor='transparent'
+<<<<<<< HEAD
             onPress={() => {
               this.setState({ smsSent: true, smsToken: null }, () => {
                 this.onSignup()
               })
             }}
+=======
+            onPress={() => {this.onSignup()}}
+>>>>>>> development
             style={[styles.smallButton, styles.buttonLinkWrap]}>
             <Text style={styles.buttonLink}>Send again</Text>
           </TouchableHighlight>
@@ -189,9 +194,7 @@ class Signup extends React.Component {
           { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
           <TouchableHighlight
             underlayColor='#C6861D'
-            onPress={() => {
-              this.onVerify()
-            }}
+            onPress={() => {this.onVerify()}}
             style={styles.buttonActive}
           >
             <Text style={styles.buttonText}>Verify</Text>
