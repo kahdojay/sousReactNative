@@ -1,6 +1,6 @@
 const React = require('react-native');
-// let MultiPickerIOS = require('react-native-multipicker');
-// let { Group, Item } = MultiPickerIOS;
+let MultiPickerIOS = require('react-native-multipicker');
+let { Group, Item } = MultiPickerIOS;
 // import Dimensions from 'Dimensions';
 import {Icon}  from 'react-native-icons';
 import Overlay from 'react-native-overlay';
@@ -61,7 +61,7 @@ class ProductCreate extends React.Component {
     ) {
       const productAttributes = {
         name: this.state.name,
-        purveyorId: this.state.purveyor.id,
+        purveyorIdList: this.state.purveyorIdList,
         amount: `${this.state.amount} ${this.state.unit}` ,
         categoryId: this.state.category.id,
       }
@@ -90,7 +90,7 @@ class ProductCreate extends React.Component {
         )
         purveyors.forEach((purveyor, purveyorIdx) => {
           const selectedIdx = _.findIndex(this.state.purveyorIdList, {'id': purveyor.id})
-          if(selectedIdx === -1){
+          if(selectedIdx === -1 || this.state.pickerIdx === selectedIdx){
             pickerItems.push(
               <PickerIOS.Item
                 key={purveyorIdx}
@@ -117,7 +117,14 @@ class ProductCreate extends React.Component {
                 const purveyor = purveyors[purveyorIdx]
                 purveyorIdList[this.state.pickerIdx] = {idx: purveyorIdx, id: purveyor.id, name: purveyor.name}
               }
-              this.setState({purveyorIdList: purveyorIdList, picker: null, pickerIdx: null})
+              this.setState({
+                purveyorIdList: purveyorIdList,
+                purveyorSelected: true,
+                picker: null,
+                pickerIdx: null
+              }, () => {
+                this.submitReady();
+              })
             }}
           >
           {pickerItems}
@@ -156,8 +163,11 @@ class ProductCreate extends React.Component {
               }
               this.setState({
                 category: category,
+                categorySelected: true,
                 picker: null,
                 pickerIdx: null
+              }, () => {
+                this.submitReady();
               })
             }}
           >
@@ -167,6 +177,42 @@ class ProductCreate extends React.Component {
         break;
       case 'amount':
         const units = ['bag', 'bunch', 'cs', 'dozen', 'ea', 'g', 'kg', 'lb', 'oz', 'pack', 'tub']
+        const amounts = _.range(1, 500)
+        picker = (
+          <MultiPickerIOS style={styles.picker}>
+            <Group
+              selectedValue={this.state.amount}
+              onChange={(e) => {
+                // console.log(e)
+                this.setState({
+                  amount: e.newValue,
+                  amountSelected: true
+                }, () => {
+                  this.submitReady();
+                });
+              }}
+            >
+              { amounts.map((num, idx) => {
+                return <Item value={num} key={idx} label={num.toString()} />
+              })}
+            </Group>
+            <Group
+              selectedValue={this.state.unit}
+              onChange={(e) => {
+                this.setState({
+                  unit: e.newValue,
+                  unitSelected: true,
+                }, () => {
+                  this.submitReady();
+                })
+              }}
+            >
+              { units.map((val, idx) => {
+                return <Item value={val} key={idx} label={val} />
+              })}
+            </Group>
+          </MultiPickerIOS>
+        );
         break;
       case null:
       default:
@@ -253,50 +299,22 @@ class ProductCreate extends React.Component {
 
         <View style={styles.inputContainer}>
           <Text style={styles.inputTitle}>Amount</Text>
-          <Text style={styles.inputField} >{this.state.amountSelected ? this.state.amount : 'Amount of'} {this.state.unitSelected ? this.state.unit : 'Units'}</Text>
+          <TouchableHighlight
+            underlayColor='transparent'
+            onPress={() => {
+              this.setState({
+                picker: 'amount'
+              })
+            }}
+            style={styles.inputFieldContainer}
+          >
+            <Text style={styles.inputField}>
+              { this.state.amountSelected ? this.state.amount : 'Amount of'} {this.state.unitSelected ? this.state.unit : 'Units'}
+            </Text>
+          </TouchableHighlight>
         </View>
+
         {picker}
-        {/*<MultiPickerIOS style={styles.picker}>
-          <Group style={styles.group} selectedValue={this.state.category} onChange={(e) => {
-              this.setState({category: e.newValue, categorySelected: true}, () => {
-                this.submitReady();
-              })
-            }}>
-              {categories.map((category, idx) => {
-                return <Item value={category} key={idx} label={category.name} />;
-              })}
-          </Group>
-          <Group selectedValue={this.state.purveyor} onChange={(e) => {
-              this.setState({purveyor: e.newValue, purveyorSelected: true}, () => {
-                this.submitReady();
-              })
-            }}>
-              { purveyors.map((purveyor, idx) => {
-                return <Item value={purveyor} key={idx} label={purveyor.name} />
-              })}
-          </Group>
-        </MultiPickerIOS>
-        <MultiPickerIOS style={styles.picker}>
-          <Group selectedValue={this.state.amount} onChange={(e) => {
-              // console.log(e)
-              this.setState({amount: e.newValue, amountSelected: true}, () => {
-                this.submitReady();
-              });
-            }}>
-            { _.range(1, 500).map((num) => {
-              return <Item value={num} key={num} label={num.toString()} />
-            })}
-          </Group>
-          <Group selectedValue={this.state.unit} onChange={(e) => {
-              this.setState({unit: e.newValue, unitSelected: true}, () => {
-                this.submitReady();
-              })
-            }}>
-            { units.map((val, idx) => {
-              return <Item value={val} key={idx} label={val} />
-            })}
-          </Group>
-        </MultiPickerIOS>*/}
       </ScrollView>
     );
   }
