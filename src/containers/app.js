@@ -118,13 +118,14 @@ class App extends React.Component {
   }
 
   getScene(route, nav) {
-    const { ui, session, teams, messages, dispatch, purveyors, products } = this.props;
-    
+    const { ui, session, teams, messages, dispatch, purveyors, products, errors } = this.props;
+
     switch (route.name) {
       case 'Signup':
         return (
           <Components.Signup
             session={session}
+            errors={errors.data}
             onRegisterSession={(sessionParams) => {
               _.debounce(() => {
                 dispatch(actions.registerSession(sessionParams))

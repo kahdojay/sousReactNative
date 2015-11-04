@@ -27,37 +27,40 @@ class Signup extends React.Component {
       submitting: false,
       // timeout: null,
     }
+    this.timeout = null
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.session.phoneNumber) { // prevents user input from being cleared
-      this.setState({
-        phoneNumber: nextProps.session.phoneNumber,
-        smsSent: nextProps.session.smsSent,
-      })
-    } else {
-      this.setState({ smsSent: nextProps.session.smsSent, })
+    let newState = {
+      phoneNumber: nextProps.session.phoneNumber,
+      smsSent: nextProps.session.smsSent,
     }
+    if(this.state.submitting === true){
+      if(nextProps.session.smsSent === true){
+        newState.submitting = false
+      }
+      if(nextProps.errors.length > 0 && nextProps.errors[0].machineKey === 'technical-error:sms'){
+        newState.submitting = false
+      }
+    }
+    this.setState(newState)
   }
 
   componentWillUnmount() {
-    if(this.state.timeout !== null)
-      window.clearTimeout(this.state.timeout);
+    if(this.timeout !== null)
+      window.clearTimeout(this.timeout);
   }
 
   setFetching() {
     this.setState({ submitting: true })
-    let timeout = window.setTimeout(() => {
-      this.setState({ submitting: false });
-    }, 2500);
+    // this.timeout = window.setTimeout(() => {
+    //   this.setState({ submitting: false });
+    // }, 1500);
   }
 
   onSignup() {
     if(this.refs.phone){
       this.refs.phone.blur();
-    }
-    if(this.refs.code){
-      this.refs.code.blur();
     }
     if(this.state.phoneNumber === null || this.state.phoneNumber ===  ''){
       this.setState({ invalid: true });
@@ -71,9 +74,6 @@ class Signup extends React.Component {
   }
 
   onVerify() {
-    if(this.refs.phone){
-      this.refs.phone.blur();
-    }
     if(this.refs.code){
       this.refs.code.blur();
     }
@@ -146,7 +146,9 @@ class Signup extends React.Component {
         <TouchableHighlight
           underlayColor='#C6861D'
           onPress={() => {
-            this.onSignup()
+            this.setState({ smsSent: true }, () => {
+              this.onSignup()
+            })
           }}
           style={styles.buttonActive}>
           <Text style={styles.buttonText}>Send SMS</Text>
@@ -160,11 +162,8 @@ class Signup extends React.Component {
           <Text style={styles.headerText}>We just sent a text to</Text>
           <Text style={[styles.boldText, styles.centered, styles.largeText]}>{formattedPhoneNumber}</Text>
           <TouchableHighlight
-            onPress={() => {
-              this.setState({ smsSent: true, smsToken: null }, () => {
-                this.onSignup()
-              })
-            }}
+            underlayColor='transparent'
+            onPress={() => {this.onSignup()}}
             style={[styles.smallButton, styles.buttonLinkWrap]}>
             <Text style={styles.buttonLink}>Send again</Text>
           </TouchableHighlight>
@@ -187,9 +186,7 @@ class Signup extends React.Component {
           { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
           <TouchableHighlight
             underlayColor='#C6861D'
-            onPress={() => {
-              this.onVerify()
-            }}
+            onPress={() => {this.onVerify()}}
             style={styles.buttonActive}
           >
             <Text style={styles.buttonText}>Verify</Text>

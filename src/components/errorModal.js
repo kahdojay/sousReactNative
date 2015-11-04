@@ -74,7 +74,7 @@ class ErrorModal extends React.Component {
       <TouchableHighlight
         style={styles.button}
         onPress={::this.handleDismiss}
-        underlayColor={'#fff'}
+        underlayColor='transparent'
       >
         <Text style={styles.buttonText}>Dismiss</Text>
       </TouchableHighlight>
@@ -122,9 +122,11 @@ var styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
-    paddingTop: 10,
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingRight: 45,
+    paddingLeft: 45,
     flex: 1,
-    height: 44,
     alignSelf: 'center',
     // overflow: 'hidden',
   },
