@@ -60,7 +60,7 @@ class TaskView extends React.Component {
     let newTask = this.props.task
     newTask.deleted = true
     this.props.onUpdateTeamTask(task.recipeId, newTask)
-    this.onDeleteTaskPop()
+    this.props.onDeleteTaskPop()
   }
   
   render() {
