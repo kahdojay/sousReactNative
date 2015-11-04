@@ -131,16 +131,35 @@ export default function ConnectActions(ddpClient) {
               dispatch(teamActions.receiveProducts(data))
               break;
             case 'users':
-              // console.log("MAIN DDP WITH FIELDS MSG", log);
-              // TODO: Revisit this to see if there is a better way to handle the data for users
-              if(data.hasOwnProperty('authToken') || (session.userId !== null && session.userId === data.id)){
+              console.log("MAIN DDP WITH FIELDS MSG: ", log);
+              console.log("SESSION USERID: ", session.userId)
+
+              let profileData = false
+              if(data.hasOwnProperty('authToken') === true){
+                profileData = true
+              }
+              if(data.hasOwnProperty('smsSent') === true){
+                profileData = true
+              }
+              if(data.hasOwnProperty('smsVerified') === true){
+                profileData = true
+              }
+              if(session.userId !== null && session.userId === data.id){
+                profileData = true
+              }
+
+              if(profileData){
                 dispatch(sessionActions.receiveSession(data))
-                // TODO: do we need to limit the data coming through?
-                if(data.hasOwnProperty('firstName') && data.hasOwnProperty('lastName') && data.hasOwnProperty('username')){
-                  dispatch(teamActions.receiveTeamsUsers(data))
+              }
+
+              if(data.hasOwnProperty('firstName') === true && data.hasOwnProperty('lastName') === true && data.hasOwnProperty('username') === true){
+                const teamUserData = {
+                  'id': data.id,
+                  'firstName': data.firstName,
+                  'lastName': data.lastName,
+                  'username': data.username,
                 }
-              } else {
-                dispatch(teamActions.receiveTeamsUsers(data))
+                dispatch(teamActions.receiveTeamsUsers(teamUserData))
               }
               break;
             case 'errors':

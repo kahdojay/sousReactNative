@@ -119,7 +119,7 @@ class App extends React.Component {
 
   getScene(route, nav) {
     const { ui, session, teams, messages, dispatch, purveyors, products } = this.props;
-
+    
     switch (route.name) {
       case 'Signup':
         return (
@@ -433,7 +433,8 @@ class App extends React.Component {
             <View style={styles.logoContainer}>
               <Image source={require('image!Logo')} style={styles.logoImage}></Image>
             </View>
-            <Text style={styles.loadingText}>SETTING UP YOUR WORKSPACE.</Text>
+            <Text style={styles.loadingText}>SETTING UP YOUR WORKSPACE</Text>
+            <Text style={styles.loadingText}>FOR THE FIRST TIME USE.</Text>
           </View>
         )
       case 'TeamMemberListing':
