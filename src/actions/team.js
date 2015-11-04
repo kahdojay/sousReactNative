@@ -82,9 +82,9 @@ export default function TeamActions(ddpClient, allActions) {
     }
   }
 
-  function completeTeamTask(messageText) {
+  function completeTeamTask(message) {
     return (dispatch) => {
-      dispatch(messageActions.createMessage(messageText))
+      dispatch(messageActions.createMessage(message))
       return dispatch({
         type: COMPLETE_TEAM_TASK
       });

@@ -14,7 +14,10 @@ export default class AddForm extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      message: ''
+      message: {
+        text: '',
+        type: 'chat',
+      }
     }
   }
 
@@ -33,7 +36,8 @@ export default class AddForm extends React.Component {
         <TouchableHighlight
           onPress={this.handleSubmit.bind(this)}
           underlayColor={"#eee"}
-          style={styles.button}>
+          style={styles.button}
+        >
           <Text style={styles.sendText}>Send</Text>
         </TouchableHighlight>
       </View>
@@ -41,13 +45,13 @@ export default class AddForm extends React.Component {
   }
 
   handleChangeMessage(text) {
-    this.setState({message: text})
+    this.setState({message: {text: text}})
   }
 
   handleSubmit() {
-    if (this.state.message !== '') {
+    if (this.state.message.text !== '') {
       this.props.onSubmit(this.state.message);
-      this.setState({message: ''})
+      this.setState({message: {text: ''}})
     }
   }
 }

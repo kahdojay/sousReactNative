@@ -110,15 +110,39 @@ class Feed extends React.Component {
             ref='scrollview'
           >
             {
-                _.filter(messages.data, (msg) => {
-                  return msg.teamId === session.teamId
-                }).map((msg, index) => {
-                  let date = new Date(msg.createdAt).toLocaleTimeString();
-                  let time = date.substring(date.length-3, date.length)
-                  let icon = <Icon name='fontawesome|user' size={25} color='#777' style={styles.avatar}/>
-                  if (msg.imageUrl) {
-                    icon = <Image source={{uri: msg.imageUrl}} style={styles.avatarImage} />
-                  }
+              _.filter(messages.data, (msg) => {
+                return msg.teamId === session.teamId
+              }).map((msg, index) => {
+                let date = new Date(msg.createdAt).toLocaleTimeString();
+                let time = date.substring(date.length-3, date.length)
+                let icon = <Icon name='fontawesome|user' size={25} color='#777' style={styles.avatar}/>
+                if (msg.imageUrl) {
+                  icon = <Image source={{uri: msg.imageUrl}} style={styles.avatarImage} />
+                }
+                if (msg.type === 'taskCompletion') {
+                  // msg.message is task name
+                  return (
+                    <View key={index} style={styles.messageContainer}>
+                      <View style={styles.message}>
+                        {icon}
+                        <View style={styles.messageContentContainer}>
+                          <View style={styles.messageTextContainer}>
+                            <Text style={styles.messageAuthor}>{msg.author}</Text>
+                            <Text style={styles.messageTimestamp}>
+                              {date.substring(0, date.length-6)}{time}
+                            </Text>
+                          </View>
+                          <View style={styles.messageTextContainer}>
+                            <Text>{msg.author}</Text>
+                            <Text> completed </Text>
+                            <Text style={{fontWeight: 'bold'}}>{msg.message}</Text>
+                          </View>
+                        </View>
+                      </View>
+                      <View style={styles.separator} />
+                    </View>
+                  )
+                } else {
                   return (
                     <View key={index} style={styles.messageContainer}>
                       <View style={styles.message}>
@@ -137,7 +161,7 @@ class Feed extends React.Component {
                     </View>
                   )
                 }
-              )
+              })
             }
           </InvertibleScrollView>
           <AddMessageForm
