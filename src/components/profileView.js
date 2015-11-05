@@ -1,8 +1,9 @@
-import { Icon } from 'react-native-icons';
 import React from 'react-native';
+import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import { mainBackgroundColor } from '../utilities/colors';
 let UIImagePickerManager = require('NativeModules').UIImagePickerManager;
+
 const {
   View,
   Text,
@@ -41,33 +42,34 @@ class ProfileView extends React.Component {
       customButtons: {
          // [Button Text] : [String returned upon selection]
       },
-      maxWidth: 400,
-      maxHeight: 400,
+      maxWidth: 100,
+      maxHeight: 100,
       returnBase64Image: false,
       returnIsVertical: false,
       quality: 1,
-      allowsEditing: false, // Built in iOS functionality to resize/reposition the image
+      allowsEditing: true, // Built in iOS functionality to resize/reposition the image
+      noData: false,
       //storageOptions: {   // if provided, the image will get saved in the documents directory (rather than tmp directory)
       //  skipBackup: true, // will set attribute so the image is not backed up to iCloud
       //  path: "images",   // will save image at /Documents/images rather than the root
       //}
     };
 
-// The first arg will be the options object for customization, the second is
-// your callback which sends string: responseType, string: response.
-// responseType will be either 'cancel', 'data', 'uri', or one of your custom button values
-    UIImagePickerManager.showImagePicker(options, (responseType, response) => {
-      // console.log(`Response Type = ${responseType}`);
+    // The first arg will be the options object for customization, the second is
+    // your callback which sends bool: didCancel, object: response.
+    //
+    // response.data is the base64 encoded image data
+    // response.uri is the uri to the local file asset on the device
+    // response.isVertical will be true if the image is vertically oriented
+    // response.width & response.height give you the image dimensions
+    UIImagePickerManager.showImagePicker(options, (didCancel, response) => {
+      console.log('Response = ', response);
 
-      if (responseType !== 'cancel') {
-        let source;
-        if (responseType === 'data') { // New photo taken OR passed returnBase64Image true -  response is the 64 bit encoded image data string
-          source = {uri: 'data:image/jpeg;base64,' + response, isStatic: true};
-        }
-        else if (responseType === 'uri') { // Selected from library - response is the URI to the local file asset
-          source = {uri: response.replace('file://', ''), isStatic: true};
-        }
-        // console.log("SOURCE", source);
+      if (didCancel) {
+        console.log('User cancelled image picker');
+      } else {
+        // const source = {uri: response.uri.replace('file://', ''), isStatic: true};
+        const source = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
         this.props.onUpdateAvatar(source);
       }
     });
@@ -86,42 +88,53 @@ class ProfileView extends React.Component {
   }
   render() {
     // console.log("PROFILE", this.props);
-    let avatar = <Image style={styles.userIcon} source={{uri: this.props.session.imageUrl}}/>
-    if (! this.props.session.imageUrl) {
+    let avatar = (
+      <Image
+        style={styles.userIcon}
+        source={{uri: this.props.session.imageUrl}}
+      />
+    )
+    if (!this.props.session.imageUrl) {
       avatar = <Icon name="material|account-circle" size={100} style={styles.userIcon} />
     }
-    let phoneNumber = <TouchableHighlight
-                        underlayColor={Colors.darkBlue}
-                        style={styles.phoneNumber}>
-                        <Text style={styles.phoneText}>{this.props.session.phoneNumber}</Text>
-                      </TouchableHighlight>
+    let phoneNumber = (
+      <TouchableHighlight
+        underlayColor={Colors.darkBlue}
+        style={styles.phoneNumber}>
+        <Text style={styles.phoneText}>{this.props.session.phoneNumber}</Text>
+      </TouchableHighlight>
+    )
     if (this.state.editPhoneNumber) {
-      phoneNumber = <View style={styles.infoField}>
-                      <TextInput
-                        onChange={(e) => this.setState({phoneNumber: e.nativeEvent.text})}
-                        style={styles.inputField}
-                        value={this.state.phoneNumber}></TextInput>
-                    </View>
+      phoneNumber = (
+        <View style={styles.infoField}>
+          <TextInput
+            onChange={(e) => this.setState({phoneNumber: e.nativeEvent.text})}
+            style={styles.inputField}
+            value={this.state.phoneNumber}></TextInput>
+        </View>
+      )
     }
-    let saveChanges = <View style={styles.saveContainer}>
-                        <TouchableHighlight
-                          underlayColor='#bbb'
-                          onPress={() => {
-                            let {firstName, lastName, email, notifications, phoneNumber} = this.state;
-                            let data = {
-                              firstName: firstName,
-                              lastName: lastName,
-                              email: email,
-                              notifications: notifications,
-                              username: phoneNumber,
-                              phoneNumber: phoneNumber,
-                            };
-                            this.props.onUpdateInfo(data);
-                          }}
-                          style={styles.saveButton}>
-                          <Text style={styles.saveText}>Save Changes</Text>
-                        </TouchableHighlight>
-                      </View>
+    let saveChanges = (
+      <View style={styles.saveContainer}>
+        <TouchableHighlight
+          underlayColor='#bbb'
+          onPress={() => {
+            let {firstName, lastName, email, notifications, phoneNumber} = this.state;
+            let data = {
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+              notifications: notifications,
+              username: phoneNumber,
+              phoneNumber: phoneNumber,
+            };
+            this.props.onUpdateInfo(data);
+          }}
+          style={styles.saveButton}>
+          <Text style={styles.saveText}>Save Changes</Text>
+        </TouchableHighlight>
+      </View>
+    )
     return (
    		<ScrollView
         style={styles.scrollView}
@@ -130,21 +143,18 @@ class ProfileView extends React.Component {
       >
         <View style={styles.wrapper}>
           <View>
-
-          <TouchableHighlight
-            underlayColor="#f7f7f7"
-            onPress={() => this.showActionSheet()}
-            style={styles.avatar}>
-            <View>
-              {avatar}
-              <Text style={styles.changeAvatarText}>Change Avatar</Text>
-            </View>
-          </TouchableHighlight>
+            <TouchableHighlight
+              underlayColor="#f7f7f7"
+              onPress={() => this.showActionSheet()}
+              style={styles.avatar}>
+              <View>
+                {avatar}
+                <Text style={styles.changeAvatarText}>Change Avatar</Text>
+              </View>
+            </TouchableHighlight>
           </View>
-
           {phoneNumber}
           <View style={styles.userInfoContainer}>
-
             <View style={styles.userProfile}>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>First Name</Text>
@@ -176,7 +186,6 @@ class ProfileView extends React.Component {
             </View>
             {! this.needsSave() ? saveChanges : <View></View>}
           </View>
-
         </View>
       </ScrollView>
     );
