@@ -183,7 +183,11 @@ class App extends React.Component {
             onTaskCompletionNotification={(task) => {
               _.debounce(() => {
                 // console.log("TASK: ", task);
-                var msg = `{{author}} completed ${task.name}`;
+                // var text = `{{author}} completed ${task.name}`;
+                var msg = {
+                  text: task.name,
+                  type: 'taskCompletion',
+                }
                 dispatch(actions.completeTeamTask(msg))
               }, 25)()
             }}

@@ -54,8 +54,6 @@ class ProductToggle extends React.Component {
       />
     );
 
-    // console.log(this.props.added)
-
     const modalShowButton = (
       <ModalToggle onPress={this._setModalVisible.bind(this, true)} >
         <Icon
@@ -84,13 +82,18 @@ class ProductToggle extends React.Component {
         <Modal
           animated={true}
           transparent={true}
-          visible={this.state.modalVisible}>
-          <View style={styles.container}>
+          visible={this.state.modalVisible}
+        >
+          <TouchableHighlight
+            onPress={() => this._setModalVisible(false)}
+            style={styles.container}
+            underlayColor="rgba(0, 0, 0, 0.5)"
+          >
             <View style={styles.innerContainer}>
               <Text style={styles.modalHeader}>Select Purveyor</Text>
               {purveyorsArray}
             </View>
-          </View>
+          </TouchableHighlight>
         </Modal>
         {this.props.added === false && this.props.availablePurveyors.length > 1 ? modalShowButton : checkbox}
       </View>

@@ -25,7 +25,8 @@ class FeedViewLeftButton extends React.Component {
     return (
       <TouchableHighlight
         underlayColor='white'
-        onPress={this.handlePress.bind(this)} >
+        onPress={this.handlePress.bind(this)}
+      >
         <Icon name='fontawesome|bars' size={30} color={Colors.navbarIconColor} style={styles.hamburger} />
       </TouchableHighlight>
     );
@@ -36,7 +37,7 @@ let styles = StyleSheet.create({
   hamburger: {
     width: 50,
     height: 50,
-    marginTop: 6,
+    marginTop: 12,
   }
 })
 

@@ -61,7 +61,7 @@ class TaskListItem extends React.Component {
   }
 
   taskUpdateFromLocalState() {
-    if(this.state.task.completed === true) {
+    if (this.state.task.completed === true) {
       this.props.onTaskCompletionNotification(this.state.task);
     }
     this.props.onUpdateTeamTask({

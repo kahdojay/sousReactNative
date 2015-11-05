@@ -17,23 +17,24 @@ export default function MessageActions(ddpClient) {
     }
   }
 
-  function createMessage(messageText, author, imageUrl) {
+  function createMessage(message, author, imageUrl) {
     // console.log('imageUrl', imageUrl)
     return (dispatch, getState) => {
       const {session} = getState()
       author = author ? author : `${session.firstName} ${session.lastName.substring(0,1)}`;
       imageUrl = imageUrl ? imageUrl : session.imageUrl;
 
-      messageText = messageText.replace(/\{\{author\}\}/g, author);
+      message.text = message.text.replace(/\{\{author\}\}/g, author);
       var newMessage = {
         _id: shortid.generate(),
-        message: messageText,
-        userId: session.userId,
         author: author || "Default",
-        teamId: session.teamId,
         createdAt: (new Date()).toISOString(),
+        delete: false,
         imageUrl: imageUrl,
-        delete: false
+        message: message.text,
+        teamId: session.teamId,
+        type: message.type,
+        userId: session.userId,
       };
       // console.log('newMessage', newMessage);
       ddpClient.call('createMessage', [newMessage])
