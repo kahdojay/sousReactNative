@@ -1,4 +1,7 @@
+import { SESSION_VERSION } from '../resources/apiConfig'
 import {
+  RESET_SESSION_VERSION,
+  UPDATE_SESSION,
   RESET_SESSION,
   REQUEST_SESSION,
   RECEIVE_SESSION,
@@ -6,52 +9,58 @@ import {
 } from '../actions';
 
 const initialState = {
-  isAuthenticated: false,
-  isFetching: false,
-  login: null,
-  token: null,
-  userId: null,
-  teamKey: null,
-  errors: null
+  session: {
+    authToken: "",
+    email: null,
+    errors: null,
+    firstName: "",
+    inviteModalVisible: false,
+    imageUrl: "",
+    isAuthenticated: false,
+    lastName: "",
+    lastUpdated: null,
+    notifications: false,
+    phoneNumber: null,
+    smsSent: false,
+    smsVerified: false,
+    teamId: null,
+    username: null,
+    userId: null,
+    version: 0,
+  }
 };
 
-function session(state = initialState, action) {
+function session(state = initialState.session, action) {
   switch (action.type) {
+  case RESET_SESSION_VERSION:
+    var newState = state;
+    if(SESSION_VERSION !== newState.version){
+      newState = Object.assign({}, initialState.session, {
+        version: SESSION_VERSION
+      })
+      // console.log('UPDATING APP SESSION TO: ', newState);
+    }
+    return newState;
   case RESET_SESSION:
-    return Object.assign({}, state, {
-      isAuthenticated: false,
-      isFetching: false,
-      errors: null,
-      stations: {},
-      tasks: {},
-      session: {
-        isAuthenticated: false,
-        isFetching: false,
-        login: ''
-      }
-    })
+    return Object.assign({}, initialState.session)
   case REQUEST_SESSION:
     return Object.assign({}, state, {
-      isFetching: true,
+      phoneNumber: action.phoneNumber,
       errors: null
     })
   case RECEIVE_SESSION:
-    return Object.assign({}, state, {
-      isAuthenticated: true,
-      isFetching: false,
-      login: action.login,
-      token: action.token,
-      userId: action.userId,
-      teamKey: action.teamKey,
+    var newSessionState = Object.assign({}, state, action, {
       errors: null,
-      lastUpdated: action.receivedAt
+      lastUpdated: (new Date).toISOString()
     })
+    // console.log(newSessionState);
+    return newSessionState;
+  case UPDATE_SESSION:
+    //TODO: prevent certain session vars from being updated (eg. userId, phoneNumber)
+    return Object.assign({}, state, action.session)
   case ERROR_SESSION:
     return Object.assign({}, state, {
-      isFetching: false,
-      login: action.login,
-      userId: null,
-      teamKey: null,
+      phoneNumber: action.phoneNumber,
       errors: action.errors
     })
   default:

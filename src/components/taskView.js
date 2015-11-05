@@ -2,7 +2,6 @@ import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
-import { mainBackgroundColor, navbarColor } from '../utilities/colors';
 
 const {
   ScrollView,
@@ -31,6 +30,8 @@ class TaskView extends React.Component {
   }
 
   scrollToBottom() {
+    // TODO: automatically scroll to bottom on TextInput focus (alternatively,
+    // define method to calculate y-position of TextInput and scroll to there)
     // if(this.refs.hasOwnProperty('scrollview')){
     //   UIManager.measure(this.refs.scrollview, (x, y, width, height, left, top) => {
     //     console.log(height);
@@ -46,65 +47,33 @@ class TaskView extends React.Component {
 
   saveTask() {
     if(this.state.saved === false){
-      let {stationId, task} = this.props;
+      let {task} = this.props;
       let newTask = this.props.task;
       newTask.description = this.state.textInputDescription;
       newTask.name = this.state.textInputName
-      this.props.onUpdateStationTask(stationId, task.recipeId, newTask);
+      this.props.onUpdateTeamTask(task.recipeId, newTask);
       this.setState({saved: true});
     }
   }
   deleteTask() {
-    let {stationId, task} = this.props;
+    let {task} = this.props;
     let newTask = this.props.task
     newTask.deleted = true
-    this.props.onUpdateStationTask(stationId, task.recipeId, newTask)
-    this.props.navigator.pop()
+    this.props.onUpdateTeamTask(task.recipeId, newTask)
+    this.props.onDeleteTaskPop()
   }
-  componentWillReceiveProps(nextProps){
-    if(nextProps.task.deleted === true){
-      this.props.navigator.pop()
-    } else {
-      this.setState({
-        textInputDescription: nextProps.task.description,
-        textInputName: nextProps.task.name,
-        saved: true,
-      });
-    }
-    if(nextProps.ui.keyboard.visible === true){
-      this.scrollToBottom();
-    } else {
-      this.scrollToTop();
-    }
-  }
-
+  
   render() {
-    let navBar = <View style={[NavigationBarStyles.navBarContainer, {backgroundColor: navbarColor}]}>
-      <View style={[
-        NavigationBarStyles.navBar,
-        {paddingVertical: 5}
-      ]}>
-        <BackBtn
-          style={styles.backButton}
-          callback={this.saveTask.bind(this)}
-          navigator={this.props.navigator}
-        />
-        <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-        <View style={NavigationBarStyles.navBarRightButton}></View>
-      </View>
-    </View>
-
-    if(this.props.ui.keyboard.visible === true){
-      navBar = <View/>
-    }
     return (
       <View style={styles.container}>
-        {navBar}
         <ScrollView
           scrollEventThrottle={200}
           ref='scrollview'
+          keyboardShouldPersistTaps={false}
+          style={styles.scrollView}
+          automaticallyAdjustContentInsets={false}
         >
-          <View style={styles.headerContainer}>
+          {/*<View style={styles.headerContainer}>
             <Icon
               name='material|assignment'
               size={100}
@@ -121,7 +90,7 @@ class TaskView extends React.Component {
                 <Icon name='fontawesome|check-square' size={50} color='#aaa' style={styles.iconSide}/>
               </View>
             </View>
-          </View>
+          </View>*/}
 
           <View style={styles.mainContainer}>
             <TextInput
@@ -157,20 +126,22 @@ class TaskView extends React.Component {
 };
 
 const styles = StyleSheet.create({
-  // navbar: {
-  //   flexDirection: 'row',
-  //   height: 30,
-  //   backgroundColor: '#1E00B1',
-  //   alignItems: 'stretch'
-  // },
   button: {
     height: 56,
     backgroundColor: '#F5A623',
     alignSelf: 'center',
     width: 150,
-    // marginTop: 30,
+    marginTop: 20,
     justifyContent: 'center',
     borderRadius: 3,
+  },
+  scrollView: {
+    backgroundColor: 'transparent',
+    flex: 1,
+    paddingLeft: 10,
+    paddingRight: 0,
+    marginTop: 0,
+    paddingTop: 0
   },
   buttonText: {
     alignSelf: 'center',
@@ -181,53 +152,60 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    alignItems: 'stretch',
+    backgroundColor: '#f7f7f7'
+  },
+  scrollWrapper: {
+    flex: 1,
+    justifyContent: 'space-between'
+  },
+  headerContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f7f7f7'
   },
   mainContainer: {
     flex: 1,
-    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#f7f7f7'
-  },
-  headerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
   },
   input: {
     height: 40,
     borderColor: 'blue',
     borderWidth: 1,
     color: 'black',
-    // marginTop: 20
   },
   iconMain: {
     height: 100,
     width: 100,
     flex: 1
   },
-  sideText: {
-    fontSize: 20,
-    fontFamily: 'OpenSans',
-    flex: 1,
-    // marginTop: 10
-  },
   searchInput: {
     height: 50,
     padding: 4,
-    // marginRight: 5,
     fontSize: 23,
     borderWidth: 1,
     borderColor: '#e6e6e6',
     borderRadius: 8,
     backgroundColor: 'white',
-    color: 'black'
+    color: 'black',
+    marginRight: 10,
+    marginTop: 10,
+  },
+  sideText: {
+    fontSize: 20,
+    marginTop: 10,
+    fontFamily: 'OpenSans',
+    flex: 1,
+    fontWeight: 'bold',
   },
   iconContainer: {
     flex: 1,
     flexDirection: 'column',
   },
   iconSideContainer: {
-    // marginBottom: 10,
-    // marginTop: 10,
     flexDirection: 'row',
   },
   iconSide: {
@@ -244,9 +222,7 @@ const styles = StyleSheet.create({
   logoImage: {
     width: 45,
     height: 45,
-    // marginTop: -10,
   },
 });
-
 
 module.exports = TaskView;

@@ -1,4 +1,4 @@
-var { Icon, } = require('react-native-icons');
+import { Icon, } from 'react-native-icons';
 import React from 'react-native';
 
 let {
@@ -34,7 +34,7 @@ export default class AddForm extends React.Component {
           onPress={this.handleSubmit.bind(this)}
           underlayColor={"#eee"}
           style={styles.button}>
-          <Text style={styles.sendButtonText}>Send</Text>
+          <Text style={styles.sendText}>Send</Text>
         </TouchableHighlight>
       </View>
     );
@@ -58,13 +58,18 @@ let styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     backgroundColor: "#f2f2f2",
-    // alignItems: 'center',
   },
   inputContainer: {
     flex: 5,
     flexDirection: 'row',
     backgroundColor: '#f2f2f2',
     padding: 8
+  },
+  sendText: {
+    fontFamily: 'OpenSans',
+    fontWeight: 'bold',
+    color: '#555',
+    alignSelf: 'center',
   },
   icon: {
     width: 30,
@@ -73,35 +78,21 @@ let styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    backgroundColor: '#d6d6d6',
-    color: '#777',
+    backgroundColor: 'white',
+    color: 'black',
     fontFamily: 'OpenSans',
     borderRadius: 5,
-    fontWeight: 'bold'
+    paddingLeft: 10,
+    borderWidth: 1,
+    borderColor: '#ddd'
   },
   button: {
     flex: 1,
-    // padding: 15,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
-  sendButtonText: {
-    flex: 1,
-    marginTop: 10,
-    alignItems: 'center',
-    alignSelf: 'center'
-  },
-  // message: {
-  //   height: 50,
-  //   width: 50,
-  //   color: 'black',
-  //   // marginTop: -10,
-  //   marginLeft: 4,
-  //   backgroundColor: 'transparent'
-  // },
   messageText: {
     marginLeft: 5,
     fontSize: 15,
-    // marginTop: -10,
     fontFamily: 'OpenSans',
     textAlign: 'center',
     color: '#0075FD',

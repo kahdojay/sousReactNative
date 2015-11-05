@@ -1,41 +1,88 @@
 import React from 'react-native';
-import Login from '../components/login';
-import Signup from '../components/signup';
-import StationIndex from '../components/stationIndex';
-import StationView from '../components/stationView';
-import TaskView from '../components/taskView';
-import Feed from '../components/feed';
-import PurveyorIndex from '../components/purveyorIndex';
-import PurveyorView from '../components/purveyorView';
-import ProductView from '../components/productView';
-import ProfileView from '../components/profileView';
 import _ from 'lodash';
-import { BackBtn } from '../utilities/navigation';
-import { NavigationBarStyles } from '../utilities/styles';
+import NavigationBar from 'react-native-navbar';
+import NavigationBarStyles from 'react-native-navbar/styles'
 import { connect } from 'react-redux/native';
 import { Icon } from 'react-native-icons';
-import { footerButtonIconColor, footerActiveHighlight } from '../utilities/colors';
+import SideMenu from 'react-native-side-menu';
+import { BackBtn } from '../utilities/navigation';
+import Colors from '../utilities/colors';
+import Urls from '../resources/urls';
 import * as actions from '../actions';
+import * as Components from '../components';
+import Dimensions from 'Dimensions';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 const {
-  ScrollView,
   PropTypes,
   View,
   Text,
+  ActionSheetIOS,
   Image,
   StyleSheet,
   Navigator,
   TouchableHighlight,
-  TouchableOpacity
+  TouchableOpacity,
+  ScrollView,
 } = React;
 
 class App extends React.Component {
-  constructor(props) {
-    super(props)
+  constructor(props, ctx) {
+    super(props, ctx);
+    this.state = {
+      touchToClose: false,
+      open: false,
+      isAuthenticated: this.props.session.isAuthenticated,
+      firstName: this.props.session.firstName,
+      lastName: this.props.session.lastName,
+      category: null,
+      categoryProducts: null,
+      currentTeam: this.props.teams.currentTeam,
+      contactList: [],
+      sceneState: {
+        ProductCreate: {
+          submitReady: false,
+          productAttributes: {}
+        }
+      },
+    }
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
       'Login': {},
       'Signup': {}
+    }
+    this.navBar = (
+      <NavigationBar
+        style={styles.nav}
+      />
+    );
+    this.navBarItem = (props, nextComponent) => {
+      return React.addons.cloneWithProps((
+        <TouchableOpacity
+          onPress={() => {
+            // console.log('Oops, need to specify function')
+          }}
+        >
+          <View style={NavigationBarStyles.navBarRightButton}>
+            {nextComponent}
+          </View>
+        </TouchableOpacity>
+      ), props)
+    };
+  }
+  handleOpenWithTouchToClose() {
+    this.setState({
+      touchToClose: true,
+      open: true,
+    });
+  }
+
+  handleChange(isOpen) {
+    if (!isOpen) {
+      this.setState({
+        touchToClose: false,
+        open: false,
+      });
     }
   }
 
@@ -45,8 +92,25 @@ class App extends React.Component {
     }
   }}
 
-  componentWillMount(){
-    this.props.dispatch(actions.connectApp())
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      isAuthenticated: nextProps.session.isAuthenticated,
+      firstName: nextProps.session.firstName,
+      lastName: nextProps.session.lastName,
+      currentTeam: nextProps.teams.currentTeam
+    })
+  }
+
+  componentDidUpdate() {
+    if(this.refs.appNavigator){
+      if(this.state.currentTeam !== null && this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
+        setTimeout(() => {
+          this.refs.appNavigator.replacePrevious({
+            name: 'Feed'
+          });
+        }, 100)
+      }
+    }
   }
 
   authenticatedRoute(route){
@@ -58,157 +122,579 @@ class App extends React.Component {
   }
 
   getScene(route, nav) {
-    const { ui, session, teams, stations, messages, dispatch, purveyors, products } = this.props;
-
-    let teamKey = session.teamKey;
+    const { ui, session, teams, messages, dispatch, purveyors, products, errors } = this.props;
 
     switch (route.name) {
-      case 'Login':
-        return <Login
-                  navigator={nav}
-                  session={session}
-                  onResetSession={() => {
-                    dispatch(actions.resetSession())
-                  }}
-                  onLogin={(sessionParams) => {
-                    dispatch(actions.createSession(sessionParams))
-                  }}
-                />
       case 'Signup':
-        return <Signup
-                  navigator={nav}
-                  session={session}
-                  teams={teams}
-                  onResetSession={() => {
-                    dispatch(actions.resetSession())
-                  }}
-                  onSignup={(sessionParams) => {
-                    dispatch(actions.registerSession(sessionParams))
-                  }}
-                />
-      case 'StationIndex':
-        return <StationIndex
-                  navigator={nav}
-                  stations={stations}
-                  onAddStation={(name) => {
-                    dispatch(actions.addStation(name, teamKey))
-                  }}
-                  onBack={() =>
-                    this._back.bind(this)
-                  }
-                  onLogout={() =>
-                    dispatch(actions.resetSession())
-                  }
-                />;
-      case 'StationView':
-        var station = _.filter(stations.data, { id: route.stationId })[0]
         return (
-          <StationView
+          <Components.Signup
+            session={session}
+            errors={errors.data}
+            onRegisterSession={(sessionParams) => {
+              _.debounce(() => {
+                dispatch(actions.registerSession(sessionParams))
+              }, 25)()
+            }}
             ui={ui}
-            navigator={nav}
-            station={station}
-            stationId={route.stationId}
-            onAddNewTask={(stationId, taskName) => {
-              dispatch(actions.addStationTask(stationId, {name: taskName}))
+          />
+        )
+      case 'TeamIndex':
+        return (
+          <Components.TeamIndex
+            teams={teams}
+            messages={messages}
+            onUpdateTeam={(teamId) => {
+              _.debounce(() => {
+                // dispatch(actions.resetPurveyors());
+                dispatch(actions.resetMessages());
+                dispatch(actions.setCurrentTeam(teamId));
+                dispatch(actions.updateSession({ teamId: teamId }));
+              }, 25)()
+              nav.replacePreviousAndPop({
+                name: 'Feed',
+              })
             }}
-            onTaskCompletionNotification={(options) => {
-              // console.log("OPTIONS", options);
-              let params = {
-                author: 'Sous',
-                teamKey: options.teamKey,
-                message: `${session.login} completed task ${options.task.name}`
-              };
-              dispatch(actions.completeStationTask(params))
+            onAddTeam={(name) => {
+              dispatch(actions.addTeam(name))
             }}
-            onDeleteStation={(stationId) => {
-              dispatch(actions.deleteStation(stationId))
+            onBack={() =>
+              this._back.bind(this)
+            }
+          />
+        )
+      case 'TeamView':
+        return (
+          <Components.TeamView
+            ui={ui}
+            teamTasks={this.state.currentTeam.tasks}
+            onNavToTask={(recipeId) => {
+              // console.log(recipeId)
+              nav.push({
+                name: 'TaskView',
+                recipeId: recipeId,
+              })
             }}
-            onUpdateStationTask={(stationId, taskId, taskAttributes) => {
-              dispatch(actions.updateStationTask(stationId, taskId, taskAttributes))
+            onAddNewTask={(taskName) => {
+              _.debounce(() => {
+                // console.log(taskName);
+                dispatch(actions.addTeamTask({name: taskName}))
+              }, 25)()
+            }}
+            onTaskCompletionNotification={(task) => {
+              _.debounce(() => {
+                // console.log("TASK: ", task);
+                var msg = `{{author}} completed ${task.name}`;
+                dispatch(actions.completeTeamTask(msg))
+              }, 25)()
+            }}
+            onDeleteTeam={() => {
+              _.debounce(() => {
+                dispatch(actions.deleteTeam())
+              }, 25)()
+            }}
+            onUpdateTeamTask={(taskId, taskAttributes) => {
+              _.debounce(() => {
+                dispatch(actions.updateTeamTask(taskId, taskAttributes))
+              }, 25)()
             }}
           />
-        );
+        )
       case 'TaskView':
-        var station = _.filter(stations.data, { id: route.stationId })[0]
-        var task = _.filter(station.tasks, {recipeId: route.recipeId})[0]
-        return <TaskView
-                  ui={ui}
-                  task={task}
-                  navigator={nav}
-                  stationId={route.stationId}
-                  onUpdateStationTask={(stationId, taskId, taskAttributes) => {
-                    dispatch(actions.updateStationTask(stationId, taskId, taskAttributes))
-                  }}
-                />;
+        var task = _.filter(this.state.currentTeam.tasks, {recipeId: route.recipeId})[0]
+        return (
+          <Components.TaskView
+            keyboardVisible={ui.keyboard.visible }
+            task={task}
+            onUpdateTeamTask={(taskId, taskAttributes) => {
+              _.debounce(() => {
+                dispatch(actions.updateTeamTask(taskId, taskAttributes))
+              }, 25)()
+            }}
+            onDeleteTaskPop={() => {
+              nav.pop()
+            }}
+          />
+        )
       case 'Feed':
-        return <Feed
-                  navigator={nav}
-                  messages={messages}
-                  userEmail={session.login}
-                  teamKey={session.teamKey}
-                  onCreateMessage={(msg) => {
-                    dispatch(actions.createMessage(msg))
-                  }}
-                />;
-      case 'PurveyorIndex':
         return (
-          <PurveyorIndex
-            navigator={nav}
-            purveyors={purveyors}
-            onAddPurveyor={(name) => {
-              dispatch(actions.addPurveyor(name, teamKey))
-            }}
-            onBack={() => {
-              this._back()
+          <Components.Feed
+            messages={messages}
+            userEmail={session.login}
+            session={session}
+            onCreateMessage={(msg) => {
+              _.debounce(() => {
+                dispatch(actions.createMessage(msg))
+              }, 25)()
             }}
           />
-        );
-      case 'PurveyorView':
-        var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
+        )
+      // case 'PurveyorIndex':
+      //   return (
+      //     <Components.PurveyorIndex
+      //       purveyors={purveyors}
+      //       session={session}
+      //       onNavToPurveyor={() => {
+      //         nav.push({
+      //           name: 'PurveyorView',
+      //           purveyorId: purveyor.id
+      //         })
+      //       }}
+      //       onAddPurveyor={(name) => {
+      //         const purveyors = this.props.purveyors.data.map((purveyor) => {
+      //           if (! purveyor.deleted)
+      //             return purveyor.name;
+      //         });
+      //         if (purveyors.indexOf(name) === -1) {
+      //           dispatch(actions.addPurveyor(name))
+      //         } else {
+      //           // console.log("ERROR: purveyor already exists");
+      //         }
+      //       }}
+      //       onBack={() => {
+      //         this._back()
+      //       }}
+      //     />
+      //   )
+      // case 'PurveyorView':
+      //   var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
+      //   return (
+      //     <Components.PurveyorView
+      //       ui={ui}
+      //       purveyor={purveyor}
+      //       onAddNewProduct={(purveyorId, productName) => {
+      //         const products = purveyor.products.map((product) => {
+      //           if (! product.deleted)
+      //             return product.name;
+      //         });
+      //         if (products.indexOf(productName) === -1) {
+      //           dispatch(actions.addPurveyorProduct(purveyorId, {name: productName}))
+      //         } else {
+      //           // console.log("ERROR: Product already exists");
+      //         }
+      //       }}
+      //       onDeletePurveyor={(purveyorId) => {
+      //         _.debounce(() => {
+      //           dispatch(actions.deletePurveyor(purveyorId))
+      //         }, 25)()
+      //       }}
+      //       onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
+      //         _.debounce(() => {
+      //           dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
+      //         }, 25)()
+      //       }}
+      //     />
+      //   )
+      // case 'ProductView':
+      //   let purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
+      //   let product = _.filter(purveyor.products, { productId: route.productId })[0]
+      //   return (
+      //     <Components.ProductView
+      //       keyboardVisible={ui.keyboard.visible}
+      //       product={product}
+      //       purveyorId={route.purveyorId}
+      //       onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
+      //         _.debounce(() => {
+      //           dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
+      //         }, 25)()
+      //       }}
+      //       onDeleteProduct={() => {
+      //         nav.pop()
+      //       }}
+      //     />
+      //   )
+      case 'CategoryIndex':
         return (
-          <PurveyorView
+          <Components.CategoryIndex
+            products={teams.products}
+            categories={teams.defaultCategories}
+            onNavigateToCategory={(category, categoryProducts) => {
+              this.setState({
+                category: category,
+                categoryProducts: categoryProducts
+              }, () => {
+                nav.push({
+                  name: 'CategoryView',
+                  categoryId: category.id
+                })
+              })
+            }}
+            onCreateProduct={() => {
+              nav.push({
+                name: 'ProductCreate'
+              })
+            }}
+          />
+        )
+      case 'CategoryView':
+        // var category = _.filter(this.state.currentTeam.categories, { id: route.categoryId })[0]
+        // var category = _.filter(teams.defaultCategories, { id: route.categoryId })[0]
+        // console.log(route);
+        return (
+          <Components.CategoryView
             ui={ui}
-            navigator={nav}
-            purveyor={purveyor}
-            onAddNewProduct={(purveyorId, productName) => {
-              dispatch(actions.addPurveyorProduct(purveyorId, {name: productName}))
-            }}
-            onDeletePurveyor={(purveyorId) => {
-              dispatch(actions.deletePurveyor(purveyorId))
-            }}
-            onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
-              dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
+            category={this.state.category}
+            cart={this.state.currentTeam.cart}
+            products={this.state.categoryProducts}
+            purveyors={purveyors}
+            onUpdateProductInCart={(cartAction, cartAttributes) => {
+              _.debounce(() => {
+                dispatch(actions.updateProductInCart(cartAction, cartAttributes))
+              }, 25)()
             }}
           />
-        );
-      case 'ProductView':
-        var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
-        var product = _.filter(purveyor.products, { productId: route.productId })[0]
-        return <ProductView
-                  ui={ui}
-                  product={product}
-                  navigator={nav}
-                  purveyorId={route.purveyorId}
-                  onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
-                    dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
-                  }}
-                />;
+        )
       case 'Profile':
         return (
-          <ProfileView />
-        );
+          <Components.ProfileView
+            session={session}
+            onUpdateInfo={(data) => {
+              _.debounce(() => {
+                // console.log("DATA", data);
+                dispatch(actions.updateSession(data));
+              }, 25)()
+            }}
+            onUpdateAvatar={(image) => {
+              _.debounce(() => {
+                // console.log("IMAGE", image);
+                dispatch(actions.updateSession({
+                  imageUrl: image.uri
+                }));
+              }, 25)()
+            }}
+            onStoreImages={(data) => {
+              nav.push({
+                name: 'ImageGallery',
+                photos: data,
+              });
+            }}
+          />
+        )
+      case 'ProductCreate':
+        return (
+          <Components.ProductCreate
+            team={this.state.currentTeam}
+            purveyors={purveyors.data}
+            onAddProduct={(productAttributes) => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductCreate.submitReady = true;
+              sceneState.ProductCreate.productAttributes = productAttributes
+              this.setState({
+                sceneState: sceneState
+              })
+            }}
+            onProductNotReady={() => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductCreate.submitReady = false;
+              this.setState({
+                sceneState: sceneState
+              })
+            }}
+          />
+        )
+      case 'UserInfo':
+        return (
+          <Components.UserInfo
+            onUpdateInfo={(data) => {
+              _.debounce(() => {
+                dispatch(actions.updateSession(data));
+              }, 25)()
+            }}
+          />
+        )
+      case 'InviteView':
+        return (
+          <Components.InviteView
+            contacts={this.state.contactList}
+            denied={this.state.contactsPermissionDenied}
+            onSMSInvite={(contactList) => {
+              _.debounce(() => {
+                dispatch(actions.inviteContacts(contactList))
+              }, 25)()
+              nav.replacePreviousAndPop({
+                name: 'Feed',
+              });
+            }}
+          />
+        )
+      case 'CartView':
+        return (
+          <Components.CartView
+            team={this.state.currentTeam}
+            purveyors={this.props.purveyors.data}
+            appState={this.props}
+            onDeleteProduct={(purveyorId, productId) => {
+              _.debounce(() => {
+                dispatch(actions.updateProductInCart(
+                  'REMOVE_FROM_CART',
+                  {purveyorId: purveyorId, productId: productId}
+                ))
+              }, 25)()
+            }}
+            onSubmitOrder={() => {
+              _.debounce(() => {
+                dispatch(actions.sendCart());
+              }, 25)()
+              nav.replacePreviousAndPop({
+                name: 'Feed',
+              });
+            }}
+          />
+        )
+      case 'Loading':
+        return (
+          <View style={{flex: 1, backgroundColor: '#f2f2f2', alignItems: 'center'}}>
+            <View style={styles.logoContainer}>
+              <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+            </View>
+            <Text style={styles.loadingText}>SETTING UP YOUR WORKSPACE</Text>
+            <Text style={styles.loadingText}>FOR THE FIRST TIME USE.</Text>
+          </View>
+        )
+      case 'TeamMemberListing':
+        return (
+          <Components.TeamMemberListing
+            teamsUsers={teams.teamsUsers}
+            currentTeamUsers={this.state.currentTeam.users}
+          />
+        )
       default:
         return <View />;
     }
   }
 
+  getNavBar(route, nav) {
+    const { dispatch, ui, teams, session } = this.props;
+
+    let navBar = <View />;
+    let nextItem = <View />;
+    let scene = this.getScene(route, nav);
+
+    // setup the header for unauthenticated routes
+    if(this.authenticatedRoute(route) === false){
+      navBar = <View />
+    } else {
+      switch(route.name) {
+        //TODO: remove cloneWithProps as it's deprecated
+        case 'TeamIndex':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            hidePrev: false,
+            buttonsColor: '#ccc',
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'fontawesome|times'}
+              />
+            ),
+            title: 'Switch Teams',
+          })
+          break;
+        case 'Feed':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            hidePrev: false,
+            title: this.state.currentTeam ? this.state.currentTeam.name : 'Sous',
+            titleColor: 'black',
+            customPrev: (
+              <Components.FeedViewLeftButton />
+            ),
+            customNext: (
+              <Components.FeedViewRightButton />
+            ),
+          })
+          break;
+        // case 'PurveyorIndex':
+        //   navBar = React.addons.cloneWithProps(this.navBar, {
+        //     navigator: nav,
+        //     route: route,
+        //     customPrev: <Components.FeedViewLeftButton />,
+        //     onNext: null,
+        //   })
+        //   break;
+        case 'TeamView':
+          // console.log(this.state.currentTeam)
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            buttonsColor: '#ccc',
+            title: this.state.currentTeam.name,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'fontawesome|times'}
+              />
+            ),
+          })
+          break;
+        // case 'PurveyorView':
+        //   navBar = React.addons.cloneWithProps(this.navBar, {
+        //     navigator: nav,
+        //     route: route,
+        //     hidePrev: false,
+        //     onNext: (navigator, route) => this.showActionSheetPurveyorView(navigator, route),
+        //     nextTitle: '...',
+        //   })
+        //   break;
+        case 'CategoryIndex':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            hidePrev: false,
+            buttonsColor: '#ccc',
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'fontawesome|times'}
+              />
+            ),
+            title: 'Order Guide',
+            customNext: (
+              <Components.CategoryViewRightButton
+                onNavToCart={() => {
+                  nav.push({ name: 'CartView', });
+                }}
+                cart={this.state.currentTeam.cart}
+              />
+            )
+          })
+          break;
+        case 'CategoryView':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                navName='CategoryIndex'
+                iconFont={'fontawesome|chevron-left'}
+              />
+            ),
+            title: this.state.category.name,
+            customNext: (
+              <Components.CategoryViewRightButton
+                onNavToCart={() => {
+                  nav.push({ name: 'CartView', });
+                }}
+                cart={this.state.currentTeam.cart}
+              />
+            )
+          })
+          break;
+        // case 'ProductView':
+        //   navBar = React.addons.cloneWithProps(this.navBar, {
+        //     navigator: nav,
+        //     route: route,
+        //     onNext: null,
+        //     hidePrev: false,
+        //   })
+        //   break;
+        case 'Profile':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            hidePrev: false,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'fontawesome|chevron-left'}
+              />
+            ),
+            title: 'Account',
+          })
+          break;
+        case 'InviteView':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'fontawesome|times'}
+              />
+            ),
+            title: 'Invite Teammates',
+          })
+          break;
+        case 'CartView':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                navName='CategoryIndex'
+                iconFont={'fontawesome|chevron-left'}
+              />
+            ),
+            title: 'Cart',
+          })
+          break;
+        case 'ProductCreate':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            ref: 'navBar',
+            navigator: nav,
+            route: route,
+            hideNext: true,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'fontawesome|times'}
+                pop={true}
+              />
+            ),
+            title: 'Add New Product',
+            customNext: (
+              <Components.ProductCreateRightCheckbox
+                submitReady={this.state.sceneState.ProductCreate.submitReady}
+                onAddProduct={() => {
+                  _.debounce(() => {
+                    dispatch(actions.addProduct(this.state.sceneState.ProductCreate.productAttributes))
+                  }, 5)()
+                  nav.replacePreviousAndPop({
+                    name: 'CategoryIndex',
+                  });
+                }}
+              />
+            ),
+          })
+          break;
+        case 'UserInfo':
+        case 'Loading':
+          navBar = <View />;
+          break;
+        case 'TeamMemberListing':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            hidePrev: false,
+            navigator: nav,
+            title: 'Team Directory',
+            route: route,
+            onNext: null,
+          })
+          break;
+        default:
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            hidePrev: false,
+            navigator: nav,
+            route: route,
+            onNext: null,
+          })
+          break;
+      }
+    }
+    return navBar;
+  }
+
   renderScene(route, nav) {
-    const { dispatch, ui } = this.props;
+    const { dispatch, ui, teams, session, errors, connect } = this.props;
 
     // redirect to initial view
-    if (this.props.session.isAuthenticated){
-      if(route.name === 'Login' || route.name === 'Signup') {
-        route.name = 'StationIndex';
+    if (this.state.isAuthenticated){
+      if (route.name === 'Login' || route.name === 'Signup' || route.name == 'UserInfo') {
+        if (this.state.firstName === "" || this.state.lastName === "") {
+          route.name = 'UserInfo';
+        } else {
+
+          if(this.state.currentTeam !== null){
+            // else send to Feed
+            route.name = 'Feed';
+          } else {
+            route.name = 'Loading';
+          }
+        }
       }
     }
     // redirect to login if requested view requires authentication
@@ -216,228 +702,144 @@ class App extends React.Component {
       route.name = 'Signup'
     }
 
-    let header = <View />;
+    let navBar = this.getNavBar(route, nav);
     let scene = this.getScene(route, nav);
-    let footer = <View />;
-    let applyHighlight = '';
+    let errorModal = (
+      <Components.ErrorModal
+        onDeleteError={(errorIdList) => {
+          _.debounce(() => {
+            dispatch(actions.deleteErrors(errorIdList))
+          }, 25)()
+        }}
+        errors={errors.data}
+      />
+    )
 
-    if(_.includes(['StationIndex', 'StationView', 'TaskView'], route.name)){
-      applyHighlight = 'Prep'
-    } else if(_.includes(['Feed'], route.name)){
-      applyHighlight = 'Feed'
-    } else if(_.includes(['PurveyorIndex', 'PurveyorView', 'ProductView'], route.name)){
-      applyHighlight = 'Order'
+    const inviteModal = (
+      <Components.InviteModal
+        ref='inviteModal'
+        currentTeam={this.state.currentTeam}
+        modalVisible={session.inviteModalVisible}
+        hideInviteModal={() => {
+          // nav.refs.inviteModal.setState({ modalVisible: true });
+          dispatch(actions.updateSession({ inviteModalVisible: false }))
+        }}
+        navigateToInviteView={(contactList, denied) => {
+          this.setState({
+            contactList: contactList,
+            contactsPermissionDenied: denied,
+          }, () => {
+            // console.log('going to InviteView')
+            nav.push({
+              name: 'InviteView',
+            })
+          });
+        }}
+        onSMSInvite={(contactList) => {
+          _.debounce(() => {
+            dispatch(actions.inviteContacts(contactList))
+          }, 25)()
+        }}
+      />
+    )
+
+    let CustomSideView = SideMenu
+    if(this.state.isAuthenticated !== true || this.state.currentTeam === null){
+      CustomSideView = View
     }
+    // console.log('app.js', this.props)
+    // console.log('app.js render, errors:', this.props.errors.data)
 
-    let prepFooterHighlight = (applyHighlight == 'Prep' ? styles.footerActiveHighlight : {});
-    let feedFooterHighlight = (applyHighlight == 'Feed' ? styles.footerActiveHighlight : {});
-    let orderFooterHighlight = (applyHighlight == 'Order' ? styles.footerActiveHighlight : {});
-
-    // setup the header for unauthenticated routes
-    if(this.authenticatedRoute(route) === false){
-      let nextButton = <View />;
-      switch (route.name) {
-        case 'Login':
-          nextButton = <TouchableHighlight
-            onPress={() => nav.replace({
-              name: 'Signup'
-            })}
-            style={styles.signup}>
-            <Text style={styles.buttonText}>Signup</Text>
-          </TouchableHighlight>;
-          break;
-        case 'Signup':
-          nextButton = <TouchableHighlight
-            onPress={() => nav.replace({
-              name: 'Login'
-            })}
-            style={styles.signup}>
-            <Text style={styles.buttonText}>Login</Text>
-          </TouchableHighlight>;
-          break;
-        default:
-          break;
-      }
-      // setup the header for authenticated routes
-      header = (
-        <View style={[styles.nav, styles.navSignUp]}>
-          <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-        </View>
-      );
-    }
-    else {
-      switch(route.name) {
-        case 'StationIndex':
-        case 'Feed':
-        case 'PurveyorIndex':
-          header =  (
-            <View style={styles.nav}>
-              <Image
-                source={require('image!Logo')}
-                style={styles.logoImage}
-              />
-              {/*<TouchableHighlight
-                style={styles.profileBtn}
-                onPress={() => {
-                  nav.replace({
-                    name: 'Profile'
-                  })
-                }}
-              >
-                <Icon
-                  name='material|account-circle'
-                  size={50}
-                  color='white'
-                  style={styles.iconFace}
-                />
-              </TouchableHighlight>*/}
-            </View>
-          );
-          break;
-        case "StationView":
-        case "PurveyorView":
-        default:
-          header =  <View></View>;
-      }
-
-      let footerContainerStyle = styles.footerContainer;
-      // TODO: fix the height animation to prevent FOUC
-      if(ui.keyboard.visible === true){
-        footerContainerStyle = [styles.footerContainer, {
-          marginTop: ui.keyboard.marginBottom - 70
-        }];
-      }
-
-      footer = <View style={footerContainerStyle}>
-        <View style={styles.footerItem}>
-          <TouchableHighlight
-            underlayColor='white'
-            onPress={() => nav.replace({
-              name: 'StationIndex'
-            })}
-            style={[styles.footerButton, prepFooterHighlight]}
-          >
-            <View>
-              <Icon
-                name='material|assignment'
-                size={30}
-                color={footerButtonIconColor}
-                style={[styles.footerButtonIcon,prepFooterHighlight]}
-              />
-              <Text style={[styles.footerButtonText,prepFooterHighlight]}>
-                Prep
-              </Text>
-            </View>
-          </TouchableHighlight>
-        </View>
-        <View style={styles.footerItem}>
-          <TouchableHighlight
-            underlayColor="white"
-            onPress={() => nav.replace({
-              name: 'Feed'
-            })}
-            style={[styles.footerButton, feedFooterHighlight]}
-          >
-            <View>
-              <Icon
-                name='material|comments'
-                size={24}
-                color={footerButtonIconColor}
-                style={[styles.footerButtonIcon,feedFooterHighlight]}
-              />
-              <Text style={[styles.footerButtonText,feedFooterHighlight]}>
-                Feed
-              </Text>
-            </View>
-          </TouchableHighlight>
-        </View>
-        <View style={styles.footerItem}>
-          <TouchableHighlight
-            underlayColor='white'
-            onPress={() => nav.replace({
-              name: 'PurveyorIndex'
-            })}
-            style={[styles.footerButton, orderFooterHighlight]}
-          >
-            <View>
-              <Icon
-                name='material|shopping-cart'
-                size={30}
-                color={footerButtonIconColor}
-                style={[styles.footerButtonIcon, orderFooterHighlight]}
-              />
-              <Text style={styles.footerButtonText}>
-                Order
-              </Text>
-            </View>
-          </TouchableHighlight>
-        </View>
-        {/*<View style={styles.footerItem}>
-          <TouchableHighlight
-            style={[styles.footerButton, styles.logoutButton]}
-            onPress={() => { dispatch(actions.resetSession()) }}
-          >
-            <View>
-              <Icon
-                name='material|bus'
-                size={30}
-                color='#fff'
-                style={[styles.footerButtonIcon]}
-              />
-              <Text style={[styles.footerButtonText,styles.logoutButtonText]}>
-                Reset
-              </Text>
-            </View>
-          </TouchableHighlight>
-        </View>*/}
-      </View>
-    }
-
-    if(ui.keyboard.visible === true){
-      header = <View/>
-    }
+    const menu = (
+      <Components.Menu
+        ref='menu'
+        team={this.state.currentTeam}
+        session={session}
+        open={this.state.open}
+        toggleInviteModal={(value) => {
+          _.debounce(() => {
+            dispatch(actions.updateSession({ inviteModalVisible: value }))
+          }, 25)()
+        }}
+        onNavToCategory={() => {
+          nav.push({ name: 'CategoryIndex', })
+        }}
+        onNavToProfile={() => {
+          nav.push({ name: 'Profile', })
+        }}
+        onNavToTeam={() => {
+          nav.push({ name: 'TeamView', })
+        }}
+        onNavToTeamMemberListing={() => {
+          nav.push({ name: 'TeamMemberListing', })
+        }}
+        onNavToTeamIndex={() => {
+          nav.push({ name: 'TeamIndex', })
+        }}
+      />
+    );
 
     return (
-      <View style={styles.container}>
-        {header}
-        {scene}
-        {footer}
-      </View>
+      <CustomSideView
+        ref='customSideView'
+        menu={menu}
+        touchToClose={true}
+        // openMenuOffset={500} // changes menu width
+        onChange={::this.handleChange}
+      >
+        <View style={styles.container} >
+          {navBar}
+          {errorModal}
+          {inviteModal}
+          {scene}
+          {session.inviteModalVisible === false ? <KeyboardSpacer /> : <View />}
+        </View>
+      </CustomSideView>
     );
+  }
+
+  configureScene(route) {
+    if (route.sceneConfig) {
+      return route.sceneConfig;
+    }
+    return Object.assign({}, Navigator.SceneConfigs.FloatFromRight, {
+      springTension: 100,
+      springFriction: 1,
+    });
   }
 
   render() {
     return (
       <Navigator
+        ref='appNavigator'
         initialRoute={{
-          name: this.initialRoute,
           index: 0,
+          name: this.initialRoute
         }}
         renderScene={this.renderScene.bind(this)}
-        configureScene={(route) => {
-          if (route.sceneConfig) {
-            return route.sceneConfig;
-          }
-          return Navigator.SceneConfigs.FloatFromRight;
-        }}
+        configureScene={this.configureScene.bind(this)}
       />
     )
   }
 }
 
-let styles = StyleSheet.create({
+const window = Dimensions.get('window');
+
+const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    height: window.height,
+    width: window.width,
     marginTop: 20,
+    flex: 1,
+    backgroundColor: 'white',
   },
   scene: {
     flex: 1
   },
   nav: {
-    backgroundColor: '#1825AD',
-    justifyContent: 'space-between',
-    margin: 0,
-    alignItems: 'center'
+    backgroundColor: Colors.navbarColor,
+    borderBottomWidth: 2,
+    borderBottomColor: '#ccc',
   },
   navSignUp: {
     justifyContent: 'center',
@@ -445,12 +847,16 @@ let styles = StyleSheet.create({
   logo: {
     color: 'white',
     fontSize: 20,
+    flex: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
     fontFamily: 'OpenSans'
   },
   logoImage: {
     width: 45,
     height: 45,
-    alignItems: 'center'
+    alignItems: 'center',
+    flex: .5
   },
   iconFace: {
     width: 70,
@@ -471,35 +877,19 @@ let styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: 'OpenSans'
   },
+  loadingText: {
+    alignSelf: 'center',
+    fontSize: 16,
+    color: '#cfcfcf',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans'
+  },
   buttonText: {
     alignSelf: 'center',
     fontSize: 27,
     color: 'white',
     fontWeight: 'bold',
     fontFamily: 'OpenSans'
-  },
-  footerContainer: {
-    flexDirection: 'row',
-    borderTopWidth: 1,
-    borderColor: '#979797'
-  },
-  footerItem: {
-    flex: 1
-  },
-  footerButton: {
-    padding: 5
-  },
-  footerButtonIcon: {
-    width: 25,
-    height: 25,
-    alignSelf: 'center'
-  },
-  footerButtonText: {
-    alignSelf: 'center',
-    color: footerButtonIconColor
-  },
-  footerActiveHighlight: {
-    backgroundColor: footerActiveHighlight,
   },
   logoutButton: {
     backgroundColor: 'pink'
@@ -510,18 +900,37 @@ let styles = StyleSheet.create({
   leftBtn: {
     flex: 1,
   },
+  logoContainer: {
+    marginTop: 50,
+    marginBottom: 15,
+    borderRadius: 100/2,
+    backgroundColor: '#dfdfdf',
+    paddingLeft: 10,
+    paddingTop: 15,
+    width: 100,
+    height: 100,
+    alignSelf: 'center'
+  },
+  logoImage: {
+    borderRadius: 15,
+    width: 80,
+    height: 70
+  },
 })
 
-function select(state) {
+function mapStateToProps(state) {
   return {
     ui: state.ui,
     session: state.session,
     teams: state.teams,
-    stations: state.stations,
     messages: state.messages,
     purveyors: state.purveyors,
     products: state.products,
+    errors: state.errors,
+    connect: state.connect,
   }
 }
 
-export default connect(select)(App);
+// --// connect(mapStateToProps, mapDispatchToProps, mergeProps, options = {})
+export default connect(mapStateToProps)(App);
+// export default App;

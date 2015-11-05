@@ -17,7 +17,8 @@ const NavigationBarStyles = React.StyleSheet.create({
     height: NAV_HEIGHT,
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
   customTitle: {
     position: 'absolute',

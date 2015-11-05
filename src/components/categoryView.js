@@ -1,0 +1,60 @@
+import React from 'react-native';
+import _ from 'lodash'
+import { Icon } from 'react-native-icons'
+import ProductList from '../components/productList';
+import { BackBtn } from '../utilities/navigation';
+import { NavigationBarStyles } from '../utilities/styles';
+import AddForm from './addForm';
+import Colors from '../utilities/colors';
+import { nameSort } from '../utilities/utils';
+
+const {
+  StyleSheet,
+  View,
+  PropTypes,
+  TouchableHighlight,
+  TouchableOpacity,
+  Text,
+  Image
+} = React;
+
+class CategoryView extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+
+  render() {
+    const {cart, category, products} = this.props
+    return (
+      <View style={styles.container}>
+        <ProductList
+          cart={cart}
+          productsCount={category.products.length}
+          products={products}
+          purveyors={this.props.purveyors}
+          onUpdateProductInCart={this.props.onUpdateProductInCart}
+        />
+      </View>
+    )
+  }
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.mainBackgroundColor,
+  },
+  logoImage: {
+    width: 45,
+    height: 45,
+  },
+  iconMore: {
+    width: 40,
+    height: 40,
+  }
+});
+
+CategoryView.propTypes = {
+};
+
+export default CategoryView

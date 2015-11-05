@@ -1,153 +1,295 @@
-var { Icon, } = require('react-native-icons');
+import { Icon, } from 'react-native-icons';
 import _ from 'lodash'
 import React from 'react-native'
 
 const {
+  Dimensions,
   StyleSheet,
   View,
   Text,
+  Image,
   TextInput,
   TouchableHighlight,
+  ScrollView,
   ActivityIndicatorIOS,
 } = React;
+
+const runTimeDimensions = Dimensions.get('window')
 
 class Signup extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       invalid: false,
-      email: '',
-      password: '',
-      username: '',
-      teamFound: false,
-      lookingForTeam: false,
-      teamName: '',
-      teamId: null
+      phoneNumber: this.props.session.phoneNumber,
+      smsToken: '',
+      smsSent: this.props.session.smsSent,
+      submitting: false,
+      // timeout: null,
     }
+    this.timeout = null
   }
 
-  componentWillMount() {
-    this.props.onResetSession();
+  componentWillReceiveProps(nextProps) {
+    let newState = {
+      phoneNumber: nextProps.session.phoneNumber,
+      smsSent: nextProps.session.smsSent,
+    }
+    if(this.state.submitting === true){
+      if(nextProps.session.smsSent === true){
+        newState.submitting = false
+      }
+      if(nextProps.errors.length > 0 && nextProps.errors[0].machineKey === 'technical-error:sms'){
+        newState.submitting = false
+      }
+    }
+    this.setState(newState)
+  }
+
+  componentWillUnmount() {
+    if(this.timeout !== null)
+      window.clearTimeout(this.timeout);
+  }
+
+  setFetching() {
+    this.setState({ submitting: true })
+    // this.timeout = window.setTimeout(() => {
+    //   this.setState({ submitting: false });
+    // }, 1500);
   }
 
   onSignup() {
-    if(this.state.email == '' || this.state.password == ''){
-      this.setState({invalid: true});
+    if(this.refs.phone){
+      this.refs.phone.blur();
+    }
+    if(this.state.phoneNumber === null || this.state.phoneNumber ===  ''){
+      this.setState({ invalid: true });
     } else {
-      // first reset all the stations and tasks and ... ?
-      // this.props.onResetSessionInfo();
-      // send the signup request
-      this.props.onSignup(Object.assign({}, {
-        email: this.state.email,
-        password: this.state.password,
-        username: this.state.username,
-        teamName: this.state.teamName,
-        teamId: this.state.teamId
+      this.setState({ smsToken: '' })
+      this.setFetching()
+      this.props.onRegisterSession(Object.assign({}, {
+        phoneNumber: this.state.phoneNumber
       }));
-      this.setState({ password: '' })
     }
   }
 
-  searchTeams(text) {
-    let updateState = {
-      invalid: false,
-      teamName: text,
-      teamId: null,
-      teamFound: false,
-      lookingForTeam: true,
+  onVerify() {
+    if(this.refs.code){
+      this.refs.code.blur();
     }
-    let foundTeams;
-    if(text == ''){
-      updateState.lookingForTeam = false;
+    if(this.state.smsToken === ''){
+      this.setState({invalid: true});
+    } else {
+      this.setFetching()
+      this.props.onRegisterSession(Object.assign({}, {
+        phoneNumber: this.state.phoneNumber,
+        smsToken: this.state.smsToken,
+      }));
     }
-    foundTeams = _.filter(this.props.teams.data, function(team) { 
-      return team.name.toLowerCase() === text.toLowerCase()
-    })
+  }
 
-    if( foundTeams.length > 0 ){
-      updateState.teamId = foundTeams[0].id;
-      updateState.teamFound = true;
+  formatPhoneNumber(phoneNumber){
+    if (phoneNumber) {
+      return phoneNumber.split('').map((num, index) => {
+        switch(index){
+          case 0:
+            return `(${num}`;
+          break;
+          case 2:
+            return `${num}) `
+          break;
+          case 5:
+            return `${num}-`
+          break;
+          default:
+          return num;
+        }
+      }).join('');
+    } else {
+      return phoneNumber;
     }
-    this.setState(updateState)
   }
 
   render() {
-    let fetching =  <ActivityIndicatorIOS
-                        animating={true}
-                        color={'#808080'}
-                        style={styles.activity}
-                        size={'small'} />
-    let errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
-    let teamLookupStatus = (this.state.teamFound) ? <Text style={[styles.teamLookup, styles.teamFound]}>Team Found</Text> : <Text style={[styles.teamLookup, styles.teamNew]}>New Team</Text>
-    let teamLookup = (this.state.lookingForTeam) ? <View style={styles.teamLookupContainer}>{teamLookupStatus}</View> : <View/>
-    return (
-      <View style={styles.container}>
-        <View style={styles.login}>
-          <View style={styles.inputContainer}>
-            <Icon name='material|email' size={30} color='#aaa' style={styles.iconFace}/>
+    const {session} = this.props;
+    const fetching =  (
+      <View style={styles.activityContainer}>
+        <ActivityIndicatorIOS
+          animating={true}
+          color={'#808080'}
+          style={styles.activity}
+          size={'small'}
+        />
+      </View>
+    );
+    const errorMessage = <Text style={styles.errorText}>Invalid entry, please try again.</Text>
+    let signup = (
+      <View style={styles.login}>
+        <Text style={styles.headerText}>Use your phone number to log in to Sous.</Text>
+        <Text style={styles.centered}>First, we will send you a <Text style={styles.boldText}>text message</Text> to verify your account.</Text>
+        <View style={styles.inputContainer}>
+          <View style={{borderBottomWidth: 1, borderBottomColor: 'black'}}>
+            <Icon name='material|phone' size={30} color='#aaa' style={styles.iconPhone}/>
             <TextInput
+              ref='phone'
               style={styles.input}
-              value={this.state.email}
-              placeholder='Email'
-              onChangeText={(text) => {
-                this.setState({email: text, invalid: false})
-              }}/>
-          </View>
-          <View style={styles.underline}></View>
-          <View style={styles.inputContainer}>
-            <Icon name='material|lock' size={30} color='#aaa' style={styles.iconFace}/>
-            <TextInput
-              secureTextEntry={true}
-              style={styles.input}
-              value={this.state.password}
-              placeholder='Password'
-              onChangeText={(text) => {
-                this.setState({password: text, invalid: false})
-              }}/>
-          </View>
-          <View style={styles.underline}></View>
-          <View style={styles.inputContainer}>
-            <Icon name='fontawesome|user' size={30} color='#aaa' style={styles.iconFace}/>
-            <TextInput
-              style={styles.input}
-              placeholder='Username'
-              onChangeText={(text) => {
-                this.setState({username: text, invalid: false})
-              }}/>
-          </View>
-          <View style={styles.underline}></View>
-          <View style={styles.inputContainer}>
-            <Icon name='fontawesome|users' size={30} color='#aaa' style={styles.iconFace}/>
-            <TextInput
-              style={styles.input}
-              value={this.state.teamName}
-              placeholder='Team'
-              onChangeText={this.searchTeams.bind(this)}/>
-            {teamLookup}
-          </View>
-          <View style={styles.underline}></View>
-          { this.props.session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
-          <TouchableHighlight
-            onPress={() => {
-              this.onSignup()
-            }}
-            style={styles.button}>
-            <Text style={styles.buttonText}>Signup</Text>
-          </TouchableHighlight>
-          <View style={styles.activityContainer}>
-            { this.props.session.isFetching ? fetching : <View /> }
+              value={this.state.phoneNumber}
+              keyboardType='phone-pad'
+              onSubmitEditing={() => {this.onSignup()}}
+              onChange={(e) => {
+                this.setState({phoneNumber: e.nativeEvent.text, invalid: false})
+              }}
+            />
           </View>
         </View>
+        { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
+        <TouchableHighlight
+          underlayColor='#C6861D'
+          onPress={() => {
+            this.setState({ smsSent: false }, () => {
+              this.onSignup()
+            })
+          }}
+          style={styles.buttonActive}>
+          <Text style={styles.buttonText}>Send SMS</Text>
+        </TouchableHighlight>
       </View>
+    );
+    if(this.state.smsSent === true){
+      const formattedPhoneNumber = this.formatPhoneNumber(session.phoneNumber);
+      signup = (
+        <View style={styles.login}>
+          <Text style={styles.headerText}>We just sent a text to</Text>
+          <Text style={[styles.boldText, styles.centered, styles.largeText]}>{formattedPhoneNumber}</Text>
+          <TouchableHighlight
+            underlayColor='transparent'
+            onPress={() => {
+              this.setState({ smsSent: true, smsToken: null }, () => {
+                this.onSignup()
+              })
+            }}
+            style={[styles.smallButton, styles.buttonLinkWrap]}>
+            <Text style={styles.buttonLink}>Send again</Text>
+          </TouchableHighlight>
+          <Text style={styles.centered}>Enter the verification code below to sign in.</Text>
+          <View style={styles.inputContainer}>
+            <View style={{borderBottomWidth: 1, borderBottomColor: 'black'}}>
+              <TextInput
+                ref='code'
+                style={styles.input}
+                value={this.state.smsToken}
+                keyboardType='phone-pad'
+                textAlign='center'
+                onSubmitEditing={() => {this.onVerify()}}
+                onChange={(e) => {
+                  this.setState({smsToken: e.nativeEvent.text, invalid: false})
+                }}
+              />
+            </View>
+          </View>
+          { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
+          <TouchableHighlight
+            underlayColor='#C6861D'
+            onPress={() => {this.onVerify()}}
+            style={styles.buttonActive}
+          >
+            <Text style={styles.buttonText}>Verify</Text>
+          </TouchableHighlight>
+        </View>
+      );
+    }
+
+    // //TODO refactor entire view to use flexbox so we can depend on
+    // if (this.props.ui.keyboard.visible) {
+    //   // console.log(runTimeDimensions)
+    //   if (runTimeDimensions.height < 500) {
+    //     this.refs.scrollView.scrollTo(200)
+    //   } else if (runTimeDimensions.height < 600) {
+    //     this.refs.scrollView.scrollTo(100)
+    //   }
+    // } else if (this.refs.scrollView){
+    //   this.refs.scrollView.scrollTo(0)
+    // }
+    return (
+      <ScrollView
+        automaticallyAdjustContentInsets={false}
+        ref="scrollView"
+        style={[
+          styles.container,
+          this.props.ui.keyboard.visible && {height: this.props.ui.keyboard.screenY}
+        ]}
+      >
+        <View style={styles.navbar}>
+          <Text style={styles.signup}>Signup/Login</Text>
+        </View>
+        <View style={styles.logoContainer}>
+          <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+        </View>
+        {this.state.submitting ? fetching : signup}
+      </ScrollView>
     );
   }
 };
 
 let styles = StyleSheet.create({
   container: {
+    flex: 1
+  },
+  navbar: {
+    height: 40,
+    backgroundColor: '#1825AD',
     flex: 1,
+    justifyContent: 'center',
+  },
+  signup: {
+    textAlign: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans',
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
+  headerText: {
+    fontSize: 22,
+    alignSelf: 'center',
+    textAlign: 'center',
+    paddingLeft: 8,
+    paddingRight: 8,
+    fontWeight: 'bold',
+  },
+  centered: {
+    alignSelf: 'center',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  boldText: {
+    fontWeight: 'bold'
+  },
+  largeText: {
+    fontSize: 20,
+    marginBottom: 10,
+    marginTop: 5,
+  },
+  summaryText: {
+    alignSelf: 'center'
+  },
+  logoContainer: {
+    marginTop: 25,
+    marginBottom: 25,
+    borderRadius: 100/2,
+    backgroundColor: '#1825AD',
+    paddingLeft: 10,
+    paddingTop: 15,
+    width: 100,
+    height: 100,
+    alignSelf: 'center'
+  },
+  logoImage: {
+    borderRadius: 15,
+    width: 80,
+    height: 70
   },
   login: {
+    flex: 1,
     paddingLeft: 5,
     paddingRight: 5,
     flexDirection: 'column',
@@ -156,52 +298,64 @@ let styles = StyleSheet.create({
   inputContainer: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'flex-start'
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
   },
   errorPlaceholder: {
     height: 0
   },
   iconFace: {
     width: 70,
-    height: 70,
+    height: 50,
+  },
+  iconPhone: {
+    position: 'absolute',
+    top: 10,
+    left: -40,
+    width: 70,
+    height: 50,
   },
   iconLock: {
     width: 70,
     height: 70,
   },
-  underline: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: '#e6e6e6',
-    marginLeft: 10
-  },
   input: {
-    flex: 1,
-    height: 50,
-    padding: 4,
-    marginRight: 5,
-    marginTop: 10,
-    fontSize: 23,
-    borderRadius: 8,
+    height: 60,
+    width: runTimeDimensions.width * .5,
+    fontSize: 20,
     color: '#333',
     fontWeight: 'bold',
-    fontFamily: 'OpenSans'
+    fontFamily: 'OpenSans',
+    alignItems: 'center',
+    alignSelf: 'center',
+    textAlign: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center'
   },
-  button: {
+  buttonActive: {
     height: 56,
     backgroundColor: '#F5A623',
     alignSelf: 'center',
     width: 150,
     marginTop: 20,
+    marginBottom: 50,
     justifyContent: 'center',
     borderRadius: 3,
   },
-
+  smallButton: {
+    height: 20,
+    alignSelf: 'center',
+    width: 150,
+    justifyContent: 'center',
+    borderRadius: 3,
+  },
+  buttonLinkWrap: {
+    backgroundColor: 'white',
+    width: 120
+  },
   buttonWithErrors: {
     height: 56,
     backgroundColor: '#F5A623',
@@ -218,6 +372,13 @@ let styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: 'OpenSans'
   },
+  buttonLink: {
+    alignSelf: 'center',
+    fontSize: 16,
+    color: '#1825AD',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans',
+  },
   errorText: {
     color: '#d00',
     textAlign: 'center',
@@ -226,7 +387,9 @@ let styles = StyleSheet.create({
     fontFamily: 'OpenSans'
   },
   activity: {
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center'
   },
   activityContainer: {
     paddingTop: 50,
@@ -235,25 +398,6 @@ let styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-
-  teamLookupContainer: {
-    position: 'absolute',
-    right: 7,
-    top: 7,
-    padding: 2,
-    width: 100,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor: '#eee',
-  },
-  teamLookup: {
-    alignSelf: 'center',
-    color: '#ccc'
-  },
-  teamFound: {
-  },
-  teamNew: {
-  }
 })
 
 module.exports = Signup;

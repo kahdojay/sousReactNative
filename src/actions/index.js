@@ -1,43 +1,49 @@
 import { DDP } from '../resources/apiConfig'
 import DDPClient from 'ddp-client'
+import ConnectActions from './connect'
 import UIActions from './ui'
 import SessionActions from './session'
-import StationActions from './station'
 import TeamActions from './team'
 import MessageActions from './message'
 import PurveyorActions from './purveyor'
+import ErrorActions from './error'
 
-let ddpClient = new DDPClient({
+const ddpClient = new DDPClient({
   // host : "localhost",
   // port : 3000,
   // ssl  : false,
-  // autoReconnect : true,
+  autoReconnect : false, // default: true,
   // autoReconnectTimer : 500,
-  // maintainCollections : true,
+  maintainCollections : false, // default: true,
   // ddpVersion : '1',  // ['1', 'pre2', 'pre1'] available
   // Use a full url instead of a set of `host`, `port` and `ssl`
   url: DDP.ENDPOINT_WS,
   // socketConstructor: WebSocket // Another constructor to create new WebSockets
 });
 
+const errorActions = ErrorActions(ddpClient)
+const connectActions = ConnectActions(ddpClient)
 const uiActions = UIActions(ddpClient)
-const sessionActions = SessionActions(ddpClient)
-const stationActions = StationActions(ddpClient)
-const teamActions = TeamActions(ddpClient)
+const sessionActions = SessionActions(ddpClient, {
+  'connectActions': connectActions
+})
 const messageActions = MessageActions(ddpClient)
+const teamActions = TeamActions(ddpClient, {
+  'connectActions': connectActions,
+  'messageActions': messageActions
+})
 const purveyorActions = PurveyorActions(ddpClient)
 
 function connectApp(){
-  return (dispatch, getState) => {
-    let teamKey = getState().session.teamKey;
-
+  return (dispatch) => {
     //--------------------------------------
     // Execute pre-connect actions
     //--------------------------------------
 
-    dispatch(teamActions.fetchTeams());
+    // dispatch(sessionActions.resetSession());
+    dispatch(sessionActions.resetSessionVersion());
+    // dispatch(uiActions.resetUI()); //NOTE: why doesnt this work?
     dispatch(messageActions.resetMessages());
-    dispatch(stationActions.resetStations());
     dispatch(purveyorActions.resetPurveyors());
 
     //--------------------------------------
@@ -47,72 +53,28 @@ function connectApp(){
     dispatch(uiActions.bindKeyboard());
 
     //--------------------------------------
-    // Bind DDP client events
+    // Connect DDP
     //--------------------------------------
 
-    ddpClient.on('connected', () => {
-      Object.keys(DDP.SUBSCRIBE_LIST).forEach((resourceKey) => {
-        let resource = DDP.SUBSCRIBE_LIST[resourceKey];
-        ddpClient.subscribe(resource.channel, [teamKey]);
-      })
-    })
-    ddpClient.on('message', (msg) => {
-      var log = JSON.parse(msg);
-      // console.log("MAIN DDP MSG", log);
-      // var stationIds = getState().stations.data.map(function(station) {
-      //   return station.id;
-      // })
-      if (log.fields){
-        var data = log.fields;
-        data.id = log.id;
-        switch(log.collection){
-          case 'messages':
-            dispatch(messageActions.receiveMessages(data))
-            break;
-          case 'stations':
-            dispatch(stationActions.receiveStations(data))
-            break;
-          case 'purveyors':
-            dispatch(purveyorActions.receivePurveyors(data))
-            break;
-          default:
-            console.log("TODO: wire up collection: ", log.collection);
-            break;
-        }
-      }
-    });
-
-    //--------------------------------------
-    // Connect the DDP client
-    //--------------------------------------
-
-    ddpClient.connect((error, wasReconnected) => {
-      if (error) {
-        // return dispatch(errorStations([{
-        //   id: 'error_feed_connection',
-        //   message: 'Feed connection error!'
-        // }]));
-        // console.log('ERROR: ', error);
-        // TODO: create a generic error action and reducer
-      }
-      if (wasReconnected) {
-        // console.log('RECONNECT: Reestablishment of a connection.');
-      }
-
-    });
+    dispatch(connectActions.connectDDP({
+      'uiActions': uiActions,
+      'sessionActions': sessionActions,
+      'teamActions': teamActions,
+      'messageActions': messageActions,
+      'purveyorActions': purveyorActions,
+      'errorActions': errorActions
+    }));
   }
 }
 
-// TODO: how to handle disconnect?
-
-export default Object.assign(
-  {
-    'connectApp': connectApp
+export default Object.assign({
+    'connectApp': connectApp,
   },
+  connectActions,
   uiActions,
   sessionActions,
   teamActions,
-  stationActions,
   messageActions,
-  purveyorActions
+  purveyorActions,
+  errorActions
 )

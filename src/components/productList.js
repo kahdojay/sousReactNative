@@ -1,66 +1,105 @@
 import React from 'react-native';
 import ProductListItem from './productListItem';
-import {
-  greyText,
-  productCompletedBackgroundColor
-} from '../utilities/colors';
+import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
 
-let {
+const {
   View,
   PropTypes,
   StyleSheet,
   Text,
+  ScrollView,
   TouchableHighlight,
 } = React;
 
-export default class ProductList extends React.Component {
+class ProductList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      showCompleted: true
+      products: null
     }
   }
-  handlePress() {
-    this.setState({showCompleted: !this.state.showCompleted})
+
+  componentWillMount() {
+    this.setState({
+      products: this.props.products.slice(0,10)
+    })
   }
+
+  componentDidMount() {
+    if(this.props.products.length > 10){
+      setTimeout(() => {
+        this.setState({
+          products: this.props.products.slice(0,21)
+        })
+      }, 200)
+    }
+    if(this.props.products.length > 21){
+      setTimeout(() => {
+        this.setState({
+          products: this.props.products.slice(0,50)
+        })
+      }, 400)
+    }
+    if(this.props.products.length > 50){
+      setTimeout(() => {
+        this.setState({
+          products: this.props.products
+        })
+      }, 800)
+    }
+  }
+
   render() {
-    let {purveyor} = this.props
-    let productsOrdered = _.filter(purveyor.products, { ordered: true, deleted: false })
-      .map((product, idx) => {
-           return <ProductListItem
+    const {cart} = this.props
+    let productList = []
+    if(this.state.products !== null){
+      productList = _.map(this.state.products, (product, idx) => {
+        let loadDelay = 50
+        // for everything off screen
+        // - index greater than 10
+        // - multiplied by fibonacci sequence
+        if(idx > 130){
+          loadDelay = 900
+        } else if(idx > 80){
+          loadDelay = 800
+        } else if(idx > 50){
+          loadDelay = 700
+        } else if(idx > 30){
+          loadDelay = 600
+        } else if(idx > 20) {
+          loadDelay = 500
+        } else if(idx > 10) {
+          loadDelay = 300
+        }
+
+        let cartItem = null
+        let cartPurveyorId = ''
+        product.purveyors.map((purveyorId) => {
+          if (cart.orders.hasOwnProperty(purveyorId) === true && cart.orders[purveyorId].products.hasOwnProperty(product.id)) {
+            cartPurveyorId = purveyorId
+            cartItem = cart.orders[purveyorId].products[product.id]
+          }
+        })
+
+        return (
+          <ProductListItem
+            cartItem={cartItem}
+            cartPurveyorId={cartPurveyorId}
+            loadDelay={loadDelay}
             product={product}
             key={idx}
-            purveyorId={purveyor.id}
-            navigator={this.props.navigator}
-            onUpdateProduct={(productAttributes) => {
-              this.props.onUpdatePurveyorProduct(purveyor.id, product.productId, productAttributes);
-            }} />
-        })
-    let productsUnordered = _.filter(purveyor.products, { ordered: false, deleted: false })
-      .map((product, idx) => {
-          return <ProductListItem
-            product={product}
-            key={idx}
-            purveyorId={purveyor.id}
-            navigator={this.props.navigator}
-            onUpdateProduct={(productAttributes) => {
-              this.props.onUpdatePurveyorProduct(purveyor.id, product.productId, productAttributes);
-            }} />
-        })
+            purveyors={this.props.purveyors}
+            onUpdateProductInCart={(cartAction, cartAttributes) => {
+              this.props.onUpdateProductInCart(cartAction, cartAttributes)
+            }}
+          />
+        )
+      })
+    }
     return (
-      <View>
-        {productsUnordered}
-        <TouchableHighlight
-          onPress={this.handlePress.bind(this)}
-        >
-          <View style={styles.container}>
-            <View style={styles.roundedCorners}>
-              <Text style={styles.text}>{productsOrdered.length} Ordered</Text>
-            </View>
-          </View>
-        </TouchableHighlight>
-        {this.state.showCompleted ? productsOrdered : <View />}
-      </View>
+      <ScrollView keyboardShouldPersistTaps={false} >
+        {productList}
+      </ScrollView>
     );
   }
 }
@@ -88,8 +127,6 @@ const styles = StyleSheet.create({
 })
 
 ProductList.propTypes = {
-  // onUpdatePurveyorProduct: PropTypes.func.isRequired,
-  // products: PropTypes.arrayOf(PropTypes.shape({
-    // ordered: PropTypes.bool.isRequired
-  // }).isRequired).isRequired
 };
+
+export default ProductList

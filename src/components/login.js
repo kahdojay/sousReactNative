@@ -1,4 +1,4 @@
-var { Icon, } = require('react-native-icons');
+import { Icon, } from 'react-native-icons';
 import React from 'react-native'
 
 const {
@@ -26,7 +26,6 @@ class Login extends React.Component {
   }
 
   componentWillMount(){
-    this.props.onResetSession();
     if(this.props.session.login !== ''){
       this.setState({
         email: this.props.session.login,
@@ -135,7 +134,6 @@ let styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 3,
   },
-
   buttonWithErrors: {
     height: 56,
     backgroundColor: '#F5A623',

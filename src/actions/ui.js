@@ -1,10 +1,17 @@
 import { DeviceEventEmitter } from 'react-native'
 import {
+  RESET_UI,
   KEYBOARD_WILL_SHOW,
   KEYBOARD_WILL_HIDE
 } from './actionTypes'
 
 export default function UIActions(ddpClient) {
+
+  function resetUI(){
+    return {
+      type: RESET_UI
+    }
+  }
 
   function bindKeyboard(){
     return (dispatch, getState) => {
@@ -20,7 +27,9 @@ export default function UIActions(ddpClient) {
         }
         dispatch({
           type: KEYBOARD_WILL_SHOW,
-          marginBottom: marginBottom
+          marginBottom: marginBottom,
+          screenX: e.endCoordinates.screenX,
+          screenY: e.endCoordinates.screenY
         })
       })
       DeviceEventEmitter.addListener('keyboardWillHide', (e) => {
@@ -28,7 +37,9 @@ export default function UIActions(ddpClient) {
         // TODO: fix the delta if switching between inputs turns the autocomplete off
         dispatch({
           type: KEYBOARD_WILL_HIDE,
-          marginBottom: 0
+          marginBottom: 0,
+          screenX: e.endCoordinates.screenX,
+          screenY: e.endCoordinates.screenY
         })
       })
     }
@@ -38,5 +49,6 @@ export default function UIActions(ddpClient) {
     KEYBOARD_WILL_SHOW,
     KEYBOARD_WILL_HIDE,
     bindKeyboard,
+    resetUI,
   }
 }

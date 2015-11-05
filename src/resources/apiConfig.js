@@ -1,24 +1,18 @@
 
-// export const API_ENDPOINT = 'http://localhost:3001/api/1';
-export const API_ENDPOINT = 'http://beta.sousapp.com/api/1';
-
-export const endpoints = {
-  ENDPOINT_SESSION: '/sessions',
-  ENDPOINT_STATION: '/stations',
-  ENDPOINT_TEAM: '/teams',
-  ENDPOINT_USER: '/users',
-};
-
 export const DDP = {
-  // ENDPOINT_WS: 'ws://sous-chat.meteor.com/websocket',
-  // ENDPOINT_WS: 'ws://localhost:3000/websocket',
-  ENDPOINT_WS: 'ws://sousmeteor-52834.onmodulus.net/websocket',
+  ENDPOINT_WS: 'ws://localhost:3000/websocket',
+  // ENDPOINT_WS: 'ws://sousstaging-53818.onmodulus.net/websocket',
+  // ENDPOINT_WS: 'ws://sousproduction-53819.onmodulus.net/websocket',
   SUBSCRIBE_LIST: {
+    RESTRICTED: {channel: 'restricted'},
     MESSAGES: {channel: 'messages'},
-    STATIONS: {channel: 'stations'},
-    PURVEYORS: {channel: 'purveyors'}
+    TEAMS: {channel: 'teams'},
+    PURVEYORS: {channel: 'purveyors'},
+    CATEGORIES: {channel: 'categories'},
+    TEAMS_USERS: {channel: 'teams-users'},
+    PRODUCTS: {channel: 'products'},
+    ERRORS: {channel: 'errors'}
   },
-  // SUBSCRIBE_MESSAGES: 'messages',
-  // SUBSCRIBE_STATIONS: 'stations',
-  // SUBSCRIBE_PURVEYORS: 'purveyors',
 }
+
+export const SESSION_VERSION = 1444868918576

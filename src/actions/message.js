@@ -1,3 +1,4 @@
+import shortid from 'shortid'
 import {
   RESET_MESSAGES,
   GET_MESSAGES,
@@ -16,20 +17,37 @@ export default function MessageActions(ddpClient) {
     }
   }
 
-  function createMessage(message) {
-    // NOTE: this will call the update when done, so the CREATE_MESSAGE reducer
-    //          currently doesnt do anything
-    ddpClient.call('createMessage', message)
-    return {
-      type: CREATE_MESSAGE,
-      message: message
-    };
+  function createMessage(messageText, author, imageUrl) {
+    // console.log('imageUrl', imageUrl)
+    return (dispatch, getState) => {
+      const {session} = getState()
+      author = author ? author : `${session.firstName} ${session.lastName.substring(0,1)}`;
+      imageUrl = imageUrl ? imageUrl : session.imageUrl;
+
+      messageText = messageText.replace(/\{\{author\}\}/g, author);
+      var newMessage = {
+        _id: shortid.generate(),
+        message: messageText,
+        userId: session.userId,
+        author: author || "Default",
+        teamId: session.teamId,
+        createdAt: (new Date()).toISOString(),
+        imageUrl: imageUrl,
+        delete: false
+      };
+      // console.log('newMessage', newMessage);
+      ddpClient.call('createMessage', [newMessage])
+      return dispatch({
+        type: CREATE_MESSAGE,
+        message: newMessage
+      });
+    }
   }
 
-  function deleteMessage(messageKey) {
+  function deleteMessage(messageId) {
     return {
       type: DELETE_MESSAGE,
-      messageKey: messageKey
+      messageId: messageId
     }
   }
 

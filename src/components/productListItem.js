@@ -1,80 +1,184 @@
-var { Icon, } = require('react-native-icons');
 import React from 'react-native'
-import CheckBox from 'react-native-checkbox'
+import ProductToggle from './productToggle'
+import { Icon } from 'react-native-icons'
+import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
+import _ from 'lodash';
 import {
-  greyText,
-  productCompletedBackgroundColor
-} from '../utilities/colors';
+  CART
+} from '../actions/actionTypes';
 
-let {
+const {
   TouchableHighlight,
   PropTypes,
   Text,
   StyleSheet,
   View,
+  Modal,
 } = React;
 
-export default class ProductListItem extends React.Component {
-  increment() {
-    this.props.onUpdateProduct({quantity: (this.props.product.quantity + 1)})
+class ProductListItem extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      product: null,
+      purveyors: null,
+      added: false,
+      quantity: 1,
+      purveyorId: '',
+      selectedPurveyorId: null,
+      note: ''
+    }
+    this.timeoutId = null
+    this.loadTimeoutId = null
   }
+
+  componentWillReceiveProps(nextProps) {
+    // delay update from receiving props
+    clearTimeout(this.timeoutId);
+    this.timeoutId = setTimeout(() => {
+      this.localStateUpdateFromCart(nextProps.cartItem, nextProps.cartPurveyorId)
+    }, 1000);
+  }
+
+  componentDidMount() {
+    this.loadTimeoutId = setTimeout(() => {
+      this.setState({
+        product: this.props.product,
+        purveyors: this.props.purveyors,
+        selectedPurveyorId: this.props.product.purveyors[0],
+      }, () => {
+        this.localStateUpdateFromCart(this.props.cartItem, this.props.cartPurveyorId)
+      })
+    }, this.props.loadDelay)
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timeoutId)
+    clearTimeout(this.loadTimeoutId)
+  }
+
+  localStateUpdateFromCart(cartItem, cartPurveyorId) {
+    let newState = {}
+    if (cartItem !== null) {
+      newState = {
+        added: true,
+        quantity: cartItem.quantity,
+        purveyorId: cartPurveyorId,
+        note: cartItem.note
+      };
+    } else {
+      newState = {
+        added: false,
+        quantity: 1,
+        purveyorId: cartPurveyorId,
+        note: ''
+      };
+    }
+    this.setState(newState);
+  }
+
+  cartUpdateFromLocalState() {
+    const cartAttributes = {
+      purveyorId: this.state.selectedPurveyorId,
+      productId: this.state.product.id,
+      quantity: this.state.quantity,
+      note: this.state.note
+    };
+    this.props.onUpdateProductInCart(
+      (this.state.added === true ? CART.ADD : CART.REMOVE),
+      cartAttributes
+    )
+  }
+
+  increment() {
+    this.setState({
+      quantity: this.state.quantity + 1
+    }, this.cartUpdateFromLocalState.bind(this))
+  }
+
   decrement() {
-    if (this.props.product.quantity > 1 ) {
-      this.props.onUpdateProduct({quantity: (this.props.product.quantity - 1)})
+    if (this.state.quantity > 1 ) {
+      this.setState({
+        quantity: this.state.quantity - 1
+      }, this.cartUpdateFromLocalState.bind(this))
     }
   }
-  handleOrderProduct() {
-    this.props.onUpdateProduct({ordered: !this.props.product.ordered});
+
+  handleToggleProduct(purveyorId) {
+    this.setState({
+      added: !this.state.added,
+      selectedPurveyorId: purveyorId
+    }, this.cartUpdateFromLocalState.bind(this))
   }
+
   render() {
-    return (
-      <View style={styles.container}>
-        <View style={[
-          styles.row,
-          this.props.product.ordered && styles.rowCompleted
-        ]}>
+    let {product, purveyors} = this.state
+    // console.log(this.state.selectedPurveyorId);
+
+    let productInfo = (<View style={styles.row}><View style={styles.main}><Text style={[styles.productText, {padding: 12}]}>Loading...</Text></View></View>);
+    if(this.state.product !== null){
+      let purveyorString = ""
+      const purveyorIdx = _.findIndex(purveyors.data, { id: this.state.selectedPurveyorId }); //.name;
+      if(purveyorIdx > -1){
+        purveyorString = purveyors.data[purveyorIdx].name || '-NOT SET-'
+      }
+      // console.log(this.state.added)
+      productInfo = (
+        <View style={styles.row}>
           <View style={styles.checkboxContainer}>
-            <CheckBox
-              label=''
-              onChange={this.handleOrderProduct.bind(this)}
-              checked={this.props.product.ordered}
+            <ProductToggle
+              added={this.state.added}
+              availablePurveyors={product.purveyors}
+              allPurveyors={purveyors}
+              currentlySelectedPurveyorId={this.state.selectedPurveyorId}
+              onToggleCartProduct={(purveyorId) => {
+                this.handleToggleProduct(purveyorId)
+              }}
             />
           </View>
-          <TouchableHighlight
-            onPress={() => this.props.navigator.push({
-              name: 'ProductView',
-              productId: this.props.product.productId,
-              purveyorId: this.props.purveyorId
-            })}
-            style={styles.main}
-          >
-            <View>
-              <Text style={[
-                styles.text,
-                this.props.ordered && styles.textCompleted
-              ]}>
-                {this.props.product.name}
-              </Text>
-              <Text
-                style={{fontSize: 9, position: 'absolute', left: 0, bottom: -10, color: '#999'}}
-              >
-                {this.props.product.price + ' • ' + this.props.product.unit}
-              </Text>
-            </View>
-          </TouchableHighlight>
-          <Text style={styles.quantity}>
-            {this.props.product.quantity > 1 ? ('X' + this.props.product.quantity) : ''}
-          </Text>
-          <TouchableHighlight
-            underlayColor="#bbb"
-            onPress={this.decrement.bind(this)}>
-            <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
-          </TouchableHighlight>
-          <TouchableHighlight
-            onPress={this.increment.bind(this)}>
-            <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
-          </TouchableHighlight>
+          <View style={styles.main}>
+            <Text style={styles.productText}>
+              {product.name}
+            </Text>
+            <Text style={{fontSize: 9,  color: '#999'}} >
+              {product.amount + ' ' + product.unit}
+            </Text>
+            <Text style={{fontSize: 9,  color: '#999'}} >
+              {purveyorString}
+            </Text>
+          </View>
+          { this.state.added === true ?
+          [
+            <Text key={'quantity'} style={styles.quantity}>
+              {this.state.quantity > 1 ? ('X' + this.state.quantity) : ''}
+            </Text>,
+            <TouchableHighlight
+              key={'decrement'}
+              underlayColor="transparent"
+              onPress={this.decrement.bind(this)}
+              style={{flex: 1}}>
+              <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
+            </TouchableHighlight>,
+            <TouchableHighlight
+              key={'increment'}
+              underlayColor='transparent'
+              onPress={this.increment.bind(this)}
+              style={{flex: 1}}>
+              <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
+            </TouchableHighlight>
+          ] : [
+            <View key={'quantity'} style={{flex: 1}} />,
+            <View key={'decrement'} style={{flex: 1}} />,
+            <View key={'increment'} style={{flex:1}} />
+          ] }
         </View>
+      )
+    }
+
+
+    return (
+      <View style={styles.container}>
+        {productInfo}
       </View>
     )
   }
@@ -92,6 +196,7 @@ let styles = StyleSheet.create({
     height: 40,
   },
   quantity: {
+    flex: 1,
     fontSize: 16
   },
   row: {
@@ -101,27 +206,22 @@ let styles = StyleSheet.create({
     padding: 5,
     alignItems: 'center',
   },
-  rowCompleted: {
-    backgroundColor: productCompletedBackgroundColor,
-  },
   checkboxContainer: {
     flex: 1,
     alignItems: 'center',
+    width: 40
   },
   main: {
     flex: 4,
   },
-  text: {
-    fontWeight: 'bold',
+  productText: {
     color: 'black',
-    fontSize: 20
-  },
-  textCompleted: {
-    color: '#777',
+    fontSize: 15
   },
 });
 
 ProductListItem.propTypes = {
-  // onUpdateProduct: PropTypes.func.isRequired,
   product: PropTypes.object.isRequired
 };
+
+export default ProductListItem

@@ -20,23 +20,20 @@ const {
 class PurveyorIndex extends React.Component {
   render() {
     let self = this
-    const { purveyors, products } = this.props
+    const { purveyors, products, session } = this.props
 
-    let purveyorsList = _.map(purveyors.data, function(purveyor, idx) {
-      if (purveyor.deleted === false) {
-        return (
-          <PurveyorIndexRow
-            key={idx}
-            purveyor={purveyor}
-            onPress={() => {
-              self.props.navigator.push({
-                name: 'PurveyorView',
-                purveyorId: purveyor.id,
-              })
-            }}
-          />
-        )
-      }
+    let purveyorsList = _.map(_.filter(purveyors.data, (purveyor) =>
+      {return purveyor.teamId === session.teamId}),
+        function(purveyor, idx) {
+          if (purveyor.deleted === false) {
+            return (
+              <PurveyorIndexRow
+                key={idx}
+                purveyor={purveyor}
+                onPress={this.props.navToPurveyor}
+              />
+            )
+          }
     })
 
     return (
@@ -45,8 +42,7 @@ class PurveyorIndex extends React.Component {
           placeholder="Add purveyor..."
           onSubmit={this.props.onAddPurveyor}
         />
-        <ScrollView
-        >
+        <ScrollView keyboardShouldPersistTaps={false} >
           {purveyorsList}
         </ScrollView>
       </View>
@@ -57,6 +53,7 @@ class PurveyorIndex extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white',
   },
   scrollView: {
     backgroundColor: '#f7f7f7',
@@ -70,8 +67,6 @@ const styles = StyleSheet.create({
 
 PurveyorIndex.propTypes = {
   onAddPurveyor: React.PropTypes.func,
-  navigator: React.PropTypes.object.isRequired,
-  //products: React.PropTypes.object,
   purveyors: React.PropTypes.object,
 };
 
