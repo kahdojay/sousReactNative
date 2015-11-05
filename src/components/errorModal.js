@@ -37,7 +37,7 @@ class ErrorModal extends React.Component {
         errors: props.errors,
         modalVisible: true
       })
-    } else if (props.errors.length === 0) {
+    } else if (props.errors.length === 0 && this.state.modalVisible === true) {
       this.setState({
         errors: [],
         modalVisible: false
@@ -45,7 +45,7 @@ class ErrorModal extends React.Component {
     }
   }
 
-  handleDismiss(errorId) {
+  handleDismiss() {
     const errorIdList = _.pluck(this.state.errors, 'id')
     this.props.onDeleteError(errorIdList)
     this.setState({
@@ -55,7 +55,6 @@ class ErrorModal extends React.Component {
   }
 
   render() {
-    // console.log('error modal')
     let errorsArray = <View />
     if (this.state.errors.length > 0) {
       // console.log('errors: ', this.state.errors)
@@ -75,7 +74,7 @@ class ErrorModal extends React.Component {
       <TouchableHighlight
         style={styles.button}
         onPress={::this.handleDismiss}
-        underlayColor={'#fff'}
+        underlayColor='transparent'
       >
         <Text style={styles.buttonText}>Dismiss</Text>
       </TouchableHighlight>
@@ -123,9 +122,11 @@ var styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
-    paddingTop: 10,
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingRight: 45,
+    paddingLeft: 45,
     flex: 1,
-    height: 44,
     alignSelf: 'center',
     // overflow: 'hidden',
   },

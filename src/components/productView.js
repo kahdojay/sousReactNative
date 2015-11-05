@@ -60,11 +60,11 @@ class ProductView extends React.Component {
     let newProduct = this.props.product
     newProduct.deleted = true
     this.props.onUpdatePurveyorProduct(purveyorId, product.recipeId, newProduct)
-    this.props.navigator.pop()
+    this.props.onDeleteProduct()
   }
   componentWillReceiveProps(nextProps){
     if(nextProps.product.deleted === true){
-      this.props.navigator.pop()
+      this.props.onDeleteProduct()
     } else {
       this.setState({
         textInputDescription: nextProps.product.description,
@@ -72,7 +72,7 @@ class ProductView extends React.Component {
         saved: true,
       });
     }
-    if(nextProps.ui.keyboard.visible === true){
+    if(nextProps.keyboardVisible === true){
       this.scrollToBottom();
     } else {
       this.scrollToTop();

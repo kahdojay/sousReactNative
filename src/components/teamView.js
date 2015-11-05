@@ -23,7 +23,7 @@ class TeamView extends React.Component {
   }
 
   render() {
-    let team = this.props.team
+    const {teamTasks} = this.props
     return (
       <View style={styles.container}>
         <AddForm
@@ -31,7 +31,7 @@ class TeamView extends React.Component {
           onSubmit={this.props.onAddNewTask}
         />
         <TaskList
-          team={team}
+          tasks={teamTasks}
           onNavToTask={this.props.onNavToTask}
           onTaskCompletionNotification={this.props.onTaskCompletionNotification}
           onUpdateTeamTask={this.props.onUpdateTeamTask}

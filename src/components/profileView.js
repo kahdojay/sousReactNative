@@ -76,10 +76,7 @@ class ProfileView extends React.Component {
     // console.log("IMAGE ERROR", err);
   }
   storeImages(data){
-    this.props.navigator.push({
-      name: 'ImageGallery',
-      photos: data,
-    });
+    this.props.onStoreImages(data)
   }
   needsSave() {
     let propValues = [ this.props.session.firstName, this.props.session.lastName, this.props.session.email, this.props.session.notifications, this.props.session.phoneNumber ];

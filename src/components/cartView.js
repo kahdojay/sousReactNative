@@ -42,14 +42,11 @@ class CartView extends React.Component {
             const cartPurveyorsString = _.pluck(cartPurveyors, 'name').join(', ');
             if(this.state.numberOfOrders > 0){
               this.props.onSubmitOrder('Order sent to ' + cartPurveyorsString);
-              this.props.navigator.replacePreviousAndPop({
-                name: 'Feed',
-              });
             }
           }}
         ]
       )
-    } 
+    }
     // TODO: handle empty cart error
   }
 
@@ -68,11 +65,12 @@ class CartView extends React.Component {
 
     return cartPurveyorProducts.map((product) => {
       // console.log('PRODUCT', product)
-      let quantity = purveyorProducts[product.id].quantity
+      let quantity = purveyorProducts[product.id].quantity * product.amount
       const productName = product.name || '';
       return (
         <View key={product.id} style={styles.productContainer}>
-          <Text style={styles.productTitle}>{quantity} {productName}</Text>
+          <Text style={styles.productTitle}>{quantity} {product.unit}</Text>
+          <Text style={styles.productTitle}>{productName}</Text>
           <TouchableHighlight
             onPress={() => {
               // console.log('delete ITEM');

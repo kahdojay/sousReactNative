@@ -5,6 +5,7 @@ import AddForm from './addForm'
 import { mainBackgroundColor } from '../utilities/colors'
 import CategoryIndexRow from './categoryIndexRow';
 import { nameSort } from '../utilities/utils';
+import Colors from '../utilities/colors';
 
 const {
   ActivityIndicatorIOS,
@@ -43,6 +44,14 @@ class CategoryIndex extends React.Component {
           placeholder="Add category..."
           onSubmit={this.props.onAddCategory}
         />{/* */}
+        {/* * /}<TouchableHighlight
+          underlayColor='#eee'
+          onPress={this.props.onCreateProduct}
+          style={styles.createButton}
+        >
+          <Text style={styles.createButtonText}>Create New Product...</Text>
+        </TouchableHighlight>
+        <View style={styles.seperator} />{/* */}
         <ScrollView keyboardShouldPersistTaps={false} >
           {categoriesList}
         </ScrollView>
@@ -56,6 +65,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
+  seperator: {
+    height: 5,
+    borderBottomColor: '#bbb',
+    borderBottomWidth: 1,
+  },
   scrollView: {
     backgroundColor: '#f7f7f7',
     height: 500,
@@ -64,6 +78,19 @@ const styles = StyleSheet.create({
     marginTop: 0,
     paddingTop: 0
   },
+  createButton: {
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 7,
+  },
+  createButtonText: {
+    color: Colors.navbarIconColor,
+    padding: 5,
+    marginLeft: 10,
+    fontFamily: 'OpenSans',
+    fontSize: 16,
+    fontWeight: 'bold',
+  }
 });
 
 CategoryIndex.propTypes = {

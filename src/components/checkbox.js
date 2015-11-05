@@ -13,6 +13,7 @@ var {
 var CheckBox = React.createClass({
   propTypes: {
     label: PropTypes.string,
+    iconColor: PropTypes.string,
     labelStyle: PropTypes.object,
     checked: PropTypes.bool,
     onChange: PropTypes.func
@@ -21,21 +22,29 @@ var CheckBox = React.createClass({
   getDefaultProps() {
     return {
       label: 'Label',
-      checked: false
+      checked: false,
+      iconColor: 'black'
     }
   },
 
   render() {
-    var iconName = 'fontawesome|square-o'
+    let iconName = 'fontawesome|square-o'
+    let iconContainerStyle = {}
     if(this.props.checked){
       iconName = 'fontawesome|check-square-o'
+      // iconContainerStyle = {marginLeft: 10}
     }
 
     return (
-      <TouchableHighlight onPress={this.props.onChange} underlayColor='white'>
-        <View style={styles.container}>
-          <Icon name={iconName} size={30} color='black' style={styles.icon}/>
-          <Text style={[this.props.labelStyle, styles.label]}>{this.props.label}</Text>
+      <TouchableHighlight
+        onPress={this.props.onChange}
+        underlayColor='transparent'
+      >
+        <View style={[styles.container, iconContainerStyle]}>
+          <Icon name={iconName} size={30} color={this.props.iconColor} style={[styles.icon]}/>
+          {this.props.label !== '' ?
+            <Text style={[this.props.labelStyle, styles.label]}>{this.props.label}</Text>
+          : <View />}
         </View>
       </TouchableHighlight>
     )
@@ -51,10 +60,6 @@ var styles = StyleSheet.create({
   icon: {
     width: 40,
     height: 40,
-  },
-  checkbox: {
-    width: 26,
-    height: 26
   },
   label: {
     fontSize: 15,

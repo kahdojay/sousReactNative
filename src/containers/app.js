@@ -5,8 +5,6 @@ import NavigationBarStyles from 'react-native-navbar/styles'
 import { connect } from 'react-redux/native';
 import { Icon } from 'react-native-icons';
 import SideMenu from 'react-native-side-menu';
-import ErrorModal from '../components/errorModal';
-import InviteModal from '../components/inviteModal';
 import { BackBtn } from '../utilities/navigation';
 import Colors from '../utilities/colors';
 import Urls from '../resources/urls';
@@ -40,6 +38,13 @@ class App extends React.Component {
       category: null,
       categoryProducts: null,
       currentTeam: this.props.teams.currentTeam,
+      contactList: [],
+      sceneState: {
+        ProductCreate: {
+          submitReady: false,
+          productAttributes: {}
+        }
+      },
     }
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
@@ -56,7 +61,8 @@ class App extends React.Component {
         <TouchableOpacity
           onPress={() => {
             // console.log('Oops, need to specify function')
-          }}>
+          }}
+        >
           <View style={NavigationBarStyles.navBarRightButton}>
             {nextComponent}
           </View>
@@ -86,10 +92,6 @@ class App extends React.Component {
     }
   }}
 
-  // componentWillMount() {
-  //   // this.props.dispatch(actions.connectApp())
-  // }
-
   componentWillReceiveProps(nextProps) {
     this.setState({
       isAuthenticated: nextProps.session.isAuthenticated,
@@ -100,12 +102,14 @@ class App extends React.Component {
   }
 
   componentDidUpdate() {
-    if(this.refs.appNavigator && this.state.currentTeam !== null && this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
-      setTimeout(() => {
-        this.refs.appNavigator.replacePrevious({
-          name: 'Feed'
-        });
-      }, 100)
+    if(this.refs.appNavigator){
+      if(this.state.currentTeam !== null && this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
+        setTimeout(() => {
+          this.refs.appNavigator.replacePrevious({
+            name: 'Feed'
+          });
+        }, 100)
+      }
     }
   }
 
@@ -118,31 +122,37 @@ class App extends React.Component {
   }
 
   getScene(route, nav) {
-    const { ui, session, teams, messages, dispatch, purveyors, products } = this.props;
+    const { ui, session, teams, messages, dispatch, purveyors, products, errors } = this.props;
 
     switch (route.name) {
       case 'Signup':
         return (
           <Components.Signup
-            navigator={nav}
             session={session}
+            errors={errors.data}
             onRegisterSession={(sessionParams) => {
-              dispatch(actions.registerSession(sessionParams))
+              _.debounce(() => {
+                dispatch(actions.registerSession(sessionParams))
+              }, 25)()
             }}
             ui={ui}
           />
-        );
+        )
       case 'TeamIndex':
         return (
           <Components.TeamIndex
-            navigator={nav}
             teams={teams}
             messages={messages}
             onUpdateTeam={(teamId) => {
-              // dispatch(actions.resetPurveyors());
-              dispatch(actions.resetMessages());
-              dispatch(actions.setCurrentTeam(teamId));
-              dispatch(actions.updateSession({ teamId: teamId }));
+              _.debounce(() => {
+                // dispatch(actions.resetPurveyors());
+                dispatch(actions.resetMessages());
+                dispatch(actions.setCurrentTeam(teamId));
+                dispatch(actions.updateSession({ teamId: teamId }));
+              }, 25)()
+              nav.replacePreviousAndPop({
+                name: 'Feed',
+              })
             }}
             onAddTeam={(name) => {
               dispatch(actions.addTeam(name))
@@ -151,13 +161,12 @@ class App extends React.Component {
               this._back.bind(this)
             }
           />
-        );
+        )
       case 'TeamView':
         return (
           <Components.TeamView
             ui={ui}
-            navigator={nav}
-            team={this.state.currentTeam}
+            teamTasks={this.state.currentTeam.tasks}
             onNavToTask={(recipeId) => {
               // console.log(recipeId)
               nav.push({
@@ -166,50 +175,70 @@ class App extends React.Component {
               })
             }}
             onAddNewTask={(taskName) => {
-              // console.log(taskName);
-              dispatch(actions.addTeamTask({name: taskName}))
+              _.debounce(() => {
+                // console.log(taskName);
+                dispatch(actions.addTeamTask({name: taskName}))
+              }, 25)()
             }}
             onTaskCompletionNotification={(task) => {
-              // console.log("TASK: ", task);
-              var msg = `{{author}} completed ${task.name}`;
-              dispatch(actions.completeTeamTask(msg))
+              _.debounce(() => {
+                // console.log("TASK: ", task);
+                var msg = `{{author}} completed ${task.name}`;
+                dispatch(actions.completeTeamTask(msg))
+              }, 25)()
             }}
             onDeleteTeam={() => {
-              dispatch(actions.deleteTeam())
+              _.debounce(() => {
+                dispatch(actions.deleteTeam())
+              }, 25)()
             }}
             onUpdateTeamTask={(taskId, taskAttributes) => {
-              dispatch(actions.updateTeamTask(taskId, taskAttributes))
+              _.debounce(() => {
+                dispatch(actions.updateTeamTask(taskId, taskAttributes))
+              }, 25)()
             }}
           />
-        );
+        )
       case 'TaskView':
         var task = _.filter(this.state.currentTeam.tasks, {recipeId: route.recipeId})[0]
-        return <Components.TaskView
-                  ui={ui}
-                  task={task}
-                  navigator={nav}
-                  onUpdateTeamTask={(taskId, taskAttributes) => {
-                    dispatch(actions.updateTeamTask(taskId, taskAttributes))
-                  }}
-                />;
+        return (
+          <Components.TaskView
+            keyboardVisible={ui.keyboard.visible }
+            task={task}
+            onUpdateTeamTask={(taskId, taskAttributes) => {
+              _.debounce(() => {
+                dispatch(actions.updateTeamTask(taskId, taskAttributes))
+              }, 25)()
+            }}
+            onDeleteTaskPop={() => {
+              nav.pop()
+            }}
+          />
+        )
       case 'Feed':
         return (
           <Components.Feed
-            navigator={nav}
             messages={messages}
             userEmail={session.login}
             session={session}
             onCreateMessage={(msg) => {
-              dispatch(actions.createMessage(msg))
+              _.debounce(() => {
+                dispatch(actions.createMessage(msg))
+              }, 25)()
             }}
           />
-        );
+        )
       // case 'PurveyorIndex':
       //   return (
       //     <Components.PurveyorIndex
-      //       navigator={nav}
       //       purveyors={purveyors}
       //       session={session}
+      //       onNavToPurveyor={() => {
+      //         nav.push({
+      //           name: 'PurveyorView',
+      //           purveyorId: purveyor.id
+      //         })
+      //       }}
       //       onAddPurveyor={(name) => {
       //         const purveyors = this.props.purveyors.data.map((purveyor) => {
       //           if (! purveyor.deleted)
@@ -225,13 +254,12 @@ class App extends React.Component {
       //         this._back()
       //       }}
       //     />
-      //   );
+      //   )
       // case 'PurveyorView':
       //   var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
       //   return (
       //     <Components.PurveyorView
       //       ui={ui}
-      //       navigator={nav}
       //       purveyor={purveyor}
       //       onAddNewProduct={(purveyorId, productName) => {
       //         const products = purveyor.products.map((product) => {
@@ -245,27 +273,35 @@ class App extends React.Component {
       //         }
       //       }}
       //       onDeletePurveyor={(purveyorId) => {
-      //         dispatch(actions.deletePurveyor(purveyorId))
+      //         _.debounce(() => {
+      //           dispatch(actions.deletePurveyor(purveyorId))
+      //         }, 25)()
       //       }}
       //       onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
-      //         dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
+      //         _.debounce(() => {
+      //           dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
+      //         }, 25)()
       //       }}
       //     />
-      //   );
+      //   )
       // case 'ProductView':
       //   let purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
       //   let product = _.filter(purveyor.products, { productId: route.productId })[0]
       //   return (
       //     <Components.ProductView
-      //       ui={ui}
+      //       keyboardVisible={ui.keyboard.visible}
       //       product={product}
-      //       navigator={nav}
       //       purveyorId={route.purveyorId}
       //       onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
-      //         dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
+      //         _.debounce(() => {
+      //           dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
+      //         }, 25)()
+      //       }}
+      //       onDeleteProduct={() => {
+      //         nav.pop()
       //       }}
       //     />
-      //   );
+      //   )
       case 'CategoryIndex':
         return (
           <Components.CategoryIndex
@@ -282,8 +318,13 @@ class App extends React.Component {
                 })
               })
             }}
+            onCreateProduct={() => {
+              nav.push({
+                name: 'ProductCreate'
+              })
+            }}
           />
-        );
+        )
       case 'CategoryView':
         // var category = _.filter(this.state.currentTeam.categories, { id: route.categoryId })[0]
         // var category = _.filter(teams.defaultCategories, { id: route.categoryId })[0]
@@ -291,7 +332,6 @@ class App extends React.Component {
         return (
           <Components.CategoryView
             ui={ui}
-            navigator={nav}
             category={this.state.category}
             cart={this.state.currentTeam.cart}
             products={this.state.categoryProducts}
@@ -300,58 +340,85 @@ class App extends React.Component {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(cartAction, cartAttributes))
               }, 25)()
-
             }}
           />
-        );
+        )
       case 'Profile':
         return (
           <Components.ProfileView
-            navigator={nav}
             session={session}
             onUpdateInfo={(data) => {
-              // console.log("DATA", data);
-              dispatch(actions.updateSession(data));
+              _.debounce(() => {
+                // console.log("DATA", data);
+                dispatch(actions.updateSession(data));
+              }, 25)()
             }}
             onUpdateAvatar={(image) => {
-              // console.log("IMAGE", image);
-              dispatch(actions.updateSession({
-                imageUrl: image.uri
-              }));
+              _.debounce(() => {
+                // console.log("IMAGE", image);
+                dispatch(actions.updateSession({
+                  imageUrl: image.uri
+                }));
+              }, 25)()
+            }}
+            onStoreImages={(data) => {
+              nav.push({
+                name: 'ImageGallery',
+                photos: data,
+              });
             }}
           />
-        );
-      // case 'ProductCreate':
-      //   return (
-      //     <Components.ProductCreate
-      //       appState={this.props}
-      //       purveyors={this.props.purveyors}
-      //       navigator={nav}
-      //       onAddProduct={(productAttributes) => {
-      //         // console.log('PRODUCT ADDED', productAttributes);
-      //       }}
-      //       />
-      //   )
+        )
+      case 'ProductCreate':
+        return (
+          <Components.ProductCreate
+            team={this.state.currentTeam}
+            purveyors={purveyors.data}
+            onAddProduct={(productAttributes) => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductCreate.submitReady = true;
+              sceneState.ProductCreate.productAttributes = productAttributes
+              this.setState({
+                sceneState: sceneState
+              })
+            }}
+            onProductNotReady={() => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductCreate.submitReady = false;
+              this.setState({
+                sceneState: sceneState
+              })
+            }}
+          />
+        )
       case 'UserInfo':
         return (
           <Components.UserInfo
-            navigator={nav}
             onUpdateInfo={(data) => {
-              dispatch(actions.updateSession(data));
+              _.debounce(() => {
+                dispatch(actions.updateSession(data));
+              }, 25)()
             }}
           />
         )
       case 'InviteView':
         return (
           <Components.InviteView
-            navigator={nav}
-            onSMSInvite={(contactList) => dispatch(actions.inviteContacts(contactList))}
+            contacts={this.state.contactList}
+            denied={this.state.contactsPermissionDenied}
+            onSMSInvite={(contactList) => {
+              _.debounce(() => {
+                dispatch(actions.inviteContacts(contactList))
+              }, 25)()
+              nav.replacePreviousAndPop({
+                name: 'Feed',
+              });
+            }}
           />
-        );
+        )
       case 'CartView':
         return (
           <Components.CartView
-            navigator={nav}
             team={this.state.currentTeam}
             purveyors={this.props.purveyors.data}
             appState={this.props}
@@ -364,53 +431,36 @@ class App extends React.Component {
               }, 25)()
             }}
             onSubmitOrder={() => {
-              dispatch(actions.sendCart());
-
-              // TODO: need to verify that the order was sent successfully
-              // if(orderingWasSuccessful){
-              //   dispatch(actions.createMessage(msg, 'Sous', Urls.sousLogo));
-              //   this.props.navigator.replacePreviousAndPop({
-              //     name: 'Feed',
-              //   });
-              // }
+              _.debounce(() => {
+                dispatch(actions.sendCart());
+              }, 25)()
+              nav.replacePreviousAndPop({
+                name: 'Feed',
+              });
             }}
           />
-        );
+        )
       case 'Loading':
         return (
           <View style={{flex: 1, backgroundColor: '#f2f2f2', alignItems: 'center'}}>
             <View style={styles.logoContainer}>
               <Image source={require('image!Logo')} style={styles.logoImage}></Image>
             </View>
-            <Text style={styles.loadingText}>SETTING UP YOUR WORKSPACE.</Text>
+            <Text style={styles.loadingText}>SETTING UP YOUR WORKSPACE</Text>
+            <Text style={styles.loadingText}>FOR THE FIRST TIME USE.</Text>
           </View>
+        )
+      case 'TeamMemberListing':
+        return (
+          <Components.TeamMemberListing
+            teamsUsers={teams.teamsUsers}
+            currentTeamUsers={this.state.currentTeam.users}
+          />
         )
       default:
         return <View />;
     }
   }
-
-  // showActionSheetPurveyorView(navigator, route) {
-  //   const { dispatch } = this.props;
-  //   let buttons = [
-  //     'Delete Purveyor',
-  //     // 'Rename Purveyor',
-  //     'Cancel'
-  //   ]
-  //   let deleteAction = 0;
-  //   let cancelAction = 2;
-  //   ActionSheetIOS.showActionSheetWithOptions({
-  //     options: buttons,
-  //     cancelButtonIndex: cancelAction,
-  //     destructiveButtonIndex: deleteAction,
-  //   },
-  //   (buttonIndex) => {
-  //     if (deleteAction === buttonIndex) {
-  //       dispatch(actions.deletePurveyor(route.purveyorId));
-  //       navigator.pop();
-  //     }
-  //   });
-  // }
 
   getNavBar(route, nav) {
     const { dispatch, ui, teams, session } = this.props;
@@ -431,7 +481,11 @@ class App extends React.Component {
             route: route,
             hidePrev: false,
             buttonsColor: '#ccc',
-            customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} />,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'fontawesome|times'}
+              />
+            ),
             title: 'Switch Teams',
           })
           break;
@@ -442,8 +496,12 @@ class App extends React.Component {
             hidePrev: false,
             title: this.state.currentTeam ? this.state.currentTeam.name : 'Sous',
             titleColor: 'black',
-            customPrev: <Components.FeedViewLeftButton />,
-            customNext: <Components.FeedViewRightButton />,
+            customPrev: (
+              <Components.FeedViewLeftButton />
+            ),
+            customNext: (
+              <Components.FeedViewRightButton />
+            ),
           })
           break;
         // case 'PurveyorIndex':
@@ -461,7 +519,11 @@ class App extends React.Component {
             route: route,
             buttonsColor: '#ccc',
             title: this.state.currentTeam.name,
-            customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} />,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'fontawesome|times'}
+              />
+            ),
           })
           break;
         // case 'PurveyorView':
@@ -479,18 +541,41 @@ class App extends React.Component {
             route: route,
             hidePrev: false,
             buttonsColor: '#ccc',
-            customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} />,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'fontawesome|times'}
+              />
+            ),
             title: 'Order Guide',
-            customNext: <Components.CategoryViewRightButton cart={this.state.currentTeam.cart} />
+            customNext: (
+              <Components.CategoryViewRightButton
+                onNavToCart={() => {
+                  nav.push({ name: 'CartView', });
+                }}
+                cart={this.state.currentTeam.cart}
+              />
+            )
           })
           break;
         case 'CategoryView':
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            customPrev: <Components.NavBackButton navName='CategoryIndex' iconFont={'fontawesome|chevron-left'} />,
+            customPrev: (
+              <Components.NavBackButton
+                navName='CategoryIndex'
+                iconFont={'fontawesome|chevron-left'}
+              />
+            ),
             title: this.state.category.name,
-            customNext: <Components.CategoryViewRightButton cart={this.state.currentTeam.cart} />
+            customNext: (
+              <Components.CategoryViewRightButton
+                onNavToCart={() => {
+                  nav.push({ name: 'CartView', });
+                }}
+                cart={this.state.currentTeam.cart}
+              />
+            )
           })
           break;
         // case 'ProductView':
@@ -506,7 +591,11 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             hidePrev: false,
-            customPrev: <Components.NavBackButton iconFont={'fontawesome|chevron-left'}/>,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'fontawesome|chevron-left'}
+              />
+            ),
             title: 'Account',
           })
           break;
@@ -514,7 +603,11 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} />,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'fontawesome|times'}
+              />
+            ),
             title: 'Invite Teammates',
           })
           break;
@@ -522,23 +615,55 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            customPrev: <Components.NavBackButton navName='CategoryIndex' iconFont={'fontawesome|chevron-left'} />,
+            customPrev: (
+              <Components.NavBackButton
+                navName='CategoryIndex'
+                iconFont={'fontawesome|chevron-left'}
+              />
+            ),
             title: 'Cart',
           })
           break;
-        // case 'ProductCreate':
-        //   navBar = React.addons.cloneWithProps(this.navBar, {
-        //     navigator: nav,
-        //     route: route,
-        //     hideNext: true,
-        //     customPrev: <Components.NavBackButton iconFont={'fontawesome|times'} pop={true} />,
-        //     title: 'Add New Product',
-        //     // customNext: <ProductCreateRightCheckbox disabled={true} />,
-        //   })
-        //   break;
+        case 'ProductCreate':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            ref: 'navBar',
+            navigator: nav,
+            route: route,
+            hideNext: true,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'fontawesome|times'}
+                pop={true}
+              />
+            ),
+            title: 'Add New Product',
+            customNext: (
+              <Components.ProductCreateRightCheckbox
+                submitReady={this.state.sceneState.ProductCreate.submitReady}
+                onAddProduct={() => {
+                  _.debounce(() => {
+                    dispatch(actions.addProduct(this.state.sceneState.ProductCreate.productAttributes))
+                  }, 5)()
+                  nav.replacePreviousAndPop({
+                    name: 'CategoryIndex',
+                  });
+                }}
+              />
+            ),
+          })
+          break;
         case 'UserInfo':
         case 'Loading':
           navBar = <View />;
+          break;
+        case 'TeamMemberListing':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            hidePrev: false,
+            navigator: nav,
+            title: 'Team Directory',
+            route: route,
+            onNext: null,
+          })
           break;
         default:
           navBar = React.addons.cloneWithProps(this.navBar, {
@@ -580,26 +705,41 @@ class App extends React.Component {
     let navBar = this.getNavBar(route, nav);
     let scene = this.getScene(route, nav);
     let errorModal = (
-      <ErrorModal
+      <Components.ErrorModal
         onDeleteError={(errorIdList) => {
           _.debounce(() => {
             dispatch(actions.deleteErrors(errorIdList))
-          }, 5)()
+          }, 25)()
         }}
         errors={errors.data}
-        navigator={nav}
       />
     )
 
-    let inviteModal = (
-      <InviteModal
-        navigator={nav}
+    const inviteModal = (
+      <Components.InviteModal
+        ref='inviteModal'
         currentTeam={this.state.currentTeam}
         modalVisible={session.inviteModalVisible}
-        toggleInviteModal={(value) => {
-          dispatch(actions.updateSession({ inviteModalVisible: value }))
+        hideInviteModal={() => {
+          // nav.refs.inviteModal.setState({ modalVisible: true });
+          dispatch(actions.updateSession({ inviteModalVisible: false }))
         }}
-        onSMSInvite={(contactList) => dispatch(actions.inviteContacts(contactList))}
+        navigateToInviteView={(contactList, denied) => {
+          this.setState({
+            contactList: contactList,
+            contactsPermissionDenied: denied,
+          }, () => {
+            // console.log('going to InviteView')
+            nav.push({
+              name: 'InviteView',
+            })
+          });
+        }}
+        onSMSInvite={(contactList) => {
+          _.debounce(() => {
+            dispatch(actions.inviteContacts(contactList))
+          }, 25)()
+        }}
       />
     )
 
@@ -609,29 +749,50 @@ class App extends React.Component {
     }
     // console.log('app.js', this.props)
     // console.log('app.js render, errors:', this.props.errors.data)
+
+    const menu = (
+      <Components.Menu
+        ref='menu'
+        team={this.state.currentTeam}
+        session={session}
+        open={this.state.open}
+        toggleInviteModal={(value) => {
+          _.debounce(() => {
+            dispatch(actions.updateSession({ inviteModalVisible: value }))
+          }, 25)()
+        }}
+        onNavToCategory={() => {
+          nav.push({ name: 'CategoryIndex', })
+        }}
+        onNavToProfile={() => {
+          nav.push({ name: 'Profile', })
+        }}
+        onNavToTeam={() => {
+          nav.push({ name: 'TeamView', })
+        }}
+        onNavToTeamMemberListing={() => {
+          nav.push({ name: 'TeamMemberListing', })
+        }}
+        onNavToTeamIndex={() => {
+          nav.push({ name: 'TeamIndex', })
+        }}
+      />
+    );
+
     return (
       <CustomSideView
-        menu={
-          <Components.Menu
-            nav={nav}
-            team={this.state.currentTeam}
-            session={session}
-            open={this.state.open}
-            toggleInviteModal={(value) => {
-              dispatch(actions.updateSession({ inviteModalVisible: value }))
-            }}
-          />
-        }
+        ref='customSideView'
+        menu={menu}
         touchToClose={true}
         // openMenuOffset={500} // changes menu width
-        onChange={this.handleChange.bind(this)}
+        onChange={::this.handleChange}
       >
         <View style={styles.container} >
           {navBar}
           {errorModal}
           {inviteModal}
           {scene}
-          <KeyboardSpacer />
+          {session.inviteModalVisible === false ? <KeyboardSpacer /> : <View />}
         </View>
       </CustomSideView>
     );
@@ -650,7 +811,7 @@ class App extends React.Component {
   render() {
     return (
       <Navigator
-        ref="appNavigator"
+        ref='appNavigator'
         initialRoute={{
           index: 0,
           name: this.initialRoute

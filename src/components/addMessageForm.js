@@ -69,6 +69,7 @@ let styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     fontWeight: 'bold',
     color: '#555',
+    alignSelf: 'center',
   },
   icon: {
     width: 30,
@@ -81,20 +82,13 @@ let styles = StyleSheet.create({
     color: 'black',
     fontFamily: 'OpenSans',
     borderRadius: 5,
-    fontWeight: 'bold',
     paddingLeft: 10,
     borderWidth: 1,
     borderColor: '#ddd'
   },
   button: {
     flex: 1,
-    justifyContent: 'center'
-  },
-  sendButtonText: {
-    flex: 1,
-    marginTop: 10,
-    alignItems: 'center',
-    alignSelf: 'center'
+    justifyContent: 'center',
   },
   messageText: {
     marginLeft: 5,

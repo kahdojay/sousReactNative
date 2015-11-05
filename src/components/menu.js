@@ -10,7 +10,6 @@ const {
   Image,
   Text,
   TouchableHighlight,
-  Component,
   ProgressViewIOS
 } = React;
 
@@ -19,38 +18,26 @@ const window = Dimensions.get('window');
 /*
  * Modal for side bar Modal for side bar
  */
-module.exports = class Menu extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ready: false
-    }
-  }
-  componentDidMount(){
-    setTimeout(()=> {
-      this.setState({ready: true})
-    }, 100)
-  }
+module.exports = class Menu extends React.Component {
   render() {
     const {team, session} = this.props
-    if(!session.teamId || !team){
+    if (!session.teamId || !team) {
       return <View />;
     }
 
     let avatar = <Icon name='fontawesome|user' size={40} color='white' style={styles.avatar} />
     if (session.imageUrl) {
-      avatar = <Image
-                  style={styles.avatar}
-                  source={{ uri: session.imageUrl }}
-                />;
+      avatar = (
+        <Image style={styles.avatar} source={{ uri: session.imageUrl }} />
+      );
     }
     const totalTasks = _.filter(team.tasks, { deleted: false } ).length
     const completeTasksCount = _.filter(team.tasks, { deleted: false, completed: true }).length
     const progress = Math.round((completeTasksCount / totalTasks)*100) || 0;
 
-    let showInviteButton = true;
+    let nonNotepadTeam = true;
     if(!team || (team && team.name === 'Notepad')){
-      showInviteButton = false;
+      nonNotepadTeam = false;
     }
 
     return (
@@ -58,11 +45,7 @@ module.exports = class Menu extends Component {
         <View style={styles.avatarContainer}>
           <TouchableHighlight
             underlayColor={'#5f697a'}
-            onPress={() => {
-              this.props.nav.push({
-                name: 'Profile',
-              })
-            }}
+            onPress={this.props.onNavToProfile}
           >
             <View style={{alignItems: 'center'}}>
               {avatar}
@@ -76,11 +59,7 @@ module.exports = class Menu extends Component {
             <TouchableHighlight
               style={styles.menuItemButton}
               underlayColor='#3e444f'
-              onPress={() => {
-                this.props.nav.push({
-                  name: 'TeamView',
-                })
-              }}
+              onPress={this.props.onNavToTeam}
             >
               <View>
                 <View style={styles.menuTextContainer}>
@@ -99,35 +78,57 @@ module.exports = class Menu extends Component {
                 </View>
               </View>
             </TouchableHighlight>
-
-            <TouchableHighlight
-              style={styles.menuItemButton}
-              underlayColor='#3e444f'
-              onPress={() => {
-                this.props.nav.push({
-                  name: 'CategoryIndex',
-                })
-              }}
-            >
-              <View style={styles.menuTextContainer}>
-                <Icon name='fontawesome|clipboard' size={20} color='white' style={styles.menuIcon}/>
-                <Text style={styles.menuItemText}>Order Guide</Text>
-              </View>
-            </TouchableHighlight>
-
-            {(showInviteButton === false) ? <View/> : (
-            <TouchableHighlight
-              underlayColor='#3e444f'
-              onPress={() => this.props.toggleInviteModal(true)}
-              style={styles.menuItemButton}
-            >
-              <View style={styles.menuTextContainer}>
-                <Icon name='fontawesome|user-plus' size={20} color='white' style={styles.menuIcon}/>
-                <Text style={styles.menuItemText}>
-                  {team ? `Invite to Team` : ''}
-                </Text>
-              </View>
-            </TouchableHighlight>
+            {(nonNotepadTeam === false) ? <View/> : (
+              <TouchableHighlight
+                onPress={this.props.onNavToCategory}
+                style={styles.menuItemButton}
+                underlayColor='#3e444f'
+              >
+                <View style={styles.menuTextContainer}>
+                  <Icon name='fontawesome|clipboard' size={20} color='white' style={styles.menuIcon}/>
+                  <Text style={styles.menuItemText}>Order Guide</Text>
+                </View>
+              </TouchableHighlight>
+            )}
+            {(nonNotepadTeam === false) ? <View/> : (
+              <TouchableHighlight
+                onPress={this.props.onNavToTeamMemberListing}
+                style={styles.menuItemButton}
+                underlayColor='#3e444f'
+              >
+                <View style={styles.menuTextContainer}>
+                  <Icon name='fontawesome|users' size={20} color='white' style={styles.menuIcon}/>
+                  <Text style={styles.menuItemText}>Team Members</Text>
+                </View>
+              </TouchableHighlight>
+            )}
+            {(nonNotepadTeam === false) ? <View/> : (
+              <TouchableHighlight
+                onPress={this.props.onNavToTeamIndex}
+                style={styles.menuItemButton}
+                underlayColor='#3e444f'
+              >
+                <View style={styles.menuTextContainer}>
+                  <Icon name='fontawesome|random' size={20} color='white' style={styles.menuIcon}/>
+                  <Text style={styles.menuItemText}>
+                    Switch Teams
+                  </Text>
+                </View>
+              </TouchableHighlight>
+            )}
+            {(nonNotepadTeam === false) ? <View/> : (
+              <TouchableHighlight
+                onPress={() => this.props.toggleInviteModal(true)}
+                style={styles.menuItemButton}
+                underlayColor='#3e444f'
+              >
+                <View style={styles.menuTextContainer}>
+                  <Icon name='fontawesome|user-plus' size={20} color='white' style={styles.menuIcon}/>
+                  <Text style={styles.menuItemText}>
+                    {team ? `Invite to Team` : ''}
+                  </Text>
+                </View>
+              </TouchableHighlight>
             )}
           </ScrollView>
         </View>
@@ -153,7 +154,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#3e444f',
     paddingTop: 10,
-    paddingBottom: 10,
+    paddingBottom: 20,
   },
   avatar: {
     width: 55,
@@ -186,14 +187,17 @@ const styles = StyleSheet.create({
   },
   menuBody: {
     flex: 5,
-    width: window.width * .7,
+    width: window.width * (2/3),
     backgroundColor: '#5f697a',
-    paddingRight: 10,
-    paddingLeft: 10,
   },
   menuItemButton: {
     flex: 1,
-    marginBottom: 25,
+    height: 50,
+    justifyContent: 'center',
+    // alignItems: 'center',
+    paddingTop: 15,
+    paddingBottom: 15,
+    paddingLeft: 10,
   },
   menuIcon: {
     width: 20,
@@ -231,7 +235,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#3e444f',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingBottom: 20
   },
   teamName: {
     color: 'white',

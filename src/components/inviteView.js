@@ -1,6 +1,5 @@
 import React from 'react-native';
 import _ from 'lodash';
-import AddressBook from 'react-native-addressbook';
 import CheckBox from './checkbox'
 import Colors from '../utilities/colors';
 const {
@@ -16,38 +15,14 @@ class InviteView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      contacts: [],
+      contacts: this.props.contacts,
+      denied: this.props.denied,
     }
-  }
-
-  /* fetches contacts after user approval,
-   * ignore contacts with not phoneNumber
-   */
-  componentDidMount() {
-    AddressBook.getContacts( (err, contacts) => {
-      if (err && err.type === 'permissionDenied') {
-        // TODO: show error to user
-        // console.log('error fetching contacts')
-      }
-      else {
-        // console.log('contacts', contacts)
-        contacts = _.chain(contacts)
-          // filter contacts with no numbers vvv
-          .filter(function(c) { return c.phoneNumbers[0]; })
-          // slip checkbox state into contact
-          .map(function(c) {
-            c.selected = false;
-            return c;
-          })
-          .value();
-        this.setState({ contacts: contacts });
-      }
-    })
   }
 
   /* returns first phone number for selected contacts */
   sendSMS() {
-    let resultSet = _.chain(this.state.contacts)
+    const resultSet = _.chain(this.state.contacts)
       .filter(function(c) { return c.selected; })
       .map('phoneNumbers[0].number')
       .value();
@@ -55,51 +30,63 @@ class InviteView extends React.Component {
   }
 
   render() {
-    const submitButton = (
-      <TouchableHighlight
-        style={styles.button}
-        underlayColor={Colors.buttonPress}
-        onPress={() => {
-          this.sendSMS();
-          this.props.navigator.replacePreviousAndPop({
-            name: 'Feed',
-          });
-        }}>
-        <Text style={styles.buttonText}>Send SMS</Text>
-      </TouchableHighlight>
-    );
-    return (
-      <ScrollView style={styles.container}>
-        {submitButton}
-        {
-          this.state.contacts.map(function(contact, idx) {
-            return (
-              <TouchableHighlight key={idx} underlayColor="#eee" style={{paddingTop: 10,}}>
-                <View style={styles.contactRow} >
-                  <View style={styles.row} >
-                    <Text style={styles.contactFirstName}>{contact.firstName} </Text>
-                    <Text style={styles.contactLastName}>{contact.lastName}</Text>
-                  </View>
-                  <CheckBox
-                    label=''
-                    onChange={(checked) => {
-                      this.setState({ contacts: this.state.contacts.map(function(c) {
-                        if (c.recordID === contact.recordID) {
-                          c.selected = !c.selected;
-                        }
-                        return c;
-                      })})
-                    }}
-                    checked={contact.selected}
-                  />
+    if (this.state.denied) {
+      return (
+        <View style={styles.messageContainer}>
+          <View style={styles.message}>
+            <Text style={styles.centerText}>To invite your contacts, please go to:</Text>
+            <Text style={styles.centerText}>Settings > Sous > Enable "Contacts"</Text>
+            <Text style={styles.centerText}>In the "ALLOW SOUS TO ACCESS" area.</Text>
+          </View>
+        </View>
+      );
+    } else {
+      let submitButton = <View />;
+      let contacts = <View />;
+      if(this.state.contacts.length > 0) {
+        contacts = []
+        this.state.contacts.forEach((contact, idx) => {
+          contacts.push(
+            <TouchableHighlight key={idx} underlayColor="#eee" style={{paddingTop: 10,}}>
+              <View style={styles.contactRow} >
+                <View style={styles.row} >
+                  <Text style={styles.contactFirstName}>{contact.firstName} </Text>
+                  <Text style={styles.contactLastName}>{contact.lastName}</Text>
                 </View>
-              </TouchableHighlight>
-            );
-          }, this)
-        }
-        {submitButton}
-      </ScrollView>
-    );
+                <CheckBox
+                  label=''
+                  onChange={(checked) => {
+                    this.setState({ contacts: this.state.contacts.map(function(c) {
+                      if (c.recordID === contact.recordID) {
+                        c.selected = !c.selected;
+                      }
+                      return c;
+                    })})
+                  }}
+                  checked={contact.selected}
+                />
+              </View>
+            </TouchableHighlight>
+          );
+        });
+        submitButton = (
+          <TouchableHighlight
+            style={styles.button}
+            underlayColor={Colors.buttonPress}
+            onPress={::this.sendSMS}>
+            <Text style={styles.buttonText}>Send SMS</Text>
+          </TouchableHighlight>
+        );
+      }
+
+      return (
+        <ScrollView style={styles.container}>
+          {submitButton}
+          {contacts}
+          {submitButton}
+        </ScrollView>
+      );
+    }
   }
 }
 
@@ -141,6 +128,21 @@ let styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontFamily: 'OpenSans'
+  },
+  messageContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  message: {
+    marginTop: -40,
+    width: 280,
+    borderRadius: 5,
+    backgroundColor: Colors.mainBackgroundColor,
+  },
+  centerText: {
+    padding: 5,
+    textAlign: 'center',
   },
 })
 

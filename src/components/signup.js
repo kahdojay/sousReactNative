@@ -15,6 +15,7 @@ const {
 } = React;
 
 const runTimeDimensions = Dimensions.get('window')
+
 class Signup extends React.Component {
   constructor(props) {
     super(props)
@@ -24,51 +25,48 @@ class Signup extends React.Component {
       smsToken: '',
       smsSent: this.props.session.smsSent,
       submitting: false,
-      timeout: null,
+      // timeout: null,
     }
+    this.timeout = null
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.session.phoneNumber) { // prevents user input from being cleared
-      this.setState({
-        phoneNumber: nextProps.session.phoneNumber,
-        smsSent: nextProps.session.smsSent,
-      })
-    } else {
-      this.setState({ smsSent: nextProps.session.smsSent, })
+    let newState = {
+      phoneNumber: nextProps.session.phoneNumber,
+      smsSent: nextProps.session.smsSent,
     }
+    if(this.state.submitting === true){
+      if(nextProps.session.smsSent === true){
+        newState.submitting = false
+      }
+      if(nextProps.errors.length > 0 && nextProps.errors[0].machineKey === 'technical-error:sms'){
+        newState.submitting = false
+      }
+    }
+    this.setState(newState)
   }
 
   componentWillUnmount() {
-    if(this.state.timeout !== null)
-      window.clearTimeout(this.state.timeout);
+    if(this.timeout !== null)
+      window.clearTimeout(this.timeout);
   }
 
   setFetching() {
     this.setState({ submitting: true })
-    let that = this
-    // TODO: use react native timer mixin
-    const timeout = window.setTimeout(() => {
-      this.setState({ submitting: false, timeout: null });
-    }, 2000);
-    this.setState({
-      timeout: timeout
-    });
+    // this.timeout = window.setTimeout(() => {
+    //   this.setState({ submitting: false });
+    // }, 1500);
   }
 
   onSignup() {
-    // disable submit for 5 seconds
-    this.setFetching()
-
     if(this.refs.phone){
       this.refs.phone.blur();
     }
-    if(this.refs.code){
-      this.refs.code.blur();
-    }
     if(this.state.phoneNumber === null || this.state.phoneNumber ===  ''){
-      this.setState({invalid: true});
+      this.setState({ invalid: true });
     } else {
+      this.setState({ smsToken: '' })
+      this.setFetching()
       this.props.onRegisterSession(Object.assign({}, {
         phoneNumber: this.state.phoneNumber
       }));
@@ -76,17 +74,13 @@ class Signup extends React.Component {
   }
 
   onVerify() {
-    this.setFetching()
-
-    if(this.refs.phone){
-      this.refs.phone.blur();
-    }
     if(this.refs.code){
       this.refs.code.blur();
     }
-    if(this.state.smsToken == ''){
+    if(this.state.smsToken === ''){
       this.setState({invalid: true});
     } else {
+      this.setFetching()
       this.props.onRegisterSession(Object.assign({}, {
         phoneNumber: this.state.phoneNumber,
         smsToken: this.state.smsToken,
@@ -128,7 +122,7 @@ class Signup extends React.Component {
         />
       </View>
     );
-    const errorMessage = <Text style={styles.errorText}>Invalid Signup</Text>
+    const errorMessage = <Text style={styles.errorText}>Invalid entry, please try again.</Text>
     let signup = (
       <View style={styles.login}>
         <Text style={styles.headerText}>Use your phone number to log in to Sous.</Text>
@@ -141,6 +135,7 @@ class Signup extends React.Component {
               style={styles.input}
               value={this.state.phoneNumber}
               keyboardType='phone-pad'
+              onSubmitEditing={() => {this.onSignup()}}
               onChange={(e) => {
                 this.setState({phoneNumber: e.nativeEvent.text, invalid: false})
               }}
@@ -151,7 +146,9 @@ class Signup extends React.Component {
         <TouchableHighlight
           underlayColor='#C6861D'
           onPress={() => {
-            this.onSignup()
+            this.setState({ smsSent: false }, () => {
+              this.onSignup()
+            })
           }}
           style={styles.buttonActive}>
           <Text style={styles.buttonText}>Send SMS</Text>
@@ -165,8 +162,11 @@ class Signup extends React.Component {
           <Text style={styles.headerText}>We just sent a text to</Text>
           <Text style={[styles.boldText, styles.centered, styles.largeText]}>{formattedPhoneNumber}</Text>
           <TouchableHighlight
+            underlayColor='transparent'
             onPress={() => {
-              this.onSignup()
+              this.setState({ smsSent: true, smsToken: null }, () => {
+                this.onSignup()
+              })
             }}
             style={[styles.smallButton, styles.buttonLinkWrap]}>
             <Text style={styles.buttonLink}>Send again</Text>
@@ -180,6 +180,7 @@ class Signup extends React.Component {
                 value={this.state.smsToken}
                 keyboardType='phone-pad'
                 textAlign='center'
+                onSubmitEditing={() => {this.onVerify()}}
                 onChange={(e) => {
                   this.setState({smsToken: e.nativeEvent.text, invalid: false})
                 }}
@@ -189,9 +190,7 @@ class Signup extends React.Component {
           { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
           <TouchableHighlight
             underlayColor='#C6861D'
-            onPress={() => {
-              this.onVerify()
-            }}
+            onPress={() => {this.onVerify()}}
             style={styles.buttonActive}
           >
             <Text style={styles.buttonText}>Verify</Text>
@@ -200,18 +199,17 @@ class Signup extends React.Component {
       );
     }
 
-    //TODO refactor entire view to use flexbox so we can depend on
-    //KeyboardSpacer instead of doing this
-    if (this.props.ui.keyboard.visible) {
-      // console.log(runTimeDimensions)
-      if (runTimeDimensions.height < 500) {
-        this.refs.scrollView.scrollTo(200)
-      } else if (runTimeDimensions.height < 600) {
-        this.refs.scrollView.scrollTo(100)
-      }
-    } else if (this.refs.scrollView){
-      this.refs.scrollView.scrollTo(0)
-    }
+    // //TODO refactor entire view to use flexbox so we can depend on
+    // if (this.props.ui.keyboard.visible) {
+    //   // console.log(runTimeDimensions)
+    //   if (runTimeDimensions.height < 500) {
+    //     this.refs.scrollView.scrollTo(200)
+    //   } else if (runTimeDimensions.height < 600) {
+    //     this.refs.scrollView.scrollTo(100)
+    //   }
+    // } else if (this.refs.scrollView){
+    //   this.refs.scrollView.scrollTo(0)
+    // }
     return (
       <ScrollView
         automaticallyAdjustContentInsets={false}
