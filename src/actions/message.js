@@ -24,7 +24,7 @@ export default function MessageActions(ddpClient) {
       author = author ? author : `${session.firstName} ${session.lastName.substring(0,1)}`;
       imageUrl = imageUrl ? imageUrl : session.imageUrl;
 
-      messageText = messageText.replace('{{author}}', author);
+      messageText = messageText.replace(/\{\{author\}\}/g, author);
       var newMessage = {
         _id: shortid.generate(),
         message: messageText,

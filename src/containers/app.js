@@ -39,6 +39,12 @@ class App extends React.Component {
       categoryProducts: null,
       currentTeam: this.props.teams.currentTeam,
       contactList: [],
+      sceneState: {
+        ProductCreate: {
+          submitReady: false,
+          productAttributes: {}
+        }
+      },
     }
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
@@ -86,10 +92,6 @@ class App extends React.Component {
     }
   }}
 
-  // componentWillMount() {
-  //   // this.props.dispatch(actions.connectApp())
-  // }
-
   componentWillReceiveProps(nextProps) {
     this.setState({
       isAuthenticated: nextProps.session.isAuthenticated,
@@ -100,12 +102,14 @@ class App extends React.Component {
   }
 
   componentDidUpdate() {
-    if(this.refs.appNavigator && this.state.currentTeam !== null && this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
-      setTimeout(() => {
-        this.refs.appNavigator.replacePrevious({
-          name: 'Feed'
-        });
-      }, 100)
+    if(this.refs.appNavigator){
+      if(this.state.currentTeam !== null && this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
+        setTimeout(() => {
+          this.refs.appNavigator.replacePrevious({
+            name: 'Feed'
+          });
+        }, 100)
+      }
     }
   }
 
@@ -314,6 +318,11 @@ class App extends React.Component {
                 })
               })
             }}
+            onCreateProduct={() => {
+              nav.push({
+                name: 'ProductCreate'
+              })
+            }}
           />
         )
       case 'CategoryView':
@@ -327,12 +336,6 @@ class App extends React.Component {
             cart={this.state.currentTeam.cart}
             products={this.state.categoryProducts}
             purveyors={purveyors}
-            onCreateProduct={(categoryId) => {
-              nav.push({
-                name: 'ProductCreate',
-                categoryId: categoryId,
-              })
-            }}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(cartAction, cartAttributes))
@@ -366,19 +369,28 @@ class App extends React.Component {
             }}
           />
         )
-      // case 'ProductCreate':
-      //   return (
-      //     <Components.ProductCreate
-      //       appState={this.props}
-      //       purveyors={this.props.purveyors}
-      //       onAddProduct={(productAttributes) => {
-      //         _.debounce(() => {
-      //           // console.log('PRODUCT ADDED', productAttributes);
-      //         }, 25)()
-      //         nav.pop();
-      //       }}
-      //     />
-      //   )
+      case 'ProductCreate':
+        return (
+          <Components.ProductCreate
+            team={this.state.currentTeam}
+            purveyors={purveyors.data}
+            onAddProduct={(productAttributes) => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductCreate.submitReady = true;
+              sceneState.ProductCreate.productAttributes = productAttributes
+              this.setState({
+                sceneState: sceneState
+              })
+            }}
+            onProductNotReady={() => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductCreate.submitReady = false;
+              this.setState({
+                sceneState: sceneState
+              })
+            }}
+          />
+        )
       case 'UserInfo':
         return (
           <Components.UserInfo
@@ -612,25 +624,34 @@ class App extends React.Component {
             title: 'Cart',
           })
           break;
-        // case 'ProductCreate':
-        //   navBar = React.addons.cloneWithProps(this.navBar, {
-        //     navigator: nav,
-        //     route: route,
-        //     hideNext: true,
-        //     customPrev: (
-        //       <Components.NavBackButton
-        //         iconFont={'fontawesome|times'}
-        //         pop={true}
-        //       />
-        //     ),
-        //     title: 'Add New Product',
-        //     // customNext: (
-        //       <ProductCreateRightCheckbox
-        //         disabled={true}
-        //       />
-        //     ),
-        //   })
-        //   break;
+        case 'ProductCreate':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            ref: 'navBar',
+            navigator: nav,
+            route: route,
+            hideNext: true,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'fontawesome|times'}
+                pop={true}
+              />
+            ),
+            title: 'Add New Product',
+            customNext: (
+              <Components.ProductCreateRightCheckbox
+                submitReady={this.state.sceneState.ProductCreate.submitReady}
+                onAddProduct={() => {
+                  _.debounce(() => {
+                    dispatch(actions.addProduct(this.state.sceneState.ProductCreate.productAttributes))
+                  }, 5)()
+                  nav.replacePreviousAndPop({
+                    name: 'CategoryIndex',
+                  });
+                }}
+              />
+            ),
+          })
+          break;
         case 'UserInfo':
         case 'Loading':
           navBar = <View />;

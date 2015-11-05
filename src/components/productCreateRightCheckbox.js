@@ -14,31 +14,27 @@ class ProductCreateRightCheckbox extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      iconFont: this.props.iconFont || 'fontawesome|check-square',
-      navName: this.props.navName || 'CategoryIndex',
-      disabled: this.props.disabled || true,
+      iconFont: this.props.iconFont || 'fontawesome|check',
     }
   }
 
-  handlePress(e) {
-    let routes = this.props.navigator.getCurrentRoutes();
-    this.props.navigator.replacePreviousAndPop({
-      name: this.state.navName,
-    });
-  }
-
   render() {
-    // let { navigator, route } = this.props;
-
     return (
       <TouchableHighlight
-        underlayColor='white'
-        onPress={this.handlePress.bind(this)} >
+        underlayColor='transparent'
+        onPress={()=> {
+          if (this.props.submitReady) {
+            this.props.onAddProduct();
+          } else {
+            // trigger error: Please fill out all the fields below
+          }
+        }}
+      >
         <Icon
-          name={`${this.state.iconFont}`}
+          name={this.state.iconFont}
           size={30}
-          color={Colors.disabled}
-          style={styles.hamburger}
+          color={this.props.submitReady ? 'green' : '#ccc'}
+          style={styles.icon}
         />
       </TouchableHighlight>
     );
@@ -46,10 +42,10 @@ class ProductCreateRightCheckbox extends React.Component {
 }
 
 let styles = StyleSheet.create({
-  hamburger: {
-    width: 50,
+  icon: {
     height: 50,
-    marginTop: 6,
+    width: 50,
+    marginTop: 6
   }
 })
 
