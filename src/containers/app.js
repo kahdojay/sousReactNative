@@ -361,6 +361,7 @@ class App extends React.Component {
               _.debounce(() => {
                 // console.log("IMAGE", image);
                 dispatch(actions.updateSession({
+                  imageData: image.data,
                   imageUrl: image.uri
                 }));
               }, 25)()

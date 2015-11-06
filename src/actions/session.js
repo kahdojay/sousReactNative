@@ -86,6 +86,11 @@ export default function SessionActions(ddpClient, allActions){
         }
       })
       dispatch(() => {
+        ddpClient.call('streamS3Image', [
+          sessionParams.imageData,
+          'avatar_' + session.userId + '.jpg',
+          session.userId,
+        ])
         ddpClient.call('updateUser', [session.userId, filteredSessionParams])
       })
       // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
@@ -101,7 +106,6 @@ export default function SessionActions(ddpClient, allActions){
   }
 
   function receiveSession(response) {
-
     // console.log("RES", response);
     // Add the userId from the user.id coming back from the server
     if(response.hasOwnProperty('id') && response.id){
