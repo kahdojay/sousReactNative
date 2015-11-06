@@ -15,7 +15,6 @@ const {
   TouchableHighlight,
   StyleSheet,
   ActionSheetIOS,
-  CameraRoll,
 } = React;
 
 class ProfileView extends React.Component {
@@ -69,7 +68,11 @@ class ProfileView extends React.Component {
         console.log('User cancelled image picker');
       } else {
         // const source = {uri: response.uri.replace('file://', ''), isStatic: true};
-        const source = {uri: 'data:image/jpeg;base64,' + response.data, isStatic: true};
+        const source = {
+          data: response.data,
+          isStatic: true,
+          uri: 'data:image/jpeg;base64,' + response.data,
+        };
         this.props.onUpdateAvatar(source);
       }
     });

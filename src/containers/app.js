@@ -12,7 +12,6 @@ import * as actions from '../actions';
 import * as Components from '../components';
 import Dimensions from 'Dimensions';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import { uploadToS3 } from '../utilities/s3Uploader'
 
 const {
   PropTypes,
@@ -361,11 +360,10 @@ class App extends React.Component {
             onUpdateAvatar={(image) => {
               _.debounce(() => {
                 // console.log("IMAGE", image);
-                uploadToS3(image, session, () => {
-                  dispatch(actions.updateSession({
-                    imageUrl: image.uri
-                  }));
-                });
+                dispatch(actions.updateSession({
+                  imageData: image.data,
+                  imageUrl: image.uri
+                }));
               }, 25)()
             }}
             onStoreImages={(data) => {

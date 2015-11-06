@@ -16,6 +16,3 @@ export const DDP = {
 }
 
 export const SESSION_VERSION = 1444868918576
-export const S3_BUCKET = 'sous-assets-production'
-export const AWS_ACCESS_KEY_ID = 'AKIAIDX7MAYP2J7T7BBQ'
-export const AWS_SECRET_ACCESS_KEY = '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'
