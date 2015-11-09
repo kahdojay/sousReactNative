@@ -155,9 +155,9 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
   name: {
     flex: 1,
