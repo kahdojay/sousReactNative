@@ -1,4 +1,5 @@
 import React from 'react-native';
+import _ from 'lodash';
 import { Icon } from 'react-native-icons';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
@@ -26,6 +27,7 @@ class TaskView extends React.Component {
       textInputDescription: this.props.task.description,
       textInputName: this.props.task.name,
       saved: true,
+      numberOflines: this.countLines(this.props.task.description)
     }
   }
 
@@ -62,7 +64,18 @@ class TaskView extends React.Component {
     this.props.onUpdateTeamTask(task.recipeId, newTask)
     this.props.onDeleteTaskPop()
   }
-  
+  countLines(text) {
+    var descriptionSplit = _.groupBy(text.split(''))
+    return descriptionSplit['\n'] ? descriptionSplit['\n'].length + 1 : 1
+  }
+  changeInputDescription(text) {
+    this.setState({
+      textInputDescription: text,
+      saved: false,
+      numberOflines: this.countLines(text),
+    })
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -94,18 +107,21 @@ class TaskView extends React.Component {
 
           <View style={styles.mainContainer}>
             <TextInput
-              style={styles.searchInput}
+              style={styles.inputTitle}
               placeholder={'Title'}
               value={this.state.textInputName}
               onChangeText={(text) => this.setState({textInputName: text, saved: false})}
               onEndEditing={() => this.saveTask()}
             />
             <TextInput
-              style={styles.searchInput}
+              style={[
+                styles.inputDescription,
+                this.state.numberOflines > 7 && {height: this.state.numberOflines * 23}
+              ]}
               multiline={true}
               placeholder={'Description'}
               value={this.state.textInputDescription}
-              onChangeText={(text) => this.setState({textInputDescription: text, saved: false})}
+              onChangeText={(text) => this.changeInputDescription(text)}
               onEndEditing={() => this.saveTask()}
             />
             {this.state.saved === false ? <TouchableHighlight
@@ -131,7 +147,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5A623',
     alignSelf: 'center',
     width: 150,
-    marginTop: 20,
+    marginTop: 5,
     justifyContent: 'center',
     borderRadius: 3,
   },
@@ -182,17 +198,30 @@ const styles = StyleSheet.create({
     width: 100,
     flex: 1
   },
-  searchInput: {
-    height: 50,
+  inputTitle: {
+    height: 40,
+    padding: 5,
+    fontSize: 26,
+    fontWeight: '100',
+    borderWidth: 1,
+    borderColor: '#e6e6e6',
+    borderRadius: 5,
+    backgroundColor: 'white',
+    color: 'black',
+    marginRight: 10,
+    marginTop: 10,
+  },
+  inputDescription: {
+    height: 180,
     padding: 4,
-    fontSize: 23,
+    fontSize: 20,
     borderWidth: 1,
     borderColor: '#e6e6e6',
     borderRadius: 8,
     backgroundColor: 'white',
     color: 'black',
     marginRight: 10,
-    marginTop: 10,
+    marginTop: 5,
   },
   sideText: {
     fontSize: 20,
