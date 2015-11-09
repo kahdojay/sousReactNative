@@ -117,21 +117,7 @@ class CartView extends React.Component {
     });
   }
 
-  renderPurveyors(cartPurveyors) {
-    return _.map(cartPurveyors, (purveyor) => {
-      return (
-        <View key={purveyor.id} style={styles.purveyorContainer}>
-          <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
-          {this.renderPurveyorProducts(purveyor.id)}
-        </View>
-      );
-    })
-  }
-
   render() {
-    const buttonStyle = this.state.numberOfOrders > 0 ?
-                                    styles.button :
-                                    [styles.button, styles.buttonDisabled];
     const { team, purveyors, appState } = this.props
     const cart = team.cart
     const products = appState.teams.products
@@ -144,10 +130,22 @@ class CartView extends React.Component {
 
     return (
       <ScrollView style={styles.scrollView}>
-        {this.renderPurveyors(cartPurveyors)}
+        {
+          _.map(cartPurveyors, (purveyor) => {
+            return (
+              <View key={purveyor.id} style={styles.purveyorContainer}>
+                <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
+                {this.renderPurveyorProducts(purveyor.id)}
+              </View>
+            );
+          })
+        }
         <TouchableHighlight
           onPress={this.handleSubmitPress.bind(this, cartPurveyors)}
-          style={buttonStyle}
+          style={[
+            styles.button,
+            this.state.numberOfOrders === 0 && styles.buttonDisabled
+          ]}
           underlayColor={Colors.disabled}
         >
           <Text style={styles.buttonText}>Submit Order</Text>
