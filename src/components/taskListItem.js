@@ -114,14 +114,16 @@ class TaskListItem extends React.Component {
                 key={'decrement'}
                 underlayColor='transparent'
                 onPress={::this.decrement}
-                style={{flex: 1}}>
+                style={{flex: 1}}
+              >
                 <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
               </TouchableHighlight>,
               <TouchableHighlight
                 key={'increment'}
                 underlayColor='transparent'
                 onPress={::this.increment}
-                style={{flex: 1}}>
+                style={{flex: 1}}
+              >
                 <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
               </TouchableHighlight>
             ] :

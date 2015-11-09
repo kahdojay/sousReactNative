@@ -56,14 +56,9 @@ class CartView extends React.Component {
     // TODO: handle empty cart error
   }
 
-  renderPurveyorProducts(purveyorId) {
-    //TODO dry this out by recieving necessary info from render()
-    const {team, purveyors, appState} = this.props
-    const cart = team.cart
-    const products = appState.teams.products
+  renderPurveyorProducts(purveyorId, cart, products) {
     const purveyorProducts = cart.orders[purveyorId].products
-
-    const cartPurveyorProductIds = Object.keys(cart.orders[purveyorId].products)
+    const cartPurveyorProductIds = Object.keys(purveyorProducts)
     const cartPurveyorProducts = _.map(cartPurveyorProductIds, (productId) => {
       return _.filter(products, {id: productId})[0]
     })
@@ -79,7 +74,8 @@ class CartView extends React.Component {
           <TouchableHighlight
             key={'decrement'}
             underlayColor='transparent'
-            style={{width: 40, alignItems: 'center'}}>
+            style={{width: 40, alignItems: 'center'}}
+          >
             <Icon
               name='fontawesome|minus-circle'
               size={30}
@@ -90,7 +86,8 @@ class CartView extends React.Component {
           <TouchableHighlight
             key={'increment'}
             underlayColor='transparent'
-            style={{width: 40, alignItems: 'center'}}>
+            style={{width: 40, alignItems: 'center'}}
+          >
             <Icon
               name='fontawesome|plus-circle'
               size={30}
@@ -118,10 +115,9 @@ class CartView extends React.Component {
   }
 
   render() {
-    const { team, purveyors, appState } = this.props
+    const {team, purveyors, appState} = this.props
     const cart = team.cart
     const products = appState.teams.products
-
     const cartPurveyorIds = Object.keys(cart.orders)
     const cartPurveyors = _.map(cartPurveyorIds, (purveyorId) => {
       return _.filter(purveyors, {id: purveyorId})[0]
@@ -135,7 +131,7 @@ class CartView extends React.Component {
             return (
               <View key={purveyor.id} style={styles.purveyorContainer}>
                 <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
-                {this.renderPurveyorProducts(purveyor.id)}
+                {this.renderPurveyorProducts(purveyor.id, cart, products)}
               </View>
             );
           })
@@ -199,7 +195,7 @@ let styles = StyleSheet.create({
     fontSize: 14,
   },
   productQuantity: {
-    width: 60,
+    width: 50,
     margin: 5,
     textAlign: 'right',
   },
