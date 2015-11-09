@@ -62,7 +62,7 @@ class TaskView extends React.Component {
     this.props.onUpdateTeamTask(task.recipeId, newTask)
     this.props.onDeleteTaskPop()
   }
-  
+
   render() {
     return (
       <View style={styles.container}>
@@ -94,14 +94,14 @@ class TaskView extends React.Component {
 
           <View style={styles.mainContainer}>
             <TextInput
-              style={styles.searchInput}
+              style={styles.inputTitle}
               placeholder={'Title'}
               value={this.state.textInputName}
               onChangeText={(text) => this.setState({textInputName: text, saved: false})}
               onEndEditing={() => this.saveTask()}
             />
             <TextInput
-              style={styles.searchInput}
+              style={styles.inputDescription}
               multiline={true}
               placeholder={'Description'}
               value={this.state.textInputDescription}
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5A623',
     alignSelf: 'center',
     width: 150,
-    marginTop: 20,
+    marginTop: 5,
     justifyContent: 'center',
     borderRadius: 3,
   },
@@ -182,17 +182,30 @@ const styles = StyleSheet.create({
     width: 100,
     flex: 1
   },
-  searchInput: {
-    height: 50,
+  inputTitle: {
+    height: 40,
+    padding: 5,
+    fontSize: 26,
+    fontWeight: '100',
+    borderWidth: 1,
+    borderColor: '#e6e6e6',
+    borderRadius: 5,
+    backgroundColor: 'white',
+    color: 'black',
+    marginRight: 10,
+    marginTop: 10,
+  },
+  inputDescription: {
+    height: 180,
     padding: 4,
-    fontSize: 23,
+    fontSize: 20,
     borderWidth: 1,
     borderColor: '#e6e6e6',
     borderRadius: 8,
     backgroundColor: 'white',
     color: 'black',
     marginRight: 10,
-    marginTop: 10,
+    marginTop: 5,
   },
   sideText: {
     fontSize: 20,
