@@ -21,12 +21,9 @@ class TaskListItem extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // clearTimeout(this.timeoutId)
-    // this.timeoutId = setTimeout(() => {
     this.setState({
       task: nextProps.task
     })
-    // }, 1000)
   }
 
   componentWillUnmount() {
@@ -111,25 +108,28 @@ class TaskListItem extends React.Component {
           <Text key={'quantity'} style={styles.quantity}>
             {task.quantity > 1 ? ('X' + task.quantity) : ''}
           </Text>
-          {task.completed === false ? [
-            <TouchableHighlight
-              key={'decrement'}
-              underlayColor='transparent'
-              onPress={::this.decrement}
-              style={{flex: 1}}>
-              <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
-            </TouchableHighlight>,
-            <TouchableHighlight
-              key={'increment'}
-              underlayColor='transparent'
-              onPress={::this.increment}
-              style={{flex: 1}}>
-              <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
-            </TouchableHighlight>
-          ] : [
-            <View key={'decrement'} style={{flex: 1}} />,
-            <View key={'increment'} style={{flex: 1}} />
-          ]}
+          {task.completed === false ?
+            [
+              <TouchableHighlight
+                key={'decrement'}
+                underlayColor='transparent'
+                onPress={::this.decrement}
+                style={{flex: 1}}>
+                <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
+              </TouchableHighlight>,
+              <TouchableHighlight
+                key={'increment'}
+                underlayColor='transparent'
+                onPress={::this.increment}
+                style={{flex: 1}}>
+                <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
+              </TouchableHighlight>
+            ] :
+            [
+              <View key={'decrement'} style={{flex: 1}} />,
+              <View key={'increment'} style={{flex: 1}} />
+            ]
+          }
         </View>
       </View>
     )

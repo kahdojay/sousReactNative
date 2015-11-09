@@ -1,7 +1,7 @@
-import { Icon } from 'react-native-icons';
 import React from 'react-native';
-import Colors from '../utilities/colors';
 import _ from 'lodash';
+import { Icon } from 'react-native-icons';
+import Colors from '../utilities/colors';
 import { nameSort } from '../utilities/utils';
 
 const {
@@ -35,15 +35,21 @@ class CartView extends React.Component {
         'Confirm',
         'Are you sure you want to send order?',
         [
-          {text: 'No', onPress: () => {
-            // console.log('Order not sent')
-          }},
-          {text: 'Yes', onPress: () => {
-            const cartPurveyorsString = _.pluck(cartPurveyors, 'name').join(', ');
-            if(this.state.numberOfOrders > 0){
-              this.props.onSubmitOrder('Order sent to ' + cartPurveyorsString);
+          {
+            text: 'No',
+            onPress: () => {
+              // console.log('Order not sent')
             }
-          }}
+          },
+          {
+            text: 'Yes',
+            onPress: () => {
+              const cartPurveyorsString = _.pluck(cartPurveyors, 'name').join(', ');
+              if(this.state.numberOfOrders > 0){
+                this.props.onSubmitOrder('Order sent to ' + cartPurveyorsString);
+              }
+            }
+          }
         ]
       )
     }
@@ -64,20 +70,47 @@ class CartView extends React.Component {
     cartPurveyorProducts.sort(nameSort)
 
     return cartPurveyorProducts.map((product) => {
-      // console.log('PRODUCT', product)
       let quantity = purveyorProducts[product.id].quantity * product.amount
       const productName = product.name || '';
       return (
         <View key={product.id} style={styles.productContainer}>
-          <Text style={styles.productTitle}>{quantity} {product.unit}</Text>
           <Text style={styles.productTitle}>{productName}</Text>
+          <Text style={styles.productQuantity}>{quantity} {product.unit}</Text>
+          <TouchableHighlight
+            key={'decrement'}
+            underlayColor='transparent'
+            style={{width: 40, alignItems: 'center'}}>
+            <Icon
+              name='fontawesome|minus-circle'
+              size={30}
+              color='#aaa'
+              style={styles.icon}
+            />
+          </TouchableHighlight>
+          <TouchableHighlight
+            key={'increment'}
+            underlayColor='transparent'
+            style={{width: 40, alignItems: 'center'}}>
+            <Icon
+              name='fontawesome|plus-circle'
+              size={30}
+              color='#aaa'
+              style={styles.icon}
+            />
+          </TouchableHighlight>
           <TouchableHighlight
             onPress={() => {
-              // console.log('delete ITEM');
               this.props.onDeleteProduct(purveyorId, product.id)
             }}
-            underlayColor='transparent'>
-            <Icon name='fontawesome|times' size={25} color='#999' style={styles.icon} />
+            style={{width: 40, alignItems: 'center'}}
+            underlayColor='transparent'
+          >
+            <Icon
+              name='fontawesome|times'
+              size={25}
+              color='#999'
+              style={styles.iconRemove}
+            />
           </TouchableHighlight>
         </View>
       )
@@ -132,10 +165,13 @@ let styles = StyleSheet.create({
   icon: {
     width: 30,
     height: 30,
+  },
+  iconRemove: {
+    width: 30,
+    height: 30,
     borderWidth: 2,
     borderColor: '#999',
     borderRadius: 4,
-    marginTop: 4,
   },
   productContainer: {
     flex: 1,
@@ -143,6 +179,7 @@ let styles = StyleSheet.create({
     backgroundColor: 'white',
     marginTop: 1,
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingRight: 5,
   },
   purveyorTitle: {
@@ -156,11 +193,17 @@ let styles = StyleSheet.create({
     fontSize: 18,
   },
   productTitle: {
-    padding: 8,
+    flex: 1,
+    paddingTop: 10,
+    paddingLeft: 5,
+    paddingBottom: 10,
     fontFamily: 'OpenSans',
     fontSize: 14,
-    backgroundColor: 'white',
-    marginTop: 1,
+  },
+  productQuantity: {
+    width: 60,
+    margin: 5,
+    textAlign: 'right',
   },
   buttonText: {
     alignSelf: 'center',
