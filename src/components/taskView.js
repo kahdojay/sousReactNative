@@ -1,4 +1,5 @@
 import React from 'react-native';
+import _ from 'lodash';
 import { Icon } from 'react-native-icons';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
@@ -26,6 +27,7 @@ class TaskView extends React.Component {
       textInputDescription: this.props.task.description,
       textInputName: this.props.task.name,
       saved: true,
+      numberOflines: this.countLines(this.props.task.description)
     }
   }
 
@@ -61,6 +63,17 @@ class TaskView extends React.Component {
     newTask.deleted = true
     this.props.onUpdateTeamTask(task.recipeId, newTask)
     this.props.onDeleteTaskPop()
+  }
+  countLines(text) {
+    var descriptionSplit = _.groupBy(text.split(''))
+    return descriptionSplit['\n'] ? descriptionSplit['\n'].length + 1 : 1
+  }
+  changeInputDescription(text) {
+    this.setState({
+      textInputDescription: text,
+      saved: false,
+      numberOflines: this.countLines(text),
+    })
   }
 
   render() {
@@ -101,11 +114,14 @@ class TaskView extends React.Component {
               onEndEditing={() => this.saveTask()}
             />
             <TextInput
-              style={styles.inputDescription}
+              style={[
+                styles.inputDescription,
+                this.state.numberOflines > 7 && {height: this.state.numberOflines * 23}
+              ]}
               multiline={true}
               placeholder={'Description'}
               value={this.state.textInputDescription}
-              onChangeText={(text) => this.setState({textInputDescription: text, saved: false})}
+              onChangeText={(text) => this.changeInputDescription(text)}
               onEndEditing={() => this.saveTask()}
             />
             {this.state.saved === false ? <TouchableHighlight
