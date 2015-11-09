@@ -32,7 +32,8 @@ class Button extends React.Component {
       <View>
         <TouchableOpacity
           onPress={this.handlePress.bind(this)}
-          style={this.props.style}>
+          style={this.props.style}
+        >
           <Text>{this.props.children}</Text>
         </TouchableOpacity>
       </View>
