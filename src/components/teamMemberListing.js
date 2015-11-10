@@ -13,17 +13,25 @@ class TeamMemberListing extends React.Component {
     super(props)
   }
 
+  getTeamMembers() {
+    const teamMembers = [];
+    this.props.currentTeamUsers.forEach((userId) => {
+      if(this.props.teamsUsers.hasOwnProperty(userId)){
+        const user = this.props.teamsUsers[userId]
+        teamMembers.push(
+          <Text key={userId} style={styles.member}>{user.firstName} {user.lastName}</Text>
+        );
+      }
+    })
+    return teamMembers;
+  }
+
   render() {
+
+    const teamMembers = this.getTeamMembers();
     return (
       <ScrollView style={styles.container}>
-      {
-        this.props.currentTeamUsers.map((userId) => {
-          const user = this.props.teamsUsers[userId]
-          return (
-            <Text style={styles.member}>{user.firstName} {user.lastName}</Text>
-          );
-        })
-      }
+      {teamMembers}
       </ScrollView>
     );
   }

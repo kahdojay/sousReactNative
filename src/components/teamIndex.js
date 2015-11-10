@@ -45,6 +45,7 @@ class TeamIndex extends React.Component {
                   <TeamIndexRow
                     key={index}
                     team={team}
+                    teamsUsers={this.props.teams.teamsUsers}
                     messages={this.props.messages}
                     onPress={() => {
                       this.props.onUpdateTeam(team.id);
