@@ -60,6 +60,14 @@ class CategoryIndex extends React.Component {
         >
           <Text style={styles.createButtonText}>Order by Purveyor</Text>
         </TouchableHighlight>
+        <TouchableHighlight
+          underlayColor='#eee'
+          onPress={this.props.onCreateProduct}
+          style={styles.createButton}
+        >
+          <Text style={styles.createButtonText}>Create New Product...</Text>
+        </TouchableHighlight>
+        <View style={styles.separator} />
         <ScrollView
           automaticallyAdjustContentInsets={false}
           keyboardShouldPersistTaps={false}
@@ -75,6 +83,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+  },
+  separator: {
+    height: 5,
+    borderBottomColor: '#bbb',
+    borderBottomWidth: 1,
   },
   scrollView: {
     backgroundColor: '#f7f7f7',
