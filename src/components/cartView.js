@@ -3,6 +3,9 @@ import _ from 'lodash';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import { nameSort } from '../utilities/utils';
+import {
+  CART
+} from '../actions/actionTypes';
 
 const {
   AlertIOS,
@@ -65,7 +68,9 @@ class CartView extends React.Component {
     cartPurveyorProducts.sort(nameSort)
 
     return cartPurveyorProducts.map((product) => {
-      let quantity = purveyorProducts[product.id].quantity * product.amount
+      //TODO what was the intention here v
+      // let quantity = purveyorProducts[product.id].quantity * product.amount
+      let quantity = purveyorProducts[product.id].quantity
       const productName = product.name || '';
       return (
         <View key={product.id} style={styles.productContainer}>
@@ -73,8 +78,18 @@ class CartView extends React.Component {
           <Text style={styles.productQuantity}>{quantity} {product.unit}</Text>
           <TouchableHighlight
             key={'decrement'}
-            underlayColor='transparent'
+            onPress={() => {
+              if (quantity > 1) {
+                const cartAttributes = {
+                  purveyorId: purveyorId,
+                  productId: product.id,
+                  quantity: quantity - 1,
+                };
+                this.props.onUpdateProductInCart(CART.ADD, cartAttributes)
+              }
+            }}
             style={{width: 40, alignItems: 'center'}}
+            underlayColor='transparent'
           >
             <Icon
               name='fontawesome|minus-circle'
@@ -85,8 +100,16 @@ class CartView extends React.Component {
           </TouchableHighlight>
           <TouchableHighlight
             key={'increment'}
-            underlayColor='transparent'
+            onPress={() => {
+              const cartAttributes = {
+                purveyorId: purveyorId,
+                productId: product.id,
+                quantity: quantity + 1,
+              };
+              this.props.onUpdateProductInCart(CART.ADD, cartAttributes)
+            }}
             style={{width: 40, alignItems: 'center'}}
+            underlayColor='transparent'
           >
             <Icon
               name='fontawesome|plus-circle'
