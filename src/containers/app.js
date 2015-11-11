@@ -436,6 +436,11 @@ class App extends React.Component {
                 ))
               }, 25)()
             }}
+            onUpdateProductInCart={(cartAction, cartAttributes) => {
+              _.debounce(() => {
+                dispatch(actions.updateProductInCart(cartAction, cartAttributes))
+              }, 25)()
+            }}
             onSubmitOrder={() => {
               _.debounce(() => {
                 dispatch(actions.sendCart());
