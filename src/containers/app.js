@@ -222,6 +222,7 @@ class App extends React.Component {
       case 'Feed':
         return (
           <Components.Feed
+            teamsUsers={teams.teamsUsers}
             messages={messages}
             userEmail={session.login}
             session={session}

@@ -1,7 +1,7 @@
 import { Icon } from 'react-native-icons';
 import React from 'react-native';
 import AddMessageForm from './addMessageForm';
-import { mainBackgroundColor } from '../utilities/colors';
+import { mainBackgroundColor, darkBlue } from '../utilities/colors';
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
 let SideMenu = require('react-native-side-menu');
 import Menu from './menu';
@@ -142,6 +142,7 @@ class Feed extends React.Component {
                 return (
                   <View key={index} style={styles.messageContainer}>
                     <View style={styles.message}>
+                      {this.props.teamsUsers[msg.userId].superUser === true ? <Text style={{position: 'absolute', top: 7, left: 2, color: darkBlue, backgroundColor: 'transparent'}}>*</Text> : <View/>}
                       {icon}
                       <View style={styles.messageContentContainer}>
                         <View style={styles.messageTextContainer}>

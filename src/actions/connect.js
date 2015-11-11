@@ -61,9 +61,9 @@ export default function ConnectActions(ddpClient) {
       }
 
       if(session.isAuthenticated === true){
-        if(teamIds !== undefined && teamIds.length > 0){
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [teamIds]))
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS_USERS.channel, [teamIds]))
+        if(teamIds !== undefined && teamIds.length > 0 && session.userId !== null){
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [session.userId, teamIds]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS_USERS.channel, [session.userId, teamIds]))
         }
         if(session.userId !== null){
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS.channel, [session.userId]))
@@ -161,6 +161,7 @@ export default function ConnectActions(ddpClient) {
                   'firstName': data.firstName,
                   'lastName': data.lastName,
                   'username': data.username,
+                  'superUser': data.superUser,
                 }
                 dispatch(teamActions.receiveTeamsUsers(teamUserData))
               }
