@@ -3,9 +3,7 @@ import ProductToggle from './productToggle'
 import { Icon } from 'react-native-icons'
 import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
 import _ from 'lodash';
-import {
-  CART
-} from '../actions/actionTypes';
+import { CART } from '../actions/actionTypes';
 
 const {
   TouchableHighlight,
@@ -123,15 +121,15 @@ class ProductListItem extends React.Component {
         </View>
       </View>
     );
-    // if(this.state.product !== null){
+    if(this.state.product !== null){
       let purveyorString = ""
-    //   const purveyorIdx = _.findIndex(purveyors.data, { id: this.state.selectedPurveyorId }); //.name;
-    //   if(purveyorIdx > -1){
-    //     purveyorString = purveyors.data[purveyorIdx].name || '-NOT SET-'
-    //   }
-    //   // console.log(this.state.added)
-    console.log('productListItem: props', this.props)
-    console.log('productListItem: state', this.state)
+      const purveyorIdx = _.findIndex(this.props.purveyors.data, { id: this.state.selectedPurveyorId }); //.name;
+      if(purveyorIdx > -1){
+        purveyorString = purveyors.data[purveyorIdx].name || '-NOT SET-'
+      } else {
+        // Single purveyor, grab name off props.purveyors
+        purveyorString = this.props.purveyors.data[0].name
+      }
       productInfo = (
         <View style={styles.row}>
           <View style={styles.checkboxContainer}>
@@ -182,7 +180,7 @@ class ProductListItem extends React.Component {
           ] }
         </View>
       )
-    // }
+    }
 
     return (
       <View style={styles.container}>
