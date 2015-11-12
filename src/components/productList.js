@@ -50,8 +50,7 @@ class ProductList extends React.Component {
   }
 
   render() {
-    // const {cart} = this.props
-    // console.log('productList', this.props)
+    const {cart} = this.props
     let productList = []
     if(this.state.products !== null){
       productList = _.map(this.state.products, (product, idx) => {
@@ -73,27 +72,19 @@ class ProductList extends React.Component {
           loadDelay = 300
         }
 
-        // let cartItem = null
-        // let cartPurveyorId = ''
-        // product.purveyors.map((purveyorId) => {
-          // if (cart.orders.hasOwnProperty(purveyorId) === true && cart.orders[purveyorId].products.hasOwnProperty(product.id)) {
-          //   cartPurveyorId = purveyorId
-          //   cartItem = cart.orders[purveyorId].products[product.id]
-          // }
-        // })
-
-        // return (
-        //   <ProductListItem
-        //     // cartItem={cartItem}
-        //     // cartPurveyorId={cartPurveyorId}
-        //     loadDelay={loadDelay}
-        //     product={product}
-        //     key={idx}
-        //     purveyors={this.props.purveyors}
-        //   />
-        // )
+        let cartItem = null
+        let cartPurveyorId = ''
+        product.purveyors.map((purveyorId) => {
+          if (cart.orders.hasOwnProperty(purveyorId) === true && cart.orders[purveyorId].products.hasOwnProperty(product.id)) {
+            cartPurveyorId = purveyorId
+            cartItem = cart.orders[purveyorId].products[product.id]
+          }
+        })
         return (
           <ProductListItem
+            cartItem={cartItem}
+            cartPurveyorId={cartPurveyorId}
+            loadDelay={loadDelay}
             key={idx}
             product={product}
             purveyors={this.props.purveyors}

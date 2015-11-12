@@ -33,6 +33,7 @@ class PurveyorView extends React.Component {
         />
         */}
         <ProductList
+          cart={this.props.cart}
           products={this.props.products}
           purveyors={{data: {0: this.props.purveyor}}}
           onUpdatePurveyorProduct={this.props.onUpdatePurveyorProduct}

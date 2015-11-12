@@ -273,6 +273,7 @@ class App extends React.Component {
         })
         return (
           <Components.PurveyorView
+            cart={this.state.currentTeam.cart}
             ui={ui}
             purveyor={purveyor}
             products={products}

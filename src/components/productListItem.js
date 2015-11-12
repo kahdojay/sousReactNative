@@ -34,24 +34,24 @@ class ProductListItem extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // delay update from receiving props
-    // clearTimeout(this.timeoutId);
-    // this.timeoutId = setTimeout(() => {
-    //   this.localStateUpdateFromCart(nextProps.cartItem, nextProps.cartPurveyorId)
-    // }, 1000);
+    clearTimeout(this.timeoutId);
+    this.timeoutId = setTimeout(() => {
+      this.localStateUpdateFromCart(nextProps.cartItem, nextProps.cartPurveyorId)
+    }, 1000);
   }
 
   componentDidMount() {
-    // this.loadTimeoutId = setTimeout(() => {
+    this.loadTimeoutId = setTimeout(() => {
       this.setState({
           product: this.props.product,
           purveyors: this.props.purveyors,
           selectedPurveyorId: this.props.product.purveyors[0],
         },
-        // () => {
-        //   this.localStateUpdateFromCart(this.props.cartItem, this.props.cartPurveyorId)
-        // }
+        () => {
+          this.localStateUpdateFromCart(this.props.cartItem, this.props.cartPurveyorId)
+        }
       )
-    // }, this.props.loadDelay)
+    }, this.props.loadDelay)
   }
 
   componentWillUnmount() {
@@ -59,25 +59,25 @@ class ProductListItem extends React.Component {
     clearTimeout(this.loadTimeoutId)
   }
 
-  // localStateUpdateFromCart(cartItem, cartPurveyorId) {
-  //   let newState = {}
-  //   if (cartItem !== null) {
-  //     newState = {
-  //       added: true,
-  //       quantity: cartItem.quantity,
-  //       purveyorId: cartPurveyorId,
-  //       note: cartItem.note
-  //     };
-  //   } else {
-  //     newState = {
-  //       added: false,
-  //       quantity: 1,
-  //       purveyorId: cartPurveyorId,
-  //       note: ''
-  //     };
-  //   }
-  //   this.setState(newState);
-  // }
+  localStateUpdateFromCart(cartItem, cartPurveyorId) {
+    let newState = {}
+    if (cartItem !== null) {
+      newState = {
+        added: true,
+        quantity: cartItem.quantity,
+        purveyorId: cartPurveyorId,
+        note: cartItem.note
+      };
+    } else {
+      newState = {
+        added: false,
+        quantity: 1,
+        purveyorId: cartPurveyorId,
+        note: ''
+      };
+    }
+    this.setState(newState);
+  }
 
   cartUpdateFromLocalState() {
     const cartAttributes = {
@@ -189,11 +189,6 @@ class ProductListItem extends React.Component {
         {productInfo}
       </View>
     )
-    // return (
-    //   <View >
-    //     <Text>{this.props.product.name}</Text>
-    //   </View>
-    // )
   }
 }
 
