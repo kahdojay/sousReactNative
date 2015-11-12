@@ -276,6 +276,7 @@ class App extends React.Component {
             cart={this.state.currentTeam.cart}
             ui={ui}
             purveyor={purveyor}
+            purveyors={purveyors}
             products={products}
             onAddNewProduct={(purveyorId, productName) => {
               const products = purveyor.products.map((product) => {
