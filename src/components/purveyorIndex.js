@@ -2,8 +2,8 @@ import React from 'react-native'
 import _ from 'lodash'
 import { Icon } from 'react-native-icons'
 import AddForm from './addForm'
-import { mainBackgroundColor } from '../utilities/colors'
 import PurveyorIndexRow from './purveyorIndexRow';
+import { navbarIconColor } from '../utilities/colors'
 
 const {
   ActivityIndicatorIOS,
@@ -40,15 +40,24 @@ class PurveyorIndex extends React.Component {
           )
         }
       },
-      this
+      this // without this it breaks
     )
 
     return (
       <View style={styles.container}>
+      {/*
         <AddForm
           placeholder="Add purveyor..."
           onSubmit={this.props.onAddPurveyor}
         />
+        */}
+        <TouchableHighlight
+          underlayColor='#eee'
+          onPress={this.props.onNavigateToCategoryIndex}
+          style={styles.createButton}
+        >
+          <Text style={styles.createButtonText}>Order by Category</Text>
+        </TouchableHighlight>
         <ScrollView keyboardShouldPersistTaps={false} >
           {purveyorsList}
         </ScrollView>
@@ -70,6 +79,17 @@ const styles = StyleSheet.create({
     marginTop: 0,
     paddingTop: 0
   },
+  createButton: {
+    padding: 5,
+  },
+  createButtonText: {
+    color: navbarIconColor,
+    textAlign: 'center',
+    padding: 5,
+    fontFamily: 'OpenSans',
+    fontSize: 16,
+    fontWeight: 'bold',
+  }
 });
 
 PurveyorIndex.propTypes = {

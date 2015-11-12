@@ -20,8 +20,12 @@ class ProductList extends React.Component {
   }
 
   componentWillMount() {
+    let products = _.filter(this.props.products, (product) => {
+      return _.contains(product.purveyors, this.props.purveyor.id)
+    })
+    console.log('filtered products', products)
     this.setState({
-      products: this.props.products.slice(0,10)
+      products: this.props.products
     })
   }
 
@@ -50,10 +54,14 @@ class ProductList extends React.Component {
   }
 
   render() {
-    const {cart} = this.props
+    // const {cart} = this.props
+    // console.log('productList', this.props)
+    let products = _.filter(this.props.products, (product) => {
+      return _.contains(product.purveyors, this.props.purveyor.id)
+    })
     let productList = []
     if(this.state.products !== null){
-      productList = _.map(this.state.products, (product, idx) => {
+      productList = _.map(products, (product, idx) => {
         let loadDelay = 50
         // for everything off screen
         // - index greater than 10
@@ -72,26 +80,33 @@ class ProductList extends React.Component {
           loadDelay = 300
         }
 
-        let cartItem = null
-        let cartPurveyorId = ''
-        product.purveyors.map((purveyorId) => {
-          if (cart.orders.hasOwnProperty(purveyorId) === true && cart.orders[purveyorId].products.hasOwnProperty(product.id)) {
-            cartPurveyorId = purveyorId
-            cartItem = cart.orders[purveyorId].products[product.id]
-          }
-        })
+        // let cartItem = null
+        // let cartPurveyorId = ''
+        // product.purveyors.map((purveyorId) => {
+          // if (cart.orders.hasOwnProperty(purveyorId) === true && cart.orders[purveyorId].products.hasOwnProperty(product.id)) {
+          //   cartPurveyorId = purveyorId
+          //   cartItem = cart.orders[purveyorId].products[product.id]
+          // }
+        // })
 
+        // return (
+        //   <ProductListItem
+        //     // cartItem={cartItem}
+        //     // cartPurveyorId={cartPurveyorId}
+        //     loadDelay={loadDelay}
+        //     product={product}
+        //     key={idx}
+        //     purveyors={this.props.purveyors}
+        //     onUpdateProductInCart={(cartAction, cartAttributes) => {
+        //       this.props.onUpdateProductInCart(cartAction, cartAttributes)
+        //     }}
+        //   />
+        // )
         return (
           <ProductListItem
-            cartItem={cartItem}
-            cartPurveyorId={cartPurveyorId}
-            loadDelay={loadDelay}
-            product={product}
             key={idx}
-            purveyors={this.props.purveyors}
-            onUpdateProductInCart={(cartAction, cartAttributes) => {
-              this.props.onUpdateProductInCart(cartAction, cartAttributes)
-            }}
+            product={product}
+            purveyor={this.props.purveyor}
           />
         )
       })

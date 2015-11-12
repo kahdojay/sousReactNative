@@ -15,8 +15,7 @@ const {
 class PurveyorIndexRow extends React.Component {
   render() {
     let { purveyor, products } = this.props
-    let purveyorProducts = _.filter(products,
-                                {purveyorId: purveyor.id, deleted: false})
+    let purveyorProducts = _.filter(products, {purveyorId: purveyor.id, deleted: false})
 
     const numCompletedProducts = _.filter(purveyorProducts, {completed: true}).length
     const totalNumProducts = purveyorProducts.length
@@ -25,16 +24,12 @@ class PurveyorIndexRow extends React.Component {
     return (
       <TouchableOpacity
         onPress={this.props.onPress}
-        style={styles.row}>
+        style={styles.row}
+      >
         <View style={styles.textProgressArrowContainer}>
-          <View
-            style={styles.textProgressContainer} >
-            <View
-              style={styles.purveyorInfo} >
+          <View style={styles.textProgressContainer} >
+            <View style={styles.purveyorInfo} >
               <Text style={styles.rowText}>{this.props.purveyor.name}</Text>
-              <Text style={styles.percentage}>
-                {numCompletedProducts}/{totalNumProducts}
-              </Text>
             </View>
           </View>
           <Icon name='material|chevron-right' size={40} color='#aaa' style={styles.iconArrow}/>

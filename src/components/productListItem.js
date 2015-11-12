@@ -20,7 +20,7 @@ class ProductListItem extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      product: null,
+      product: this.props.product,
       purveyors: null,
       added: false,
       quantity: 1,
@@ -41,15 +41,17 @@ class ProductListItem extends React.Component {
   }
 
   componentDidMount() {
-    this.loadTimeoutId = setTimeout(() => {
+    // this.loadTimeoutId = setTimeout(() => {
       this.setState({
-        product: this.props.product,
-        purveyors: this.props.purveyors,
-        selectedPurveyorId: this.props.product.purveyors[0],
-      }, () => {
-        this.localStateUpdateFromCart(this.props.cartItem, this.props.cartPurveyorId)
-      })
-    }, this.props.loadDelay)
+          product: this.props.product,
+          purveyors: this.props.purveyors,
+          selectedPurveyorId: this.props.product.purveyors[0],
+        },
+        // () => {
+        //   this.localStateUpdateFromCart(this.props.cartItem, this.props.cartPurveyorId)
+        // }
+      )
+    // }, this.props.loadDelay)
   }
 
   componentWillUnmount() {
@@ -57,25 +59,25 @@ class ProductListItem extends React.Component {
     clearTimeout(this.loadTimeoutId)
   }
 
-  localStateUpdateFromCart(cartItem, cartPurveyorId) {
-    let newState = {}
-    if (cartItem !== null) {
-      newState = {
-        added: true,
-        quantity: cartItem.quantity,
-        purveyorId: cartPurveyorId,
-        note: cartItem.note
-      };
-    } else {
-      newState = {
-        added: false,
-        quantity: 1,
-        purveyorId: cartPurveyorId,
-        note: ''
-      };
-    }
-    this.setState(newState);
-  }
+  // localStateUpdateFromCart(cartItem, cartPurveyorId) {
+  //   let newState = {}
+  //   if (cartItem !== null) {
+  //     newState = {
+  //       added: true,
+  //       quantity: cartItem.quantity,
+  //       purveyorId: cartPurveyorId,
+  //       note: cartItem.note
+  //     };
+  //   } else {
+  //     newState = {
+  //       added: false,
+  //       quantity: 1,
+  //       purveyorId: cartPurveyorId,
+  //       note: ''
+  //     };
+  //   }
+  //   this.setState(newState);
+  // }
 
   cartUpdateFromLocalState() {
     const cartAttributes = {
@@ -113,23 +115,30 @@ class ProductListItem extends React.Component {
 
   render() {
     let {product, purveyors} = this.state
-    // console.log(this.state.selectedPurveyorId);
+    console.log('productListItem: state', this.state);
+    console.log('productListItem: props', this.props);
 
-    let productInfo = (<View style={styles.row}><View style={styles.main}><Text style={[styles.productText, {padding: 12}]}>Loading...</Text></View></View>);
-    if(this.state.product !== null){
+    let productInfo = (
+      <View style={styles.row}>
+        <View style={styles.main}>
+          <Text style={[styles.productText, {padding: 12}]}>Loading...</Text>
+        </View>
+      </View>
+    );
+    // if(this.state.product !== null){
       let purveyorString = ""
-      const purveyorIdx = _.findIndex(purveyors.data, { id: this.state.selectedPurveyorId }); //.name;
-      if(purveyorIdx > -1){
-        purveyorString = purveyors.data[purveyorIdx].name || '-NOT SET-'
-      }
-      // console.log(this.state.added)
+    //   const purveyorIdx = _.findIndex(purveyors.data, { id: this.state.selectedPurveyorId }); //.name;
+    //   if(purveyorIdx > -1){
+    //     purveyorString = purveyors.data[purveyorIdx].name || '-NOT SET-'
+    //   }
+    //   // console.log(this.state.added)
       productInfo = (
         <View style={styles.row}>
           <View style={styles.checkboxContainer}>
             <ProductToggle
               added={this.state.added}
-              availablePurveyors={product.purveyors}
-              allPurveyors={purveyors}
+              availablePurveyors={[this.props.purveyor]}
+              allPurveyors={[this.props.purveyor]}
               currentlySelectedPurveyorId={this.state.selectedPurveyorId}
               onToggleCartProduct={(purveyorId) => {
                 this.handleToggleProduct(purveyorId)
@@ -173,14 +182,18 @@ class ProductListItem extends React.Component {
           ] }
         </View>
       )
-    }
-
+    // }
 
     return (
       <View style={styles.container}>
         {productInfo}
       </View>
     )
+    // return (
+    //   <View >
+    //     <Text>{this.props.product.name}</Text>
+    //   </View>
+    // )
   }
 }
 
