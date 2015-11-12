@@ -37,6 +37,7 @@ class App extends React.Component {
       lastName: this.props.session.lastName,
       category: null,
       categoryProducts: null,
+      purveyor: null,
       currentTeam: this.props.teams.currentTeam,
       contactList: [],
       sceneState: {
@@ -239,6 +240,11 @@ class App extends React.Component {
             purveyors={purveyors}
             session={session}
             onNavToPurveyor={(purveyor) => {
+              this.setState({
+                  purveyor: purveyor,
+                },
+                () => { console.log('purveyor updated')}
+              )
               nav.push({
                 name: 'PurveyorView',
                 purveyorId: purveyor.id
@@ -567,7 +573,21 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
-            hidePrev: false,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'fontawesome|chevron-left'}
+                pop={true}
+              />
+            ),
+            title: this.state.purveyor.name,
+            customNext: (
+              <Components.CategoryViewRightButton
+                onNavToCart={() => {
+                  nav.push({ name: 'CartView', });
+                }}
+                cart={this.state.currentTeam.cart}
+              />
+            )
           })
           break;
         case 'CategoryIndex':
