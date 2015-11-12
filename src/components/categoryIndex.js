@@ -25,8 +25,10 @@ class CategoryIndex extends React.Component {
 
     let categoriesList = _.map(_.sortBy(categories, 'name'), (category) => {
       const categoryProducts = _.sortBy(_.filter(products, (product) => {
-        return category.products.indexOf(product.id) > -1
-      }), 'name')
+          return category.products.indexOf(product.id) > -1
+        }),
+        'name'
+      )
       return (
         <CategoryIndexRow
           key={category.id}
@@ -52,7 +54,10 @@ class CategoryIndex extends React.Component {
           <Text style={styles.createButtonText}>Create New Product...</Text>
         </TouchableHighlight>
         <View style={styles.seperator} />{/* */}
-        <ScrollView keyboardShouldPersistTaps={false} >
+        <ScrollView
+          automaticallyAdjustContentInsets={false}
+          keyboardShouldPersistTaps={false}
+        >
           {categoriesList}
         </ScrollView>
       </View>
