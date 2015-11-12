@@ -54,31 +54,32 @@ class ProductToggle extends React.Component {
       />
     );
 
-    // const modalShowButton = (
-    //   <ModalToggle onPress={this._setModalVisible.bind(this, true)} >
-    //     <Icon
-    //       name='fontawesome|ellipsis-h'
-    //       size={30}
-    //       color='black'
-    //       style={styles.icon}
-    //     />
-    //   </ModalToggle>
-    // );
+    const modalShowButton = (
+      <ModalToggle onPress={this._setModalVisible.bind(this, true)} >
+        <Icon
+          name='fontawesome|ellipsis-h'
+          size={30}
+          color='black'
+          style={styles.icon}
+        />
+      </ModalToggle>
+    );
 
-    const purveyorsArray = []
-    // const purveyorsArray = this.props.availablePurveyors.map((purveyorId, idx) => {
-      // const purveyorName = _.find(this.props.allPurveyors.data, { id: purveyorId }).name;
-    //   const purveyorName = this.props.purveyor.name
-    //   return (
-    //     <ModalToggle
-    //       key={idx}
-    //       style={styles.modalButton}
-    //       onPress={this._handlePurveyorSelect.bind(this, purveyorId)}
-    //     >
-    //       <Text>{purveyorName}</Text>
-    //     </ModalToggle>
-    //   )
-    // })
+console.log('product toggle: props', this.props)
+console.log('product toggle: state', this.state)
+    const purveyorsArray = this.props.availablePurveyors.map((purveyorId, idx) => {
+      const purveyorName = _.find(this.props.allPurveyors.data, { id: purveyorId }).name;
+      return (
+        <ModalToggle
+          key={idx}
+          style={styles.modalButton}
+          onPress={this._handlePurveyorSelect.bind(this, purveyorId)}
+        >
+          <Text>{purveyorName}</Text>
+        </ModalToggle>
+      )
+    })
+
     return (
       <View>
         <Modal
@@ -97,7 +98,10 @@ class ProductToggle extends React.Component {
             </View>
           </TouchableHighlight>
         </Modal>
-        {this.props.added === false && this.props.availablePurveyors.length > 1 ? modalShowButton : checkbox}
+        {
+          this.props.added === false &&
+          this.props.availablePurveyors.length > 1 ? modalShowButton : checkbox
+        }
       </View>
     );
   }

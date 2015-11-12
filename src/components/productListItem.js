@@ -115,8 +115,6 @@ class ProductListItem extends React.Component {
 
   render() {
     let {product, purveyors} = this.state
-    console.log('productListItem: state', this.state);
-    console.log('productListItem: props', this.props);
 
     let productInfo = (
       <View style={styles.row}>
@@ -132,13 +130,15 @@ class ProductListItem extends React.Component {
     //     purveyorString = purveyors.data[purveyorIdx].name || '-NOT SET-'
     //   }
     //   // console.log(this.state.added)
+    console.log('productListItem: props', this.props)
+    console.log('productListItem: state', this.state)
       productInfo = (
         <View style={styles.row}>
           <View style={styles.checkboxContainer}>
             <ProductToggle
               added={this.state.added}
-              availablePurveyors={[this.props.purveyor]}
-              allPurveyors={[this.props.purveyor]}
+              availablePurveyors={this.props.product.purveyors}
+              allPurveyors={this.props.purveyors}
               currentlySelectedPurveyorId={this.state.selectedPurveyorId}
               onToggleCartProduct={(purveyorId) => {
                 this.handleToggleProduct(purveyorId)

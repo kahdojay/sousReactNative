@@ -53,9 +53,7 @@ class App extends React.Component {
       'Signup': {}
     }
     this.navBar = (
-      <NavigationBar
-        style={styles.nav}
-      />
+      <NavigationBar style={styles.nav} />
     );
     this.navBarItem = (props, nextComponent) => {
       return React.addons.cloneWithProps((
@@ -240,11 +238,7 @@ class App extends React.Component {
             purveyors={purveyors}
             session={session}
             onNavToPurveyor={(purveyor) => {
-              this.setState({
-                  purveyor: purveyor,
-                },
-                () => { console.log('purveyor updated')}
-              )
+              this.setState({ purveyor: purveyor, })
               nav.push({
                 name: 'PurveyorView',
                 purveyorId: purveyor.id
