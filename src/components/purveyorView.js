@@ -22,6 +22,7 @@ class PurveyorView extends React.Component {
   }
 
   render() {
+    console.log('purveyorView', this.props)
     let purveyor = this.props.purveyor
 
     return (

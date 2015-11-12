@@ -233,33 +233,34 @@ class App extends React.Component {
             }}
           />
         )
-      // case 'PurveyorIndex':
-      //   return (
-      //     <Components.PurveyorIndex
-      //       purveyors={purveyors}
-      //       session={session}
-      //       onNavToPurveyor={() => {
-      //         nav.push({
-      //           name: 'PurveyorView',
-      //           purveyorId: purveyor.id
-      //         })
-      //       }}
-      //       onAddPurveyor={(name) => {
-      //         const purveyors = this.props.purveyors.data.map((purveyor) => {
-      //           if (! purveyor.deleted)
-      //             return purveyor.name;
-      //         });
-      //         if (purveyors.indexOf(name) === -1) {
-      //           dispatch(actions.addPurveyor(name))
-      //         } else {
-      //           // console.log("ERROR: purveyor already exists");
-      //         }
-      //       }}
-      //       onBack={() => {
-      //         this._back()
-      //       }}
-      //     />
-      //   )
+      case 'PurveyorIndex':
+        return (
+          <Components.PurveyorIndex
+            purveyors={purveyors}
+            session={session}
+            onNavToPurveyor={(purveyor) => {
+              nav.push({
+                name: 'PurveyorView',
+                purveyorId: purveyor.id
+              })
+            }}
+            onAddPurveyor={(name) => {
+              const purveyors = this.props.purveyors.data.map((purveyor) => {
+                if (!purveyor.deleted) {
+                  return purveyor.name;
+                }
+              });
+              if (purveyors.indexOf(name) === -1) {
+                dispatch(actions.addPurveyor(name))
+              } else {
+                // console.log("ERROR: purveyor already exists");
+              }
+            }}
+            onBack={() => {
+              this._back()
+            }}
+          />
+        )
       // case 'PurveyorView':
       //   var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
       //   return (
@@ -321,6 +322,11 @@ class App extends React.Component {
                   name: 'CategoryView',
                   categoryId: category.id
                 })
+              })
+            }}
+            onNavigateToPurveyorIndex={() => {
+              nav.replace({
+                name: 'PurveyorIndex'
               })
             }}
             onCreateProduct={() => {
