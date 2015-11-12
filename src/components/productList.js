@@ -21,7 +21,7 @@ class ProductList extends React.Component {
 
   componentWillMount() {
     this.setState({
-      products: this.props.products
+      products: this.props.products.slice(0,10)
     })
   }
 
