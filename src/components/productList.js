@@ -20,10 +20,6 @@ class ProductList extends React.Component {
   }
 
   componentWillMount() {
-    let products = _.filter(this.props.products, (product) => {
-      return _.contains(product.purveyors, this.props.purveyor.id)
-    })
-    console.log('filtered products', products)
     this.setState({
       products: this.props.products
     })
@@ -56,12 +52,9 @@ class ProductList extends React.Component {
   render() {
     // const {cart} = this.props
     // console.log('productList', this.props)
-    let products = _.filter(this.props.products, (product) => {
-      return _.contains(product.purveyors, this.props.purveyor.id)
-    })
     let productList = []
     if(this.state.products !== null){
-      productList = _.map(products, (product, idx) => {
+      productList = _.map(this.state.products, (product, idx) => {
         let loadDelay = 50
         // for everything off screen
         // - index greater than 10
@@ -97,9 +90,6 @@ class ProductList extends React.Component {
         //     product={product}
         //     key={idx}
         //     purveyors={this.props.purveyors}
-        //     onUpdateProductInCart={(cartAction, cartAttributes) => {
-        //       this.props.onUpdateProductInCart(cartAction, cartAttributes)
-        //     }}
         //   />
         // )
         return (
@@ -107,6 +97,9 @@ class ProductList extends React.Component {
             key={idx}
             product={product}
             purveyor={this.props.purveyor}
+            onUpdateProductInCart={(cartAction, cartAttributes) => {
+              this.props.onUpdateProductInCart(cartAction, cartAttributes)
+            }}
           />
         )
       })

@@ -34,10 +34,10 @@ class ProductListItem extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // delay update from receiving props
-    clearTimeout(this.timeoutId);
-    this.timeoutId = setTimeout(() => {
-      this.localStateUpdateFromCart(nextProps.cartItem, nextProps.cartPurveyorId)
-    }, 1000);
+    // clearTimeout(this.timeoutId);
+    // this.timeoutId = setTimeout(() => {
+    //   this.localStateUpdateFromCart(nextProps.cartItem, nextProps.cartPurveyorId)
+    // }, 1000);
   }
 
   componentDidMount() {

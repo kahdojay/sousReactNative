@@ -268,15 +268,19 @@ class App extends React.Component {
         )
       case 'PurveyorView':
         var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
+        let products = _.filter(teams.products, (product) => {
+          return _.includes(product.purveyors, purveyor.id)
+        })
         return (
           <Components.PurveyorView
             ui={ui}
             purveyor={purveyor}
-            products={teams.products}
+            products={products}
             onAddNewProduct={(purveyorId, productName) => {
               const products = purveyor.products.map((product) => {
-                if (! product.deleted)
+                if (!product.deleted) {
                   return product.name;
+                }
               });
               if (products.indexOf(productName) === -1) {
                 dispatch(actions.addPurveyorProduct(purveyorId, {name: productName}))
@@ -292,6 +296,11 @@ class App extends React.Component {
             onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
               _.debounce(() => {
                 dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
+              }, 25)()
+            }}
+            onUpdateProductInCart={(cartAction, cartAttributes) => {
+              _.debounce(() => {
+                dispatch(actions.updateProductInCart(cartAction, cartAttributes))
               }, 25)()
             }}
           />
