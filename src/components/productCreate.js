@@ -75,10 +75,13 @@ class ProductCreate extends React.Component {
     let picker = <View />;
     let selectedValue = null;
     const pickerItems = []
-    switch(this.state.picker) {
+    switch (this.state.picker) {
       case 'purveyor':
         const {purveyors} = this.props;
-        if(this.state.purveyorIdList[this.state.pickerIdx] !== null && this.state.purveyorIdList[this.state.pickerIdx].hasOwnProperty('idx')){
+        if (
+          this.state.purveyorIdList[this.state.pickerIdx] !== null &&
+          this.state.purveyorIdList[this.state.pickerIdx].hasOwnProperty('idx')
+        ) {
           selectedValue = this.state.purveyorIdList[this.state.pickerIdx].idx;
         }
         pickerItems.push(
@@ -127,7 +130,7 @@ class ProductCreate extends React.Component {
               })
             }}
           >
-          {pickerItems}
+            {pickerItems}
           </PickerIOS>
         );
         break;
@@ -176,6 +179,7 @@ class ProductCreate extends React.Component {
         );
         break;
       case 'amount':
+        // TODO split this into two single pickers
         const units = ['bag', 'bunch', 'cs', 'dozen', 'ea', 'g', 'kg', 'lb', 'oz', 'pack', 'tub']
         const amounts = _.range(1, 500)
         picker = (
@@ -309,7 +313,10 @@ class ProductCreate extends React.Component {
             style={styles.inputFieldContainer}
           >
             <Text style={styles.inputField}>
-              { this.state.amountSelected ? this.state.amount : 'Amount of'} {this.state.unitSelected ? this.state.unit : 'Units'}
+              {
+                //TODO split this into two inputs.
+                this.state.amountSelected ? this.state.amount : 'Amount of'
+              } {this.state.unitSelected ? this.state.unit : 'Units'}
             </Text>
           </TouchableHighlight>
         </View>
@@ -374,6 +381,5 @@ const styles = StyleSheet.create({
     height: 20,
   },
 });
-
 
 module.exports = ProductCreate;
