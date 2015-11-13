@@ -96,7 +96,10 @@ class ProductList extends React.Component {
       })
     }
     return (
-      <ScrollView keyboardShouldPersistTaps={false} >
+      <ScrollView
+        automaticallyAdjustContentInsets={false}
+        keyboardShouldPersistTaps={false}
+      >
         {productList}
       </ScrollView>
     );

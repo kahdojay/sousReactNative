@@ -42,12 +42,11 @@ class PurveyorIndexRow extends React.Component {
 
 const styles = StyleSheet.create({
   row: {
+    flex: 1,
     flexDirection: 'column',
     padding: 10,
-    height: 69
   },
   progress: {
-    paddingTop: 5,
     margin: 5,
     height: 8,
     borderRadius: 10,
@@ -60,6 +59,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   textProgressContainer: {
     flex: 1,
@@ -71,7 +71,8 @@ const styles = StyleSheet.create({
   },
   purveyorInfo: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   rowText: {
     fontWeight: 'bold',
@@ -81,10 +82,8 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans'
   },
   iconArrow: {
-    width: 70,
-    height: 70,
-    marginTop: -20,
-    marginRight: -15
+    width: 40,
+    height: 40,
   },
 })
 

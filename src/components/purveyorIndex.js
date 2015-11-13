@@ -53,12 +53,22 @@ class PurveyorIndex extends React.Component {
         */}
         <TouchableHighlight
           underlayColor='#eee'
+          onPress={this.props.onCreateProduct}
+          style={styles.createButton}
+        >
+          <Text style={styles.createButtonText}>Create New Product...</Text>
+        </TouchableHighlight>
+        <TouchableHighlight
+          underlayColor='#eee'
           onPress={this.props.onNavigateToCategoryIndex}
           style={styles.createButton}
         >
           <Text style={styles.createButtonText}>Order by Category</Text>
         </TouchableHighlight>
-        <ScrollView keyboardShouldPersistTaps={false} >
+        <ScrollView
+          automaticallyAdjustContentInsets={false}
+          keyboardShouldPersistTaps={false}
+        >
           {purveyorsList}
         </ScrollView>
       </View>
@@ -80,7 +90,6 @@ const styles = StyleSheet.create({
     paddingTop: 0
   },
   createButton: {
-    padding: 5,
   },
   createButtonText: {
     color: navbarIconColor,
