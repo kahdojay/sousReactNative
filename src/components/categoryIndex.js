@@ -53,7 +53,7 @@ class CategoryIndex extends React.Component {
         >
           <Text style={styles.createButtonText}>Order by Purveyor</Text>
         </TouchableHighlight>
-        <TouchableHighlight
+        {/* */}<TouchableHighlight
           underlayColor='#eee'
           onPress={this.props.onCreateProduct}
           style={styles.createButton}
