@@ -1,6 +1,4 @@
 import React from 'react-native';
-let MultiPickerIOS = require('react-native-multipicker');
-let { Group, Item } = MultiPickerIOS;
 import Dimensions from 'Dimensions';
 import {Icon}  from 'react-native-icons';
 import Colors from '../utilities/colors';
@@ -180,43 +178,49 @@ class ProductCreate extends React.Component {
         );
         break;
       case 'amount':
-        // TODO split this into two single pickers
-        const units = ['bag', 'bunch', 'cs', 'dozen', 'ea', 'g', 'kg', 'lb', 'oz', 'pack', 'tub']
         const amounts = _.range(1, 500)
         picker = (
-          <MultiPickerIOS style={styles.picker}>
-            <Group
-              selectedValue={this.state.amount}
-              onChange={(e) => {
-                // console.log(e)
-                this.setState({
-                  amount: e.newValue,
-                  amountSelected: true
-                }, () => {
-                  this.submitReady();
-                });
-              }}
-            >
-              { amounts.map((num, idx) => {
-                return <Item value={num} key={idx} label={num.toString()} />
-              })}
-            </Group>
-            <Group
-              selectedValue={this.state.unit}
-              onChange={(e) => {
-                this.setState({
-                  unit: e.newValue,
+          <PickerIOS
+            selectedValue={this.state.amount}
+            onValueChange={(amount) => {
+              this.setState(
+                {
+                  amount: amount,
+                  amountSelected: true,
+                },
+                () => { this.submitReady(); }
+              )
+            }}
+          >
+            {
+              amounts.map((n, idx) => {
+                return <PickerIOS.Item key={idx} value={n} label={n.toString()} />
+              })
+            }
+          </PickerIOS>
+        );
+        break;
+      case 'units':
+        const units = ['bag', 'bunch', 'cs', 'dozen', 'ea', 'g', 'kg', 'lb', 'oz', 'pack', 'tub']
+        picker = (
+          <PickerIOS
+            selectedValue={this.state.unit}
+            onValueChange={(unit) => {
+              this.setState(
+                {
+                  unit: unit,
                   unitSelected: true,
-                }, () => {
-                  this.submitReady();
-                })
-              }}
-            >
-              { units.map((val, idx) => {
-                return <Item value={val} key={idx} label={val} />
-              })}
-            </Group>
-          </MultiPickerIOS>
+                },
+                () => { this.submitReady(); }
+              )
+            }}
+          >
+            {
+              units.map((unit, idx) => {
+                return <PickerIOS.Item key={idx} value={unit} label={unit} />
+              })
+            }
+          </PickerIOS>
         );
         break;
       case null:
@@ -308,7 +312,6 @@ class ProductCreate extends React.Component {
             </Text>
           </TouchableHighlight>
         </View>
-
         <View style={styles.inputContainer}>
           <Text style={styles.inputTitle}>Amount</Text>
           <TouchableHighlight
@@ -321,10 +324,23 @@ class ProductCreate extends React.Component {
             style={styles.inputFieldContainer}
           >
             <Text style={styles.inputField}>
-              {
-                //TODO split this into two inputs.
-                this.state.amountSelected ? this.state.amount : 'Amount of'
-              } {this.state.unitSelected ? this.state.unit : 'Units'}
+              { this.state.amountSelected ? this.state.amount : 'Amount' }
+            </Text>
+          </TouchableHighlight>
+        </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputTitle}>Units</Text>
+          <TouchableHighlight
+            underlayColor='transparent'
+            onPress={() => {
+              this.setState({
+                picker: 'units'
+              })
+            }}
+            style={styles.inputFieldContainer}
+          >
+            <Text style={styles.inputField}>
+              { this.state.unitSelected ? this.state.unit : 'Units' }
             </Text>
           </TouchableHighlight>
         </View>
@@ -349,22 +365,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     padding: 8,
     color: Colors.greyText,
-  },
-  picker: {
-    // width: Dimensions.get('window').width * .3,
-    // width: 500,
-    // paddingRight: 20,
-    // paddingLeft: 20,
-    // marginLeft: 20,
-    // alignItems: 'center',
-    // justifyContent: 'center',
-  },
-  group: {
-    // width: Dimensions.get('window').width,
-    // width: 555,
-    paddingRight: 20,
-    paddingLeft: 20,
-    marginLeft: 20,
   },
   inputFieldContainer: {
     flex: 1,
