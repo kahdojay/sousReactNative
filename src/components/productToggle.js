@@ -66,7 +66,8 @@ class ProductToggle extends React.Component {
     );
 
     const purveyorsArray = this.props.availablePurveyors.map((purveyorId, idx) => {
-      const purveyorName = _.find(this.props.allPurveyors.data, { id: purveyorId }).name;
+      const purveyor = _.find(this.props.allPurveyors.data, { id: purveyorId });
+      const purveyorName = purveyor ? purveyor.name : '';
       return (
         <ModalToggle
           key={idx}
@@ -77,6 +78,7 @@ class ProductToggle extends React.Component {
         </ModalToggle>
       )
     })
+
     return (
       <View>
         <Modal
@@ -95,7 +97,10 @@ class ProductToggle extends React.Component {
             </View>
           </TouchableHighlight>
         </Modal>
-        {this.props.added === false && this.props.availablePurveyors.length > 1 ? modalShowButton : checkbox}
+        {
+          this.props.added === false &&
+          this.props.availablePurveyors.length > 1 ? modalShowButton : checkbox
+        }
       </View>
     );
   }

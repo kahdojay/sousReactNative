@@ -37,6 +37,7 @@ class App extends React.Component {
       lastName: this.props.session.lastName,
       category: null,
       categoryProducts: null,
+      purveyor: null,
       currentTeam: this.props.teams.currentTeam,
       contactList: [],
       sceneState: {
@@ -52,9 +53,7 @@ class App extends React.Component {
       'Signup': {}
     }
     this.navBar = (
-      <NavigationBar
-        style={styles.nav}
-      />
+      <NavigationBar style={styles.nav} />
     );
     this.navBarItem = (props, nextComponent) => {
       return React.addons.cloneWithProps((
@@ -233,62 +232,81 @@ class App extends React.Component {
             }}
           />
         )
-      // case 'PurveyorIndex':
-      //   return (
-      //     <Components.PurveyorIndex
-      //       purveyors={purveyors}
-      //       session={session}
-      //       onNavToPurveyor={() => {
-      //         nav.push({
-      //           name: 'PurveyorView',
-      //           purveyorId: purveyor.id
-      //         })
-      //       }}
-      //       onAddPurveyor={(name) => {
-      //         const purveyors = this.props.purveyors.data.map((purveyor) => {
-      //           if (! purveyor.deleted)
-      //             return purveyor.name;
-      //         });
-      //         if (purveyors.indexOf(name) === -1) {
-      //           dispatch(actions.addPurveyor(name))
-      //         } else {
-      //           // console.log("ERROR: purveyor already exists");
-      //         }
-      //       }}
-      //       onBack={() => {
-      //         this._back()
-      //       }}
-      //     />
-      //   )
-      // case 'PurveyorView':
-      //   var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
-      //   return (
-      //     <Components.PurveyorView
-      //       ui={ui}
-      //       purveyor={purveyor}
-      //       onAddNewProduct={(purveyorId, productName) => {
-      //         const products = purveyor.products.map((product) => {
-      //           if (! product.deleted)
-      //             return product.name;
-      //         });
-      //         if (products.indexOf(productName) === -1) {
-      //           dispatch(actions.addPurveyorProduct(purveyorId, {name: productName}))
-      //         } else {
-      //           // console.log("ERROR: Product already exists");
-      //         }
-      //       }}
-      //       onDeletePurveyor={(purveyorId) => {
-      //         _.debounce(() => {
-      //           dispatch(actions.deletePurveyor(purveyorId))
-      //         }, 25)()
-      //       }}
-      //       onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
-      //         _.debounce(() => {
-      //           dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
-      //         }, 25)()
-      //       }}
-      //     />
-      //   )
+      case 'PurveyorIndex':
+        return (
+          <Components.PurveyorIndex
+            purveyors={purveyors}
+            session={session}
+            onNavToPurveyor={(purveyor) => {
+              this.setState({ purveyor: purveyor, })
+              nav.push({
+                name: 'PurveyorView',
+                purveyorId: purveyor.id
+              })
+            }}
+            onAddPurveyor={(name) => {
+              const purveyors = this.props.purveyors.data.map((purveyor) => {
+                if (!purveyor.deleted) {
+                  return purveyor.name;
+                }
+              });
+              if (purveyors.indexOf(name) === -1) {
+                dispatch(actions.addPurveyor(name))
+              } else {
+                // console.log("ERROR: purveyor already exists");
+              }
+            }}
+            onNavigateToCategoryIndex={() => {
+              nav.replace({
+                name: 'CategoryIndex'
+              })
+            }}
+            onBack={() => {
+              this._back()
+            }}
+          />
+        )
+      case 'PurveyorView':
+        var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
+        let products = _.filter(teams.products, (product) => {
+          return _.includes(product.purveyors, purveyor.id)
+        })
+        return (
+          <Components.PurveyorView
+            cart={this.state.currentTeam.cart}
+            ui={ui}
+            purveyor={purveyor}
+            purveyors={purveyors}
+            products={products}
+            onAddNewProduct={(purveyorId, productName) => {
+              const products = purveyor.products.map((product) => {
+                if (!product.deleted) {
+                  return product.name;
+                }
+              });
+              if (products.indexOf(productName) === -1) {
+                dispatch(actions.addPurveyorProduct(purveyorId, {name: productName}))
+              } else {
+                // console.log("ERROR: Product already exists");
+              }
+            }}
+            onDeletePurveyor={(purveyorId) => {
+              _.debounce(() => {
+                dispatch(actions.deletePurveyor(purveyorId))
+              }, 25)()
+            }}
+            onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
+              _.debounce(() => {
+                dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
+              }, 25)()
+            }}
+            onUpdateProductInCart={(cartAction, cartAttributes) => {
+              _.debounce(() => {
+                dispatch(actions.updateProductInCart(cartAction, cartAttributes))
+              }, 25)()
+            }}
+          />
+        )
       // case 'ProductView':
       //   let purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
       //   let product = _.filter(purveyor.products, { productId: route.productId })[0]
@@ -321,6 +339,11 @@ class App extends React.Component {
                   name: 'CategoryView',
                   categoryId: category.id
                 })
+              })
+            }}
+            onNavigateToPurveyorIndex={() => {
+              nav.replace({
+                name: 'PurveyorIndex'
               })
             }}
             onCreateProduct={() => {
@@ -493,9 +516,7 @@ class App extends React.Component {
             hidePrev: false,
             buttonsColor: '#ccc',
             customPrev: (
-              <Components.NavBackButton
-                iconFont={'fontawesome|times'}
-              />
+              <Components.NavBackButton iconFont={'fontawesome|times'} />
             ),
             title: 'Switch Teams',
           })
@@ -515,37 +536,56 @@ class App extends React.Component {
             ),
           })
           break;
-        // case 'PurveyorIndex':
-        //   navBar = React.addons.cloneWithProps(this.navBar, {
-        //     navigator: nav,
-        //     route: route,
-        //     customPrev: <Components.FeedViewLeftButton />,
-        //     onNext: null,
-        //   })
-        //   break;
+        case 'PurveyorIndex':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton iconFont={'fontawesome|times'} />
+            ),
+            title: 'Order Guide',
+            customNext: (
+              <Components.CategoryViewRightButton
+                onNavToCart={() => {
+                  nav.push({ name: 'CartView', });
+                }}
+                cart={this.state.currentTeam.cart}
+              />
+            )
+          })
+          break;
         case 'TeamView':
-          // console.log(this.state.currentTeam)
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
             buttonsColor: '#ccc',
             title: this.state.currentTeam.name,
             customPrev: (
-              <Components.NavBackButton
-                iconFont={'fontawesome|times'}
-              />
+              <Components.NavBackButton iconFont={'fontawesome|times'} />
             ),
           })
           break;
-        // case 'PurveyorView':
-        //   navBar = React.addons.cloneWithProps(this.navBar, {
-        //     navigator: nav,
-        //     route: route,
-        //     hidePrev: false,
-        //     onNext: (navigator, route) => this.showActionSheetPurveyorView(navigator, route),
-        //     nextTitle: '...',
-        //   })
-        //   break;
+        case 'PurveyorView':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'fontawesome|chevron-left'}
+                pop={true}
+              />
+            ),
+            title: this.state.purveyor.name,
+            customNext: (
+              <Components.CategoryViewRightButton
+                onNavToCart={() => {
+                  nav.push({ name: 'CartView', });
+                }}
+                cart={this.state.currentTeam.cart}
+              />
+            )
+          })
+          break;
         case 'CategoryIndex':
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
@@ -553,9 +593,7 @@ class App extends React.Component {
             hidePrev: false,
             buttonsColor: '#ccc',
             customPrev: (
-              <Components.NavBackButton
-                iconFont={'fontawesome|times'}
-              />
+              <Components.NavBackButton iconFont={'fontawesome|times'} />
             ),
             title: 'Order Guide',
             customNext: (
@@ -628,7 +666,7 @@ class App extends React.Component {
             route: route,
             customPrev: (
               <Components.NavBackButton
-                navName='CategoryIndex'
+                pop={true}
                 iconFont={'fontawesome|chevron-left'}
               />
             ),

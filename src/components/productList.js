@@ -80,14 +80,13 @@ class ProductList extends React.Component {
             cartItem = cart.orders[purveyorId].products[product.id]
           }
         })
-
         return (
           <ProductListItem
             cartItem={cartItem}
             cartPurveyorId={cartPurveyorId}
             loadDelay={loadDelay}
-            product={product}
             key={idx}
+            product={product}
             purveyors={this.props.purveyors}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               this.props.onUpdateProductInCart(cartAction, cartAttributes)
