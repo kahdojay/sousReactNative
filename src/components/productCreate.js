@@ -1,8 +1,9 @@
-const React = require('react-native');
+import React from 'react-native';
 let MultiPickerIOS = require('react-native-multipicker');
 let { Group, Item } = MultiPickerIOS;
-// import Dimensions from 'Dimensions';
+import Dimensions from 'Dimensions';
 import {Icon}  from 'react-native-icons';
+import Colors from '../utilities/colors';
 import Overlay from 'react-native-overlay';
 import _ from 'lodash';
 
@@ -174,7 +175,7 @@ class ProductCreate extends React.Component {
               })
             }}
           >
-          {pickerItems}
+            {pickerItems}
           </PickerIOS>
         );
         break;
@@ -236,7 +237,9 @@ class ProductCreate extends React.Component {
     purveyorIdList.forEach((selectedPurveyor, idx) => {
       purveyorInputs.push((
         <View key={`purveyor-${idx}`} style={styles.inputContainer}>
-          <Text style={styles.inputTitle}>{idx > 0 ? 'Additional Purveyor' : 'Purveyor'}</Text>
+          <Text style={styles.inputTitle}>
+            {idx > 0 ? 'Additional Purveyor' : 'Purveyor'}
+          </Text>
           <TouchableHighlight
             underlayColor='transparent'
             onPress={() => {
@@ -248,15 +251,16 @@ class ProductCreate extends React.Component {
             style={styles.inputFieldContainer}
           >
             <Text style={styles.inputField}>
-            { selectedPurveyor !== null ?
-              selectedPurveyor.name.substr(0,20) + (selectedPurveyor.name.length > 20 ? '...' : '')
-            : 'Select Purveyor' }
+            {
+              selectedPurveyor !== null ?
+                selectedPurveyor.name.substr(0,20) + (selectedPurveyor.name.length > 20 ? '...' : '')
+                : 'Select Purveyor'
+            }
             </Text>
           </TouchableHighlight>
         </View>
       ))
     })
-
     return purveyorInputs;
   }
 
@@ -266,7 +270,10 @@ class ProductCreate extends React.Component {
     const picker = this.getPicker()
     const purveyorInputs = this.getPurveyorInputs()
     return (
-      <ScrollView style={styles.scrollView}>
+      <ScrollView
+        automaticallyAdjustContentInsets={false}
+        style={styles.scrollView}
+      >
         <View key={'name'} style={styles.inputContainer}>
           <Text style={styles.inputTitle}>Name</Text>
           <TextInput
@@ -293,9 +300,10 @@ class ProductCreate extends React.Component {
             style={styles.inputFieldContainer}
           >
             <Text style={styles.inputField}>
-              { this.state.category ?
-                this.state.category.name :
-                'Select Category'
+              {
+                this.state.category ?
+                  this.state.category.name :
+                  'Select Category'
               }
             </Text>
           </TouchableHighlight>
@@ -320,7 +328,6 @@ class ProductCreate extends React.Component {
             </Text>
           </TouchableHighlight>
         </View>
-
         {picker}
       </ScrollView>
     );
@@ -331,16 +338,17 @@ const styles = StyleSheet.create({
   inputContainer: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'center',
-    backgroundColor: '#fefefe',
-    borderRadius: 4,
+    justifyContent: 'space-around',
+    alignItems: 'center',
   },
   inputTitle: {
-    flex: 1,
+    // v- this with looks good on iPhone 6 plus and 4s
+    width: Dimensions.get('window').width * .4,
     fontFamily: 'OpenSans',
     fontWeight: 'bold',
     fontSize: 14,
     padding: 8,
+    color: Colors.greyText,
   },
   picker: {
     // width: Dimensions.get('window').width * .3,
@@ -359,19 +367,15 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   inputFieldContainer: {
-    flex: 2,
+    flex: 1,
   },
   inputField: {
-    backgroundColor: 'white',
-    borderWidth: 1,
-    color: '#777',
-    borderColor: '#f2f2f2',
-    borderRadius: 8,
     padding: 8,
     margin: 2,
     fontFamily: 'OpenSans',
     fontWeight: 'bold',
     fontSize: 14,
+    textAlign: 'right',
   },
   scrollView: {
     backgroundColor: '#f9f9f9',

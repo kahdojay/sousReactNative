@@ -34,11 +34,11 @@ class ProductCreateRightCheckbox extends React.Component {
         <Icon
           name='fontawesome|square-o'
           size={40}
-          color={this.props.submitReady ? 'green' : '#ccc'}
+          color={this.props.submitReady ? Colors.green : '#ccc'}
           style={styles.iconOutline}
         >
           <Icon
-            color={this.props.submitReady ? 'green' : '#ccc'}
+            color={this.props.submitReady ? Colors.green : '#ccc'}
             name={this.state.iconFont}
             size={25}
             style={styles.icon}
@@ -61,7 +61,8 @@ let styles = StyleSheet.create({
   icon: {
     flex: 1,
     width: 20,
-    height: 20
+    height: 20,
+    marginTop: -3,
   },
 })
 
