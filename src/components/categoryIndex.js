@@ -60,13 +60,6 @@ class CategoryIndex extends React.Component {
         >
           <Text style={styles.createButtonText}>Order by Purveyor</Text>
         </TouchableHighlight>
-        <TouchableHighlight
-          underlayColor='#eee'
-          onPress={this.props.onCreateProduct}
-          style={styles.createButton}
-        >
-          <Text style={styles.createButtonText}>Create New Product...</Text>
-        </TouchableHighlight>
         <View style={styles.separator} />
         <ScrollView
           automaticallyAdjustContentInsets={false}
