@@ -22,6 +22,7 @@ class ProductCreateRightCheckbox extends React.Component {
     return (
       <TouchableHighlight
         underlayColor='transparent'
+        style={{justifyContent: 'center',}}
         onPress={()=> {
           if (this.props.submitReady) {
             this.props.onAddProduct();
@@ -31,22 +32,38 @@ class ProductCreateRightCheckbox extends React.Component {
         }}
       >
         <Icon
-          name={this.state.iconFont}
-          size={30}
-          color={this.props.submitReady ? 'green' : '#ccc'}
-          style={styles.icon}
-        />
+          name='fontawesome|square-o'
+          size={40}
+          color={this.props.submitReady ? Colors.green : '#ccc'}
+          style={styles.iconOutline}
+        >
+          <Icon
+            color={this.props.submitReady ? Colors.green : '#ccc'}
+            name={this.state.iconFont}
+            size={25}
+            style={styles.icon}
+          />
+        </Icon>
       </TouchableHighlight>
     );
   }
 }
 
 let styles = StyleSheet.create({
+  iconOutline: {
+    flexDirection: 'column',
+    width: 60,
+    height: 60,
+    marginTop: 5,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   icon: {
-    height: 50,
-    width: 50,
-    marginTop: 6
-  }
+    flex: 1,
+    width: 20,
+    height: 20,
+    marginTop: -3,
+  },
 })
 
 export default ProductCreateRightCheckbox;

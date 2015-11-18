@@ -48,6 +48,13 @@ class CategoryIndex extends React.Component {
         />{/* */}
         <TouchableHighlight
           underlayColor='#eee'
+          onPress={this.props.onCreateProduct}
+          style={styles.createButton}
+        >
+          <Text style={styles.createButtonText}>Create New Product...</Text>
+        </TouchableHighlight>
+        <TouchableHighlight
+          underlayColor='#eee'
           onPress={this.props.onNavigateToPurveyorIndex}
           style={styles.createButton}
         >
@@ -69,11 +76,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
-  seperator: {
-    height: 5,
-    borderBottomColor: '#bbb',
-    borderBottomWidth: 1,
-  },
   scrollView: {
     backgroundColor: '#f7f7f7',
     height: 500,
@@ -83,7 +85,6 @@ const styles = StyleSheet.create({
     paddingTop: 0
   },
   createButton: {
-    padding: 5,
   },
   createButtonText: {
     color: Colors.navbarIconColor,
