@@ -86,6 +86,8 @@ export default function ConnectActions(ddpClient) {
       teamActions,
       messageActions,
       purveyorActions,
+      productActions,
+      categoryActions,
       errorActions
     } = allActions
 
@@ -126,10 +128,10 @@ export default function ConnectActions(ddpClient) {
               dispatch(purveyorActions.receivePurveyors(data))
               break;
             case 'categories':
-              dispatch(teamActions.receiveCategories(data))
+              dispatch(categoryActions.receiveCategories(data))
               break;
             case 'products':
-              dispatch(teamActions.receiveProducts(data))
+              dispatch(productActions.receiveProducts(data))
               break;
             case 'users':
               // console.log("MAIN DDP WITH FIELDS MSG: ", log);

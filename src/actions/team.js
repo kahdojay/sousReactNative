@@ -11,8 +11,6 @@ import {
   GET_TEAMS,
   REQUEST_TEAMS,
   RECEIVE_TEAMS,
-  RECEIVE_CATEGORIES,
-  RECEIVE_PRODUCTS,
   RECEIVE_TEAMS_USERS,
   ERROR_TEAMS,
   ADD_TEAM,
@@ -239,20 +237,6 @@ export default function TeamActions(ddpClient, allActions) {
     }
   }
 
-  function receiveCategories(category) {
-    return {
-      type: RECEIVE_CATEGORIES,
-      category: category
-    }
-  }
-
-  function receiveProducts(product) {
-    return {
-      type: RECEIVE_PRODUCTS,
-      product: product
-    }
-  }
-
   function receiveTeamsUsers(user) {
     return {
       type: RECEIVE_TEAMS_USERS,
@@ -432,9 +416,7 @@ export default function TeamActions(ddpClient, allActions) {
     GET_TEAMS,
     REQUEST_TEAMS,
     RECEIVE_TEAMS,
-    RECEIVE_CATEGORIES,
     RECEIVE_TEAMS_USERS,
-    RECEIVE_PRODUCTS,
     ERROR_TEAMS,
     ADD_TEAM,
     UPDATE_TEAM,
