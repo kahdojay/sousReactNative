@@ -7,8 +7,6 @@ import {
   GET_TEAMS,
   REQUEST_TEAMS,
   RECEIVE_TEAMS,
-  RECEIVE_CATEGORIES,
-  RECEIVE_PRODUCTS,
   RECEIVE_TEAMS_USERS,
   ERROR_TEAMS,
   ADD_TEAM,
@@ -27,7 +25,6 @@ const initialState = {
     currentTeam: null,
     cartTimeoutId: null,
     taskTimeoutId: null,
-    products: {},
     lastUpdated: null
   }
 };
@@ -61,24 +58,6 @@ function teams(state = initialState.teams, action) {
       data: receiveTeamsDataState,
       // currentTeam: receiveCurrentTeam,
       lastUpdated: (new Date()).toISOString()
-    });
-
-  case RECEIVE_CATEGORIES:
-    const defaultCategoriesState = Object.assign({}, state);
-    // const currentDefaultCategoriesState = updateDataState(defaultCategoriesState.defaultCategories, action.category)
-    defaultCategoriesState.defaultCategories[action.category.id] = action.category;
-    return Object.assign({}, state, {
-      // defaultCategories: currentDefaultCategoriesState,
-      defaultCategories: defaultCategoriesState.defaultCategories,
-    });
-
-  case RECEIVE_PRODUCTS:
-    const newProductsState = Object.assign({}, state);
-    // const currentProductsState = updateDataState(newProductsState.products, action.product)
-    newProductsState.products[action.product.id] = action.product;
-    return Object.assign({}, state, {
-      // products: currentProductsState,
-      products: newProductsState.products
     });
 
   case RECEIVE_TEAMS_USERS:

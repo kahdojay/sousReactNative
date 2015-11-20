@@ -24,20 +24,17 @@ class CategoryIndex extends React.Component {
     const { categories, products } = this.props
 
     let categoriesList = _.map(_.sortBy(categories, 'name'), (category) => {
-      const categoryProducts = _.sortBy(_.filter(products, (product) => {
-          return category.products.indexOf(product.id) > -1
-        }),
-        'name'
-      )
-      return (
-        <CategoryIndexRow
-          key={category.id}
-          category={category}
-          onPress={() => {
-            this.props.onNavigateToCategory(category, categoryProducts)
-          }}
-        />
-      )
+      if (category.deleted === false) {
+        return (
+          <CategoryIndexRow
+            key={category.id}
+            category={category}
+            onPress={() => {
+              this.props.onNavigateToCategory(category.id)
+            }}
+          />
+        )
+      }
     })
 
     return (

@@ -31,16 +31,18 @@ function categories(state = initialState.categories, action) {
 
   // receive the categories
   case RECEIVE_CATEGORIES:
-    var newCategoryState = Object.assign({}, state);
-    if(newCategoryState.teams.hasOwnProperty(action.category.teamId) === false){
-      newCategoryState.teams[action.category.teamId] = {};
+    var newCategoryTeamState = Object.assign({}, state.teams);
+    if(newCategoryTeamState.hasOwnProperty(action.category.teamId) === false){
+      newCategoryTeamState[action.category.teamId] = {};
     }
-    var currentCategoriesDataState = updateDataState(newCategoryState.teams[action.category.teamId], action.category)
-    var currentTeamsDataState = Object.assign({}, teams);
-    currentTeamsDataState[action.category.teamId] = currentCategoriesDataState
+    let originalTeamCategory = {}
+    if(newCategoryTeamState[action.category.teamId].hasOwnProperty(action.category.id)){
+      originalTeamCategory = newCategoryTeamState[action.category.teamId][action.category.id] = newCategoryTeamState[action.category.teamId][action.category.id]
+    }
+    newCategoryTeamState[action.category.teamId][action.category.id] = Object.assign(originalTeamCategory, action.category)
     return Object.assign({}, state, {
       errors: null,
-      teams: currentTeamsDataState,
+      teams: newCategoryTeamState,
       lastUpdated: (new Date()).toISOString()
     });
 

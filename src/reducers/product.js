@@ -31,16 +31,18 @@ function products(state = initialState.products, action) {
 
   // receive the products
   case RECEIVE_PRODUCTS:
-    var newProductState = Object.assign({}, state);
-    if(newProductState.teams.hasOwnProperty(action.product.teamId) === false){
-      newProductState.teams[action.product.teamId] = {};
+    var newProductTeamState = Object.assign({}, state.teams);
+    if(newProductTeamState.hasOwnProperty(action.product.teamId) === false){
+      newProductTeamState[action.product.teamId] = {};
     }
-    var currentProductsDataState = updateDataState(newProductState.teams[action.product.teamId], action.product)
-    var currentTeamsDataState = Object.assign({}, teams);
-    currentTeamsDataState[action.product.teamId] = currentProductsDataState
+    let originalTeamProduct = {}
+    if(newProductTeamState[action.product.teamId].hasOwnProperty(action.product.id)){
+      originalTeamProduct = newProductTeamState[action.product.teamId][action.product.id] = newProductTeamState[action.product.teamId][action.product.id]
+    }
+    newProductTeamState[action.product.teamId][action.product.id] = Object.assign(originalTeamProduct, action.product)
     return Object.assign({}, state, {
       errors: null,
-      teams: currentTeamsDataState,
+      teams: newProductTeamState,
       lastUpdated: (new Date()).toISOString()
     });
 

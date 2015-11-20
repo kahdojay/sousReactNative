@@ -66,6 +66,8 @@ function connectApp(){
       'teamActions': teamActions,
       'messageActions': messageActions,
       'purveyorActions': purveyorActions,
+      'categoryActions': categoryActions,
+      'productActions': productActions,
       'errorActions': errorActions
     }));
   }

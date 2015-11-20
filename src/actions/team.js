@@ -429,8 +429,6 @@ export default function TeamActions(ddpClient, allActions) {
     deleteTeam,
     // getTeams,
     receiveTeams,
-    receiveCategories,
-    receiveProducts,
     receiveTeamsUsers,
     updateProductInCart,
     sendCart,

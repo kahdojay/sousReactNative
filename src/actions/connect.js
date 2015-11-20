@@ -64,8 +64,8 @@ export default function ConnectActions(ddpClient) {
         if(teamIds !== undefined && teamIds.length > 0 && session.userId !== null){
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS_USERS.channel, [session.userId, teamIds]))
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CATEGORIES.channel, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [session.userId, teamIds]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CATEGORIES.channel, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PRODUCTS.channel, [session.userId, teamIds]))
         }
         if(session.userId !== null){

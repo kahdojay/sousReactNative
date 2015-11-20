@@ -22,16 +22,11 @@ class PurveyorIndex extends React.Component {
     let self = this
     const { purveyors, products, session } = this.props
 
-    let purveyorsList = _.map(_.filter(purveyors.data, (purveyor) => {
-        //TODO add teamId s to purveyors and filter
-        // return purveyor.teamId === session.teamId
-        return true;
-      }),
-      function(purveyor, idx) {
+    let purveyorsList = _.map(_.sortBy(purveyors, 'name'), (purveyor) => {
         if (purveyor.deleted === false) {
           return (
             <PurveyorIndexRow
-              key={idx}
+              key={purveyor.id}
               purveyor={purveyor}
               onPress={() => {
                 this.props.onNavToPurveyor(purveyor)
