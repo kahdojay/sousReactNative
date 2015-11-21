@@ -22,16 +22,11 @@ class PurveyorIndex extends React.Component {
     let self = this
     const { purveyors, products, session } = this.props
 
-    let purveyorsList = _.map(_.filter(purveyors.data, (purveyor) => {
-        //TODO add teamId s to purveyors and filter
-        // return purveyor.teamId === session.teamId
-        return true;
-      }),
-      function(purveyor, idx) {
+    let purveyorsList = _.map(_.sortBy(purveyors, 'name'), (purveyor) => {
         if (purveyor.deleted === false) {
           return (
             <PurveyorIndexRow
-              key={idx}
+              key={purveyor.id}
               purveyor={purveyor}
               onPress={() => {
                 this.props.onNavToPurveyor(purveyor)
@@ -51,13 +46,13 @@ class PurveyorIndex extends React.Component {
           onSubmit={this.props.onAddPurveyor}
         />
         */}
-        <TouchableHighlight
+        {/* * /}<TouchableHighlight
           underlayColor='#eee'
           onPress={this.props.onCreateProduct}
           style={styles.createButton}
         >
           <Text style={styles.createButtonText}>Create New Product...</Text>
-        </TouchableHighlight>
+        </TouchableHighlight>{/* */}
         <TouchableHighlight
           underlayColor='#eee'
           onPress={this.props.onNavigateToCategoryIndex}
@@ -65,6 +60,7 @@ class PurveyorIndex extends React.Component {
         >
           <Text style={styles.createButtonText}>Order by Category</Text>
         </TouchableHighlight>
+        <View style={styles.separator} />
         <ScrollView
           automaticallyAdjustContentInsets={false}
           keyboardShouldPersistTaps={false}
@@ -80,6 +76,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+  },
+  separator: {
+    height: 5,
+    borderBottomColor: '#bbb',
+    borderBottomWidth: 1,
   },
   scrollView: {
     backgroundColor: '#f7f7f7',

@@ -24,20 +24,17 @@ class CategoryIndex extends React.Component {
     const { categories, products } = this.props
 
     let categoriesList = _.map(_.sortBy(categories, 'name'), (category) => {
-      const categoryProducts = _.sortBy(_.filter(products, (product) => {
-          return category.products.indexOf(product.id) > -1
-        }),
-        'name'
-      )
-      return (
-        <CategoryIndexRow
-          key={category.id}
-          category={category}
-          onPress={() => {
-            this.props.onNavigateToCategory(category, categoryProducts)
-          }}
-        />
-      )
+      if (category.deleted === false) {
+        return (
+          <CategoryIndexRow
+            key={category.id}
+            category={category}
+            onPress={() => {
+              this.props.onNavigateToCategory(category.id)
+            }}
+          />
+        )
+      }
     })
 
     return (
@@ -46,13 +43,13 @@ class CategoryIndex extends React.Component {
           placeholder="Add category..."
           onSubmit={this.props.onAddCategory}
         />{/* */}
-        <TouchableHighlight
+        {/* * /}<TouchableHighlight
           underlayColor='#eee'
           onPress={this.props.onCreateProduct}
           style={styles.createButton}
         >
           <Text style={styles.createButtonText}>Create New Product...</Text>
-        </TouchableHighlight>
+        </TouchableHighlight>{/* */}
         <TouchableHighlight
           underlayColor='#eee'
           onPress={this.props.onNavigateToPurveyorIndex}
@@ -60,6 +57,7 @@ class CategoryIndex extends React.Component {
         >
           <Text style={styles.createButtonText}>Order by Purveyor</Text>
         </TouchableHighlight>
+        <View style={styles.separator} />
         <ScrollView
           automaticallyAdjustContentInsets={false}
           keyboardShouldPersistTaps={false}
@@ -75,6 +73,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+  },
+  separator: {
+    height: 5,
+    borderBottomColor: '#bbb',
+    borderBottomWidth: 1,
   },
   scrollView: {
     backgroundColor: '#f7f7f7',

@@ -50,10 +50,13 @@ class ProductList extends React.Component {
   }
 
   render() {
-    const {cart} = this.props
+    const {cart, purveyors} = this.props
     let productList = []
     if(this.state.products !== null){
-      productList = _.map(this.state.products, (product, idx) => {
+      this.state.products.forEach((product, idx) => {
+        if(product === null){
+          return;
+        }
         let loadDelay = 50
         // for everything off screen
         // - index greater than 10
@@ -80,19 +83,19 @@ class ProductList extends React.Component {
             cartItem = cart.orders[purveyorId].products[product.id]
           }
         })
-        return (
+        productList.push((
           <ProductListItem
             cartItem={cartItem}
             cartPurveyorId={cartPurveyorId}
             loadDelay={loadDelay}
             key={idx}
             product={product}
-            purveyors={this.props.purveyors}
+            purveyors={purveyors}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               this.props.onUpdateProductInCart(cartAction, cartAttributes)
             }}
           />
-        )
+        ))
       })
     }
     return (

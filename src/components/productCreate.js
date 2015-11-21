@@ -134,7 +134,7 @@ class ProductCreate extends React.Component {
         );
         break;
       case 'category':
-        const categories = this.props.team.categories;
+        const categories = this.props.categories;
         if(this.state.category !== null && this.state.category.hasOwnProperty('id')){
           selectedValue = this.state.category.id;
         }

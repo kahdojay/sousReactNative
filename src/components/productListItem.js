@@ -112,7 +112,8 @@ class ProductListItem extends React.Component {
   }
 
   render() {
-    let {product, purveyors} = this.state
+    const {product} = this.state
+    const {purveyors} = this.props;
 
     let productInfo = (
       <View style={styles.row}>
@@ -123,20 +124,20 @@ class ProductListItem extends React.Component {
     );
     if(this.state.product !== null){
       let purveyorString = ""
-      const purveyorIdx = _.findIndex(this.props.purveyors.data, { id: this.state.selectedPurveyorId }); //.name;
-      if(purveyorIdx > -1){
-        purveyorString = purveyors.data[purveyorIdx].name || '-NOT SET-'
+      if(purveyors.hasOwnProperty(this.state.selectedPurveyorId) === true){
+        purveyorString = purveyors[this.state.selectedPurveyorId].name || '-NOT SET-'
       } else {
         // Single purveyor, grab name off props.purveyors
-        purveyorString = this.props.purveyors.data[0].name
+        const purveyorIds = Object.keys(purveyors)
+        purveyorString = purveyors[purveyorIds[0]].name
       }
       productInfo = (
         <View style={styles.row}>
           <View style={styles.checkboxContainer}>
             <ProductToggle
               added={this.state.added}
-              availablePurveyors={this.props.product.purveyors}
-              allPurveyors={this.props.purveyors}
+              availablePurveyors={product.purveyors}
+              allPurveyors={purveyors}
               currentlySelectedPurveyorId={this.state.selectedPurveyorId}
               onToggleCartProduct={(purveyorId) => {
                 this.handleToggleProduct(purveyorId)

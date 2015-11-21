@@ -17,9 +17,9 @@ class PurveyorIndexRow extends React.Component {
     let { purveyor, products } = this.props
     let purveyorProducts = _.filter(products, {purveyorId: purveyor.id, deleted: false})
 
-    const numCompletedProducts = _.filter(purveyorProducts, {completed: true}).length
-    const totalNumProducts = purveyorProducts.length
-    const progress = numCompletedProducts/totalNumProducts
+    // const numCompletedProducts = _.filter(purveyorProducts, {completed: true}).length
+    // const totalNumProducts = purveyorProducts.length
+    // const progress = numCompletedProducts/totalNumProducts
 
     return (
       <TouchableOpacity
@@ -29,7 +29,7 @@ class PurveyorIndexRow extends React.Component {
         <View style={styles.textProgressArrowContainer}>
           <View style={styles.textProgressContainer} >
             <View style={styles.purveyorInfo} >
-              <Text style={styles.rowText}>{this.props.purveyor.name}</Text>
+              <Text style={styles.rowText}>{purveyor.name}</Text>
             </View>
           </View>
           <Icon name='material|chevron-right' size={40} color='#aaa' style={styles.iconArrow}/>

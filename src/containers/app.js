@@ -121,7 +121,17 @@ class App extends React.Component {
   }
 
   getScene(route, nav) {
-    const { ui, session, teams, messages, dispatch, purveyors, products, errors } = this.props;
+    const { ui, session, teams, messages, dispatch, purveyors, products, categories, errors } = this.props;
+
+    let currentTeamPurveyors = {}
+    let currentTeamCategories = {}
+    let currentTeamProducts = {}
+
+    if(this.state.currentTeam !== null){
+      currentTeamPurveyors = purveyors.teams[this.state.currentTeam.id] || {}
+      currentTeamCategories = categories.teams[this.state.currentTeam.id] || {}
+      currentTeamProducts = products.teams[this.state.currentTeam.id] || {}
+    }
 
     switch (route.name) {
       case 'Signup':
@@ -235,7 +245,7 @@ class App extends React.Component {
       case 'PurveyorIndex':
         return (
           <Components.PurveyorIndex
-            purveyors={purveyors}
+            purveyors={currentTeamPurveyors}
             session={session}
             onNavToPurveyor={(purveyor) => {
               this.setState({ purveyor: purveyor, })
@@ -245,16 +255,7 @@ class App extends React.Component {
               })
             }}
             onAddPurveyor={(name) => {
-              const purveyors = this.props.purveyors.data.map((purveyor) => {
-                if (!purveyor.deleted) {
-                  return purveyor.name;
-                }
-              });
-              if (purveyors.indexOf(name) === -1) {
-                dispatch(actions.addPurveyor(name))
-              } else {
-                // console.log("ERROR: purveyor already exists");
-              }
+              dispatch(actions.addPurveyor(name))
             }}
             onNavigateToCategoryIndex={() => {
               nav.replace({
@@ -267,8 +268,8 @@ class App extends React.Component {
           />
         )
       case 'PurveyorView':
-        var purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
-        let products = _.filter(teams.products, (product) => {
+        let purveyor = currentTeamPurveyors[route.purveyorId]
+        let products = _.filter(currentTeamProducts, (product) => {
           return _.includes(product.purveyors, purveyor.id)
         })
         return (
@@ -276,7 +277,7 @@ class App extends React.Component {
             cart={this.state.currentTeam.cart}
             ui={ui}
             purveyor={purveyor}
-            purveyors={purveyors}
+            purveyors={currentTeamPurveyors}
             products={products}
             onAddNewProduct={(purveyorId, productName) => {
               const products = purveyor.products.map((product) => {
@@ -328,12 +329,15 @@ class App extends React.Component {
       case 'CategoryIndex':
         return (
           <Components.CategoryIndex
-            products={teams.products}
-            categories={teams.defaultCategories}
-            onNavigateToCategory={(category, categoryProducts) => {
+            products={currentTeamProducts}
+            categories={currentTeamCategories}
+            onNavigateToCategory={(categoryId) => {
+              const category = currentTeamCategories[categoryId]
               this.setState({
                 category: category,
-                categoryProducts: categoryProducts
+                categoryProducts: _.map(category.products, (productId) => {
+                  return currentTeamProducts[productId] || null
+                })
               }, () => {
                 nav.push({
                   name: 'CategoryView',
@@ -354,16 +358,13 @@ class App extends React.Component {
           />
         )
       case 'CategoryView':
-        // var category = _.filter(this.state.currentTeam.categories, { id: route.categoryId })[0]
-        // var category = _.filter(teams.defaultCategories, { id: route.categoryId })[0]
-        // console.log(route);
         return (
           <Components.CategoryView
             ui={ui}
             category={this.state.category}
             cart={this.state.currentTeam.cart}
             products={this.state.categoryProducts}
-            purveyors={purveyors}
+            purveyors={currentTeamPurveyors}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(cartAction, cartAttributes))
@@ -402,7 +403,8 @@ class App extends React.Component {
         return (
           <Components.ProductCreate
             team={this.state.currentTeam}
-            purveyors={purveyors.data}
+            categories={currentTeamCategories}
+            purveyors={currentTeamPurveyors}
             onAddProduct={(productAttributes) => {
               const sceneState = Object.assign({}, this.state.sceneState);
               sceneState.ProductCreate.submitReady = true;
@@ -449,7 +451,7 @@ class App extends React.Component {
         return (
           <Components.CartView
             team={this.state.currentTeam}
-            purveyors={this.props.purveyors.data}
+            purveyors={currentTeamPurveyors}
             appState={this.props}
             onDeleteProduct={(purveyorId, productId) => {
               _.debounce(() => {
@@ -975,6 +977,7 @@ function mapStateToProps(state) {
     messages: state.messages,
     purveyors: state.purveyors,
     products: state.products,
+    categories: state.categories,
     errors: state.errors,
     connect: state.connect,
   }
