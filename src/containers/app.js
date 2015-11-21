@@ -452,7 +452,7 @@ class App extends React.Component {
           <Components.CartView
             team={this.state.currentTeam}
             purveyors={currentTeamPurveyors}
-            appState={this.props}
+            products={currentTeamProducts}
             onDeleteProduct={(purveyorId, productId) => {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(

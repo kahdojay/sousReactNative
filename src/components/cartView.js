@@ -138,9 +138,8 @@ class CartView extends React.Component {
   }
 
   render() {
-    const {team, purveyors, appState} = this.props
+    const {team, purveyors, products} = this.props
     const cart = team.cart
-    const products = appState.teams.products
     const cartPurveyorIds = Object.keys(cart.orders)
     const cartPurveyors = _.map(cartPurveyorIds, (purveyorId) => {
       return _.filter(purveyors, {id: purveyorId})[0]
