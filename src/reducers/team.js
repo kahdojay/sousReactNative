@@ -20,7 +20,6 @@ const initialState = {
     isFetching: false,
     errors: null,
     data: [],
-    defaultCategories: {},
     teamsUsers: {},
     currentTeam: null,
     cartTimeoutId: null,
@@ -62,10 +61,8 @@ function teams(state = initialState.teams, action) {
 
   case RECEIVE_TEAMS_USERS:
     const teamsUsersState = Object.assign({}, state);
-    // const currentDefaultCategoriesState = updateDataState(defaultCategoriesState.defaultCategories, action.category)
     teamsUsersState.teamsUsers[action.user.id] = action.user;
     return Object.assign({}, state, {
-      // defaultCategories: currentDefaultCategoriesState,
       teamsUsers: teamsUsersState.teamsUsers,
     });
 

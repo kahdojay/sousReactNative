@@ -249,16 +249,7 @@ class App extends React.Component {
               })
             }}
             onAddPurveyor={(name) => {
-              const purveyors = this.props.purveyors.data.map((purveyor) => {
-                if (!purveyor.deleted) {
-                  return purveyor.name;
-                }
-              });
-              if (purveyors.indexOf(name) === -1) {
-                dispatch(actions.addPurveyor(name))
-              } else {
-                // console.log("ERROR: purveyor already exists");
-              }
+              dispatch(actions.addPurveyor(name))
             }}
             onNavigateToCategoryIndex={() => {
               nav.replace({
@@ -406,7 +397,8 @@ class App extends React.Component {
         return (
           <Components.ProductCreate
             team={this.state.currentTeam}
-            purveyors={purveyors.data}
+            categories={currentTeamCategories}
+            purveyors={currentTeamPurveyors}
             onAddProduct={(productAttributes) => {
               const sceneState = Object.assign({}, this.state.sceneState);
               sceneState.ProductCreate.submitReady = true;
@@ -453,7 +445,7 @@ class App extends React.Component {
         return (
           <Components.CartView
             team={this.state.currentTeam}
-            purveyors={this.props.purveyors.data}
+            purveyors={currentTeamPurveyors}
             appState={this.props}
             onDeleteProduct={(purveyorId, productId) => {
               _.debounce(() => {

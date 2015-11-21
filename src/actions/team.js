@@ -52,7 +52,6 @@ export default function TeamActions(ddpClient, allActions) {
           _id: Shortid.generate(),
           name: name,
           tasks: [],
-          categories: teams.defaultCategories,
           users: [session.userId],
           cart: {
             date: null,
