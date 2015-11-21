@@ -121,11 +121,17 @@ class App extends React.Component {
   }
 
   getScene(route, nav) {
-    const { ui, session, teams, messages, dispatch, purveyors, products,categories, errors } = this.props;
+    const { ui, session, teams, messages, dispatch, purveyors, products, categories, errors } = this.props;
 
-    const currentTeamPurveyors = purveyors.teams[this.state.currentTeam.id] || {}
-    const currentTeamCategories = categories.teams[this.state.currentTeam.id] || {}
-    const currentTeamProducts = products.teams[this.state.currentTeam.id] || {}
+    let currentTeamPurveyors = {}
+    let currentTeamCategories = {}
+    let currentTeamProducts = {}
+
+    if(this.state.currentTeam !== null){
+      currentTeamPurveyors = purveyors.teams[this.state.currentTeam.id] || {}
+      currentTeamCategories = categories.teams[this.state.currentTeam.id] || {}
+      currentTeamProducts = products.teams[this.state.currentTeam.id] || {}
+    }
 
     switch (route.name) {
       case 'Signup':

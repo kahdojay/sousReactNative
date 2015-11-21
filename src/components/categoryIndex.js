@@ -43,13 +43,13 @@ class CategoryIndex extends React.Component {
           placeholder="Add category..."
           onSubmit={this.props.onAddCategory}
         />{/* */}
-        <TouchableHighlight
+        {/* * /}<TouchableHighlight
           underlayColor='#eee'
           onPress={this.props.onCreateProduct}
           style={styles.createButton}
         >
           <Text style={styles.createButtonText}>Create New Product...</Text>
-        </TouchableHighlight>
+        </TouchableHighlight>{/* */}
         <TouchableHighlight
           underlayColor='#eee'
           onPress={this.props.onNavigateToPurveyorIndex}

@@ -46,13 +46,13 @@ class PurveyorIndex extends React.Component {
           onSubmit={this.props.onAddPurveyor}
         />
         */}
-        <TouchableHighlight
+        {/* * /}<TouchableHighlight
           underlayColor='#eee'
           onPress={this.props.onCreateProduct}
           style={styles.createButton}
         >
           <Text style={styles.createButtonText}>Create New Product...</Text>
-        </TouchableHighlight>
+        </TouchableHighlight>{/* */}
         <TouchableHighlight
           underlayColor='#eee'
           onPress={this.props.onNavigateToCategoryIndex}
@@ -60,6 +60,7 @@ class PurveyorIndex extends React.Component {
         >
           <Text style={styles.createButtonText}>Order by Category</Text>
         </TouchableHighlight>
+        <View style={styles.separator} />
         <ScrollView
           automaticallyAdjustContentInsets={false}
           keyboardShouldPersistTaps={false}
@@ -75,6 +76,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+  },
+  separator: {
+    height: 5,
+    borderBottomColor: '#bbb',
+    borderBottomWidth: 1,
   },
   scrollView: {
     backgroundColor: '#f7f7f7',
