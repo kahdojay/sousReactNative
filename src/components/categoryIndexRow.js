@@ -19,19 +19,23 @@ class CategoryIndexRow extends React.Component {
     return (
       <TouchableOpacity
         onPress={this.props.onPress}
-        style={styles.row}>
+        style={styles.row}
+      >
         <View style={styles.textProgressArrowContainer}>
-          <View
-            style={styles.textProgressContainer} >
-            <View
-              style={styles.categoryInfo} >
+          <View style={styles.textProgressContainer} >
+            <View style={styles.categoryInfo} >
               <Text style={styles.rowText}>{category.name}</Text>
               <Text style={styles.percentage}>
                 {category.products.length}
               </Text>
             </View>
           </View>
-          <Icon name='material|chevron-right' size={40} color='#aaa' style={styles.iconArrow}/>
+          <Icon
+            name='material|chevron-right'
+            size={40}
+            color='#aaa'
+            style={styles.iconArrow}
+          />
         </View>
         <View style={styles.seperator} />
       </TouchableOpacity>
@@ -41,12 +45,11 @@ class CategoryIndexRow extends React.Component {
 
 const styles = StyleSheet.create({
   row: {
+    flex: 1,
     flexDirection: 'column',
     padding: 10,
-    height: 69
   },
   progress: {
-    paddingTop: 5,
     margin: 5,
     height: 8,
     borderRadius: 10,
@@ -59,6 +62,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   textProgressContainer: {
     flex: 1,
@@ -70,7 +74,11 @@ const styles = StyleSheet.create({
   },
   categoryInfo: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  percentage: {
+    paddingRight: 5,
   },
   rowText: {
     fontWeight: 'bold',
@@ -80,10 +88,8 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans'
   },
   iconArrow: {
-    width: 70,
-    height: 70,
-    marginTop: -20,
-    marginRight: -15
+    width: 40,
+    height: 40,
   },
 })
 

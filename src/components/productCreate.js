@@ -1,8 +1,7 @@
-const React = require('react-native');
-let MultiPickerIOS = require('react-native-multipicker');
-let { Group, Item } = MultiPickerIOS;
-// import Dimensions from 'Dimensions';
+import React from 'react-native';
+import Dimensions from 'Dimensions';
 import {Icon}  from 'react-native-icons';
+import Colors from '../utilities/colors';
 import Overlay from 'react-native-overlay';
 import _ from 'lodash';
 
@@ -75,10 +74,13 @@ class ProductCreate extends React.Component {
     let picker = <View />;
     let selectedValue = null;
     const pickerItems = []
-    switch(this.state.picker) {
+    switch (this.state.picker) {
       case 'purveyor':
         const {purveyors} = this.props;
-        if(this.state.purveyorIdList[this.state.pickerIdx] !== null && this.state.purveyorIdList[this.state.pickerIdx].hasOwnProperty('idx')){
+        if (
+          this.state.purveyorIdList[this.state.pickerIdx] !== null &&
+          this.state.purveyorIdList[this.state.pickerIdx].hasOwnProperty('idx')
+        ) {
           selectedValue = this.state.purveyorIdList[this.state.pickerIdx].idx;
         }
         pickerItems.push(
@@ -127,12 +129,12 @@ class ProductCreate extends React.Component {
               })
             }}
           >
-          {pickerItems}
+            {pickerItems}
           </PickerIOS>
         );
         break;
       case 'category':
-        const categories = this.props.team.categories;
+        const categories = this.props.categories;
         if(this.state.category !== null && this.state.category.hasOwnProperty('id')){
           selectedValue = this.state.category.id;
         }
@@ -171,47 +173,54 @@ class ProductCreate extends React.Component {
               })
             }}
           >
-          {pickerItems}
+            {pickerItems}
           </PickerIOS>
         );
         break;
       case 'amount':
-        const units = ['bag', 'bunch', 'cs', 'dozen', 'ea', 'g', 'kg', 'lb', 'oz', 'pack', 'tub']
         const amounts = _.range(1, 500)
         picker = (
-          <MultiPickerIOS style={styles.picker}>
-            <Group
-              selectedValue={this.state.amount}
-              onChange={(e) => {
-                // console.log(e)
-                this.setState({
-                  amount: e.newValue,
-                  amountSelected: true
-                }, () => {
-                  this.submitReady();
-                });
-              }}
-            >
-              { amounts.map((num, idx) => {
-                return <Item value={num} key={idx} label={num.toString()} />
-              })}
-            </Group>
-            <Group
-              selectedValue={this.state.unit}
-              onChange={(e) => {
-                this.setState({
-                  unit: e.newValue,
+          <PickerIOS
+            selectedValue={this.state.amount}
+            onValueChange={(amount) => {
+              this.setState(
+                {
+                  amount: amount,
+                  amountSelected: true,
+                },
+                () => { this.submitReady(); }
+              )
+            }}
+          >
+            {
+              amounts.map((n, idx) => {
+                return <PickerIOS.Item key={idx} value={n} label={n.toString()} />
+              })
+            }
+          </PickerIOS>
+        );
+        break;
+      case 'units':
+        const units = ['bag', 'bunch', 'cs', 'dozen', 'ea', 'g', 'kg', 'lb', 'oz', 'pack', 'tub']
+        picker = (
+          <PickerIOS
+            selectedValue={this.state.unit}
+            onValueChange={(unit) => {
+              this.setState(
+                {
+                  unit: unit,
                   unitSelected: true,
-                }, () => {
-                  this.submitReady();
-                })
-              }}
-            >
-              { units.map((val, idx) => {
-                return <Item value={val} key={idx} label={val} />
-              })}
-            </Group>
-          </MultiPickerIOS>
+                },
+                () => { this.submitReady(); }
+              )
+            }}
+          >
+            {
+              units.map((unit, idx) => {
+                return <PickerIOS.Item key={idx} value={unit} label={unit} />
+              })
+            }
+          </PickerIOS>
         );
         break;
       case null:
@@ -232,7 +241,9 @@ class ProductCreate extends React.Component {
     purveyorIdList.forEach((selectedPurveyor, idx) => {
       purveyorInputs.push((
         <View key={`purveyor-${idx}`} style={styles.inputContainer}>
-          <Text style={styles.inputTitle}>{idx > 0 ? 'Additional Purveyor' : 'Purveyor'}</Text>
+          <Text style={styles.inputTitle}>
+            {idx > 0 ? 'Additional Purveyor' : 'Purveyor'}
+          </Text>
           <TouchableHighlight
             underlayColor='transparent'
             onPress={() => {
@@ -244,15 +255,16 @@ class ProductCreate extends React.Component {
             style={styles.inputFieldContainer}
           >
             <Text style={styles.inputField}>
-            { selectedPurveyor !== null ?
-              selectedPurveyor.name.substr(0,20) + (selectedPurveyor.name.length > 20 ? '...' : '')
-            : 'Select Purveyor' }
+            {
+              selectedPurveyor !== null ?
+                selectedPurveyor.name.substr(0,20) + (selectedPurveyor.name.length > 20 ? '...' : '')
+                : 'Select Purveyor'
+            }
             </Text>
           </TouchableHighlight>
         </View>
       ))
     })
-
     return purveyorInputs;
   }
 
@@ -262,7 +274,10 @@ class ProductCreate extends React.Component {
     const picker = this.getPicker()
     const purveyorInputs = this.getPurveyorInputs()
     return (
-      <ScrollView style={styles.scrollView}>
+      <ScrollView
+        automaticallyAdjustContentInsets={false}
+        style={styles.scrollView}
+      >
         <View key={'name'} style={styles.inputContainer}>
           <Text style={styles.inputTitle}>Name</Text>
           <TextInput
@@ -289,14 +304,14 @@ class ProductCreate extends React.Component {
             style={styles.inputFieldContainer}
           >
             <Text style={styles.inputField}>
-              { this.state.category ?
-                this.state.category.name :
-                'Select Category'
+              {
+                this.state.category ?
+                  this.state.category.name :
+                  'Select Category'
               }
             </Text>
           </TouchableHighlight>
         </View>
-
         <View style={styles.inputContainer}>
           <Text style={styles.inputTitle}>Amount</Text>
           <TouchableHighlight
@@ -309,11 +324,26 @@ class ProductCreate extends React.Component {
             style={styles.inputFieldContainer}
           >
             <Text style={styles.inputField}>
-              { this.state.amountSelected ? this.state.amount : 'Amount of'} {this.state.unitSelected ? this.state.unit : 'Units'}
+              { this.state.amountSelected ? this.state.amount : 'Amount' }
             </Text>
           </TouchableHighlight>
         </View>
-
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputTitle}>Units</Text>
+          <TouchableHighlight
+            underlayColor='transparent'
+            onPress={() => {
+              this.setState({
+                picker: 'units'
+              })
+            }}
+            style={styles.inputFieldContainer}
+          >
+            <Text style={styles.inputField}>
+              { this.state.unitSelected ? this.state.unit : 'Units' }
+            </Text>
+          </TouchableHighlight>
+        </View>
         {picker}
       </ScrollView>
     );
@@ -324,47 +354,28 @@ const styles = StyleSheet.create({
   inputContainer: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'center',
-    backgroundColor: '#fefefe',
-    borderRadius: 4,
+    justifyContent: 'space-around',
+    alignItems: 'center',
   },
   inputTitle: {
-    flex: 1,
+    // v- this with looks good on iPhone 6 plus and 4s
+    width: Dimensions.get('window').width * .4,
     fontFamily: 'OpenSans',
     fontWeight: 'bold',
     fontSize: 14,
     padding: 8,
-  },
-  picker: {
-    // width: Dimensions.get('window').width * .3,
-    // width: 500,
-    // paddingRight: 20,
-    // paddingLeft: 20,
-    // marginLeft: 20,
-    // alignItems: 'center',
-    // justifyContent: 'center',
-  },
-  group: {
-    // width: Dimensions.get('window').width,
-    // width: 555,
-    paddingRight: 20,
-    paddingLeft: 20,
-    marginLeft: 20,
+    color: Colors.greyText,
   },
   inputFieldContainer: {
-    flex: 2,
+    flex: 1,
   },
   inputField: {
-    backgroundColor: 'white',
-    borderWidth: 1,
-    color: '#777',
-    borderColor: '#f2f2f2',
-    borderRadius: 8,
     padding: 8,
     margin: 2,
     fontFamily: 'OpenSans',
     fontWeight: 'bold',
     fontSize: 14,
+    textAlign: 'right',
   },
   scrollView: {
     backgroundColor: '#f9f9f9',
@@ -374,6 +385,5 @@ const styles = StyleSheet.create({
     height: 20,
   },
 });
-
 
 module.exports = ProductCreate;

@@ -24,18 +24,17 @@ class CategoryIndex extends React.Component {
     const { categories, products } = this.props
 
     let categoriesList = _.map(_.sortBy(categories, 'name'), (category) => {
-      const categoryProducts = _.sortBy(_.filter(products, (product) => {
-        return category.products.indexOf(product.id) > -1
-      }), 'name')
-      return (
-        <CategoryIndexRow
-          key={category.id}
-          category={category}
-          onPress={() => {
-            this.props.onNavigateToCategory(category, categoryProducts)
-          }}
-        />
-      )
+      if (category.deleted === false) {
+        return (
+          <CategoryIndexRow
+            key={category.id}
+            category={category}
+            onPress={() => {
+              this.props.onNavigateToCategory(category.id)
+            }}
+          />
+        )
+      }
     })
 
     return (
@@ -50,9 +49,19 @@ class CategoryIndex extends React.Component {
           style={styles.createButton}
         >
           <Text style={styles.createButtonText}>Create New Product...</Text>
+        </TouchableHighlight>{/* */}
+        <TouchableHighlight
+          underlayColor='#eee'
+          onPress={this.props.onNavigateToPurveyorIndex}
+          style={styles.createButton}
+        >
+          <Text style={styles.createButtonText}>Order by Purveyor</Text>
         </TouchableHighlight>
-        <View style={styles.seperator} />{/* */}
-        <ScrollView keyboardShouldPersistTaps={false} >
+        <View style={styles.separator} />
+        <ScrollView
+          automaticallyAdjustContentInsets={false}
+          keyboardShouldPersistTaps={false}
+        >
           {categoriesList}
         </ScrollView>
       </View>
@@ -65,7 +74,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
-  seperator: {
+  separator: {
     height: 5,
     borderBottomColor: '#bbb',
     borderBottomWidth: 1,
@@ -79,14 +88,11 @@ const styles = StyleSheet.create({
     paddingTop: 0
   },
   createButton: {
-    backgroundColor: 'white',
-    padding: 10,
-    borderRadius: 7,
   },
   createButtonText: {
     color: Colors.navbarIconColor,
+    textAlign: 'center',
     padding: 5,
-    marginLeft: 10,
     fontFamily: 'OpenSans',
     fontSize: 16,
     fontWeight: 'bold',

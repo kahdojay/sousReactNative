@@ -15,7 +15,9 @@ const {
 class TeamIndexRow extends React.Component {
   render() {
     let { team, messages } = this.props
-    let memberCount = _.compact(team.users).length;
+    let memberCount = _.compact(_.filter(team.users, (userId) => {
+      return this.props.teamsUsers.hasOwnProperty(userId)
+    })).length;
 
     let filteredMessages = _.compact(messages.data.map((message) => {
       if (message != undefined && message.teamId === team.id)

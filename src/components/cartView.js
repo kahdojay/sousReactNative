@@ -1,8 +1,11 @@
-import { Icon } from 'react-native-icons';
 import React from 'react-native';
-import Colors from '../utilities/colors';
 import _ from 'lodash';
+import { Icon } from 'react-native-icons';
+import Colors from '../utilities/colors';
 import { nameSort } from '../utilities/utils';
+import {
+  CART
+} from '../actions/actionTypes';
 
 const {
   AlertIOS,
@@ -35,74 +38,108 @@ class CartView extends React.Component {
         'Confirm',
         'Are you sure you want to send order?',
         [
-          {text: 'No', onPress: () => {
-            // console.log('Order not sent')
-          }},
-          {text: 'Yes', onPress: () => {
-            const cartPurveyorsString = _.pluck(cartPurveyors, 'name').join(', ');
-            if(this.state.numberOfOrders > 0){
-              this.props.onSubmitOrder('Order sent to ' + cartPurveyorsString);
+          {
+            text: 'No',
+            onPress: () => {
+              // console.log('Order not sent')
             }
-          }}
+          },
+          {
+            text: 'Yes',
+            onPress: () => {
+              const cartPurveyorsString = _.pluck(cartPurveyors, 'name').join(', ');
+              if(this.state.numberOfOrders > 0){
+                this.props.onSubmitOrder('Order sent to ' + cartPurveyorsString);
+              }
+            }
+          }
         ]
       )
     }
     // TODO: handle empty cart error
   }
 
-  renderPurveyorProducts(purveyorId) {
-    //TODO dry this out by recieving necessary info from render()
-    const {team, purveyors, appState} = this.props
-    const cart = team.cart
-    const products = appState.teams.products
+  renderPurveyorProducts(purveyorId, cart, products) {
     const purveyorProducts = cart.orders[purveyorId].products
-
-    const cartPurveyorProductIds = Object.keys(cart.orders[purveyorId].products)
+    const cartPurveyorProductIds = Object.keys(purveyorProducts)
     const cartPurveyorProducts = _.map(cartPurveyorProductIds, (productId) => {
       return _.filter(products, {id: productId})[0]
     })
     cartPurveyorProducts.sort(nameSort)
 
     return cartPurveyorProducts.map((product) => {
-      // console.log('PRODUCT', product)
-      let quantity = purveyorProducts[product.id].quantity * product.amount
+      //TODO what was the intention here v
+      // let quantity = purveyorProducts[product.id].quantity * product.amount
+      let quantity = purveyorProducts[product.id].quantity
       const productName = product.name || '';
       return (
         <View key={product.id} style={styles.productContainer}>
-          <Text style={styles.productTitle}>{quantity} {product.unit}</Text>
           <Text style={styles.productTitle}>{productName}</Text>
+          <Text style={styles.productQuantity}>{quantity} {product.unit}</Text>
+          <TouchableHighlight
+            key={'decrement'}
+            onPress={() => {
+              if (quantity > 1) {
+                const cartAttributes = {
+                  purveyorId: purveyorId,
+                  productId: product.id,
+                  quantity: quantity - 1,
+                };
+                this.props.onUpdateProductInCart(CART.ADD, cartAttributes)
+              }
+            }}
+            style={{width: 40, alignItems: 'center'}}
+            underlayColor='transparent'
+          >
+            <Icon
+              name='fontawesome|minus-circle'
+              size={30}
+              color='#aaa'
+              style={styles.icon}
+            />
+          </TouchableHighlight>
+          <TouchableHighlight
+            key={'increment'}
+            onPress={() => {
+              const cartAttributes = {
+                purveyorId: purveyorId,
+                productId: product.id,
+                quantity: quantity + 1,
+              };
+              this.props.onUpdateProductInCart(CART.ADD, cartAttributes)
+            }}
+            style={{width: 40, alignItems: 'center'}}
+            underlayColor='transparent'
+          >
+            <Icon
+              name='fontawesome|plus-circle'
+              size={30}
+              color='#aaa'
+              style={styles.icon}
+            />
+          </TouchableHighlight>
           <TouchableHighlight
             onPress={() => {
-              // console.log('delete ITEM');
               this.props.onDeleteProduct(purveyorId, product.id)
             }}
-            underlayColor='transparent'>
-            <Icon name='fontawesome|times' size={25} color='#999' style={styles.icon} />
+            style={{width: 40, alignItems: 'center'}}
+            underlayColor='transparent'
+          >
+            <Icon
+              name='fontawesome|times'
+              size={25}
+              color='#999'
+              style={styles.iconRemove}
+            />
           </TouchableHighlight>
         </View>
       )
     });
   }
 
-  renderPurveyors(cartPurveyors) {
-    return _.map(cartPurveyors, (purveyor) => {
-      return (
-        <View key={purveyor.id} style={styles.purveyorContainer}>
-          <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
-          {this.renderPurveyorProducts(purveyor.id)}
-        </View>
-      );
-    })
-  }
-
   render() {
-    const buttonStyle = this.state.numberOfOrders > 0 ?
-                                    styles.button :
-                                    [styles.button, styles.buttonDisabled];
-    const { team, purveyors, appState } = this.props
+    const {team, purveyors, products} = this.props
     const cart = team.cart
-    const products = appState.teams.products
-
     const cartPurveyorIds = Object.keys(cart.orders)
     const cartPurveyors = _.map(cartPurveyorIds, (purveyorId) => {
       return _.filter(purveyors, {id: purveyorId})[0]
@@ -111,10 +148,22 @@ class CartView extends React.Component {
 
     return (
       <ScrollView style={styles.scrollView}>
-        {this.renderPurveyors(cartPurveyors)}
+        {
+          _.map(cartPurveyors, (purveyor) => {
+            return (
+              <View key={purveyor.id} style={styles.purveyorContainer}>
+                <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
+                {this.renderPurveyorProducts(purveyor.id, cart, products)}
+              </View>
+            );
+          })
+        }
         <TouchableHighlight
           onPress={this.handleSubmitPress.bind(this, cartPurveyors)}
-          style={buttonStyle}
+          style={[
+            styles.button,
+            this.state.numberOfOrders === 0 && styles.buttonDisabled
+          ]}
           underlayColor={Colors.disabled}
         >
           <Text style={styles.buttonText}>Submit Order</Text>
@@ -132,10 +181,13 @@ let styles = StyleSheet.create({
   icon: {
     width: 30,
     height: 30,
+  },
+  iconRemove: {
+    width: 30,
+    height: 30,
     borderWidth: 2,
     borderColor: '#999',
     borderRadius: 4,
-    marginTop: 4,
   },
   productContainer: {
     flex: 1,
@@ -143,6 +195,7 @@ let styles = StyleSheet.create({
     backgroundColor: 'white',
     marginTop: 1,
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingRight: 5,
   },
   purveyorTitle: {
@@ -156,11 +209,17 @@ let styles = StyleSheet.create({
     fontSize: 18,
   },
   productTitle: {
-    padding: 8,
+    flex: 1,
+    paddingTop: 10,
+    paddingLeft: 5,
+    paddingBottom: 10,
     fontFamily: 'OpenSans',
     fontSize: 14,
-    backgroundColor: 'white',
-    marginTop: 1,
+  },
+  productQuantity: {
+    width: 50,
+    margin: 5,
+    textAlign: 'right',
   },
   buttonText: {
     alignSelf: 'center',

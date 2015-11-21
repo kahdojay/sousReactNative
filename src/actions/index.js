@@ -6,6 +6,8 @@ import SessionActions from './session'
 import TeamActions from './team'
 import MessageActions from './message'
 import PurveyorActions from './purveyor'
+import ProductActions from './product'
+import CategoryActions from './category'
 import ErrorActions from './error'
 
 const ddpClient = new DDPClient({
@@ -33,6 +35,8 @@ const teamActions = TeamActions(ddpClient, {
   'messageActions': messageActions
 })
 const purveyorActions = PurveyorActions(ddpClient)
+const productActions = ProductActions(ddpClient)
+const categoryActions = CategoryActions(ddpClient)
 
 function connectApp(){
   return (dispatch) => {
@@ -44,7 +48,7 @@ function connectApp(){
     dispatch(sessionActions.resetSessionVersion());
     // dispatch(uiActions.resetUI()); //NOTE: why doesnt this work?
     dispatch(messageActions.resetMessages());
-    dispatch(purveyorActions.resetPurveyors());
+    // dispatch(purveyorActions.resetPurveyors());
 
     //--------------------------------------
     // Bind app events
@@ -62,6 +66,8 @@ function connectApp(){
       'teamActions': teamActions,
       'messageActions': messageActions,
       'purveyorActions': purveyorActions,
+      'categoryActions': categoryActions,
+      'productActions': productActions,
       'errorActions': errorActions
     }));
   }
@@ -76,5 +82,7 @@ export default Object.assign({
   teamActions,
   messageActions,
   purveyorActions,
+  productActions,
+  categoryActions,
   errorActions
 )

@@ -24,14 +24,14 @@ class CategoryView extends React.Component {
   }
 
   render() {
-    const {cart, category, products} = this.props
+    const {cart, category, products, purveyors} = this.props;
     return (
       <View style={styles.container}>
         <ProductList
           cart={cart}
           productsCount={category.products.length}
           products={products}
-          purveyors={this.props.purveyors}
+          purveyors={purveyors}
           onUpdateProductInCart={this.props.onUpdateProductInCart}
         />
       </View>

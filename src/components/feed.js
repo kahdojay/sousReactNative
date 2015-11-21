@@ -1,7 +1,7 @@
 import { Icon } from 'react-native-icons';
 import React from 'react-native';
 import AddMessageForm from './addMessageForm';
-import { mainBackgroundColor } from '../utilities/colors';
+import { mainBackgroundColor, darkBlue } from '../utilities/colors';
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
 let SideMenu = require('react-native-side-menu');
 import Menu from './menu';
@@ -32,7 +32,8 @@ class Button extends React.Component {
       <View>
         <TouchableOpacity
           onPress={this.handlePress.bind(this)}
-          style={this.props.style}>
+          style={this.props.style}
+        >
           <Text>{this.props.children}</Text>
         </TouchableOpacity>
       </View>
@@ -110,34 +111,53 @@ class Feed extends React.Component {
             ref='scrollview'
           >
             {
-                _.filter(messages.data, (msg) => {
-                  return msg.teamId === session.teamId
-                }).map((msg, index) => {
-                  let date = new Date(msg.createdAt).toLocaleTimeString();
-                  let time = date.substring(date.length-3, date.length)
-                  let icon = <Icon name='fontawesome|user' size={25} color='#777' style={styles.avatar}/>
-                  if (msg.imageUrl) {
-                    icon = <Image source={{uri: msg.imageUrl}} style={styles.avatarImage} />
-                  }
-                  return (
-                    <View key={index} style={styles.messageContainer}>
-                      <View style={styles.message}>
-                        {icon}
-                        <View style={styles.messageContentContainer}>
-                          <View style={styles.messageTextContainer}>
-                            <Text style={styles.messageAuthor}>{msg.author}</Text>
-                            <Text style={styles.messageTimestamp}>
-                              {date.substring(0, date.length-6)}{time}
-                            </Text>
-                          </View>
-                          <Text style={styles.messageText} key={index}>{msg.message}</Text>
-                        </View>
-                      </View>
-                      <View style={styles.separator} />
-                    </View>
-                  )
+              _.filter(messages.data, (msg) => {
+                return msg.teamId === session.teamId
+              }).map((msg, index) => {
+                let date = new Date(msg.createdAt).toLocaleTimeString();
+                let time = date.substring(date.length-3, date.length)
+                let icon = <Icon name='fontawesome|user' size={25} color='#777' style={styles.avatar}/>
+                if (msg.imageUrl) {
+                  icon = <Image source={{uri: msg.imageUrl}} style={styles.avatarImage} />
                 }
-              )
+                let messageString = '';
+                if (msg.type === 'taskCompletion') {
+                  // msg.message is task name
+                  messageString = (
+                    <Text style={styles.messageText}>{msg.author} completed
+                      <Text style={{fontWeight: 'bold'}}> {msg.message}</Text>
+                    </Text>
+                  );
+                } else if (msg.type === 'order') {
+                  messageString = (
+                    <Text style={styles.messageText}>Order has been sent to
+                      <Text style={{fontWeight: 'bold'}}> {msg.purveyor}</Text>
+                    </Text>
+                  );
+                } else {
+                  messageString = (
+                    <Text style={styles.messageText} >{msg.message}</Text>
+                  );
+                }
+                return (
+                  <View key={index} style={styles.messageContainer}>
+                    <View style={styles.message}>
+                      {this.props.teamsUsers[msg.userId].superUser === true ? <Text style={{position: 'absolute', top: 7, left: 2, color: darkBlue, backgroundColor: 'transparent'}}>*</Text> : <View/>}
+                      {icon}
+                      <View style={styles.messageContentContainer}>
+                        <View style={styles.messageTextContainer}>
+                          <Text style={styles.messageAuthor}>{msg.author}</Text>
+                          <Text style={styles.messageTimestamp}>
+                            {date.substring(0, date.length-6)}{time}
+                          </Text>
+                        </View>
+                        {messageString}
+                      </View>
+                    </View>
+                    <View style={styles.separator} />
+                  </View>
+                )
+              })
             }
           </InvertibleScrollView>
           <AddMessageForm
