@@ -47,24 +47,28 @@ class InviteView extends React.Component {
         contacts = []
         this.state.contacts.forEach((contact, idx) => {
           contacts.push(
-            <TouchableHighlight key={idx} underlayColor="#eee" style={{paddingTop: 10,}}>
+            <TouchableHighlight key={idx} underlayColor="#eee" >
               <View style={styles.contactRow} >
                 <View style={styles.row} >
                   <Text style={styles.contactFirstName}>{contact.firstName} </Text>
                   <Text style={styles.contactLastName}>{contact.lastName}</Text>
                 </View>
-                <CheckBox
-                  label=''
-                  onChange={(checked) => {
-                    this.setState({ contacts: this.state.contacts.map(function(c) {
-                      if (c.recordID === contact.recordID) {
-                        c.selected = !c.selected;
-                      }
-                      return c;
-                    })})
-                  }}
-                  checked={contact.selected}
-                />
+                <View style={{paddingTop: 5}} >
+                  <CheckBox
+                    checked={contact.selected}
+                    label=''
+                    onChange={(checked) => {
+                      this.setState({
+                        contacts: this.state.contacts.map(function(c) {
+                          if (c.recordID === contact.recordID) {
+                            c.selected = !c.selected;
+                          }
+                          return c;
+                        })
+                      })
+                    }}
+                  />
+                </View>
               </View>
             </TouchableHighlight>
           );
@@ -80,7 +84,10 @@ class InviteView extends React.Component {
       }
 
       return (
-        <ScrollView style={styles.container}>
+        <ScrollView
+          automaticallyAdjustContentInsets={false}
+          style={styles.container}
+        >
           {submitButton}
           {contacts}
           {submitButton}
@@ -95,10 +102,11 @@ let styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingRight: 10,
     paddingLeft: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee'
+    borderBottomColor: '#ddd',
   },
   row: {
     flexDirection: 'row',
@@ -116,9 +124,10 @@ let styles = StyleSheet.create({
   },
   button: {
     height: 56,
+    width: 150,
+    margin: 5,
     backgroundColor: '#F5A623',
     alignSelf: 'center',
-    width: 150,
     justifyContent: 'center',
     borderRadius: 3,
   },

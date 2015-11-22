@@ -21,55 +21,57 @@ class ProductList extends React.Component {
 
   componentWillMount() {
     this.setState({
-      products: this.props.products.slice(0,10)
+      products: this.props.products.slice(0,15)
     })
   }
 
   componentDidMount() {
-    if(this.props.products.length > 10){
+    if(this.props.products.length > 15){
       setTimeout(() => {
         this.setState({
-          products: this.props.products.slice(0,21)
+          products: this.props.products.slice(0,30)
         })
-      }, 200)
+      }, 300)
     }
-    if(this.props.products.length > 21){
+    if(this.props.products.length > 30){
       setTimeout(() => {
         this.setState({
-          products: this.props.products.slice(0,50)
+          products: this.props.products.slice(0,60)
         })
-      }, 400)
+      }, 500)
     }
-    if(this.props.products.length > 50){
+    if(this.props.products.length > 60){
       setTimeout(() => {
         this.setState({
           products: this.props.products
         })
-      }, 800)
+      }, 700)
     }
   }
 
   render() {
-    const {cart} = this.props
+    const {cart, purveyors} = this.props
     let productList = []
     if(this.state.products !== null){
-      productList = _.map(this.state.products, (product, idx) => {
-        let loadDelay = 50
+      this.state.products.forEach((product, idx) => {
+        if(product === null){
+          return;
+        }
+        let loadDelay = 250
         // for everything off screen
-        // - index greater than 10
-        // - multiplied by fibonacci sequence
+        // - index greater than 15
         if(idx > 130){
-          loadDelay = 900
+          loadDelay = 1000
         } else if(idx > 80){
-          loadDelay = 800
+          loadDelay = 900
         } else if(idx > 50){
-          loadDelay = 700
+          loadDelay = 800
         } else if(idx > 30){
-          loadDelay = 600
+          loadDelay = 700
         } else if(idx > 20) {
+          loadDelay = 600
+        } else if(idx > 15) {
           loadDelay = 500
-        } else if(idx > 10) {
-          loadDelay = 300
         }
 
         let cartItem = null
@@ -80,24 +82,26 @@ class ProductList extends React.Component {
             cartItem = cart.orders[purveyorId].products[product.id]
           }
         })
-
-        return (
+        productList.push((
           <ProductListItem
             cartItem={cartItem}
             cartPurveyorId={cartPurveyorId}
             loadDelay={loadDelay}
-            product={product}
             key={idx}
-            purveyors={this.props.purveyors}
+            product={product}
+            purveyors={purveyors}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               this.props.onUpdateProductInCart(cartAction, cartAttributes)
             }}
           />
-        )
+        ))
       })
     }
     return (
-      <ScrollView keyboardShouldPersistTaps={false} >
+      <ScrollView
+        automaticallyAdjustContentInsets={false}
+        keyboardShouldPersistTaps={false}
+      >
         {productList}
       </ScrollView>
     );

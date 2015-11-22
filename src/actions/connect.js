@@ -61,17 +61,15 @@ export default function ConnectActions(ddpClient) {
       }
 
       if(session.isAuthenticated === true){
-        if(teamIds !== undefined && teamIds.length > 0){
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [teamIds]))
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS_USERS.channel, [teamIds]))
+        if(teamIds !== undefined && teamIds.length > 0 && session.userId !== null){
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [session.userId, teamIds]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS_USERS.channel, [session.userId, teamIds]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [session.userId, teamIds]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CATEGORIES.channel, [session.userId, teamIds]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PRODUCTS.channel, [session.userId, teamIds]))
         }
         if(session.userId !== null){
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS.channel, [session.userId]))
-        }
-        if(session.teamId !== null){
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [session.teamId]))
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CATEGORIES.channel, [session.teamId]))
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PRODUCTS.channel, [session.teamId]))
         }
       }
     }
@@ -88,6 +86,8 @@ export default function ConnectActions(ddpClient) {
       teamActions,
       messageActions,
       purveyorActions,
+      productActions,
+      categoryActions,
       errorActions
     } = allActions
 
@@ -128,10 +128,10 @@ export default function ConnectActions(ddpClient) {
               dispatch(purveyorActions.receivePurveyors(data))
               break;
             case 'categories':
-              dispatch(teamActions.receiveCategories(data))
+              dispatch(categoryActions.receiveCategories(data))
               break;
             case 'products':
-              dispatch(teamActions.receiveProducts(data))
+              dispatch(productActions.receiveProducts(data))
               break;
             case 'users':
               // console.log("MAIN DDP WITH FIELDS MSG: ", log);
@@ -161,6 +161,7 @@ export default function ConnectActions(ddpClient) {
                   'firstName': data.firstName,
                   'lastName': data.lastName,
                   'username': data.username,
+                  'superUser': data.superUser,
                 }
                 dispatch(teamActions.receiveTeamsUsers(teamUserData))
               }

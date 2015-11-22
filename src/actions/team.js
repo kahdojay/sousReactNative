@@ -11,8 +11,6 @@ import {
   GET_TEAMS,
   REQUEST_TEAMS,
   RECEIVE_TEAMS,
-  RECEIVE_CATEGORIES,
-  RECEIVE_PRODUCTS,
   RECEIVE_TEAMS_USERS,
   ERROR_TEAMS,
   ADD_TEAM,
@@ -54,7 +52,6 @@ export default function TeamActions(ddpClient, allActions) {
           _id: Shortid.generate(),
           name: name,
           tasks: [],
-          categories: teams.defaultCategories,
           users: [session.userId],
           cart: {
             date: null,
@@ -82,9 +79,9 @@ export default function TeamActions(ddpClient, allActions) {
     }
   }
 
-  function completeTeamTask(messageText) {
+  function completeTeamTask(message) {
     return (dispatch) => {
-      dispatch(messageActions.createMessage(messageText))
+      dispatch(messageActions.createMessage(message))
       return dispatch({
         type: COMPLETE_TEAM_TASK
       });
@@ -236,20 +233,6 @@ export default function TeamActions(ddpClient, allActions) {
         team: team,
         sessionTeamId: session.teamId
       })
-    }
-  }
-
-  function receiveCategories(category) {
-    return {
-      type: RECEIVE_CATEGORIES,
-      category: category
-    }
-  }
-
-  function receiveProducts(product) {
-    return {
-      type: RECEIVE_PRODUCTS,
-      product: product
     }
   }
 
@@ -432,9 +415,7 @@ export default function TeamActions(ddpClient, allActions) {
     GET_TEAMS,
     REQUEST_TEAMS,
     RECEIVE_TEAMS,
-    RECEIVE_CATEGORIES,
     RECEIVE_TEAMS_USERS,
-    RECEIVE_PRODUCTS,
     ERROR_TEAMS,
     ADD_TEAM,
     UPDATE_TEAM,
@@ -447,8 +428,6 @@ export default function TeamActions(ddpClient, allActions) {
     deleteTeam,
     // getTeams,
     receiveTeams,
-    receiveCategories,
-    receiveProducts,
     receiveTeamsUsers,
     updateProductInCart,
     sendCart,

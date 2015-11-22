@@ -2,6 +2,7 @@ import _ from 'lodash'
 import { Icon } from 'react-native-icons';
 import React from 'react-native';
 import Dimensions from 'Dimensions';
+import pkgInfo from 'json!../../package.json';
 
 const {
   StyleSheet,
@@ -21,6 +22,8 @@ const window = Dimensions.get('window');
 module.exports = class Menu extends React.Component {
   render() {
     const {team, session} = this.props
+    const version = pkgInfo.version;
+    const build = pkgInfo.build;
     if (!session.teamId || !team) {
       return <View />;
     }
@@ -102,20 +105,18 @@ module.exports = class Menu extends React.Component {
                 </View>
               </TouchableHighlight>
             )}
-            {(nonNotepadTeam === false) ? <View/> : (
-              <TouchableHighlight
-                onPress={this.props.onNavToTeamIndex}
-                style={styles.menuItemButton}
-                underlayColor='#3e444f'
-              >
-                <View style={styles.menuTextContainer}>
-                  <Icon name='fontawesome|random' size={20} color='white' style={styles.menuIcon}/>
-                  <Text style={styles.menuItemText}>
-                    Switch Teams
-                  </Text>
-                </View>
-              </TouchableHighlight>
-            )}
+            <TouchableHighlight
+              onPress={this.props.onNavToTeamIndex}
+              style={styles.menuItemButton}
+              underlayColor='#3e444f'
+            >
+              <View style={styles.menuTextContainer}>
+                <Icon name='fontawesome|random' size={20} color='white' style={styles.menuIcon}/>
+                <Text style={styles.menuItemText}>
+                  Switch Teams
+                </Text>
+              </View>
+            </TouchableHighlight>
             {(nonNotepadTeam === false) ? <View/> : (
               <TouchableHighlight
                 onPress={() => this.props.toggleInviteModal(true)}
@@ -135,6 +136,7 @@ module.exports = class Menu extends React.Component {
         <View style={styles.separator} />
         <View style={styles.teamNameContainer}>
           <Text style={styles.teamName}>{team ? team.name : ''}</Text>
+          <Text style={styles.buildInfo}>version: {version} - build: {build}</Text>
         </View>
       </View>
     );
@@ -157,9 +159,9 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   avatar: {
-    width: 55,
-    height: 55,
-    borderRadius: 34,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
   name: {
     flex: 1,
@@ -236,10 +238,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#3e444f',
     justifyContent: 'center',
-    paddingBottom: 20
+    paddingBottom: 10,
   },
   teamName: {
     color: 'white',
     fontFamily: 'OpenSans',
   },
+  buildInfo: {
+    fontFamily: 'OpenSans',
+    fontSize: 10,
+    color: '#aaaaaa',
+  }
 });

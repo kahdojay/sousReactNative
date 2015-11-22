@@ -54,8 +54,6 @@ class ProductToggle extends React.Component {
       />
     );
 
-    // console.log(this.props.added)
-
     const modalShowButton = (
       <ModalToggle onPress={this._setModalVisible.bind(this, true)} >
         <Icon
@@ -68,7 +66,8 @@ class ProductToggle extends React.Component {
     );
 
     const purveyorsArray = this.props.availablePurveyors.map((purveyorId, idx) => {
-      const purveyorName = _.find(this.props.allPurveyors.data, { id: purveyorId }).name;
+      const purveyor = _.find(this.props.allPurveyors, { id: purveyorId });
+      const purveyorName = purveyor ? purveyor.name : '';
       return (
         <ModalToggle
           key={idx}
@@ -79,20 +78,29 @@ class ProductToggle extends React.Component {
         </ModalToggle>
       )
     })
+
     return (
       <View>
         <Modal
           animated={true}
           transparent={true}
-          visible={this.state.modalVisible}>
-          <View style={styles.container}>
+          visible={this.state.modalVisible}
+        >
+          <TouchableHighlight
+            onPress={() => this._setModalVisible(false)}
+            style={styles.container}
+            underlayColor="rgba(0, 0, 0, 0.5)"
+          >
             <View style={styles.innerContainer}>
               <Text style={styles.modalHeader}>Select Purveyor</Text>
               {purveyorsArray}
             </View>
-          </View>
+          </TouchableHighlight>
         </Modal>
-        {this.props.added === false && this.props.availablePurveyors.length > 1 ? modalShowButton : checkbox}
+        {
+          this.props.added === false &&
+          this.props.availablePurveyors.length > 1 ? modalShowButton : checkbox
+        }
       </View>
     );
   }

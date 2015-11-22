@@ -24,7 +24,8 @@ class FeedViewRightButton extends React.Component {
     return (
       <TouchableHighlight
         underlayColor='white'
-        onPress={this.handlePress.bind(this)} >
+        onPress={this.handlePress.bind(this)}
+      >
         <Icon
           name='fontawesome|comment-o'
           size={30}
@@ -40,7 +41,7 @@ let styles = StyleSheet.create({
   bubble: {
     width: 50,
     height: 50,
-    marginTop: 6,
+    marginTop: 12,
   }
 })
 

@@ -15,4 +15,4 @@ export const DDP = {
   },
 }
 
-export const SESSION_VERSION = 1444868918576
+export const SESSION_VERSION = 1448129295000

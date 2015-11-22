@@ -22,19 +22,23 @@ class PurveyorView extends React.Component {
   }
 
   render() {
-    let purveyor = this.props.purveyor
-
+    const {purveyors, products, cart} = this.props;
     return (
       <View style={styles.container}>
+      {/*}
         <AddForm
           placeholder="Add a Product..."
           onSubmit={(productName) => {
             this.props.onAddNewProduct(purveyor.id, productName)
           }}
         />
+        */}
         <ProductList
-          purveyor={purveyor}
+          cart={cart}
+          products={products}
+          purveyors={purveyors}
           onUpdatePurveyorProduct={this.props.onUpdatePurveyorProduct}
+          onUpdateProductInCart={this.props.onUpdateProductInCart}
         />
       </View>
     )

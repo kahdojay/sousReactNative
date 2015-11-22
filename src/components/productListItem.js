@@ -3,9 +3,7 @@ import ProductToggle from './productToggle'
 import { Icon } from 'react-native-icons'
 import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
 import _ from 'lodash';
-import {
-  CART
-} from '../actions/actionTypes';
+import { CART } from '../actions/actionTypes';
 
 const {
   TouchableHighlight,
@@ -20,6 +18,7 @@ class ProductListItem extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      shouldUpdate: false,
       product: null,
       purveyors: null,
       added: false,
@@ -32,28 +31,41 @@ class ProductListItem extends React.Component {
     this.loadTimeoutId = null
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return nextState.shouldUpdate;
+  }
+
+  componentDidUpdate(){
+    this.setState({
+      shouldUpdate: false,
+    })
+  }
+
   componentWillReceiveProps(nextProps) {
     // delay update from receiving props
     clearTimeout(this.timeoutId);
     this.timeoutId = setTimeout(() => {
       this.localStateUpdateFromCart(nextProps.cartItem, nextProps.cartPurveyorId)
-    }, 1000);
+    }, 10);
   }
 
   componentDidMount() {
     this.loadTimeoutId = setTimeout(() => {
       this.setState({
-        product: this.props.product,
-        purveyors: this.props.purveyors,
-        selectedPurveyorId: this.props.product.purveyors[0],
-      }, () => {
-        this.localStateUpdateFromCart(this.props.cartItem, this.props.cartPurveyorId)
-      })
+          shouldUpdate: true,
+          product: this.props.product,
+          purveyors: this.props.purveyors,
+          selectedPurveyorId: this.props.product.purveyors[0],
+        },
+        () => {
+          this.localStateUpdateFromCart(this.props.cartItem, this.props.cartPurveyorId)
+        }
+      )
     }, this.props.loadDelay)
   }
 
   componentWillUnmount() {
-    clearTimeout(this.timeoutId)
+    // clearTimeout(this.timeoutId)
     clearTimeout(this.loadTimeoutId)
   }
 
@@ -87,11 +99,13 @@ class ProductListItem extends React.Component {
     this.props.onUpdateProductInCart(
       (this.state.added === true ? CART.ADD : CART.REMOVE),
       cartAttributes
-    )
+    );
+
   }
 
   increment() {
     this.setState({
+      shouldUpdate: true,
       quantity: this.state.quantity + 1
     }, this.cartUpdateFromLocalState.bind(this))
   }
@@ -99,6 +113,7 @@ class ProductListItem extends React.Component {
   decrement() {
     if (this.state.quantity > 1 ) {
       this.setState({
+        shouldUpdate: true,
         quantity: this.state.quantity - 1
       }, this.cartUpdateFromLocalState.bind(this))
     }
@@ -106,23 +121,32 @@ class ProductListItem extends React.Component {
 
   handleToggleProduct(purveyorId) {
     this.setState({
+      shouldUpdate: true,
       added: !this.state.added,
       selectedPurveyorId: purveyorId
     }, this.cartUpdateFromLocalState.bind(this))
   }
 
   render() {
-    let {product, purveyors} = this.state
-    // console.log(this.state.selectedPurveyorId);
+    const {product} = this.state
+    const {purveyors} = this.props;
 
-    let productInfo = (<View style={styles.row}><View style={styles.main}><Text style={[styles.productText, {padding: 12}]}>Loading...</Text></View></View>);
+    let productInfo = (
+      <View style={styles.row}>
+        <View style={styles.main}>
+          <Text style={[styles.productText, {padding: 12}]}>Loading...</Text>
+        </View>
+      </View>
+    );
     if(this.state.product !== null){
       let purveyorString = ""
-      const purveyorIdx = _.findIndex(purveyors.data, { id: this.state.selectedPurveyorId }); //.name;
-      if(purveyorIdx > -1){
-        purveyorString = purveyors.data[purveyorIdx].name || '-NOT SET-'
+      if(purveyors.hasOwnProperty(this.state.selectedPurveyorId) === true){
+        purveyorString = purveyors[this.state.selectedPurveyorId].name || '-NOT SET-'
+      } else {
+        // Single purveyor, grab name off props.purveyors
+        const purveyorIds = Object.keys(purveyors)
+        purveyorString = purveyors[purveyorIds[0]].name
       }
-      // console.log(this.state.added)
       productInfo = (
         <View style={styles.row}>
           <View style={styles.checkboxContainer}>
@@ -174,7 +198,6 @@ class ProductListItem extends React.Component {
         </View>
       )
     }
-
 
     return (
       <View style={styles.container}>

@@ -1,6 +1,7 @@
 {
   "name": "sousmobile",
-  "version": "0.0.1",
+  "version": "0.4.1",
+  "build": 1,
   "private": true,
   "scripts": {
     "start": "HOT=1 ./node_modules/.bin/react-native-webpack-server start --hot",
@@ -17,7 +18,7 @@
     "react-native": "^0.11.0",
     "react-native-addressbook": "^1.2.0",
     "react-native-icons": "^0.4.0",
-    "react-native-image-picker": "^0.7.1",
+    "react-native-image-picker": "^0.9.0",
     "react-native-invertible-scroll-view": "^0.1.2",
     "react-native-keyboard-spacer": "^0.1.1",
     "react-native-multipicker": "^0.1.1",
@@ -36,6 +37,7 @@
     "babel-plugin-react-transform": "^1.1.1",
     "babel-runtime": "^5.8.25",
     "chai": "^3.3.0",
+    "json-loader": "^0.5.3",
     "mocha": "^2.3.3",
     "mocha-traceur": "^2.1.0",
     "react-native-webpack-server": "^0.7.1",
