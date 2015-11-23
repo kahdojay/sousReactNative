@@ -1,5 +1,6 @@
 import React from 'react-native';
-import { Icon } from 'react-native-icons'
+import _ from 'lodash';
+import { Icon } from 'react-native-icons';
 import ProductList from '../components/productList';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
@@ -23,6 +24,7 @@ class PurveyorView extends React.Component {
 
   render() {
     const {purveyors, products, cart} = this.props;
+
     return (
       <View style={styles.container}>
       {/*}
