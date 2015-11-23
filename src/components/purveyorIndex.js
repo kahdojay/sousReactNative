@@ -19,7 +19,6 @@ const {
 
 class PurveyorIndex extends React.Component {
   render() {
-    let self = this
     const { purveyors, products, session } = this.props
 
     let purveyorsList = _.map(_.sortBy(purveyors, 'name'), (purveyor) => {
@@ -29,7 +28,7 @@ class PurveyorIndex extends React.Component {
               key={purveyor.id}
               purveyor={purveyor}
               onPress={() => {
-                this.props.onNavToPurveyor(purveyor)
+                this.props.onNavToPurveyor(purveyor.id)
               }}
             />
           )

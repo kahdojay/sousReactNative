@@ -36,7 +36,7 @@ class App extends React.Component {
       firstName: this.props.session.firstName,
       lastName: this.props.session.lastName,
       category: null,
-      categoryProducts: null,
+      specificProducts: null,
       purveyor: null,
       currentTeam: this.props.teams.currentTeam,
       contactList: [],
@@ -247,11 +247,18 @@ class App extends React.Component {
           <Components.PurveyorIndex
             purveyors={currentTeamPurveyors}
             session={session}
-            onNavToPurveyor={(purveyor) => {
-              this.setState({ purveyor: purveyor, })
-              nav.push({
-                name: 'PurveyorView',
-                purveyorId: purveyor.id
+            onNavToPurveyor={(purveyorId) => {
+              const purveyor = currentTeamPurveyors[purveyorId];
+              this.setState({
+                purveyor: purveyor,
+                specificProducts: _.sortBy(_.filter(currentTeamProducts, (product) => {
+                  return _.includes(product.purveyors, purveyor.id)
+                }), 'name')
+              }, () => {
+                nav.push({
+                  name: 'PurveyorView',
+                  purveyorId: purveyor.id
+                })
               })
             }}
             onAddPurveyor={(name) => {
@@ -268,17 +275,17 @@ class App extends React.Component {
           />
         )
       case 'PurveyorView':
-        let purveyor = currentTeamPurveyors[route.purveyorId]
-        let products = _.filter(currentTeamProducts, (product) => {
-          return _.includes(product.purveyors, purveyor.id)
-        })
+        // let purveyor = currentTeamPurveyors[route.purveyorId]
+        // let products = _.filter(currentTeamProducts, (product) => {
+        //   return _.includes(product.purveyors, purveyor.id)
+        // })
         return (
           <Components.PurveyorView
             cart={this.state.currentTeam.cart}
             ui={ui}
-            purveyor={purveyor}
+            purveyor={this.state.purveyor}
             purveyors={currentTeamPurveyors}
-            products={products}
+            products={this.state.specificProducts}
             onAddNewProduct={(purveyorId, productName) => {
               const products = purveyor.products.map((product) => {
                 if (!product.deleted) {
@@ -335,9 +342,9 @@ class App extends React.Component {
               const category = currentTeamCategories[categoryId]
               this.setState({
                 category: category,
-                categoryProducts: _.map(category.products, (productId) => {
-                  return currentTeamProducts[productId] || null
-                })
+                specificProducts: _.sortBy(_.map(category.products, (productId) => {
+                  return currentTeamProducts[productId] || {id: '', name: '', deleted:true }
+                }), 'name')
               }, () => {
                 nav.push({
                   name: 'CategoryView',
@@ -363,7 +370,7 @@ class App extends React.Component {
             ui={ui}
             category={this.state.category}
             cart={this.state.currentTeam.cart}
-            products={this.state.categoryProducts}
+            products={this.state.specificProducts}
             purveyors={currentTeamPurveyors}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               _.debounce(() => {

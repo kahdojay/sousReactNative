@@ -1,12 +1,11 @@
 import React from 'react-native';
-import _ from 'lodash'
-import { Icon } from 'react-native-icons'
+import _ from 'lodash';
+import { Icon } from 'react-native-icons';
 import ProductList from '../components/productList';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
 import AddForm from './addForm';
 import Colors from '../utilities/colors';
-import { nameSort } from '../utilities/utils';
 
 const {
   StyleSheet,
