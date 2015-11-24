@@ -73,7 +73,7 @@ class CartView extends React.Component {
       return (
         <View key={product.id} style={styles.productContainer}>
           <Text style={styles.productTitle}>{productName}</Text>
-          <Text style={styles.productQuantity}>{quantity} {product.unit}</Text>
+          <Text style={styles.productQuantity}>{quantity} {product.unit}{(quantity > 1) ? 's' : ''}</Text>
           <TouchableHighlight
             key={'decrement'}
             onPress={() => {
