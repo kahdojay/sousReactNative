@@ -74,7 +74,7 @@ class CartView extends React.Component {
         <View key={product.id} style={styles.productContainer}>
           <Text style={styles.productTitle}>{productName}</Text>
           <Text style={styles.productQuantity}>{quantity} {product.unit}{(quantity > 1) ? 's' : ''}</Text>
-          <TouchableHighlight
+          {/* * /}<TouchableHighlight
             key={'decrement'}
             onPress={() => {
               if (quantity > 1) {
@@ -115,7 +115,7 @@ class CartView extends React.Component {
               color='#aaa'
               style={styles.icon}
             />
-          </TouchableHighlight>
+        </TouchableHighlight>{/* */}
           <TouchableHighlight
             onPress={() => {
               this.props.onDeleteProduct(purveyorId, product.id)
