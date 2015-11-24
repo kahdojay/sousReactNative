@@ -68,9 +68,7 @@ class CartView extends React.Component {
     cartPurveyorProducts.sort(nameSort)
 
     return cartPurveyorProducts.map((product) => {
-      //TODO what was the intention here v
-      // let quantity = purveyorProducts[product.id].quantity * product.amount
-      let quantity = purveyorProducts[product.id].quantity
+      let quantity = purveyorProducts[product.id].quantity * product.amount
       const productName = product.name || '';
       return (
         <View key={product.id} style={styles.productContainer}>
