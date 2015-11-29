@@ -60,28 +60,37 @@ class CartView extends React.Component {
   }
 
   renderPurveyorProducts(purveyorId, cart, products) {
-    const purveyorProducts = cart.orders[purveyorId].products
-    const cartPurveyorProductIds = Object.keys(purveyorProducts)
+    const cartProducts = cart.orders[purveyorId].products
+    const cartPurveyorProductIds = Object.keys(cartProducts)
     const cartPurveyorProducts = _.map(cartPurveyorProductIds, (productId) => {
       return _.filter(products, {id: productId})[0]
     })
     cartPurveyorProducts.sort(nameSort)
 
     return cartPurveyorProducts.map((product) => {
-      let quantity = purveyorProducts[product.id].quantity * product.amount
+      const cartProduct = cartProducts[product.id];
+      let quantity = cartProduct.quantity * product.amount;
       const productName = product.name || '';
+      let productUnit = product.unit;
+      if(cartProduct.quantity > 1){
+        if(product.unit == 'bunch'){
+          productUnit += 'es';
+        } else if(product.unit !== 'ea' && product.unit !== 'dozen'){
+          productUnit += 's';
+        }
+      }
       return (
         <View key={product.id} style={styles.productContainer}>
           <Text style={styles.productTitle}>{productName}</Text>
-          <Text style={styles.productQuantity}>{quantity} {product.unit}{(quantity > 1) ? 's' : ''}</Text>
-          {/* * /}<TouchableHighlight
+          <Text style={styles.productQuantity}>{quantity} {productUnit}</Text>
+          <TouchableHighlight
             key={'decrement'}
             onPress={() => {
               if (quantity > 1) {
                 const cartAttributes = {
                   purveyorId: purveyorId,
                   productId: product.id,
-                  quantity: quantity - 1,
+                  quantity: cartProduct.quantity - 1,
                 };
                 this.props.onUpdateProductInCart(CART.ADD, cartAttributes)
               }
@@ -102,7 +111,7 @@ class CartView extends React.Component {
               const cartAttributes = {
                 purveyorId: purveyorId,
                 productId: product.id,
-                quantity: quantity + 1,
+                quantity: cartProduct.quantity + 1,
               };
               this.props.onUpdateProductInCart(CART.ADD, cartAttributes)
             }}
@@ -115,7 +124,7 @@ class CartView extends React.Component {
               color='#aaa'
               style={styles.icon}
             />
-        </TouchableHighlight>{/* */}
+        </TouchableHighlight>
           <TouchableHighlight
             onPress={() => {
               this.props.onDeleteProduct(purveyorId, product.id)
