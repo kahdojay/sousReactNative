@@ -18,7 +18,7 @@ class ProductListItem extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      shouldUpdate: false,
+      loaded: false,
       product: null,
       purveyors: null,
       added: false,
@@ -32,13 +32,18 @@ class ProductListItem extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return nextState.shouldUpdate;
-  }
-
-  componentDidUpdate(){
-    this.setState({
-      shouldUpdate: false,
-    })
+    let shouldUpdate = true;
+    if(nextProps.cartItem === null && this.props.cartItem === null){
+      shouldUpdate = false;
+    }
+    if(this.state.added === true && nextProps.cartItem === null){
+      shouldUpdate = true;
+    }
+    if(this.state.loaded === false){
+      shouldUpdate = true;
+    }
+    // console.log(nextState.shouldUpdate);
+    return shouldUpdate;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -52,7 +57,7 @@ class ProductListItem extends React.Component {
   componentDidMount() {
     this.loadTimeoutId = setTimeout(() => {
       this.setState({
-          shouldUpdate: true,
+          loaded: true,
           product: this.props.product,
           purveyors: this.props.purveyors,
           selectedPurveyorId: this.props.product.purveyors[0],
@@ -65,7 +70,7 @@ class ProductListItem extends React.Component {
   }
 
   componentWillUnmount() {
-    // clearTimeout(this.timeoutId)
+    clearTimeout(this.timeoutId)
     clearTimeout(this.loadTimeoutId)
   }
 
@@ -105,7 +110,6 @@ class ProductListItem extends React.Component {
 
   increment() {
     this.setState({
-      shouldUpdate: true,
       quantity: this.state.quantity + 1
     }, this.cartUpdateFromLocalState.bind(this))
   }
@@ -113,7 +117,6 @@ class ProductListItem extends React.Component {
   decrement() {
     if (this.state.quantity > 1 ) {
       this.setState({
-        shouldUpdate: true,
         quantity: this.state.quantity - 1
       }, this.cartUpdateFromLocalState.bind(this))
     }
@@ -121,7 +124,6 @@ class ProductListItem extends React.Component {
 
   handleToggleProduct(purveyorId) {
     this.setState({
-      shouldUpdate: true,
       added: !this.state.added,
       selectedPurveyorId: purveyorId
     }, this.cartUpdateFromLocalState.bind(this))
