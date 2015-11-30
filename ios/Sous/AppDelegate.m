@@ -4,6 +4,7 @@
  *
  */
 
+#import "RCTPushNotificationManager.h"
 #import <Parse/Parse.h>
 
 #import "AppDelegate.h"
@@ -70,15 +71,25 @@
   return YES;
 }
 
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-  // Store the deviceToken in the current installation and save it to Parse.
-  PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-  [currentInstallation setDeviceTokenFromData:deviceToken];
-  [currentInstallation saveInBackground];
-}
+//- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+//  // Store the deviceToken in the current installation and save it to Parse.
+//  PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+//  [currentInstallation setDeviceTokenFromData:deviceToken];
+//  [currentInstallation saveInBackground];
+//}
+//
+//- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+//  [PFPush handlePush:userInfo];
+//}
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-  [PFPush handlePush:userInfo];
+// Required for the register event.
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
+    [RCTPushNotificationManager application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 }
-
+// Required for the notification event.
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification
+{
+    [RCTPushNotificationManager application:application didReceiveRemoteNotification:notification];
+}
 @end
