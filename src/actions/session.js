@@ -86,11 +86,13 @@ export default function SessionActions(ddpClient, allActions){
         }
       })
       dispatch(() => {
-        ddpClient.call('streamS3Image', [
-          sessionParams.imageData,
-          'avatar_' + session.userId + '.jpg',
-          session.userId,
-        ])
+        if(sessionParams.hasOwnProperty('imageData') === true){
+          ddpClient.call('streamS3Image', [
+            sessionParams.imageData,
+            'avatar_' + session.userId + '.jpg',
+            session.userId,
+          ])
+        }
         ddpClient.call('updateUser', [session.userId, filteredSessionParams])
       })
       // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
@@ -111,6 +113,10 @@ export default function SessionActions(ddpClient, allActions){
     if(response.hasOwnProperty('id') && response.id){
       response.userId = response.id;
     }
+    // remove the image data, since we dont want to store it in the state
+    if(response.hasOwnProperty('imageData') === true){
+      delete response.imageData
+    }
     return (dispatch, getState) => {
       const {session} = getState();
       var isAuthenticated = session.isAuthenticated;
@@ -129,7 +135,7 @@ export default function SessionActions(ddpClient, allActions){
       let action = newSession
       action.type = RECEIVE_SESSION
       // console.log('isAuthenticated: ', action.type, action.isAuthenticated);
-      return dispatch(newSession);
+      return dispatch(action);
     }
   }
 

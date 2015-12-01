@@ -126,11 +126,13 @@ class App extends React.Component {
     let currentTeamPurveyors = {}
     let currentTeamCategories = {}
     let currentTeamProducts = {}
+    let currentTeamMessages = {}
 
     if(this.state.currentTeam !== null){
       currentTeamPurveyors = purveyors.teams[this.state.currentTeam.id] || {}
       currentTeamCategories = categories.teams[this.state.currentTeam.id] || {}
       currentTeamProducts = products.teams[this.state.currentTeam.id] || {}
+      currentTeamMessages = messages.teams[this.state.currentTeam.id] || {}
     }
 
     switch (route.name) {
@@ -151,13 +153,16 @@ class App extends React.Component {
         return (
           <Components.TeamIndex
             teams={teams}
-            messages={messages}
+            messagesByTeams={messages.teams}
             onUpdateTeam={(teamId) => {
               _.debounce(() => {
                 // dispatch(actions.resetPurveyors());
-                dispatch(actions.resetMessages());
+                // dispatch(actions.resetMessages());
                 dispatch(actions.setCurrentTeam(teamId));
                 dispatch(actions.updateSession({ teamId: teamId }));
+                if(Object.keys(messages.teams[teamId]).length < 20){
+                  dispatch(actions.getTeamMessages(teamId));
+                }
               }, 25)()
               nav.replacePreviousAndPop({
                 name: 'Feed',
@@ -232,9 +237,12 @@ class App extends React.Component {
         return (
           <Components.Feed
             teamsUsers={teams.teamsUsers}
-            messages={messages}
+            messagesFetching={messages.isFetching}
+            messages={currentTeamMessages}
             userEmail={session.login}
-            session={session}
+            onGetMoreMessages={() => {
+              dispatch(actions.getTeamMessages(this.state.currentTeam.id));
+            }}
             onCreateMessage={(msg) => {
               _.debounce(() => {
                 dispatch(actions.createMessage(msg))
@@ -510,7 +518,7 @@ class App extends React.Component {
 
     let navBar = <View />;
     let nextItem = <View />;
-    let scene = this.getScene(route, nav);
+    // let scene = this.getScene(route, nav);
 
     // setup the header for unauthenticated routes
     if(this.authenticatedRoute(route) === false){

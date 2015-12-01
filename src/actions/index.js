@@ -47,7 +47,7 @@ function connectApp(){
     // dispatch(sessionActions.resetSession());
     dispatch(sessionActions.resetSessionVersion());
     // dispatch(uiActions.resetUI()); //NOTE: why doesnt this work?
-    dispatch(messageActions.resetMessages());
+    // dispatch(messageActions.resetMessages());
     // dispatch(purveyorActions.resetPurveyors());
 
     //--------------------------------------

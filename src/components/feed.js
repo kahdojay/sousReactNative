@@ -70,9 +70,9 @@ class Feed extends React.Component {
     }
   }
 
-  componentDidUpdate(){
-    this.scrollToBottom();
-  }
+  // componentDidUpdate(){
+  //   this.scrollToBottom();
+  // }
 
   scrollToBottom() {
     if(this.refs.hasOwnProperty('scrollview')) {
@@ -84,87 +84,114 @@ class Feed extends React.Component {
     this.props.onCreateMessage(msg);
   }
 
+  getMessages(messages) {
+    let retMessages = []
+    const now = new Date()
+    const aDayAgo = -(1000 * 60 * 60 * 24)
+    let messageKeys = Object.keys(messages)
+    if(messageKeys.length > 0){
+      // sort at runtime
+      messageKeys.sort((a, b) => {
+        return moment(messages[a].createdAt).isBefore(messages[b].createdAt) ? 1 : -1;
+      })
+      messageKeys.forEach((msgId, index) => {
+        const msg = messages[msgId];
+        // let date = new Date(msg.createdAt).toLocaleTimeString();
+        // let time = date.substring(date.length-3, date.length)
+        // {date.substring(0, date.length-6)}{time}
+        const msgDate = moment(msg.createdAt)
+        let displayDate = `Today, ${msgDate.format("h:mm a")}`;
+        if(moment(msg.createdAt).diff(now) < aDayAgo){
+          displayDate = msgDate.format("ddd, M/D - h:mm a")
+        }
+        let icon = <Icon name='fontawesome|user' size={40} color='#aaa' style={styles.avatar}/>
+        if (msg.imageUrl) {
+          icon = <Image source={{uri: msg.imageUrl}} style={styles.avatarImage} />
+        }
+        let messageString = '';
+        if (msg.type === 'taskCompletion') {
+          // msg.message is task name
+          messageString = (
+            <Text style={styles.messageText}>{msg.author} completed
+              <Text style={{fontWeight: 'bold'}}> {msg.message}</Text>
+            </Text>
+          );
+        } else if (msg.type === 'order') {
+          messageString = (
+            <Text style={styles.messageText}>Order has been sent to
+              <Text style={{fontWeight: 'bold'}}> {msg.purveyor}</Text>
+            </Text>
+          );
+        } else {
+          messageString = (
+            <Text style={styles.messageText} >{msg.message}</Text>
+          );
+        }
+        let superUserIndicator = <View/>;
+        if(this.props.teamsUsers.hasOwnProperty(msg.userId) === true && this.props.teamsUsers[msg.userId].superUser === true){
+          superUserIndicator = <Text style={{position: 'absolute', top: 7, left: 2, color: darkBlue, backgroundColor: 'transparent'}}>*</Text>;
+        }
+        retMessages.push(
+          <View key={msg.id} style={styles.messageContainer}>
+            <View style={styles.message}>
+              {superUserIndicator}
+              {icon}
+              <View style={styles.messageContentContainer}>
+                <View style={styles.messageTextContainer}>
+                  <Text style={styles.messageAuthor}>{msg.author}</Text>
+                  <Text style={styles.messageTimestamp}>
+                    {displayDate}
+                  </Text>
+                </View>
+                {messageString}
+              </View>
+            </View>
+            <View style={styles.separator} />
+          </View>
+        )
+      });
+    }
+    return retMessages;
+  }
+
   render() {
-    let { messages, session } = this.props;
-    let fetching =  (
-      <ActivityIndicatorIOS
-        animating={true}
-        color={'#808080'}
-        style={styles.activity}
-        size={'large'}
-      />
-    )
-    // sort at runtime
-    messages.data.sort(function(a, b) {
-      return moment(a.createdAt).isBefore(b.createdAt) ? 1 : -1;
-    })
+    let { messages, messagesFetching, session } = this.props;
+    const messageList = this.getMessages(messages);
+    if(messagesFetching === true){
+      messageList.push((
+        <ActivityIndicatorIOS
+          key={'loading'}
+          animating={true}
+          color={'#808080'}
+          style={styles.activity}
+          size={'large'}
+        />
+      ))
+    }
+    messageList.push((
+      <View key={'get-more'}>
+        <TouchableOpacity
+          onPress={this.props.onGetMoreMessages}
+        >
+          <Text style={styles.loadMore}>Load more</Text>
+        </TouchableOpacity>
+      </View>
+    ))
     return (
       <View style={styles.container}>
-        <View style={styles.messageContainer}>
-          {messages.isFetching ? fetching : <View style={styles.notFetching}/>}
-          <InvertibleScrollView
-            style={styles.scrollView}
-            contentInset={{bottom:49}}
-            keyboardShouldPersistTaps={false}
-            automaticallyAdjustContentInsets={false}
-            inverted
-            ref='scrollview'
-          >
-            {
-              _.filter(messages.data, (msg) => {
-                return msg.teamId === session.teamId
-              }).map((msg, index) => {
-                let date = new Date(msg.createdAt).toLocaleTimeString();
-                let time = date.substring(date.length-3, date.length)
-                let icon = <Icon name='fontawesome|user' size={25} color='#777' style={styles.avatar}/>
-                if (msg.imageUrl) {
-                  icon = <Image source={{uri: msg.imageUrl}} style={styles.avatarImage} />
-                }
-                let messageString = '';
-                if (msg.type === 'taskCompletion') {
-                  // msg.message is task name
-                  messageString = (
-                    <Text style={styles.messageText}>{msg.author} completed
-                      <Text style={{fontWeight: 'bold'}}> {msg.message}</Text>
-                    </Text>
-                  );
-                } else if (msg.type === 'order') {
-                  messageString = (
-                    <Text style={styles.messageText}>Order has been sent to
-                      <Text style={{fontWeight: 'bold'}}> {msg.purveyor}</Text>
-                    </Text>
-                  );
-                } else {
-                  messageString = (
-                    <Text style={styles.messageText} >{msg.message}</Text>
-                  );
-                }
-                return (
-                  <View key={index} style={styles.messageContainer}>
-                    <View style={styles.message}>
-                      {this.props.teamsUsers[msg.userId].superUser === true ? <Text style={{position: 'absolute', top: 7, left: 2, color: darkBlue, backgroundColor: 'transparent'}}>*</Text> : <View/>}
-                      {icon}
-                      <View style={styles.messageContentContainer}>
-                        <View style={styles.messageTextContainer}>
-                          <Text style={styles.messageAuthor}>{msg.author}</Text>
-                          <Text style={styles.messageTimestamp}>
-                            {date.substring(0, date.length-6)}{time}
-                          </Text>
-                        </View>
-                        {messageString}
-                      </View>
-                    </View>
-                    <View style={styles.separator} />
-                  </View>
-                )
-              })
-            }
-          </InvertibleScrollView>
-          <AddMessageForm
-            placeholder="Message..."
-            onSubmit={this.onHandleSubmit.bind(this)}
-          />
-        </View>
+        <InvertibleScrollView
+          style={styles.scrollView}
+          keyboardShouldPersistTaps={false}
+          automaticallyAdjustContentInsets={false}
+          inverted
+          ref='scrollview'
+        >
+          {messageList}
+        </InvertibleScrollView>
+        <AddMessageForm
+          placeholder="Message..."
+          onSubmit={this.onHandleSubmit.bind(this)}
+        />
       </View>
     );
   }
@@ -184,10 +211,6 @@ const styles = StyleSheet.create({
     flex: 9,
     marginLeft: 10,
     paddingRight: 10,
-  },
-  messageContainer: {
-    padding: 0,
-    margin: 0,
   },
   messageTextContainer: {
     flex: 1,
@@ -211,11 +234,11 @@ const styles = StyleSheet.create({
     height: 0
   },
   avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignSelf: 'center',
-    flex: 1
+    backgroundColor: '#eee'
   },
   avatarImage: {
     width: 40,
@@ -225,6 +248,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    backgroundColor: 'teal'
   },
   messageContainer: {
     flex: 1,
@@ -243,7 +267,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   activity: {
-    height: 0,
+    alignSelf: 'center',
+    marginLeft: -(36/2),
+    marginBottom: (36/2)
   },
   button: {
     position: 'absolute',
@@ -277,6 +303,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333333',
     marginBottom: 5,
+  },
+  loadMore: {
+    margin: 20,
+    padding: 10,
+    paddingLeft: 30,
+    paddingRight: 30,
+    fontFamily: 'OpenSans',
+    fontWeight: 'bold',
+    color: '#555',
+    alignSelf: 'center',
+    backgroundColor: '#f2f2f2',
   },
 });
 
