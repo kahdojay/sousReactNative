@@ -36,7 +36,7 @@ export default function TeamActions(ddpClient, allActions) {
 
   function addTeam(name) {
     return (dispatch, getState) => {
-      const {session, teams} = getState();
+      const {session, teams, messages} = getState();
 
       const teamNames = teams.data.map((team) => {
         if (! team.deleted)
@@ -213,7 +213,7 @@ export default function TeamActions(ddpClient, allActions) {
   function receiveTeams(team) {
     // console.log(RECEIVE_TEAMS, team);
     return (dispatch, getState) => {
-      const {session, teams} = getState();
+      const {session, teams, messages} = getState();
       let teamIds = _.pluck(teams.data, 'id');
 
       if( teamIds.indexOf(team.id) === -1 ){
@@ -225,7 +225,14 @@ export default function TeamActions(ddpClient, allActions) {
         dispatch({
           type: SET_CURRENT_TEAM,
           team: Object.assign({}, teams.currentTeam, team)
-        })
+        })       
+        let messageCount = 0
+        if(messages.teams.hasOwnProperty(session.teamId) && Object.keys(messages.teams[session.teamId]).length > 0){
+          messageCount = Object.keys(messages.teams[session.teamId]).length;
+        }
+        if(messageCount < 20){
+          dispatch(messageActions.getTeamMessages(session.teamId));
+        }
       }
 
       return dispatch({

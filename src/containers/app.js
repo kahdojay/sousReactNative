@@ -160,7 +160,11 @@ class App extends React.Component {
                 // dispatch(actions.resetMessages());
                 dispatch(actions.setCurrentTeam(teamId));
                 dispatch(actions.updateSession({ teamId: teamId }));
-                if(Object.keys(messages.teams[teamId]).length < 20){
+                let messageCount = 0;
+                if(messages.teams.hasOwnProperty(teamId) && Object.keys(messages.teams[teamId]).length > 0){
+                  messageCount = Object.keys(messages.teams[teamId]).length;
+                }
+                if(messageCount < 20){
                   dispatch(actions.getTeamMessages(teamId));
                 }
               }, 25)()

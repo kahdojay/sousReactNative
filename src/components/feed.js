@@ -305,7 +305,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   loadMore: {
-    margin: 20,
+    marginTop: 2,
+    marginBottom: 10,
     padding: 10,
     paddingLeft: 30,
     paddingRight: 30,
