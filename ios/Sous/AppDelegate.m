@@ -4,8 +4,7 @@
  *
  */
 
-#import "RCTPushNotificationManager.h"
-#import <Parse/Parse.h>
+#import "RemotePushDelegate.h"
 
 #import "AppDelegate.h"
 
@@ -16,18 +15,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  [Parse setApplicationId:@"vFE70wypvE813z5p1xYUrujFGkDFcUuXGcteBUyY"
-                clientKey:@"aycVD5jS9U2FJ2mJzcKCdcr2TpJ5DgVYpwQI4HNg"];
-  
-  // Register for Push Notitications
-  UIUserNotificationType userNotificationTypes = (UIUserNotificationTypeAlert |
-                                                  UIUserNotificationTypeBadge |
-                                                  UIUserNotificationTypeSound);
-  UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:userNotificationTypes
-                                                                           categories:nil];
-  [application registerUserNotificationSettings:settings];
-  [application registerForRemoteNotifications];
-//
   NSURL *jsCodeLocation;
 
   /**
@@ -44,7 +31,7 @@
    * on the same Wi-Fi network.
    */
 
-// jsCodeLocation = [NSURL URLWithString:@"http://localhost:8080/index.ios.bundle?platform=ios&dev=true"];
+ jsCodeLocation = [NSURL URLWithString:@"http://localhost:8080/index.ios.bundle?platform=ios&dev=true"];
 
   /**
    * OPTION 2
@@ -56,7 +43,7 @@
    * see http://facebook.github.io/react-native/docs/runningondevice.html
    */
 
-    jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+//    jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"sousmobile"
@@ -71,25 +58,7 @@
   return YES;
 }
 
-//- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-//  // Store the deviceToken in the current installation and save it to Parse.
-//  PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-//  [currentInstallation setDeviceTokenFromData:deviceToken];
-//  [currentInstallation saveInBackground];
-//}
-//
-//- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-//  [PFPush handlePush:userInfo];
-//}
-
-// Required for the register event.
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
-{
-    [RCTPushNotificationManager application:application didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-}
-// Required for the notification event.
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification
-{
-    [RCTPushNotificationManager application:application didReceiveRemoteNotification:notification];
+- (id) init {
+  return self;
 }
 @end
