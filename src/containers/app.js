@@ -12,6 +12,7 @@ import * as actions from '../actions';
 import * as Components from '../components';
 import Dimensions from 'Dimensions';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
+import PushManager from 'react-native-remote-push/RemotePushIOS';
 
 const {
   PropTypes,
@@ -30,6 +31,7 @@ class App extends React.Component {
   constructor(props, ctx) {
     super(props, ctx);
     this.state = {
+      installationRegistered: false,
       touchToClose: false,
       open: false,
       isAuthenticated: this.props.session.isAuthenticated,
@@ -753,6 +755,17 @@ class App extends React.Component {
 
     // redirect to initial view
     if (this.state.isAuthenticated){
+      if (this.state.installationRegistered === false) {
+        let that = this
+        PushManager.requestPermissions(function(err, data) {
+          if (err) {
+            console.log("Could not register for push");
+          } else {
+            dispatch(actions.registerInstallation(session.userId, data))
+            that.setState({ installationRegistered: true })
+          }
+        });
+      }
       if (route.name === 'Login' || route.name === 'Signup' || route.name == 'UserInfo') {
         if (this.state.firstName === "" || this.state.lastName === "") {
           route.name = 'UserInfo';

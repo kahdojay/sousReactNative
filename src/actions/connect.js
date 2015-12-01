@@ -1,5 +1,6 @@
 import { DDP } from '../resources/apiConfig'
 import {
+  REGISTER_INSTALLATION,
   CONNECTION_STATUS,
   RESET_CHANNELS,
   SUBSCRIBE_CHANNEL,
@@ -11,6 +12,13 @@ import {
 export default function ConnectActions(ddpClient) {
 
   var connectedChannels = {}
+
+  function registerInstallation(userId, deviceAttributes) {
+    ddpClient.call('registerInstallation', [userId, deviceAttributes])
+    return {
+      type: REGISTER_INSTALLATION
+    }
+  }
 
   function processSubscription(channel, argsList){
     // console.log('PROCESSING: ', channel, argsList);
@@ -292,6 +300,7 @@ export default function ConnectActions(ddpClient) {
     CONNECT,
     // 'connectSingleChannel': connectSingleChannel,
     // 'connectChannels': connectChannels,
+    'registerInstallation': registerInstallation,
     'connectDDP': connectDDP,
     'connectDDPClient': connectDDPClient,
     'connectDDPTimeoutId': connectDDPTimeoutId,
