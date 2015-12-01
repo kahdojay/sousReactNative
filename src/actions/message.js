@@ -12,7 +12,6 @@ import {
 } from './actionTypes'
 
 export default function MessageActions(ddpClient) {
-
   function resetMessages(){
     return {
       type: RESET_MESSAGES
