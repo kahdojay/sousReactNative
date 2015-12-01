@@ -19,60 +19,76 @@ const {
   PropTypes,
 } = React;
 
-class Button extends React.Component {
-  handlePress(e) {
-    this.context.menuActions.toggle();
-    if (this.props.onPress) {
-      this.props.onPress(e);
-    }
-  }
-
-  render() {
-    return (
-      <View>
-        <TouchableOpacity
-          onPress={this.handlePress.bind(this)}
-          style={this.props.style}
-        >
-          <Text>{this.props.children}</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-}
-
-Button.contextTypes = {
-  menuActions: React.PropTypes.object.isRequired
-};
+// class Button extends React.Component {
+//   handlePress(e) {
+//     this.context.menuActions.toggle();
+//     if (this.props.onPress) {
+//       this.props.onPress(e);
+//     }
+//   }
+//
+//   render() {
+//     return (
+//       <View>
+//         <TouchableOpacity
+//           onPress={this.handlePress.bind(this)}
+//           style={this.props.style}
+//         >
+//           <Text>{this.props.children}</Text>
+//         </TouchableOpacity>
+//       </View>
+//     );
+//   }
+// }
+//
+// Button.contextTypes = {
+//   menuActions: React.PropTypes.object.isRequired
+// };
 
 class Feed extends React.Component {
   constructor(props, ctx) {
     super(props, ctx);
     this.state = {
-      touchToClose: false,
-      open: false,
+      // touchToClose: false,
+      // open: false,
+      lastMessageCreatedAt: null,
+      messages: null,
+      scrollToBottom: false,
     }
   }
 
-  handleOpenWithTouchToClose() {
-    this.setState({
-      touchToClose: true,
-      open: true,
-    });
-  }
-
-  handleChange(isOpen) {
-    if (!isOpen) {
-      this.setState({
-        touchToClose: false,
-        open: false,
-      });
-    }
-  }
-
-  // componentDidUpdate(){
-  //   this.scrollToBottom();
+  // handleOpenWithTouchToClose() {
+  //   this.setState({
+  //     touchToClose: true,
+  //     open: true,
+  //   });
   // }
+  //
+  // handleChange(isOpen) {
+  //   if (!isOpen) {
+  //     this.setState({
+  //       touchToClose: false,
+  //       open: false,
+  //     });
+  //   }
+  // }
+
+  componentWillReceiveProps(nextProps) {
+    // if(this.state.lastMessageCreatedAt === null){
+    //   lastMessageCreatedAt
+    // }
+    this.processMessages(nextProps.messages)
+  }
+
+  componentDidMount() {
+    this.processMessages(this.props.messages, true)
+  }
+
+  componentDidUpdate(){
+    if(this.state.scrollToBottom === true){
+      this.scrollToBottom();
+    }
+  }
 
   scrollToBottom() {
     if(this.refs.hasOwnProperty('scrollview')) {
@@ -80,22 +96,75 @@ class Feed extends React.Component {
     }
   }
 
+  processMessages(propMessages, stagger = false) {
+    let messageKeys = Object.keys(propMessages)
+    if(messageKeys.length > 0){
+      // sort at runtime
+      messageKeys.sort((a, b) => {
+        return moment(propMessages[a].createdAt).isBefore(propMessages[b].createdAt) ? 1 : -1;
+      })
+      const messages = messageKeys.map((msgId) => {
+        return propMessages[msgId];
+      })
+
+      let lastMessageCreatedAt = messages[messages.length - 1].createdAt;
+      let scrollToBottom = false;
+      // if(this.state.lastMessageCreatedAt !== null && this.state.messages !== null && this.state.messages.length > 0){
+      //   const lastStateMessageCreatedAt = this.state.messages[this.state.messages.length - 1].createdAt;
+      //   if(moment(lastMessageCreatedAt).diff(moment(lastStateMessageCreatedAt)) < 0){
+      //     scrollToBottom = true;
+      //   }
+      // }
+
+      this.setState({
+        lastMessageCreatedAt: lastMessageCreatedAt,
+        scrollToBottom: scrollToBottom
+      });
+
+      if(stagger === false){
+        this.setState({
+          messages: messages
+        })
+      } else {
+        this.setState({
+          messages: messages.slice(0,20)
+        })
+
+        if(messages.length > 20){
+          setTimeout(() => {
+            this.setState({
+              messages: messages.slice(0,40)
+            })
+          }, 500)
+        }
+        if(messages.length > 40){
+          setTimeout(() => {
+            this.setState({
+              messages: messages.slice(0,80)
+            })
+          }, 900)
+        }
+        if(messages.length > 80){
+          setTimeout(() => {
+            this.setState({
+              messages: messages
+            })
+          }, 1300)
+        }
+      }
+    }
+  }
+
   onHandleSubmit(msg) {
     this.props.onCreateMessage(msg);
   }
 
-  getMessages(messages) {
+  getMessages() {
     let retMessages = []
     const now = new Date()
     const aDayAgo = -(1000 * 60 * 60 * 24)
-    let messageKeys = Object.keys(messages)
-    if(messageKeys.length > 0){
-      // sort at runtime
-      messageKeys.sort((a, b) => {
-        return moment(messages[a].createdAt).isBefore(messages[b].createdAt) ? 1 : -1;
-      })
-      messageKeys.forEach((msgId, index) => {
-        const msg = messages[msgId];
+    if(this.state.messages !== null && this.state.messages.length > 0){
+      this.state.messages.forEach((msg, index) => {
         // let date = new Date(msg.createdAt).toLocaleTimeString();
         // let time = date.substring(date.length-3, date.length)
         // {date.substring(0, date.length-6)}{time}
@@ -155,8 +224,11 @@ class Feed extends React.Component {
   }
 
   render() {
-    let { messages, messagesFetching, session } = this.props;
-    const messageList = this.getMessages(messages);
+    let { messagesFetching } = this.props;
+    let messageList = []
+    if(this.state.messages !== null){
+      messageList = this.getMessages();
+    }
     if(messagesFetching === true){
       messageList.push((
         <ActivityIndicatorIOS
