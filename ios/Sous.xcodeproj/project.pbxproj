@@ -39,6 +39,9 @@
 		A5380FEC1BE05E2E00FADB96 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A5380FE91BE05E2E00FADB96 /* main.m */; };
 		A5380FEF1BE05E4400FADB96 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A5380FED1BE05E4400FADB96 /* LaunchScreen.xib */; };
 		A5380FF11BE05F0D00FADB96 /* SousTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A5380FF01BE05F0D00FADB96 /* SousTests.m */; };
+		A54708A31C0D34300032C5F0 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = A54708A21C0D34300032C5F0 /* main.jsbundle */; };
+		A54708AA1C0D504D0032C5F0 /* libRCTRemotePushManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A54708A91C0D50020032C5F0 /* libRCTRemotePushManager.a */; };
+		A54708AD1C0D50EB0032C5F0 /* RemotePushDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A54708AC1C0D50EB0032C5F0 /* RemotePushDelegate.m */; };
 		A5B6CC2F1C0BDCD9003263E0 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC2D1C0BDCD9003263E0 /* Bolts.framework */; };
 		A5B6CC301C0BDCD9003263E0 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC2E1C0BDCD9003263E0 /* Parse.framework */; };
 		A5B6CC321C0BDE2D003263E0 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC311C0BDE2D003263E0 /* AudioToolbox.framework */; };
@@ -53,8 +56,6 @@
 		A5B6CC441C0BDE6E003263E0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC431C0BDE6E003263E0 /* libsqlite3.tbd */; };
 		A5B6CC461C0BDE83003263E0 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC451C0BDE83003263E0 /* Accounts.framework */; };
 		A5B6CC481C0BDE89003263E0 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC471C0BDE89003263E0 /* Social.framework */; };
-		A5D41ABE1C0CDBF700FF3A6A /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = A5D41ABD1C0CDBF700FF3A6A /* main.jsbundle */; };
-		A5D41B0D1C0CEA7F00FF3A6A /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A5D41B041C0CEA5B00FF3A6A /* libRCTPushNotification.a */; };
 		C430DDA41BCEC67100962F41 /* libRCTAddressBook.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C430DD971BCEC63F00962F41 /* libRCTAddressBook.a */; };
 /* End PBXBuildFile section */
 
@@ -157,12 +158,12 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNOverlay;
 		};
-		A5D41B031C0CEA5B00FF3A6A /* PBXContainerItemProxy */ = {
+		A54708A81C0D50020032C5F0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A5D41AF81C0CEA5A00FF3A6A /* RCTPushNotification.xcodeproj */;
+			containerPortal = A54708A41C0D50020032C5F0 /* RCTRemotePushManager.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = RCTPushNotification;
+			remoteGlobalIDString = 48DDA26A1B0A1157004C75B0;
+			remoteInfo = RCTRemotePushManager;
 		};
 		C430DD961BCEC63F00962F41 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -218,6 +219,10 @@
 		A5380FE91BE05E2E00FADB96 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A5380FEE1BE05E4400FADB96 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		A5380FF01BE05F0D00FADB96 /* SousTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SousTests.m; sourceTree = "<group>"; };
+		A54708A21C0D34300032C5F0 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = SOURCE_ROOT; };
+		A54708A41C0D50020032C5F0 /* RCTRemotePushManager.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTRemotePushManager.xcodeproj; path = "../node_modules/react-native-remote-push/RCTRemotePushManager.xcodeproj"; sourceTree = "<group>"; };
+		A54708AB1C0D50EB0032C5F0 /* RemotePushDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemotePushDelegate.h; sourceTree = "<group>"; };
+		A54708AC1C0D50EB0032C5F0 /* RemotePushDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemotePushDelegate.m; sourceTree = "<group>"; };
 		A5B6CC2D1C0BDCD9003263E0 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
 		A5B6CC2E1C0BDCD9003263E0 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		A5B6CC311C0BDE2D003263E0 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
@@ -232,8 +237,6 @@
 		A5B6CC431C0BDE6E003263E0 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		A5B6CC451C0BDE83003263E0 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		A5B6CC471C0BDE89003263E0 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
-		A5D41ABD1C0CDBF700FF3A6A /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = SOURCE_ROOT; };
-		A5D41AF81C0CEA5A00FF3A6A /* RCTPushNotification.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTPushNotification.xcodeproj; path = "../node_modules/react-native/Libraries/PushNotificationIOS/RCTPushNotification.xcodeproj"; sourceTree = "<group>"; };
 		C430DD901BCEC63F00962F41 /* RCTAddressBook.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAddressBook.xcodeproj; path = "../node_modules/react-native-addressbook/RCTAddressBook.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -249,7 +252,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5D41B0D1C0CEA7F00FF3A6A /* libRCTPushNotification.a in Frameworks */,
+				A54708AA1C0D504D0032C5F0 /* libRCTRemotePushManager.a in Frameworks */,
 				A5B6CC481C0BDE89003263E0 /* Social.framework in Frameworks */,
 				A5B6CC461C0BDE83003263E0 /* Accounts.framework in Frameworks */,
 				A5B6CC441C0BDE6E003263E0 /* libsqlite3.tbd in Frameworks */,
@@ -368,7 +371,7 @@
 		13B07FAE1A68108700A75B9A /* Sous */ = {
 			isa = PBXGroup;
 			children = (
-				A5D41ABD1C0CDBF700FF3A6A /* main.jsbundle */,
+				A54708A21C0D34300032C5F0 /* main.jsbundle */,
 				A5380FE41BE05DFA00FADB96 /* AppDelegate.h */,
 				A5380FE51BE05DFA00FADB96 /* AppDelegate.m */,
 				A5380FED1BE05E4400FADB96 /* LaunchScreen.xib */,
@@ -398,7 +401,9 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				A5D41AF81C0CEA5A00FF3A6A /* RCTPushNotification.xcodeproj */,
+				A54708AB1C0D50EB0032C5F0 /* RemotePushDelegate.h */,
+				A54708AC1C0D50EB0032C5F0 /* RemotePushDelegate.m */,
+				A54708A41C0D50020032C5F0 /* RCTRemotePushManager.xcodeproj */,
 				8918EAF21BD822690068EBBA /* RNOverlay.xcodeproj */,
 				8918EA9F1BD801AE0068EBBA /* RNMultiPicker.xcodeproj */,
 				110F5EC91BCF2D4900234ED6 /* ReactNativeIcons.xcodeproj */,
@@ -494,6 +499,14 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		A54708A51C0D50020032C5F0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A54708A91C0D50020032C5F0 /* libRCTRemotePushManager.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		A5B6CC1D1C0BDCC6003263E0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -513,14 +526,6 @@
 				A5B6CC2E1C0BDCD9003263E0 /* Parse.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		A5D41AF91C0CEA5A00FF3A6A /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A5D41B041C0CEA5B00FF3A6A /* libRCTPushNotification.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		C430DD911BCEC63F00962F41 /* Products */ = {
@@ -625,8 +630,8 @@
 					ProjectRef = 00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */;
 				},
 				{
-					ProductGroup = A5D41AF91C0CEA5A00FF3A6A /* Products */;
-					ProjectRef = A5D41AF81C0CEA5A00FF3A6A /* RCTPushNotification.xcodeproj */;
+					ProductGroup = A54708A51C0D50020032C5F0 /* Products */;
+					ProjectRef = A54708A41C0D50020032C5F0 /* RCTRemotePushManager.xcodeproj */;
 				},
 				{
 					ProductGroup = 139105B71AF99BAD00B5F7CC /* Products */;
@@ -761,11 +766,11 @@
 			remoteRef = 8918EB041BD822690068EBBA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		A5D41B041C0CEA5B00FF3A6A /* libRCTPushNotification.a */ = {
+		A54708A91C0D50020032C5F0 /* libRCTRemotePushManager.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libRCTPushNotification.a;
-			remoteRef = A5D41B031C0CEA5B00FF3A6A /* PBXContainerItemProxy */;
+			path = libRCTRemotePushManager.a;
+			remoteRef = A54708A81C0D50020032C5F0 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		C430DD971BCEC63F00962F41 /* libRCTAddressBook.a */ = {
@@ -803,7 +808,7 @@
 				89EFDE5D1BCC097F001FBBEF /* OpenSans-Italic.ttf in Resources */,
 				89EFDE591BCC097F001FBBEF /* OpenSans-Bold.ttf in Resources */,
 				89EFDE5B1BCC097F001FBBEF /* OpenSans-ExtraBold.ttf in Resources */,
-				A5D41ABE1C0CDBF700FF3A6A /* main.jsbundle in Resources */,
+				A54708A31C0D34300032C5F0 /* main.jsbundle in Resources */,
 				89EFDE5E1BCC097F001FBBEF /* OpenSans-Light.ttf in Resources */,
 				A5380FEB1BE05E2E00FADB96 /* Info.plist in Resources */,
 				89A667011BC2F38A00F45CFD /* OpenSans-Regular.ttf in Resources */,
@@ -832,6 +837,7 @@
 			files = (
 				A5380FE61BE05DFA00FADB96 /* AppDelegate.m in Sources */,
 				A5380FEC1BE05E2E00FADB96 /* main.m in Sources */,
+				A54708AD1C0D50EB0032C5F0 /* RemotePushDelegate.m in Sources */,
 				899803FF1BCEC7E00011F96A /* UIImagePickerManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
