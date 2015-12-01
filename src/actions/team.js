@@ -3,6 +3,7 @@ import { DDP } from '../resources/apiConfig'
 import Shortid from 'shortid'
 import MessageActions from './message'
 import { getIdx, updateByIdx, updateDataState } from '../utilities/reducer'
+import Urls from '../resources/urls';
 import {
   SET_TASK_TIMEOUT_ID,
   SET_CART_TIMEOUT_ID,
@@ -81,7 +82,7 @@ export default function TeamActions(ddpClient, allActions) {
 
   function completeTeamTask(message) {
     return (dispatch) => {
-      dispatch(messageActions.createMessage(message))
+      dispatch(messageActions.createMessage(message, 'Sous', Urls.msgLogo))
       return dispatch({
         type: COMPLETE_TEAM_TASK
       });
@@ -225,7 +226,7 @@ export default function TeamActions(ddpClient, allActions) {
         dispatch({
           type: SET_CURRENT_TEAM,
           team: Object.assign({}, teams.currentTeam, team)
-        })       
+        })
         let messageCount = 0
         if(messages.teams.hasOwnProperty(session.teamId) && Object.keys(messages.teams[session.teamId]).length > 0){
           messageCount = Object.keys(messages.teams[session.teamId]).length;

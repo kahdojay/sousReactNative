@@ -47,9 +47,8 @@ class CartView extends React.Component {
           {
             text: 'Yes',
             onPress: () => {
-              const cartPurveyorsString = _.pluck(cartPurveyors, 'name').join(', ');
               if(this.state.numberOfOrders > 0){
-                this.props.onSubmitOrder('Order sent to ' + cartPurveyorsString);
+                this.props.onSubmitOrder();
               }
             }
           }
