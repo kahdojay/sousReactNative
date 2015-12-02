@@ -39,23 +39,8 @@
 		A5380FEC1BE05E2E00FADB96 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A5380FE91BE05E2E00FADB96 /* main.m */; };
 		A5380FEF1BE05E4400FADB96 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A5380FED1BE05E4400FADB96 /* LaunchScreen.xib */; };
 		A5380FF11BE05F0D00FADB96 /* SousTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A5380FF01BE05F0D00FADB96 /* SousTests.m */; };
-		A54708A31C0D34300032C5F0 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = A54708A21C0D34300032C5F0 /* main.jsbundle */; };
 		A54708AA1C0D504D0032C5F0 /* libRCTRemotePushManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A54708A91C0D50020032C5F0 /* libRCTRemotePushManager.a */; };
 		A54708AD1C0D50EB0032C5F0 /* RemotePushDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A54708AC1C0D50EB0032C5F0 /* RemotePushDelegate.m */; };
-		A5B6CC2F1C0BDCD9003263E0 /* Bolts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC2D1C0BDCD9003263E0 /* Bolts.framework */; };
-		A5B6CC301C0BDCD9003263E0 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC2E1C0BDCD9003263E0 /* Parse.framework */; };
-		A5B6CC321C0BDE2D003263E0 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC311C0BDE2D003263E0 /* AudioToolbox.framework */; };
-		A5B6CC341C0BDE39003263E0 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC331C0BDE39003263E0 /* CFNetwork.framework */; };
-		A5B6CC361C0BDE3F003263E0 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC351C0BDE3F003263E0 /* CoreGraphics.framework */; };
-		A5B6CC381C0BDE47003263E0 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC371C0BDE47003263E0 /* CoreLocation.framework */; };
-		A5B6CC3A1C0BDE4C003263E0 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC391C0BDE4C003263E0 /* QuartzCore.framework */; };
-		A5B6CC3C1C0BDE52003263E0 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC3B1C0BDE52003263E0 /* Security.framework */; };
-		A5B6CC3E1C0BDE57003263E0 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC3D1C0BDE57003263E0 /* StoreKit.framework */; };
-		A5B6CC401C0BDE5D003263E0 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC3F1C0BDE5D003263E0 /* SystemConfiguration.framework */; };
-		A5B6CC421C0BDE64003263E0 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC411C0BDE64003263E0 /* libz.tbd */; };
-		A5B6CC441C0BDE6E003263E0 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC431C0BDE6E003263E0 /* libsqlite3.tbd */; };
-		A5B6CC461C0BDE83003263E0 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC451C0BDE83003263E0 /* Accounts.framework */; };
-		A5B6CC481C0BDE89003263E0 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5B6CC471C0BDE89003263E0 /* Social.framework */; };
 		C430DDA41BCEC67100962F41 /* libRCTAddressBook.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C430DD971BCEC63F00962F41 /* libRCTAddressBook.a */; };
 /* End PBXBuildFile section */
 
@@ -219,24 +204,9 @@
 		A5380FE91BE05E2E00FADB96 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A5380FEE1BE05E4400FADB96 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		A5380FF01BE05F0D00FADB96 /* SousTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SousTests.m; sourceTree = "<group>"; };
-		A54708A21C0D34300032C5F0 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = SOURCE_ROOT; };
 		A54708A41C0D50020032C5F0 /* RCTRemotePushManager.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTRemotePushManager.xcodeproj; path = "../node_modules/react-native-remote-push/RCTRemotePushManager.xcodeproj"; sourceTree = "<group>"; };
 		A54708AB1C0D50EB0032C5F0 /* RemotePushDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemotePushDelegate.h; sourceTree = "<group>"; };
 		A54708AC1C0D50EB0032C5F0 /* RemotePushDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RemotePushDelegate.m; sourceTree = "<group>"; };
-		A5B6CC2D1C0BDCD9003263E0 /* Bolts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bolts.framework; sourceTree = "<group>"; };
-		A5B6CC2E1C0BDCD9003263E0 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
-		A5B6CC311C0BDE2D003263E0 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		A5B6CC331C0BDE39003263E0 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
-		A5B6CC351C0BDE3F003263E0 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		A5B6CC371C0BDE47003263E0 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		A5B6CC391C0BDE4C003263E0 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		A5B6CC3B1C0BDE52003263E0 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		A5B6CC3D1C0BDE57003263E0 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
-		A5B6CC3F1C0BDE5D003263E0 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		A5B6CC411C0BDE64003263E0 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
-		A5B6CC431C0BDE6E003263E0 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
-		A5B6CC451C0BDE83003263E0 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
-		A5B6CC471C0BDE89003263E0 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		C430DD901BCEC63F00962F41 /* RCTAddressBook.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAddressBook.xcodeproj; path = "../node_modules/react-native-addressbook/RCTAddressBook.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -253,25 +223,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				A54708AA1C0D504D0032C5F0 /* libRCTRemotePushManager.a in Frameworks */,
-				A5B6CC481C0BDE89003263E0 /* Social.framework in Frameworks */,
-				A5B6CC461C0BDE83003263E0 /* Accounts.framework in Frameworks */,
-				A5B6CC441C0BDE6E003263E0 /* libsqlite3.tbd in Frameworks */,
-				A5B6CC421C0BDE64003263E0 /* libz.tbd in Frameworks */,
-				A5B6CC401C0BDE5D003263E0 /* SystemConfiguration.framework in Frameworks */,
-				A5B6CC3E1C0BDE57003263E0 /* StoreKit.framework in Frameworks */,
-				A5B6CC3C1C0BDE52003263E0 /* Security.framework in Frameworks */,
-				A5B6CC3A1C0BDE4C003263E0 /* QuartzCore.framework in Frameworks */,
-				A5B6CC381C0BDE47003263E0 /* CoreLocation.framework in Frameworks */,
-				A5B6CC361C0BDE3F003263E0 /* CoreGraphics.framework in Frameworks */,
-				A5B6CC341C0BDE39003263E0 /* CFNetwork.framework in Frameworks */,
-				A5B6CC321C0BDE2D003263E0 /* AudioToolbox.framework in Frameworks */,
-				A5B6CC2F1C0BDCD9003263E0 /* Bolts.framework in Frameworks */,
 				8918EB061BD8227C0068EBBA /* libRNOverlay.a in Frameworks */,
 				110F5ECF1BCF2D5700234ED6 /* libReactNativeIcons.a in Frameworks */,
 				C430DDA41BCEC67100962F41 /* libRCTAddressBook.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
-				A5B6CC301C0BDCD9003263E0 /* Parse.framework in Frameworks */,
 				8918EAB21BD801C20068EBBA /* libRNMultiPickerIOS.a in Frameworks */,
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
 				00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */,
@@ -371,7 +327,6 @@
 		13B07FAE1A68108700A75B9A /* Sous */ = {
 			isa = PBXGroup;
 			children = (
-				A54708A21C0D34300032C5F0 /* main.jsbundle */,
 				A5380FE41BE05DFA00FADB96 /* AppDelegate.h */,
 				A5380FE51BE05DFA00FADB96 /* AppDelegate.m */,
 				A5380FED1BE05E4400FADB96 /* LaunchScreen.xib */,
@@ -434,7 +389,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				A5B6CC1D1C0BDCC6003263E0 /* Frameworks */,
 				13B07FAE1A68108700A75B9A /* Sous */,
 				89A666FD1BC2F34F00F45CFD /* Resources */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -505,27 +459,6 @@
 				A54708A91C0D50020032C5F0 /* libRCTRemotePushManager.a */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		A5B6CC1D1C0BDCC6003263E0 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				A5B6CC471C0BDE89003263E0 /* Social.framework */,
-				A5B6CC451C0BDE83003263E0 /* Accounts.framework */,
-				A5B6CC431C0BDE6E003263E0 /* libsqlite3.tbd */,
-				A5B6CC411C0BDE64003263E0 /* libz.tbd */,
-				A5B6CC3F1C0BDE5D003263E0 /* SystemConfiguration.framework */,
-				A5B6CC3D1C0BDE57003263E0 /* StoreKit.framework */,
-				A5B6CC3B1C0BDE52003263E0 /* Security.framework */,
-				A5B6CC391C0BDE4C003263E0 /* QuartzCore.framework */,
-				A5B6CC371C0BDE47003263E0 /* CoreLocation.framework */,
-				A5B6CC351C0BDE3F003263E0 /* CoreGraphics.framework */,
-				A5B6CC331C0BDE39003263E0 /* CFNetwork.framework */,
-				A5B6CC311C0BDE2D003263E0 /* AudioToolbox.framework */,
-				A5B6CC2D1C0BDCD9003263E0 /* Bolts.framework */,
-				A5B6CC2E1C0BDCD9003263E0 /* Parse.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		C430DD911BCEC63F00962F41 /* Products */ = {
@@ -808,7 +741,6 @@
 				89EFDE5D1BCC097F001FBBEF /* OpenSans-Italic.ttf in Resources */,
 				89EFDE591BCC097F001FBBEF /* OpenSans-Bold.ttf in Resources */,
 				89EFDE5B1BCC097F001FBBEF /* OpenSans-ExtraBold.ttf in Resources */,
-				A54708A31C0D34300032C5F0 /* main.jsbundle in Resources */,
 				89EFDE5E1BCC097F001FBBEF /* OpenSans-Light.ttf in Resources */,
 				A5380FEB1BE05E2E00FADB96 /* Info.plist in Resources */,
 				89A667011BC2F38A00F45CFD /* OpenSans-Regular.ttf in Resources */,
