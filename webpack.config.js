@@ -32,6 +32,7 @@ var config = {
         path.resolve(__dirname, 'node_modules/react-native-keyboard-spacer'),
         path.resolve(__dirname, 'node_modules/react-native-multipicker'),
         path.resolve(__dirname, 'node_modules/react-native-overlay'),
+        path.resolve(__dirname, 'node_modules/react-native-remote-push'),
         // Note: add any other js or node modules that need babel processing
       ],
       loader: ['babel-loader'],
