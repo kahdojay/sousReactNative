@@ -25,12 +25,17 @@ function updateByIdx(currentDataState, idx, attributes){
   return currentDataState
 }
 
-function updateDataState(currentDataState, attributes){
+function cleanupAttributes(attributes){
   // cleanup for the data passed to mongo
   if(attributes.hasOwnProperty('_id')){
     attributes.id = attributes._id;
     delete attributes._id
   }
+  return attributes
+}
+
+function updateDataState(currentDataState, attributes){
+  attributes = cleanupAttributes(attributes)
   if(attributes.hasOwnProperty('id') === true) {
     var idx = getIdx(currentDataState, attributes.id);
     currentDataState = updateByIdx(currentDataState, idx, attributes)
@@ -39,6 +44,7 @@ function updateDataState(currentDataState, attributes){
 }
 
 export default {
+  'cleanupAttributes': cleanupAttributes,
   'getIdx': getIdx,
   'updateByIdx': updateByIdx,
   'updateDataState': updateDataState

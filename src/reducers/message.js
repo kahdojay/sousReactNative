@@ -1,9 +1,10 @@
-import { getIdx, updateByIdx, updateDataState } from '../utilities/reducer'
+import { cleanupAttributes } from '../utilities/reducer'
 import {
   RESET_MESSAGES,
   GET_MESSAGES,
   REQUEST_MESSAGES,
   RECEIVE_MESSAGES,
+  NO_MESSAGES,
   ERROR_MESSAGES,
   CREATE_MESSAGE,
   DELETE_MESSAGE
@@ -13,10 +14,23 @@ const initialState = {
   messages: {
     isFetching: false,
     errors: null,
-    data: [],
+    teams: {},
     lastUpdated: null
   }
 };
+
+function addTeamMessage(newMessageTeamState, message){
+  message = cleanupAttributes(message)
+  if(newMessageTeamState.hasOwnProperty(message.teamId) === false){
+    newMessageTeamState[message.teamId] = {};
+  }
+  let originalTeamMessage = {}
+  if(newMessageTeamState[message.teamId].hasOwnProperty(message.id)){
+    originalTeamMessage = newMessageTeamState[message.teamId][message.id]
+  }
+  newMessageTeamState[message.teamId][message.id] = Object.assign(originalTeamMessage, message)
+  return newMessageTeamState
+}
 
 function messages(state = initialState.messages, action) {
   switch (action.type) {
@@ -31,37 +45,47 @@ function messages(state = initialState.messages, action) {
       errors: null,
     });
 
+  // received no the messages
+  case NO_MESSAGES:
+    return Object.assign({}, state, {
+      isFetching: false,
+      errors: null,
+    });
+
   // receive the messages
   case RECEIVE_MESSAGES:
     // console.log('message action received: ', action)
-    var newMessageState = Object.assign({}, state);
-    var currentMessagesDataState = updateDataState(newMessageState.data, action.message)
-    // console.log(action.type, action.message.id)
-    // console.log('TEAM REDUCER: ', currentMessagesDataState)
+    const newReceivedTeamsMessagesState = addTeamMessage(Object.assign({}, state.teams), action.message);
     return Object.assign({}, state, {
-      isFetching: false, // do we need to phase this out?
+      isFetching: false,
       errors: null,
-      data: currentMessagesDataState,
+      teams: newReceivedTeamsMessagesState,
       lastUpdated: (new Date()).toISOString()
     });
 
   // create message
   case CREATE_MESSAGE:
-    var newMessageState = Object.assign({}, state);
-    var currentMessagesDataState = updateDataState(newMessageState.data, action.message)
+    const newCreatedTeamsMessagesState = addTeamMessage(Object.assign({}, state.teams), action.message);
     // console.log(action.type, action.message.id)
     return Object.assign({}, state, {
-      data: currentMessagesDataState,
+      isFetching: false,
+      errors: null,
+      teams: newCreatedTeamsMessagesState,
       lastUpdated: (new Date()).toISOString()
     });
 
   // delete message
   case DELETE_MESSAGE:
-    var newMessageState = Object.assign({}, state);
-    var messageIdx = getIdx(newMessageState.data, action.messageId);
-    var currentMessagesDataState = updateByIdx(newMessageState.data, messageIdx, { deleted: true });
+    const newDeletedTeamsMessageState = Object.assign({}, state.teams);
+    if(newDeletedTeamsMessageState.hasOwnProperty(action.teamId) === true){
+      if(newDeletedTeamsMessageState[teamId].hasOwnProperty(messageId) === true){
+        delete newDeletedTeamsMessageState[teamId][messageId]
+      }
+    }
     return Object.assign({}, state, {
-      data: currentMessagesDataState,
+      isFetching: false,
+      errors: null,
+      teams: newDeletedTeamsMessageState,
       lastUpdated: (new Date()).toISOString()
     });
 

@@ -20,6 +20,7 @@ const {
 class TeamIndex extends React.Component {
 
   render() {
+    const {teams, messagesByTeams} = this.props
     // let fetching =  <ActivityIndicatorIOS
     //                     animating={true}
     //                     color={'#808080'}
@@ -37,16 +38,20 @@ class TeamIndex extends React.Component {
             contentInset={{bottom:49}}
             automaticallyAdjustContentInsets={false}
           >
-            { this.props.teams.data.map((team, index) => {
+            { teams.data.map((team, index) => {
               // let lastMessage = _.filter(this.props.messages.data.sort((a, b) => {return a.createdAt > b.createdAt}), (msg) => {return msg.teamId === team.id})[0] || "";
               // console.log(lastMessage);
+              let teamMessages = {}
+              if(messagesByTeams.hasOwnProperty(team.id) === true){
+                teamMessages = messagesByTeams[team.id];
+              }
               if (team.deleted === false) {
                 return (
                   <TeamIndexRow
                     key={index}
                     team={team}
-                    teamsUsers={this.props.teams.teamsUsers}
-                    messages={this.props.messages}
+                    teamsUsers={teams.teamsUsers}
+                    messages={teamMessages}
                     onPress={() => {
                       this.props.onUpdateTeam(team.id);
                     }}
@@ -73,8 +78,6 @@ const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: '#f7f7f7',
     height: 500,
-    paddingLeft: 20,
-    paddingRight: 0,
     marginTop: 0,
     paddingTop: 0
   },

@@ -3,6 +3,7 @@ import { DDP } from '../resources/apiConfig'
 import Shortid from 'shortid'
 import MessageActions from './message'
 import { getIdx, updateByIdx, updateDataState } from '../utilities/reducer'
+import Urls from '../resources/urls';
 import {
   SET_TASK_TIMEOUT_ID,
   SET_CART_TIMEOUT_ID,
@@ -36,7 +37,7 @@ export default function TeamActions(ddpClient, allActions) {
 
   function addTeam(name) {
     return (dispatch, getState) => {
-      const {session, teams} = getState();
+      const {session, teams, messages} = getState();
 
       const teamNames = teams.data.map((team) => {
         if (! team.deleted)
@@ -81,7 +82,7 @@ export default function TeamActions(ddpClient, allActions) {
 
   function completeTeamTask(message) {
     return (dispatch) => {
-      dispatch(messageActions.createMessage(message))
+      dispatch(messageActions.createMessage(message, 'Sous', Urls.msgLogo))
       return dispatch({
         type: COMPLETE_TEAM_TASK
       });
@@ -213,7 +214,7 @@ export default function TeamActions(ddpClient, allActions) {
   function receiveTeams(team) {
     // console.log(RECEIVE_TEAMS, team);
     return (dispatch, getState) => {
-      const {session, teams} = getState();
+      const {session, teams, messages} = getState();
       let teamIds = _.pluck(teams.data, 'id');
 
       if( teamIds.indexOf(team.id) === -1 ){
@@ -226,6 +227,14 @@ export default function TeamActions(ddpClient, allActions) {
           type: SET_CURRENT_TEAM,
           team: Object.assign({}, teams.currentTeam, team)
         })
+      }
+
+      let messageCount = 0
+      if(messages.teams.hasOwnProperty(team.id) && Object.keys(messages.teams[team.id]).length > 0){
+        messageCount = Object.keys(messages.teams[team.id]).length;
+      }
+      if(messageCount < 20){
+        dispatch(messageActions.getTeamMessages(team.id));
       }
 
       return dispatch({
