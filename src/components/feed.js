@@ -191,7 +191,7 @@ class Feed extends React.Component {
           );
         } else if (msg.type === 'order') {
           messageString = (
-            <Text style={styles.messageText}>Order has been sent to
+            <Text style={styles.messageText}>Order sent to
               <Text style={{fontWeight: 'bold'}}> {msg.purveyor}</Text>
             </Text>
           );
