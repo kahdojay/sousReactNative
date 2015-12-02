@@ -1,7 +1,7 @@
+jest.dontMock('ddp-client')
+
 import { DDP } from '../resources/apiConfig'
 import ddpClient from '../utilities/ddpClient'
-
-jest.dontMock('ddp-client')
 
 describe('registration', () => {
   it('can connect', () => {
