@@ -1,12 +1,30 @@
-// __tests__/registration-test.js
-import Connect from '../utilities/connect'
+import { DDP } from '../resources/apiConfig'
+import ddpClient from '../utilities/ddpClient'
+
+jest.dontMock('ddp-client')
 
 describe('registration', () => {
-  beforeEach(() => {
-    const ddpClient = new Connect()
-  })
-  it('connection', () => {
-    console.log(ddpClient)
-    expect(ddpClient).toBeTruthy();
+  it('can connect', () => {
+    const mockFn = jest.genMockFunction().mockImplementation((msg) => {
+      var log = JSON.parse(msg);
+      if (log.hasOwnProperty('fields')){
+        // console.log("MAIN DDP WITH FIELDS MSG", log);
+        var data = log.fields;
+        data.id = log.id;
+        switch(log.collection){
+          case DDP.SUBSCRIBE_LIST.RESTRICTED.collection:
+            console.log(data)
+            expect(data).toEqual({
+
+            });
+            break;
+          default:
+            break;
+        }
+      }
+    })
+    ddpClient.on('messages', mockFn);
+    ddpClient.subscribe(DDP.SUBSCRIBE_LIST.RESTRICTED.channel);
+    ddpClient.call('sendSMSCode', ['5623105753']);
   });
 });

@@ -7,9 +7,7 @@ import PurveyorActions from './purveyor'
 import ProductActions from './product'
 import CategoryActions from './category'
 import ErrorActions from './error'
-import Connect from '../utilities/connect'
-
-const ddpClient = new Connect()
+import ddpClient from '../utilities/ddpClient'
 
 const errorActions = ErrorActions(ddpClient)
 const connectActions = ConnectActions(ddpClient)
