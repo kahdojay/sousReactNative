@@ -14,6 +14,7 @@ export default function ConnectActions(ddpClient) {
   var connectedChannels = {}
 
   function registerInstallation(userId, deviceAttributes) {
+    // TODO: use connect.channels in processSubscription to retrigger registrations on team changes
     ddpClient.call('registerInstallation', [userId, deviceAttributes])
     return {
       type: REGISTER_INSTALLATION
