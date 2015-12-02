@@ -152,6 +152,10 @@ class Feed extends React.Component {
           }, 1300)
         }
       }
+    } else {
+      this.setState({
+        messages: null
+      })
     }
   }
 
@@ -240,15 +244,17 @@ class Feed extends React.Component {
         />
       ))
     }
-    messageList.push((
-      <View key={'get-more'}>
-        <TouchableOpacity
-          onPress={this.props.onGetMoreMessages}
-        >
-          <Text style={styles.loadMore}>Load more</Text>
-        </TouchableOpacity>
-      </View>
-    ))
+    if(messageList.length >= 20){
+      messageList.push((
+        <View key={'get-more'}>
+          <TouchableOpacity
+            onPress={this.props.onGetMoreMessages}
+          >
+            <Text style={styles.loadMore}>Load more</Text>
+          </TouchableOpacity>
+        </View>
+      ))
+    }
     return (
       <View style={styles.container}>
         <InvertibleScrollView

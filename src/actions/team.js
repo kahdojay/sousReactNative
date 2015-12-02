@@ -227,13 +227,14 @@ export default function TeamActions(ddpClient, allActions) {
           type: SET_CURRENT_TEAM,
           team: Object.assign({}, teams.currentTeam, team)
         })
-        let messageCount = 0
-        if(messages.teams.hasOwnProperty(session.teamId) && Object.keys(messages.teams[session.teamId]).length > 0){
-          messageCount = Object.keys(messages.teams[session.teamId]).length;
-        }
-        if(messageCount < 20){
-          dispatch(messageActions.getTeamMessages(session.teamId));
-        }
+      }
+
+      let messageCount = 0
+      if(messages.teams.hasOwnProperty(team.id) && Object.keys(messages.teams[team.id]).length > 0){
+        messageCount = Object.keys(messages.teams[team.id]).length;
+      }
+      if(messageCount < 20){
+        dispatch(messageActions.getTeamMessages(team.id));
       }
 
       return dispatch({
