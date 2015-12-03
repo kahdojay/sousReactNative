@@ -6,7 +6,7 @@ import WebSocket from 'ws'
 import { DDP } from '../resources/apiConfig'
 import DDPClient from 'ddp-client'
 import Twilio from 'twilio'
-import meteorSettings from '../../../sousMeteor/settings-staging.json'
+import meteorSettings from '../../../sousMeteor/settings-development.json'
 
 const twilioClient = Twilio(meteorSettings.TWILIO.SID, meteorSettings.TWILIO.TOKEN)
 const phoneNumber = '5005550006'
