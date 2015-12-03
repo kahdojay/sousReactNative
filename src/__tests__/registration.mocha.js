@@ -2,6 +2,7 @@ import assert from 'assert'
 // import events from 'events'
 // import sinon from 'sinon'
 import WebSocket from 'ws'
+import chalk from 'chalk'
 import { DDP } from '../resources/apiConfig'
 import DDPClient from 'ddp-client'
 import Twilio from 'twilio'
@@ -28,7 +29,7 @@ describe('Registration', () => {
     ddpClient.close();
   })
 
-  it('should connect to the correct url', (done) => {
+  it(`should connect to the correct url: ${chalk.cyan(DDP.ENDPOINT_WS)}`, (done) => {
     ddpClient.on('connected', () => {
       done()
     });
@@ -42,7 +43,7 @@ describe('Registration', () => {
     });
   });
 
-  it(`should register using a phone number: ${phoneNumber}`, function (done) {
+  it(`should register using a phone number: ${chalk.cyan(phoneNumber)}`, function (done) {
     this.timeout(15000)
 
     ddpClient.on('message', (msg) => {
