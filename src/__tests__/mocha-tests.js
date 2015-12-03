@@ -273,6 +273,7 @@ describe('Ordering', () => {
 
         ddpClient.call('updateTeam', [session.teamId, { cart: updatedCart }], (result) => {
           ddpClient.call('sendCart', [session.userId, session.teamId, teamOrderId], (result) => {
+            // TODO: subscribe to the orders being sent instead of immediate results
             console.log(result)
             done()
           })
