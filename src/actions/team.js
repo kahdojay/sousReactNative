@@ -283,7 +283,7 @@ export default function TeamActions(ddpClient, allActions) {
         // add the product purveyor
         if (updatedCart.orders.hasOwnProperty(cartAttributes.purveyorId) === false) {
           updatedCart.orders[cartAttributes.purveyorId] = {
-            id: Shortid.generate(),
+            id: Shortid.generate(), // TODO: Is this being used for anything?
             total: 0.0,
             deliveryInstruction: '',
             products: {}
