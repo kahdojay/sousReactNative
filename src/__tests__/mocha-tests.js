@@ -169,7 +169,7 @@ describe('Teams', () => {
 })
 
 describe('Ordering', () => {
-  it(`should place an order using phone number: ${chalk.cyan(phoneNumber)}`, function (done) {
+  it(`should place an order`, function (done) {
     // check connection
     checkConnection(done);
     checkAuthenticated(done);
