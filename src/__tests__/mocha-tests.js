@@ -6,7 +6,7 @@ import WebSocket from 'ws'
 import { DDP } from '../resources/apiConfig'
 import DDPClient from 'ddp-client'
 import Twilio from 'twilio'
-import meteorSettings from '../../../sousMeteor/settings-development.json'
+import meteorSettings from '../../../sousMeteor/settings-staging.json'
 
 const twilioClient = Twilio(meteorSettings.TWILIO.SID, meteorSettings.TWILIO.TOKEN)
 const phoneNumber = '5005550006'
@@ -123,7 +123,6 @@ describe('Registration', () => {
       }
     });
 
-    ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.RESTRICTED.channel)
     ddpClient.subscribe(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [phoneNumber]);
     ddpClient.call('sendSMSCode', [phoneNumber]);
   });
@@ -172,7 +171,7 @@ describe('Teams', () => {
 
   })
 
-  it(`should set the user's teamId to team: ${chalk.cyan(teamCode)}`, (done) => {
+  it(`should set the user's teamId to team: ${chalk.cyan(teamCode)}`, function (done) {
     if(teamId === null){
       assert.fail(teamId, !null)
       done()
@@ -181,20 +180,18 @@ describe('Teams', () => {
         assert.equal(session.teamId, teamId)
         done()
       } else {
+        this.timeout(7000);
         ddpClient.removeAllListeners(['message']);
         ddpClient.on('message', (msg) => {
           const log = JSON.parse(msg);
           if (log.hasOwnProperty('fields')){
-            // console.log("MAIN DDP WITH FIELDS MSG", log);
+            console.log("MAIN DDP WITH FIELDS MSG", log);
             const data = log.fields;
             data.id = log.id;
             switch(log.collection){
               case DDP.SUBSCRIBE_LIST.RESTRICTED.collection:
+                console.log(log.msg, data, "\n\n\n");
                 if(log.msg === 'changed' && data.hasOwnProperty('teamId')){
-                  session.teamId = data.teamId
-                  assert.equal(session.teamId, data.teamId)
-                  done()
-                } else if(log.msg === 'added'){
                   session.teamId = data.teamId
                   assert.equal(session.teamId, data.teamId)
                   done()
@@ -204,12 +201,11 @@ describe('Teams', () => {
               break;
             }
           }
-        });
-        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.RESTRICTED.channel)
-        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [phoneNumber])
-        ddpClient.call('updateUser', [session.userId, {
-          teamId: teamId
-        }])
+        })
+
+        ddpClient.call('updateUser', [session.userId, { teamId: teamId }], (result) => {
+          console.log(result)
+        })
       }
     }
   })
@@ -270,7 +266,6 @@ describe('Ordering', () => {
             }
           }
         });
-        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.ORDERS.channel)
         ddpClient.subscribe(DDP.SUBSCRIBE_LIST.ORDERS.channel, [session.userId, [session.teamId]])
 
         // PLACE THE ORDER
@@ -346,6 +341,8 @@ describe('Disconnect', () => {
     ddpClient.on('socket-close', () => {
       done();
     })
-    ddpClient.close();
+    ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.RESTRICTED.channel)
+    ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.ORDERS.channel)
+    ddpClient.close()
   })
 })
