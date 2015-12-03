@@ -236,7 +236,7 @@ describe('Ordering', () => {
         }
 
         let updatedCart = Object.assign({}, teams[session.teamId].cart)
-        const orderId = Shortid.generate();
+        const teamOrderId = Shortid.generate();
         let cartProductPurveyor = null;
 
         // add the date
@@ -246,8 +246,9 @@ describe('Ordering', () => {
 
         // add the product purveyor
         if (updatedCart.orders.hasOwnProperty(cartAttributes.purveyorId) === false) {
+          const orderId = Shortid.generate()
           updatedCart.orders[cartAttributes.purveyorId] = {
-            id: Shortid.generate(),
+            id: orderId,
             total: 0.0,
             deliveryInstruction: '',
             products: {}
@@ -270,9 +271,11 @@ describe('Ordering', () => {
         // update the product purveyor
         updatedCart.orders[cartAttributes.purveyorId] = cartProductPurveyor;
 
-        ddpClient.call('updateTeam', [session.teamId, { cart: updatedCart }], () => {
-          ddpClient.call('sendCart', [session.userId, session.teamId, orderId])
-          done()
+        ddpClient.call('updateTeam', [session.teamId, { cart: updatedCart }], (result) => {
+          ddpClient.call('sendCart', [session.userId, session.teamId, teamOrderId], (result) => {
+            console.log(result)
+            done()
+          })
         });
       }
     })
