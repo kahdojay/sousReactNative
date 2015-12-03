@@ -12,6 +12,7 @@ export const DDP = {
     CATEGORIES: {channel: 'categories', collection: 'categories'},
     TEAMS_USERS: {channel: 'teams-users', collection: 'users'},
     PRODUCTS: {channel: 'products', collection: 'products'},
+    ORDERS: {channel: 'orders', collection: 'orders'},
     ERRORS: {channel: 'errors', collection: 'errors'}
   },
 }

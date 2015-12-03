@@ -15,6 +15,7 @@ let connected = false
 let isAuthenticated = false
 let session = {}
 let teams = {}
+let orders = {}
 let teamId = null
 
 const ddpClient = new DDPClient({
@@ -227,6 +228,9 @@ describe('Ordering', () => {
         done()
       } else {
 
+        // SETUP THE VARIABLES
+
+        orders[session.teamId] = {}
         const firstProduct = result.products[0]
         const cartAttributes = {
           purveyorId: firstProduct.purveyors[0],
@@ -238,6 +242,38 @@ describe('Ordering', () => {
         let updatedCart = Object.assign({}, teams[session.teamId].cart)
         const teamOrderId = Shortid.generate();
         let cartProductPurveyor = null;
+
+        // SUBSCRIBE TO THE ORDERS CHANNEL
+
+        ddpClient.removeAllListeners(['message']);
+        ddpClient.on('message', (msg) => {
+          const log = JSON.parse(msg);
+          if (log.hasOwnProperty('fields')){
+            // console.log("MAIN DDP WITH FIELDS MSG", log);
+            const data = log.fields;
+            data.id = log.id;
+            switch(log.collection){
+              case DDP.SUBSCRIBE_LIST.ORDERS.collection:
+                if(log.msg === 'changed'){
+                  if(orders[session.teamId].hasOwnProperty(data.id) === true){
+                    orders[session.teamId][data.id] = Object.assign({}, orders[session.teamId][data.id], data)
+                    checkOrders()
+                  }
+                } else if(log.msg === 'added') {
+                  if(data.teamOrderId === teamOrderId){
+                    orders[session.teamId][data.id] = data
+                  }
+                }
+              break;
+            default:
+              break;
+            }
+          }
+        });
+        ddpClient.unsubscribe(DDP.SUBSCRIBE_LIST.ORDERS.channel)
+        ddpClient.subscribe(DDP.SUBSCRIBE_LIST.ORDERS.channel, [session.userId, [session.teamId]])
+
+        // PLACE THE ORDER
 
         // add the date
         if (updatedCart.date === null) {
@@ -272,12 +308,29 @@ describe('Ordering', () => {
         updatedCart.orders[cartAttributes.purveyorId] = cartProductPurveyor;
 
         ddpClient.call('updateTeam', [session.teamId, { cart: updatedCart }], (result) => {
-          ddpClient.call('sendCart', [session.userId, session.teamId, teamOrderId], (result) => {
-            // TODO: subscribe to the orders being sent instead of immediate results
-            console.log(result)
-            done()
-          })
+          ddpClient.call('sendCart', [session.userId, session.teamId, teamOrderId])
         });
+
+        function checkOrders(){
+          let testComplete = null
+          let testPassed = null
+
+          const orderSentList = _.pluck(orders[session.teamId], 'sent');
+
+          if(orderSentList.indexOf(null) === -1){
+            testComplete = true
+            if(orderSentList.indexOf(false) === -1){
+              testPassed = true
+            } else {
+              testPassed = false
+            }
+          }
+
+          if(testComplete === true){
+            assert.equal(testPassed, true)
+            done()
+          }
+        }
       }
     })
   });
@@ -286,7 +339,6 @@ describe('Ordering', () => {
 
 
 describe('Disconnect', () => {
-
   it(`should disconnect from url: ${chalk.cyan(DDP.ENDPOINT_WS)}`, (done) => {
     // check connection
     checkConnection(done);
@@ -296,5 +348,4 @@ describe('Disconnect', () => {
     })
     ddpClient.close();
   })
-
 })
