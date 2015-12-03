@@ -8,7 +8,7 @@
     "start_cold": "./node_modules/.bin/react-native-webpack-server start",
     "bundle": "./node_modules/.bin/react-native-webpack-server bundle",
     "jest": "BABEL_JEST_STAGE=0 jest src/__tests__/*.jest.js",
-    "test": "./node_modules/mocha/bin/mocha --compilers js:babel-core/register src/__tests__/*.mocha.js"
+    "test": "./node_modules/mocha/bin/mocha --compilers js:babel-core/register src/__tests__/mocha-tests.js"
   },
   "jest": {
     "rootDir": "src",
