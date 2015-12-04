@@ -95,6 +95,7 @@ class App extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
+      installationRegistered: nextProps.connect.installationRegistered,
       isAuthenticated: nextProps.session.isAuthenticated,
       firstName: nextProps.session.firstName,
       lastName: nextProps.session.lastName,
@@ -110,6 +111,24 @@ class App extends React.Component {
             name: 'Feed'
           });
         }, 100)
+      }
+      if(this.state.isAuthenticated === true){
+        const {dispatch, connect, session} = this.props
+        if (this.state.installationRegistered !== true && connect.status === actions.CONNECT.CONNECTED) {
+          PushManager.requestPermissions((err, data) => {
+            if (err) {
+              dispatch(actions.registerInstallationError(session.userId))
+            } else {
+              if(data.hasOwnProperty('token') && data.token.indexOf('Error') !== -1){
+                dispatch(actions.registerInstallation(session.userId, data))
+              } else {
+                console.log(err, data)
+                dispatch(actions.registerInstallationError(session.userId))
+                // dispatch(actions.registerInstallationDeclined(session.userId))
+              }
+            }
+          });
+        }
       }
     }
   }
@@ -755,18 +774,6 @@ class App extends React.Component {
 
     // redirect to initial view
     if (this.state.isAuthenticated){
-      if (this.state.installationRegistered === false) {
-        PushManager.requestPermissions((err, data) => {
-          if (err) {
-            console.log("Could not register for push");
-          } else {
-            if(data.token.indexOf('Error') !== -1){
-              dispatch(actions.registerInstallation(session.userId, data))
-              this.setState({ installationRegistered: true })
-            }
-          }
-        });
-      }
       if (route.name === 'Login' || route.name === 'Signup' || route.name == 'UserInfo') {
         if (this.state.firstName === "" || this.state.lastName === "") {
           route.name = 'UserInfo';
@@ -775,6 +782,7 @@ class App extends React.Component {
             // else send to Feed
             route.name = 'Feed';
           } else {
+            // console.log(teams);
             route.name = 'Loading';
           }
         }
