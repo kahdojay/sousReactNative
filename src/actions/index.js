@@ -17,6 +17,7 @@ const sessionActions = SessionActions(ddpClient, {
 })
 const messageActions = MessageActions(ddpClient)
 const teamActions = TeamActions(ddpClient, {
+  'sessionActions': sessionActions,
   'connectActions': connectActions,
   'messageActions': messageActions
 })

@@ -1,4 +1,4 @@
-import shortid from 'shortid'
+import { generateId } from '../utilities/utils'
 import MessageActions from './message'
 import {
   RESET_CATEGORIES,
@@ -23,7 +23,7 @@ export default function CategoryActions(ddpClient){
   //   return (dispatch, getState) => {
   //     const { session } = getState();
   //     var newCategoryAttributes = {
-  //       _id: shortid.generate(),
+  //       _id: generateId(),
   //       teamId: session.teamId,
   //       name: categoryRow.name,
   //       description: categoryRow.description,

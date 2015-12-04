@@ -138,8 +138,7 @@ class App extends React.Component {
       }
     }
     if(this.refs.appNavigator){
-      if(this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
-        console.log(this.state.currentTeam)
+      if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'Loading'){
         if(this.state.currentTeam !== null){
           setTimeout(() => {
             this.refs.appNavigator.replacePrevious({
@@ -150,6 +149,14 @@ class App extends React.Component {
           setTimeout(() => {
             this.refs.appNavigator.replacePrevious({
               name: 'TeamIndex'
+            });
+          }, 10)
+        }
+      } else if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'UserTeam'){
+        if(this.state.currentTeam !== null){
+          setTimeout(() => {
+            this.refs.appNavigator.replacePrevious({
+              name: 'Feed'
             });
           }, 10)
         }
@@ -496,6 +503,17 @@ class App extends React.Component {
             }}
           />
         )
+      case 'UserTeam':
+        return (
+          <Components.UserTeam
+            session={session}
+            onCreateTeam={(teamName) => {
+              _.debounce(() => {
+                dispatch(actions.addTeam(teamName));
+              }, 25)()
+            }}
+          />
+        )
       case 'InviteView':
         return (
           <Components.InviteView
@@ -768,6 +786,7 @@ class App extends React.Component {
           })
           break;
         case 'UserInfo':
+        case 'UserTeam':
         case 'Loading':
           navBar = <View />;
           break;
@@ -798,13 +817,15 @@ class App extends React.Component {
 
     // redirect to initial view
     if (this.state.isAuthenticated){
-      if (route.name === 'Login' || route.name === 'Signup' || route.name == 'UserInfo') {
-        if (this.state.firstName === "" || this.state.lastName === "") {
+      if (route.name === 'Login' || route.name === 'Signup' || route.name === 'UserInfo') {
+        if (this.state.firstName === '' || this.state.lastName === '') {
           route.name = 'UserInfo';
         } else {
           if(this.state.currentTeam !== null){
             // else send to Feed
             route.name = 'Feed';
+          } else if(session.teamId === null) {
+            route.name = 'UserTeam';
           } else {
             route.name = 'Loading';
           }
@@ -857,48 +878,45 @@ class App extends React.Component {
       />
     )
 
-    let CustomSideView = SideMenu
-    if(this.state.isAuthenticated !== true || this.state.currentTeam === null){
-      CustomSideView = View
+    let CustomSideView = View
+    let menu = View
+    if(this.state.isAuthenticated === true && this.state.currentTeam !== null){
+      CustomSideView = SideMenu
+      menu = (
+        <Components.Menu
+          ref='menu'
+          team={this.state.currentTeam}
+          session={session}
+          open={this.state.open}
+          toggleInviteModal={(value) => {
+            _.debounce(() => {
+              dispatch(actions.updateSession({ inviteModalVisible: value }))
+            }, 25)()
+          }}
+          onNavToCategory={() => {
+            nav.push({ name: 'CategoryIndex', })
+          }}
+          onNavToProfile={() => {
+            nav.push({ name: 'Profile', })
+          }}
+          onNavToTeam={() => {
+            nav.push({ name: 'TeamView', })
+          }}
+          onNavToTeamMemberListing={() => {
+            nav.push({ name: 'TeamMemberListing', })
+          }}
+          onNavToTeamIndex={() => {
+            nav.push({ name: 'TeamIndex', })
+          }}
+        />
+      );
     }
-    // console.log('app.js', this.props)
-    // console.log('app.js render, errors:', this.props.errors.data)
-
-    const menu = (
-      <Components.Menu
-        ref='menu'
-        team={this.state.currentTeam}
-        session={session}
-        open={this.state.open}
-        toggleInviteModal={(value) => {
-          _.debounce(() => {
-            dispatch(actions.updateSession({ inviteModalVisible: value }))
-          }, 25)()
-        }}
-        onNavToCategory={() => {
-          nav.push({ name: 'CategoryIndex', })
-        }}
-        onNavToProfile={() => {
-          nav.push({ name: 'Profile', })
-        }}
-        onNavToTeam={() => {
-          nav.push({ name: 'TeamView', })
-        }}
-        onNavToTeamMemberListing={() => {
-          nav.push({ name: 'TeamMemberListing', })
-        }}
-        onNavToTeamIndex={() => {
-          nav.push({ name: 'TeamIndex', })
-        }}
-      />
-    );
 
     return (
       <CustomSideView
         ref='customSideView'
         menu={menu}
         touchToClose={true}
-        // openMenuOffset={500} // changes menu width
         onChange={::this.handleChange}
       >
         <View style={styles.container} >

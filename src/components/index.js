@@ -24,6 +24,7 @@ import TeamIndex from './teamIndex';
 import TeamView from './teamView';
 import TeamMemberListing from './teamMemberListing';
 import UserInfo from './userInfo';
+import UserTeam from './userTeam';
 
 export default {
    CartView,
@@ -52,4 +53,5 @@ export default {
    TeamMemberListing,
    TeamView,
    UserInfo,
+   UserTeam,
 }
