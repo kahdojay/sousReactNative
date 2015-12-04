@@ -410,6 +410,7 @@ export default function TeamActions(ddpClient, allActions) {
     return (dispatch, getState) => {
       const {teams} = getState()
       var team = _.filter(teams.data, { id: teamId })[0]
+      // console.log(team)
       return dispatch({
         type: SET_CURRENT_TEAM,
         team: team

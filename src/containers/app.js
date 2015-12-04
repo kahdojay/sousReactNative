@@ -103,32 +103,55 @@ class App extends React.Component {
     })
   }
 
-  componentDidUpdate() {
+  componentWillUpdate(nextProps) {
     if(this.refs.appNavigator){
-      if(this.state.currentTeam !== null && this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
-        setTimeout(() => {
-          this.refs.appNavigator.replacePrevious({
-            name: 'Feed'
-          });
-        }, 100)
+      if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'TeamIndex'){
+        if(this.state.currentTeam !== null){
+          setTimeout(() => {
+            this.refs.appNavigator.replacePrevious({
+              name: 'Feed'
+            });
+          }, 10)
+        }
       }
-      if(this.state.isAuthenticated === true){
-        const {dispatch, connect, session} = this.props
-        if (this.state.installationRegistered !== true && connect.status === actions.CONNECT.CONNECTED) {
-          PushManager.requestPermissions((err, data) => {
-            if (err) {
-              dispatch(actions.registerInstallationError(session.userId))
+    }
+  }
+
+  componentDidUpdate() {
+    if(this.state.isAuthenticated === true){
+      const {dispatch, connect, session} = this.props
+      if (this.state.installationRegistered !== true && connect.status === actions.CONNECT.CONNECTED) {
+        PushManager.requestPermissions((err, data) => {
+          if (err) {
+            dispatch(actions.registerInstallationError(session.userId))
+          } else {
+            // if(userDoesNotAllow === true){
+            //   dispatch(actions.registerInstallationDeclined(session.userId))
+            // }
+            if(data.hasOwnProperty('token') && data.token.indexOf('Error') === -1){
+              dispatch(actions.registerInstallation(session.userId, data))
             } else {
-              // if(userDoesNotAllow === true){
-              //   dispatch(actions.registerInstallationDeclined(session.userId))
-              // }
-              if(data.hasOwnProperty('token') && data.token.indexOf('Error') === -1){
-                dispatch(actions.registerInstallation(session.userId, data))
-              } else {
-                dispatch(actions.registerInstallationError(session.userId))
-              }
+              dispatch(actions.registerInstallationError(session.userId))
             }
-          });
+          }
+        });
+      }
+    }
+    if(this.refs.appNavigator){
+      if(this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
+        console.log(this.state.currentTeam)
+        if(this.state.currentTeam !== null){
+          setTimeout(() => {
+            this.refs.appNavigator.replacePrevious({
+              name: 'Feed'
+            });
+          }, 10)
+        } else if(this.props.teams.data.length > 0){
+          setTimeout(() => {
+            this.refs.appNavigator.replacePrevious({
+              name: 'TeamIndex'
+            });
+          }, 10)
         }
       }
     }
@@ -783,7 +806,6 @@ class App extends React.Component {
             // else send to Feed
             route.name = 'Feed';
           } else {
-            // console.log(teams);
             route.name = 'Loading';
           }
         }
