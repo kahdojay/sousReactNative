@@ -31,7 +31,7 @@ class App extends React.Component {
   constructor(props, ctx) {
     super(props, ctx);
     this.state = {
-      installationRegistered: false,
+      installationRegistered: this.props.connect.installationRegistered,
       touchToClose: false,
       open: false,
       isAuthenticated: this.props.session.isAuthenticated,
@@ -119,12 +119,13 @@ class App extends React.Component {
             if (err) {
               dispatch(actions.registerInstallationError(session.userId))
             } else {
-              if(data.hasOwnProperty('token') && data.token.indexOf('Error') !== -1){
+              // if(userDoesNotAllow === true){
+              //   dispatch(actions.registerInstallationDeclined(session.userId))
+              // }
+              if(data.hasOwnProperty('token') && data.token.indexOf('Error') === -1){
                 dispatch(actions.registerInstallation(session.userId, data))
               } else {
-                console.log(err, data)
                 dispatch(actions.registerInstallationError(session.userId))
-                // dispatch(actions.registerInstallationDeclined(session.userId))
               }
             }
           });
