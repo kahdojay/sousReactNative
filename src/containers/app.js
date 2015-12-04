@@ -756,13 +756,14 @@ class App extends React.Component {
     // redirect to initial view
     if (this.state.isAuthenticated){
       if (this.state.installationRegistered === false) {
-        let that = this
-        PushManager.requestPermissions(function(err, data) {
+        PushManager.requestPermissions((err, data) => {
           if (err) {
             console.log("Could not register for push");
           } else {
-            dispatch(actions.registerInstallation(session.userId, data))
-            that.setState({ installationRegistered: true })
+            if(data.token.indexOf('Error') !== -1){
+              dispatch(actions.registerInstallation(session.userId, data))
+              this.setState({ installationRegistered: true })
+            }
           }
         });
       }
@@ -770,7 +771,6 @@ class App extends React.Component {
         if (this.state.firstName === "" || this.state.lastName === "") {
           route.name = 'UserInfo';
         } else {
-
           if(this.state.currentTeam !== null){
             // else send to Feed
             route.name = 'Feed';
