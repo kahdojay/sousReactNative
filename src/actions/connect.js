@@ -313,7 +313,7 @@ export default function ConnectActions(ddpClient) {
   function sendEmail(requestAttributes){
     return (dispatch) => {
       dispatch(() => {
-        console.log('Sending email: ', requestAttributes);
+        // console.log('Sending email: ', requestAttributes);
         ddpClient.call('sendEmail', [requestAttributes])
       })
       return {

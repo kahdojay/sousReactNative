@@ -13,7 +13,7 @@ describe('registration', () => {
         data.id = log.id;
         switch(log.collection){
           case DDP.SUBSCRIBE_LIST.RESTRICTED.collection:
-            console.log(data)
+            // console.log(data)
             expect(data).toEqual({
 
             });

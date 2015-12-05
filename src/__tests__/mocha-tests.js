@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import assert from 'assert'
 import chalk from 'chalk'
-import Shortid from 'shortid'
+import { generateId } from '../utilities/utils'
 import WebSocket from 'ws'
 import { DDP } from '../resources/apiConfig'
 import DDPClient from 'ddp-client'
@@ -185,12 +185,12 @@ describe('Teams', () => {
         ddpClient.on('message', (msg) => {
           const log = JSON.parse(msg);
           if (log.hasOwnProperty('fields')){
-            console.log("MAIN DDP WITH FIELDS MSG", log);
+            // console.log("MAIN DDP WITH FIELDS MSG", log);
             const data = log.fields;
             data.id = log.id;
             switch(log.collection){
               case DDP.SUBSCRIBE_LIST.RESTRICTED.collection:
-                console.log(log.msg, data, "\n\n\n");
+                // console.log(log.msg, data, "\n\n\n");
                 if(log.msg === 'changed' && data.hasOwnProperty('teamId')){
                   session.teamId = data.teamId
                   assert.equal(session.teamId, data.teamId)
@@ -204,7 +204,7 @@ describe('Teams', () => {
         })
 
         ddpClient.call('updateUser', [session.userId, { teamId: teamId }], (result) => {
-          console.log(result)
+          // console.log(result)
         })
       }
     }
@@ -236,7 +236,7 @@ describe('Ordering', () => {
         }
 
         let updatedCart = Object.assign({}, teams[session.teamId].cart)
-        const teamOrderId = Shortid.generate();
+        const teamOrderId = generateId();
         let cartProductPurveyor = null;
 
         // SUBSCRIBE TO THE ORDERS CHANNEL
@@ -277,7 +277,7 @@ describe('Ordering', () => {
 
         // add the product purveyor
         if (updatedCart.orders.hasOwnProperty(cartAttributes.purveyorId) === false) {
-          const orderId = Shortid.generate()
+          const orderId = generateId()
           updatedCart.orders[cartAttributes.purveyorId] = {
             id: orderId,
             total: 0.0,
