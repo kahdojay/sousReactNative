@@ -1,16 +1,17 @@
-import shortid from 'shortid'
+import { generateId } from '../utilities/utils';
+import moment from 'moment';
 import {
   RESET_MESSAGES,
   GET_MESSAGES,
   REQUEST_MESSAGES,
   RECEIVE_MESSAGES,
+  NO_MESSAGES,
   ERROR_MESSAGES,
   CREATE_MESSAGE,
   DELETE_MESSAGE
 } from './actionTypes'
 
 export default function MessageActions(ddpClient) {
-
   function resetMessages(){
     return {
       type: RESET_MESSAGES
@@ -26,7 +27,7 @@ export default function MessageActions(ddpClient) {
 
       message.text = message.text.replace(/\{\{author\}\}/g, author);
       var newMessage = {
-        _id: shortid.generate(),
+        _id: generateId(),
         author: author || "Default",
         createdAt: (new Date()).toISOString(),
         delete: false,
@@ -37,7 +38,9 @@ export default function MessageActions(ddpClient) {
         userId: session.userId,
       };
       // console.log('newMessage', newMessage);
-      ddpClient.call('createMessage', [newMessage])
+      dispatch(() => {
+        ddpClient.call('createMessage', [newMessage])
+      })
       return dispatch({
         type: CREATE_MESSAGE,
         message: newMessage
@@ -45,10 +48,11 @@ export default function MessageActions(ddpClient) {
     }
   }
 
-  function deleteMessage(messageId) {
+  function deleteMessage(teamId, messageId) {
     return {
       type: DELETE_MESSAGE,
-      messageId: messageId
+      teamId: teamId,
+      messageId: messageId,
     }
   }
 
@@ -65,10 +69,50 @@ export default function MessageActions(ddpClient) {
     }
   }
 
+  function noMessagesReceived() {
+    return {
+      type: NO_MESSAGES
+    }
+  }
+
   function errorMessages(errors){
     return {
       type: ERROR_MESSAGES,
       errors: errors
+    }
+  }
+
+  function getTeamMessages(teamId) {
+    return (dispatch, getState) => {
+      const {messages} = getState()
+      // console.log(messages);
+      // console.log(teamId);
+      const teamMessages = messages.teams[teamId] || {}
+      let messageKeys = Object.keys(teamMessages)
+      let lastMessageDate = (new Date()).toISOString()
+      if(messageKeys.length > 0){
+        messageKeys.sort((a, b) => {
+          return moment(teamMessages[a].createdAt).isBefore(teamMessages[b].createdAt) ? 1 : -1;
+        })
+        lastMessageDate = teamMessages[messageKeys[messageKeys.length - 1]].createdAt;
+      }
+      dispatch(() => {
+        ddpClient.call(
+          'getTeamMessages',
+          [teamId, lastMessageDate],
+          (err, result) => {
+            // console.log('called function, result: ', result);
+            if(result.length > 0){
+              result.forEach((message) => {
+                dispatch(receiveMessages(message));
+              })
+            } else {
+              dispatch(noMessagesReceived())
+            }
+          }
+        );
+      });
+      return dispatch(requestMessages());
     }
   }
 
@@ -77,6 +121,7 @@ export default function MessageActions(ddpClient) {
     GET_MESSAGES,
     REQUEST_MESSAGES,
     RECEIVE_MESSAGES,
+    NO_MESSAGES,
     ERROR_MESSAGES,
     CREATE_MESSAGE,
     DELETE_MESSAGE,
@@ -84,6 +129,7 @@ export default function MessageActions(ddpClient) {
     deleteMessage,
     // getMessages,
     resetMessages,
-    receiveMessages
+    receiveMessages,
+    getTeamMessages,
   }
 }

@@ -1,5 +1,3 @@
-import { DDP } from '../resources/apiConfig'
-import DDPClient from 'ddp-client'
 import ConnectActions from './connect'
 import UIActions from './ui'
 import SessionActions from './session'
@@ -9,19 +7,7 @@ import PurveyorActions from './purveyor'
 import ProductActions from './product'
 import CategoryActions from './category'
 import ErrorActions from './error'
-
-const ddpClient = new DDPClient({
-  // host : "localhost",
-  // port : 3000,
-  // ssl  : false,
-  autoReconnect : false, // default: true,
-  // autoReconnectTimer : 500,
-  maintainCollections : false, // default: true,
-  // ddpVersion : '1',  // ['1', 'pre2', 'pre1'] available
-  // Use a full url instead of a set of `host`, `port` and `ssl`
-  url: DDP.ENDPOINT_WS,
-  // socketConstructor: WebSocket // Another constructor to create new WebSockets
-});
+import ddpClient from '../utilities/ddpClient'
 
 const errorActions = ErrorActions(ddpClient)
 const connectActions = ConnectActions(ddpClient)
@@ -31,6 +17,7 @@ const sessionActions = SessionActions(ddpClient, {
 })
 const messageActions = MessageActions(ddpClient)
 const teamActions = TeamActions(ddpClient, {
+  'sessionActions': sessionActions,
   'connectActions': connectActions,
   'messageActions': messageActions
 })
@@ -46,8 +33,9 @@ function connectApp(){
 
     // dispatch(sessionActions.resetSession());
     dispatch(sessionActions.resetSessionVersion());
+    dispatch(teamActions.resetTeams());
     // dispatch(uiActions.resetUI()); //NOTE: why doesnt this work?
-    dispatch(messageActions.resetMessages());
+    // dispatch(messageActions.resetMessages());
     // dispatch(purveyorActions.resetPurveyors());
 
     //--------------------------------------

@@ -15,6 +15,11 @@
 		110F5ECF1BCF2D5700234ED6 /* libReactNativeIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 110F5ECE1BCF2D4900234ED6 /* libReactNativeIcons.a */; };
 		110F5ED01BCF2DDF00234ED6 /* Material-Design-Iconic-Font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 117817961BCDD8EE009F23E6 /* Material-Design-Iconic-Font.ttf */; };
 		110F5ED11BCF2DDF00234ED6 /* FontAwesome.otf in Resources */ = {isa = PBXBuildFile; fileRef = 117817971BCDD8EE009F23E6 /* FontAwesome.otf */; };
+		119B21331C0F6F37000402CA /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 119B21321C0F6F37000402CA /* main.jsbundle */; };
+		119B21341C0F6F37000402CA /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 119B21321C0F6F37000402CA /* main.jsbundle */; };
+		119B213B1C0F71AB000402CA /* RemotePushDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 119B213A1C0F71AB000402CA /* RemotePushDelegate.m */; };
+		119B213C1C0F71AB000402CA /* RemotePushDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 119B213A1C0F71AB000402CA /* RemotePushDelegate.m */; };
+		11E4106F1C1153250080A1E7 /* libRCTRemotePushManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 119B21311C0F6CF6000402CA /* libRCTRemotePushManager.a */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
 		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
@@ -36,7 +41,6 @@
 		A531FDAA1BE3EC2F00E90569 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = A531FDA91BE3EC2F00E90569 /* main.jsbundle */; };
 		A5380FE61BE05DFA00FADB96 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A5380FE51BE05DFA00FADB96 /* AppDelegate.m */; };
 		A5380FEA1BE05E2E00FADB96 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A5380FE71BE05E2E00FADB96 /* Images.xcassets */; };
-		A5380FEB1BE05E2E00FADB96 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A5380FE81BE05E2E00FADB96 /* Info.plist */; };
 		A5380FEC1BE05E2E00FADB96 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A5380FE91BE05E2E00FADB96 /* main.m */; };
 		A5380FEF1BE05E4400FADB96 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A5380FED1BE05E4400FADB96 /* LaunchScreen.xib */; };
 		A5380FF11BE05F0D00FADB96 /* SousTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A5380FF01BE05F0D00FADB96 /* SousTests.m */; };
@@ -92,6 +96,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 2F5A3EB81ACDBF8000439386;
 			remoteInfo = ReactNativeIcons;
+		};
+		119B21301C0F6CF6000402CA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 119B212C1C0F6CF6000402CA /* RCTRemotePushManager.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 48DDA26A1B0A1157004C75B0;
+			remoteInfo = RCTRemotePushManager;
 		};
 		139105C01AF99BAD00B5F7CC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -169,6 +180,10 @@
 		110F5EC91BCF2D4900234ED6 /* ReactNativeIcons.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeIcons.xcodeproj; path = "../node_modules/react-native-icons/ios/ReactNativeIcons.xcodeproj"; sourceTree = "<group>"; };
 		117817961BCDD8EE009F23E6 /* Material-Design-Iconic-Font.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Material-Design-Iconic-Font.ttf"; sourceTree = "<group>"; };
 		117817971BCDD8EE009F23E6 /* FontAwesome.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome.otf; sourceTree = "<group>"; };
+		119B212C1C0F6CF6000402CA /* RCTRemotePushManager.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTRemotePushManager.xcodeproj; path = "../node_modules/react-native-remote-push/RCTRemotePushManager.xcodeproj"; sourceTree = "<group>"; };
+		119B21321C0F6F37000402CA /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = SOURCE_ROOT; };
+		119B21391C0F71AB000402CA /* RemotePushDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemotePushDelegate.h; path = "../node_modules/react-native-remote-push/RemotePushDelegate.h"; sourceTree = "<group>"; };
+		119B213A1C0F71AB000402CA /* RemotePushDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemotePushDelegate.m; path = "../node_modules/react-native-remote-push/RemotePushDelegate.m"; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Sous.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sous.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -212,6 +227,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11E4106F1C1153250080A1E7 /* libRCTRemotePushManager.a in Frameworks */,
 				8918EB061BD8227C0068EBBA /* libRNOverlay.a in Frameworks */,
 				110F5ECF1BCF2D5700234ED6 /* libReactNativeIcons.a in Frameworks */,
 				C430DDA41BCEC67100962F41 /* libRCTAddressBook.a in Frameworks */,
@@ -297,6 +313,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		119B212D1C0F6CF6000402CA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				119B21311C0F6CF6000402CA /* libRCTRemotePushManager.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		139105B71AF99BAD00B5F7CC /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -316,7 +340,7 @@
 		13B07FAE1A68108700A75B9A /* Sous */ = {
 			isa = PBXGroup;
 			children = (
-				A531FDA91BE3EC2F00E90569 /* main.jsbundle */,
+				119B21321C0F6F37000402CA /* main.jsbundle */,
 				A5380FE41BE05DFA00FADB96 /* AppDelegate.h */,
 				A5380FE51BE05DFA00FADB96 /* AppDelegate.m */,
 				A5380FED1BE05E4400FADB96 /* LaunchScreen.xib */,
@@ -346,6 +370,9 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				119B21391C0F71AB000402CA /* RemotePushDelegate.h */,
+				119B213A1C0F71AB000402CA /* RemotePushDelegate.m */,
+				119B212C1C0F6CF6000402CA /* RCTRemotePushManager.xcodeproj */,
 				8918EAF21BD822690068EBBA /* RNOverlay.xcodeproj */,
 				8918EA9F1BD801AE0068EBBA /* RNMultiPicker.xcodeproj */,
 				110F5EC91BCF2D4900234ED6 /* ReactNativeIcons.xcodeproj */,
@@ -493,7 +520,7 @@
 		83CBB9F71A601CBA00E9B192 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0710;
 				ORGANIZATIONNAME = "Sous Inc.";
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
@@ -540,6 +567,10 @@
 				{
 					ProductGroup = 00C302D41ABCB9D200DB3ED1 /* Products */;
 					ProjectRef = 00C302D31ABCB9D200DB3ED1 /* RCTNetwork.xcodeproj */;
+				},
+				{
+					ProductGroup = 119B212D1C0F6CF6000402CA /* Products */;
+					ProjectRef = 119B212C1C0F6CF6000402CA /* RCTRemotePushManager.xcodeproj */;
 				},
 				{
 					ProductGroup = 139105B71AF99BAD00B5F7CC /* Products */;
@@ -625,6 +656,13 @@
 			remoteRef = 110F5ECD1BCF2D4900234ED6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		119B21311C0F6CF6000402CA /* libRCTRemotePushManager.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRCTRemotePushManager.a;
+			remoteRef = 119B21301C0F6CF6000402CA /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		139105C11AF99BAD00B5F7CC /* libRCTSettings.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -695,6 +733,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				119B21341C0F6F37000402CA /* main.jsbundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -711,11 +750,11 @@
 				89EFDE5B1BCC097F001FBBEF /* OpenSans-ExtraBold.ttf in Resources */,
 				A531FDAA1BE3EC2F00E90569 /* main.jsbundle in Resources */,
 				89EFDE5E1BCC097F001FBBEF /* OpenSans-Light.ttf in Resources */,
-				A5380FEB1BE05E2E00FADB96 /* Info.plist in Resources */,
 				89A667011BC2F38A00F45CFD /* OpenSans-Regular.ttf in Resources */,
 				A5380FEF1BE05E4400FADB96 /* LaunchScreen.xib in Resources */,
 				89EFDE5C1BCC097F001FBBEF /* OpenSans-ExtraBoldItalic.ttf in Resources */,
 				89EFDE5A1BCC097F001FBBEF /* OpenSans-BoldItalic.ttf in Resources */,
+				119B21331C0F6F37000402CA /* main.jsbundle in Resources */,
 				89EFDE5F1BCC097F001FBBEF /* OpenSans-LightItalic.ttf in Resources */,
 				89EFDE601BCC097F001FBBEF /* OpenSans-Semibold.ttf in Resources */,
 			);
@@ -728,6 +767,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				119B213C1C0F71AB000402CA /* RemotePushDelegate.m in Sources */,
 				A5380FF11BE05F0D00FADB96 /* SousTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -738,6 +778,7 @@
 			files = (
 				A5380FE61BE05DFA00FADB96 /* AppDelegate.m in Sources */,
 				A5380FEC1BE05E2E00FADB96 /* main.m in Sources */,
+				119B213B1C0F71AB000402CA /* RemotePushDelegate.m in Sources */,
 				899803FF1BCEC7E00011F96A /* UIImagePickerManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -781,7 +822,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sousapp.sousRN;
 				PRODUCT_NAME = Sous;
-				PROVISIONING_PROFILE = "abce62c7-9ac0-49ec-819c-79e9a5ab772b";
+				PROVISIONING_PROFILE = "78fabf6d-7dc3-429b-9d72-08e7d56f84e4";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sous.app/Sous";
 			};
 			name = Debug;
@@ -800,6 +841,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sousapp.sousRN;
 				PRODUCT_NAME = Sous;
+				PROVISIONING_PROFILE = "c4cd847f-7a0b-43c1-8af2-7f4d1b84890c";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sous.app/Sous";
 			};
 			name = Release;
@@ -808,12 +850,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Don Kahn (ZXGDLAS9W4)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEAD_CODE_STRIPPING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
+					"$(SRCROOT)/../node_modules/react-native/Libraries/PushNotificationIOS",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Sous/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -821,7 +868,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sousapp.sousRN;
 				PRODUCT_NAME = Sous;
-				PROVISIONING_PROFILE = "abce62c7-9ac0-49ec-819c-79e9a5ab772b";
+				PROVISIONING_PROFILE = "78fabf6d-7dc3-429b-9d72-08e7d56f84e4";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -830,12 +877,17 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Sous Inc. (QXC764RXA5)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEAD_CODE_STRIPPING = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
+					"$(SRCROOT)/../node_modules/react-native/Libraries/PushNotificationIOS",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Sous/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -843,7 +895,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sousapp.sousRN;
 				PRODUCT_NAME = Sous;
-				PROVISIONING_PROFILE = "71f088bb-1788-44ec-8693-1694c0a225f2";
+				PROVISIONING_PROFILE = "c4cd847f-7a0b-43c1-8af2-7f4d1b84890c";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -949,7 +1001,7 @@
 				00E356F71AD99517003FC87E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Sous" */ = {
 			isa = XCConfigurationList;
@@ -958,7 +1010,7 @@
 				13B07F951A680F5B00A75B9A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Sous" */ = {
 			isa = XCConfigurationList;
@@ -967,7 +1019,7 @@
 				83CBBA211A601CBA00E9B192 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};

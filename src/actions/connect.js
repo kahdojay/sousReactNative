@@ -1,5 +1,7 @@
 import { DDP } from '../resources/apiConfig'
 import {
+  SEND_EMAIL,
+  REGISTER_INSTALLATION,
   CONNECTION_STATUS,
   RESET_CHANNELS,
   SUBSCRIBE_CHANNEL,
@@ -11,6 +13,33 @@ import {
 export default function ConnectActions(ddpClient) {
 
   var connectedChannels = {}
+
+  function registerInstallation(userId, deviceAttributes) {
+    return (dispatch, getState) => {
+      // TODO: use connect.channels in processSubscription to retrigger registrations on team changes
+      dispatch(() => {
+        ddpClient.call('registerInstallation', [userId, deviceAttributes])
+      })
+      return dispatch({
+        type: REGISTER_INSTALLATION,
+        installationRegistered: true,
+      })
+    }
+  }
+
+  function registerInstallationDeclined(userId) {
+    return {
+      type: REGISTER_INSTALLATION,
+      installationRegistered: true,
+    }
+  }
+
+  function registerInstallationError(userId) {
+    return {
+      type: REGISTER_INSTALLATION,
+      installationRegistered: true,
+    }
+  }
 
   function processSubscription(channel, argsList){
     // console.log('PROCESSING: ', channel, argsList);
@@ -61,8 +90,10 @@ export default function ConnectActions(ddpClient) {
       }
 
       if(session.isAuthenticated === true){
+        if(session.teamId !== null){
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [session.userId, session.teamId]))
+        }
         if(teamIds !== undefined && teamIds.length > 0 && session.userId !== null){
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS_USERS.channel, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CATEGORIES.channel, [session.userId, teamIds]))
@@ -119,6 +150,7 @@ export default function ConnectActions(ddpClient) {
           data.id = log.id;
           switch(log.collection){
             case 'messages':
+              // console.log("MAIN DDP WITH FIELDS MSG", log);
               dispatch(messageActions.receiveMessages(data))
               break;
             case 'teams':
@@ -278,9 +310,23 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
+  function sendEmail(requestAttributes){
+    return (dispatch) => {
+      dispatch(() => {
+        // console.log('Sending email: ', requestAttributes);
+        ddpClient.call('sendEmail', [requestAttributes])
+      })
+      return {
+        type: SEND_EMAIL
+      }
+    }
+  }
+
   // TODO: how to handle disconnect?
 
   return {
+    SEND_EMAIL,
+    REGISTER_INSTALLATION,
     CONNECTION_STATUS,
     RESET_CHANNELS,
     SUBSCRIBE_CHANNEL,
@@ -289,9 +335,13 @@ export default function ConnectActions(ddpClient) {
     CONNECT,
     // 'connectSingleChannel': connectSingleChannel,
     // 'connectChannels': connectChannels,
+    'registerInstallation': registerInstallation,
+    'registerInstallationDeclined': registerInstallationDeclined,
+    'registerInstallationError': registerInstallationError,
     'connectDDP': connectDDP,
     'connectDDPClient': connectDDPClient,
     'connectDDPTimeoutId': connectDDPTimeoutId,
     'subscribeDDP': subscribeDDP,
+    'sendEmail': sendEmail,
   }
 }

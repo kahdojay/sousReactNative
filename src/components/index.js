@@ -1,3 +1,4 @@
+import AddOrderGuide from './addOrderGuide';
 import CartView from './cartView';
 import CategoryIndex from './categoryIndex';
 import CategoryView from './categoryView';
@@ -6,6 +7,7 @@ import ErrorModal from '../components/errorModal';
 import Feed from './feed';
 import FeedViewLeftButton from './feedViewLeftButton';
 import FeedViewRightButton from './feedViewRightButton';
+import GenericModal from './genericModal';
 import InviteModal from '../components/inviteModal';
 import InviteView from './inviteView';
 import Login from './login';
@@ -24,32 +26,36 @@ import TeamIndex from './teamIndex';
 import TeamView from './teamView';
 import TeamMemberListing from './teamMemberListing';
 import UserInfo from './userInfo';
+import UserTeam from './userTeam';
 
 export default {
-   CartView,
-   CategoryIndex,
-   CategoryView,
-   CategoryViewRightButton,
-   ErrorModal,
-   Feed,
-   FeedViewLeftButton,
-   FeedViewRightButton,
-   InviteModal,
-   InviteView,
-   Login,
-   Menu,
-   NavBackButton,
-   NavbarTitle,
-   ProductCreate,
-   ProductCreateRightCheckbox,
-   ProductView,
-   ProfileView,
-   PurveyorIndex,
-   PurveyorView,
-   Signup,
-   TaskView,
-   TeamIndex,
-   TeamMemberListing,
-   TeamView,
-   UserInfo,
+  AddOrderGuide,
+  CartView,
+  CategoryIndex,
+  CategoryView,
+  CategoryViewRightButton,
+  ErrorModal,
+  Feed,
+  FeedViewLeftButton,
+  FeedViewRightButton,
+  GenericModal,
+  InviteModal,
+  InviteView,
+  Login,
+  Menu,
+  NavBackButton,
+  NavbarTitle,
+  ProductCreate,
+  ProductCreateRightCheckbox,
+  ProductView,
+  ProfileView,
+  PurveyorIndex,
+  PurveyorView,
+  Signup,
+  TaskView,
+  TeamIndex,
+  TeamMemberListing,
+  TeamView,
+  UserInfo,
+  UserTeam,
 }

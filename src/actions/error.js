@@ -1,4 +1,4 @@
-import shortid from 'shortid'
+import { generateId } from '../utilities/utils'
 import {
   RESET_ERRORS,
   RECEIVE_ERRORS,
@@ -18,7 +18,7 @@ export default function ErrorActions(ddpClient) {
   //   console.log('errorText', errorText)
   //   return (dispatch, getState) => {
   //     var newError = {
-  //       _id: shortid.generate(),
+  //       _id: generateId(),
   //       error: errorText,
   //       createdAt: (new Date()).getTime(),
   //     };

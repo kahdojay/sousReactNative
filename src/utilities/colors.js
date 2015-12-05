@@ -2,6 +2,7 @@ const Colors = {
   blue: '#1E00B1',
   button: '#1825AD',
   buttonPress: '#C4851C',
+  buttonPressUnderlay: '#C6861D',
   darkBlue: '#18008E',
   disabled: '#ccc',
   footerButtonIconColor: '#C7C6C7',
