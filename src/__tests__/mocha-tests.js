@@ -147,11 +147,32 @@ describe('Teams', () => {
           }
         })
         if(teamCodeFound === true){
-          ddpClient.call('updateUser', [session.userId, {
-            teamId: teamId
-          }])
-          assert.ok(teamCodeFound)
-          done();
+          ddpClient.call('addUserToTeam', [session.userId, teamId], (err, result) => {
+            if(result.exists === true){
+              assert.equal(result.exists, true)
+            } else {
+              assert.equal(result.updated, 1)
+            }
+          })
+          ddpClient.call('getUserByPhoneNumber', [phoneNumber], (err, result) => {
+            result.user.userId = result.user._id
+            delete result.user._id
+            session = result.user
+            if(session.teamId === teamId){
+              assert(session.teamId, teamId)
+              done()
+            } else {
+              ddpClient.call('updateUser', [session.userId, {
+                teamId: teamId
+              }], (err, result) => {
+                result.user.userId = result.user._id
+                delete result.user._id
+                session = result.user
+                assert.equal(session.teamId, teamId)
+                done();
+              })
+            }
+          })
         } else {
           ddpClient.call('getTeamByCode', [teamCode], (err, result) => {
             result.id = result._id
@@ -176,6 +197,7 @@ describe('Teams', () => {
       assert.fail(teamId, !null)
       done()
     } else {
+      // console.log(`${session.teamId} === ${teamId}`)
       if(session.hasOwnProperty('teamId') === true && session.teamId === teamId){
         assert.equal(session.teamId, teamId)
         done()
