@@ -2,8 +2,6 @@ import React from 'react-native';
 import _ from 'lodash';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
-import AddressBook from 'react-native-addressbook';
 
 const {
   Modal,
@@ -72,7 +70,7 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
+    padding: 5,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     alignItems: 'center'
   },
@@ -84,6 +82,9 @@ var styles = StyleSheet.create({
   messageContainer: {
     flex: 1,
     margin: 20,
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 20,
   },
   row: {
     flexDirection: 'row',
@@ -100,8 +101,8 @@ var styles = StyleSheet.create({
     fontWeight: 'bold',
     padding: 16,
     textAlign: 'center',
-    color: Colors.blue,
-    width: 264,
+    color: Colors.button,
+    width: 300,
   },
 });
 

@@ -2,6 +2,7 @@
  * action types
  */
 
+export const SEND_EMAIL = 'SEND_EMAIL';
 export const REGISTER_INSTALLATION = 'REGISTER_INSTALLATION';
 export const CONNECTION_STATUS = 'CONNECTION_STATUS';
 export const RESET_CHANNELS = 'RESET_CHANNELS';

@@ -115,12 +115,6 @@ let styles = StyleSheet.create({
     backgroundColor: 'white',
     margin: 10,
   },
-  teamPreferences: {
-    flex: 2,
-    margin: 10,
-    marginTop: 0,
-    backgroundColor: 'white',
-  },
   infoField: {
     backgroundColor: 'white',
     borderWidth: 1,
@@ -187,7 +181,7 @@ let styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: 'OpenSans'
   },
-  deactivateText:{
+  deactivateText: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#777',
@@ -201,12 +195,10 @@ let styles = StyleSheet.create({
     padding: 10,
   },
   searchForTeamTextContainer: {
-    borderBottomWidth: 1,
-    borderColor: Colors.blue,
   },
   searchForTeamText: {
     fontSize: 16,
-    color: Colors.blue,
+    color: Colors.button,
     textAlign: 'center',
   },
   container: {

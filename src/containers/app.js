@@ -44,6 +44,7 @@ class App extends React.Component {
       contactList: [],
       showGenericModal: false,
       genericModalMessage: '',
+      genericModalCallback: () => {},
       sceneState: {
         ProductCreate: {
           submitReady: false,
@@ -174,20 +175,15 @@ class App extends React.Component {
     return isAuthenticated;
   }
 
-  getScene(route, nav) {
+  getScene(route, nav, currentTeamInfo) {
     const { ui, session, teams, messages, dispatch, purveyors, products, categories, errors } = this.props;
 
-    let currentTeamPurveyors = {}
-    let currentTeamCategories = {}
-    let currentTeamProducts = {}
-    let currentTeamMessages = {}
-
-    if(this.state.currentTeam !== null){
-      currentTeamPurveyors = purveyors.teams[this.state.currentTeam.id] || {}
-      currentTeamCategories = categories.teams[this.state.currentTeam.id] || {}
-      currentTeamProducts = products.teams[this.state.currentTeam.id] || {}
-      currentTeamMessages = messages.teams[this.state.currentTeam.id] || {}
-    }
+    const {
+      currentTeamPurveyors,
+      currentTeamCategories,
+      currentTeamProducts,
+      currentTeamMessages
+    } = currentTeamInfo
 
     switch (route.name) {
       case 'Signup':
@@ -201,6 +197,56 @@ class App extends React.Component {
               }, 25)()
             }}
             ui={ui}
+          />
+        )
+      case 'AddOrderGuide':
+        return (
+          <Components.AddOrderGuide
+            emailAddress={session.email}
+            onLearnMore={() => {
+              const learnMoreMsg = (
+                <View>
+                  <Text style={{textAlign: 'center'}}>
+                    With Sous, you can create and send
+                    <Text style={{fontWeight: 'bold'}}> purchase orders </Text>
+                    by adding your
+                    <Text style={{fontWeight: 'bold'}}> order guide </Text>
+                    to the platform. Once the orders are placed, Sous
+                    will notify the entire team to expect an order.
+                  </Text>
+                </View>
+              )
+              this.setState({
+                genericModalMessage: learnMoreMsg,
+                showGenericModal: true
+              })
+            }}
+            onSendEmail={(emailAddress) => {
+              dispatch(actions.sendEmail({
+                type: 'REQUEST_ORDER_GUIDE',
+                body: `Order guide request from: ${emailAddress}`
+              }));
+              dispatch(actions.updateSession({
+                email: emailAddress
+              }))
+              const learnMoreMsg = (
+                <View>
+                  <Text style={{textAlign: 'center'}}>
+                    Thanks for reaching out - we typically respond within
+                    <Text style={{fontWeight: 'bold'}}> 24 hours </Text>
+                  </Text>
+                </View>
+              )
+              this.setState({
+                genericModalMessage: learnMoreMsg,
+                showGenericModal: true,
+                genericModalCallback: () => {
+                  nav.replacePreviousAndPop({
+                    name: 'Feed',
+                  })
+                }
+              })
+            }}
           />
         )
       case 'TeamIndex':
@@ -515,14 +561,14 @@ class App extends React.Component {
               }, 25)()
             }}
             onSearchForTeam={() => {
-              let msg = (
+              let searchForTeamMsg = (
                 <Text style={{textAlign: 'center'}}>
                   If you're trying to join another person's team,
                   ask them to invite you by selecting <Text style={{fontWeight: 'bold'}}>"Invite to Team"</Text> from the menu.
                 </Text>
               )
               this.setState({
-                genericModalMessage: msg,
+                genericModalMessage: searchForTeamMsg,
                 showGenericModal: true,
               })
             }}
@@ -594,12 +640,18 @@ class App extends React.Component {
     }
   }
 
-  getNavBar(route, nav) {
+  getNavBar(route, nav, currentTeamInfo) {
     const { dispatch, ui, teams, session } = this.props;
+
+    const {
+      currentTeamPurveyors,
+      currentTeamCategories,
+      currentTeamProducts,
+      currentTeamMessages
+    } = currentTeamInfo
 
     let navBar = <View />;
     let nextItem = <View />;
-    // let scene = this.getScene(route, nav);
 
     // setup the header for unauthenticated routes
     if(this.authenticatedRoute(route) === false){
@@ -607,6 +659,18 @@ class App extends React.Component {
     } else {
       switch(route.name) {
         //TODO: remove cloneWithProps as it's deprecated
+        case 'AddOrderGuide':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            buttonsColor: '#ccc',
+            customPrev: (
+              <Components.NavBackButton iconFont={'fontawesome|times'} />
+            ),
+            title: 'Order Guide',
+            hideNext: true,
+          })
+          break;
         case 'TeamIndex':
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
@@ -799,11 +863,6 @@ class App extends React.Component {
             ),
           })
           break;
-        case 'UserInfo':
-        case 'UserTeam':
-        case 'Loading':
-          navBar = <View />;
-          break;
         case 'TeamMemberListing':
           navBar = React.addons.cloneWithProps(this.navBar, {
             hidePrev: false,
@@ -812,6 +871,11 @@ class App extends React.Component {
             route: route,
             onNext: null,
           })
+          break;
+        case 'UserInfo':
+        case 'UserTeam':
+        case 'Loading':
+          navBar = <View />;
           break;
         default:
           navBar = React.addons.cloneWithProps(this.navBar, {
@@ -826,8 +890,14 @@ class App extends React.Component {
     return navBar;
   }
 
-  renderScene(route, nav) {
-    const { dispatch, ui, teams, session, errors, connect } = this.props;
+  getRoute(route, nav, currentTeamInfo) {
+    const { session } = this.props;
+    const {
+      currentTeamPurveyors,
+      currentTeamCategories,
+      currentTeamProducts,
+      currentTeamMessages
+    } = currentTeamInfo
 
     // redirect to initial view
     if (this.state.isAuthenticated){
@@ -845,14 +915,41 @@ class App extends React.Component {
           }
         }
       }
+      if(Object.keys(currentTeamPurveyors).length === 0){
+        if(route.name === 'CategoryIndex' || route.name === 'PurveyorIndex') {
+          route.name = 'AddOrderGuide';
+        }
+      }
     }
     // redirect to login if requested view requires authentication
     else if(route.name !== 'Login' && route.name !== 'Signup') {
       route.name = 'Signup'
     }
 
-    let navBar = this.getNavBar(route, nav);
-    let scene = this.getScene(route, nav);
+    return route
+  }
+
+  renderScene(route, nav) {
+    const { dispatch, ui, session, teams, messages, purveyors, products, categories, errors, connect } = this.props;
+
+    let currentTeamInfo = {
+      currentTeamPurveyors: {},
+      currentTeamCategories: {},
+      currentTeamProducts: {},
+      currentTeamMessages: {},
+    }
+
+    if(this.state.currentTeam !== null){
+      currentTeamInfo.currentTeamPurveyors = purveyors.teams[this.state.currentTeam.id] || {}
+      currentTeamInfo.currentTeamCategories = categories.teams[this.state.currentTeam.id] || {}
+      currentTeamInfo.currentTeamProducts = products.teams[this.state.currentTeam.id] || {}
+      currentTeamInfo.currentTeamMessages = messages.teams[this.state.currentTeam.id] || {}
+    }
+
+    route = this.getRoute(route, nav, currentTeamInfo);
+
+    let navBar = this.getNavBar(route, nav, currentTeamInfo);
+    let scene = this.getScene(route, nav, currentTeamInfo);
     let errorModal = (
       <Components.ErrorModal
         onDeleteError={(errorIdList) => {
@@ -899,9 +996,13 @@ class App extends React.Component {
         currentTeam={this.state.currentTeam}
         modalVisible={this.state.showGenericModal}
         hideModal={() => {
+          const cb = this.state.genericModalCallback();
           this.setState({
-            showGenericModal: false
-          })
+            genericModalMessage: '',
+            showGenericModal: false,
+            genericModalCallback: () => {}
+          }, cb);
+          // TODO: do we need to make the callback execute on hide?
         }}
       />
     )

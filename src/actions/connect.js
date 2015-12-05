@@ -1,5 +1,6 @@
 import { DDP } from '../resources/apiConfig'
 import {
+  SEND_EMAIL,
   REGISTER_INSTALLATION,
   CONNECTION_STATUS,
   RESET_CHANNELS,
@@ -309,9 +310,22 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
+  function sendEmail(requestAttributes){
+    return (dispatch) => {
+      dispatch(() => {
+        console.log('Sending email: ', requestAttributes);
+        ddpClient.call('sendEmail', [requestAttributes])
+      })
+      return {
+        type: SEND_EMAIL
+      }
+    }
+  }
+
   // TODO: how to handle disconnect?
 
   return {
+    SEND_EMAIL,
     REGISTER_INSTALLATION,
     CONNECTION_STATUS,
     RESET_CHANNELS,
@@ -328,5 +342,6 @@ export default function ConnectActions(ddpClient) {
     'connectDDPClient': connectDDPClient,
     'connectDDPTimeoutId': connectDDPTimeoutId,
     'subscribeDDP': subscribeDDP,
+    'sendEmail': sendEmail,
   }
 }
