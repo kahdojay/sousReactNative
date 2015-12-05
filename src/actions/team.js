@@ -250,13 +250,7 @@ export default function TeamActions(ddpClient, allActions) {
         })
       }
 
-      let messageCount = 0
-      if(messages.teams.hasOwnProperty(team.id) && Object.keys(messages.teams[team.id]).length > 0){
-        messageCount = Object.keys(messages.teams[team.id]).length;
-      }
-      if(messageCount < 20){
-        dispatch(messageActions.getTeamMessages(team.id));
-      }
+      dispatch(messageActions.getTeamMessages(team.id), true);
 
       return dispatch({
         type: RECEIVE_TEAMS,

@@ -150,8 +150,8 @@ export default function ConnectActions(ddpClient) {
           data.id = log.id;
           switch(log.collection){
             case 'messages':
-              // console.log("MAIN DDP WITH FIELDS MSG", log);
-              dispatch(messageActions.receiveMessages(data))
+              console.log("MAIN DDP WITH FIELDS MSG", log);
+              dispatch(messageActions.getTeamMessages(data.teamId, true))
               break;
             case 'teams':
               dispatch(teamActions.receiveTeams(data))
