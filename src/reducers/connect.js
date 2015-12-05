@@ -1,4 +1,5 @@
 import {
+  REGISTER_INSTALLATION,
   CONNECTION_STATUS,
   RESET_CHANNELS,
   SUBSCRIBE_CHANNEL,
@@ -12,7 +13,7 @@ const initialState = {
     channels: {},
     timeoutId: null,
     status: CONNECT.CONNECTED,
-
+    installationRegistered: false,
     error: null
   }
 }
@@ -25,13 +26,17 @@ function connect(state = initialState.connect, action) {
       // status: CONNECT.OFFLINE, // if you do this you get offline flash modal when app starts
       // if you delete it you get flash of error modal
     });
+  case REGISTER_INSTALLATION:
+    return Object.assign({}, state, {
+      installationRegistered: action.installationRegistered,
+    });
   case CONNECTION_STATUS:
     let channels = state.channels;
     if( action.status === CONNECT.OFFLINE ){
-     channels = []
-   } else if( action.status === CONNECT.CONNECTED ){
-
-   }
+      channels = []
+    } else if( action.status === CONNECT.CONNECTED ){
+      // .. ??
+    }
     return Object.assign({}, state, {
       timeoutId: action.timeoutId,
       status: action.status,

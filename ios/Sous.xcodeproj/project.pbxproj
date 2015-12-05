@@ -19,6 +19,7 @@
 		119B21341C0F6F37000402CA /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 119B21321C0F6F37000402CA /* main.jsbundle */; };
 		119B213B1C0F71AB000402CA /* RemotePushDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 119B213A1C0F71AB000402CA /* RemotePushDelegate.m */; };
 		119B213C1C0F71AB000402CA /* RemotePushDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 119B213A1C0F71AB000402CA /* RemotePushDelegate.m */; };
+		11E4106F1C1153250080A1E7 /* libRCTRemotePushManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 119B21311C0F6CF6000402CA /* libRCTRemotePushManager.a */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
 		139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
@@ -224,6 +225,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11E4106F1C1153250080A1E7 /* libRCTRemotePushManager.a in Frameworks */,
 				8918EB061BD8227C0068EBBA /* libRNOverlay.a in Frameworks */,
 				110F5ECF1BCF2D5700234ED6 /* libReactNativeIcons.a in Frameworks */,
 				C430DDA41BCEC67100962F41 /* libRCTAddressBook.a in Frameworks */,

@@ -1,5 +1,6 @@
 import { DDP } from '../resources/apiConfig'
 import {
+  SEND_EMAIL,
   REGISTER_INSTALLATION,
   CONNECTION_STATUS,
   RESET_CHANNELS,
@@ -14,10 +15,29 @@ export default function ConnectActions(ddpClient) {
   var connectedChannels = {}
 
   function registerInstallation(userId, deviceAttributes) {
-    // TODO: use connect.channels in processSubscription to retrigger registrations on team changes
-    ddpClient.call('registerInstallation', [userId, deviceAttributes])
+    return (dispatch, getState) => {
+      // TODO: use connect.channels in processSubscription to retrigger registrations on team changes
+      dispatch(() => {
+        ddpClient.call('registerInstallation', [userId, deviceAttributes])
+      })
+      return dispatch({
+        type: REGISTER_INSTALLATION,
+        installationRegistered: true,
+      })
+    }
+  }
+
+  function registerInstallationDeclined(userId) {
     return {
-      type: REGISTER_INSTALLATION
+      type: REGISTER_INSTALLATION,
+      installationRegistered: true,
+    }
+  }
+
+  function registerInstallationError(userId) {
+    return {
+      type: REGISTER_INSTALLATION,
+      installationRegistered: true,
     }
   }
 
@@ -290,9 +310,23 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
+  function sendEmail(requestAttributes){
+    return (dispatch) => {
+      dispatch(() => {
+        // console.log('Sending email: ', requestAttributes);
+        ddpClient.call('sendEmail', [requestAttributes])
+      })
+      return {
+        type: SEND_EMAIL
+      }
+    }
+  }
+
   // TODO: how to handle disconnect?
 
   return {
+    SEND_EMAIL,
+    REGISTER_INSTALLATION,
     CONNECTION_STATUS,
     RESET_CHANNELS,
     SUBSCRIBE_CHANNEL,
@@ -302,9 +336,12 @@ export default function ConnectActions(ddpClient) {
     // 'connectSingleChannel': connectSingleChannel,
     // 'connectChannels': connectChannels,
     'registerInstallation': registerInstallation,
+    'registerInstallationDeclined': registerInstallationDeclined,
+    'registerInstallationError': registerInstallationError,
     'connectDDP': connectDDP,
     'connectDDPClient': connectDDPClient,
     'connectDDPTimeoutId': connectDDPTimeoutId,
     'subscribeDDP': subscribeDDP,
+    'sendEmail': sendEmail,
   }
 }

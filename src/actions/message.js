@@ -1,4 +1,4 @@
-import shortid from 'shortid';
+import { generateId } from '../utilities/utils';
 import moment from 'moment';
 import {
   RESET_MESSAGES,
@@ -27,7 +27,7 @@ export default function MessageActions(ddpClient) {
 
       message.text = message.text.replace(/\{\{author\}\}/g, author);
       var newMessage = {
-        _id: shortid.generate(),
+        _id: generateId(),
         author: author || "Default",
         createdAt: (new Date()).toISOString(),
         delete: false,

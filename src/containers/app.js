@@ -31,7 +31,7 @@ class App extends React.Component {
   constructor(props, ctx) {
     super(props, ctx);
     this.state = {
-      installationRegistered: false,
+      installationRegistered: this.props.connect.installationRegistered,
       touchToClose: false,
       open: false,
       isAuthenticated: this.props.session.isAuthenticated,
@@ -42,6 +42,9 @@ class App extends React.Component {
       purveyor: null,
       currentTeam: this.props.teams.currentTeam,
       contactList: [],
+      showGenericModal: false,
+      genericModalMessage: '',
+      genericModalCallback: () => {},
       sceneState: {
         ProductCreate: {
           submitReady: false,
@@ -95,6 +98,7 @@ class App extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
+      installationRegistered: nextProps.connect.installationRegistered,
       isAuthenticated: nextProps.session.isAuthenticated,
       firstName: nextProps.session.firstName,
       lastName: nextProps.session.lastName,
@@ -102,14 +106,63 @@ class App extends React.Component {
     })
   }
 
-  componentDidUpdate() {
+  componentWillUpdate(nextProps) {
     if(this.refs.appNavigator){
-      if(this.state.currentTeam !== null && this.refs.appNavigator.getCurrentRoutes()[0].name == 'Loading'){
-        setTimeout(() => {
-          this.refs.appNavigator.replacePrevious({
-            name: 'Feed'
-          });
-        }, 100)
+      if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'TeamIndex'){
+        if(this.state.currentTeam !== null){
+          setTimeout(() => {
+            this.refs.appNavigator.replacePrevious({
+              name: 'Feed'
+            });
+          }, 10)
+        }
+      }
+    }
+  }
+
+  componentDidUpdate() {
+    if(this.state.isAuthenticated === true){
+      const {dispatch, connect, session} = this.props
+      if (this.state.installationRegistered !== true && connect.status === actions.CONNECT.CONNECTED) {
+        PushManager.requestPermissions((err, data) => {
+          if (err) {
+            dispatch(actions.registerInstallationError(session.userId))
+          } else {
+            // if(userDoesNotAllow === true){
+            //   dispatch(actions.registerInstallationDeclined(session.userId))
+            // }
+            if(data.hasOwnProperty('token') && data.token.indexOf('Error') === -1){
+              dispatch(actions.registerInstallation(session.userId, data))
+            } else {
+              dispatch(actions.registerInstallationError(session.userId))
+            }
+          }
+        });
+      }
+    }
+    if(this.refs.appNavigator){
+      if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'Loading'){
+        if(this.state.currentTeam !== null){
+          setTimeout(() => {
+            this.refs.appNavigator.replacePrevious({
+              name: 'Feed'
+            });
+          }, 10)
+        } else if(this.props.teams.data.length > 0){
+          setTimeout(() => {
+            this.refs.appNavigator.replacePrevious({
+              name: 'TeamIndex'
+            });
+          }, 10)
+        }
+      } else if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'UserTeam'){
+        if(this.state.currentTeam !== null){
+          setTimeout(() => {
+            this.refs.appNavigator.replacePrevious({
+              name: 'Feed'
+            });
+          }, 10)
+        }
       }
     }
   }
@@ -122,20 +175,15 @@ class App extends React.Component {
     return isAuthenticated;
   }
 
-  getScene(route, nav) {
+  getScene(route, nav, currentTeamInfo) {
     const { ui, session, teams, messages, dispatch, purveyors, products, categories, errors } = this.props;
 
-    let currentTeamPurveyors = {}
-    let currentTeamCategories = {}
-    let currentTeamProducts = {}
-    let currentTeamMessages = {}
-
-    if(this.state.currentTeam !== null){
-      currentTeamPurveyors = purveyors.teams[this.state.currentTeam.id] || {}
-      currentTeamCategories = categories.teams[this.state.currentTeam.id] || {}
-      currentTeamProducts = products.teams[this.state.currentTeam.id] || {}
-      currentTeamMessages = messages.teams[this.state.currentTeam.id] || {}
-    }
+    const {
+      currentTeamPurveyors,
+      currentTeamCategories,
+      currentTeamProducts,
+      currentTeamMessages
+    } = currentTeamInfo
 
     switch (route.name) {
       case 'Signup':
@@ -149,6 +197,56 @@ class App extends React.Component {
               }, 25)()
             }}
             ui={ui}
+          />
+        )
+      case 'AddOrderGuide':
+        return (
+          <Components.AddOrderGuide
+            emailAddress={session.email}
+            onLearnMore={() => {
+              const learnMoreMsg = (
+                <View>
+                  <Text style={{textAlign: 'center'}}>
+                    With Sous, you can create and send
+                    <Text style={{fontWeight: 'bold'}}> purchase orders </Text>
+                    by adding your
+                    <Text style={{fontWeight: 'bold'}}> order guide </Text>
+                    to the platform. Once the orders are placed, Sous
+                    will notify the entire team to expect an order.
+                  </Text>
+                </View>
+              )
+              this.setState({
+                genericModalMessage: learnMoreMsg,
+                showGenericModal: true
+              })
+            }}
+            onSendEmail={(emailAddress) => {
+              dispatch(actions.sendEmail({
+                type: 'REQUEST_ORDER_GUIDE',
+                body: `Order guide request from: ${emailAddress}`
+              }));
+              dispatch(actions.updateSession({
+                email: emailAddress
+              }))
+              const learnMoreMsg = (
+                <View>
+                  <Text style={{textAlign: 'center'}}>
+                    Thanks for reaching out - we typically respond within
+                    <Text style={{fontWeight: 'bold'}}> 24 hours </Text>
+                  </Text>
+                </View>
+              )
+              this.setState({
+                genericModalMessage: learnMoreMsg,
+                showGenericModal: true,
+                genericModalCallback: () => {
+                  nav.replacePreviousAndPop({
+                    name: 'Feed',
+                  })
+                }
+              })
+            }}
           />
         )
       case 'TeamIndex':
@@ -453,6 +551,29 @@ class App extends React.Component {
             }}
           />
         )
+      case 'UserTeam':
+        return (
+          <Components.UserTeam
+            session={session}
+            onCreateTeam={(teamName) => {
+              _.debounce(() => {
+                dispatch(actions.addTeam(teamName));
+              }, 25)()
+            }}
+            onSearchForTeam={() => {
+              let searchForTeamMsg = (
+                <Text style={{textAlign: 'center'}}>
+                  If you're trying to join another person's team,
+                  ask them to invite you by selecting <Text style={{fontWeight: 'bold'}}>"Invite to Team"</Text> from the menu.
+                </Text>
+              )
+              this.setState({
+                genericModalMessage: searchForTeamMsg,
+                showGenericModal: true,
+              })
+            }}
+          />
+        )
       case 'InviteView':
         return (
           <Components.InviteView
@@ -519,12 +640,18 @@ class App extends React.Component {
     }
   }
 
-  getNavBar(route, nav) {
+  getNavBar(route, nav, currentTeamInfo) {
     const { dispatch, ui, teams, session } = this.props;
+
+    const {
+      currentTeamPurveyors,
+      currentTeamCategories,
+      currentTeamProducts,
+      currentTeamMessages
+    } = currentTeamInfo
 
     let navBar = <View />;
     let nextItem = <View />;
-    // let scene = this.getScene(route, nav);
 
     // setup the header for unauthenticated routes
     if(this.authenticatedRoute(route) === false){
@@ -532,6 +659,18 @@ class App extends React.Component {
     } else {
       switch(route.name) {
         //TODO: remove cloneWithProps as it's deprecated
+        case 'AddOrderGuide':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            buttonsColor: '#ccc',
+            customPrev: (
+              <Components.NavBackButton iconFont={'fontawesome|times'} />
+            ),
+            title: 'Order Guide',
+            hideNext: true,
+          })
+          break;
         case 'TeamIndex':
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
@@ -724,10 +863,6 @@ class App extends React.Component {
             ),
           })
           break;
-        case 'UserInfo':
-        case 'Loading':
-          navBar = <View />;
-          break;
         case 'TeamMemberListing':
           navBar = React.addons.cloneWithProps(this.navBar, {
             hidePrev: false,
@@ -736,6 +871,11 @@ class App extends React.Component {
             route: route,
             onNext: null,
           })
+          break;
+        case 'UserInfo':
+        case 'UserTeam':
+        case 'Loading':
+          navBar = <View />;
           break;
         default:
           navBar = React.addons.cloneWithProps(this.navBar, {
@@ -750,33 +890,34 @@ class App extends React.Component {
     return navBar;
   }
 
-  renderScene(route, nav) {
-    const { dispatch, ui, teams, session, errors, connect } = this.props;
+  getRoute(route, nav, currentTeamInfo) {
+    const { session } = this.props;
+    const {
+      currentTeamPurveyors,
+      currentTeamCategories,
+      currentTeamProducts,
+      currentTeamMessages
+    } = currentTeamInfo
 
     // redirect to initial view
     if (this.state.isAuthenticated){
-      if (this.state.installationRegistered === false) {
-        let that = this
-        PushManager.requestPermissions(function(err, data) {
-          if (err) {
-            console.log("Could not register for push");
-          } else {
-            dispatch(actions.registerInstallation(session.userId, data))
-            that.setState({ installationRegistered: true })
-          }
-        });
-      }
-      if (route.name === 'Login' || route.name === 'Signup' || route.name == 'UserInfo') {
-        if (this.state.firstName === "" || this.state.lastName === "") {
+      if (route.name === 'Login' || route.name === 'Signup' || route.name === 'UserInfo') {
+        if (this.state.firstName === '' || this.state.lastName === '') {
           route.name = 'UserInfo';
         } else {
-
           if(this.state.currentTeam !== null){
             // else send to Feed
             route.name = 'Feed';
+          } else if(session.teamId === null) {
+            route.name = 'UserTeam';
           } else {
             route.name = 'Loading';
           }
+        }
+      }
+      if(Object.keys(currentTeamPurveyors).length === 0){
+        if(route.name === 'CategoryIndex' || route.name === 'PurveyorIndex') {
+          route.name = 'AddOrderGuide';
         }
       }
     }
@@ -785,8 +926,30 @@ class App extends React.Component {
       route.name = 'Signup'
     }
 
-    let navBar = this.getNavBar(route, nav);
-    let scene = this.getScene(route, nav);
+    return route
+  }
+
+  renderScene(route, nav) {
+    const { dispatch, ui, session, teams, messages, purveyors, products, categories, errors, connect } = this.props;
+
+    let currentTeamInfo = {
+      currentTeamPurveyors: {},
+      currentTeamCategories: {},
+      currentTeamProducts: {},
+      currentTeamMessages: {},
+    }
+
+    if(this.state.currentTeam !== null){
+      currentTeamInfo.currentTeamPurveyors = purveyors.teams[this.state.currentTeam.id] || {}
+      currentTeamInfo.currentTeamCategories = categories.teams[this.state.currentTeam.id] || {}
+      currentTeamInfo.currentTeamProducts = products.teams[this.state.currentTeam.id] || {}
+      currentTeamInfo.currentTeamMessages = messages.teams[this.state.currentTeam.id] || {}
+    }
+
+    route = this.getRoute(route, nav, currentTeamInfo);
+
+    let navBar = this.getNavBar(route, nav, currentTeamInfo);
+    let scene = this.getScene(route, nav, currentTeamInfo);
     let errorModal = (
       <Components.ErrorModal
         onDeleteError={(errorIdList) => {
@@ -826,54 +989,70 @@ class App extends React.Component {
       />
     )
 
-    let CustomSideView = SideMenu
-    if(this.state.isAuthenticated !== true || this.state.currentTeam === null){
-      CustomSideView = View
-    }
-    // console.log('app.js', this.props)
-    // console.log('app.js render, errors:', this.props.errors.data)
-
-    const menu = (
-      <Components.Menu
-        ref='menu'
-        team={this.state.currentTeam}
-        session={session}
-        open={this.state.open}
-        toggleInviteModal={(value) => {
-          _.debounce(() => {
-            dispatch(actions.updateSession({ inviteModalVisible: value }))
-          }, 25)()
-        }}
-        onNavToCategory={() => {
-          nav.push({ name: 'CategoryIndex', })
-        }}
-        onNavToProfile={() => {
-          nav.push({ name: 'Profile', })
-        }}
-        onNavToTeam={() => {
-          nav.push({ name: 'TeamView', })
-        }}
-        onNavToTeamMemberListing={() => {
-          nav.push({ name: 'TeamMemberListing', })
-        }}
-        onNavToTeamIndex={() => {
-          nav.push({ name: 'TeamIndex', })
+    const genericModal = (
+      <Components.GenericModal
+        ref='genericModal'
+        modalMessage={this.state.genericModalMessage}
+        currentTeam={this.state.currentTeam}
+        modalVisible={this.state.showGenericModal}
+        hideModal={() => {
+          const cb = this.state.genericModalCallback();
+          this.setState({
+            genericModalMessage: '',
+            showGenericModal: false,
+            genericModalCallback: () => {}
+          }, cb);
+          // TODO: do we need to make the callback execute on hide?
         }}
       />
-    );
+    )
+
+    let CustomSideView = View
+    let menu = View
+    if(this.state.isAuthenticated === true && this.state.currentTeam !== null){
+      CustomSideView = SideMenu
+      menu = (
+        <Components.Menu
+          ref='menu'
+          team={this.state.currentTeam}
+          session={session}
+          open={this.state.open}
+          toggleInviteModal={(value) => {
+            _.debounce(() => {
+              dispatch(actions.updateSession({ inviteModalVisible: value }))
+            }, 25)()
+          }}
+          onNavToCategory={() => {
+            nav.push({ name: 'CategoryIndex', })
+          }}
+          onNavToProfile={() => {
+            nav.push({ name: 'Profile', })
+          }}
+          onNavToTeam={() => {
+            nav.push({ name: 'TeamView', })
+          }}
+          onNavToTeamMemberListing={() => {
+            nav.push({ name: 'TeamMemberListing', })
+          }}
+          onNavToTeamIndex={() => {
+            nav.push({ name: 'TeamIndex', })
+          }}
+        />
+      );
+    }
 
     return (
       <CustomSideView
         ref='customSideView'
         menu={menu}
         touchToClose={true}
-        // openMenuOffset={500} // changes menu width
         onChange={::this.handleChange}
       >
         <View style={styles.container} >
           {navBar}
           {errorModal}
           {inviteModal}
+          {genericModal}
           {scene}
           {session.inviteModalVisible === false ? <KeyboardSpacer /> : <View />}
         </View>

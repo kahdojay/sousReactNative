@@ -17,6 +17,7 @@ const sessionActions = SessionActions(ddpClient, {
 })
 const messageActions = MessageActions(ddpClient)
 const teamActions = TeamActions(ddpClient, {
+  'sessionActions': sessionActions,
   'connectActions': connectActions,
   'messageActions': messageActions
 })
@@ -32,6 +33,7 @@ function connectApp(){
 
     // dispatch(sessionActions.resetSession());
     dispatch(sessionActions.resetSessionVersion());
+    dispatch(teamActions.resetTeams());
     // dispatch(uiActions.resetUI()); //NOTE: why doesnt this work?
     // dispatch(messageActions.resetMessages());
     // dispatch(purveyorActions.resetPurveyors());

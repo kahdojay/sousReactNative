@@ -1,6 +1,7 @@
 import _ from 'lodash'
+import slug from 'slug'
 import { DDP } from '../resources/apiConfig'
-import Shortid from 'shortid'
+import { generateId } from '../utilities/utils'
 import MessageActions from './message'
 import { getIdx, updateByIdx, updateDataState } from '../utilities/reducer'
 import Urls from '../resources/urls';
@@ -25,6 +26,7 @@ import {
 export default function TeamActions(ddpClient, allActions) {
 
   const {
+    sessionActions,
     messageActions,
     connectActions
   } = allActions
@@ -37,7 +39,7 @@ export default function TeamActions(ddpClient, allActions) {
 
   function addTeam(name) {
     return (dispatch, getState) => {
-      const {session, teams, messages} = getState();
+      let {session, teams, messages} = getState();
 
       const teamNames = teams.data.map((team) => {
         if (! team.deleted)
@@ -49,8 +51,17 @@ export default function TeamActions(ddpClient, allActions) {
           message: 'Team already exists',
         }]));
       } else {
+
+        let teamCode = slug(name, {
+          replacement: '',
+        })
+        teamCode = teamCode.toUpperCase()
+        teamCode = teamCode.replace('TEAM', '')
+        // TODO: add any other filters?
+        // TODO: check for unique teamCode?
         var newTeamAttributes = {
-          _id: Shortid.generate(),
+          _id: generateId(),
+          teamCode: teamCode,
           name: name,
           tasks: [],
           users: [session.userId],
@@ -62,20 +73,30 @@ export default function TeamActions(ddpClient, allActions) {
           orders: [],
           deleted: false
         }
+
         dispatch(() => {
           ddpClient.call('createTeam', [newTeamAttributes]);
         })
 
-        // subscribe to newly-added team
-        let teamIds = _.pluck(teams.data, 'id');
-        teamIds.push(newTeamAttributes._id)
-        dispatch(connectActions.subscribeDDP(session, teamIds))
-
-        return dispatch({
+        dispatch({
           type: ADD_TEAM,
           team: newTeamAttributes,
           sessionTeamId: session.teamId
         });
+
+        dispatch(sessionActions.updateSession({teamId: newTeamAttributes.id}))
+
+        // add the teamId to the session
+        session = Object.assign({}, session, {
+          teamId: newTeamAttributes.id
+        })
+
+        // subscribe to newly-added team
+        let teamIds = _.pluck(teams.data, 'id');
+        teamIds.push(newTeamAttributes.id)
+        dispatch(connectActions.subscribeDDP(session, teamIds))
+
+
       }
     }
   }
@@ -98,7 +119,7 @@ export default function TeamActions(ddpClient, allActions) {
       });
       if (tasks.indexOf(taskAttributes.name) === -1) {
         var newTaskAttributes = {
-          recipeId: Shortid.generate(),
+          recipeId: generateId(),
           name: taskAttributes.name,
           description: "",
           deleted: false,
@@ -282,7 +303,7 @@ export default function TeamActions(ddpClient, allActions) {
 
         // add the product purveyor
         if (updatedCart.orders.hasOwnProperty(cartAttributes.purveyorId) === false) {
-          const orderId = Shortid.generate()
+          const orderId = generateId()
           updatedCart.orders[cartAttributes.purveyorId] = {
             id: orderId,
             total: 0.0,
@@ -397,7 +418,7 @@ export default function TeamActions(ddpClient, allActions) {
   function sendCart() {
     return (dispatch, getState) => {
       const {session} = getState()
-      const orderId = Shortid.generate();
+      const orderId = generateId();
       ddpClient.call('sendCart', [session.userId, session.teamId, orderId])
       // TODO: add each teams[session.teamId].cart.orders into teams[session.teamId].orders seperately
       return dispatch({
@@ -410,6 +431,7 @@ export default function TeamActions(ddpClient, allActions) {
     return (dispatch, getState) => {
       const {teams} = getState()
       var team = _.filter(teams.data, { id: teamId })[0]
+      // console.log(team)
       return dispatch({
         type: SET_CURRENT_TEAM,
         team: team
