@@ -82,6 +82,7 @@ class Feed extends React.Component {
 
   componentDidMount() {
     this.processMessages(this.props.messages, true)
+    this.props.onGetNewMessages();
   }
 
   componentDidUpdate(){

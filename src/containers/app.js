@@ -266,6 +266,8 @@ class App extends React.Component {
                 }
                 if(messageCount < 20){
                   dispatch(actions.getTeamMessages(teamId));
+                } else {
+                  dispatch(actions.getTeamMessages(teamId), true);
                 }
               }, 25)()
               nav.replacePreviousAndPop({
@@ -344,6 +346,9 @@ class App extends React.Component {
             messagesFetching={messages.isFetching}
             messages={currentTeamMessages}
             userEmail={session.login}
+            onGetNewMessages={() => {
+              dispatch(actions.getTeamMessages(this.state.currentTeam.id), true);
+            }}
             onGetMoreMessages={() => {
               dispatch(actions.getTeamMessages(this.state.currentTeam.id));
             }}
