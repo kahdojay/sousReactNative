@@ -56,6 +56,7 @@ function messages(state = initialState.messages, action) {
   case RECEIVE_MESSAGES:
     // console.log('message action received: ', action)
     const newReceivedTeamsMessagesState = addTeamMessage(Object.assign({}, state.teams), action.message);
+    // console.log(newReceivedTeamsMessagesState)
     return Object.assign({}, state, {
       isFetching: false,
       errors: null,

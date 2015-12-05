@@ -63,9 +63,12 @@ export default function MessageActions(ddpClient) {
   }
 
   function receiveMessages(message) {
-    return {
-      type: RECEIVE_MESSAGES,
-      message: message
+    return (dispatch) => {
+      // console.log(message);
+      return dispatch({
+        type: RECEIVE_MESSAGES,
+        message: message
+      })
     }
   }
 
@@ -82,7 +85,7 @@ export default function MessageActions(ddpClient) {
     }
   }
 
-  function getTeamMessages(teamId, sinceFirst=false) {
+  function getTeamMessages(teamId, sinceNow=false) {
     return (dispatch, getState) => {
       const {messages} = getState()
       // console.log(messages);
@@ -94,16 +97,17 @@ export default function MessageActions(ddpClient) {
         messageKeys.sort((a, b) => {
           return moment(teamMessages[a].createdAt).isBefore(teamMessages[b].createdAt) ? 1 : -1;
         })
-        if(sinceFirst === true){
-          messageDate = teamMessages[messageKeys[0]].createdAt;
+        if(sinceNow === true){
+          messageDate = (new Date).toISOString();
         } else {
           messageDate = teamMessages[messageKeys[messageKeys.length - 1]].createdAt;
         }
       }
+      // console.log(messageDate)
       dispatch(() => {
         ddpClient.call(
           'getTeamMessages',
-          [teamId, messageDate, sinceFirst],
+          [teamId, messageDate, false],
           (err, result) => {
             // console.log('called function, result: ', result);
             if(result.length > 0){

@@ -121,6 +121,7 @@ class App extends React.Component {
   }
 
   componentDidUpdate() {
+    // console.log(this.state.currentTeam)
     if(this.state.isAuthenticated === true && this.state.currentTeam !== null){
       const {dispatch, connect, session} = this.props
       if (this.state.installationRegistered !== true && connect.status === actions.CONNECT.CONNECTED) {

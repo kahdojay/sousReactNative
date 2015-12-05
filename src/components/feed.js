@@ -77,12 +77,13 @@ class Feed extends React.Component {
     // if(this.state.lastMessageCreatedAt === null){
     //   lastMessageCreatedAt
     // }
+    //
+    // console.log(nextProps.messages);
     this.processMessages(nextProps.messages)
   }
 
   componentDidMount() {
     this.processMessages(this.props.messages, true)
-    this.props.onGetNewMessages();
   }
 
   componentDidUpdate(){
@@ -116,6 +117,7 @@ class Feed extends React.Component {
       //     scrollToBottom = true;
       //   }
       // }
+      // this.props.onGetNewMessages()
 
       this.setState({
         lastMessageCreatedAt: lastMessageCreatedAt,
