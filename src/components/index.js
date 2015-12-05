@@ -6,6 +6,7 @@ import ErrorModal from '../components/errorModal';
 import Feed from './feed';
 import FeedViewLeftButton from './feedViewLeftButton';
 import FeedViewRightButton from './feedViewRightButton';
+import GenericModal from './genericModal';
 import InviteModal from '../components/inviteModal';
 import InviteView from './inviteView';
 import Login from './login';
@@ -35,6 +36,7 @@ export default {
    Feed,
    FeedViewLeftButton,
    FeedViewRightButton,
+   GenericModal,
    InviteModal,
    InviteView,
    Login,

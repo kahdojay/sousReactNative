@@ -2,6 +2,7 @@ import { Icon } from 'react-native-icons';
 import React from 'react-native';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
+import Colors from '../utilities/colors';
 import { mainBackgroundColor, navbarColor } from '../utilities/colors';
 let {
   AppRegistry,
@@ -10,7 +11,7 @@ let {
   View,
   ScrollView,
   TextInput,
-  TouchableHighlight
+  TouchableOpacity
 } = React;
 
 
@@ -44,13 +45,13 @@ class UserTeam extends React.Component{
           </View>
         </View>
 
-        <View style={styles.userProfile}>
+        <View style={styles.teamProfile}>
           <View style={styles.headerContainer}>
             <Text style={styles.question}>What is your first <Text style={[styles.question, styles.bold]}>team's name?</Text></Text>
           </View>
         </View>
 
-        <View style={styles.userProfile}>
+        <View style={styles.teamProfile}>
           <View style={styles.infoField}>
             <TextInput
               style={styles.input}
@@ -62,7 +63,7 @@ class UserTeam extends React.Component{
         </View>
 
         <View style={styles.deactivateContainer}>
-          <TouchableHighlight
+          <TouchableOpacity
             onPress={() => {
               let {teamName} = this.state;
               if (teamName != '') {
@@ -73,7 +74,20 @@ class UserTeam extends React.Component{
             }}
             style={styles.deactivateButton}>
             <Text style={styles.deactivateText}>Create</Text>
-          </TouchableHighlight>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.searchForTeamContainer}>
+          <TouchableOpacity
+            onPress={() => {
+              this.props.onSearchForTeam();
+            }}
+            style={styles.searchForTeamButton}
+          >
+            <View style={styles.searchForTeamTextContainer}>
+              <Text style={styles.searchForTeamText}>Searching for an existing team?</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     )
@@ -84,7 +98,7 @@ let styles = StyleSheet.create({
     backgroundColor: 'white',
     flex: 1,
   },
-  userInfoContainer: {
+  teamInfoContainer: {
     flexDirection: 'column',
     justifyContent: 'center',
   },
@@ -96,12 +110,12 @@ let styles = StyleSheet.create({
   headerContainer: {
 
   },
-  userProfile: {
+  teamProfile: {
     flex: 1,
     backgroundColor: 'white',
     margin: 10,
   },
-  userPreferences: {
+  teamPreferences: {
     flex: 2,
     margin: 10,
     marginTop: 0,
@@ -160,7 +174,7 @@ let styles = StyleSheet.create({
     padding: 10,
     width: 100,
     borderRadius: 7,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   input: {
     flex: 1,
@@ -177,6 +191,22 @@ let styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#777',
+    textAlign: 'center',
+  },
+  searchForTeamContainer: {
+    marginTop: 10,
+    alignItems: 'center'
+  },
+  searchForTeamButton: {
+    padding: 10,
+  },
+  searchForTeamTextContainer: {
+    borderBottomWidth: 1,
+    borderColor: Colors.blue,
+  },
+  searchForTeamText: {
+    fontSize: 16,
+    color: Colors.blue,
     textAlign: 'center',
   },
   container: {
@@ -217,7 +247,7 @@ let styles = StyleSheet.create({
     flex: 2,
     alignItems: 'center'
   },
-  userIcon: {
+  teamIcon: {
     width: 90,
     height: 90,
     borderRadius: 45,

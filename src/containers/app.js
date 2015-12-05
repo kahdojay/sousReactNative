@@ -42,6 +42,8 @@ class App extends React.Component {
       purveyor: null,
       currentTeam: this.props.teams.currentTeam,
       contactList: [],
+      showGenericModal: false,
+      genericModalMessage: '',
       sceneState: {
         ProductCreate: {
           submitReady: false,
@@ -512,6 +514,18 @@ class App extends React.Component {
                 dispatch(actions.addTeam(teamName));
               }, 25)()
             }}
+            onSearchForTeam={() => {
+              let msg = (
+                <Text style={{textAlign: 'center'}}>
+                  If you're trying to join another person's team,
+                  ask them to invite you by selecting <Text style={{fontWeight: 'bold'}}>"Invite to Team"</Text> from the menu.
+                </Text>
+              )
+              this.setState({
+                genericModalMessage: msg,
+                showGenericModal: true,
+              })
+            }}
           />
         )
       case 'InviteView':
@@ -878,6 +892,20 @@ class App extends React.Component {
       />
     )
 
+    const genericModal = (
+      <Components.GenericModal
+        ref='genericModal'
+        modalMessage={this.state.genericModalMessage}
+        currentTeam={this.state.currentTeam}
+        modalVisible={this.state.showGenericModal}
+        hideModal={() => {
+          this.setState({
+            showGenericModal: false
+          })
+        }}
+      />
+    )
+
     let CustomSideView = View
     let menu = View
     if(this.state.isAuthenticated === true && this.state.currentTeam !== null){
@@ -923,6 +951,7 @@ class App extends React.Component {
           {navBar}
           {errorModal}
           {inviteModal}
+          {genericModal}
           {scene}
           {session.inviteModalVisible === false ? <KeyboardSpacer /> : <View />}
         </View>
