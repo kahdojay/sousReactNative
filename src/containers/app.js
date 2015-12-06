@@ -261,15 +261,6 @@ class App extends React.Component {
                 // dispatch(actions.resetMessages());
                 dispatch(actions.setCurrentTeam(teamId));
                 dispatch(actions.updateSession({ teamId: teamId }));
-                let messageCount = 0;
-                if(messages.teams.hasOwnProperty(teamId) && Object.keys(messages.teams[teamId]).length > 0){
-                  messageCount = Object.keys(messages.teams[teamId]).length;
-                }
-                if(messageCount < 20){
-                  dispatch(actions.getTeamMessages(teamId));
-                } else {
-                  dispatch(actions.getTeamMessages(teamId), true);
-                }
               }, 25)()
               nav.replacePreviousAndPop({
                 name: 'Feed',
@@ -347,9 +338,6 @@ class App extends React.Component {
             messagesFetching={messages.isFetching}
             messages={currentTeamMessages}
             userEmail={session.login}
-            onGetNewMessages={() => {
-              dispatch(actions.getTeamMessages(this.state.currentTeam.id), true);
-            }}
             onGetMoreMessages={() => {
               dispatch(actions.getTeamMessages(this.state.currentTeam.id));
             }}
@@ -626,12 +614,11 @@ class App extends React.Component {
         )
       case 'Loading':
         return (
-          <View style={{flex: 1, backgroundColor: '#f2f2f2', alignItems: 'center'}}>
+          <View style={{flex: 1, alignItems: 'center'}}>
             <View style={styles.logoContainer}>
               <Image source={require('image!Logo')} style={styles.logoImage}></Image>
             </View>
-            <Text style={styles.loadingText}>SETTING UP YOUR WORKSPACE</Text>
-            <Text style={styles.loadingText}>FOR THE FIRST TIME USE.</Text>
+            <Text style={styles.loadingText}>LOADING</Text>
           </View>
         )
       case 'TeamMemberListing':
@@ -1146,11 +1133,12 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans'
   },
   loadingText: {
-    alignSelf: 'center',
-    fontSize: 16,
-    color: '#cfcfcf',
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 20,
+    fontFamily: 'OpenSans',
     fontWeight: 'bold',
-    fontFamily: 'OpenSans'
+    color: '#555',
   },
   buttonText: {
     alignSelf: 'center',
@@ -1172,7 +1160,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
     marginBottom: 15,
     borderRadius: 100/2,
-    backgroundColor: '#dfdfdf',
+    backgroundColor: Colors.button,
     paddingLeft: 10,
     paddingTop: 15,
     width: 100,

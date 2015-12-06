@@ -117,7 +117,6 @@ class Feed extends React.Component {
       //     scrollToBottom = true;
       //   }
       // }
-      // this.props.onGetNewMessages()
 
       this.setState({
         lastMessageCreatedAt: lastMessageCreatedAt,

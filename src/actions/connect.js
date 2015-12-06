@@ -1,4 +1,5 @@
-import { DDP } from '../resources/apiConfig'
+import { DDP } from '../resources/apiConfig';
+import moment from 'moment';
 import {
   SEND_EMAIL,
   REGISTER_INSTALLATION,
@@ -80,7 +81,7 @@ export default function ConnectActions(ddpClient) {
   function subscribeDDP(session, teamIds){
     // console.log('subscribeDDP called for session: ', session)
     return (dispatch, getState) => {
-      const {connect} = getState()
+      const {connect, messages} = getState()
       if(session.phoneNumber !== ""){
         dispatch(processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [session.phoneNumber]))
       }
@@ -91,7 +92,16 @@ export default function ConnectActions(ddpClient) {
 
       if(session.isAuthenticated === true){
         if(session.teamId !== null){
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [session.userId, session.teamId]))
+          const teamMessages = messages.teams[session.teamId] || {}
+          let messageKeys = Object.keys(teamMessages)
+          let messageDate = (new Date()).toISOString()
+          if(messageKeys.length > 0){
+            messageKeys.sort((a, b) => {
+              return moment(teamMessages[a].createdAt).isBefore(teamMessages[b].createdAt) ? 1 : -1;
+            })
+            messageDate = teamMessages[messageKeys[0]].createdAt;
+          }
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [session.userId, session.teamId, messageDate]))
         }
         if(teamIds !== undefined && teamIds.length > 0 && session.userId !== null){
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS_USERS.channel, [session.userId, teamIds]))
@@ -150,8 +160,8 @@ export default function ConnectActions(ddpClient) {
           data.id = log.id;
           switch(log.collection){
             case 'messages':
-              console.log("MAIN DDP WITH FIELDS MSG", log);
-              dispatch(messageActions.getTeamMessages(data.teamId, true))
+              // console.log("MAIN DDP WITH FIELDS MSG", log);
+              dispatch(messageActions.receiveMessages(data))
               break;
             case 'teams':
               dispatch(teamActions.receiveTeams(data))
