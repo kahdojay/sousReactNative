@@ -37,7 +37,7 @@ function products(state = initialState.products, action) {
     }
     let originalTeamProduct = {}
     if(newProductTeamState[action.product.teamId].hasOwnProperty(action.product.id)){
-      originalTeamProduct = newProductTeamState[action.product.teamId][action.product.id] = newProductTeamState[action.product.teamId][action.product.id]
+      originalTeamProduct = newProductTeamState[action.product.teamId][action.product.id]
     }
     newProductTeamState[action.product.teamId][action.product.id] = Object.assign(originalTeamProduct, action.product)
     return Object.assign({}, state, {

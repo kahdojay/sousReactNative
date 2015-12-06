@@ -62,10 +62,10 @@ class ProfileView extends React.Component {
     // response.isVertical will be true if the image is vertically oriented
     // response.width & response.height give you the image dimensions
     UIImagePickerManager.showImagePicker(options, (didCancel, response) => {
-      console.log('Response = ', response);
+      // console.log('Response = ', response);
 
       if (didCancel) {
-        console.log('User cancelled image picker');
+        // console.log('User cancelled image picker');
       } else {
         // const source = {uri: response.uri.replace('file://', ''), isStatic: true};
         const source = {

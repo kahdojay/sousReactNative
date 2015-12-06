@@ -82,14 +82,10 @@ function teams(state = initialState.teams, action) {
     const addTeamsDataState = updateDataState(addTeamState.data, action.team);
     const addTeamIdx = getIdx(addTeamsDataState, action.team.id);
 
-    let addCurrentTeam = addTeamState.currentTeam;
-    if(action.sessionTeamId === action.team.id){
-      addCurrentTeam = addTeamsDataState[addTeamIdx];
-    }
     // console.log(action.type, action.team.id)
     return Object.assign({}, state, {
       data: addTeamsDataState,
-      currentTeam: addCurrentTeam,
+      currentTeam: action.team,
       lastUpdated: (new Date()).toISOString()
     });
 

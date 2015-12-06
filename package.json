@@ -1,20 +1,31 @@
 {
   "name": "sousmobile",
-  "version": "0.4.1",
-  "build": 5,
+  "version": "1.0.1",
+  "build": 1,
   "private": true,
   "scripts": {
     "start": "HOT=1 ./node_modules/.bin/react-native-webpack-server start --hot",
     "start_cold": "./node_modules/.bin/react-native-webpack-server start",
     "bundle": "./node_modules/.bin/react-native-webpack-server bundle",
-    "test": "mocha ./test/* --compilers js:babel/register"
+    "jest": "BABEL_JEST_STAGE=0 jest src/__tests__/*.jest.js",
+    "test": "./node_modules/mocha/bin/mocha --compilers js:babel-core/register src/__tests__/mocha-tests.js"
+  },
+  "jest": {
+    "rootDir": "src",
+    "scriptPreprocessor": "<rootDir>/jest/preprocessor.js",
+    "testFileExtensions": [
+      "js"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "json"
+    ]
   },
   "dependencies": {
-    "ddp-client": "^0.1.2",
+    "ddp-client": "https://github.com/sousapp/node-ddp-client",
     "lodash": "^3.10.1",
     "moment": "^2.10.6",
     "moment-timezone": "^0.4.1",
-    "murmurhash": "0.0.2",
     "react-native": "^0.11.0",
     "react-native-addressbook": "^1.2.0",
     "react-native-icons": "^0.4.0",
@@ -24,25 +35,32 @@
     "react-native-multipicker": "^0.1.1",
     "react-native-navbar": "^0.8.2",
     "react-native-overlay": "^0.3.0",
+    "react-native-remote-push": "^1.0.1",
     "react-native-side-menu": "^0.14.2",
     "react-redux": "^2.1.2",
     "redux-persist": "^1.0.0",
     "redux-thunk": "^1.0.0",
-    "shortid": "^2.2.2"
+    "shortid": "^2.2.2",
+    "slug": "^0.9.1"
   },
   "devDependencies": {
-    "babel": "^5.8.23",
+    "babel": "^5.8.25",
     "babel-core": "^5.8.25",
-    "babel-loader": "^5.3.2",
+    "babel-jest": "^5.3.0",
+    "babel-loader": "^5.4.0",
     "babel-plugin-react-transform": "^1.1.1",
     "babel-runtime": "^5.8.25",
     "chai": "^3.3.0",
+    "chalk": "^1.1.1",
+    "jest-cli": "^0.8.0",
     "json-loader": "^0.5.3",
-    "mocha": "^2.3.3",
-    "mocha-traceur": "^2.1.0",
     "react-native-webpack-server": "^0.7.1",
     "react-transform-hmr": "^1.0.1",
+    "rewire": "^2.5.1",
+    "sinon": "^1.17.2",
+    "twilio": "^2.5.2",
     "webpack": "^1.12.2",
-    "webpack-dev-server": "^1.12.0"
+    "webpack-dev-server": "^1.12.0",
+    "ws": "^0.8.1"
   }
 }

@@ -1,6 +1,7 @@
 import { Icon, } from 'react-native-icons';
-import _ from 'lodash'
-import React from 'react-native'
+import _ from 'lodash';
+import React from 'react-native';
+import Colors from '../utilities/colors';
 
 const {
   Dimensions,
@@ -237,7 +238,7 @@ let styles = StyleSheet.create({
   },
   navbar: {
     height: 40,
-    backgroundColor: '#1825AD',
+    backgroundColor: Colors.button,
     flex: 1,
     justifyContent: 'center',
   },
@@ -276,7 +277,7 @@ let styles = StyleSheet.create({
     marginTop: 25,
     marginBottom: 25,
     borderRadius: 100/2,
-    backgroundColor: '#1825AD',
+    backgroundColor: Colors.button,
     paddingLeft: 10,
     paddingTop: 15,
     width: 100,
@@ -375,7 +376,7 @@ let styles = StyleSheet.create({
   buttonLink: {
     alignSelf: 'center',
     fontSize: 16,
-    color: '#1825AD',
+    color: Colors.button,
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
   },

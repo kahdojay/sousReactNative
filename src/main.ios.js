@@ -7,6 +7,7 @@ import { persistStore, autoRehydrate } from 'redux-persist';
 import App from './containers/app';
 import * as actions from './actions';
 import reducers from './reducers';
+import Colors from './utilities/colors';
 
 const {
   AppRegistry,
@@ -65,7 +66,7 @@ class SousAppBase extends React.Component {
           <View style={styles.logoContainer}>
             <Image source={require('image!Logo')} style={styles.logoImage}></Image>
           </View>
-          <Text style={styles.connecting}>Connecting</Text>
+          <Text style={styles.connecting}>LOADING</Text>
         </View>
       )
     } else {
@@ -95,6 +96,7 @@ const styles = StyleSheet.create({
   container: {
     marginTop: 20,
     flex: 1,
+    alignItems: 'center'
   },
   scene: {
     flex: 1
@@ -103,7 +105,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
     marginBottom: 15,
     borderRadius: 100/2,
-    backgroundColor: '#1825AD',
+    backgroundColor: Colors.button,
     paddingLeft: 10,
     paddingTop: 15,
     width: 100,

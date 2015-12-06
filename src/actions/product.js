@@ -1,4 +1,4 @@
-import shortid from 'shortid'
+import { generateId } from '../utilities/utils'
 import MessageActions from './message'
 import {
   RESET_PRODUCTS,
@@ -23,7 +23,7 @@ export default function ProductActions(ddpClient){
   //   return (dispatch, getState) => {
   //     const { session } = getState();
   //     var newProductAttributes = {
-  //       _id: shortid.generate(),
+  //       _id: generateId(),
   //       teamId: session.teamId,
   //       name: productRow.name,
   //       description: productRow.description,

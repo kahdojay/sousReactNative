@@ -1,4 +1,4 @@
-import shortid from 'shortid'
+import { generateId } from '../utilities/utils'
 import MessageActions from './message'
 import {
   RESET_PURVEYORS,
@@ -26,7 +26,7 @@ export default function PurveyorActions(ddpClient){
     return (dispatch, getState) => {
       const { session } = getState();
       var newPurveyorAttributes = {
-        _id: shortid.generate(),
+        _id: generateId(),
         teamId: session.teamId,
         name: name,
         description: '',
@@ -52,7 +52,7 @@ export default function PurveyorActions(ddpClient){
 
   function addPurveyorProduct(purveyorId, productAttributes){
     var newProductAttributes = {
-      productId: shortid.generate(),
+      productId: generateId(),
       name: productAttributes.name,
       description: "",
       deleted: false,
