@@ -215,6 +215,10 @@ class App extends React.Component {
                     to the platform. Once the orders are placed, Sous
                     will notify the entire team to expect an order.
                   </Text>
+                  <Text style={{textAlign: 'center', marginTop: 10}}>
+                    To get started press
+                    <Text style={{fontWeight: 'bold'}}> Contact Sous.</Text>
+                  </Text>
                 </View>
               )
               this.setState({
@@ -258,7 +262,7 @@ class App extends React.Component {
             onUpdateTeam={(teamId) => {
               _.debounce(() => {
                 // dispatch(actions.resetPurveyors());
-                // dispatch(actions.resetMessages());
+                dispatch(actions.resetMessages());
                 dispatch(actions.setCurrentTeam(teamId));
                 dispatch(actions.updateSession({ teamId: teamId }));
               }, 25)()

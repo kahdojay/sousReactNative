@@ -85,7 +85,7 @@ class AddOrderGuide extends React.Component {
             }}
             style={styles.buttonActive}
           >
-            <Text style={styles.buttonText}>E-mail Sous</Text>
+            <Text style={styles.buttonText}>Contact Sous</Text>
           </TouchableHighlight>
         </View>
       </ScrollView>

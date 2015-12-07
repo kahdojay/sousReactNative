@@ -146,6 +146,10 @@ class ProfileView extends React.Component {
       >
         <View style={styles.wrapper}>
           <View>
+            <View style={styles.avatar}>
+              {avatar}
+            </View>
+            {/* * /}
             <TouchableHighlight
               underlayColor="#f7f7f7"
               onPress={() => this.showActionSheet()}
@@ -155,6 +159,7 @@ class ProfileView extends React.Component {
                 <Text style={styles.changeAvatarText}>Change Avatar</Text>
               </View>
             </TouchableHighlight>
+            {/* */}
           </View>
           {phoneNumber}
           <View style={styles.userInfoContainer}>
