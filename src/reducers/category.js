@@ -51,12 +51,12 @@ function categories(state = initialState.categories, action) {
   case ADD_PRODUCT_TO_CATEGORY:
     const newCategoryTeamProductsState = Object.assign({}, state.teams);
     if(newCategoryTeamProductsState.hasOwnProperty(action.teamId) === true){
-      console.log(newCategoryTeamProductsState[action.teamId])
+      // console.log(newCategoryTeamProductsState[action.teamId])
       if(newCategoryTeamProductsState[action.teamId].hasOwnProperty(action.categoryId)){
-        console.log(action)
-        console.log(newCategoryTeamProductsState[action.teamId][action.categoryId].products)
+        // console.log(action)
+        // console.log(newCategoryTeamProductsState[action.teamId][action.categoryId].products)
         newCategoryTeamProductsState[action.teamId][action.categoryId].products.push(action.productId)
-        console.log(newCategoryTeamProductsState[action.teamId][action.categoryId].products)
+        // console.log(newCategoryTeamProductsState[action.teamId][action.categoryId].products)
       }
     }
     return Object.assign({}, state, {
