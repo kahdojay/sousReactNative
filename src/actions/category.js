@@ -8,7 +8,7 @@ import {
   ADD_CATEGORY,
   UPDATE_CATEGORY,
   DELETE_CATEGORY,
-  ORDER_CATEGORY_CATEGORY
+  ADD_PRODUCT_TO_CATEGORY,
 } from './actionTypes'
 
 export default function CategoryActions(ddpClient){
@@ -42,24 +42,52 @@ export default function CategoryActions(ddpClient){
   // }
   //
   // function updateCategory(categoryId, categoryAttributes){
-  //   ddpClient.call('updateCategory', [categoryId, categoryAttributes]);
-  //   return {
-  //     type: UPDATE_CATEGORY,
-  //     categoryId: categoryId,
-  //     category: categoryAttributes
+  //   return (dispatch, getState) => {
+  //     dispatch(() => {
+  //       ddpClient.call('updateCategory', [categoryId, categoryAttributes]);
+  //     })
+  //     return dispatch({
+  //       type: UPDATE_CATEGORY,
+  //       categoryId: categoryId,
+  //       category: categoryAttributes
+  //     })
   //   }
   // }
   //
   // function deleteCategory(categoryId) {
   //   return (dispatch, getState) => {
   //     const {session} = getState()
-  //     ddpClient.call('deleteCategory', [categoryId, session.userId])
-  //     return {
+  //     dispatch(() => {
+  //       dpClient.call('deleteCategory', [categoryId, session.userId])
+  //     })
+  //     return dispatch({
   //       type: DELETE_CATEGORY,
   //       categoryId: categoryId
-  //     }
+  //     })
   //   }
   // }
+
+  function addProductToCategory(categoryId, productId){
+    // console.log(categoryId, productId)
+    return (dispatch, getState) => {
+      const {teams} = getState()
+      dispatch(() => {
+        ddpClient.call('addProductToCategory', [
+          {
+            _id: categoryId,
+            teamId: teams.currentTeam.id
+          },
+          productId
+        ])
+      })
+      return dispatch({
+        type: ADD_PRODUCT_TO_CATEGORY,
+        categoryId: categoryId,
+        productId: productId,
+        teamId: teams.currentTeam.id
+      })
+    }
+  }
 
   function requestCategories() {
     return {
@@ -89,9 +117,11 @@ export default function CategoryActions(ddpClient){
     ADD_CATEGORY,
     UPDATE_CATEGORY,
     DELETE_CATEGORY,
+    ADD_PRODUCT_TO_CATEGORY,
     // addCategory,
     // updateCategory,
     // deleteCategory,
+    addProductToCategory,
     receiveCategories,
     resetCategories,
   }

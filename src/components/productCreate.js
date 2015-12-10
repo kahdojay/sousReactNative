@@ -23,8 +23,8 @@ class ProductCreate extends React.Component {
       name: '',
       purveyorIdList: [null],
       category: null,
-      amount: 1,
-      unit: 'bag',
+      amount: null,
+      unit: null,
       purveyorSelected: false,
       categorySelected: false,
       amountSelected: false,
@@ -32,16 +32,18 @@ class ProductCreate extends React.Component {
       ready: false,
       picker: null,
       // loaded: false,
+      purveyors: null,
+      categories: null,
     }
   }
 
-  // componentWillUnmount(){
-  //   // console.log('UPDATE', this.state)
-  //   this.setState({
-  //     loaded: false
-  //   })
-  // }
-  //
+  componentWillMount(){
+    this.setState({
+      purveyors: _.sortBy(this.props.purveyors, 'name'),
+      categories: _.sortBy(this.props.categories, 'name'),
+    })
+  }
+
   // componentDidMount(){
   //   setTimeout(() => {
   //     this.setState({
@@ -60,8 +62,11 @@ class ProductCreate extends React.Component {
     ) {
       const productAttributes = {
         name: this.state.name,
-        purveyorIdList: this.state.purveyorIdList,
-        amount: `${this.state.amount} ${this.state.unit}` ,
+        purveyors: _.pluck(_.filter(this.state.purveyorIdList, (purveyor) => {
+          return purveyor !== null
+        }), 'id'),
+        amount: this.state.amount,
+        unit: this.state.unit,
         categoryId: this.state.category.id,
       }
       this.props.onAddProduct(productAttributes);
@@ -76,7 +81,7 @@ class ProductCreate extends React.Component {
     const pickerItems = []
     switch (this.state.picker) {
       case 'purveyor':
-        const {purveyors} = this.props;
+        const {purveyors} = this.state;
         if (
           this.state.purveyorIdList[this.state.pickerIdx] !== null &&
           this.state.purveyorIdList[this.state.pickerIdx].hasOwnProperty('idx')
@@ -90,6 +95,7 @@ class ProductCreate extends React.Component {
             label={'Select Purveyor ...'}
           />
         )
+        // console.log(purveyors);
         purveyors.forEach((purveyor, purveyorIdx) => {
           const selectedIdx = _.findIndex(this.state.purveyorIdList, {'id': purveyor.id})
           if(selectedIdx === -1 || this.state.pickerIdx === selectedIdx){
@@ -134,7 +140,7 @@ class ProductCreate extends React.Component {
         );
         break;
       case 'category':
-        const categories = this.props.categories;
+        const {categories} = this.state;
         if(this.state.category !== null && this.state.category.hasOwnProperty('id')){
           selectedValue = this.state.category.id;
         }
@@ -145,8 +151,7 @@ class ProductCreate extends React.Component {
             label={'Select Category ...'}
           />
         )
-        Object.keys(categories).forEach((categoryId) => {
-          const category = categories[categoryId]
+        categories.forEach((category, categoryIdx) => {
           pickerItems.push(
             <PickerIOS.Item
               key={category.id}
@@ -161,7 +166,7 @@ class ProductCreate extends React.Component {
             onValueChange={(categoryId) => {
               let category = null
               if(categoryId !== null){
-                category = categories[categoryId]
+                category = this.props.categories[categoryId]
               }
               this.setState({
                 category: category,
@@ -192,6 +197,11 @@ class ProductCreate extends React.Component {
               )
             }}
           >
+            <PickerIOS.Item
+              key={null}
+              value={null}
+              label={'Select Amount ...'}
+            />
             {
               amounts.map((n, idx) => {
                 return <PickerIOS.Item key={idx} value={n} label={n.toString()} />
@@ -215,6 +225,11 @@ class ProductCreate extends React.Component {
               )
             }}
           >
+            <PickerIOS.Item
+              key={null}
+              value={null}
+              label={'Select Unit ...'}
+            />
             {
               units.map((unit, idx) => {
                 return <PickerIOS.Item key={idx} value={unit} label={unit} />
@@ -257,7 +272,7 @@ class ProductCreate extends React.Component {
             <Text style={styles.inputField}>
             {
               selectedPurveyor !== null ?
-                selectedPurveyor.name.substr(0,20) + (selectedPurveyor.name.length > 20 ? '...' : '')
+                selectedPurveyor.name.substr(0,24) + (selectedPurveyor.name.length > 24 ? '...' : '')
                 : 'Select Purveyor'
             }
             </Text>
@@ -359,7 +374,7 @@ const styles = StyleSheet.create({
   },
   inputTitle: {
     // v- this with looks good on iPhone 6 plus and 4s
-    width: Dimensions.get('window').width * .4,
+    width: Dimensions.get('window').width * .54,
     fontFamily: 'OpenSans',
     fontWeight: 'bold',
     fontSize: 14,
