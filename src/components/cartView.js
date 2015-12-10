@@ -74,7 +74,7 @@ class CartView extends React.Component {
       if(cartProduct.quantity > 1){
         if(product.unit == 'bunch'){
           productUnit += 'es';
-        } else if(product.unit !== 'ea' && product.unit !== 'dozen'){
+        } else if(product.unit !== 'ea' && product.unit !== 'dozen' && product.unit !== 'cs'){
           productUnit += 's';
         }
       }

@@ -374,8 +374,10 @@ class App extends React.Component {
             onAddPurveyor={(name) => {
               dispatch(actions.addPurveyor(name))
             }}
-            onBack={() => {
-              this._back()
+            onCreateProduct={() => {
+              nav.push({
+                name: 'ProductCreate'
+              })
             }}
           />
         )
