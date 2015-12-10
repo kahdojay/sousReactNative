@@ -13,6 +13,7 @@ import InviteView from './inviteView';
 import Login from './login';
 import Menu from './menu';
 import NavBackButton from './navBackButton';
+import NavOrderGuide from './navOrderGuide';
 import NavbarTitle from './NavbarTitle';
 import ProductCreate from './productCreate';
 import ProductCreateRightCheckbox from './ProductCreateRightCheckbox';
@@ -45,6 +46,7 @@ export default {
   Menu,
   NavBackButton,
   NavbarTitle,
+  NavOrderGuide,
   ProductCreate,
   ProductCreateRightCheckbox,
   ProductView,

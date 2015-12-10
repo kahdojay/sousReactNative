@@ -21,9 +21,11 @@ const teamActions = TeamActions(ddpClient, {
   'connectActions': connectActions,
   'messageActions': messageActions
 })
-const purveyorActions = PurveyorActions(ddpClient)
-const productActions = ProductActions(ddpClient)
 const categoryActions = CategoryActions(ddpClient)
+const productActions = ProductActions(ddpClient, {
+  'categoryActions': categoryActions
+})
+const purveyorActions = PurveyorActions(ddpClient)
 
 function connectApp(){
   return (dispatch) => {
