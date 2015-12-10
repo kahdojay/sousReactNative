@@ -113,6 +113,7 @@ class ProductCreate extends React.Component {
             selectedValue={selectedValue}
             onValueChange={(purveyorIdx) => {
               let purveyorIdList = this.state.purveyorIdList
+              let purveyorSelected = false
               if(purveyorIdx === null){
                 purveyorIdList = [
                   ...purveyorIdList.slice(0, this.state.pickerIdx),
@@ -124,10 +125,11 @@ class ProductCreate extends React.Component {
               } else {
                 const purveyor = purveyors[purveyorIdx]
                 purveyorIdList[this.state.pickerIdx] = {idx: purveyorIdx, id: purveyor.id, name: purveyor.name}
+                purveyorSelected = true
               }
               this.setState({
                 purveyorIdList: purveyorIdList,
-                purveyorSelected: true,
+                purveyorSelected: purveyorSelected,
                 picker: null,
                 pickerIdx: null
               }, () => {
@@ -165,12 +167,14 @@ class ProductCreate extends React.Component {
             selectedValue={selectedValue}
             onValueChange={(categoryId) => {
               let category = null
+              let categorySelected = false
               if(categoryId !== null){
                 category = this.props.categories[categoryId]
+                categorySelected = true
               }
               this.setState({
                 category: category,
-                categorySelected: true,
+                categorySelected: categorySelected,
                 picker: null,
                 pickerIdx: null
               }, () => {
@@ -188,10 +192,14 @@ class ProductCreate extends React.Component {
           <PickerIOS
             selectedValue={this.state.amount}
             onValueChange={(amount) => {
+              let amountSelected = false
+              if(amount !== null){
+                amountSelected = true
+              }
               this.setState(
                 {
                   amount: amount,
-                  amountSelected: true,
+                  amountSelected: amountSelected,
                 },
                 () => { this.submitReady(); }
               )
@@ -216,10 +224,14 @@ class ProductCreate extends React.Component {
           <PickerIOS
             selectedValue={this.state.unit}
             onValueChange={(unit) => {
+              let unitSelected = false
+              if(unit !== null){
+                unitSelected = true
+              }
               this.setState(
                 {
                   unit: unit,
-                  unitSelected: true,
+                  unitSelected: unitSelected,
                 },
                 () => { this.submitReady(); }
               )
@@ -228,7 +240,7 @@ class ProductCreate extends React.Component {
             <PickerIOS.Item
               key={null}
               value={null}
-              label={'Select Unit ...'}
+              label={'Select Units ...'}
             />
             {
               units.map((unit, idx) => {
@@ -262,6 +274,9 @@ class ProductCreate extends React.Component {
           <TouchableHighlight
             underlayColor='transparent'
             onPress={() => {
+              if(this.refs.name){
+                this.refs.name.blur()
+              }
               this.setState({
                 picker: 'purveyor',
                 pickerIdx: idx
@@ -312,6 +327,9 @@ class ProductCreate extends React.Component {
           <TouchableHighlight
             underlayColor='transparent'
             onPress={() => {
+              if(this.refs.name){
+                this.refs.name.blur()
+              }
               this.setState({
                 picker: 'category'
               })
@@ -332,6 +350,9 @@ class ProductCreate extends React.Component {
           <TouchableHighlight
             underlayColor='transparent'
             onPress={() => {
+              if(this.refs.name){
+                this.refs.name.blur()
+              }
               this.setState({
                 picker: 'amount'
               })
@@ -339,7 +360,7 @@ class ProductCreate extends React.Component {
             style={styles.inputFieldContainer}
           >
             <Text style={styles.inputField}>
-              { this.state.amountSelected ? this.state.amount : 'Amount' }
+              { this.state.amountSelected ? this.state.amount : 'Select Amount' }
             </Text>
           </TouchableHighlight>
         </View>
@@ -348,6 +369,9 @@ class ProductCreate extends React.Component {
           <TouchableHighlight
             underlayColor='transparent'
             onPress={() => {
+              if(this.refs.name){
+                this.refs.name.blur()
+              }
               this.setState({
                 picker: 'units'
               })
@@ -355,7 +379,7 @@ class ProductCreate extends React.Component {
             style={styles.inputFieldContainer}
           >
             <Text style={styles.inputField}>
-              { this.state.unitSelected ? this.state.unit : 'Units' }
+              { this.state.unitSelected ? this.state.unit : 'Select Units' }
             </Text>
           </TouchableHighlight>
         </View>
