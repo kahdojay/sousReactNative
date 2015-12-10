@@ -45,20 +45,13 @@ class PurveyorIndex extends React.Component {
           onSubmit={this.props.onAddPurveyor}
         />
         */}
-        {/* * /}<TouchableHighlight
+        {/* */}<TouchableHighlight
           underlayColor='#eee'
           onPress={this.props.onCreateProduct}
           style={styles.createButton}
         >
           <Text style={styles.createButtonText}>Create New Product...</Text>
         </TouchableHighlight>{/* */}
-        <TouchableHighlight
-          underlayColor='#eee'
-          onPress={this.props.onNavigateToCategoryIndex}
-          style={styles.createButton}
-        >
-          <Text style={styles.createButtonText}>Order by Category</Text>
-        </TouchableHighlight>
         <View style={styles.separator} />
         <ScrollView
           automaticallyAdjustContentInsets={false}

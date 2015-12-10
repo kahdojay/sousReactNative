@@ -1,5 +1,4 @@
 import React from 'react-native'
-import { navbarColor } from '../utilities/colors';
 
 const {
   TouchableHighlight,
