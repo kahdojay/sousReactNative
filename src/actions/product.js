@@ -11,7 +11,11 @@ import {
   ORDER_PRODUCT_PRODUCT
 } from './actionTypes'
 
-export default function ProductActions(ddpClient){
+export default function ProductActions(ddpClient, allActions){
+
+  const {
+    categoryActions,
+  } = allActions
 
   function resetProducts(){
     return {
@@ -19,47 +23,54 @@ export default function ProductActions(ddpClient){
     }
   }
 
-  // function addProduct(name) {
-  //   return (dispatch, getState) => {
-  //     const { session } = getState();
-  //     var newProductAttributes = {
-  //       _id: generateId(),
-  //       teamId: session.teamId,
-  //       name: productRow.name,
-  //       description: productRow.description,
-  //       price: productRow.price,
-  //       purveyors: purveyors,
-  //       amount: productRow.amount,
-  //       unit: productRow.unit,
-  //       deleted: false,
-  //     }
-  //     ddpClient.call('createProduct', [newProductAttributes]);
-  //     return dispatch({
-  //       type: ADD_PRODUCT,
-  //       product: newProductAttributes
-  //     });
-  //   }
-  // }
-  //
-  // function updateProduct(productId, productAttributes){
-  //   ddpClient.call('updateProduct', [productId, productAttributes]);
-  //   return {
-  //     type: UPDATE_PRODUCT,
-  //     productId: productId,
-  //     product: productAttributes
-  //   }
-  // }
-  // 
-  // function deleteProduct(productId) {
-  //   return (dispatch, getState) => {
-  //     const {session} = getState()
-  //     ddpClient.call('deleteProduct', [productId, session.userId])
-  //     return {
-  //       type: DELETE_PRODUCT,
-  //       productId: productId
-  //     }
-  //   }
-  // }
+  function addProduct(productAttributes) {
+    return (dispatch, getState) => {
+      const { session, teams } = getState();
+      const { currentTeam } = teams;
+      var newProductAttributes = {
+        _id: generateId(),
+        teamId: session.teamId,
+        teamCode: currentTeam.teamCode,
+        name: productAttributes.name,
+        description: productAttributes.description || '',
+        price: productAttributes.price || '',
+        purveyors: productAttributes.purveyors,
+        amount: productAttributes.amount,
+        unit: productAttributes.unit,
+        deleted: false,
+      }
+      dispatch(() => {
+        ddpClient.call('createProduct', [newProductAttributes]);
+
+      })
+      dispatch(categoryActions.addProductToCategory(productAttributes.categoryId,newProductAttributes._id))
+      
+      return dispatch({
+        type: ADD_PRODUCT,
+        product: newProductAttributes,
+      });
+    }
+  }
+
+  function updateProduct(productId, productAttributes){
+    // ddpClient.call('updateProduct', [productId, productAttributes]);
+    return {
+      type: UPDATE_PRODUCT,
+      productId: productId,
+      product: productAttributes
+    }
+  }
+
+  function deleteProduct(productId) {
+    return (dispatch, getState) => {
+      const {session} = getState()
+      // ddpClient.call('deleteProduct', [productId, session.userId])
+      return {
+        type: DELETE_PRODUCT,
+        productId: productId
+      }
+    }
+  }
 
   function requestProducts() {
     return {
@@ -89,9 +100,9 @@ export default function ProductActions(ddpClient){
     ADD_PRODUCT,
     UPDATE_PRODUCT,
     DELETE_PRODUCT,
-    // addProduct,
-    // updateProduct,
-    // deleteProduct,
+    addProduct,
+    updateProduct,
+    deleteProduct,
     receiveProducts,
     resetProducts,
   }

@@ -15,7 +15,6 @@ const {
 class CategoryIndexRow extends React.Component {
   render() {
     let { category } = this.props
-
     return (
       <TouchableOpacity
         onPress={this.props.onPress}

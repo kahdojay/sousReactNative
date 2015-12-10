@@ -374,11 +374,6 @@ class App extends React.Component {
             onAddPurveyor={(name) => {
               dispatch(actions.addPurveyor(name))
             }}
-            onNavigateToCategoryIndex={() => {
-              nav.replace({
-                name: 'CategoryIndex'
-              })
-            }}
             onBack={() => {
               this._back()
             }}
@@ -460,11 +455,6 @@ class App extends React.Component {
                   name: 'CategoryView',
                   categoryId: category.id
                 })
-              })
-            }}
-            onNavigateToPurveyorIndex={() => {
-              nav.replace({
-                name: 'PurveyorIndex'
               })
             }}
             onCreateProduct={() => {
@@ -702,7 +692,16 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton iconFont={'fontawesome|times'} />
             ),
-            title: 'Order Guide',
+            customTitle: (
+              <Components.NavOrderGuide
+                selectedIndex={1}
+                onChange={() => {
+                  nav.replace({
+                    name: 'CategoryIndex'
+                  })
+                }}
+              />
+            ),
             customNext: (
               <Components.CategoryViewRightButton
                 onNavToCart={() => {
@@ -734,7 +733,7 @@ class App extends React.Component {
                 pop={true}
               />
             ),
-            title: this.state.purveyor.name,
+            title: this.state.purveyor.name.substr(0,20) + (this.state.purveyor.name.length > 20 ? '...' : ''),
             customNext: (
               <Components.CategoryViewRightButton
                 onNavToCart={() => {
@@ -754,7 +753,16 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton iconFont={'fontawesome|times'} />
             ),
-            title: 'Order Guide',
+            customTitle: (
+              <Components.NavOrderGuide
+                selectedIndex={0}
+                onChange={() => {
+                  nav.replace({
+                    name: 'PurveyorIndex'
+                  })
+                }}
+              />
+            ),
             customNext: (
               <Components.CategoryViewRightButton
                 onNavToCart={() => {

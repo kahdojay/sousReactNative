@@ -8,6 +8,7 @@ import {
   ADD_CATEGORY,
   UPDATE_CATEGORY,
   DELETE_CATEGORY,
+  ADD_PRODUCT_TO_CATEGORY,
 } from '../actions';
 
 const initialState = {
@@ -31,7 +32,7 @@ function categories(state = initialState.categories, action) {
 
   // receive the categories
   case RECEIVE_CATEGORIES:
-    var newCategoryTeamState = Object.assign({}, state.teams);
+    const newCategoryTeamState = Object.assign({}, state.teams);
     if(newCategoryTeamState.hasOwnProperty(action.category.teamId) === false){
       newCategoryTeamState[action.category.teamId] = {};
     }
@@ -43,6 +44,24 @@ function categories(state = initialState.categories, action) {
     return Object.assign({}, state, {
       errors: null,
       teams: newCategoryTeamState,
+      lastUpdated: (new Date()).toISOString()
+    });
+
+  // add product to categories
+  case ADD_PRODUCT_TO_CATEGORY:
+    const newCategoryTeamProductsState = Object.assign({}, state.teams);
+    if(newCategoryTeamProductsState.hasOwnProperty(action.teamId) === true){
+      // console.log(newCategoryTeamProductsState[action.teamId])
+      if(newCategoryTeamProductsState[action.teamId].hasOwnProperty(action.categoryId)){
+        // console.log(action)
+        // console.log(newCategoryTeamProductsState[action.teamId][action.categoryId].products)
+        newCategoryTeamProductsState[action.teamId][action.categoryId].products.push(action.productId)
+        // console.log(newCategoryTeamProductsState[action.teamId][action.categoryId].products)
+      }
+    }
+    return Object.assign({}, state, {
+      errors: null,
+      teams: newCategoryTeamProductsState,
       lastUpdated: (new Date()).toISOString()
     });
 
