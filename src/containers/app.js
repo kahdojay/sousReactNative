@@ -512,6 +512,7 @@ class App extends React.Component {
             team={this.state.currentTeam}
             categories={currentTeamCategories}
             purveyors={currentTeamPurveyors}
+            products={currentTeamProducts}
             onAddProduct={(productAttributes) => {
               const sceneState = Object.assign({}, this.state.sceneState);
               sceneState.ProductCreate.submitReady = true;

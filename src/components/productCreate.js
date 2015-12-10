@@ -32,6 +32,8 @@ class ProductCreate extends React.Component {
       ready: false,
       picker: null,
       // loaded: false,
+      duplicateProductName: false,
+      productNames: null,
       purveyors: null,
       categories: null,
     }
@@ -39,6 +41,7 @@ class ProductCreate extends React.Component {
 
   componentWillMount(){
     this.setState({
+      productNames: _.pluck(this.props.products, 'name')
       purveyors: _.sortBy(this.props.purveyors, 'name'),
       categories: _.sortBy(this.props.categories, 'name'),
     })
@@ -52,13 +55,34 @@ class ProductCreate extends React.Component {
   //   }, 500);
   // }
 
+  productIssues() {
+    let error = false
+    if(this.state.name === ''){
+      error = true
+      this.setState({
+        duplicateProductName: false
+      })
+    } else if(this.state.productNames.indexOf(this.state.name) !== -1) {
+      this.setState({
+        duplicateProductName: true
+      })
+      error = true
+    }
+    if(error === false){
+      this.setState({
+        duplicateProductName: false
+      })
+    }
+    return error
+  }
+
   submitReady(){
     if (
       this.state.purveyorSelected &&
       this.state.categorySelected &&
       this.state.amountSelected &&
       this.state.unitSelected &&
-      this.state.name != ''
+      this.productIssues() === false
     ) {
       const productAttributes = {
         name: this.state.name,
@@ -288,6 +312,10 @@ class ProductCreate extends React.Component {
     const currentTeamId = this.props.team.id;
     const picker = this.getPicker()
     const purveyorInputs = this.getPurveyorInputs()
+    let productError = <View />
+    if(this.state.duplicateProductName === true){
+      productError = <Text>Error, product name already exists</Text>
+    }
     return (
       <ScrollView
         automaticallyAdjustContentInsets={false}
@@ -305,6 +333,7 @@ class ProductCreate extends React.Component {
               });
             }}
           />
+        {productError}
         </View>
         {purveyorInputs}
         <View style={styles.inputContainer}>
