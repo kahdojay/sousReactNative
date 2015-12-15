@@ -1,5 +1,5 @@
-import { Icon } from 'react-native-icons';
 import React from 'react-native';
+import FeedListItem from './feedListItem';
 import AddMessageForm from './addMessageForm';
 import { mainBackgroundColor, darkBlue } from '../utilities/colors';
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
@@ -13,7 +13,6 @@ const {
   View,
   Text,
   TextInput,
-  Image,
   TouchableHighlight,
   TouchableOpacity,
   PropTypes,
@@ -171,58 +170,13 @@ class Feed extends React.Component {
     const aDayAgo = -(1000 * 60 * 60 * 24)
     if(this.state.messages !== null && this.state.messages.length > 0){
       this.state.messages.forEach((msg, index) => {
-        // let date = new Date(msg.createdAt).toLocaleTimeString();
-        // let time = date.substring(date.length-3, date.length)
-        // {date.substring(0, date.length-6)}{time}
-        const msgDate = moment(msg.createdAt)
-        let displayDate = `Today, ${msgDate.format("h:mm a")}`;
-        if(moment(msg.createdAt).diff(now) < aDayAgo){
-          displayDate = msgDate.format("ddd, M/D - h:mm a")
-        }
-        let icon = <Icon name='fontawesome|user' size={40} color='#aaa' style={styles.avatar}/>
-        if (msg.imageUrl) {
-          icon = <Image source={{uri: msg.imageUrl}} style={styles.avatarImage} />
-        }
-        let messageString = '';
-        if (msg.type === 'taskCompletion') {
-          // msg.message is task name
-          messageString = (
-            <Text style={styles.messageText}>{msg.author} completed
-              <Text style={{fontWeight: 'bold'}}> {msg.message}</Text>
-            </Text>
-          );
-        } else if (msg.type === 'order') {
-          messageString = (
-            <Text style={styles.messageText}>Order sent to
-              <Text style={{fontWeight: 'bold'}}> {msg.purveyor}</Text>
-            </Text>
-          );
-        } else {
-          messageString = (
-            <Text style={styles.messageText} >{msg.message}</Text>
-          );
-        }
-        let superUserIndicator = <View/>;
-        if(this.props.teamsUsers.hasOwnProperty(msg.userId) === true && this.props.teamsUsers[msg.userId].superUser === true){
-          superUserIndicator = <Text style={{position: 'absolute', top: 7, left: 2, color: darkBlue, backgroundColor: 'transparent'}}>*</Text>;
-        }
         retMessages.push(
-          <View key={msg.id} style={styles.messageContainer}>
-            <View style={styles.message}>
-              {superUserIndicator}
-              {icon}
-              <View style={styles.messageContentContainer}>
-                <View style={styles.messageTextContainer}>
-                  <Text style={styles.messageAuthor}>{msg.author}</Text>
-                  <Text style={styles.messageTimestamp}>
-                    {displayDate}
-                  </Text>
-                </View>
-                {messageString}
-              </View>
-            </View>
-            <View style={styles.separator} />
-          </View>
+          <FeedListItem
+            key={msg.id}
+            now={now}
+            aDayAgo={aDayAgo}
+            msg={msg}
+          />
         )
       });
     }
@@ -278,60 +232,12 @@ class Feed extends React.Component {
 };
 
 const styles = StyleSheet.create({
-  message: {
-    flexDirection: 'row'
-  },
-  messageText: {
-    fontSize: 14,
-    fontFamily: 'OpenSans',
-    marginLeft: 5,
-    marginBottom: 10
-  },
-  messageContentContainer: {
-    flex: 9,
-    marginLeft: 10,
-    paddingRight: 10,
-  },
-  messageTextContainer: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  messageAuthor: {
-    fontSize: 14,
-    margin: 5,
-    fontWeight: 'bold',
-    fontFamily: 'OpenSans',
-  },
-  messageTimestamp: {
-    fontSize: 12,
-    fontFamily: 'OpenSans',
-    marginTop: 9,
-    marginLeft: 6,
-    fontWeight: 'bold',
-    color: "#ddd"
-  },
   notFetching: {
     height: 0
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignSelf: 'center',
-    backgroundColor: '#eee'
-  },
-  avatarImage: {
-    width: 40,
-    marginTop: 10,
-    height: 40,
-    borderRadius: 20,
   },
   container: {
     flex: 1,
     backgroundColor: 'teal'
-  },
-  messageContainer: {
-    flex: 1,
   },
   scrollView: {
     backgroundColor: 'white',
@@ -341,48 +247,10 @@ const styles = StyleSheet.create({
     marginTop: 0,
     paddingTop: 0
   },
-  separator: {
-    height: 5,
-    borderBottomColor: '#f1f1f1',
-    borderBottomWidth: 1,
-  },
   activity: {
     alignSelf: 'center',
     marginLeft: -(36/2),
     marginBottom: (36/2)
-  },
-  button: {
-    position: 'absolute',
-    bottom: 50,
-    backgroundColor: 'red',
-    borderRadius: 20,
-  },
-  button2: {
-    position: 'absolute',
-    bottom: 20,
-    backgroundColor: 'red',
-    borderRadius: 20,
-  },
-  caption: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    alignItems: 'center',
-  },
-  menuContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
   },
   loadMore: {
     marginTop: 2,

@@ -5,6 +5,7 @@ import CategoryView from './categoryView';
 import CategoryViewRightButton from './CategoryViewRightButton';
 import ErrorModal from '../components/errorModal';
 import Feed from './feed';
+import FeedListItem from './feedListItem';
 import FeedViewLeftButton from './feedViewLeftButton';
 import FeedViewRightButton from './feedViewRightButton';
 import GenericModal from './genericModal';
@@ -37,6 +38,7 @@ export default {
   CategoryViewRightButton,
   ErrorModal,
   Feed,
+  FeedListItem,
   FeedViewLeftButton,
   FeedViewRightButton,
   GenericModal,
