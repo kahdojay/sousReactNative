@@ -451,7 +451,8 @@ class App extends React.Component {
               this.setState({
                 category: category,
                 specificProducts: _.sortBy(_.map(category.products, (productId) => {
-                  return currentTeamProducts[productId] || {id: '', name: '', deleted:true }
+                  const product = currentTeamProducts[productId]
+                  return product
                 }), 'name')
               }, () => {
                 nav.push({
@@ -950,7 +951,9 @@ class App extends React.Component {
     if(this.state.currentTeam !== null){
       currentTeamInfo.currentTeamPurveyors = purveyors.teams[this.state.currentTeam.id] || {}
       currentTeamInfo.currentTeamCategories = categories.teams[this.state.currentTeam.id] || {}
-      currentTeamInfo.currentTeamProducts = products.teams[this.state.currentTeam.id] || {}
+      if(products.teams.hasOwnProperty(this.state.currentTeam.id) === true){
+        currentTeamInfo.currentTeamProducts = products.teams[this.state.currentTeam.id]
+      }
       currentTeamInfo.currentTeamMessages = messages.teams[this.state.currentTeam.id] || {}
     }
 
