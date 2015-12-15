@@ -876,7 +876,7 @@ class App extends React.Component {
           navBar = React.addons.cloneWithProps(this.navBar, {
             hidePrev: false,
             navigator: nav,
-            title: 'Team Directory',
+            title: 'Team Members',
             route: route,
             onNext: null,
           })
