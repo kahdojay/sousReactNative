@@ -36,27 +36,26 @@ class Signup extends React.Component {
       phoneNumber: nextProps.session.phoneNumber,
       smsSent: nextProps.session.smsSent,
     }
-    if(this.state.submitting === true){
-      if(nextProps.session.smsSent === true){
+    if(this.state.submitting !== false){
+      if(this.state.submitting === 'signup' && nextProps.session.smsSent === true){
         newState.submitting = false
       }
-      if(nextProps.errors.length > 0 && nextProps.errors[0].machineKey === 'technical-error:sms'){
+      // console.log('SESSION STATE: ', nextProps.session)
+      if(this.state.submitting === 'verify' && nextProps.session.smsVerified === true){
         newState.submitting = false
+      }
+      if(nextProps.errors.length > 0){
+        const machineKey = nextProps.errors[0].machineKey
+        if(machineKey === 'technical-error:sms' || machineKey === 'verification-error'){
+          newState.submitting = false
+        }
       }
     }
     this.setState(newState)
   }
 
-  componentWillUnmount() {
-    if(this.timeout !== null)
-      window.clearTimeout(this.timeout);
-  }
-
-  setFetching() {
-    this.setState({ submitting: true })
-    // this.timeout = window.setTimeout(() => {
-    //   this.setState({ submitting: false });
-    // }, 1500);
+  setFetching(submitting) {
+    this.setState({ submitting: submitting })
   }
 
   onSignup() {
@@ -67,7 +66,7 @@ class Signup extends React.Component {
       this.setState({ invalid: true });
     } else {
       this.setState({ smsToken: '' })
-      this.setFetching()
+      this.setFetching('signup')
       this.props.onRegisterSession(Object.assign({}, {
         phoneNumber: this.state.phoneNumber
       }));
@@ -81,7 +80,7 @@ class Signup extends React.Component {
     if(this.state.smsToken === ''){
       this.setState({invalid: true});
     } else {
-      this.setFetching()
+      this.setFetching('verify')
       this.props.onRegisterSession(Object.assign({}, {
         phoneNumber: this.state.phoneNumber,
         smsToken: this.state.smsToken,
@@ -226,7 +225,7 @@ class Signup extends React.Component {
         <View style={styles.logoContainer}>
           <Image source={require('image!Logo')} style={styles.logoImage}></Image>
         </View>
-        {this.state.submitting ? fetching : signup}
+        {this.state.submitting !== false ? fetching : signup}
       </ScrollView>
     );
   }
