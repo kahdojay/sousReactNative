@@ -21,7 +21,7 @@ class TeamMemberListing extends React.Component {
         const user = this.props.teamsUsers[userId]
         teamMembers.push(
           <Text key={userId} style={styles.member}>
-            {user.superUser === true ? <Text style={{textAlign: 'center', color: darkBlue, backgroundColor: 'transparent'}}>*</Text> : ''}
+            {/* * /}{user.superUser === true ? <Text style={{textAlign: 'center', color: darkBlue, backgroundColor: 'transparent'}}>*</Text> : ''}{/* */}
             {user.firstName} {user.lastName}
           </Text>
         );

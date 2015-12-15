@@ -44,6 +44,7 @@ class TeamIndex extends React.Component {
               let teamMessages = {}
               if(messagesByTeams.hasOwnProperty(team.id) === true){
                 teamMessages = messagesByTeams[team.id];
+                console.log(teamMessages)
               }
               if (team.deleted === false) {
                 return (

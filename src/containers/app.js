@@ -262,7 +262,8 @@ class App extends React.Component {
             onUpdateTeam={(teamId) => {
               _.debounce(() => {
                 // dispatch(actions.resetPurveyors());
-                dispatch(actions.resetMessages());
+                dispatch(actions.resetMessages(teamId));
+                dispatch(actions.getTeamMessages(teamId));
                 dispatch(actions.setCurrentTeam(teamId));
                 dispatch(actions.updateSession({ teamId: teamId }));
               }, 25)()
