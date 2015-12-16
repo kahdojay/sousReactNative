@@ -24,8 +24,13 @@ class CategoryIndex extends React.Component {
 
     let categoriesList = _.map(_.sortBy(categories, 'name'), (category) => {
       if (category.deleted === false) {
+        const categoryProducts = {}
+        category.products.forEach((productId) => {
+          categoryProducts[productId] = products[productId]
+        })
         return (
           <CategoryIndexRow
+            products={categoryProducts}
             key={category.id}
             category={category}
             onPress={() => {

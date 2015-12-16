@@ -53,7 +53,9 @@ class ProductList extends React.Component {
     const {cart, purveyors} = this.props
     let productList = []
     if(this.state.products !== null){
-      this.state.products.forEach((product, idx) => {
+      _.forEach(_.filter(this.state.products, (product) => {
+        return product.deleted !== true
+      }), (product, idx) => {
         if(product === null){
           return;
         }

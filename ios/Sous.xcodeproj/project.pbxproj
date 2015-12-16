@@ -528,7 +528,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = UH5W8JH3GF;
+						DevelopmentTeam = QXC764RXA5;
 					};
 				};
 			};
@@ -809,6 +809,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Sous Inc.";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
@@ -822,7 +823,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sousapp.sousRN;
 				PRODUCT_NAME = Sous;
-				PROVISIONING_PROFILE = "78fabf6d-7dc3-429b-9d72-08e7d56f84e4";
+				PROVISIONING_PROFILE = "5521db66-a91b-4eda-9767-a866e49275ef";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sous.app/Sous";
 			};
 			name = Debug;
@@ -831,6 +832,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Sous Inc.";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -841,7 +843,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sousapp.sousRN;
 				PRODUCT_NAME = Sous;
-				PROVISIONING_PROFILE = "c4cd847f-7a0b-43c1-8af2-7f4d1b84890c";
+				PROVISIONING_PROFILE = "f7a9d916-a899-44de-9f5a-7cd329249254";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Sous.app/Sous";
 			};
 			name = Release;
@@ -850,7 +852,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Sous Inc.";
 				DEAD_CODE_STRIPPING = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -868,7 +870,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sousapp.sousRN;
 				PRODUCT_NAME = Sous;
-				PROVISIONING_PROFILE = "78fabf6d-7dc3-429b-9d72-08e7d56f84e4";
+				PROVISIONING_PROFILE = "5521db66-a91b-4eda-9767-a866e49275ef";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -877,7 +879,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Sous Inc.";
 				DEAD_CODE_STRIPPING = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -895,7 +897,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sousapp.sousRN;
 				PRODUCT_NAME = Sous;
-				PROVISIONING_PROFILE = "c4cd847f-7a0b-43c1-8af2-7f4d1b84890c";
+				PROVISIONING_PROFILE = "f7a9d916-a899-44de-9f5a-7cd329249254";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

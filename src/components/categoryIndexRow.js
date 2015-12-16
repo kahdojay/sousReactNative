@@ -14,7 +14,15 @@ const {
 
 class CategoryIndexRow extends React.Component {
   render() {
-    let { category } = this.props
+    let { category, products } = this.props
+
+    const categoryProducts = _.filter(products, (product) => {
+      if(product.id === 'k8Ice1As0LKY9THo'){
+        console.log(product);
+      }
+      return product.deleted !== true
+    })
+
     return (
       <TouchableOpacity
         onPress={this.props.onPress}
@@ -25,7 +33,7 @@ class CategoryIndexRow extends React.Component {
             <View style={styles.categoryInfo} >
               <Text style={styles.rowText}>{category.name}</Text>
               <Text style={styles.percentage}>
-                {category.products.length}
+                {categoryProducts.length}
               </Text>
             </View>
           </View>

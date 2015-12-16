@@ -2,6 +2,8 @@ import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import _ from 'lodash';
 import { greyText, taskCompletedBackgroundColor } from '../utilities/colors';
+import messageUtils from '../utilities/message';
+import moment from 'moment';
 
 const {
   View,
@@ -19,16 +21,13 @@ class TeamIndexRow extends React.Component {
       return this.props.teamsUsers.hasOwnProperty(userId)
     })).length;
     const recentMessages = Object.keys(messages).sort((a,b) => {
-      return messages[b].createdAt - messages[a].createdAt
+      return moment(messages[a].createdAt).isBefore(messages[b].createdAt) ? 1 : -1;
     });
-    let messageLength = 36;
+    let messageLength = 30;
     let mostRecentMessage = '';
     if (recentMessages.length > 0){
       const lastMessage = messages[recentMessages[0]]
-      mostRecentMessage = `${lastMessage.author}: ${lastMessage.message}`
-      if(mostRecentMessage.length > messageLength) {
-        mostRecentMessage  = mostRecentMessage.substring(0, messageLength) + '...'
-      }
+      mostRecentMessage = messageUtils.formatMessage(lastMessage, messageLength);
     }
     let teamTasks = _.filter(team.tasks,{deleted: false})
 

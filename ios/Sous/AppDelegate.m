@@ -58,6 +58,10 @@
   return YES;
 }
 
+- (void) applicationWillEnterForeground:(UIApplication *)application {
+  [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+}
+
 - (id) init {
   return self;
 }
