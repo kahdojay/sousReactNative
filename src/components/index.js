@@ -27,6 +27,7 @@ import TaskView from './taskView';
 import TeamIndex from './teamIndex';
 import TeamView from './teamView';
 import TeamMemberListing from './teamMemberListing';
+import TeamMemberRightInvite from './TeamMemberRightInvite';
 import UserInfo from './userInfo';
 import UserTeam from './userTeam';
 
@@ -59,6 +60,7 @@ export default {
   TaskView,
   TeamIndex,
   TeamMemberListing,
+  TeamMemberRightInvite,
   TeamView,
   UserInfo,
   UserTeam,

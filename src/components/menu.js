@@ -117,20 +117,6 @@ module.exports = class Menu extends React.Component {
                 </Text>
               </View>
             </TouchableHighlight>
-            {(nonNotepadTeam === false) ? <View/> : (
-              <TouchableHighlight
-                onPress={() => this.props.toggleInviteModal(true)}
-                style={styles.menuItemButton}
-                underlayColor='#3e444f'
-              >
-                <View style={styles.menuTextContainer}>
-                  <Icon name='fontawesome|user-plus' size={20} color='white' style={styles.menuIcon}/>
-                  <Text style={styles.menuItemText}>
-                    {team ? `Invite to Team` : ''}
-                  </Text>
-                </View>
-              </TouchableHighlight>
-            )}
           </ScrollView>
         </View>
         <View style={styles.separator} />

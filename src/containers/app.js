@@ -849,7 +849,6 @@ class App extends React.Component {
             ref: 'navBar',
             navigator: nav,
             route: route,
-            hideNext: true,
             customPrev: (
               <Components.NavBackButton
                 iconFont={'fontawesome|times'}
@@ -874,11 +873,24 @@ class App extends React.Component {
           break;
         case 'TeamMemberListing':
           navBar = React.addons.cloneWithProps(this.navBar, {
-            hidePrev: false,
             navigator: nav,
-            title: 'Team Members',
             route: route,
-            onNext: null,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'fontawesome|times'}
+                pop={true}
+              />
+            ),
+            title: 'Team Members',
+            customNext: (
+              <Components.TeamMemberRightInvite
+                toggleInviteModal={(value) => {
+                  _.debounce(() => {
+                    dispatch(actions.updateSession({ inviteModalVisible: value }))
+                  }, 25)()
+                }}
+              />
+            ),
           })
           break;
         case 'UserInfo':
@@ -1028,11 +1040,6 @@ class App extends React.Component {
           team={this.state.currentTeam}
           session={session}
           open={this.state.open}
-          toggleInviteModal={(value) => {
-            _.debounce(() => {
-              dispatch(actions.updateSession({ inviteModalVisible: value }))
-            }, 25)()
-          }}
           onNavToCategory={() => {
             nav.push({ name: 'CategoryIndex', })
           }}
