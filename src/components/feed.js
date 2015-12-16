@@ -7,15 +7,15 @@ let SideMenu = require('react-native-side-menu');
 import Menu from './menu';
 import moment from 'moment';
 const {
-  ScrollView,
   ActivityIndicatorIOS,
+  PropTypes,
+  ScrollView,
   StyleSheet,
-  View,
   Text,
   TextInput,
   TouchableHighlight,
   TouchableOpacity,
-  PropTypes,
+  View,
 } = React;
 
 // class Button extends React.Component {
