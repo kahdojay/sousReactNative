@@ -205,11 +205,10 @@ class ProductCreate extends React.Component {
               )
             }}
           >
-            <PickerIOS.Item
-              key={null}
-              value={null}
-              label={'Select Amount ...'}
-            />
+            <PickerIOS.Item key={null} value={null} label={'Select Amount ...'} />
+            <PickerIOS.Item key={'1/8'} value={0.125} label={'1/8'} />
+            <PickerIOS.Item key={'1/4'} value={0.25} label={'1/4'} />
+            <PickerIOS.Item key={'1/2'} value={0.5} label={'1/2'} />
             {
               amounts.map((n, idx) => {
                 return <PickerIOS.Item key={idx} value={n} label={n.toString()} />

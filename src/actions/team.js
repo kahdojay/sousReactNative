@@ -86,6 +86,15 @@ export default function TeamActions(ddpClient, allActions) {
 
         dispatch(sessionActions.updateSession({teamId: newTeamAttributes.id}))
 
+        const teamUserData = {
+          'id': session.userId,
+          'firstName': session.firstName,
+          'lastName': session.lastName,
+          'username': session.username,
+          'superUser': session.superUser,
+        }
+        dispatch(receiveTeamsUsers(teamUserData))
+
         // add the teamId to the session
         session = Object.assign({}, session, {
           teamId: newTeamAttributes.id
@@ -95,7 +104,6 @@ export default function TeamActions(ddpClient, allActions) {
         let teamIds = _.pluck(teams.data, 'id');
         teamIds.push(newTeamAttributes.id)
         dispatch(connectActions.subscribeDDP(session, teamIds))
-
 
       }
     }

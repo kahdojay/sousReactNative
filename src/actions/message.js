@@ -12,8 +12,9 @@ import {
 } from './actionTypes'
 
 export default function MessageActions(ddpClient) {
-  function resetMessages(){
+  function resetMessages(teamId = null){
     return {
+      teamId: teamId,
       type: RESET_MESSAGES
     }
   }

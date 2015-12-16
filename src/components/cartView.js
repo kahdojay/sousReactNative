@@ -69,6 +69,9 @@ class CartView extends React.Component {
     return cartPurveyorProducts.map((product) => {
       const cartProduct = cartProducts[product.id];
       let quantity = cartProduct.quantity * product.amount;
+      if(quantity.toString().indexOf('.') !== -1){
+        quantity = parseFloat(Math.floor(quantity * 1000)/1000)
+      }
       const productName = product.name || '';
       let productUnit = product.unit;
       if(cartProduct.quantity > 1){
@@ -85,7 +88,7 @@ class CartView extends React.Component {
           <TouchableHighlight
             key={'decrement'}
             onPress={() => {
-              if (quantity > 1) {
+              if (quantity > .1) {
                 const cartAttributes = {
                   purveyorId: purveyorId,
                   productId: product.id,

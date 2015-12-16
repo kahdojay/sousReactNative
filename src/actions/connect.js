@@ -42,13 +42,16 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
-  function processSubscription(channel, argsList){
+  function processSubscription(channel, argsList, keyOverride = null){
     // console.log('PROCESSING: ', channel, argsList);
     return (dispatch, getState) => {
       const {connect} = getState()
 
       let proceed = false
-      const connectionDetails = [channel, argsList]
+      let connectionDetails = [channel, argsList]
+      if(keyOverride !== null){
+        connectionDetails = keyOverride
+      }
       const connectionId = JSON.stringify(connectionDetails)
 
       // console.log(connect.channels.hasOwnProperty(channel), ' === false ?');
@@ -101,7 +104,7 @@ export default function ConnectActions(ddpClient) {
             })
             messageDate = teamMessages[messageKeys[0]].createdAt;
           }
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [session.userId, session.teamId, messageDate]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [session.userId, session.teamId, messageDate], [session.userId, session.teamId]))
         }
         if(teamIds !== undefined && teamIds.length > 0 && session.userId !== null){
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS_USERS.channel, [session.userId, teamIds]))

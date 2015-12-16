@@ -36,7 +36,14 @@ function messages(state = initialState.messages, action) {
   switch (action.type) {
   // reset the messages
   case RESET_MESSAGES:
-    return Object.assign({}, initialState.messages);
+    let resetMessageState = Object.assign({}, initialState.messages);
+    if(action.hasOwnProperty('teamId') === true && action.teamId !== null){
+      resetMessageState = Object.assign({}, state);
+      if(resetMessageState.teams.hasOwnProperty(action.teamId) === true){
+        delete resetMessageState.teams[action.teamId];
+      }
+    }
+    return resetMessageState;
 
   // request the messages
   case REQUEST_MESSAGES:

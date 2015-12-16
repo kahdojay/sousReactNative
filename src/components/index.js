@@ -5,6 +5,7 @@ import CategoryView from './categoryView';
 import CategoryViewRightButton from './CategoryViewRightButton';
 import ErrorModal from '../components/errorModal';
 import Feed from './feed';
+import FeedListItem from './feedListItem';
 import FeedViewLeftButton from './feedViewLeftButton';
 import FeedViewRightButton from './feedViewRightButton';
 import GenericModal from './genericModal';
@@ -26,6 +27,7 @@ import TaskView from './taskView';
 import TeamIndex from './teamIndex';
 import TeamView from './teamView';
 import TeamMemberListing from './teamMemberListing';
+import TeamMemberRightInvite from './TeamMemberRightInvite';
 import UserInfo from './userInfo';
 import UserTeam from './userTeam';
 
@@ -37,6 +39,7 @@ export default {
   CategoryViewRightButton,
   ErrorModal,
   Feed,
+  FeedListItem,
   FeedViewLeftButton,
   FeedViewRightButton,
   GenericModal,
@@ -57,6 +60,7 @@ export default {
   TaskView,
   TeamIndex,
   TeamMemberListing,
+  TeamMemberRightInvite,
   TeamView,
   UserInfo,
   UserTeam,
