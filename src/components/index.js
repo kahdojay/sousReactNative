@@ -16,8 +16,8 @@ import Menu from './menu';
 import NavBackButton from './navBackButton';
 import NavOrderGuide from './navOrderGuide';
 import NavbarTitle from './NavbarTitle';
-import ProductCreate from './productCreate';
-import ProductCreateRightCheckbox from './ProductCreateRightCheckbox';
+import ProductForm from './productForm';
+import ProductFormRightCheckbox from './productFormRightCheckbox';
 import ProductView from './productView';
 import ProfileView from './profileView';
 import PurveyorIndex from './purveyorIndex';
@@ -50,8 +50,8 @@ export default {
   NavBackButton,
   NavbarTitle,
   NavOrderGuide,
-  ProductCreate,
-  ProductCreateRightCheckbox,
+  ProductForm,
+  ProductFormRightCheckbox,
   ProductView,
   ProfileView,
   PurveyorIndex,

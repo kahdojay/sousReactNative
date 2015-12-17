@@ -4,6 +4,7 @@ import { Icon } from 'react-native-icons'
 import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
 import _ from 'lodash';
 import { CART } from '../actions/actionTypes';
+import Dimensions from 'Dimensions';
 
 const {
   TouchableHighlight,
@@ -25,7 +26,8 @@ class ProductListItem extends React.Component {
       quantity: 1,
       purveyorId: '',
       selectedPurveyorId: null,
-      note: ''
+      note: '',
+      editVisible: false,
     }
     this.timeoutId = null
     this.loadTimeoutId = null
@@ -42,6 +44,9 @@ class ProductListItem extends React.Component {
     if(this.state.loaded === false){
       shouldUpdate = true;
     }
+    if(nextState.editVisible !== this.state.editVisible) {
+      shouldUpdate = true;
+    }
     // console.log(nextState.shouldUpdate);
     return shouldUpdate;
   }
@@ -56,7 +61,8 @@ class ProductListItem extends React.Component {
 
   componentDidMount() {
     this.loadTimeoutId = setTimeout(() => {
-      this.setState({
+      this.setState(
+        {
           loaded: true,
           product: this.props.product,
           purveyors: this.props.purveyors,
@@ -151,63 +157,96 @@ class ProductListItem extends React.Component {
       }
       productInfo = (
         <View style={styles.row}>
-          <View style={styles.checkboxContainer}>
-            <ProductToggle
-              added={this.state.added}
-              availablePurveyors={product.purveyors}
-              allPurveyors={purveyors}
-              currentlySelectedPurveyorId={this.state.selectedPurveyorId}
-              onToggleCartProduct={(purveyorId) => {
-                this.handleToggleProduct(purveyorId)
-              }}
-            />
-          </View>
+          { this.state.editVisible === false ?
+            <View style={styles.checkboxContainer}>
+              <ProductToggle
+                added={this.state.added}
+                availablePurveyors={product.purveyors}
+                allPurveyors={purveyors}
+                currentlySelectedPurveyorId={this.state.selectedPurveyorId}
+                onToggleCartProduct={(purveyorId) => {
+                  this.handleToggleProduct(purveyorId)
+                }}
+              />
+            </View>
+          : <View style={{width: 5}} /> }
           <View style={styles.main}>
-            <Text style={styles.productText}>
-              {product.name}
-            </Text>
-            <Text style={{fontSize: 9,  color: '#999'}} >
-              {product.amount + ' ' + product.unit}
-            </Text>
-            <Text style={{fontSize: 9,  color: '#999'}} >
-              {purveyorString}
-            </Text>
-          </View>
-          { this.state.added === true ?
-          [
-            <Text key={'quantity'} style={styles.quantity}>
-              {this.state.quantity > 1 ? ('X' + this.state.quantity) : ''}
-            </Text>,
             <TouchableHighlight
-              key={'decrement'}
               underlayColor="transparent"
-              onPress={this.decrement.bind(this)}
-              style={{flex: 1}}>
-              <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
-            </TouchableHighlight>,
-            <TouchableHighlight
-              key={'increment'}
-              underlayColor='transparent'
-              onPress={this.increment.bind(this)}
-              style={{flex: 1}}>
-              <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
+              onPress={() => {
+                this.setState({
+                  editVisible: !this.state.editVisible
+                })
+              }}>
+              <View>
+                <Text style={styles.productText}>
+                  {product.name}
+                </Text>
+                <Text style={{fontSize: 9,  color: '#999'}} >
+                  {product.amount + ' ' + product.unit}
+                </Text>
+                <Text style={{fontSize: 9,  color: '#999'}} >
+                  {purveyorString}
+                </Text>
+              </View>
             </TouchableHighlight>
-          ] : [
-            <View key={'quantity'} style={{flex: 1}} />,
-            <View key={'decrement'} style={{flex: 1}} />,
-            <View key={'increment'} style={{flex:1}} />
-          ] }
+          </View>
+          { this.state.editVisible === false ?
+            ( this.state.added === true ?
+            [
+              <Text key={'quantity'} style={styles.quantity}>
+                {this.state.quantity > 1 ? ('X' + this.state.quantity) : ''}
+              </Text>,
+              <TouchableHighlight
+                key={'decrement'}
+                underlayColor="transparent"
+                onPress={this.decrement.bind(this)}
+                style={{flex: 1}}>
+                <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
+              </TouchableHighlight>,
+              <TouchableHighlight
+                key={'increment'}
+                underlayColor='transparent'
+                onPress={this.increment.bind(this)}
+                style={{flex: 1}}>
+                <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
+              </TouchableHighlight>
+            ] : [
+              <View key={'quantity'} style={{flex: 1}} />,
+              <View key={'decrement'} style={{flex: 1}} />,
+              <View key={'increment'} style={{flex:1}} />
+            ] )
+          : <View style={{width: 5}} /> }
         </View>
       )
     }
-
     return (
       <View style={styles.container}>
         {productInfo}
+        { this.state.editVisible === true ?
+          <View style={styles.editView}>
+            <TouchableHighlight
+              underlayColor="transparent"
+              onPress={this.props.onProductEdit}
+              style={{flex: 1}}>
+              <Icon name='material|edit' size={30} color='#fff' style={[styles.iconEdit, {backgroundColor: '#dd0'}]}/>
+            </TouchableHighlight>
+            <TouchableHighlight
+              underlayColor="transparent"
+              onPress={() => {
+
+              }}
+              style={{flex: 1}}>
+              <Icon name='material|delete' size={30} color='#fff' style={[styles.iconEdit, {backgroundColor: '#d00'}]}/>
+            </TouchableHighlight>
+          </View>
+        : <View /> }
       </View>
     )
   }
 }
+
+const window = Dimensions.get('window');
 
 let styles = StyleSheet.create({
   container: {
@@ -220,6 +259,10 @@ let styles = StyleSheet.create({
     width: 40,
     height: 40,
   },
+  iconEdit: {
+    width: 60,
+    height: 40
+  },
   quantity: {
     flex: 1,
     fontSize: 16
@@ -229,7 +272,7 @@ let styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: 'white',
     padding: 5,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   checkboxContainer: {
     flex: 1,
@@ -243,6 +286,20 @@ let styles = StyleSheet.create({
     color: 'black',
     fontSize: 15
   },
+  editView: {
+    position: 'absolute',
+    top: 3,
+    bottom: -3,
+    right: 5,
+    width: 130,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    paddingTop: 5,
+    paddingBottom: 5,
+    alignItems: 'center'
+  }
 });
 
 ProductListItem.propTypes = {

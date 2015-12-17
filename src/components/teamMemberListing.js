@@ -3,9 +3,10 @@ import React from 'react-native';
 import { mainBackgroundColor, navbarColor, darkBlue } from '../utilities/colors';
 
 const {
-  StyleSheet,
-  ScrollView,
+  Image,
   PropTypes,
+  ScrollView,
+  StyleSheet,
   Text,
   TouchableHighlight,
   View,

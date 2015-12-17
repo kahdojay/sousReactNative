@@ -41,10 +41,9 @@ export default function ProductActions(ddpClient, allActions){
       }
       dispatch(() => {
         ddpClient.call('createProduct', [newProductAttributes]);
-
       })
       dispatch(categoryActions.addProductToCategory(productAttributes.categoryId,newProductAttributes._id))
-      
+
       return dispatch({
         type: ADD_PRODUCT,
         product: newProductAttributes,
@@ -53,7 +52,7 @@ export default function ProductActions(ddpClient, allActions){
   }
 
   function updateProduct(productId, productAttributes){
-    // ddpClient.call('updateProduct', [productId, productAttributes]);
+    ddpClient.call('updateProduct', [productId, productAttributes]);
     return {
       type: UPDATE_PRODUCT,
       productId: productId,
@@ -64,7 +63,7 @@ export default function ProductActions(ddpClient, allActions){
   function deleteProduct(productId) {
     return (dispatch, getState) => {
       const {session} = getState()
-      // ddpClient.call('deleteProduct', [productId, session.userId])
+      ddpClient.call('deleteProduct', [productId, session.userId])
       return {
         type: DELETE_PRODUCT,
         productId: productId

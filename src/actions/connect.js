@@ -207,6 +207,7 @@ export default function ConnectActions(ddpClient) {
                   'lastName': data.lastName,
                   'username': data.username,
                   'superUser': data.superUser,
+                  'imageUrl': data.imageUrl,
                 }
                 dispatch(teamActions.receiveTeamsUsers(teamUserData))
               }

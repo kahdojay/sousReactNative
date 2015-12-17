@@ -17,9 +17,6 @@ class CategoryIndexRow extends React.Component {
     let { category, products } = this.props
 
     const categoryProducts = _.filter(products, (product) => {
-      if(product.id === 'k8Ice1As0LKY9THo'){
-        console.log(product);
-      }
       return product.deleted !== true
     })
 

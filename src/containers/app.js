@@ -37,6 +37,7 @@ class App extends React.Component {
       isAuthenticated: this.props.session.isAuthenticated,
       firstName: this.props.session.firstName,
       lastName: this.props.session.lastName,
+      product: null,
       category: null,
       specificProducts: null,
       purveyor: null,
@@ -46,8 +47,9 @@ class App extends React.Component {
       genericModalMessage: '',
       genericModalCallback: () => {},
       sceneState: {
-        ProductCreate: {
+        ProductForm: {
           submitReady: false,
+          productId: null,
           productAttributes: {}
         }
       },
@@ -377,7 +379,7 @@ class App extends React.Component {
             }}
             onCreateProduct={() => {
               nav.push({
-                name: 'ProductCreate'
+                name: 'ProductForm'
               })
             }}
           />
@@ -463,7 +465,7 @@ class App extends React.Component {
             }}
             onCreateProduct={() => {
               nav.push({
-                name: 'ProductCreate'
+                name: 'ProductForm'
               })
             }}
           />
@@ -476,6 +478,25 @@ class App extends React.Component {
             cart={this.state.currentTeam.cart}
             products={this.state.specificProducts}
             purveyors={currentTeamPurveyors}
+            onProductEdit={(product) => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductForm.submitReady = true;
+              sceneState.ProductForm.productId = product.id
+              sceneState.ProductForm.productAttributes = {
+                name: product.name,
+                purveyors: product.purveyors,
+                amount: product.amount,
+                unit: product.unit,
+                categoryId: this.state.category.id,
+              }
+              this.setState({
+                product: product
+              }, () => {
+                nav.push({
+                  name: 'ProductForm'
+                })
+              })
+            }}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(cartAction, cartAttributes))
@@ -510,23 +531,24 @@ class App extends React.Component {
             }}
           />
         )
-      case 'ProductCreate':
+      case 'ProductForm':
         return (
-          <Components.ProductCreate
+          <Components.ProductForm
+            product={this.state.product}
             team={this.state.currentTeam}
             categories={currentTeamCategories}
             purveyors={currentTeamPurveyors}
-            onAddProduct={(productAttributes) => {
+            onProcessProduct={(productAttributes) => {
               const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductCreate.submitReady = true;
-              sceneState.ProductCreate.productAttributes = productAttributes
+              sceneState.ProductForm.submitReady = true;
+              sceneState.ProductForm.productAttributes = productAttributes
               this.setState({
                 sceneState: sceneState
               })
             }}
             onProductNotReady={() => {
               const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductCreate.submitReady = false;
+              sceneState.ProductForm.submitReady = false;
               this.setState({
                 sceneState: sceneState
               })
@@ -844,7 +866,7 @@ class App extends React.Component {
             title: 'Cart',
           })
           break;
-        case 'ProductCreate':
+        case 'ProductForm':
           navBar = React.addons.cloneWithProps(this.navBar, {
             ref: 'navBar',
             navigator: nav,
@@ -855,13 +877,18 @@ class App extends React.Component {
                 pop={true}
               />
             ),
-            title: 'Add New Product',
+            title: (this.state.product === null) ? 'Add New Product' : 'Edit Product',
             customNext: (
-              <Components.ProductCreateRightCheckbox
-                submitReady={this.state.sceneState.ProductCreate.submitReady}
-                onAddProduct={() => {
+              <Components.ProductFormRightCheckbox
+                submitReady={this.state.sceneState.ProductForm.submitReady}
+                onProcessProduct={() => {
                   _.debounce(() => {
-                    dispatch(actions.addProduct(this.state.sceneState.ProductCreate.productAttributes))
+                    const {productId, productAttributes} = this.state.sceneState.ProductForm
+                    if(productId === null){
+                      dispatch(actions.addProduct(productAttributes))
+                    } else {
+                      dispatch(actions.updateProduct(productId, productAttributes))
+                    }
                   }, 5)()
                   nav.replacePreviousAndPop({
                     name: 'CategoryIndex',

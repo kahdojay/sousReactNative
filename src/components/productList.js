@@ -92,6 +92,9 @@ class ProductList extends React.Component {
             key={idx}
             product={product}
             purveyors={purveyors}
+            onProductEdit={() => {
+              this.props.onProductEdit(product)
+            }}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               this.props.onUpdateProductInCart(cartAction, cartAttributes)
             }}
