@@ -46,27 +46,41 @@ export default function ProductActions(ddpClient, allActions){
 
       return dispatch({
         type: ADD_PRODUCT,
+        teamId: currentTeam.id,
         product: newProductAttributes,
       });
     }
   }
 
   function updateProduct(productId, productAttributes){
-    ddpClient.call('updateProduct', [productId, productAttributes]);
-    return {
-      type: UPDATE_PRODUCT,
-      productId: productId,
-      product: productAttributes
+    return (dispatch, getState) => {
+      const {session, teams } = getState();
+      const { currentTeam } = teams;
+      dispatch(() => {
+        ddpClient.call('updateProduct', [productId, productAttributes, session.userId]);
+      })
+      return {
+        type: UPDATE_PRODUCT,
+        teamId: currentTeam.id,
+        productId: productId,
+        product: productAttributes
+      }
     }
   }
 
   function deleteProduct(productId) {
     return (dispatch, getState) => {
-      const {session} = getState()
-      ddpClient.call('deleteProduct', [productId, session.userId])
+      const {session, teams } = getState();
+      const { currentTeam } = teams;
+      const productAttributes = {deleted: true};
+      dispatch(() => {
+        ddpClient.call('updateProduct', [productId, productAttributes, session.userId])
+      })
       return {
         type: DELETE_PRODUCT,
-        productId: productId
+        teamId: currentTeam.id,
+        productId: productId,
+        product: productAttributes
       }
     }
   }

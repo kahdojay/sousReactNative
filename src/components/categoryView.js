@@ -32,6 +32,7 @@ class CategoryView extends React.Component {
           products={products}
           purveyors={purveyors}
           onProductEdit={this.props.onProductEdit}
+          onProductDelete={this.props.onProductDelete}
           onUpdateProductInCart={this.props.onUpdateProductInCart}
         />
       </View>
