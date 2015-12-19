@@ -72,6 +72,10 @@ class Feed extends React.Component {
   //   }
   // }
 
+  componentWillMount() {
+    this.props.onClearBadge()
+  }
+
   componentWillReceiveProps(nextProps) {
     // if(this.state.lastMessageCreatedAt === null){
     //   lastMessageCreatedAt
