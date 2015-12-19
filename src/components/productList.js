@@ -3,11 +3,11 @@ import ProductListItem from './productListItem';
 import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
 
 const {
-  View,
   PropTypes,
-  Text,
   ScrollView,
+  Text,
   TouchableHighlight,
+  View,
 } = React;
 
 class ProductList extends React.Component {

@@ -290,7 +290,9 @@ class ProductForm extends React.Component {
         break;
       case null:
       default:
-        picker = <View />;
+        picker = (
+          <View />
+        );
         break;
     }
     return picker
@@ -341,6 +343,15 @@ class ProductForm extends React.Component {
     const currentTeamId = this.props.team.id;
     const picker = this.getPicker()
     const purveyorInputs = this.getPurveyorInputs()
+    let separator = (
+      <View />
+    )
+    if(this.state.picker !== null){
+      separator = (
+        <View style={styles.separator} />
+      )
+    }
+
     return (
       <ScrollView
         automaticallyAdjustContentInsets={false}
@@ -422,13 +433,20 @@ class ProductForm extends React.Component {
             </Text>
           </TouchableHighlight>
         </View>
+        {separator}
         {picker}
       </ScrollView>
     );
   }
 };
 
+const window = Dimensions.get('window');
+
 const styles = StyleSheet.create({
+  scrollView: {
+    backgroundColor: Colors.mainBackgroundColor,
+    flex: 1,
+  },
   inputContainer: {
     flex: 1,
     flexDirection: 'row',
@@ -437,7 +455,7 @@ const styles = StyleSheet.create({
   },
   inputTitle: {
     // v- this with looks good on iPhone 6 plus and 4s
-    width: Dimensions.get('window').width * .54,
+    width: window.width * .54,
     fontFamily: 'OpenSans',
     fontWeight: 'bold',
     fontSize: 14,
@@ -455,12 +473,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'right',
   },
-  scrollView: {
-    backgroundColor: '#f9f9f9',
-    flex: 1,
-  },
-  emptySpace: {
-    height: 20,
+  separator: {
+    height: 0,
+    borderBottomColor: '#bbb',
+    borderBottomWidth: 1,
   },
 });
 

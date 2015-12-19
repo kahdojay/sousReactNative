@@ -1,7 +1,7 @@
-import React from 'react-native'
-import _ from 'lodash'
-import CheckBox from './checkbox'
-import { Icon } from 'react-native-icons'
+import React from 'react-native';
+import _ from 'lodash';
+import { Icon } from 'react-native-icons';
+import Colors from '../utilities/colors';
 
 const {
   Modal,
@@ -12,15 +12,18 @@ const {
   View,
 } = React;
 
-class ModalToggle extends React.Component {
+class TouchableWrapper extends React.Component {
   render() {
+    const underlayColor = this.props.hasOwnProperty('underlayColor') === true ? this.props.underlayColor : '#eee'
     return (
       <TouchableHighlight
         onPress={this.props.onPress}
         style={[styles.button, this.props.style]}
-        underlayColor="#eee"
+        underlayColor={underlayColor}
       >
-        <View>{this.props.children}</View>
+        <View>
+          {this.props.children}
+        </View>
       </TouchableHighlight>
     );
   }
@@ -46,41 +49,57 @@ class ProductToggle extends React.Component {
   }
 
   render() {
-    const checkbox = (
-      <CheckBox
-        label=''
-        onChange={this._handlePurveyorSelect.bind(this, this.props.currentlySelectedPurveyorId)}
-        checked={this.props.added}
-      />
-    );
 
-    const modalShowButton = (
-      <ModalToggle onPress={this._setModalVisible.bind(this, true)} >
-        <Icon
-          name='fontawesome|ellipsis-h'
-          size={30}
-          color='black'
-          style={styles.icon}
-        />
-      </ModalToggle>
-    );
+    let wrappedChildren = (
+      <TouchableWrapper
+        onPress={this._handlePurveyorSelect.bind(this, this.props.currentlySelectedPurveyorId)}
+        underlayColor='transparent'
+      >
+        {this.props.children}
+      </TouchableWrapper>
+    )
+    let modal = (
+      <View />
+    )
 
-    const purveyorsArray = this.props.availablePurveyors.map((purveyorId, idx) => {
-      const purveyor = _.find(this.props.allPurveyors, { id: purveyorId });
-      const purveyorName = purveyor ? purveyor.name : '';
-      return (
-        <ModalToggle
-          key={idx}
-          style={styles.modalButton}
-          onPress={this._handlePurveyorSelect.bind(this, purveyorId)}
+
+    if(this.props.availablePurveyors.length > 1){
+      wrappedChildren = (
+        <TouchableWrapper
+          onPress={this._setModalVisible.bind(this, true)}
+          underlayColor='transparent'
         >
-          <Text>{purveyorName}</Text>
-        </ModalToggle>
+          {this.props.children}
+        </TouchableWrapper>
       )
-    })
 
-    return (
-      <View>
+      const purveyorsArray = this.props.availablePurveyors.map((purveyorId, idx) => {
+        const purveyor = _.find(this.props.allPurveyors, { id: purveyorId });
+        const purveyorName = purveyor ? purveyor.name : '';
+        let selectedIcon = (
+          <View />
+        )
+        // console.log(this.props.currentlySelectedPurveyorId, purveyorId)
+        if(this.props.added === true && purveyorId === this.props.currentlySelectedPurveyorId){
+          selectedIcon = (
+            <Icon name='fontawesome|check' size={14} color={Colors.green} style={styles.icon}/>
+          )
+        }
+        return (
+          <TouchableWrapper
+            key={idx}
+            style={styles.modalButton}
+            onPress={this._handlePurveyorSelect.bind(this, purveyorId)}
+          >
+            <View style={{flexDirection: 'row'}}>
+              {selectedIcon}
+              <Text>{purveyorName}</Text>
+            </View>
+          </TouchableWrapper>
+        )
+      })
+
+      modal = (
         <Modal
           animated={true}
           transparent={true}
@@ -97,10 +116,13 @@ class ProductToggle extends React.Component {
             </View>
           </TouchableHighlight>
         </Modal>
-        {
-          this.props.added === false &&
-          this.props.availablePurveyors.length > 1 ? modalShowButton : checkbox
-        }
+      )
+    }
+
+    return (
+      <View>
+        {modal}
+        {wrappedChildren}
       </View>
     );
   }
@@ -121,25 +143,24 @@ var styles = StyleSheet.create({
   },
   modalHeader: {
     fontWeight: 'bold',
+    marginBottom: 10,
   },
   button: {
     flex: 1,
-    height: 44,
-    width: 190,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
   },
   modalButton: {
+    paddingTop: 14,
+    paddingBottom: 14,
     paddingLeft: 10,
     paddingRight: 10,
-    marginTop: 10,
     borderTopColor: 'black',
     borderTopWidth: 1,
+    width: 240,
   },
   icon: {
-    width: 40,
-    height: 40,
+    width: 16,
+    height: 16,
+    marginRight: 5
   },
 });
 

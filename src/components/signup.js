@@ -25,10 +25,8 @@ class Signup extends React.Component {
       phoneNumber: this.props.session.phoneNumber,
       smsToken: '',
       smsSent: this.props.session.smsSent,
-      submitting: false,
-      // timeout: null,
+      submitting: false
     }
-    this.timeout = null
   }
 
   componentWillReceiveProps(nextProps) {
