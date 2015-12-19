@@ -37,8 +37,9 @@ class App extends React.Component {
       isAuthenticated: this.props.session.isAuthenticated,
       firstName: this.props.session.firstName,
       lastName: this.props.session.lastName,
+      product: null,
       category: null,
-      specificProducts: null,
+      // specificProducts: null,
       purveyor: null,
       currentTeam: this.props.teams.currentTeam,
       contactList: [],
@@ -46,8 +47,9 @@ class App extends React.Component {
       genericModalMessage: '',
       genericModalCallback: () => {},
       sceneState: {
-        ProductCreate: {
+        ProductForm: {
           submitReady: false,
+          productId: null,
           productAttributes: {}
         }
       },
@@ -74,6 +76,7 @@ class App extends React.Component {
       ), props)
     };
   }
+
   handleOpenWithTouchToClose() {
     this.setState({
       touchToClose: true,
@@ -104,6 +107,10 @@ class App extends React.Component {
       lastName: nextProps.session.lastName,
       currentTeam: nextProps.teams.currentTeam
     })
+    if(nextProps.teams.currentTeam !== null && nextProps.products.teams[nextProps.teams.currentTeam.id].hasOwnProperty('k8Ice1As0LKY9THo') === true){
+      const nextPropsProduct = nextProps.products.teams[nextProps.teams.currentTeam.id]['k8Ice1As0LKY9THo']
+      console.log('componentWillReceiveProps: ', nextPropsProduct.amount, nextPropsProduct.updatedAt)
+    }
   }
 
   componentWillUpdate(nextProps) {
@@ -118,6 +125,15 @@ class App extends React.Component {
         }
       }
     }
+    // const {products, purveyors, categories, messages} = nextProps;
+    // if(this.state.currentTeam !== null){
+    //   // currentTeamInfo.currentTeamPurveyors = purveyors.teams[this.state.currentTeam.id] || {}
+    //   // currentTeamInfo.currentTeamCategories = categories.teams[this.state.currentTeam.id] || {}
+    //   if(products.teams.hasOwnProperty(this.state.currentTeam.id) === true){
+    //     currentTeamInfo.currentTeamProducts = products.teams[this.state.currentTeam.id]
+    //   }
+    //   // currentTeamInfo.currentTeamMessages = messages.teams[this.state.currentTeam.id] || {}
+    // }
   }
 
   componentDidUpdate() {
@@ -362,9 +378,9 @@ class App extends React.Component {
               const purveyor = currentTeamPurveyors[purveyorId];
               this.setState({
                 purveyor: purveyor,
-                specificProducts: _.sortBy(_.filter(currentTeamProducts, (product) => {
-                  return _.includes(product.purveyors, purveyor.id)
-                }), 'name')
+                // specificProducts: _.sortBy(_.filter(currentTeamProducts, (product) => {
+                //   return _.includes(product.purveyors, purveyor.id)
+                // }), 'name')
               }, () => {
                 nav.push({
                   name: 'PurveyorView',
@@ -377,7 +393,7 @@ class App extends React.Component {
             }}
             onCreateProduct={() => {
               nav.push({
-                name: 'ProductCreate'
+                name: 'ProductForm'
               })
             }}
           />
@@ -387,13 +403,16 @@ class App extends React.Component {
         // let products = _.filter(currentTeamProducts, (product) => {
         //   return _.includes(product.purveyors, purveyor.id)
         // })
+        const specificProductsPurveyor = _.sortBy(_.filter(currentTeamProducts, (product) => {
+          return _.includes(product.purveyors, this.state.purveyor.id)
+        }), 'name')
         return (
           <Components.PurveyorView
             cart={this.state.currentTeam.cart}
             ui={ui}
             purveyor={this.state.purveyor}
             purveyors={currentTeamPurveyors}
-            products={this.state.specificProducts}
+            products={specificProductsPurveyor}
             onAddNewProduct={(purveyorId, productName) => {
               const products = purveyor.products.map((product) => {
                 if (!product.deleted) {
@@ -450,10 +469,10 @@ class App extends React.Component {
               const category = currentTeamCategories[categoryId]
               this.setState({
                 category: category,
-                specificProducts: _.sortBy(_.map(category.products, (productId) => {
-                  const product = currentTeamProducts[productId]
-                  return product
-                }), 'name')
+                // specificProducts: _.sortBy(_.map(category.products, (productId) => {
+                //   const product = currentTeamProducts[productId]
+                //   return product
+                // }), 'name')
               }, () => {
                 nav.push({
                   name: 'CategoryView',
@@ -463,19 +482,50 @@ class App extends React.Component {
             }}
             onCreateProduct={() => {
               nav.push({
-                name: 'ProductCreate'
+                name: 'ProductForm'
               })
             }}
           />
         )
       case 'CategoryView':
+        const specificProductsCategory = _.sortBy(_.map(this.state.category.products, (productId) => {
+          const product = currentTeamProducts[productId]
+          if(productId === 'k8Ice1As0LKY9THo'){
+            console.log('CategoryView: ', product.amount, product.updatedAt)
+          }
+          return product
+        }), 'name')
         return (
           <Components.CategoryView
             ui={ui}
             category={this.state.category}
             cart={this.state.currentTeam.cart}
-            products={this.state.specificProducts}
+            products={specificProductsCategory}
             purveyors={currentTeamPurveyors}
+            onProductDelete={(productId) => {
+              _.debounce(() => {
+                dispatch(actions.deleteProduct(productId));
+              }, 25)()
+            }}
+            onProductEdit={(product) => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductForm.submitReady = true;
+              sceneState.ProductForm.productId = product.id
+              sceneState.ProductForm.productAttributes = {
+                name: product.name,
+                purveyors: product.purveyors,
+                amount: product.amount,
+                unit: product.unit,
+                categoryId: this.state.category.id,
+              }
+              this.setState({
+                product: product
+              }, () => {
+                nav.push({
+                  name: 'ProductForm'
+                })
+              })
+            }}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(cartAction, cartAttributes))
@@ -510,23 +560,24 @@ class App extends React.Component {
             }}
           />
         )
-      case 'ProductCreate':
+      case 'ProductForm':
         return (
-          <Components.ProductCreate
+          <Components.ProductForm
+            product={this.state.product}
             team={this.state.currentTeam}
             categories={currentTeamCategories}
             purveyors={currentTeamPurveyors}
-            onAddProduct={(productAttributes) => {
+            onProcessProduct={(productAttributes) => {
               const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductCreate.submitReady = true;
-              sceneState.ProductCreate.productAttributes = productAttributes
+              sceneState.ProductForm.submitReady = true;
+              sceneState.ProductForm.productAttributes = productAttributes
               this.setState({
                 sceneState: sceneState
               })
             }}
             onProductNotReady={() => {
               const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductCreate.submitReady = false;
+              sceneState.ProductForm.submitReady = false;
               this.setState({
                 sceneState: sceneState
               })
@@ -844,7 +895,7 @@ class App extends React.Component {
             title: 'Cart',
           })
           break;
-        case 'ProductCreate':
+        case 'ProductForm':
           navBar = React.addons.cloneWithProps(this.navBar, {
             ref: 'navBar',
             navigator: nav,
@@ -855,17 +906,29 @@ class App extends React.Component {
                 pop={true}
               />
             ),
-            title: 'Add New Product',
+            title: (this.state.product === null) ? 'Add New Product' : 'Edit Product',
             customNext: (
-              <Components.ProductCreateRightCheckbox
-                submitReady={this.state.sceneState.ProductCreate.submitReady}
-                onAddProduct={() => {
+              <Components.ProductFormRightCheckbox
+                submitReady={this.state.sceneState.ProductForm.submitReady}
+                onProcessProduct={() => {
                   _.debounce(() => {
-                    dispatch(actions.addProduct(this.state.sceneState.ProductCreate.productAttributes))
+                    const {productId, productAttributes} = this.state.sceneState.ProductForm
+                    if(productId === null){
+                      dispatch(actions.addProduct(productAttributes))
+                    } else {
+                      dispatch(actions.updateProduct(productId, productAttributes))
+                    }
                   }, 5)()
-                  nav.replacePreviousAndPop({
-                    name: 'CategoryIndex',
-                  });
+                  if(this.state.product === null){
+                    nav.replacePreviousAndPop({
+                      name: 'CategoryIndex',
+                    });
+                  } else {
+                    nav.replace({
+                      name: 'CategoryView',
+                      categoryId: this.state.category.id
+                    })
+                  }
                 }}
               />
             ),
@@ -958,15 +1021,35 @@ class App extends React.Component {
       currentTeamCategories: {},
       currentTeamProducts: {},
       currentTeamMessages: {},
+      lastUpdated: {
+        purveyors: null,
+        categories: null,
+        products: null,
+        messages: null,
+      }
     }
 
     if(this.state.currentTeam !== null){
-      currentTeamInfo.currentTeamPurveyors = purveyors.teams[this.state.currentTeam.id] || {}
-      currentTeamInfo.currentTeamCategories = categories.teams[this.state.currentTeam.id] || {}
+      if(purveyors.teams.hasOwnProperty(this.state.currentTeam.id) === true){
+        currentTeamInfo.currentTeamPurveyors = purveyors.teams[this.state.currentTeam.id]
+        currentTeamInfo.lastUpdated.purveyors = purveyors.lastUpdated;
+      }
+      if(categories.teams.hasOwnProperty(this.state.currentTeam.id) === true){
+        currentTeamInfo.currentTeamCategories = categories.teams[this.state.currentTeam.id]
+        currentTeamInfo.lastUpdated.categories = categories.lastUpdated;
+      }
       if(products.teams.hasOwnProperty(this.state.currentTeam.id) === true){
         currentTeamInfo.currentTeamProducts = products.teams[this.state.currentTeam.id]
+        currentTeamInfo.lastUpdated.products = products.lastUpdated;
+        if(currentTeamInfo.currentTeamProducts.hasOwnProperty('k8Ice1As0LKY9THo') === true){
+          const updatedProduct = currentTeamInfo.currentTeamProducts['k8Ice1As0LKY9THo']
+          console.log('renderScene: ', updatedProduct.amount, updatedProduct.updatedAt)
+        }
       }
-      currentTeamInfo.currentTeamMessages = messages.teams[this.state.currentTeam.id] || {}
+      if(messages.teams.hasOwnProperty(this.state.currentTeam.id) === true){
+        currentTeamInfo.currentTeamMessages = messages.teams[this.state.currentTeam.id]
+        currentTeamInfo.lastUpdated.messages = messages.lastUpdated;
+      }
     }
 
     route = this.getRoute(route, nav, currentTeamInfo);

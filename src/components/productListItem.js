@@ -4,6 +4,8 @@ import { Icon } from 'react-native-icons'
 import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
 import _ from 'lodash';
 import { CART } from '../actions/actionTypes';
+import Colors from '../utilities/colors';
+import Swipeout from 'react-native-swipeout';
 
 const {
   TouchableHighlight,
@@ -25,7 +27,7 @@ class ProductListItem extends React.Component {
       quantity: 1,
       purveyorId: '',
       selectedPurveyorId: null,
-      note: ''
+      note: '',
     }
     this.timeoutId = null
     this.loadTimeoutId = null
@@ -42,6 +44,13 @@ class ProductListItem extends React.Component {
     if(this.state.loaded === false){
       shouldUpdate = true;
     }
+    if(this.state.product !== null){
+      // console.log(nextProps.product);
+      if(JSON.stringify(nextState.product) !== JSON.stringify(this.state.product)){
+        shouldUpdate = true;
+      }
+      console.log('shouldUpdate: ', shouldUpdate)
+    }
     // console.log(nextState.shouldUpdate);
     return shouldUpdate;
   }
@@ -56,7 +65,8 @@ class ProductListItem extends React.Component {
 
   componentDidMount() {
     this.loadTimeoutId = setTimeout(() => {
-      this.setState({
+      this.setState(
+        {
           loaded: true,
           product: this.props.product,
           purveyors: this.props.purveyors,
@@ -163,47 +173,76 @@ class ProductListItem extends React.Component {
             />
           </View>
           <View style={styles.main}>
-            <Text style={styles.productText}>
-              {product.name}
-            </Text>
-            <Text style={{fontSize: 9,  color: '#999'}} >
-              {product.amount + ' ' + product.unit}
-            </Text>
-            <Text style={{fontSize: 9,  color: '#999'}} >
-              {purveyorString}
-            </Text>
+            <TouchableHighlight
+              underlayColor="transparent"
+              onPress={() => {
+                // console.log('Add to cart')
+                // this.handleToggleProduct(purveyorId)
+              }}>
+              <View>
+                <Text style={styles.productText}>
+                  {product.name}
+                </Text>
+                <Text style={{fontSize: 9,  color: '#999'}} >
+                  {product.amount + ' ' + product.unit}
+                </Text>
+                <Text style={{fontSize: 9,  color: '#999'}} >
+                  {purveyorString}
+                </Text>
+              </View>
+            </TouchableHighlight>
           </View>
           { this.state.added === true ?
-          [
-            <Text key={'quantity'} style={styles.quantity}>
-              {this.state.quantity > 1 ? ('X' + this.state.quantity) : ''}
-            </Text>,
-            <TouchableHighlight
-              key={'decrement'}
-              underlayColor="transparent"
-              onPress={this.decrement.bind(this)}
-              style={{flex: 1}}>
-              <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
-            </TouchableHighlight>,
-            <TouchableHighlight
-              key={'increment'}
-              underlayColor='transparent'
-              onPress={this.increment.bind(this)}
-              style={{flex: 1}}>
-              <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
-            </TouchableHighlight>
-          ] : [
-            <View key={'quantity'} style={{flex: 1}} />,
-            <View key={'decrement'} style={{flex: 1}} />,
-            <View key={'increment'} style={{flex:1}} />
-          ] }
+            [
+              <Text key={'quantity'} style={styles.quantity}>
+                {this.state.quantity > 1 ? ('X' + this.state.quantity) : ''}
+              </Text>,
+              <TouchableHighlight
+                key={'decrement'}
+                underlayColor="transparent"
+                onPress={this.decrement.bind(this)}
+                style={{flex: 1}}>
+                <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
+              </TouchableHighlight>,
+              <TouchableHighlight
+                key={'increment'}
+                underlayColor='transparent'
+                onPress={this.increment.bind(this)}
+                style={{flex: 1}}>
+                <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
+              </TouchableHighlight>
+            ] : [
+              <View key={'quantity'} style={{flex: 1}} />,
+              <View key={'decrement'} style={{flex: 1}} />,
+              <View key={'increment'} style={{flex:1}} />
+            ]
+          }
         </View>
       )
     }
 
+    const buttons = [{
+      backgroundColor: 'transparent',
+      component: (
+        <Icon name='material|edit' size={30} color={Colors.blue} style={styles.iconEdit}/>
+      ),
+      onPress: this.props.onProductEdit
+    }, {
+      backgroundColor: 'transparent',
+      component: (
+        <Icon name='material|delete' size={30} color={Colors.blue} style={styles.iconEdit}/>
+      ),
+      onPress: this.props.onProductDelete
+    }]
+
     return (
       <View style={styles.container}>
-        {productInfo}
+        <Swipeout
+          right={buttons}
+          backgroundColor={Colors.mainBackgroundColor}
+        >
+          {productInfo}
+        </Swipeout>
       </View>
     )
   }
@@ -220,6 +259,15 @@ let styles = StyleSheet.create({
     width: 40,
     height: 40,
   },
+  iconEdit: {
+    flex: 1,
+    alignSelf: 'center',
+    width: 54,
+    height: 40,
+    marginLeft: 2,
+    marginTop: 7,
+    marginBottom: 7,
+  },
   quantity: {
     flex: 1,
     fontSize: 16
@@ -229,7 +277,7 @@ let styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: 'white',
     padding: 5,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   checkboxContainer: {
     flex: 1,
@@ -242,7 +290,7 @@ let styles = StyleSheet.create({
   productText: {
     color: 'black',
     fontSize: 15
-  },
+  }
 });
 
 ProductListItem.propTypes = {
