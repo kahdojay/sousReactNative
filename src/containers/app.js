@@ -107,10 +107,6 @@ class App extends React.Component {
       lastName: nextProps.session.lastName,
       currentTeam: nextProps.teams.currentTeam
     })
-    if(nextProps.teams.currentTeam !== null && nextProps.products.teams[nextProps.teams.currentTeam.id].hasOwnProperty('k8Ice1As0LKY9THo') === true){
-      const nextPropsProduct = nextProps.products.teams[nextProps.teams.currentTeam.id]['k8Ice1As0LKY9THo']
-      console.log('componentWillReceiveProps: ', nextPropsProduct.amount, nextPropsProduct.updatedAt)
-    }
   }
 
   componentWillUpdate(nextProps) {
@@ -490,9 +486,6 @@ class App extends React.Component {
       case 'CategoryView':
         const specificProductsCategory = _.sortBy(_.map(this.state.category.products, (productId) => {
           const product = currentTeamProducts[productId]
-          if(productId === 'k8Ice1As0LKY9THo'){
-            console.log('CategoryView: ', product.amount, product.updatedAt)
-          }
           return product
         }), 'name')
         return (
@@ -1041,10 +1034,6 @@ class App extends React.Component {
       if(products.teams.hasOwnProperty(this.state.currentTeam.id) === true){
         currentTeamInfo.currentTeamProducts = products.teams[this.state.currentTeam.id]
         currentTeamInfo.lastUpdated.products = products.lastUpdated;
-        if(currentTeamInfo.currentTeamProducts.hasOwnProperty('k8Ice1As0LKY9THo') === true){
-          const updatedProduct = currentTeamInfo.currentTeamProducts['k8Ice1As0LKY9THo']
-          console.log('renderScene: ', updatedProduct.amount, updatedProduct.updatedAt)
-        }
       }
       if(messages.teams.hasOwnProperty(this.state.currentTeam.id) === true){
         currentTeamInfo.currentTeamMessages = messages.teams[this.state.currentTeam.id]
