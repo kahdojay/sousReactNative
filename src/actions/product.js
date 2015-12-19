@@ -59,12 +59,12 @@ export default function ProductActions(ddpClient, allActions){
       dispatch(() => {
         ddpClient.call('updateProduct', [productId, productAttributes, session.userId]);
       })
-      return {
+      return dispatch({
         type: UPDATE_PRODUCT,
         teamId: currentTeam.id,
         productId: productId,
         product: productAttributes
-      }
+      })
     }
   }
 
@@ -76,12 +76,12 @@ export default function ProductActions(ddpClient, allActions){
       dispatch(() => {
         ddpClient.call('updateProduct', [productId, productAttributes, session.userId])
       })
-      return {
+      return dispatch({
         type: DELETE_PRODUCT,
         teamId: currentTeam.id,
         productId: productId,
         product: productAttributes
-      }
+      })
     }
   }
 
