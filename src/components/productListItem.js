@@ -44,13 +44,12 @@ class ProductListItem extends React.Component {
     if(this.state.loaded === false){
       shouldUpdate = true;
     }
-    if(this.state.product !== null){
-      // console.log(nextProps.product);
-      if(JSON.stringify(nextState.product) !== JSON.stringify(this.state.product)){
-        shouldUpdate = true;
-      }
-      console.log('shouldUpdate: ', shouldUpdate)
-    }
+    // if(this.state.product !== null){
+    //   // console.log(nextProps.product);
+    //   if(JSON.stringify(nextProps.product) !== JSON.stringify(this.state.product)){
+    //     shouldUpdate = true;
+    //   }
+    // }
     // console.log(nextState.shouldUpdate);
     return shouldUpdate;
   }
@@ -224,13 +223,13 @@ class ProductListItem extends React.Component {
     const buttons = [{
       backgroundColor: 'transparent',
       component: (
-        <Icon name='material|edit' size={30} color={Colors.blue} style={styles.iconEdit}/>
+        <Icon name='material|edit' size={30} color={Colors.navbarIconColor} style={styles.iconEdit}/>
       ),
       onPress: this.props.onProductEdit
     }, {
       backgroundColor: 'transparent',
       component: (
-        <Icon name='material|delete' size={30} color={Colors.blue} style={styles.iconEdit}/>
+        <Icon name='material|delete' size={30} color={Colors.navbarIconColor} style={styles.iconEdit}/>
       ),
       onPress: this.props.onProductDelete
     }]

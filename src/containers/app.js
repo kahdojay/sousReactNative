@@ -41,7 +41,6 @@ class App extends React.Component {
       category: null,
       // specificProducts: null,
       purveyor: null,
-      currentTeam: this.props.teams.currentTeam,
       contactList: [],
       showGenericModal: false,
       genericModalMessage: '',
@@ -53,6 +52,19 @@ class App extends React.Component {
           productAttributes: {}
         }
       },
+      currentTeamInfo: {
+        team: this.props.teams.currentTeam,
+        purveyors: {},
+        categories: {},
+        products: {},
+        messages: {},
+        lastUpdated: {
+          purveyors: null,
+          categories: null,
+          products: null,
+          messages: null,
+        }
+      }
     }
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
@@ -100,19 +112,39 @@ class App extends React.Component {
   }}
 
   componentWillReceiveProps(nextProps) {
+    let currentTeamInfo = this.state.currentTeamInfo
+    currentTeamInfo.team = nextProps.teams.currentTeam
+    if(currentTeamInfo.team !== null){
+      if(nextProps.purveyors.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
+        currentTeamInfo.purveyors = nextProps.purveyors.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.purveyors = nextProps.purveyors.lastUpdated;
+      }
+      if(nextProps.categories.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
+        currentTeamInfo.categories = nextProps.categories.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.categories = nextProps.categories.lastUpdated;
+      }
+      if(nextProps.products.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
+        currentTeamInfo.products = nextProps.products.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.products = nextProps.products.lastUpdated;
+      }
+      if(nextProps.messages.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
+        currentTeamInfo.messages = nextProps.messages.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.messages = nextProps.messages.lastUpdated;
+      }
+    }
     this.setState({
       installationRegistered: nextProps.connect.installationRegistered,
       isAuthenticated: nextProps.session.isAuthenticated,
       firstName: nextProps.session.firstName,
       lastName: nextProps.session.lastName,
-      currentTeam: nextProps.teams.currentTeam
+      currentTeamInfo: currentTeamInfo,
     })
   }
 
   componentWillUpdate(nextProps) {
     if(this.refs.appNavigator){
       if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'TeamIndex'){
-        if(this.state.currentTeam !== null){
+        if(this.state.currentTeamInfo.team !== null){
           setTimeout(() => {
             this.refs.appNavigator.replacePrevious({
               name: 'Feed'
@@ -121,20 +153,11 @@ class App extends React.Component {
         }
       }
     }
-    // const {products, purveyors, categories, messages} = nextProps;
-    // if(this.state.currentTeam !== null){
-    //   // currentTeamInfo.currentTeamPurveyors = purveyors.teams[this.state.currentTeam.id] || {}
-    //   // currentTeamInfo.currentTeamCategories = categories.teams[this.state.currentTeam.id] || {}
-    //   if(products.teams.hasOwnProperty(this.state.currentTeam.id) === true){
-    //     currentTeamInfo.currentTeamProducts = products.teams[this.state.currentTeam.id]
-    //   }
-    //   // currentTeamInfo.currentTeamMessages = messages.teams[this.state.currentTeam.id] || {}
-    // }
   }
 
   componentDidUpdate() {
-    // console.log(this.state.currentTeam)
-    if(this.state.isAuthenticated === true && this.state.currentTeam !== null){
+    // console.log(this.state.currentTeamInfo.team)
+    if(this.state.isAuthenticated === true && this.state.currentTeamInfo.team !== null){
       const {dispatch, connect, session} = this.props
       if (this.state.installationRegistered !== true && connect.status === actions.CONNECT.CONNECTED) {
         PushManager.requestPermissions((err, data) => {
@@ -155,7 +178,7 @@ class App extends React.Component {
     }
     if(this.refs.appNavigator){
       if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'Loading'){
-        if(this.state.currentTeam !== null){
+        if(this.state.currentTeamInfo.team !== null){
           setTimeout(() => {
             this.refs.appNavigator.replacePrevious({
               name: 'Feed'
@@ -169,7 +192,7 @@ class App extends React.Component {
           }, 10)
         }
       } else if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'UserTeam'){
-        if(this.state.currentTeam !== null){
+        if(this.state.currentTeamInfo.team !== null){
           setTimeout(() => {
             this.refs.appNavigator.replacePrevious({
               name: 'Feed'
@@ -188,15 +211,8 @@ class App extends React.Component {
     return isAuthenticated;
   }
 
-  getScene(route, nav, currentTeamInfo) {
+  getScene(route, nav) {
     const { ui, session, teams, messages, dispatch, purveyors, products, categories, errors } = this.props;
-
-    const {
-      currentTeamPurveyors,
-      currentTeamCategories,
-      currentTeamProducts,
-      currentTeamMessages
-    } = currentTeamInfo
 
     switch (route.name) {
       case 'Signup':
@@ -295,7 +311,7 @@ class App extends React.Component {
         return (
           <Components.TeamView
             ui={ui}
-            teamTasks={this.state.currentTeam.tasks}
+            teamTasks={this.state.currentTeamInfo.team.tasks}
             onNavToTask={(recipeId) => {
               // console.log(recipeId)
               nav.push({
@@ -333,7 +349,7 @@ class App extends React.Component {
           />
         )
       case 'TaskView':
-        var task = _.filter(this.state.currentTeam.tasks, {recipeId: route.recipeId})[0]
+        var task = _.filter(this.state.currentTeamInfo.team.tasks, {recipeId: route.recipeId})[0]
         return (
           <Components.TaskView
             keyboardVisible={ui.keyboard.visible }
@@ -353,10 +369,10 @@ class App extends React.Component {
           <Components.Feed
             teamsUsers={teams.teamsUsers}
             messagesFetching={messages.isFetching}
-            messages={currentTeamMessages}
+            messages={this.state.currentTeamInfo.messages}
             userEmail={session.login}
             onGetMoreMessages={() => {
-              dispatch(actions.getTeamMessages(this.state.currentTeam.id));
+              dispatch(actions.getTeamMessages(this.state.currentTeamInfo.team.id));
             }}
             onCreateMessage={(msg) => {
               _.debounce(() => {
@@ -368,13 +384,13 @@ class App extends React.Component {
       case 'PurveyorIndex':
         return (
           <Components.PurveyorIndex
-            purveyors={currentTeamPurveyors}
+            purveyors={this.state.currentTeamInfo.purveyors}
             session={session}
             onNavToPurveyor={(purveyorId) => {
-              const purveyor = currentTeamPurveyors[purveyorId];
+              const purveyor = this.state.currentTeamInfo.purveyors[purveyorId];
               this.setState({
                 purveyor: purveyor,
-                // specificProducts: _.sortBy(_.filter(currentTeamProducts, (product) => {
+                // specificProducts: _.sortBy(_.filter(this.state.currentTeamInfo.products, (product) => {
                 //   return _.includes(product.purveyors, purveyor.id)
                 // }), 'name')
               }, () => {
@@ -395,19 +411,19 @@ class App extends React.Component {
           />
         )
       case 'PurveyorView':
-        // let purveyor = currentTeamPurveyors[route.purveyorId]
-        // let products = _.filter(currentTeamProducts, (product) => {
+        // let purveyor = this.state.currentTeamInfo.purveyors[route.purveyorId]
+        // let products = _.filter(this.state.currentTeamInfo.products, (product) => {
         //   return _.includes(product.purveyors, purveyor.id)
         // })
-        const specificProductsPurveyor = _.sortBy(_.filter(currentTeamProducts, (product) => {
+        const specificProductsPurveyor = _.sortBy(_.filter(this.state.currentTeamInfo.products, (product) => {
           return _.includes(product.purveyors, this.state.purveyor.id)
         }), 'name')
         return (
           <Components.PurveyorView
-            cart={this.state.currentTeam.cart}
+            cart={this.state.currentTeamInfo.team.cart}
             ui={ui}
             purveyor={this.state.purveyor}
-            purveyors={currentTeamPurveyors}
+            purveyors={this.state.currentTeamInfo.purveyors}
             products={specificProductsPurveyor}
             onAddNewProduct={(purveyorId, productName) => {
               const products = purveyor.products.map((product) => {
@@ -459,14 +475,14 @@ class App extends React.Component {
       case 'CategoryIndex':
         return (
           <Components.CategoryIndex
-            products={currentTeamProducts}
-            categories={currentTeamCategories}
+            products={this.state.currentTeamInfo.products}
+            categories={this.state.currentTeamInfo.categories}
             onNavigateToCategory={(categoryId) => {
-              const category = currentTeamCategories[categoryId]
+              const category = this.state.currentTeamInfo.categories[categoryId]
               this.setState({
                 category: category,
                 // specificProducts: _.sortBy(_.map(category.products, (productId) => {
-                //   const product = currentTeamProducts[productId]
+                //   const product = this.state.currentTeamInfo.products[productId]
                 //   return product
                 // }), 'name')
               }, () => {
@@ -485,16 +501,16 @@ class App extends React.Component {
         )
       case 'CategoryView':
         const specificProductsCategory = _.sortBy(_.map(this.state.category.products, (productId) => {
-          const product = currentTeamProducts[productId]
+          const product = this.state.currentTeamInfo.products[productId]
           return product
         }), 'name')
         return (
           <Components.CategoryView
             ui={ui}
             category={this.state.category}
-            cart={this.state.currentTeam.cart}
+            cart={this.state.currentTeamInfo.team.cart}
             products={specificProductsCategory}
-            purveyors={currentTeamPurveyors}
+            purveyors={this.state.currentTeamInfo.purveyors}
             onProductDelete={(productId) => {
               _.debounce(() => {
                 dispatch(actions.deleteProduct(productId));
@@ -557,9 +573,9 @@ class App extends React.Component {
         return (
           <Components.ProductForm
             product={this.state.product}
-            team={this.state.currentTeam}
-            categories={currentTeamCategories}
-            purveyors={currentTeamPurveyors}
+            team={this.state.currentTeamInfo.team}
+            categories={this.state.currentTeamInfo.categories}
+            purveyors={this.state.currentTeamInfo.purveyors}
             onProcessProduct={(productAttributes) => {
               const sceneState = Object.assign({}, this.state.sceneState);
               sceneState.ProductForm.submitReady = true;
@@ -628,9 +644,9 @@ class App extends React.Component {
       case 'CartView':
         return (
           <Components.CartView
-            team={this.state.currentTeam}
-            purveyors={currentTeamPurveyors}
-            products={currentTeamProducts}
+            team={this.state.currentTeamInfo.team}
+            purveyors={this.state.currentTeamInfo.purveyors}
+            products={this.state.currentTeamInfo.products}
             onDeleteProduct={(purveyorId, productId) => {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(
@@ -667,7 +683,7 @@ class App extends React.Component {
         return (
           <Components.TeamMemberListing
             teamsUsers={teams.teamsUsers}
-            currentTeamUsers={this.state.currentTeam.users}
+            currentTeamUsers={this.state.currentTeamInfo.team.users}
           />
         )
       default:
@@ -675,15 +691,8 @@ class App extends React.Component {
     }
   }
 
-  getNavBar(route, nav, currentTeamInfo) {
+  getNavBar(route, nav) {
     const { dispatch, ui, teams, session } = this.props;
-
-    const {
-      currentTeamPurveyors,
-      currentTeamCategories,
-      currentTeamProducts,
-      currentTeamMessages
-    } = currentTeamInfo
 
     let navBar = <View />;
     let nextItem = <View />;
@@ -723,7 +732,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             hidePrev: false,
-            title: this.state.currentTeam ? this.state.currentTeam.name : 'Sous',
+            title: this.state.currentTeamInfo.team ? this.state.currentTeamInfo.team.name : 'Sous',
             titleColor: 'black',
             customPrev: (
               <Components.FeedViewLeftButton />
@@ -755,7 +764,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cart={this.state.currentTeam.cart}
+                cart={this.state.currentTeamInfo.team.cart}
               />
             )
           })
@@ -765,7 +774,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             buttonsColor: '#ccc',
-            title: this.state.currentTeam.name,
+            title: this.state.currentTeamInfo.team.name,
             customPrev: (
               <Components.NavBackButton iconFont={'fontawesome|times'} />
             ),
@@ -787,7 +796,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cart={this.state.currentTeam.cart}
+                cart={this.state.currentTeamInfo.team.cart}
               />
             )
           })
@@ -816,7 +825,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cart={this.state.currentTeam.cart}
+                cart={this.state.currentTeamInfo.team.cart}
               />
             )
           })
@@ -837,7 +846,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cart={this.state.currentTeam.cart}
+                cart={this.state.currentTeamInfo.team.cart}
               />
             )
           })
@@ -967,14 +976,8 @@ class App extends React.Component {
     return navBar;
   }
 
-  getRoute(route, nav, currentTeamInfo) {
+  getRoute(route, nav) {
     const { session } = this.props;
-    const {
-      currentTeamPurveyors,
-      currentTeamCategories,
-      currentTeamProducts,
-      currentTeamMessages
-    } = currentTeamInfo
 
     // redirect to initial view
     if (this.state.isAuthenticated){
@@ -982,7 +985,7 @@ class App extends React.Component {
         if (this.state.firstName === '' || this.state.lastName === '') {
           route.name = 'UserInfo';
         } else {
-          if(this.state.currentTeam !== null){
+          if(this.state.currentTeamInfo.team !== null){
             // else send to Feed
             route.name = 'Feed';
           } else if(session.teamId === null) {
@@ -992,7 +995,7 @@ class App extends React.Component {
           }
         }
       }
-      if(Object.keys(currentTeamPurveyors).length === 0){
+      if(Object.keys(this.state.currentTeamInfo.purveyors).length === 0){
         if(route.name === 'CategoryIndex' || route.name === 'PurveyorIndex') {
           route.name = 'AddOrderGuide';
         }
@@ -1009,42 +1012,10 @@ class App extends React.Component {
   renderScene(route, nav) {
     const { dispatch, ui, session, teams, messages, purveyors, products, categories, errors, connect } = this.props;
 
-    let currentTeamInfo = {
-      currentTeamPurveyors: {},
-      currentTeamCategories: {},
-      currentTeamProducts: {},
-      currentTeamMessages: {},
-      lastUpdated: {
-        purveyors: null,
-        categories: null,
-        products: null,
-        messages: null,
-      }
-    }
+    route = this.getRoute(route, nav);
 
-    if(this.state.currentTeam !== null){
-      if(purveyors.teams.hasOwnProperty(this.state.currentTeam.id) === true){
-        currentTeamInfo.currentTeamPurveyors = purveyors.teams[this.state.currentTeam.id]
-        currentTeamInfo.lastUpdated.purveyors = purveyors.lastUpdated;
-      }
-      if(categories.teams.hasOwnProperty(this.state.currentTeam.id) === true){
-        currentTeamInfo.currentTeamCategories = categories.teams[this.state.currentTeam.id]
-        currentTeamInfo.lastUpdated.categories = categories.lastUpdated;
-      }
-      if(products.teams.hasOwnProperty(this.state.currentTeam.id) === true){
-        currentTeamInfo.currentTeamProducts = products.teams[this.state.currentTeam.id]
-        currentTeamInfo.lastUpdated.products = products.lastUpdated;
-      }
-      if(messages.teams.hasOwnProperty(this.state.currentTeam.id) === true){
-        currentTeamInfo.currentTeamMessages = messages.teams[this.state.currentTeam.id]
-        currentTeamInfo.lastUpdated.messages = messages.lastUpdated;
-      }
-    }
-
-    route = this.getRoute(route, nav, currentTeamInfo);
-
-    let navBar = this.getNavBar(route, nav, currentTeamInfo);
-    let scene = this.getScene(route, nav, currentTeamInfo);
+    let navBar = this.getNavBar(route, nav);
+    let scene = this.getScene(route, nav);
     let errorModal = (
       <Components.ErrorModal
         onDeleteError={(errorIdList) => {
@@ -1059,7 +1030,7 @@ class App extends React.Component {
     const inviteModal = (
       <Components.InviteModal
         ref='inviteModal'
-        currentTeam={this.state.currentTeam}
+        currentTeam={this.state.currentTeamInfo.team}
         modalVisible={session.inviteModalVisible}
         hideInviteModal={() => {
           // nav.refs.inviteModal.setState({ modalVisible: true });
@@ -1088,7 +1059,7 @@ class App extends React.Component {
       <Components.GenericModal
         ref='genericModal'
         modalMessage={this.state.genericModalMessage}
-        currentTeam={this.state.currentTeam}
+        currentTeam={this.state.currentTeamInfo.team}
         modalVisible={this.state.showGenericModal}
         hideModal={() => {
           const cb = this.state.genericModalCallback();
@@ -1104,12 +1075,12 @@ class App extends React.Component {
 
     let CustomSideView = View
     let menu = View
-    if(this.state.isAuthenticated === true && this.state.currentTeam !== null){
+    if(this.state.isAuthenticated === true && this.state.currentTeamInfo.team !== null){
       CustomSideView = SideMenu
       menu = (
         <Components.Menu
           ref='menu'
-          team={this.state.currentTeam}
+          team={this.state.currentTeamInfo.team}
           session={session}
           open={this.state.open}
           onNavToCategory={() => {
