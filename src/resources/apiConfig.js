@@ -6,6 +6,7 @@ export const DDP = {
   // ENDPOINT_WS: 'ws://sousproduction-53819.onmodulus.net/websocket',
   SUBSCRIBE_LIST: {
     RESTRICTED: {channel: 'restricted', collection: 'users'},
+    SETTINGS: {channel: 'settings', collection: 'settings'},
     MESSAGES: {channel: 'messages', collection: 'messages'},
     TEAMS: {channel: 'teams', collection: 'teams'},
     PURVEYORS: {channel: 'purveyors', collection: 'purveyors'},

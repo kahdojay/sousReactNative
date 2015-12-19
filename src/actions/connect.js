@@ -3,6 +3,7 @@ import moment from 'moment';
 import {
   SEND_EMAIL,
   REGISTER_INSTALLATION,
+  UPDATE_INSTALLATION,
   CONNECTION_STATUS,
   RESET_CHANNELS,
   SUBSCRIBE_CHANNEL,
@@ -15,12 +16,40 @@ export default function ConnectActions(ddpClient) {
 
   var connectedChannels = {}
 
-  function registerInstallation(userId, deviceAttributes) {
+  function registerInstallation(deviceAttributes) {
     return (dispatch, getState) => {
+      const {session} = getState()
       // TODO: use connect.channels in processSubscription to retrigger registrations on team changes
       dispatch(() => {
-        ddpClient.call('registerInstallation', [userId, deviceAttributes])
+        ddpClient.call('registerInstallation', [session.userId, {
+          token: deviceAttributes.token,
+          uuid: deviceAttributes.uuid,
+        }])
       })
+      return dispatch({
+        type: REGISTER_INSTALLATION,
+        installationRegistered: true,
+        token: deviceAttributes.token,
+        uuid: deviceAttributes.uuid,
+      })
+    }
+  }
+
+  function updateInstallation(dataAttributes) {
+    return (dispatch, getState) => {
+      const {session} = getState()
+      dispatch(() => {
+        ddpClient.call('updateInstallation', [session.userId, dataAttributes])
+      })
+      return dispatch({
+        type: UPDATE_INSTALLATION,
+      })
+    }
+  }
+
+  function registerInstallationDeclined() {
+    return (dispatch, getState) => {
+      const {session} = getState()
       return dispatch({
         type: REGISTER_INSTALLATION,
         installationRegistered: true,
@@ -28,17 +57,13 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
-  function registerInstallationDeclined(userId) {
-    return {
-      type: REGISTER_INSTALLATION,
-      installationRegistered: true,
-    }
-  }
-
-  function registerInstallationError(userId) {
-    return {
-      type: REGISTER_INSTALLATION,
-      installationRegistered: true,
+  function registerInstallationError() {
+    return (dispatch, getState) => {
+      const {session} = getState()
+      return dispatch({
+        type: REGISTER_INSTALLATION,
+        installationRegistered: true,
+      })
     }
   }
 
@@ -91,6 +116,7 @@ export default function ConnectActions(ddpClient) {
 
       if(session.userId !== null){
         dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ERRORS.channel, [session.userId]))
+        dispatch(processSubscription(DDP.SUBSCRIBE_LIST.SETTINGS.channel, [session.userId]))
       }
 
       if(session.isAuthenticated === true){
@@ -340,6 +366,7 @@ export default function ConnectActions(ddpClient) {
 
   return {
     SEND_EMAIL,
+    UPDATE_INSTALLATION,
     REGISTER_INSTALLATION,
     CONNECTION_STATUS,
     RESET_CHANNELS,
@@ -350,6 +377,7 @@ export default function ConnectActions(ddpClient) {
     // 'connectSingleChannel': connectSingleChannel,
     // 'connectChannels': connectChannels,
     'registerInstallation': registerInstallation,
+    'updateInstallation': updateInstallation,
     'registerInstallationDeclined': registerInstallationDeclined,
     'registerInstallationError': registerInstallationError,
     'connectDDP': connectDDP,

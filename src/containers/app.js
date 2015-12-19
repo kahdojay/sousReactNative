@@ -13,6 +13,7 @@ import * as Components from '../components';
 import Dimensions from 'Dimensions';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import PushManager from 'react-native-remote-push/RemotePushIOS';
+import DeviceUUID from 'react-native-device-uuid';
 
 const {
   PropTypes,
@@ -162,15 +163,20 @@ class App extends React.Component {
       if (this.state.installationRegistered !== true && connect.status === actions.CONNECT.CONNECTED) {
         PushManager.requestPermissions((err, data) => {
           if (err) {
-            dispatch(actions.registerInstallationError(session.userId))
+            dispatch(actions.registerInstallationError())
           } else {
             // if(userDoesNotAllow === true){
-            //   dispatch(actions.registerInstallationDeclined(session.userId))
+            //   dispatch(actions.registerInstallationDeclined())
             // }
             if(data.hasOwnProperty('token') && data.token.indexOf('Error') === -1){
-              dispatch(actions.registerInstallation(session.userId, data))
+              DeviceUUID.getUUID().then((uuid) => {
+                dispatch(actions.registerInstallation({
+                  token: data.token,
+                  uuid: uuid,
+                }))
+              });
             } else {
-              dispatch(actions.registerInstallationError(session.userId))
+              dispatch(actions.registerInstallationError())
             }
           }
         });
@@ -371,6 +377,11 @@ class App extends React.Component {
             messagesFetching={messages.isFetching}
             messages={this.state.currentTeamInfo.messages}
             userEmail={session.login}
+            onClearBadge={() => {
+              dispatch(actions.updateInstallation({
+                "badge": 0
+              }))
+            }}
             onGetMoreMessages={() => {
               dispatch(actions.getTeamMessages(this.state.currentTeamInfo.team.id));
             }}
