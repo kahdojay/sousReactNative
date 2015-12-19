@@ -8,12 +8,13 @@ import Colors from '../utilities/colors';
 import Swipeout from 'react-native-swipeout';
 
 const {
-  TouchableHighlight,
-  PropTypes,
-  Text,
-  StyleSheet,
-  View,
   Modal,
+  PickerIOS,
+  PropTypes,
+  StyleSheet,
+  Text,
+  TouchableHighlight,
+  View,
 } = React;
 
 class ProductListItem extends React.Component {
@@ -28,6 +29,7 @@ class ProductListItem extends React.Component {
       purveyorId: '',
       selectedPurveyorId: null,
       note: '',
+      editQuantity: false,
     }
     this.timeoutId = null
     this.loadTimeoutId = null
@@ -117,20 +119,6 @@ class ProductListItem extends React.Component {
 
   }
 
-  increment() {
-    this.setState({
-      quantity: this.state.quantity + 1
-    }, this.cartUpdateFromLocalState.bind(this))
-  }
-
-  decrement() {
-    if (this.state.quantity > 1 ) {
-      this.setState({
-        quantity: this.state.quantity - 1
-      }, this.cartUpdateFromLocalState.bind(this))
-    }
-  }
-
   handleToggleProduct(purveyorId) {
     this.setState({
       added: !this.state.added,
@@ -155,12 +143,17 @@ class ProductListItem extends React.Component {
         purveyorString = purveyors[this.state.selectedPurveyorId].name || '-NOT SET-'
       } else {
         // Single purveyor, grab name off props.purveyors
-        const purveyorIds = Object.keys(purveyors)
-        purveyorString = purveyors[purveyorIds[0]].name
+        // const purveyorIds = Object.keys(purveyors)
+        // purveyorString = purveyors[purveyorIds[0]].name
+        purveyorString = 'Multiple purveyors'
+      }
+      let selectedStyle = []
+      if(this.state.added === true){
+        selectedStyle = styles.selectedRow
       }
       productInfo = (
-        <View style={styles.row}>
-          <View style={styles.checkboxContainer}>
+        <View style={[styles.row, selectedStyle]}>
+          <View style={styles.main}>
             <ProductToggle
               added={this.state.added}
               availablePurveyors={product.purveyors}
@@ -169,15 +162,7 @@ class ProductListItem extends React.Component {
               onToggleCartProduct={(purveyorId) => {
                 this.handleToggleProduct(purveyorId)
               }}
-            />
-          </View>
-          <View style={styles.main}>
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={() => {
-                // console.log('Add to cart')
-                // this.handleToggleProduct(purveyorId)
-              }}>
+            >
               <View>
                 <Text style={styles.productText}>
                   {product.name}
@@ -189,33 +174,23 @@ class ProductListItem extends React.Component {
                   {purveyorString}
                 </Text>
               </View>
-            </TouchableHighlight>
+            </ProductToggle>
           </View>
-          { this.state.added === true ?
-            [
-              <Text key={'quantity'} style={styles.quantity}>
-                {this.state.quantity > 1 ? ('X' + this.state.quantity) : ''}
-              </Text>,
+          <View style={styles.quantityContainer}>
+            { this.state.added === true ?
               <TouchableHighlight
-                key={'decrement'}
-                underlayColor="transparent"
-                onPress={this.decrement.bind(this)}
-                style={{flex: 1}}>
-                <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
-              </TouchableHighlight>,
-              <TouchableHighlight
-                key={'increment'}
+                onPress={() => {
+                  this.setState({
+                    editQuantity: true
+                  })
+                }}
                 underlayColor='transparent'
-                onPress={this.increment.bind(this)}
-                style={{flex: 1}}>
-                <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
+              >
+                <Text style={styles.quantity}>{this.state.quantity}</Text>
               </TouchableHighlight>
-            ] : [
-              <View key={'quantity'} style={{flex: 1}} />,
-              <View key={'decrement'} style={{flex: 1}} />,
-              <View key={'increment'} style={{flex:1}} />
-            ]
-          }
+              : <Text style={styles.quantity}>{''}</Text>
+            }
+          </View>
         </View>
       )
     }
@@ -234,6 +209,33 @@ class ProductListItem extends React.Component {
       onPress: this.props.onProductDelete
     }]
 
+
+    let picker = (
+      <View />
+    )
+    if(this.state.editQuantity === true){
+      const quantities = _.range(1, 50)
+      picker = (
+        <PickerIOS
+          selectedValue={this.state.quantity}
+          onValueChange={(quantity) => {
+            this.setState({
+              quantity: quantity,
+              editQuantity: false,
+            }, this.cartUpdateFromLocalState.bind(this))
+          }}
+          style={{backgroundColor: '#fff', marginLeft: 10, marginRight: 10}}
+        >
+          <PickerIOS.Item key={null} value={null} label={'Select Quantity ...'} />
+          {
+            quantities.map((n, idx) => {
+              return <PickerIOS.Item key={idx} value={n} label={n.toString()} />
+            })
+          }
+        </PickerIOS>
+      )
+    }
+
     return (
       <View style={styles.container}>
         <Swipeout
@@ -242,6 +244,7 @@ class ProductListItem extends React.Component {
         >
           {productInfo}
         </Swipeout>
+        {picker}
       </View>
     )
   }
@@ -267,9 +270,13 @@ let styles = StyleSheet.create({
     marginTop: 7,
     marginBottom: 7,
   },
-  quantity: {
+  quantityContainer: {
     flex: 1,
-    fontSize: 16
+  },
+  quantity: {
+    fontSize: 22,
+    textAlign: 'right',
+    paddingRight: 5
   },
   row: {
     borderRadius: 10,
@@ -278,13 +285,16 @@ let styles = StyleSheet.create({
     padding: 5,
     alignItems: 'center'
   },
+  selectedRow: {
+    backgroundColor: Colors.lightGreen
+  },
   checkboxContainer: {
     flex: 1,
     alignItems: 'center',
     width: 40
   },
   main: {
-    flex: 4,
+    flex: 6,
   },
   productText: {
     color: 'black',
