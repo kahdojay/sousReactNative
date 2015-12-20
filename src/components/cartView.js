@@ -85,7 +85,14 @@ class CartView extends React.Component {
           _.map(cartPurveyors, (purveyor) => {
             return (
               <View key={purveyor.id} style={styles.purveyorContainer}>
-                <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
+                <View style={styles.purveyorInfo}>
+                  <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
+                  <View style={{flex: 1}}>
+                    <Text style={styles.orderCutoffTime}>{purveyor.orderCutoffTime}</Text>
+                    <Text style={styles.orderMinimum}>{purveyor.orderMinimum}</Text>
+                    <Text style={styles.orderTotal}>{team.cart.total}</Text>
+                  </View>
+                </View>
                 {this.renderPurveyorProducts(purveyor.id, team.cart, products)}
               </View>
             );
@@ -115,15 +122,37 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
   },
-  purveyorTitle: {
+  purveyorInfo: {
     backgroundColor: Colors.darkBlue,
     borderRadius: 2,
-    fontWeight: 'bold',
-    padding: 10,
-    color: 'white',
     marginTop: 1,
+    padding: 10,
+    flexDirection: 'row'
+  },
+  purveyorTitle: {
+    flex: 2,
+    fontWeight: 'bold',
+    color: 'white',
     fontFamily: 'OpenSans',
     fontSize: 18,
+  },
+  orderCutoffTime: {
+    color: 'white',
+    fontFamily: 'OpenSans',
+    fontSize: 12,
+    textAlign: 'right',
+  },
+  orderMinimum: {
+    color: 'white',
+    fontFamily: 'OpenSans',
+    fontSize: 12,
+    textAlign: 'right',
+  },
+  orderTotal: {
+    color: 'white',
+    fontFamily: 'OpenSans',
+    fontSize: 12,
+    textAlign: 'right',
   },
   buttonText: {
     alignSelf: 'center',
