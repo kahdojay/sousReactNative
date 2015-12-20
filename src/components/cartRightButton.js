@@ -11,16 +11,12 @@ const {
   StyleSheet,
 } = React;
 
-class CategoryViewRightButton extends React.Component {
+class CartRightButton extends React.Component {
   constructor(props) {
     super(props)
   }
 
-  onNavToCreateProduct(e) {
-    this.props.onNavToCreateProduct()
-  }
-
-  onNavToCart(e) {
+  handlePress(e) {
     this.props.onNavToCart()
   }
 
@@ -33,28 +29,18 @@ class CategoryViewRightButton extends React.Component {
     // ...
 
     return (
-      <View style={styles.container}>
-        <TouchableHighlight
-          underlayColor='white'
-          onPress={::this.onNavToCart}
-          style={styles.navBarItem}
-        >
-          <Icon name='fontawesome|shopping-cart' size={30} color={Colors.lightBlue} style={styles.plus}>
-            {badgeValue !== '' ? <Icon name='fontawesome|circle' size={24} color={Colors.red} style={styles.badge}><Text style={styles.badgeText}>{badgeValue}</Text></Icon> : <View/> }
-          </Icon>
-        </TouchableHighlight>
-      </View>
+      <TouchableHighlight
+        underlayColor='white'
+        onPress={::this.handlePress} >
+        <Icon name='fontawesome|shopping-cart' size={30} color={Colors.lightBlue} style={styles.cart}>
+          {badgeValue !== '' ? <Icon name='fontawesome|circle' size={24} color={Colors.red} style={styles.badge}><Text style={styles.badgeText}>{badgeValue}</Text></Icon> : <View/> }
+        </Icon>
+      </TouchableHighlight>
     );
   }
 }
 
 let styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row'
-  },
-  navBarItem: {
-    flex: 1
-  },
   cart: {
     width: 50,
     height: 50,
@@ -76,11 +62,7 @@ let styles = StyleSheet.create({
   }
 })
 
-CategoryViewRightButton.propTypes = {
+CartRightButton.propTypes = {
 };
 
-CategoryViewRightButton.contextTypes = {
-  menuActions: React.PropTypes.object.isRequired
-}
-
-export default CategoryViewRightButton
+export default CartRightButton

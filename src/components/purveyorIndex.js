@@ -1,7 +1,6 @@
-import React from 'react-native'
-import _ from 'lodash'
-import { Icon } from 'react-native-icons'
-import AddForm from './addForm'
+import React from 'react-native';
+import _ from 'lodash';
+import AddForm from './addForm';
 import PurveyorIndexRow from './purveyorIndexRow';
 import Colors from '../utilities/colors';
 

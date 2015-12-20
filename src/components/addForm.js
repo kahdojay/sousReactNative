@@ -28,7 +28,7 @@ export default class AddForm extends React.Component {
             placeholder={this.props.placeholder}
             onChangeText={this.handleChangeText.bind(this)}
             onSubmitEditing={this.handleSubmit.bind(this)}
-            />
+          />
         </View>
         <TouchableHighlight
           onPress={this.handleSubmit.bind(this)}

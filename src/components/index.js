@@ -1,8 +1,8 @@
 import AddOrderGuide from './addOrderGuide';
 import CartView from './cartView';
+import CartRightButton from './CartRightButton';
 import CategoryIndex from './categoryIndex';
 import CategoryView from './categoryView';
-import CategoryViewRightButton from './CategoryViewRightButton';
 import ErrorModal from '../components/errorModal';
 import Feed from './feed';
 import FeedListItem from './feedListItem';
@@ -23,6 +23,7 @@ import ProfileView from './profileView';
 import PurveyorIndex from './purveyorIndex';
 import PurveyorView from './purveyorView';
 import Signup from './signup';
+import SearchView from './searchView';
 import TaskView from './taskView';
 import TeamIndex from './teamIndex';
 import TeamView from './teamView';
@@ -34,9 +35,9 @@ import UserTeam from './userTeam';
 export default {
   AddOrderGuide,
   CartView,
+  CartRightButton,
   CategoryIndex,
   CategoryView,
-  CategoryViewRightButton,
   ErrorModal,
   Feed,
   FeedListItem,
@@ -57,6 +58,7 @@ export default {
   PurveyorIndex,
   PurveyorView,
   Signup,
+  SearchView,
   TaskView,
   TeamIndex,
   TeamMemberListing,
