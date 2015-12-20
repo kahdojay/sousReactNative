@@ -18,15 +18,15 @@ class ProductList extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      products: []
-    }, () => {
-      this.setState({
-        products: nextProps.products
-      })
-    })
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   this.setState({
+  //     products: []
+  //   }, () => {
+  //     this.setState({
+  //       products: nextProps.products
+  //     })
+  //   })
+  // }
 
   componentWillMount() {
     this.setState({

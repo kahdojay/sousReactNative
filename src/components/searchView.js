@@ -26,7 +26,8 @@ class SearchView extends React.Component {
   searchForProducts() {
     if(this.state.search !== ''){
       this.setState({
-        searching: true
+        searching: true,
+        products: [],
       }, () => {
         const products = _.filter(this.props.products, (product) => {
           return product.name.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1
