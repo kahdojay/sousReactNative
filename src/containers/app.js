@@ -653,10 +653,14 @@ class App extends React.Component {
           />
         )
       case 'CartView':
+        const cartPurveyorIds = Object.keys(this.state.currentTeamInfo.team.cart.orders)
+        const cartPurveyors = _.sortBy(_.map(cartPurveyorIds, (purveyorId) => {
+          return this.state.currentTeamInfo.purveyors[purveyorId]
+        }), 'name')
         return (
           <Components.CartView
             team={this.state.currentTeamInfo.team}
-            purveyors={this.state.currentTeamInfo.purveyors}
+            cartPurveyors={cartPurveyors}
             products={this.state.currentTeamInfo.products}
             onDeleteProduct={(purveyorId, productId) => {
               _.debounce(() => {

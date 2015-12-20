@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
   createButton: {
   },
   createButtonText: {
-    color: Colors.navbarIconColor,
+    color: Colors.lightBlue,
     textAlign: 'center',
     padding: 5,
     fontFamily: 'OpenSans',

@@ -29,7 +29,7 @@ class FeedViewRightButton extends React.Component {
         <Icon
           name='fontawesome|comment-o'
           size={30}
-          color={Colors.navbarIconColor}
+          color={Colors.lightBlue}
           style={styles.bubble}
         />
       </TouchableHighlight>

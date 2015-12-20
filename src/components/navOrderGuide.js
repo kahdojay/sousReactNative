@@ -19,7 +19,7 @@ class NavOrderGuide extends React.Component {
           Order Guide
         </Text>
         <SegmentedControlIOS
-          tintColor={Colors.navbarIconColor}
+          tintColor={Colors.lightBlue}
           style={styles.segmentedControl}
           values={['Category', 'Purveyor']}
           selectedIndex={this.props.selectedIndex}
