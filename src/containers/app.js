@@ -3,7 +3,6 @@ import _ from 'lodash';
 import NavigationBar from 'react-native-navbar';
 import NavigationBarStyles from 'react-native-navbar/styles'
 import { connect } from 'react-redux/native';
-import { Icon } from 'react-native-icons';
 import SideMenu from 'react-native-side-menu';
 import { BackBtn } from '../utilities/navigation';
 import Colors from '../utilities/colors';
@@ -395,6 +394,31 @@ class App extends React.Component {
       case 'PurveyorIndex':
         return (
           <Components.PurveyorIndex
+            selectedSegmentationIndex={1}
+            segmentationList={['Category', 'Purveyor', 'Search']}
+            onSegmentationChange={(evt) => {
+              const navValue = evt.nativeEvent.value
+              switch(navValue){
+                case 'Search':
+                  nav.replace({
+                    name: 'SearchView'
+                  })
+                  break
+                case 'Purveyor':
+                  // nav.replace({
+                  //   name: 'PurveyorIndex',
+                  // });
+                  break;
+                case 'Category':
+                  nav.replace({
+                    name: 'CategoryIndex',
+                  });
+                  break;
+                default:
+                  // do nothing
+                  break;
+              }
+            }}
             purveyors={this.state.currentTeamInfo.purveyors}
             session={session}
             onNavToPurveyor={(purveyorId) => {
@@ -436,27 +460,29 @@ class App extends React.Component {
             purveyor={this.state.purveyor}
             purveyors={this.state.currentTeamInfo.purveyors}
             products={specificProductsPurveyor}
-            onAddNewProduct={(purveyorId, productName) => {
-              const products = purveyor.products.map((product) => {
-                if (!product.deleted) {
-                  return product.name;
-                }
-              });
-              if (products.indexOf(productName) === -1) {
-                dispatch(actions.addPurveyorProduct(purveyorId, {name: productName}))
-              } else {
-                // console.log("ERROR: Product already exists");
+            onProductDelete={(productId) => {
+              _.debounce(() => {
+                dispatch(actions.deleteProduct(productId));
+              }, 25)()
+            }}
+            onProductEdit={(product) => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductForm.submitReady = true;
+              sceneState.ProductForm.productId = product.id
+              sceneState.ProductForm.productAttributes = {
+                name: product.name,
+                purveyors: product.purveyors,
+                amount: product.amount,
+                unit: product.unit,
+                categoryId: this.state.category.id,
               }
-            }}
-            onDeletePurveyor={(purveyorId) => {
-              _.debounce(() => {
-                dispatch(actions.deletePurveyor(purveyorId))
-              }, 25)()
-            }}
-            onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
-              _.debounce(() => {
-                dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
-              }, 25)()
+              this.setState({
+                product: product
+              }, () => {
+                nav.push({
+                  name: 'ProductForm'
+                })
+              })
             }}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               _.debounce(() => {
@@ -486,6 +512,31 @@ class App extends React.Component {
       case 'CategoryIndex':
         return (
           <Components.CategoryIndex
+            selectedSegmentationIndex={0}
+            segmentationList={['Category', 'Purveyor', 'Search']}
+            onSegmentationChange={(evt) => {
+              const navValue = evt.nativeEvent.value
+              switch(navValue){
+                case 'Search':
+                  nav.replace({
+                    name: 'SearchView'
+                  })
+                  break
+                case 'Purveyor':
+                  nav.replace({
+                    name: 'PurveyorIndex',
+                  });
+                  break;
+                case 'Category':
+                  // nav.replace({
+                  //   name: 'CategoryIndex',
+                  // });
+                  break;
+                default:
+                  // do nothing
+                  break;
+              }
+            }}
             products={this.state.currentTeamInfo.products}
             categories={this.state.currentTeamInfo.categories}
             onNavigateToCategory={(categoryId) => {
@@ -522,6 +573,73 @@ class App extends React.Component {
             cart={this.state.currentTeamInfo.team.cart}
             products={specificProductsCategory}
             purveyors={this.state.currentTeamInfo.purveyors}
+            onProductDelete={(productId) => {
+              _.debounce(() => {
+                dispatch(actions.deleteProduct(productId));
+              }, 25)()
+            }}
+            onProductEdit={(product) => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductForm.submitReady = true;
+              sceneState.ProductForm.productId = product.id
+              sceneState.ProductForm.productAttributes = {
+                name: product.name,
+                purveyors: product.purveyors,
+                amount: product.amount,
+                unit: product.unit,
+                categoryId: this.state.category.id,
+              }
+              this.setState({
+                product: product
+              }, () => {
+                nav.push({
+                  name: 'ProductForm'
+                })
+              })
+            }}
+            onUpdateProductInCart={(cartAction, cartAttributes) => {
+              _.debounce(() => {
+                dispatch(actions.updateProductInCart(cartAction, cartAttributes))
+              }, 25)()
+            }}
+          />
+        )
+      case 'SearchView':
+        return (
+          <Components.SearchView
+            selectedSegmentationIndex={2}
+            segmentationList={['Category', 'Purveyor', 'Search']}
+            onSegmentationChange={(evt) => {
+              const navValue = evt.nativeEvent.value
+              switch(navValue){
+                case 'Search':
+                  // nav.replace({
+                  //   name: 'SearchView'
+                  // })
+                  break
+                case 'Purveyor':
+                  nav.replace({
+                    name: 'PurveyorIndex',
+                  });
+                  break;
+                case 'Category':
+                  nav.replace({
+                    name: 'CategoryIndex',
+                  });
+                  break;
+                default:
+                  // do nothing
+                  break;
+              }
+            }}
+            products={this.state.currentTeamInfo.products}
+            cart={this.state.currentTeamInfo.team.cart}
+            purveyors={this.state.currentTeamInfo.purveyors}
+            onCreateProduct={() => {
+              nav.push({
+                name: 'ProductForm'
+              })
+            }}
             onProductDelete={(productId) => {
               _.debounce(() => {
                 dispatch(actions.deleteProduct(productId));
@@ -764,18 +882,9 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton iconFont={'fontawesome|times'} />
             ),
-            customTitle: (
-              <Components.NavOrderGuide
-                selectedIndex={1}
-                onChange={() => {
-                  nav.replace({
-                    name: 'CategoryIndex'
-                  })
-                }}
-              />
-            ),
+            title: 'Order Guide',
             customNext: (
-              <Components.CategoryViewRightButton
+              <Components.CartRightButton
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
@@ -807,7 +916,7 @@ class App extends React.Component {
             ),
             title: this.state.purveyor.name.substr(0,20) + (this.state.purveyor.name.length > 20 ? '...' : ''),
             customNext: (
-              <Components.CategoryViewRightButton
+              <Components.CartRightButton
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
@@ -825,18 +934,9 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton iconFont={'fontawesome|times'} />
             ),
-            customTitle: (
-              <Components.NavOrderGuide
-                selectedIndex={0}
-                onChange={() => {
-                  nav.replace({
-                    name: 'PurveyorIndex'
-                  })
-                }}
-              />
-            ),
+            title: 'Order Guide',
             customNext: (
-              <Components.CategoryViewRightButton
+              <Components.CartRightButton
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
@@ -857,7 +957,25 @@ class App extends React.Component {
             ),
             title: this.state.category.name,
             customNext: (
-              <Components.CategoryViewRightButton
+              <Components.CartRightButton
+                onNavToCart={() => {
+                  nav.push({ name: 'CartView', });
+                }}
+                cart={this.state.currentTeamInfo.team.cart}
+              />
+            )
+          })
+          break;
+        case 'SearchView':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton iconFont={'fontawesome|times'} />
+            ),
+            title: 'Order Guide',
+            customNext: (
+              <Components.CartRightButton
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}

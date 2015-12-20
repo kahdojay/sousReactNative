@@ -18,13 +18,15 @@ class ProductList extends React.Component {
     }
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   const firstProd = nextProps.products[Object.keys(nextProps.products)[0]]
-  //   console.log('ProductList: ', firstProd.amount, firstProd.updatedAt)
-  //   this.setState({
-  //     products: nextProps.products
-  //   })
-  // }
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      products: []
+    }, () => {
+      this.setState({
+        products: nextProps.products
+      })
+    })
+  }
 
   componentWillMount() {
     this.setState({

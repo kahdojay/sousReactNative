@@ -1,6 +1,5 @@
 import React from 'react-native';
 import _ from 'lodash';
-import { Icon } from 'react-native-icons';
 import ProductList from '../components/productList';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
@@ -28,7 +27,6 @@ class CategoryView extends React.Component {
       <View style={styles.container}>
         <ProductList
           cart={cart}
-          productsCount={category.products.length}
           products={products}
           purveyors={purveyors}
           onProductEdit={this.props.onProductEdit}

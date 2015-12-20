@@ -11,7 +11,7 @@ const {
   StyleSheet,
 } = React;
 
-class CategoryViewRightButton extends React.Component {
+class CartRightButton extends React.Component {
   constructor(props) {
     super(props)
   }
@@ -62,11 +62,7 @@ let styles = StyleSheet.create({
   }
 })
 
-CategoryViewRightButton.propTypes = {
+CartRightButton.propTypes = {
 };
 
-CategoryViewRightButton.contextTypes = {
-  menuActions: React.PropTypes.object.isRequired
-}
-
-export default CategoryViewRightButton
+export default CartRightButton

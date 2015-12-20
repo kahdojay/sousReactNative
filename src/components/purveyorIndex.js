@@ -1,20 +1,20 @@
-import React from 'react-native'
-import _ from 'lodash'
-import { Icon } from 'react-native-icons'
-import AddForm from './addForm'
+import React from 'react-native';
+import _ from 'lodash';
+import AddForm from './addForm';
 import PurveyorIndexRow from './purveyorIndexRow';
-import { lightBlue } from '../utilities/colors'
+import Colors from '../utilities/colors';
 
 const {
   ActivityIndicatorIOS,
+  Image,
+  PropTypes,
+  ScrollView,
   StyleSheet,
-  View,
   Text,
   TextInput,
-  Image,
-  ScrollView,
   TouchableHighlight,
-  PropTypes,
+  SegmentedControlIOS,
+  View,
 } = React;
 
 class PurveyorIndex extends React.Component {
@@ -39,20 +39,20 @@ class PurveyorIndex extends React.Component {
 
     return (
       <View style={styles.container}>
-      {/*
-        <AddForm
-          placeholder="Add purveyor..."
-          onSubmit={this.props.onAddPurveyor}
-        />
-        */}
-        {/* */}<TouchableHighlight
+        <TouchableHighlight
           underlayColor='#eee'
           onPress={this.props.onCreateProduct}
           style={styles.createButton}
         >
-          <Text style={styles.createButtonText}>Create New Product...</Text>
-        </TouchableHighlight>{/* */}
-        <View style={styles.separator} />
+          <Text style={styles.createButtonText}>Create New Product</Text>
+        </TouchableHighlight>
+        <SegmentedControlIOS
+          tintColor={Colors.lightBlue}
+          style={styles.segmentedControl}
+          values={this.props.segmentationList}
+          selectedIndex={this.props.selectedSegmentationIndex}
+          onChange={this.props.onSegmentationChange}
+        />
         <ScrollView
           automaticallyAdjustContentInsets={false}
           keyboardShouldPersistTaps={false}
@@ -82,12 +82,16 @@ const styles = StyleSheet.create({
     marginTop: 0,
     paddingTop: 0
   },
+  segmentedControl: {
+    fontWeight: 'bold',
+    height: 36
+  },
   createButton: {
   },
   createButtonText: {
-    color: lightBlue,
+    color: Colors.lightBlue,
     textAlign: 'center',
-    padding: 5,
+    padding: 10,
     fontFamily: 'OpenSans',
     fontSize: 16,
     fontWeight: 'bold',
