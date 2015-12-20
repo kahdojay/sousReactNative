@@ -2,12 +2,12 @@ import React from 'react-native'
 import Colors from '../utilities/colors'
 
 const {
-  TouchableHighlight,
-  PropTypes,
-  Text,
   Image,
+  PropTypes,
   SegmentedControlIOS,
   StyleSheet,
+  Text,
+  TouchableHighlight,
   View,
 } = React;
 

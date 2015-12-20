@@ -395,6 +395,31 @@ class App extends React.Component {
       case 'PurveyorIndex':
         return (
           <Components.PurveyorIndex
+            selectedSegmentationIndex={1}
+            segmentationList={['Category', 'Purveyor', 'Search']}
+            onSegmentationChange={(evt) => {
+              const navValue = evt.nativeEvent.value
+              switch(navValue){
+                case 'Search':
+                  nav.replace({
+                    name: 'Search'
+                  })
+                  break
+                case 'Purveyor':
+                  // nav.replace({
+                  //   name: 'PurveyorIndex',
+                  // });
+                  break;
+                case 'Category':
+                  nav.replace({
+                    name: 'CategoryIndex',
+                  });
+                  break;
+                default:
+                  // do nothing
+                  break;
+              }
+            }}
             purveyors={this.state.currentTeamInfo.purveyors}
             session={session}
             onNavToPurveyor={(purveyorId) => {
@@ -413,11 +438,6 @@ class App extends React.Component {
             }}
             onAddPurveyor={(name) => {
               dispatch(actions.addPurveyor(name))
-            }}
-            onCreateProduct={() => {
-              nav.push({
-                name: 'ProductForm'
-              })
             }}
           />
         )
@@ -486,6 +506,31 @@ class App extends React.Component {
       case 'CategoryIndex':
         return (
           <Components.CategoryIndex
+            selectedSegmentationIndex={0}
+            segmentationList={['Category', 'Purveyor', 'Search']}
+            onSegmentationChange={(evt) => {
+              const navValue = evt.nativeEvent.value
+              switch(navValue){
+                case 'Search':
+                  nav.replace({
+                    name: 'Search'
+                  })
+                  break
+                case 'Purveyor':
+                  nav.replace({
+                    name: 'PurveyorIndex',
+                  });
+                  break;
+                case 'Category':
+                  // nav.replace({
+                  //   name: 'CategoryIndex',
+                  // });
+                  break;
+                default:
+                  // do nothing
+                  break;
+              }
+            }}
             products={this.state.currentTeamInfo.products}
             categories={this.state.currentTeamInfo.categories}
             onNavigateToCategory={(categoryId) => {
@@ -501,11 +546,6 @@ class App extends React.Component {
                   name: 'CategoryView',
                   categoryId: category.id
                 })
-              })
-            }}
-            onCreateProduct={() => {
-              nav.push({
-                name: 'ProductForm'
               })
             }}
           />
@@ -764,16 +804,7 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton iconFont={'fontawesome|times'} />
             ),
-            customTitle: (
-              <Components.NavOrderGuide
-                selectedIndex={1}
-                onChange={() => {
-                  nav.replace({
-                    name: 'CategoryIndex'
-                  })
-                }}
-              />
-            ),
+            title: 'Order Guide',
             customNext: (
               <Components.CategoryViewRightButton
                 onNavToCart={() => {
@@ -825,16 +856,7 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton iconFont={'fontawesome|times'} />
             ),
-            customTitle: (
-              <Components.NavOrderGuide
-                selectedIndex={0}
-                onChange={() => {
-                  nav.replace({
-                    name: 'PurveyorIndex'
-                  })
-                }}
-              />
-            ),
+            title: 'Order Guide',
             customNext: (
               <Components.CategoryViewRightButton
                 onNavToCart={() => {

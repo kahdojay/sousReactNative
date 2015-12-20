@@ -16,7 +16,11 @@ class CategoryViewRightButton extends React.Component {
     super(props)
   }
 
-  handlePress(e) {
+  onNavToCreateProduct(e) {
+    this.props.onNavToCreateProduct()
+  }
+
+  onNavToCart(e) {
     this.props.onNavToCart()
   }
 
@@ -29,18 +33,28 @@ class CategoryViewRightButton extends React.Component {
     // ...
 
     return (
-      <TouchableHighlight
-        underlayColor='white'
-        onPress={::this.handlePress} >
-        <Icon name='fontawesome|shopping-cart' size={30} color={Colors.lightBlue} style={styles.cart}>
-          {badgeValue !== '' ? <Icon name='fontawesome|circle' size={24} color={Colors.red} style={styles.badge}><Text style={styles.badgeText}>{badgeValue}</Text></Icon> : <View/> }
-        </Icon>
-      </TouchableHighlight>
+      <View style={styles.container}>
+        <TouchableHighlight
+          underlayColor='white'
+          onPress={::this.onNavToCart}
+          style={styles.navBarItem}
+        >
+          <Icon name='fontawesome|shopping-cart' size={30} color={Colors.lightBlue} style={styles.plus}>
+            {badgeValue !== '' ? <Icon name='fontawesome|circle' size={24} color={Colors.red} style={styles.badge}><Text style={styles.badgeText}>{badgeValue}</Text></Icon> : <View/> }
+          </Icon>
+        </TouchableHighlight>
+      </View>
     );
   }
 }
 
 let styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row'
+  },
+  navBarItem: {
+    flex: 1
+  },
   cart: {
     width: 50,
     height: 50,
