@@ -226,7 +226,7 @@ class ProductForm extends React.Component {
         );
         break;
       case 'amount':
-        const amounts = _.range(1, 500)
+        const amounts = _.range(1, 501)
         picker = (
           <PickerIOS
             selectedValue={parseFloat(this.state.amount)}

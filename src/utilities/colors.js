@@ -11,7 +11,6 @@ const Colors = {
   lightBlue: '#4C9EF5',
   mainBackgroundColor: '#f3f3f3',
   navbarColor: 'white',
-  navbarIconColor: '#4C9EF5',
   red: '#B11E00',
   green: '#7CD34B',
   lightGreen: '#D6F7C4',

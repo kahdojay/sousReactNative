@@ -62,8 +62,7 @@ class ProductToggle extends React.Component {
       <View />
     )
 
-
-    if(this.props.availablePurveyors.length > 1){
+    if(this.props.added === false && this.props.availablePurveyors.length > 1){
       wrappedChildren = (
         <TouchableWrapper
           onPress={this._setModalVisible.bind(this, true)}
@@ -76,15 +75,6 @@ class ProductToggle extends React.Component {
       const purveyorsArray = this.props.availablePurveyors.map((purveyorId, idx) => {
         const purveyor = _.find(this.props.allPurveyors, { id: purveyorId });
         const purveyorName = purveyor ? purveyor.name : '';
-        let selectedIcon = (
-          <View />
-        )
-        // console.log(this.props.currentlySelectedPurveyorId, purveyorId)
-        if(this.props.added === true && purveyorId === this.props.currentlySelectedPurveyorId){
-          selectedIcon = (
-            <Icon name='fontawesome|check' size={14} color={Colors.green} style={styles.icon}/>
-          )
-        }
         return (
           <TouchableWrapper
             key={idx}
@@ -92,7 +82,6 @@ class ProductToggle extends React.Component {
             onPress={this._handlePurveyorSelect.bind(this, purveyorId)}
           >
             <View style={{flexDirection: 'row'}}>
-              {selectedIcon}
               <Text>{purveyorName}</Text>
             </View>
           </TouchableWrapper>
