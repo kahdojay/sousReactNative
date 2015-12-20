@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { Icon } from 'react-native-icons'
 import AddForm from './addForm'
 import PurveyorIndexRow from './purveyorIndexRow';
-import { navbarIconColor } from '../utilities/colors'
+import { lightBlue } from '../utilities/colors'
 
 const {
   ActivityIndicatorIOS,
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
   createButton: {
   },
   createButtonText: {
-    color: navbarIconColor,
+    color: lightBlue,
     textAlign: 'center',
     padding: 5,
     fontFamily: 'OpenSans',

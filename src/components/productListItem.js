@@ -137,7 +137,11 @@ class ProductListItem extends React.Component {
         </View>
       </View>
     );
-    if(this.state.product !== null){
+    let modal = (
+      <View />
+    );
+    let buttons = []
+    if(product !== null){
       let purveyorString = ""
       if(purveyors.hasOwnProperty(this.state.selectedPurveyorId) === true){
         purveyorString = purveyors[this.state.selectedPurveyorId].name || '-NOT SET-'
@@ -148,8 +152,10 @@ class ProductListItem extends React.Component {
         purveyorString = 'Multiple purveyors'
       }
       let selectedStyle = []
+      let productDetailsColor = '#999'
       if(this.state.added === true){
         selectedStyle = styles.selectedRow
+        productDetailsColor = '#000'
       }
       productInfo = (
         <View style={[styles.row, selectedStyle]}>
@@ -167,10 +173,10 @@ class ProductListItem extends React.Component {
                 <Text style={styles.productText}>
                   {product.name}
                 </Text>
-                <Text style={{fontSize: 9,  color: '#999'}} >
-                  {product.amount + ' ' + product.unit}
+                <Text style={{fontSize: 9,  color: productDetailsColor}} >
+                  {`${product.amount} ${product.unit}`}
                 </Text>
-                <Text style={{fontSize: 9,  color: '#999'}} >
+                <Text style={{fontSize: 9,  color: productDetailsColor}} >
                   {purveyorString}
                 </Text>
               </View>
@@ -186,53 +192,79 @@ class ProductListItem extends React.Component {
                 }}
                 underlayColor='transparent'
               >
-                <Text style={styles.quantity}>{this.state.quantity}</Text>
+                <Text style={styles.quantity}>{`${this.state.quantity}x`}</Text>
               </TouchableHighlight>
               : <Text style={styles.quantity}>{''}</Text>
             }
           </View>
         </View>
       )
-    }
+      buttons = [{
+        backgroundColor: 'transparent',
+        component: (
+          <Icon name='material|edit' size={30} color={Colors.lightBlue} style={styles.iconEdit}/>
+        ),
+        onPress: this.props.onProductEdit
+      }, {
+        backgroundColor: 'transparent',
+        component: (
+          <Icon name='material|delete' size={30} color={Colors.lightBlue} style={styles.iconEdit}/>
+        ),
+        onPress: this.props.onProductDelete
+      }]
 
-    const buttons = [{
-      backgroundColor: 'transparent',
-      component: (
-        <Icon name='material|edit' size={30} color={Colors.navbarIconColor} style={styles.iconEdit}/>
-      ),
-      onPress: this.props.onProductEdit
-    }, {
-      backgroundColor: 'transparent',
-      component: (
-        <Icon name='material|delete' size={30} color={Colors.navbarIconColor} style={styles.iconEdit}/>
-      ),
-      onPress: this.props.onProductDelete
-    }]
-
-
-    let picker = (
-      <View />
-    )
-    if(this.state.editQuantity === true){
-      const quantities = _.range(1, 50)
-      picker = (
-        <PickerIOS
-          selectedValue={this.state.quantity}
-          onValueChange={(quantity) => {
-            this.setState({
-              quantity: quantity,
-              editQuantity: false,
-            }, this.cartUpdateFromLocalState.bind(this))
-          }}
-          style={{backgroundColor: '#fff', marginLeft: 10, marginRight: 10}}
+      const quantities = _.range(1, 501)
+      let quantity = this.state.quantity * product.amount;
+      if(quantity.toString().indexOf('.') !== -1){
+        quantity = parseFloat(Math.floor(quantity * 1000)/1000)
+      }
+      let productUnit = product.unit;
+      if(this.state.quantity > 1){
+        if(product.unit == 'bunch'){
+          productUnit += 'es';
+        } else if(product.unit !== 'ea' && product.unit !== 'dozen' && product.unit !== 'cs'){
+          productUnit += 's';
+        }
+      }
+      modal = (
+        <Modal
+          animated={true}
+          transparent={true}
+          visible={this.state.editQuantity}
         >
-          <PickerIOS.Item key={null} value={null} label={'Select Quantity ...'} />
-          {
-            quantities.map((n, idx) => {
-              return <PickerIOS.Item key={idx} value={n} label={n.toString()} />
-            })
-          }
-        </PickerIOS>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalInnerContainer}>
+              <PickerIOS
+                selectedValue={this.state.quantity}
+                onValueChange={(quantity) => {
+                  this.setState({
+                    quantity: quantity,
+                  })
+                }}
+                style={{width: 260, alignSelf: 'center'}}
+              >
+                {
+                  quantities.map((n, idx) => {
+                    return <PickerIOS.Item key={idx} value={n} label={n.toString()} />
+                  })
+                }
+              </PickerIOS>
+              <View style={styles.separator} />
+              <TouchableHighlight
+                onPress={() => {
+                  this.setState({
+                    editQuantity: false,
+                  }, this.cartUpdateFromLocalState.bind(this))
+                }}
+                underlayColor='transparent'
+              >
+                <Text style={styles.modalButtonText}>
+                  {`Update to ${quantity} ${productUnit}`}
+                </Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </Modal>
       )
     }
 
@@ -244,7 +276,7 @@ class ProductListItem extends React.Component {
         >
           {productInfo}
         </Swipeout>
-        {picker}
+        {modal}
       </View>
     )
   }
@@ -271,10 +303,10 @@ let styles = StyleSheet.create({
     marginBottom: 7,
   },
   quantityContainer: {
-    flex: 1,
+    flex: 1.5,
   },
   quantity: {
-    fontSize: 22,
+    fontSize: 20,
     textAlign: 'right',
     paddingRight: 5
   },
@@ -283,23 +315,41 @@ let styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: 'white',
     padding: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
     alignItems: 'center'
   },
   selectedRow: {
-    backgroundColor: Colors.lightGreen
-  },
-  checkboxContainer: {
-    flex: 1,
-    alignItems: 'center',
-    width: 40
+    backgroundColor: Colors.lightBlue
   },
   main: {
-    flex: 6,
+    flex: 5,
   },
   productText: {
     color: 'black',
     fontSize: 15
-  }
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
+  modalInnerContainer: {
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  modalButtonText: {
+    textAlign: 'center',
+    color: Colors.lightBlue,
+    paddingTop: 15,
+  },
+  separator: {
+    height: 0,
+    borderBottomColor: '#bbb',
+    borderBottomWidth: 1,
+  },
 });
 
 ProductListItem.propTypes = {

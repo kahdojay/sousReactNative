@@ -1,19 +1,16 @@
 import React from 'react-native';
 import _ from 'lodash';
-import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
-import { nameSort } from '../utilities/utils';
-import {
-  CART
-} from '../actions/actionTypes';
+import CartViewListItem from './cartViewListItem';
 
 const {
   AlertIOS,
-  View,
-  Text,
+  PickerIOS,
   ScrollView,
-  TouchableHighlight,
   StyleSheet,
+  Text,
+  TouchableHighlight,
+  View,
 } = React;
 
 class CartView extends React.Component {
@@ -61,99 +58,26 @@ class CartView extends React.Component {
   renderPurveyorProducts(purveyorId, cart, products) {
     const cartProducts = cart.orders[purveyorId].products
     const cartPurveyorProductIds = Object.keys(cartProducts)
-    const cartPurveyorProducts = _.map(cartPurveyorProductIds, (productId) => {
-      return _.filter(products, {id: productId})[0]
-    })
-    cartPurveyorProducts.sort(nameSort)
+    const cartPurveyorProducts = _.sortBy(_.map(cartPurveyorProductIds, (productId) => {
+      return products[productId]
+    }), 'name')
 
     return cartPurveyorProducts.map((product) => {
       const cartProduct = cartProducts[product.id];
-      let quantity = cartProduct.quantity * product.amount;
-      if(quantity.toString().indexOf('.') !== -1){
-        quantity = parseFloat(Math.floor(quantity * 1000)/1000)
-      }
-      const productName = product.name || '';
-      let productUnit = product.unit;
-      if(cartProduct.quantity > 1){
-        if(product.unit == 'bunch'){
-          productUnit += 'es';
-        } else if(product.unit !== 'ea' && product.unit !== 'dozen' && product.unit !== 'cs'){
-          productUnit += 's';
-        }
-      }
       return (
-        <View key={product.id} style={styles.productContainer}>
-          <Text style={styles.productTitle}>{productName}</Text>
-          <Text style={styles.productQuantity}>{quantity} {productUnit}</Text>
-          <TouchableHighlight
-            key={'decrement'}
-            onPress={() => {
-              if (quantity > .1) {
-                const cartAttributes = {
-                  purveyorId: purveyorId,
-                  productId: product.id,
-                  quantity: cartProduct.quantity - 1,
-                };
-                this.props.onUpdateProductInCart(CART.ADD, cartAttributes)
-              }
-            }}
-            style={{width: 40, alignItems: 'center'}}
-            underlayColor='transparent'
-          >
-            <Icon
-              name='fontawesome|minus-circle'
-              size={30}
-              color='#aaa'
-              style={styles.icon}
-            />
-          </TouchableHighlight>
-          <TouchableHighlight
-            key={'increment'}
-            onPress={() => {
-              const cartAttributes = {
-                purveyorId: purveyorId,
-                productId: product.id,
-                quantity: cartProduct.quantity + 1,
-              };
-              this.props.onUpdateProductInCart(CART.ADD, cartAttributes)
-            }}
-            style={{width: 40, alignItems: 'center'}}
-            underlayColor='transparent'
-          >
-            <Icon
-              name='fontawesome|plus-circle'
-              size={30}
-              color='#aaa'
-              style={styles.icon}
-            />
-        </TouchableHighlight>
-          <TouchableHighlight
-            onPress={() => {
-              this.props.onDeleteProduct(purveyorId, product.id)
-            }}
-            style={{width: 40, alignItems: 'center'}}
-            underlayColor='transparent'
-          >
-            <Icon
-              name='fontawesome|times'
-              size={25}
-              color='#999'
-              style={styles.iconRemove}
-            />
-          </TouchableHighlight>
-        </View>
+        <CartViewListItem
+          purveyorId={purveyorId}
+          product={product}
+          cartProduct={cartProduct}
+          onUpdateProductInCart={this.props.onUpdateProductInCart}
+          onDeleteProduct={this.props.onDeleteProduct}
+        />
       )
     });
   }
 
   render() {
-    const {team, purveyors, products} = this.props
-    const cart = team.cart
-    const cartPurveyorIds = Object.keys(cart.orders)
-    const cartPurveyors = _.map(cartPurveyorIds, (purveyorId) => {
-      return _.filter(purveyors, {id: purveyorId})[0]
-    })
-    cartPurveyors.sort(nameSort)
+    const {team, cartPurveyors, products} = this.props
 
     return (
       <ScrollView style={styles.scrollView}>
@@ -162,7 +86,7 @@ class CartView extends React.Component {
             return (
               <View key={purveyor.id} style={styles.purveyorContainer}>
                 <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
-                {this.renderPurveyorProducts(purveyor.id, cart, products)}
+                {this.renderPurveyorProducts(purveyor.id, team.cart, products)}
               </View>
             );
           })
@@ -182,33 +106,17 @@ class CartView extends React.Component {
   }
 }
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
+  scrollView: {
+    backgroundColor: '#f2f2f2',
+    flex: 1,
+  },
   purveyorContainer: {
     marginLeft: 10,
     marginRight: 10,
   },
-  icon: {
-    width: 30,
-    height: 30,
-  },
-  iconRemove: {
-    width: 30,
-    height: 30,
-    borderWidth: 2,
-    borderColor: '#999',
-    borderRadius: 4,
-  },
-  productContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    marginTop: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingRight: 5,
-  },
   purveyorTitle: {
-    backgroundColor: Colors.lightBlue,
+    backgroundColor: Colors.darkBlue,
     borderRadius: 2,
     fontWeight: 'bold',
     padding: 10,
@@ -216,19 +124,6 @@ let styles = StyleSheet.create({
     marginTop: 1,
     fontFamily: 'OpenSans',
     fontSize: 18,
-  },
-  productTitle: {
-    flex: 1,
-    paddingTop: 10,
-    paddingLeft: 5,
-    paddingBottom: 10,
-    fontFamily: 'OpenSans',
-    fontSize: 14,
-  },
-  productQuantity: {
-    width: 50,
-    margin: 5,
-    textAlign: 'right',
   },
   buttonText: {
     alignSelf: 'center',
@@ -249,10 +144,6 @@ let styles = StyleSheet.create({
   },
   buttonDisabled: {
     backgroundColor: Colors.disabled,
-  },
-  scrollView: {
-    backgroundColor: '#f2f2f2',
-    flex: 1,
   },
 })
 
