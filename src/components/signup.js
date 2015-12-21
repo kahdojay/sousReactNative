@@ -335,7 +335,7 @@ let styles = StyleSheet.create({
   },
   buttonActive: {
     height: 56,
-    backgroundColor: '#F5A623',
+    backgroundColor: Colors.gold,
     alignSelf: 'center',
     width: 150,
     marginTop: 20,
@@ -356,7 +356,7 @@ let styles = StyleSheet.create({
   },
   buttonWithErrors: {
     height: 56,
-    backgroundColor: '#F5A623',
+    backgroundColor: Colors.gold,
     alignSelf: 'center',
     width: 150,
     marginTop: 10,

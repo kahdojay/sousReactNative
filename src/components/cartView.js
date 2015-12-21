@@ -5,6 +5,7 @@ import CartViewListItem from './cartViewListItem';
 
 const {
   AlertIOS,
+  Modal,
   PickerIOS,
   ScrollView,
   StyleSheet,
@@ -18,7 +19,9 @@ class CartView extends React.Component {
     super(props)
     const numberOfOrders = Object.keys(this.props.team.cart.orders).length
     this.state = {
-      numberOfOrders: numberOfOrders
+      numberOfOrders: numberOfOrders,
+      showPurveyorInfo: false,
+      purveyor: null,
     }
   }
 
@@ -76,8 +79,74 @@ class CartView extends React.Component {
     });
   }
 
+  renderDeliveryDays() {
+    if(this.state.purveyor === null){
+      return <View />
+    }
+    const daysOfWeek = ['Su','Mo','Tu','We','Th','Fr','Sa']
+    const renderedDaysOfWeek = daysOfWeek.map((dow) => {
+      let dowStyle = [styles.dayOfWeek]
+      if(this.state.purveyor.deliveryDays.indexOf(dow) !== -1){
+        dowStyle.push(styles.dayOfWeekActive)
+      }
+      return (
+        <Text key={dow} style={dowStyle}>{dow}</Text>
+      )
+    })
+    return (
+      <View style={styles.dayOfWeekContainer}>
+        {renderedDaysOfWeek}
+      </View>
+    )
+  }
+
   render() {
     const {team, cartPurveyors, products} = this.props
+
+    const modal = (
+      <Modal
+        animated={true}
+        transparent={true}
+        visible={this.state.showPurveyorInfo}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalInnerContainer}>
+            { this.state.purveyor !== null ?
+              <View>
+                <View style={styles.purveyorInfoRow}>
+                  <Text style={styles.purveyorInfoLabel}>Order Cutoff Time</Text>
+                  <Text style={styles.purveyorInfoData}>{this.state.purveyor.orderCutoffTime}</Text>
+                </View>
+                <View style={styles.purveyorInfoRow}>
+                  <Text style={styles.purveyorInfoLabel}>Order Minimum</Text>
+                  <Text style={styles.purveyorInfoData}>{this.state.purveyor.orderMinimum}</Text>
+                </View>
+                <View style={styles.purveyorInfoRow}>
+                  <Text style={styles.purveyorInfoLabel}>Delivery Days</Text>
+                  {this.renderDeliveryDays()}
+                </View>
+                <View style={styles.purveyorInfoRow}>
+                  <Text style={styles.purveyorInfoLabel}>Notes</Text>
+                  <Text style={styles.purveyorInfoData}>{this.state.purveyor.notes}</Text>
+                </View>
+              </View>
+            : <Text>Loading ...</Text> }
+            <View style={styles.separator} />
+            <TouchableHighlight
+              onPress={() => {
+                this.setState({
+                  showPurveyorInfo: false,
+                  purveyor: null,
+                })
+              }}
+              underlayColor='transparent'
+            >
+              <Text style={styles.modalButtonText}>Ok</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
+    )
 
     return (
       <ScrollView style={styles.scrollView}>
@@ -86,11 +155,21 @@ class CartView extends React.Component {
             return (
               <View key={purveyor.id} style={styles.purveyorContainer}>
                 <View style={styles.purveyorInfo}>
-                  <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
-                  <View style={{flex: 1}}>
-                    <Text style={styles.orderCutoffTime}>{purveyor.orderCutoffTime}</Text>
-                    <Text style={styles.orderMinimum}>{purveyor.orderMinimum}</Text>
-                    <Text style={styles.orderTotal}>{team.cart.total}</Text>
+                  <View style={styles.purveyorInfoLeft}>
+                    <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
+                  </View>
+                  <View style={styles.purveyorInfoRight}>
+                    <TouchableHighlight
+                      onPress={() => {
+                        this.setState({
+                          showPurveyorInfo: true,
+                          purveyor: purveyor,
+                        })
+                      }}
+                      underlayColor='transparent'
+                    >
+                      <Text style={styles.purveyorInfoDetails}>Show details</Text>
+                    </TouchableHighlight>
                   </View>
                 </View>
                 {this.renderPurveyorProducts(purveyor.id, team.cart, products)}
@@ -108,6 +187,7 @@ class CartView extends React.Component {
         >
           <Text style={styles.buttonText}>Submit Order</Text>
         </TouchableHighlight>
+        {modal}
       </ScrollView>
     );
   }
@@ -129,29 +209,40 @@ const styles = StyleSheet.create({
     padding: 10,
     flexDirection: 'row'
   },
+  purveyorInfoLeft: {
+    flex: 2
+  },
+  purveyorInfoRight: {
+    flex: 1
+  },
   purveyorTitle: {
-    flex: 2,
     fontWeight: 'bold',
     color: 'white',
     fontFamily: 'OpenSans',
     fontSize: 18,
   },
-  orderCutoffTime: {
-    color: 'white',
+  purveyorInfoRow: {
+    paddingTop: 5,
+    paddingBottom: 5,
+  },
+  purveyorInfoLabel: {
+    flex: 1,
+    fontFamily: 'OpenSans',
+    fontSize: 12,
+    fontWeight: 'bold',
+    textAlign: 'left',
+  },
+  purveyorInfoData: {
+    flex: 2,
     fontFamily: 'OpenSans',
     fontSize: 12,
     textAlign: 'right',
   },
-  orderMinimum: {
-    color: 'white',
+  purveyorInfoDetails: {
+    flex: 1,
     fontFamily: 'OpenSans',
-    fontSize: 12,
-    textAlign: 'right',
-  },
-  orderTotal: {
-    color: 'white',
-    fontFamily: 'OpenSans',
-    fontSize: 12,
+    fontSize: 14,
+    color: '#fff',
     textAlign: 'right',
   },
   buttonText: {
@@ -163,7 +254,7 @@ const styles = StyleSheet.create({
   },
   button: {
     height: 56,
-    backgroundColor: '#F5A623',
+    backgroundColor: Colors.gold,
     alignSelf: 'center',
     width: 200,
     marginTop: 20,
@@ -174,6 +265,44 @@ const styles = StyleSheet.create({
   buttonDisabled: {
     backgroundColor: Colors.disabled,
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
+  modalInnerContainer: {
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  modalButtonText: {
+    textAlign: 'center',
+    color: Colors.lightBlue,
+    paddingTop: 15,
+  },
+  separator: {
+    marginTop: 10,
+    height: 0,
+    borderBottomColor: '#bbb',
+    borderBottomWidth: 1,
+  },
+  dayOfWeekContainer: {
+    flexDirection: 'row',
+    flex:2,
+    alignItems: 'center'
+  },
+  dayOfWeek: {
+    flex: 1,
+    textAlign: 'center',
+    margin: 3,
+    color: '#aaa',
+    backgroundColor: '#ddd',
+  },
+  dayOfWeekActive: {
+    color: '#222',
+    backgroundColor: Colors.gold
+  }
 })
 
 export default CartView

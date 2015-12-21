@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { Icon } from 'react-native-icons';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
+import Colors from '../utilities/colors';
 
 const {
   ScrollView,
@@ -144,7 +145,7 @@ class TaskView extends React.Component {
 const styles = StyleSheet.create({
   button: {
     height: 56,
-    backgroundColor: '#F5A623',
+    backgroundColor: Colors.gold,
     alignSelf: 'center',
     width: 150,
     marginTop: 5,
