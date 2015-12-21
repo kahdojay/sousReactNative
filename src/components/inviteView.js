@@ -126,7 +126,7 @@ let styles = StyleSheet.create({
     height: 56,
     width: 150,
     margin: 5,
-    backgroundColor: '#F5A623',
+    backgroundColor: Colors.gold,
     alignSelf: 'center',
     justifyContent: 'center',
     borderRadius: 3,

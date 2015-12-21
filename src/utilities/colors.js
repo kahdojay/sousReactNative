@@ -13,6 +13,7 @@ const Colors = {
   navbarColor: 'white',
   red: '#B11E00',
   green: '#7CD34B',
+  gold: '#F5A623',
   lightGreen: '#D6F7C4',
   taskCompletedBackgroundColor: '#e1e1e1',
 }
