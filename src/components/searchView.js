@@ -1,6 +1,7 @@
 import React from 'react-native';
-import Colors from '../utilities/colors';
 import { Icon } from 'react-native-icons';
+import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 import ProductList from '../components/productList';
 
 const {
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     color: '#777',
     fontFamily: 'OpenSans',
-    borderRadius: 5,
+    borderRadius: Sizes.inputBorderRadius,
     fontWeight: 'bold',
   },
   iconClose: {

@@ -1,7 +1,8 @@
 import { Icon } from 'react-native-icons';
-import React from 'react-native'
-import CheckBox from './checkbox'
-import { greyText, taskCompletedBackgroundColor } from '../utilities/colors';
+import React from 'react-native';
+import CheckBox from './checkbox';
+import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 
 const {
   TouchableHighlight,
@@ -157,7 +158,7 @@ let styles = StyleSheet.create({
   taskIncompleteText: {
   },
   row: {
-    borderRadius: 10,
+    borderRadius: Sizes.rowBorderRadius,
     flexDirection: 'row',
     backgroundColor: 'white',
     padding: 5,
@@ -165,7 +166,7 @@ let styles = StyleSheet.create({
     alignItems: 'center',
   },
   rowCompleted: {
-    backgroundColor: taskCompletedBackgroundColor,
+    backgroundColor: Colors.taskCompletedBackgroundColor,
   },
   checkboxContainer: {
     flex: 1,

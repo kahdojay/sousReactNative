@@ -96,10 +96,10 @@ class ProductToggle extends React.Component {
         >
           <TouchableHighlight
             onPress={() => this._setModalVisible(false)}
-            style={styles.container}
+            style={styles.modalContainer}
             underlayColor="rgba(0, 0, 0, 0.5)"
           >
-            <View style={styles.innerContainer}>
+            <View style={styles.modalInnerContainer}>
               <Text style={styles.modalHeader}>Select Purveyor</Text>
               {purveyorsArray}
             </View>
@@ -118,13 +118,13 @@ class ProductToggle extends React.Component {
 };
 
 var styles = StyleSheet.create({
-  container: {
+  modalContainer: {
     flex: 1,
     justifyContent: 'center',
     padding: 20,
     backgroundColor: 'rgba(0, 0, 0, 0.5)'
   },
-  innerContainer: {
+  modalInnerContainer: {
     borderRadius: 10,
     backgroundColor: '#fff',
     padding: 20,

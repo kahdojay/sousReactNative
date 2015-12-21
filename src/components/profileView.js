@@ -1,7 +1,7 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
-import { mainBackgroundColor } from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 let UIImagePickerManager = require('NativeModules').UIImagePickerManager;
 
 const {
@@ -151,7 +151,7 @@ class ProfileView extends React.Component {
             </View>
             {/* * /}
             <TouchableHighlight
-              underlayColor="#f7f7f7"
+              underlayColor={Colors.mainBackgroundColor}
               onPress={() => this.showActionSheet()}
               style={styles.avatar}>
               <View>
@@ -262,7 +262,7 @@ let styles = StyleSheet.create({
     backgroundColor: 'white',
     color: 'black',
     fontFamily: 'OpenSans',
-    borderRadius: 5,
+    borderRadius: Sizes.inputBorderRadius,
     fontWeight: 'bold',
     paddingLeft: 10,
     borderWidth: 1,
@@ -317,7 +317,7 @@ let styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: mainBackgroundColor,
+    backgroundColor: Colors.mainBackgroundColor,
     alignItems: 'stretch',
   },
   navbar: {
@@ -393,7 +393,7 @@ let styles = StyleSheet.create({
     height: 50,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 5,
+    borderRadius: Sizes.inputBorderRadius,
     padding: 10,
   },
 })

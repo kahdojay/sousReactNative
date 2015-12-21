@@ -81,29 +81,42 @@ module.exports = class Menu extends React.Component {
                 </View>
               </View>
             </TouchableHighlight>
-            {(nonNotepadTeam === false) ? <View/> : (
-              <TouchableHighlight
-                onPress={this.props.onNavToCategory}
-                style={styles.menuItemButton}
-                underlayColor='#3e444f'
-              >
-                <View style={styles.menuTextContainer}>
-                  <Icon name='fontawesome|clipboard' size={20} color='white' style={styles.menuIcon}/>
-                  <Text style={styles.menuItemText}>Order Guide</Text>
-                </View>
-              </TouchableHighlight>
-            )}
-            {(nonNotepadTeam === false) ? <View/> : (
-              <TouchableHighlight
-                onPress={this.props.onNavToTeamMemberListing}
-                style={styles.menuItemButton}
-                underlayColor='#3e444f'
-              >
-                <View style={styles.menuTextContainer}>
-                  <Icon name='fontawesome|users' size={20} color='white' style={styles.menuIcon}/>
-                  <Text style={styles.menuItemText}>Team Members</Text>
-                </View>
-              </TouchableHighlight>
+            { nonNotepadTeam === false ? <View/> : (
+              [
+                <TouchableHighlight
+                  key='order-guide'
+                  onPress={this.props.onNavToCategory}
+                  style={styles.menuItemButton}
+                  underlayColor='#3e444f'
+                >
+                  <View style={styles.menuTextContainer}>
+                    <Icon name='fontawesome|clipboard' size={20} color='white' style={styles.menuIcon}/>
+                    <Text style={styles.menuItemText}>Order Guide</Text>
+                  </View>
+                </TouchableHighlight>,
+                <TouchableHighlight
+                  key='receiving-guide'
+                  onPress={this.props.onNavToOrders}
+                  style={styles.menuItemButton}
+                  underlayColor='#3e444f'
+                >
+                  <View style={styles.menuTextContainer}>
+                    <Icon name='fontawesome|list-alt' size={20} color='white' style={styles.menuIcon}/>
+                    <Text style={styles.menuItemText}>Receiving Guide</Text>
+                  </View>
+                </TouchableHighlight>,
+                <TouchableHighlight
+                  key='team-members'
+                  onPress={this.props.onNavToTeamMemberListing}
+                  style={styles.menuItemButton}
+                  underlayColor='#3e444f'
+                >
+                  <View style={styles.menuTextContainer}>
+                    <Icon name='fontawesome|users' size={20} color='white' style={styles.menuIcon}/>
+                    <Text style={styles.menuItemText}>Team Members</Text>
+                  </View>
+                </TouchableHighlight>
+              ]
             )}
             <TouchableHighlight
               onPress={this.props.onNavToTeamIndex}

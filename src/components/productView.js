@@ -169,13 +169,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f7f7f7'
+    backgroundColor: Colors.mainBackgroundColor
   },
   mainContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f7f7f7'
+    backgroundColor: Colors.mainBackgroundColor
   },
   input: {
     height: 40,

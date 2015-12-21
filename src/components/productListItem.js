@@ -1,10 +1,10 @@
-import React from 'react-native'
-import ProductToggle from './productToggle'
-import { Icon } from 'react-native-icons'
-import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
+import React from 'react-native';
+import ProductToggle from './productToggle';
+import { Icon } from 'react-native-icons';
 import _ from 'lodash';
 import { CART } from '../actions/actionTypes';
 import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 import Swipeout from 'react-native-swipeout';
 
 const {
@@ -311,7 +311,7 @@ let styles = StyleSheet.create({
     paddingRight: 5
   },
   row: {
-    borderRadius: 10,
+    borderRadius: Sizes.rowBorderRadius,
     flexDirection: 'row',
     backgroundColor: 'white',
     padding: 5,
@@ -336,7 +336,7 @@ let styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)'
   },
   modalInnerContainer: {
-    borderRadius: 10,
+    borderRadius: Sizes.modalInnerBorderRadius,
     backgroundColor: '#fff',
     padding: 20,
   },

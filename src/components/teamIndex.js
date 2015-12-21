@@ -2,7 +2,7 @@ import { Icon } from 'react-native-icons';
 import React from 'react-native';
 import ErrorModal from './errorModal';
 import AddForm from './addForm';
-import { mainBackgroundColor } from '../utilities/colors';
+import Colors from '../utilities/colors';
 import TeamIndexRow from './teamIndexRow';
 
 const {
@@ -77,8 +77,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollView: {
-    backgroundColor: '#f7f7f7',
-    height: 500,
+    backgroundColor: Colors.mainBackgroundColor,
     marginTop: 0,
     paddingTop: 0
   },
