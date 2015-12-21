@@ -125,10 +125,10 @@ class CartView extends React.Component {
                   <Text style={styles.purveyorInfoLabel}>Delivery Days</Text>
                   {this.renderDeliveryDays()}
                 </View>
-                <View style={styles.purveyorInfoRow}>
+                {/* * /}<View style={styles.purveyorInfoRow}>
                   <Text style={styles.purveyorInfoLabel}>Notes</Text>
                   <Text style={styles.purveyorInfoData}>{this.state.purveyor.notes}</Text>
-                </View>
+                </View>{/**/}
               </View>
             : <Text>Loading ...</Text> }
             <View style={styles.separator} />
