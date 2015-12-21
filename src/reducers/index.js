@@ -8,6 +8,7 @@ import purveyor from './purveyor'
 import product from './product'
 import category from './category'
 import error from './error'
+import order from './order'
 
 const reducers = combineReducers(Object.assign(
   {},
@@ -19,7 +20,8 @@ const reducers = combineReducers(Object.assign(
   purveyor,
   product,
   category,
-  error
+  error,
+  order
 ));
 
 export default reducers;

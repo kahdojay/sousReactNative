@@ -1,7 +1,7 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import _ from 'lodash';
-import { greyText, taskCompletedBackgroundColor } from '../utilities/colors';
+import Colors from '../utilities/colors';
 
 const {
   View,

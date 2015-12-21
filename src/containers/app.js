@@ -57,11 +57,13 @@ class App extends React.Component {
         purveyors: {},
         categories: {},
         products: {},
+        orders: {},
         messages: {},
         lastUpdated: {
           purveyors: null,
           categories: null,
           products: null,
+          orders: null,
           messages: null,
         }
       }
@@ -130,6 +132,10 @@ class App extends React.Component {
       if(nextProps.messages.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.messages = nextProps.messages.teams[currentTeamInfo.team.id]
         currentTeamInfo.lastUpdated.messages = nextProps.messages.lastUpdated;
+      }
+      if(nextProps.orders.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
+        currentTeamInfo.orders = nextProps.orders.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.orders = nextProps.orders.lastUpdated;
       }
     }
     this.setState({
@@ -671,6 +677,15 @@ class App extends React.Component {
             }}
           />
         )
+        case 'OrderIndex':
+          return (
+            <Components.OrderIndex
+              orders={this.state.currentTeamInfo.orders}
+              purveyors={this.state.currentTeamInfo.purveyors}
+              teamsUsers={teams.teamsUsers}
+              currentTeamUsers={this.state.currentTeamInfo.team.users}
+            />
+          )
       case 'Profile':
         return (
           <Components.ProfileView
@@ -984,6 +999,19 @@ class App extends React.Component {
             )
           })
           break;
+        case 'OrderIndex':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            hidePrev: false,
+            buttonsColor: '#ccc',
+            customPrev: (
+              <Components.NavBackButton iconFont={'fontawesome|times'} />
+            ),
+            title: 'Receiving Guide',
+            hideNext: true,
+          })
+          break;
         // case 'ProductView':
         //   navBar = React.addons.cloneWithProps(this.navBar, {
         //     navigator: nav,
@@ -1219,6 +1247,9 @@ class App extends React.Component {
           onNavToCategory={() => {
             nav.push({ name: 'CategoryIndex', })
           }}
+          onNavToOrders={() => {
+            nav.push({ name: 'OrderIndex', })
+          }}
           onNavToProfile={() => {
             nav.push({ name: 'Profile', })
           }}
@@ -1383,6 +1414,7 @@ function mapStateToProps(state) {
     messages: state.messages,
     purveyors: state.purveyors,
     products: state.products,
+    orders: state.orders,
     categories: state.categories,
     errors: state.errors,
     connect: state.connect,

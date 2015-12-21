@@ -7,6 +7,7 @@ import PurveyorActions from './purveyor'
 import ProductActions from './product'
 import CategoryActions from './category'
 import ErrorActions from './error'
+import OrderActions from './order'
 import ddpClient from '../utilities/ddpClient'
 
 const errorActions = ErrorActions(ddpClient)
@@ -26,6 +27,9 @@ const productActions = ProductActions(ddpClient, {
   'categoryActions': categoryActions
 })
 const purveyorActions = PurveyorActions(ddpClient)
+const orderActions = OrderActions(ddpClient, {
+  'messageActions': messageActions
+})
 
 function connectApp(){
   return (dispatch) => {
@@ -58,7 +62,8 @@ function connectApp(){
       'purveyorActions': purveyorActions,
       'categoryActions': categoryActions,
       'productActions': productActions,
-      'errorActions': errorActions
+      'errorActions': errorActions,
+      'orderActions': orderActions
     }));
   }
 }
@@ -74,5 +79,6 @@ export default Object.assign({
   purveyorActions,
   productActions,
   categoryActions,
-  errorActions
+  errorActions,
+  orderActions,
 )

@@ -1,8 +1,5 @@
-import React from 'react-native'
-import _ from 'lodash'
-import { Icon } from 'react-native-icons'
-import AddForm from './addForm'
-import { mainBackgroundColor } from '../utilities/colors'
+import React from 'react-native';
+import _ from 'lodash';
 import CategoryIndexRow from './categoryIndexRow';
 import Colors from '../utilities/colors';
 
@@ -78,14 +75,6 @@ const styles = StyleSheet.create({
     height: 0,
     borderBottomColor: '#bbb',
     borderBottomWidth: 1,
-  },
-  scrollView: {
-    backgroundColor: '#f7f7f7',
-    height: 500,
-    paddingLeft: 20,
-    paddingRight: 0,
-    marginTop: 0,
-    paddingTop: 0
   },
   segmentedControl: {
     fontWeight: 'bold',

@@ -1,9 +1,9 @@
 import React from 'react-native';
 import _ from 'lodash';
 import { Icon } from 'react-native-icons';
-import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
 import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 
 const {
   ScrollView,
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#f7f7f7'
+    backgroundColor: Colors.mainBackgroundColor
   },
   scrollWrapper: {
     flex: 1,
@@ -180,13 +180,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f7f7f7'
+    backgroundColor: Colors.mainBackgroundColor
   },
   mainContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f7f7f7'
+    backgroundColor: Colors.mainBackgroundColor
   },
   input: {
     height: 40,
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     fontWeight: '100',
     borderWidth: 1,
     borderColor: '#e6e6e6',
-    borderRadius: 5,
+    borderRadius: Sizes.inputBorderRadius,
     backgroundColor: 'white',
     color: 'black',
     marginRight: 10,
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     borderWidth: 1,
     borderColor: '#e6e6e6',
-    borderRadius: 8,
+    borderRadius:  Sizes.descriptionBorderRadius,
     backgroundColor: 'white',
     color: 'black',
     marginRight: 10,

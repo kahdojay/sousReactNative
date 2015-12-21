@@ -137,6 +137,7 @@ export default function ConnectActions(ddpClient) {
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CATEGORIES.channel, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PRODUCTS.channel, [session.userId, teamIds]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ORDERS.channel, [session.userId, teamIds]))
         }
         if(session.userId !== null){
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS.channel, [session.userId]))
@@ -158,7 +159,8 @@ export default function ConnectActions(ddpClient) {
       purveyorActions,
       productActions,
       categoryActions,
-      errorActions
+      errorActions,
+      orderActions,
     } = allActions
 
     return (dispatch, getState) => {
@@ -240,6 +242,9 @@ export default function ConnectActions(ddpClient) {
               break;
             case 'errors':
               dispatch(errorActions.receiveErrors(data))
+              break;
+            case 'orders':
+              dispatch(orderActions.receiveOrders(data))
               break;
             default:
               // console.log("TODO: wire up collection: ", log.collection);

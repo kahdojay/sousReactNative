@@ -1,4 +1,3 @@
-import { getIdx, updateByIdx, updateDataState } from '../utilities/reducer'
 import {
   RESET_PRODUCTS,
   GET_PRODUCTS,
