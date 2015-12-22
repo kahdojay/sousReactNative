@@ -17,6 +17,8 @@ import NavBackButton from './navBackButton';
 import NavOrderGuide from './navOrderGuide';
 import NavbarTitle from './NavbarTitle';
 import OrderIndex from './orderIndex';
+import OrderRightButton from './orderRightButton'
+import OrderView from './orderView';
 import ProductForm from './productForm';
 import ProductFormRightCheckbox from './productFormRightCheckbox';
 import ProductView from './productView';
@@ -53,6 +55,8 @@ export default {
   NavbarTitle,
   NavOrderGuide,
   OrderIndex,
+  OrderRightButton,
+  OrderView,
   ProductForm,
   ProductFormRightCheckbox,
   ProductView,

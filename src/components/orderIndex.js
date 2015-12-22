@@ -20,8 +20,9 @@ class OrderIndex extends React.Component {
     const { orders, purveyors, teamsUsers } = this.props
 
     let fullOrders = _.map(orders, (order) => {
+      const purveyor = purveyors[order.purveyorId]
       return Object.assign({}, order, {
-        purveyor: purveyors[order.purveyorId],
+        purveyor: purveyor,
         user: teamsUsers[order.userId]
       })
     })
@@ -31,19 +32,27 @@ class OrderIndex extends React.Component {
         const itemCount = Object.keys(order.orderDetails.products).length
         const orderedAtDate = moment(order.orderedAt)
         return (
-          <View style={styles.row}>
-            <View style={{flex:2}}>
-              <Text style={[styles.purveyorName, styles.bold]}>
-                {order.purveyor.name}
-                <Text style={styles.metaInfo}> {`${itemCount} Item${itemCount > 1 ? 's' : ''}`}</Text>
-              </Text>
-              <Text style={styles.metaInfo}>{`${order.user.firstName} ${order.user.lastName[0]}.`}</Text>
+          <TouchableHighlight
+            key={order.id}
+            underlayColor='transparent'
+            onPress={() => {
+              this.props.onNavToOrder(order.id)
+            }}
+          >
+            <View style={styles.row}>
+              <View style={{flex:2}}>
+                <Text style={[styles.purveyorName, styles.bold]}>
+                  {order.purveyor.name}
+                  <Text style={styles.metaInfo}> {`${itemCount} Item${itemCount > 1 ? 's' : ''}`}</Text>
+                </Text>
+                <Text style={styles.metaInfo}>{`${order.user.firstName} ${order.user.lastName[0]}.`}</Text>
+              </View>
+              <View style={{flex:1}}>
+                <Text style={[styles.metaInfo, styles.bold, styles.rightAlign]}>{orderedAtDate.format('M/D/YY')}</Text>
+                <Text style={[styles.metaInfo, styles.rightAlign]}>{orderedAtDate.format('h:mm a')}</Text>
+              </View>
             </View>
-            <View style={{flex:1}}>
-              <Text style={[styles.metaInfo, styles.bold, styles.rightAlign]}>{orderedAtDate.format('M/D/YY')}</Text>
-              <Text style={[styles.metaInfo, styles.rightAlign]}>{orderedAtDate.format('h:mm a')}</Text>
-            </View>
-          </View>
+          </TouchableHighlight>
         )
       }
     })
@@ -86,7 +95,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     flexDirection: 'row',
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   purveyorName: {
     color: 'black',

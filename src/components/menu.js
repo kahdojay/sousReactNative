@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { Icon } from 'react-native-icons';
 import React from 'react-native';
 import Dimensions from 'Dimensions';
-import pkgInfo from 'json!../../package.json';
+import pkgInfo from '../../package.json';
 
 const {
   StyleSheet,

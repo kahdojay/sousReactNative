@@ -1,5 +1,6 @@
 import React from 'react-native';
 import _ from 'lodash';
+import moment from 'moment-timezone';
 import NavigationBar from 'react-native-navbar';
 import NavigationBarStyles from 'react-native-navbar/styles'
 import { connect } from 'react-redux/native';
@@ -12,6 +13,7 @@ import * as Components from '../components';
 import Dimensions from 'Dimensions';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import PushManager from 'react-native-remote-push/RemotePushIOS';
+import Communications from 'react-native-communications';
 import DeviceUUID from 'react-native-device-uuid';
 
 const {
@@ -684,8 +686,31 @@ class App extends React.Component {
               purveyors={this.state.currentTeamInfo.purveyors}
               teamsUsers={teams.teamsUsers}
               currentTeamUsers={this.state.currentTeamInfo.team.users}
+              onNavToOrder={(orderId) => {
+                const order = this.state.currentTeamInfo.orders[orderId]
+                const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
+                this.setState({
+                  order: order,
+                  purveyor: purveyor,
+                },() => {
+                  nav.push({
+                    name: 'OrderView'
+                  })
+                })
+              }}
             />
           )
+      case 'OrderView':
+        const orderProducts = _.sortBy(_.map(Object.keys(this.state.order.orderDetails.products), (productId) => {
+          return this.state.currentTeamInfo.products[productId]
+        }), 'name')
+        return (
+          <Components.OrderView
+            order={this.state.order}
+            purveyor={this.state.purveyor}
+            products={orderProducts}
+          />
+        )
       case 'Profile':
         return (
           <Components.ProfileView
@@ -1000,6 +1025,9 @@ class App extends React.Component {
           })
           break;
         case 'OrderIndex':
+          const openOrders = _.filter(this.state.currentTeamInfo.orders, (order) => {
+            return order.hasOwnProperty('confirmed') === false || order.confirmed === false
+          })
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
@@ -1008,8 +1036,44 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton iconFont={'fontawesome|times'} />
             ),
-            title: 'Receiving Guide',
+            title: `${openOrders.length} Open Orders`,
             hideNext: true,
+          })
+          break;
+        case 'OrderView':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                navName='OrderIndex'
+                iconFont={'fontawesome|chevron-left'}
+              />
+            ),
+            title: this.state.purveyor.name.substr(0,16) + (this.state.purveyor.name.length > 16 ? '...' : ''),
+            customNext: (
+              <Components.OrderRightButton
+                purveyor={this.state.purveyor}
+                onHandlePress={(type) => {
+                  const order = this.state.order
+                  const purveyor = this.state.purveyor
+                  const team = this.state.currentTeamInfo.team
+                  if(type === 'call') {
+                    Communications.phonecall(purveyor.phone, true)
+                  } else if(type === 'email'){
+                    let timeZone = 'UTC';
+                    if(purveyor.hasOwnProperty('timeZone') && purveyor.timeZone){
+                      timeZone = purveyor.timeZone;
+                    }
+                    const orderDate = moment(order.orderedAt).tz(timeZone);
+                    const to = purveyor.orderEmails.split(',')
+                    const cc = ['orders@sousapp.com']
+                    const subject = `re: ${purveyor.name} • Order Received from ${team.name} on ${orderDate.format('dddd, MMMM D')}`
+                    Communications.email(to, cc, null, subject, null)
+                  }
+                }}
+              />
+            ),
           })
           break;
         // case 'ProductView':
