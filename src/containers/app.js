@@ -450,8 +450,16 @@ class App extends React.Component {
               dispatch(actions.addPurveyor(name))
             }}
             onCreateProduct={() => {
-              nav.push({
-                name: 'ProductForm'
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductForm.submitReady = false;
+              sceneState.ProductForm.productId = null
+              sceneState.ProductForm.productAttributes = {}
+              this.setState({
+                product: null
+              }, () => {
+                nav.push({
+                  name: 'ProductForm'
+                })
               })
             }}
           />
@@ -566,8 +574,16 @@ class App extends React.Component {
               })
             }}
             onCreateProduct={() => {
-              nav.push({
-                name: 'ProductForm'
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductForm.submitReady = false;
+              sceneState.ProductForm.productId = null
+              sceneState.ProductForm.productAttributes = {}
+              this.setState({
+                product: null
+              }, () => {
+                nav.push({
+                  name: 'ProductForm'
+                })
               })
             }}
           />
@@ -647,8 +663,16 @@ class App extends React.Component {
             cart={this.state.currentTeamInfo.team.cart}
             purveyors={this.state.currentTeamInfo.purveyors}
             onCreateProduct={() => {
-              nav.push({
-                name: 'ProductForm'
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductForm.submitReady = false;
+              sceneState.ProductForm.productId = null
+              sceneState.ProductForm.productAttributes = {}
+              this.setState({
+                product: null
+              }, () => {
+                nav.push({
+                  name: 'ProductForm'
+                })
               })
             }}
             onProductDelete={(productId) => {
