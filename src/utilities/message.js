@@ -1,4 +1,7 @@
 import React from 'react-native';
+import Colors from './colors';
+import { Icon } from 'react-native-icons';
+
 const {
   View,
   Text,
@@ -25,6 +28,23 @@ function formatMessage(msg, messageLength = null) {
     messageString = (
       <Text style={styles.messageText}>Order sent to
         <Text style={{fontWeight: 'bold'}}> {msg.purveyor}</Text>
+      </Text>
+    );
+  } else if (msg.type === 'orderConfirmation') {
+    messageString = (
+      <Text>
+        <Text style={styles.messageText}>
+          <Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
+          order checked in.
+        </Text>
+        { message !== '' ?
+          <Text style={styles.messageText}>
+            {' '}
+            <Text style={{color: Colors.gold, fontStyle: 'italic'}}>Note:</Text>
+            {' '}
+            {message}
+          </Text>
+        : null }
       </Text>
     );
   } else {

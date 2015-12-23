@@ -51,8 +51,11 @@ class App extends React.Component {
         ProductForm: {
           submitReady: false,
           productId: null,
-          productAttributes: {}
-        }
+          productAttributes: {},
+        },
+        OrderIndex: {
+          showConfirmedOrders: false,
+        },
       },
       currentTeamInfo: {
         team: this.props.teams.currentTeam,
@@ -682,10 +685,18 @@ class App extends React.Component {
         case 'OrderIndex':
           return (
             <Components.OrderIndex
+              showConfirmedOrders={this.state.sceneState.OrderIndex.showConfirmedOrders}
               orders={this.state.currentTeamInfo.orders}
               purveyors={this.state.currentTeamInfo.purveyors}
               teamsUsers={teams.teamsUsers}
               currentTeamUsers={this.state.currentTeamInfo.team.users}
+              onProcessShowOrders={(showConfirmedOrders) => {
+                const sceneState = Object.assign({}, this.state.sceneState);
+                sceneState.OrderIndex.showConfirmedOrders = showConfirmedOrders;
+                this.setState({
+                  sceneState: sceneState
+                })
+              }}
               onNavToOrder={(orderId) => {
                 const order = this.state.currentTeamInfo.orders[orderId]
                 const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
@@ -706,9 +717,28 @@ class App extends React.Component {
         }), 'name')
         return (
           <Components.OrderView
+            userId={session.userId}
             order={this.state.order}
             purveyor={this.state.purveyor}
             products={orderProducts}
+            teamsUsers={teams.teamsUsers}
+            onConfirmOrder={(order) => {
+              _.debounce(() => {
+                dispatch(actions.updateOrder(order.id, {
+                  confirm: order.confirm
+                }))
+              }, 25)()
+            }}
+            onSendConfirmationMessage={(msg) => {
+              _.debounce(() => {
+                dispatch(actions.createMessage(msg))
+              }, 25)()
+            }}
+            onNavToOrders={() => {
+              nav.replacePreviousAndPop({
+                name: 'OrderIndex',
+              })
+            }}
           />
         )
       case 'Profile':
@@ -1026,7 +1056,7 @@ class App extends React.Component {
           break;
         case 'OrderIndex':
           const openOrders = _.filter(this.state.currentTeamInfo.orders, (order) => {
-            return order.hasOwnProperty('confirmed') === false || order.confirmed === false
+            return order.confirm.order === false
           })
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,

@@ -1,6 +1,7 @@
-import React from 'react-native'
-import _ from 'lodash'
-import { Icon } from 'react-native-icons'
+import React from 'react-native';
+import _ from 'lodash';
+import { Icon } from 'react-native-icons';
+import Sizes from '../utilities/sizes';
 
 const {
   Modal,
@@ -110,7 +111,7 @@ var styles = StyleSheet.create({
     alignItems: 'center'
   },
   modalInnerContainer: {
-    borderRadius: 10,
+    borderRadius: Sizes.modalInnerBorderRadius,
     backgroundColor: '#fff',
     padding: 20,
   },

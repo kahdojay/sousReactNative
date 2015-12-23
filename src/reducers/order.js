@@ -36,7 +36,7 @@ function orders(state = initialState.orders, action) {
       newOrderTeamState[action.order.teamId] = {};
     }
     const originalTeamOrder = getTeamOrder(newOrderTeamState, action.order.teamId, action.order.id)
-    newOrderTeamState[action.order.teamId][action.order.id] = Object.assign(originalTeamOrder, action.order)
+    newOrderTeamState[action.order.teamId][action.order.id] = Object.assign({}, originalTeamOrder, action.order)
     return Object.assign({}, state, {
       errors: null,
       teams: newOrderTeamState,
@@ -47,7 +47,7 @@ function orders(state = initialState.orders, action) {
   case UPDATE_ORDER:
     var updateOrderTeamState = Object.assign({}, state.teams);
     const updateOriginalTeamOrder = getTeamOrder(updateOrderTeamState, action.teamId, action.orderId)
-    updateOrderTeamState[action.teamId][action.orderId] = Object.assign(updateOriginalTeamOrder, action.order, {
+    updateOrderTeamState[action.teamId][action.orderId] = Object.assign({}, updateOriginalTeamOrder, action.order, {
       updatedAt: (new Date()).toISOString()
     })
     return Object.assign({}, state, {
