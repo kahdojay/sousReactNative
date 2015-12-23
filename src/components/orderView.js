@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
   confirmedText: {
     alignSelf: 'center',
     fontSize: 14,
-    color: Colors.greyText,
+    color: '#333',
     fontFamily: 'OpenSans',
   },
   orderMessage: {
