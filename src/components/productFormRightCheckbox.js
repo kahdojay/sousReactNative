@@ -10,7 +10,7 @@ const {
   StyleSheet,
 } = React;
 
-class ProductCreateRightCheckbox extends React.Component {
+class ProductFormRightCheckbox extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -25,7 +25,7 @@ class ProductCreateRightCheckbox extends React.Component {
         style={{justifyContent: 'center',}}
         onPress={()=> {
           if (this.props.submitReady) {
-            this.props.onAddProduct();
+            this.props.onProcessProduct();
           } else {
             // trigger error: Please fill out all the fields below
           }
@@ -66,4 +66,4 @@ let styles = StyleSheet.create({
   },
 })
 
-export default ProductCreateRightCheckbox;
+export default ProductFormRightCheckbox;

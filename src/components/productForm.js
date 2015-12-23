@@ -16,7 +16,7 @@ const {
   ScrollView,
 } = React;
 
-class ProductCreate extends React.Component {
+class ProductForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,8 +38,46 @@ class ProductCreate extends React.Component {
   }
 
   componentWillMount(){
+    let productAttributes = {
+      name: '',
+      purveyorIdList: [null],
+      category: null,
+      amount: null,
+      unit: null,
+      purveyorSelected: false,
+      categorySelected: false,
+      amountSelected: false,
+      unitSelected: false,
+    }
+    const {product} = this.props
+    const sortedPurveyors = _.sortBy(this.props.purveyors, 'name');
+    if(product !== null){
+      productAttributes = product
+      productAttributes.purveyorIdList = _.map(product.purveyors, (purveyorId) => {
+        const purveyor = this.props.purveyors[purveyorId]
+        const purveyorIdx = _.findIndex(sortedPurveyors, {id: purveyor.id})
+        return {idx: purveyorIdx, id: purveyor.id, name: purveyor.name}
+      })
+      const category = _.filter(this.props.categories, (category) => {
+        return category.products.indexOf(product.id) !== -1
+      })
+      productAttributes.category = category[0]
+      productAttributes.purveyorSelected = true
+      productAttributes.categorySelected = true
+      productAttributes.amountSelected = true
+      productAttributes.unitSelected = true
+    }
     this.setState({
-      purveyors: _.sortBy(this.props.purveyors, 'name'),
+      name: productAttributes.name,
+      purveyorIdList: productAttributes.purveyorIdList,
+      category: productAttributes.category,
+      amount: productAttributes.amount,
+      unit: productAttributes.unit,
+      purveyorSelected: productAttributes.purveyorSelected,
+      categorySelected: productAttributes.categorySelected,
+      amountSelected: productAttributes.amountSelected,
+      unitSelected: productAttributes.unitSelected,
+      purveyors: sortedPurveyors,
       categories: _.sortBy(this.props.categories, 'name'),
     })
   }
@@ -58,7 +96,7 @@ class ProductCreate extends React.Component {
       this.state.categorySelected &&
       this.state.amountSelected &&
       this.state.unitSelected &&
-      this.state.name != ''
+      this.state.name !== ''
     ) {
       const productAttributes = {
         name: this.state.name,
@@ -69,7 +107,7 @@ class ProductCreate extends React.Component {
         unit: this.state.unit,
         categoryId: this.state.category.id,
       }
-      this.props.onAddProduct(productAttributes);
+      this.props.onProcessProduct(productAttributes);
     } else {
       this.props.onProductNotReady();
     }
@@ -81,12 +119,12 @@ class ProductCreate extends React.Component {
     const pickerItems = []
     switch (this.state.picker) {
       case 'purveyor':
-        const {purveyors} = this.state;
+        const {purveyors, purveyorIdList} = this.state;
         if (
-          this.state.purveyorIdList[this.state.pickerIdx] !== null &&
-          this.state.purveyorIdList[this.state.pickerIdx].hasOwnProperty('idx')
+          purveyorIdList[this.state.pickerIdx] !== null &&
+          purveyorIdList[this.state.pickerIdx].hasOwnProperty('idx')
         ) {
-          selectedValue = this.state.purveyorIdList[this.state.pickerIdx].idx;
+          selectedValue = purveyorIdList[this.state.pickerIdx].idx;
         }
         pickerItems.push(
           <PickerIOS.Item
@@ -97,7 +135,7 @@ class ProductCreate extends React.Component {
         )
         // console.log(purveyors);
         purveyors.forEach((purveyor, purveyorIdx) => {
-          const selectedIdx = _.findIndex(this.state.purveyorIdList, {'id': purveyor.id})
+          const selectedIdx = _.findIndex(purveyorIdList, {'id': purveyor.id})
           if(selectedIdx === -1 || this.state.pickerIdx === selectedIdx){
             pickerItems.push(
               <PickerIOS.Item
@@ -112,23 +150,24 @@ class ProductCreate extends React.Component {
           <PickerIOS
             selectedValue={selectedValue}
             onValueChange={(purveyorIdx) => {
-              let purveyorIdList = this.state.purveyorIdList
               let purveyorSelected = false
+              let newPurveyorIdList = []
+              newPurveyorIdList = newPurveyorIdList.concat(purveyorIdList)
               if(purveyorIdx === null){
-                purveyorIdList = [
-                  ...purveyorIdList.slice(0, this.state.pickerIdx),
-                  ...purveyorIdList.slice(this.state.pickerIdx + 1)
+                newPurveyorIdList = [
+                  ...newPurveyorIdList.slice(0, this.state.pickerIdx),
+                  ...newPurveyorIdList.slice(this.state.pickerIdx + 1)
                 ]
-                if(purveyorIdList.length === 0){
-                  purveyorIdList.push(null)
+                if(newPurveyorIdList.length === 0){
+                  newPurveyorIdList.push(null)
                 }
               } else {
                 const purveyor = purveyors[purveyorIdx]
-                purveyorIdList[this.state.pickerIdx] = {idx: purveyorIdx, id: purveyor.id, name: purveyor.name}
+                newPurveyorIdList[this.state.pickerIdx] = {idx: purveyorIdx, id: purveyor.id, name: purveyor.name}
                 purveyorSelected = true
               }
               this.setState({
-                purveyorIdList: purveyorIdList,
+                purveyorIdList: newPurveyorIdList,
                 purveyorSelected: purveyorSelected,
                 picker: null,
                 pickerIdx: null
@@ -187,10 +226,10 @@ class ProductCreate extends React.Component {
         );
         break;
       case 'amount':
-        const amounts = _.range(1, 500)
+        const amounts = _.range(1, 501)
         picker = (
           <PickerIOS
-            selectedValue={this.state.amount}
+            selectedValue={parseFloat(this.state.amount)}
             onValueChange={(amount) => {
               let amountSelected = false
               if(amount !== null){
@@ -251,7 +290,9 @@ class ProductCreate extends React.Component {
         break;
       case null:
       default:
-        picker = <View />;
+        picker = (
+          <View />
+        );
         break;
     }
     return picker
@@ -302,6 +343,15 @@ class ProductCreate extends React.Component {
     const currentTeamId = this.props.team.id;
     const picker = this.getPicker()
     const purveyorInputs = this.getPurveyorInputs()
+    let separator = (
+      <View />
+    )
+    if(this.state.picker !== null){
+      separator = (
+        <View style={styles.separator} />
+      )
+    }
+
     return (
       <ScrollView
         automaticallyAdjustContentInsets={false}
@@ -312,6 +362,7 @@ class ProductCreate extends React.Component {
           <TextInput
             ref='name'
             style={[styles.inputField, {flex: 2}]}
+            value={this.state.name}
             placeholder='Name'
             onChange={(e) => {
               this.setState({name: e.nativeEvent.text}, () => {
@@ -382,13 +433,20 @@ class ProductCreate extends React.Component {
             </Text>
           </TouchableHighlight>
         </View>
+        {separator}
         {picker}
       </ScrollView>
     );
   }
 };
 
+const window = Dimensions.get('window');
+
 const styles = StyleSheet.create({
+  scrollView: {
+    backgroundColor: Colors.mainBackgroundColor,
+    flex: 1,
+  },
   inputContainer: {
     flex: 1,
     flexDirection: 'row',
@@ -397,7 +455,7 @@ const styles = StyleSheet.create({
   },
   inputTitle: {
     // v- this with looks good on iPhone 6 plus and 4s
-    width: Dimensions.get('window').width * .54,
+    width: window.width * .54,
     fontFamily: 'OpenSans',
     fontWeight: 'bold',
     fontSize: 14,
@@ -415,13 +473,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'right',
   },
-  scrollView: {
-    backgroundColor: '#f9f9f9',
-    flex: 1,
-  },
-  emptySpace: {
-    height: 20,
+  separator: {
+    height: 0,
+    borderBottomColor: '#bbb',
+    borderBottomWidth: 1,
   },
 });
 
-module.exports = ProductCreate;
+module.exports = ProductForm;

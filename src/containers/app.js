@@ -1,9 +1,9 @@
 import React from 'react-native';
 import _ from 'lodash';
+import moment from 'moment-timezone';
 import NavigationBar from 'react-native-navbar';
 import NavigationBarStyles from 'react-native-navbar/styles'
 import { connect } from 'react-redux/native';
-import { Icon } from 'react-native-icons';
 import SideMenu from 'react-native-side-menu';
 import { BackBtn } from '../utilities/navigation';
 import Colors from '../utilities/colors';
@@ -13,6 +13,8 @@ import * as Components from '../components';
 import Dimensions from 'Dimensions';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import PushManager from 'react-native-remote-push/RemotePushIOS';
+import Communications from 'react-native-communications';
+import DeviceUUID from 'react-native-device-uuid';
 
 const {
   PropTypes,
@@ -37,20 +39,39 @@ class App extends React.Component {
       isAuthenticated: this.props.session.isAuthenticated,
       firstName: this.props.session.firstName,
       lastName: this.props.session.lastName,
+      product: null,
       category: null,
-      specificProducts: null,
+      // specificProducts: null,
       purveyor: null,
-      currentTeam: this.props.teams.currentTeam,
       contactList: [],
       showGenericModal: false,
       genericModalMessage: '',
       genericModalCallback: () => {},
       sceneState: {
-        ProductCreate: {
+        ProductForm: {
           submitReady: false,
-          productAttributes: {}
-        }
+          productId: null,
+          productAttributes: {},
+        },
+        OrderIndex: {
+          showConfirmedOrders: false,
+        },
       },
+      currentTeamInfo: {
+        team: this.props.teams.currentTeam,
+        purveyors: {},
+        categories: {},
+        products: {},
+        orders: {},
+        messages: {},
+        lastUpdated: {
+          purveyors: null,
+          categories: null,
+          products: null,
+          orders: null,
+          messages: null,
+        }
+      }
     }
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
@@ -74,6 +95,7 @@ class App extends React.Component {
       ), props)
     };
   }
+
   handleOpenWithTouchToClose() {
     this.setState({
       touchToClose: true,
@@ -97,19 +119,43 @@ class App extends React.Component {
   }}
 
   componentWillReceiveProps(nextProps) {
+    let currentTeamInfo = this.state.currentTeamInfo
+    currentTeamInfo.team = nextProps.teams.currentTeam
+    if(currentTeamInfo.team !== null){
+      if(nextProps.purveyors.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
+        currentTeamInfo.purveyors = nextProps.purveyors.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.purveyors = nextProps.purveyors.lastUpdated;
+      }
+      if(nextProps.categories.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
+        currentTeamInfo.categories = nextProps.categories.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.categories = nextProps.categories.lastUpdated;
+      }
+      if(nextProps.products.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
+        currentTeamInfo.products = nextProps.products.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.products = nextProps.products.lastUpdated;
+      }
+      if(nextProps.messages.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
+        currentTeamInfo.messages = nextProps.messages.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.messages = nextProps.messages.lastUpdated;
+      }
+      if(nextProps.orders.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
+        currentTeamInfo.orders = nextProps.orders.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.orders = nextProps.orders.lastUpdated;
+      }
+    }
     this.setState({
       installationRegistered: nextProps.connect.installationRegistered,
       isAuthenticated: nextProps.session.isAuthenticated,
       firstName: nextProps.session.firstName,
       lastName: nextProps.session.lastName,
-      currentTeam: nextProps.teams.currentTeam
+      currentTeamInfo: currentTeamInfo,
     })
   }
 
   componentWillUpdate(nextProps) {
     if(this.refs.appNavigator){
       if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'TeamIndex'){
-        if(this.state.currentTeam !== null){
+        if(this.state.currentTeamInfo.team !== null){
           setTimeout(() => {
             this.refs.appNavigator.replacePrevious({
               name: 'Feed'
@@ -121,21 +167,26 @@ class App extends React.Component {
   }
 
   componentDidUpdate() {
-    // console.log(this.state.currentTeam)
-    if(this.state.isAuthenticated === true && this.state.currentTeam !== null){
+    // console.log(this.state.currentTeamInfo.team)
+    if(this.state.isAuthenticated === true && this.state.currentTeamInfo.team !== null){
       const {dispatch, connect, session} = this.props
       if (this.state.installationRegistered !== true && connect.status === actions.CONNECT.CONNECTED) {
         PushManager.requestPermissions((err, data) => {
           if (err) {
-            dispatch(actions.registerInstallationError(session.userId))
+            dispatch(actions.registerInstallationError())
           } else {
             // if(userDoesNotAllow === true){
-            //   dispatch(actions.registerInstallationDeclined(session.userId))
+            //   dispatch(actions.registerInstallationDeclined())
             // }
             if(data.hasOwnProperty('token') && data.token.indexOf('Error') === -1){
-              dispatch(actions.registerInstallation(session.userId, data))
+              DeviceUUID.getUUID().then((uuid) => {
+                dispatch(actions.registerInstallation({
+                  token: data.token,
+                  uuid: uuid,
+                }))
+              });
             } else {
-              dispatch(actions.registerInstallationError(session.userId))
+              dispatch(actions.registerInstallationError())
             }
           }
         });
@@ -143,7 +194,7 @@ class App extends React.Component {
     }
     if(this.refs.appNavigator){
       if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'Loading'){
-        if(this.state.currentTeam !== null){
+        if(this.state.currentTeamInfo.team !== null){
           setTimeout(() => {
             this.refs.appNavigator.replacePrevious({
               name: 'Feed'
@@ -157,7 +208,7 @@ class App extends React.Component {
           }, 10)
         }
       } else if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'UserTeam'){
-        if(this.state.currentTeam !== null){
+        if(this.state.currentTeamInfo.team !== null){
           setTimeout(() => {
             this.refs.appNavigator.replacePrevious({
               name: 'Feed'
@@ -176,15 +227,8 @@ class App extends React.Component {
     return isAuthenticated;
   }
 
-  getScene(route, nav, currentTeamInfo) {
+  getScene(route, nav) {
     const { ui, session, teams, messages, dispatch, purveyors, products, categories, errors } = this.props;
-
-    const {
-      currentTeamPurveyors,
-      currentTeamCategories,
-      currentTeamProducts,
-      currentTeamMessages
-    } = currentTeamInfo
 
     switch (route.name) {
       case 'Signup':
@@ -283,7 +327,7 @@ class App extends React.Component {
         return (
           <Components.TeamView
             ui={ui}
-            teamTasks={this.state.currentTeam.tasks}
+            teamTasks={this.state.currentTeamInfo.team.tasks}
             onNavToTask={(recipeId) => {
               // console.log(recipeId)
               nav.push({
@@ -321,7 +365,7 @@ class App extends React.Component {
           />
         )
       case 'TaskView':
-        var task = _.filter(this.state.currentTeam.tasks, {recipeId: route.recipeId})[0]
+        var task = _.filter(this.state.currentTeamInfo.team.tasks, {recipeId: route.recipeId})[0]
         return (
           <Components.TaskView
             keyboardVisible={ui.keyboard.visible }
@@ -341,10 +385,15 @@ class App extends React.Component {
           <Components.Feed
             teamsUsers={teams.teamsUsers}
             messagesFetching={messages.isFetching}
-            messages={currentTeamMessages}
+            messages={this.state.currentTeamInfo.messages}
             userEmail={session.login}
+            onClearBadge={() => {
+              dispatch(actions.updateInstallation({
+                "badge": 0
+              }))
+            }}
             onGetMoreMessages={() => {
-              dispatch(actions.getTeamMessages(this.state.currentTeam.id));
+              dispatch(actions.getTeamMessages(this.state.currentTeamInfo.team.id));
             }}
             onCreateMessage={(msg) => {
               _.debounce(() => {
@@ -356,15 +405,40 @@ class App extends React.Component {
       case 'PurveyorIndex':
         return (
           <Components.PurveyorIndex
-            purveyors={currentTeamPurveyors}
+            selectedSegmentationIndex={1}
+            segmentationList={['Category', 'Purveyor', 'Search']}
+            onSegmentationChange={(evt) => {
+              const navValue = evt.nativeEvent.value
+              switch(navValue){
+                case 'Search':
+                  nav.replace({
+                    name: 'SearchView'
+                  })
+                  break
+                case 'Purveyor':
+                  // nav.replace({
+                  //   name: 'PurveyorIndex',
+                  // });
+                  break;
+                case 'Category':
+                  nav.replace({
+                    name: 'CategoryIndex',
+                  });
+                  break;
+                default:
+                  // do nothing
+                  break;
+              }
+            }}
+            purveyors={this.state.currentTeamInfo.purveyors}
             session={session}
             onNavToPurveyor={(purveyorId) => {
-              const purveyor = currentTeamPurveyors[purveyorId];
+              const purveyor = this.state.currentTeamInfo.purveyors[purveyorId];
               this.setState({
                 purveyor: purveyor,
-                specificProducts: _.sortBy(_.filter(currentTeamProducts, (product) => {
-                  return _.includes(product.purveyors, purveyor.id)
-                }), 'name')
+                // specificProducts: _.sortBy(_.filter(this.state.currentTeamInfo.products, (product) => {
+                //   return _.includes(product.purveyors, purveyor.id)
+                // }), 'name')
               }, () => {
                 nav.push({
                   name: 'PurveyorView',
@@ -377,44 +451,49 @@ class App extends React.Component {
             }}
             onCreateProduct={() => {
               nav.push({
-                name: 'ProductCreate'
+                name: 'ProductForm'
               })
             }}
           />
         )
       case 'PurveyorView':
-        // let purveyor = currentTeamPurveyors[route.purveyorId]
-        // let products = _.filter(currentTeamProducts, (product) => {
+        // let purveyor = this.state.currentTeamInfo.purveyors[route.purveyorId]
+        // let products = _.filter(this.state.currentTeamInfo.products, (product) => {
         //   return _.includes(product.purveyors, purveyor.id)
         // })
+        const specificProductsPurveyor = _.sortBy(_.filter(this.state.currentTeamInfo.products, (product) => {
+          return _.includes(product.purveyors, this.state.purveyor.id)
+        }), 'name')
         return (
           <Components.PurveyorView
-            cart={this.state.currentTeam.cart}
+            cart={this.state.currentTeamInfo.team.cart}
             ui={ui}
             purveyor={this.state.purveyor}
-            purveyors={currentTeamPurveyors}
-            products={this.state.specificProducts}
-            onAddNewProduct={(purveyorId, productName) => {
-              const products = purveyor.products.map((product) => {
-                if (!product.deleted) {
-                  return product.name;
-                }
-              });
-              if (products.indexOf(productName) === -1) {
-                dispatch(actions.addPurveyorProduct(purveyorId, {name: productName}))
-              } else {
-                // console.log("ERROR: Product already exists");
+            purveyors={this.state.currentTeamInfo.purveyors}
+            products={specificProductsPurveyor}
+            onProductDelete={(productId) => {
+              _.debounce(() => {
+                dispatch(actions.deleteProduct(productId));
+              }, 25)()
+            }}
+            onProductEdit={(product) => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductForm.submitReady = true;
+              sceneState.ProductForm.productId = product.id
+              sceneState.ProductForm.productAttributes = {
+                name: product.name,
+                purveyors: product.purveyors,
+                amount: product.amount,
+                unit: product.unit,
+                categoryId: this.state.category.id,
               }
-            }}
-            onDeletePurveyor={(purveyorId) => {
-              _.debounce(() => {
-                dispatch(actions.deletePurveyor(purveyorId))
-              }, 25)()
-            }}
-            onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
-              _.debounce(() => {
-                dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
-              }, 25)()
+              this.setState({
+                product: product
+              }, () => {
+                nav.push({
+                  name: 'ProductForm'
+                })
+              })
             }}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               _.debounce(() => {
@@ -444,16 +523,41 @@ class App extends React.Component {
       case 'CategoryIndex':
         return (
           <Components.CategoryIndex
-            products={currentTeamProducts}
-            categories={currentTeamCategories}
+            selectedSegmentationIndex={0}
+            segmentationList={['Category', 'Purveyor', 'Search']}
+            onSegmentationChange={(evt) => {
+              const navValue = evt.nativeEvent.value
+              switch(navValue){
+                case 'Search':
+                  nav.replace({
+                    name: 'SearchView'
+                  })
+                  break
+                case 'Purveyor':
+                  nav.replace({
+                    name: 'PurveyorIndex',
+                  });
+                  break;
+                case 'Category':
+                  // nav.replace({
+                  //   name: 'CategoryIndex',
+                  // });
+                  break;
+                default:
+                  // do nothing
+                  break;
+              }
+            }}
+            products={this.state.currentTeamInfo.products}
+            categories={this.state.currentTeamInfo.categories}
             onNavigateToCategory={(categoryId) => {
-              const category = currentTeamCategories[categoryId]
+              const category = this.state.currentTeamInfo.categories[categoryId]
               this.setState({
                 category: category,
-                specificProducts: _.sortBy(_.map(category.products, (productId) => {
-                  const product = currentTeamProducts[productId]
-                  return product
-                }), 'name')
+                // specificProducts: _.sortBy(_.map(category.products, (productId) => {
+                //   const product = this.state.currentTeamInfo.products[productId]
+                //   return product
+                // }), 'name')
               }, () => {
                 nav.push({
                   name: 'CategoryView',
@@ -463,23 +567,181 @@ class App extends React.Component {
             }}
             onCreateProduct={() => {
               nav.push({
-                name: 'ProductCreate'
+                name: 'ProductForm'
               })
             }}
           />
         )
       case 'CategoryView':
+        const specificProductsCategory = _.sortBy(_.map(this.state.category.products, (productId) => {
+          const product = this.state.currentTeamInfo.products[productId]
+          return product
+        }), 'name')
         return (
           <Components.CategoryView
             ui={ui}
             category={this.state.category}
-            cart={this.state.currentTeam.cart}
-            products={this.state.specificProducts}
-            purveyors={currentTeamPurveyors}
+            cart={this.state.currentTeamInfo.team.cart}
+            products={specificProductsCategory}
+            purveyors={this.state.currentTeamInfo.purveyors}
+            onProductDelete={(productId) => {
+              _.debounce(() => {
+                dispatch(actions.deleteProduct(productId));
+              }, 25)()
+            }}
+            onProductEdit={(product) => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductForm.submitReady = true;
+              sceneState.ProductForm.productId = product.id
+              sceneState.ProductForm.productAttributes = {
+                name: product.name,
+                purveyors: product.purveyors,
+                amount: product.amount,
+                unit: product.unit,
+                categoryId: this.state.category.id,
+              }
+              this.setState({
+                product: product
+              }, () => {
+                nav.push({
+                  name: 'ProductForm'
+                })
+              })
+            }}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(cartAction, cartAttributes))
               }, 25)()
+            }}
+          />
+        )
+      case 'SearchView':
+        return (
+          <Components.SearchView
+            selectedSegmentationIndex={2}
+            segmentationList={['Category', 'Purveyor', 'Search']}
+            onSegmentationChange={(evt) => {
+              const navValue = evt.nativeEvent.value
+              switch(navValue){
+                case 'Search':
+                  // nav.replace({
+                  //   name: 'SearchView'
+                  // })
+                  break
+                case 'Purveyor':
+                  nav.replace({
+                    name: 'PurveyorIndex',
+                  });
+                  break;
+                case 'Category':
+                  nav.replace({
+                    name: 'CategoryIndex',
+                  });
+                  break;
+                default:
+                  // do nothing
+                  break;
+              }
+            }}
+            products={this.state.currentTeamInfo.products}
+            cart={this.state.currentTeamInfo.team.cart}
+            purveyors={this.state.currentTeamInfo.purveyors}
+            onCreateProduct={() => {
+              nav.push({
+                name: 'ProductForm'
+              })
+            }}
+            onProductDelete={(productId) => {
+              _.debounce(() => {
+                dispatch(actions.deleteProduct(productId));
+              }, 25)()
+            }}
+            onProductEdit={(product) => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.ProductForm.submitReady = true;
+              sceneState.ProductForm.productId = product.id
+              sceneState.ProductForm.productAttributes = {
+                name: product.name,
+                purveyors: product.purveyors,
+                amount: product.amount,
+                unit: product.unit,
+                categoryId: this.state.category.id,
+              }
+              this.setState({
+                product: product
+              }, () => {
+                nav.push({
+                  name: 'ProductForm'
+                })
+              })
+            }}
+            onUpdateProductInCart={(cartAction, cartAttributes) => {
+              _.debounce(() => {
+                dispatch(actions.updateProductInCart(cartAction, cartAttributes))
+              }, 25)()
+            }}
+          />
+        )
+        case 'OrderIndex':
+          return (
+            <Components.OrderIndex
+              showConfirmedOrders={this.state.sceneState.OrderIndex.showConfirmedOrders}
+              orders={this.state.currentTeamInfo.orders}
+              purveyors={this.state.currentTeamInfo.purveyors}
+              teamsUsers={teams.teamsUsers}
+              currentTeamUsers={this.state.currentTeamInfo.team.users}
+              onProcessShowOrders={(showConfirmedOrders) => {
+                const sceneState = Object.assign({}, this.state.sceneState);
+                sceneState.OrderIndex.showConfirmedOrders = showConfirmedOrders;
+                this.setState({
+                  sceneState: sceneState
+                })
+              }}
+              onNavToOrder={(orderId) => {
+                const order = this.state.currentTeamInfo.orders[orderId]
+                const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
+                this.setState({
+                  order: order,
+                  purveyor: purveyor,
+                },() => {
+                  nav.push({
+                    name: 'OrderView'
+                  })
+                })
+              }}
+            />
+          )
+      case 'OrderView':
+        const orderProducts = _.sortBy(_.map(Object.keys(this.state.order.orderDetails.products), (productId) => {
+          return this.state.currentTeamInfo.products[productId]
+        }), 'name')
+        const orderMessages = _.sortBy(_.filter(this.state.currentTeamInfo.messages, (message) => {
+          return message.hasOwnProperty('orderId') === true && message.orderId === this.state.order.id
+        }), 'createdAt')
+        return (
+          <Components.OrderView
+            userId={session.userId}
+            order={this.state.order}
+            purveyor={this.state.purveyor}
+            products={orderProducts}
+            teamsUsers={teams.teamsUsers}
+            messages={orderMessages}
+            onConfirmOrder={(order) => {
+              _.debounce(() => {
+                dispatch(actions.updateOrder(order.id, {
+                  confirm: order.confirm
+                }))
+              }, 25)()
+            }}
+            onSendConfirmationMessage={(msg) => {
+              _.debounce(() => {
+                dispatch(actions.createMessage(msg))
+              }, 25)()
+            }}
+            onNavToOrders={() => {
+              nav.replacePreviousAndPop({
+                name: 'OrderIndex',
+              })
             }}
           />
         )
@@ -510,23 +772,24 @@ class App extends React.Component {
             }}
           />
         )
-      case 'ProductCreate':
+      case 'ProductForm':
         return (
-          <Components.ProductCreate
-            team={this.state.currentTeam}
-            categories={currentTeamCategories}
-            purveyors={currentTeamPurveyors}
-            onAddProduct={(productAttributes) => {
+          <Components.ProductForm
+            product={this.state.product}
+            team={this.state.currentTeamInfo.team}
+            categories={this.state.currentTeamInfo.categories}
+            purveyors={this.state.currentTeamInfo.purveyors}
+            onProcessProduct={(productAttributes) => {
               const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductCreate.submitReady = true;
-              sceneState.ProductCreate.productAttributes = productAttributes
+              sceneState.ProductForm.submitReady = true;
+              sceneState.ProductForm.productAttributes = productAttributes
               this.setState({
                 sceneState: sceneState
               })
             }}
             onProductNotReady={() => {
               const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductCreate.submitReady = false;
+              sceneState.ProductForm.submitReady = false;
               this.setState({
                 sceneState: sceneState
               })
@@ -582,11 +845,15 @@ class App extends React.Component {
           />
         )
       case 'CartView':
+        const cartPurveyorIds = Object.keys(this.state.currentTeamInfo.team.cart.orders)
+        const cartPurveyors = _.sortBy(_.map(cartPurveyorIds, (purveyorId) => {
+          return this.state.currentTeamInfo.purveyors[purveyorId]
+        }), 'name')
         return (
           <Components.CartView
-            team={this.state.currentTeam}
-            purveyors={currentTeamPurveyors}
-            products={currentTeamProducts}
+            team={this.state.currentTeamInfo.team}
+            cartPurveyors={cartPurveyors}
+            products={this.state.currentTeamInfo.products}
             onDeleteProduct={(purveyorId, productId) => {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(
@@ -623,7 +890,7 @@ class App extends React.Component {
         return (
           <Components.TeamMemberListing
             teamsUsers={teams.teamsUsers}
-            currentTeamUsers={this.state.currentTeam.users}
+            currentTeamUsers={this.state.currentTeamInfo.team.users}
           />
         )
       default:
@@ -631,15 +898,8 @@ class App extends React.Component {
     }
   }
 
-  getNavBar(route, nav, currentTeamInfo) {
+  getNavBar(route, nav) {
     const { dispatch, ui, teams, session } = this.props;
-
-    const {
-      currentTeamPurveyors,
-      currentTeamCategories,
-      currentTeamProducts,
-      currentTeamMessages
-    } = currentTeamInfo
 
     let navBar = <View />;
     let nextItem = <View />;
@@ -679,7 +939,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             hidePrev: false,
-            title: this.state.currentTeam ? this.state.currentTeam.name : 'Sous',
+            title: this.state.currentTeamInfo.team ? this.state.currentTeamInfo.team.name : 'Sous',
             titleColor: 'black',
             customPrev: (
               <Components.FeedViewLeftButton />
@@ -696,22 +956,13 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton iconFont={'fontawesome|times'} />
             ),
-            customTitle: (
-              <Components.NavOrderGuide
-                selectedIndex={1}
-                onChange={() => {
-                  nav.replace({
-                    name: 'CategoryIndex'
-                  })
-                }}
-              />
-            ),
+            title: 'Order Guide',
             customNext: (
-              <Components.CategoryViewRightButton
+              <Components.CartRightButton
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cart={this.state.currentTeam.cart}
+                cart={this.state.currentTeamInfo.team.cart}
               />
             )
           })
@@ -721,7 +972,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             buttonsColor: '#ccc',
-            title: this.state.currentTeam.name,
+            title: this.state.currentTeamInfo.team.name,
             customPrev: (
               <Components.NavBackButton iconFont={'fontawesome|times'} />
             ),
@@ -739,11 +990,11 @@ class App extends React.Component {
             ),
             title: this.state.purveyor.name.substr(0,20) + (this.state.purveyor.name.length > 20 ? '...' : ''),
             customNext: (
-              <Components.CategoryViewRightButton
+              <Components.CartRightButton
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cart={this.state.currentTeam.cart}
+                cart={this.state.currentTeamInfo.team.cart}
               />
             )
           })
@@ -757,22 +1008,13 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton iconFont={'fontawesome|times'} />
             ),
-            customTitle: (
-              <Components.NavOrderGuide
-                selectedIndex={0}
-                onChange={() => {
-                  nav.replace({
-                    name: 'PurveyorIndex'
-                  })
-                }}
-              />
-            ),
+            title: 'Order Guide',
             customNext: (
-              <Components.CategoryViewRightButton
+              <Components.CartRightButton
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cart={this.state.currentTeam.cart}
+                cart={this.state.currentTeamInfo.team.cart}
               />
             )
           })
@@ -789,13 +1031,83 @@ class App extends React.Component {
             ),
             title: this.state.category.name,
             customNext: (
-              <Components.CategoryViewRightButton
+              <Components.CartRightButton
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cart={this.state.currentTeam.cart}
+                cart={this.state.currentTeamInfo.team.cart}
               />
             )
+          })
+          break;
+        case 'SearchView':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton iconFont={'fontawesome|times'} />
+            ),
+            title: 'Order Guide',
+            customNext: (
+              <Components.CartRightButton
+                onNavToCart={() => {
+                  nav.push({ name: 'CartView', });
+                }}
+                cart={this.state.currentTeamInfo.team.cart}
+              />
+            )
+          })
+          break;
+        case 'OrderIndex':
+          const openOrders = _.filter(this.state.currentTeamInfo.orders, (order) => {
+            return order.confirm.order === false
+          })
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            hidePrev: false,
+            buttonsColor: '#ccc',
+            customPrev: (
+              <Components.NavBackButton iconFont={'fontawesome|times'} />
+            ),
+            title: `${openOrders.length} Open Orders`,
+            hideNext: true,
+          })
+          break;
+        case 'OrderView':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                navName='OrderIndex'
+                iconFont={'fontawesome|chevron-left'}
+              />
+            ),
+            title: this.state.purveyor.name.substr(0,16) + (this.state.purveyor.name.length > 16 ? '...' : ''),
+            customNext: (
+              <Components.OrderRightButton
+                purveyor={this.state.purveyor}
+                onHandlePress={(type) => {
+                  const order = this.state.order
+                  const purveyor = this.state.purveyor
+                  const team = this.state.currentTeamInfo.team
+                  if(type === 'call') {
+                    Communications.phonecall(purveyor.phone, true)
+                  } else if(type === 'email'){
+                    let timeZone = 'UTC';
+                    if(purveyor.hasOwnProperty('timeZone') && purveyor.timeZone){
+                      timeZone = purveyor.timeZone;
+                    }
+                    const orderDate = moment(order.orderedAt).tz(timeZone);
+                    const to = purveyor.orderEmails.split(',')
+                    const cc = ['orders@sousapp.com']
+                    const subject = `re: ${purveyor.name} • Order Received from ${team.name} on ${orderDate.format('dddd, MMMM D')}`
+                    Communications.email(to, cc, null, subject, null)
+                  }
+                }}
+              />
+            ),
           })
           break;
         // case 'ProductView':
@@ -844,7 +1156,7 @@ class App extends React.Component {
             title: 'Cart',
           })
           break;
-        case 'ProductCreate':
+        case 'ProductForm':
           navBar = React.addons.cloneWithProps(this.navBar, {
             ref: 'navBar',
             navigator: nav,
@@ -855,17 +1167,29 @@ class App extends React.Component {
                 pop={true}
               />
             ),
-            title: 'Add New Product',
+            title: (this.state.product === null) ? 'Add New Product' : 'Edit Product',
             customNext: (
-              <Components.ProductCreateRightCheckbox
-                submitReady={this.state.sceneState.ProductCreate.submitReady}
-                onAddProduct={() => {
+              <Components.ProductFormRightCheckbox
+                submitReady={this.state.sceneState.ProductForm.submitReady}
+                onProcessProduct={() => {
                   _.debounce(() => {
-                    dispatch(actions.addProduct(this.state.sceneState.ProductCreate.productAttributes))
+                    const {productId, productAttributes} = this.state.sceneState.ProductForm
+                    if(productId === null){
+                      dispatch(actions.addProduct(productAttributes))
+                    } else {
+                      dispatch(actions.updateProduct(productId, productAttributes))
+                    }
                   }, 5)()
-                  nav.replacePreviousAndPop({
-                    name: 'CategoryIndex',
-                  });
+                  if(this.state.product === null){
+                    nav.replacePreviousAndPop({
+                      name: 'CategoryIndex',
+                    });
+                  } else {
+                    nav.replace({
+                      name: 'CategoryView',
+                      categoryId: this.state.category.id
+                    })
+                  }
                 }}
               />
             ),
@@ -911,14 +1235,8 @@ class App extends React.Component {
     return navBar;
   }
 
-  getRoute(route, nav, currentTeamInfo) {
+  getRoute(route, nav) {
     const { session } = this.props;
-    const {
-      currentTeamPurveyors,
-      currentTeamCategories,
-      currentTeamProducts,
-      currentTeamMessages
-    } = currentTeamInfo
 
     // redirect to initial view
     if (this.state.isAuthenticated){
@@ -926,7 +1244,7 @@ class App extends React.Component {
         if (this.state.firstName === '' || this.state.lastName === '') {
           route.name = 'UserInfo';
         } else {
-          if(this.state.currentTeam !== null){
+          if(this.state.currentTeamInfo.team !== null){
             // else send to Feed
             route.name = 'Feed';
           } else if(session.teamId === null) {
@@ -936,7 +1254,7 @@ class App extends React.Component {
           }
         }
       }
-      if(Object.keys(currentTeamPurveyors).length === 0){
+      if(Object.keys(this.state.currentTeamInfo.purveyors).length === 0){
         if(route.name === 'CategoryIndex' || route.name === 'PurveyorIndex') {
           route.name = 'AddOrderGuide';
         }
@@ -953,26 +1271,10 @@ class App extends React.Component {
   renderScene(route, nav) {
     const { dispatch, ui, session, teams, messages, purveyors, products, categories, errors, connect } = this.props;
 
-    let currentTeamInfo = {
-      currentTeamPurveyors: {},
-      currentTeamCategories: {},
-      currentTeamProducts: {},
-      currentTeamMessages: {},
-    }
+    route = this.getRoute(route, nav);
 
-    if(this.state.currentTeam !== null){
-      currentTeamInfo.currentTeamPurveyors = purveyors.teams[this.state.currentTeam.id] || {}
-      currentTeamInfo.currentTeamCategories = categories.teams[this.state.currentTeam.id] || {}
-      if(products.teams.hasOwnProperty(this.state.currentTeam.id) === true){
-        currentTeamInfo.currentTeamProducts = products.teams[this.state.currentTeam.id]
-      }
-      currentTeamInfo.currentTeamMessages = messages.teams[this.state.currentTeam.id] || {}
-    }
-
-    route = this.getRoute(route, nav, currentTeamInfo);
-
-    let navBar = this.getNavBar(route, nav, currentTeamInfo);
-    let scene = this.getScene(route, nav, currentTeamInfo);
+    let navBar = this.getNavBar(route, nav);
+    let scene = this.getScene(route, nav);
     let errorModal = (
       <Components.ErrorModal
         onDeleteError={(errorIdList) => {
@@ -987,7 +1289,7 @@ class App extends React.Component {
     const inviteModal = (
       <Components.InviteModal
         ref='inviteModal'
-        currentTeam={this.state.currentTeam}
+        currentTeam={this.state.currentTeamInfo.team}
         modalVisible={session.inviteModalVisible}
         hideInviteModal={() => {
           // nav.refs.inviteModal.setState({ modalVisible: true });
@@ -1016,7 +1318,7 @@ class App extends React.Component {
       <Components.GenericModal
         ref='genericModal'
         modalMessage={this.state.genericModalMessage}
-        currentTeam={this.state.currentTeam}
+        currentTeam={this.state.currentTeamInfo.team}
         modalVisible={this.state.showGenericModal}
         hideModal={() => {
           const cb = this.state.genericModalCallback();
@@ -1032,16 +1334,19 @@ class App extends React.Component {
 
     let CustomSideView = View
     let menu = View
-    if(this.state.isAuthenticated === true && this.state.currentTeam !== null){
+    if(this.state.isAuthenticated === true && this.state.currentTeamInfo.team !== null){
       CustomSideView = SideMenu
       menu = (
         <Components.Menu
           ref='menu'
-          team={this.state.currentTeam}
+          team={this.state.currentTeamInfo.team}
           session={session}
           open={this.state.open}
           onNavToCategory={() => {
             nav.push({ name: 'CategoryIndex', })
+          }}
+          onNavToOrders={() => {
+            nav.push({ name: 'OrderIndex', })
           }}
           onNavToProfile={() => {
             nav.push({ name: 'Profile', })
@@ -1207,6 +1512,7 @@ function mapStateToProps(state) {
     messages: state.messages,
     purveyors: state.purveyors,
     products: state.products,
+    orders: state.orders,
     categories: state.categories,
     errors: state.errors,
     connect: state.connect,

@@ -1,7 +1,7 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import _ from 'lodash';
-import { greyText, taskCompletedBackgroundColor } from '../utilities/colors';
+import Colors from '../utilities/colors';
 
 const {
   View,
@@ -17,10 +17,7 @@ class CategoryIndexRow extends React.Component {
     let { category, products } = this.props
 
     const categoryProducts = _.filter(products, (product) => {
-      if(product.id === 'k8Ice1As0LKY9THo'){
-        console.log(product);
-      }
-      return product.deleted !== true
+      return product.hasOwnProperty('deleted') === true && product.deleted === false
     })
 
     return (

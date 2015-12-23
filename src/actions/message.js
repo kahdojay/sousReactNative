@@ -38,6 +38,12 @@ export default function MessageActions(ddpClient) {
         type: message.type,
         userId: session.userId,
       };
+      if(message.hasOwnProperty('purveyor') === true){
+        newMessage.purveyor = message.purveyor
+      }
+      if(message.hasOwnProperty('orderId') === true){
+        newMessage.orderId = message.orderId
+      }
       // console.log('newMessage', newMessage);
       dispatch(() => {
         ddpClient.call('createMessage', [newMessage])

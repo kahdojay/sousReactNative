@@ -1,6 +1,7 @@
 import React from 'react-native';
+import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 import TaskListItem from './taskListItem';
-import { greyText, taskCompletedBackgroundColor } from '../utilities/colors';
 
 const {
   View,
@@ -122,16 +123,16 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   roundedCorners: {
-    backgroundColor: taskCompletedBackgroundColor,
+    backgroundColor: Colors.taskCompletedBackgroundColor,
     width: 150,
-    borderRadius: 10,
+    borderRadius: Sizes.inputBorderRadius,
     alignItems: 'center',
   },
   text: {
     textAlign: 'center',
-    backgroundColor: taskCompletedBackgroundColor,
+    backgroundColor: Colors.taskCompletedBackgroundColor,
     fontWeight: 'bold',
-    color: greyText,
+    color: Colors.greyText,
     paddingTop: 5,
     paddingBottom: 3,
     width: 140,

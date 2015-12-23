@@ -1,8 +1,8 @@
 import AddOrderGuide from './addOrderGuide';
 import CartView from './cartView';
+import CartRightButton from './CartRightButton';
 import CategoryIndex from './categoryIndex';
 import CategoryView from './categoryView';
-import CategoryViewRightButton from './CategoryViewRightButton';
 import ErrorModal from '../components/errorModal';
 import Feed from './feed';
 import FeedListItem from './feedListItem';
@@ -16,13 +16,17 @@ import Menu from './menu';
 import NavBackButton from './navBackButton';
 import NavOrderGuide from './navOrderGuide';
 import NavbarTitle from './NavbarTitle';
-import ProductCreate from './productCreate';
-import ProductCreateRightCheckbox from './ProductCreateRightCheckbox';
+import OrderIndex from './orderIndex';
+import OrderRightButton from './orderRightButton'
+import OrderView from './orderView';
+import ProductForm from './productForm';
+import ProductFormRightCheckbox from './productFormRightCheckbox';
 import ProductView from './productView';
 import ProfileView from './profileView';
 import PurveyorIndex from './purveyorIndex';
 import PurveyorView from './purveyorView';
 import Signup from './signup';
+import SearchView from './searchView';
 import TaskView from './taskView';
 import TeamIndex from './teamIndex';
 import TeamView from './teamView';
@@ -34,9 +38,9 @@ import UserTeam from './userTeam';
 export default {
   AddOrderGuide,
   CartView,
+  CartRightButton,
   CategoryIndex,
   CategoryView,
-  CategoryViewRightButton,
   ErrorModal,
   Feed,
   FeedListItem,
@@ -50,13 +54,17 @@ export default {
   NavBackButton,
   NavbarTitle,
   NavOrderGuide,
-  ProductCreate,
-  ProductCreateRightCheckbox,
+  OrderIndex,
+  OrderRightButton,
+  OrderView,
+  ProductForm,
+  ProductFormRightCheckbox,
   ProductView,
   ProfileView,
   PurveyorIndex,
   PurveyorView,
   Signup,
+  SearchView,
   TaskView,
   TeamIndex,
   TeamMemberListing,

@@ -1,4 +1,3 @@
-import { getIdx, updateByIdx, updateDataState } from '../utilities/reducer'
 import {
   RESET_PRODUCTS,
   GET_PRODUCTS,
@@ -18,6 +17,17 @@ const initialState = {
   }
 };
 
+function getTeamProduct(productTeamState, teamId, productId) {
+  let originalTeamProduct = null
+  if(productTeamState.hasOwnProperty(teamId) !== false){
+    originalTeamProduct = {}
+    if(productTeamState[teamId].hasOwnProperty(productId)){
+      originalTeamProduct = productTeamState[teamId][productId]
+    }
+  }
+  return originalTeamProduct
+}
+
 function products(state = initialState.products, action) {
   switch (action.type) {
   // reset the products
@@ -35,10 +45,7 @@ function products(state = initialState.products, action) {
     if(newProductTeamState.hasOwnProperty(action.product.teamId) === false){
       newProductTeamState[action.product.teamId] = {};
     }
-    let originalTeamProduct = {}
-    if(newProductTeamState[action.product.teamId].hasOwnProperty(action.product.id)){
-      originalTeamProduct = newProductTeamState[action.product.teamId][action.product.id]
-    }
+    const originalTeamProduct = getTeamProduct(newProductTeamState, action.product.teamId, action.product.id)
     newProductTeamState[action.product.teamId][action.product.id] = Object.assign(originalTeamProduct, action.product)
     return Object.assign({}, state, {
       errors: null,
@@ -46,58 +53,45 @@ function products(state = initialState.products, action) {
       lastUpdated: (new Date()).toISOString()
     });
 
-  // // delete the product
-  // case DELETE_PRODUCT:
-  //   var newProductState = Object.assign({}, state);
-  //   var productIdx = getIdx(newProductState.data, action.productId);
-  //   var currentProductsDataState = updateByIdx(newProductState.data, productIdx, { deleted: true });
-  //   return Object.assign({}, state, {
-  //     data: currentProductsDataState,
-  //     lastUpdated: (new Date()).toISOString()
-  //   });
-  //
-  // // add product
-  // case ADD_PRODUCT:
-  //   var newProductState = Object.assign({}, state);
-  //   var currentProductsDataState = updateDataState(newProductState.data, action.product)
-  //   // console.log(action.type, action.product.id)
-  //   return Object.assign({}, state, {
-  //     data: currentProductsDataState,
-  //     lastUpdated: (new Date()).toISOString()
-  //   });
-  //
-  // // update product
-  // case UPDATE_PRODUCT:
-  //   // action {
-  //   //   productId
-  //   //   product
-  //   //   ------- OR -------
-  //   //   productId
-  //   //   productId
-  //   //   product
-  //   // }
-  //
-  //   var newProductState = Object.assign({}, state);
-  //   var currentProductsDataState = newProductState.data;
-  //   // if product passed in, then assume we are only updating the product attributes
-  //   if (action.hasOwnProperty('product')) {
-  //     currentProductsDataState = updateDataState(newProductState.data, action.product);
-  //   }
-  //   // if productId and product passed in, then assume we are updating a specific product
-  //   else if(action.hasOwnProperty('productId') && action.hasOwnProperty('product')){
-  //     var productIdx = getIdx(newProductState.data, action.productId);
-  //     // console.log(action.type, action.productId);
-  //     var productIdx = getIdx(newProductState.data[productIdx].products, action.productId);
-  //     var currentProductsDataState = updateByIdx(newProductState.data[productIdx].products, productIdx, action.product);
-  //     currentProductsDataState = updateByIdx(newProductState.data, productIdx, {
-  //       products: currentProductsDataState
-  //     });
-  //   }
-  //
-  //   return Object.assign({}, state, {
-  //     data: currentProductsDataState,
-  //     lastUpdated: (new Date()).toISOString()
-  //   });
+  // delete the product
+  case DELETE_PRODUCT:
+    var deleteProductTeamState = Object.assign({}, state.teams);
+    const deleteOriginalTeamProduct = getTeamProduct(deleteProductTeamState, action.teamId, action.productId)
+    if(deleteOriginalTeamProduct !== null){
+      deleteProductTeamState[action.teamId][action.productId].deleted = true
+      deleteProductTeamState[action.teamId][action.productId].updatedAt = (new Date()).toISOString()
+    }
+    return Object.assign({}, state, {
+      errors: null,
+      teams: deleteProductTeamState,
+      lastUpdated: (new Date()).toISOString()
+    });
+
+  // add product
+  case ADD_PRODUCT:
+    var addProductTeamState = Object.assign({}, state.teams);
+    const addOriginalTeamProduct = getTeamProduct(addProductTeamState, action.teamId, action.productId)
+    addProductTeamState[action.teamId][action.productId] = Object.assign(addOriginalTeamProduct, action.product, {
+      updatedAt: (new Date()).toISOString()
+    })
+    return Object.assign({}, state, {
+      errors: null,
+      teams: addProductTeamState,
+      lastUpdated: (new Date()).toISOString()
+    });
+
+  // update product
+  case UPDATE_PRODUCT:
+    var updateProductTeamState = Object.assign({}, state.teams);
+    const updateOriginalTeamProduct = getTeamProduct(updateProductTeamState, action.teamId, action.productId)
+    updateProductTeamState[action.teamId][action.productId] = Object.assign(updateOriginalTeamProduct, action.product, {
+      updatedAt: (new Date()).toISOString()
+    })
+    return Object.assign({}, state, {
+      errors: null,
+      teams: updateProductTeamState,
+      lastUpdated: (new Date()).toISOString()
+    });
 
   // everything else
   case GET_PRODUCTS:

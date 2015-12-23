@@ -11,7 +11,7 @@ const {
   StyleSheet,
 } = React;
 
-class CategoryViewRightButton extends React.Component {
+class CartRightButton extends React.Component {
   constructor(props) {
     super(props)
   }
@@ -32,7 +32,7 @@ class CategoryViewRightButton extends React.Component {
       <TouchableHighlight
         underlayColor='white'
         onPress={::this.handlePress} >
-        <Icon name='fontawesome|shopping-cart' size={30} color={Colors.navbarIconColor} style={styles.cart}>
+        <Icon name='fontawesome|shopping-cart' size={30} color={Colors.lightBlue} style={styles.cart}>
           {badgeValue !== '' ? <Icon name='fontawesome|circle' size={24} color={Colors.red} style={styles.badge}><Text style={styles.badgeText}>{badgeValue}</Text></Icon> : <View/> }
         </Icon>
       </TouchableHighlight>
@@ -62,11 +62,7 @@ let styles = StyleSheet.create({
   }
 })
 
-CategoryViewRightButton.propTypes = {
+CartRightButton.propTypes = {
 };
 
-CategoryViewRightButton.contextTypes = {
-  menuActions: React.PropTypes.object.isRequired
-}
-
-export default CategoryViewRightButton
+export default CartRightButton
