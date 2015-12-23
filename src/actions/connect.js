@@ -333,6 +333,7 @@ export default function ConnectActions(ddpClient) {
       dispatch({
         type: RESET_CHANNELS,
       })
+      // dispatch(allActions.orderActions.resetOrders());
       dispatch(subscribeDDPMessage(allActions))
       dispatch(subscribeDDPConnected())
       dispatch(subscribeDDPSocketClose())

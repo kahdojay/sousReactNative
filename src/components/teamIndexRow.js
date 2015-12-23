@@ -35,7 +35,7 @@ class TeamIndexRow extends React.Component {
     const totalNumTasks = teamTasks.length
     const progress = numCompletedTasks/totalNumTasks
     let progressColor = progress < 0.9 ? "#4A90E2" : "#7ED321";
-    let percentage = Math.floor(( numCompletedTasks / totalNumTasks)*100) || 0
+    // let percentage = Math.floor(( numCompletedTasks / totalNumTasks)*100) || 0
 
     return (
       <TouchableOpacity
@@ -50,11 +50,10 @@ class TeamIndexRow extends React.Component {
                 <Text style={styles.rowText}>{this.props.team.name}</Text>
                 <Text style={styles.memberCount}>{memberCount} members</Text>
               </View>
-              <Text style={styles.percentage}>
+              <Text style={styles.messagePreview}>
                 {mostRecentMessage}
               </Text>
             </View>
-
           </View>
           <Icon name='material|chevron-right' size={40} color='#aaa' style={styles.iconArrow}/>
         </View>
@@ -67,8 +66,7 @@ class TeamIndexRow extends React.Component {
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'column',
-    padding: 10,
-    height: 73
+    padding: 10
   },
   progress: {
     paddingTop: 5,
@@ -101,7 +99,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
   },
-  percentage:{
+  messagePreview:{
     fontFamily: 'OpenSans',
     color: '#777',
     fontSize: 13,

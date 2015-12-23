@@ -16,34 +16,90 @@ const {
 } = React;
 
 class OrderIndex extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      orders: null,
+      purveyors: null,
+      teamsUsers: null,
+      loaded: false,
+      showConfirmedOrders: false,
+    }
+  }
+
+  componentWillMount(){
+    this.setState({
+      orders: this.props.orders,
+      purveyors: this.props.purveyors,
+      teamsUsers: this.props.teamsUsers,
+      showConfirmedOrders: this.props.showConfirmedOrders,
+      loaded: true,
+    })
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      orders: nextProps.orders,
+      purveyors: nextProps.purveyors,
+      teamsUsers: nextProps.teamsUsers,
+    })
+  }
+
   render() {
-    const { orders, purveyors, teamsUsers } = this.props
+    const { orders, purveyors, teamsUsers } = this.state
+
+    if(this.state.loaded === false){
+      return (
+        <View />
+      )
+    }
 
     let fullOrders = _.map(orders, (order) => {
+      const purveyor = purveyors[order.purveyorId]
       return Object.assign({}, order, {
-        purveyor: purveyors[order.purveyorId],
+        purveyor: purveyor,
         user: teamsUsers[order.userId]
       })
     })
 
-    let ordersList = _.map(_.sortBy(fullOrders, 'purveyor.name'), (order) => {
-      if (order.hasOwnProperty('confirmed') === false || order.confirmed === false) {
+    let ordersList = _.map(_.sortBy(fullOrders, 'orderedAt'), (order) => {
+      let show = false
+      if(this.state.showConfirmedOrders === false && order.confirm.order === false){
+        show = true
+      } else if(this.state.showConfirmedOrders === true){
+        show = true
+      }
+      if(show === true) {
         const itemCount = Object.keys(order.orderDetails.products).length
         const orderedAtDate = moment(order.orderedAt)
+        let confirmedOrderStyle = {}
+        let confirmedOrderMetaInfoStyle = {}
+        if(order.confirm.order === true){
+          confirmedOrderStyle = styles.confirmedOrder
+          confirmedOrderMetaInfoStyle = styles.confirmedOrderMetaInfo
+        }
         return (
-          <View style={styles.row}>
-            <View style={{flex:2}}>
-              <Text style={[styles.purveyorName, styles.bold]}>
-                {order.purveyor.name}
-                <Text style={styles.metaInfo}> {`${itemCount} Item${itemCount > 1 ? 's' : ''}`}</Text>
-              </Text>
-              <Text style={styles.metaInfo}>{`${order.user.firstName} ${order.user.lastName[0]}.`}</Text>
+          <TouchableHighlight
+            key={order.id}
+            underlayColor='transparent'
+            onPress={() => {
+              this.props.onNavToOrder(order.id)
+            }}
+          >
+            <View style={[styles.row, confirmedOrderStyle]}>
+              <View style={{flex:2}}>
+                <Text style={[styles.purveyorName, styles.bold]}>
+                  {order.purveyor.name}
+                  <Text style={[styles.metaInfo,confirmedOrderMetaInfoStyle]}> {`${itemCount} Item${itemCount > 1 ? 's' : ''}`}</Text>
+                </Text>
+                <Text style={[styles.metaInfo,confirmedOrderMetaInfoStyle]}>{`${order.user.firstName} ${order.user.lastName[0]}.`}</Text>
+              </View>
+              <View style={{flex:1}}>
+                <Text style={[styles.metaInfo, styles.bold, styles.rightAlign,confirmedOrderMetaInfoStyle]}>{orderedAtDate.format('M/D/YY')}</Text>
+                <Text style={[styles.metaInfo, styles.rightAlign,confirmedOrderMetaInfoStyle]}>{orderedAtDate.format('h:mm a')}</Text>
+              </View>
             </View>
-            <View style={{flex:1}}>
-              <Text style={[styles.metaInfo, styles.bold, styles.rightAlign]}>{orderedAtDate.format('M/D/YY')}</Text>
-              <Text style={[styles.metaInfo, styles.rightAlign]}>{orderedAtDate.format('h:mm a')}</Text>
-            </View>
-          </View>
+          </TouchableHighlight>
         )
       }
     })
@@ -57,6 +113,23 @@ class OrderIndex extends React.Component {
         >
           {ordersList}
         </ScrollView>
+        <TouchableHighlight
+          onPress={() => {
+            this.setState({
+              showConfirmedOrders: !this.state.showConfirmedOrders
+            }, () => {
+              this.props.onProcessShowOrders(this.state.showConfirmedOrders)  
+            })
+          }}
+          underlayColor='transparent'
+          style={styles.buttonContainerLink}
+        >
+          <View style={styles.buttonContainer}>
+            <Text style={styles.buttonText}>
+              { this.state.showConfirmedOrders === false ? 'See Complete History' : 'Hide Confirmed Orders' }
+            </Text>
+          </View>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -65,7 +138,7 @@ class OrderIndex extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: Colors.mainBackgroundColor,
   },
   scrollView: {
     flex: 1,
@@ -86,7 +159,12 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     flexDirection: 'row',
-    backgroundColor: 'white'
+    backgroundColor: 'white',
+  },
+  confirmedOrder: {
+    backgroundColor: '#ddd',
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
   purveyorName: {
     color: 'black',
@@ -97,12 +175,30 @@ const styles = StyleSheet.create({
     fontWeight: 'normal',
     fontSize: 12,
   },
+  confirmedOrderMetaInfo: {
+    color: '#333',
+  },
   bold: {
     fontWeight: 'bold'
   },
   rightAlign: {
     textAlign: 'right'
-  }
+  },
+  buttonContainerLink: {
+    margin: 10,
+  },
+  buttonContainer: {
+    backgroundColor: 'white',
+    borderRadius: 3,
+    padding: 10,
+  },
+  buttonText: {
+    alignSelf: 'center',
+    fontSize: 16,
+    color: Colors.lightBlue,
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans'
+  },
 });
 
 OrderIndex.propTypes = {

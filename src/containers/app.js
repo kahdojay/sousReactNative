@@ -1,5 +1,6 @@
 import React from 'react-native';
 import _ from 'lodash';
+import moment from 'moment-timezone';
 import NavigationBar from 'react-native-navbar';
 import NavigationBarStyles from 'react-native-navbar/styles'
 import { connect } from 'react-redux/native';
@@ -12,6 +13,7 @@ import * as Components from '../components';
 import Dimensions from 'Dimensions';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import PushManager from 'react-native-remote-push/RemotePushIOS';
+import Communications from 'react-native-communications';
 import DeviceUUID from 'react-native-device-uuid';
 
 const {
@@ -49,8 +51,11 @@ class App extends React.Component {
         ProductForm: {
           submitReady: false,
           productId: null,
-          productAttributes: {}
-        }
+          productAttributes: {},
+        },
+        OrderIndex: {
+          showConfirmedOrders: false,
+        },
       },
       currentTeamInfo: {
         team: this.props.teams.currentTeam,
@@ -680,12 +685,66 @@ class App extends React.Component {
         case 'OrderIndex':
           return (
             <Components.OrderIndex
+              showConfirmedOrders={this.state.sceneState.OrderIndex.showConfirmedOrders}
               orders={this.state.currentTeamInfo.orders}
               purveyors={this.state.currentTeamInfo.purveyors}
               teamsUsers={teams.teamsUsers}
               currentTeamUsers={this.state.currentTeamInfo.team.users}
+              onProcessShowOrders={(showConfirmedOrders) => {
+                const sceneState = Object.assign({}, this.state.sceneState);
+                sceneState.OrderIndex.showConfirmedOrders = showConfirmedOrders;
+                this.setState({
+                  sceneState: sceneState
+                })
+              }}
+              onNavToOrder={(orderId) => {
+                const order = this.state.currentTeamInfo.orders[orderId]
+                const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
+                this.setState({
+                  order: order,
+                  purveyor: purveyor,
+                },() => {
+                  nav.push({
+                    name: 'OrderView'
+                  })
+                })
+              }}
             />
           )
+      case 'OrderView':
+        const orderProducts = _.sortBy(_.map(Object.keys(this.state.order.orderDetails.products), (productId) => {
+          return this.state.currentTeamInfo.products[productId]
+        }), 'name')
+        const orderMessages = _.sortBy(_.filter(this.state.currentTeamInfo.messages, (message) => {
+          return message.hasOwnProperty('orderId') === true && message.orderId === this.state.order.id
+        }), 'createdAt')
+        return (
+          <Components.OrderView
+            userId={session.userId}
+            order={this.state.order}
+            purveyor={this.state.purveyor}
+            products={orderProducts}
+            teamsUsers={teams.teamsUsers}
+            messages={orderMessages}
+            onConfirmOrder={(order) => {
+              _.debounce(() => {
+                dispatch(actions.updateOrder(order.id, {
+                  confirm: order.confirm
+                }))
+              }, 25)()
+            }}
+            onSendConfirmationMessage={(msg) => {
+              _.debounce(() => {
+                dispatch(actions.createMessage(msg))
+              }, 25)()
+            }}
+            onNavToOrders={() => {
+              nav.replacePreviousAndPop({
+                name: 'OrderIndex',
+              })
+            }}
+          />
+        )
       case 'Profile':
         return (
           <Components.ProfileView
@@ -1000,6 +1059,9 @@ class App extends React.Component {
           })
           break;
         case 'OrderIndex':
+          const openOrders = _.filter(this.state.currentTeamInfo.orders, (order) => {
+            return order.confirm.order === false
+          })
           navBar = React.addons.cloneWithProps(this.navBar, {
             navigator: nav,
             route: route,
@@ -1008,8 +1070,44 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton iconFont={'fontawesome|times'} />
             ),
-            title: 'Receiving Guide',
+            title: `${openOrders.length} Open Orders`,
             hideNext: true,
+          })
+          break;
+        case 'OrderView':
+          navBar = React.addons.cloneWithProps(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                navName='OrderIndex'
+                iconFont={'fontawesome|chevron-left'}
+              />
+            ),
+            title: this.state.purveyor.name.substr(0,16) + (this.state.purveyor.name.length > 16 ? '...' : ''),
+            customNext: (
+              <Components.OrderRightButton
+                purveyor={this.state.purveyor}
+                onHandlePress={(type) => {
+                  const order = this.state.order
+                  const purveyor = this.state.purveyor
+                  const team = this.state.currentTeamInfo.team
+                  if(type === 'call') {
+                    Communications.phonecall(purveyor.phone, true)
+                  } else if(type === 'email'){
+                    let timeZone = 'UTC';
+                    if(purveyor.hasOwnProperty('timeZone') && purveyor.timeZone){
+                      timeZone = purveyor.timeZone;
+                    }
+                    const orderDate = moment(order.orderedAt).tz(timeZone);
+                    const to = purveyor.orderEmails.split(',')
+                    const cc = ['orders@sousapp.com']
+                    const subject = `re: ${purveyor.name} • Order Received from ${team.name} on ${orderDate.format('dddd, MMMM D')}`
+                    Communications.email(to, cc, null, subject, null)
+                  }
+                }}
+              />
+            ),
           })
           break;
         // case 'ProductView':

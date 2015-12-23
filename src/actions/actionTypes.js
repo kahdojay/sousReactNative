@@ -62,7 +62,7 @@ export const DELETE_ERRORS = 'DELETE_ERRORS';
 
 export const RESET_ORDERS = 'RESET_ORDERS';
 export const RECEIVE_ORDERS = 'RECEIVE_ORDERS';
-export const UPDATE_ORDER = 'RECEIVE_ORDERS';
+export const UPDATE_ORDER = 'UPDATE_ORDER';
 
 export const RESET_PURVEYORS = 'RESET_PURVEYORS';
 export const GET_PURVEYORS = 'GET_PURVEYORS';

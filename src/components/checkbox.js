@@ -35,8 +35,13 @@ var CheckBox = React.createClass({
       // iconContainerStyle = {marginLeft: 10}
     }
 
+    let TouchableWrapper = TouchableHighlight
+    if(this.props.hasOwnProperty('disabled') === true && this.props.disabled === true){
+      TouchableWrapper = View
+    }
+
     return (
-      <TouchableHighlight
+      <TouchableWrapper
         onPress={this.props.onChange}
         underlayColor='transparent'
       >
@@ -46,7 +51,7 @@ var CheckBox = React.createClass({
             <Text style={[this.props.labelStyle, styles.label]}>{this.props.label}</Text>
           : <View />}
         </View>
-      </TouchableHighlight>
+      </TouchableWrapper>
     )
   }
 });
