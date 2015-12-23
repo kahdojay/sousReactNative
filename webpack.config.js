@@ -22,9 +22,11 @@ var config = {
       test: /\.js$/,
       include: [
         path.resolve(__dirname, 'src'),
+        path.resolve(__dirname, 'node_modules/ddp-client'),
         path.resolve(__dirname, 'node_modules/react-native-addressbook'),
         path.resolve(__dirname, 'node_modules/react-native-checkbox'),
         path.resolve(__dirname, 'node_modules/react-native-communications'),
+        path.resolve(__dirname, 'node_modules/react-native-device-uuid'),
         path.resolve(__dirname, 'node_modules/react-native-icons'),
         path.resolve(__dirname, 'node_modules/react-native-image-picker'),
         path.resolve(__dirname, 'node_modules/react-native-invertible-scroll-view'),

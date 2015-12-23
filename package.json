@@ -7,6 +7,7 @@
     "start": "HOT=1 ./node_modules/.bin/react-native-webpack-server start --hot",
     "start_cold": "./node_modules/.bin/react-native-webpack-server start",
     "bundle": "./node_modules/.bin/react-native-webpack-server bundle",
+    "bundle-prod": "NODE_ENV=production ./node_modules/.bin/react-native-webpack-server bundle",
     "jest": "BABEL_JEST_STAGE=0 jest src/__tests__/*.jest.js",
     "test": "./node_modules/mocha/bin/mocha --compilers js:babel-core/register src/__tests__/mocha-tests.js"
   },
