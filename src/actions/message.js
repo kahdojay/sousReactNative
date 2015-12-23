@@ -41,6 +41,9 @@ export default function MessageActions(ddpClient) {
       if(message.hasOwnProperty('purveyor') === true){
         newMessage.purveyor = message.purveyor
       }
+      if(message.hasOwnProperty('orderId') === true){
+        newMessage.orderId = message.orderId
+      }
       // console.log('newMessage', newMessage);
       dispatch(() => {
         ddpClient.call('createMessage', [newMessage])

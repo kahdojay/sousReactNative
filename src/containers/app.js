@@ -715,6 +715,9 @@ class App extends React.Component {
         const orderProducts = _.sortBy(_.map(Object.keys(this.state.order.orderDetails.products), (productId) => {
           return this.state.currentTeamInfo.products[productId]
         }), 'name')
+        const orderMessages = _.sortBy(_.filter(this.state.currentTeamInfo.messages, (message) => {
+          return message.hasOwnProperty('orderId') === true && message.orderId === this.state.order.id
+        }), 'createdAt')
         return (
           <Components.OrderView
             userId={session.userId}
@@ -722,6 +725,7 @@ class App extends React.Component {
             purveyor={this.state.purveyor}
             products={orderProducts}
             teamsUsers={teams.teamsUsers}
+            messages={orderMessages}
             onConfirmOrder={(order) => {
               _.debounce(() => {
                 dispatch(actions.updateOrder(order.id, {

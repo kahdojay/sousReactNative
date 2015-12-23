@@ -5,6 +5,7 @@ import Sizes from '../utilities/sizes';
 import OrderListItem from './orderListItem';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import moment from 'moment';
+import messageUtils from '../utilities/message';
 
 const {
   Modal,
@@ -25,6 +26,7 @@ class OrderView extends React.Component {
       order: null,
       products: null,
       purveyor: null,
+      messages: null,
       teamsUsers: null,
       loaded: false,
       showConfirm: false,
@@ -38,6 +40,7 @@ class OrderView extends React.Component {
       order: this.props.order,
       products: this.props.products,
       purveyor: this.props.purveyor,
+      messages: this.props.messages,
       teamsUsers: this.props.teamsUsers,
       loaded: true,
     })
@@ -58,6 +61,7 @@ class OrderView extends React.Component {
         type: 'orderConfirmation',
         purveyor: this.state.purveyor.name,
         text: this.state.confirmationMessage,
+        orderId: this.state.order.id,
       });
       this.props.onNavToOrders()
     })
@@ -77,7 +81,7 @@ class OrderView extends React.Component {
   }
 
   render() {
-    const {order, purveyor, products, teamsUsers} = this.state;
+    const {order, purveyor, products, messages, teamsUsers} = this.state;
 
     let productsList = null
     let modal = null
@@ -204,6 +208,11 @@ class OrderView extends React.Component {
               <View style={[styles.buttonContainerLink, styles.buttonContainer, buttonDisabledStyle]}>
                 <Text style={[styles.confirmedText]}>Delivery confirmed by: {`${confirmUser.firstName} ${confirmUser.lastName[0]}.`}</Text>
                 <Text style={[styles.confirmedText]}>{order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('M/D/YY h:mm a') : ''}</Text>
+                { messages.length > 0 ?
+                  <View style={styles.orderMessage}>
+                    {messageUtils.formatMessage(messages[(messages.length-1)])}
+                  </View>
+                : <View /> }
               </View>
             }
             {modal}
@@ -253,6 +262,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.greyText,
     fontFamily: 'OpenSans',
+  },
+  orderMessage: {
+    backgroundColor: 'white',
+    padding: 5,
+    margin: 5,
+    borderRadius: 3,
   },
   separator: {
     height: 0,
