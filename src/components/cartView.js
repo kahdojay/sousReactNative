@@ -1,19 +1,17 @@
 import React from 'react-native';
 import _ from 'lodash';
-import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
-import { nameSort } from '../utilities/utils';
-import {
-  CART
-} from '../actions/actionTypes';
+import CartViewListItem from './cartViewListItem';
 
 const {
   AlertIOS,
-  View,
-  Text,
+  Modal,
+  PickerIOS,
   ScrollView,
-  TouchableHighlight,
   StyleSheet,
+  Text,
+  TouchableHighlight,
+  View,
 } = React;
 
 class CartView extends React.Component {
@@ -21,7 +19,9 @@ class CartView extends React.Component {
     super(props)
     const numberOfOrders = Object.keys(this.props.team.cart.orders).length
     this.state = {
-      numberOfOrders: numberOfOrders
+      numberOfOrders: numberOfOrders,
+      showPurveyorInfo: false,
+      purveyor: null,
     }
   }
 
@@ -61,99 +61,92 @@ class CartView extends React.Component {
   renderPurveyorProducts(purveyorId, cart, products) {
     const cartProducts = cart.orders[purveyorId].products
     const cartPurveyorProductIds = Object.keys(cartProducts)
-    const cartPurveyorProducts = _.map(cartPurveyorProductIds, (productId) => {
-      return _.filter(products, {id: productId})[0]
-    })
-    cartPurveyorProducts.sort(nameSort)
+    const cartPurveyorProducts = _.sortBy(_.map(cartPurveyorProductIds, (productId) => {
+      return products[productId]
+    }), 'name')
 
     return cartPurveyorProducts.map((product) => {
       const cartProduct = cartProducts[product.id];
-      let quantity = cartProduct.quantity * product.amount;
-      if(quantity.toString().indexOf('.') !== -1){
-        quantity = parseFloat(Math.floor(quantity * 1000)/1000)
-      }
-      const productName = product.name || '';
-      let productUnit = product.unit;
-      if(cartProduct.quantity > 1){
-        if(product.unit == 'bunch'){
-          productUnit += 'es';
-        } else if(product.unit !== 'ea' && product.unit !== 'dozen' && product.unit !== 'cs'){
-          productUnit += 's';
-        }
-      }
       return (
-        <View key={product.id} style={styles.productContainer}>
-          <Text style={styles.productTitle}>{productName}</Text>
-          <Text style={styles.productQuantity}>{quantity} {productUnit}</Text>
-          <TouchableHighlight
-            key={'decrement'}
-            onPress={() => {
-              if (quantity > .1) {
-                const cartAttributes = {
-                  purveyorId: purveyorId,
-                  productId: product.id,
-                  quantity: cartProduct.quantity - 1,
-                };
-                this.props.onUpdateProductInCart(CART.ADD, cartAttributes)
-              }
-            }}
-            style={{width: 40, alignItems: 'center'}}
-            underlayColor='transparent'
-          >
-            <Icon
-              name='fontawesome|minus-circle'
-              size={30}
-              color='#aaa'
-              style={styles.icon}
-            />
-          </TouchableHighlight>
-          <TouchableHighlight
-            key={'increment'}
-            onPress={() => {
-              const cartAttributes = {
-                purveyorId: purveyorId,
-                productId: product.id,
-                quantity: cartProduct.quantity + 1,
-              };
-              this.props.onUpdateProductInCart(CART.ADD, cartAttributes)
-            }}
-            style={{width: 40, alignItems: 'center'}}
-            underlayColor='transparent'
-          >
-            <Icon
-              name='fontawesome|plus-circle'
-              size={30}
-              color='#aaa'
-              style={styles.icon}
-            />
-        </TouchableHighlight>
-          <TouchableHighlight
-            onPress={() => {
-              this.props.onDeleteProduct(purveyorId, product.id)
-            }}
-            style={{width: 40, alignItems: 'center'}}
-            underlayColor='transparent'
-          >
-            <Icon
-              name='fontawesome|times'
-              size={25}
-              color='#999'
-              style={styles.iconRemove}
-            />
-          </TouchableHighlight>
-        </View>
+        <CartViewListItem
+          purveyorId={purveyorId}
+          product={product}
+          cartProduct={cartProduct}
+          onUpdateProductInCart={this.props.onUpdateProductInCart}
+          onDeleteProduct={this.props.onDeleteProduct}
+        />
       )
     });
   }
 
-  render() {
-    const {team, purveyors, products} = this.props
-    const cart = team.cart
-    const cartPurveyorIds = Object.keys(cart.orders)
-    const cartPurveyors = _.map(cartPurveyorIds, (purveyorId) => {
-      return _.filter(purveyors, {id: purveyorId})[0]
+  renderDeliveryDays() {
+    if(this.state.purveyor === null){
+      return <View />
+    }
+    const daysOfWeek = ['Su','Mo','Tu','We','Th','Fr','Sa']
+    const renderedDaysOfWeek = daysOfWeek.map((dow) => {
+      let dowStyle = [styles.dayOfWeek]
+      if(this.state.purveyor.deliveryDays.indexOf(dow) !== -1){
+        dowStyle.push(styles.dayOfWeekActive)
+      }
+      return (
+        <Text key={dow} style={dowStyle}>{dow}</Text>
+      )
     })
-    cartPurveyors.sort(nameSort)
+    return (
+      <View style={styles.dayOfWeekContainer}>
+        {renderedDaysOfWeek}
+      </View>
+    )
+  }
+
+  render() {
+    const {team, cartPurveyors, products} = this.props
+
+    const modal = (
+      <Modal
+        animated={true}
+        transparent={true}
+        visible={this.state.showPurveyorInfo}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalInnerContainer}>
+            { this.state.purveyor !== null ?
+              <View>
+                <View style={styles.purveyorInfoRow}>
+                  <Text style={styles.purveyorInfoLabel}>Order Cutoff Time</Text>
+                  <Text style={styles.purveyorInfoData}>{this.state.purveyor.orderCutoffTime}</Text>
+                </View>
+                <View style={styles.purveyorInfoRow}>
+                  <Text style={styles.purveyorInfoLabel}>Order Minimum</Text>
+                  <Text style={styles.purveyorInfoData}>{this.state.purveyor.orderMinimum}</Text>
+                </View>
+                <View style={styles.purveyorInfoRow}>
+                  <Text style={styles.purveyorInfoLabel}>Delivery Days</Text>
+                  {this.renderDeliveryDays()}
+                </View>
+                {/* * /}<View style={styles.purveyorInfoRow}>
+                  <Text style={styles.purveyorInfoLabel}>Notes</Text>
+                  <Text style={styles.purveyorInfoData}>{this.state.purveyor.notes}</Text>
+                </View>{/**/}
+              </View>
+            : <Text>Loading ...</Text> }
+            <View style={styles.separator} />
+            <TouchableHighlight
+              onPress={() => {
+                this.setState({
+                  showPurveyorInfo: false,
+                  purveyor: null,
+                })
+              }}
+              underlayColor='transparent'
+            >
+              <Text style={styles.modalButtonText}>Ok</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
+    )
 
     return (
       <ScrollView style={styles.scrollView}>
@@ -161,8 +154,25 @@ class CartView extends React.Component {
           _.map(cartPurveyors, (purveyor) => {
             return (
               <View key={purveyor.id} style={styles.purveyorContainer}>
-                <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
-                {this.renderPurveyorProducts(purveyor.id, cart, products)}
+                <View style={styles.purveyorInfo}>
+                  <View style={styles.purveyorInfoLeft}>
+                    <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
+                  </View>
+                  <View style={styles.purveyorInfoRight}>
+                    <TouchableHighlight
+                      onPress={() => {
+                        this.setState({
+                          showPurveyorInfo: true,
+                          purveyor: purveyor,
+                        })
+                      }}
+                      underlayColor='transparent'
+                    >
+                      <Text style={styles.purveyorInfoDetails}>Show details</Text>
+                    </TouchableHighlight>
+                  </View>
+                </View>
+                {this.renderPurveyorProducts(purveyor.id, team.cart, products)}
               </View>
             );
           })
@@ -177,57 +187,62 @@ class CartView extends React.Component {
         >
           <Text style={styles.buttonText}>Submit Order</Text>
         </TouchableHighlight>
+        {modal}
       </ScrollView>
     );
   }
 }
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
+  scrollView: {
+    backgroundColor: '#f2f2f2',
+    flex: 1,
+  },
   purveyorContainer: {
     marginLeft: 10,
     marginRight: 10,
   },
-  icon: {
-    width: 30,
-    height: 30,
-  },
-  iconRemove: {
-    width: 30,
-    height: 30,
-    borderWidth: 2,
-    borderColor: '#999',
-    borderRadius: 4,
-  },
-  productContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: 'white',
+  purveyorInfo: {
+    backgroundColor: Colors.darkBlue,
+    borderRadius: 2,
     marginTop: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingRight: 5,
+    padding: 10,
+    flexDirection: 'row'
+  },
+  purveyorInfoLeft: {
+    flex: 2
+  },
+  purveyorInfoRight: {
+    flex: 1
   },
   purveyorTitle: {
-    backgroundColor: Colors.lightBlue,
-    borderRadius: 2,
     fontWeight: 'bold',
-    padding: 10,
     color: 'white',
-    marginTop: 1,
     fontFamily: 'OpenSans',
     fontSize: 18,
   },
-  productTitle: {
+  purveyorInfoRow: {
+    paddingTop: 5,
+    paddingBottom: 5,
+  },
+  purveyorInfoLabel: {
     flex: 1,
-    paddingTop: 10,
-    paddingLeft: 5,
-    paddingBottom: 10,
+    fontFamily: 'OpenSans',
+    fontSize: 12,
+    fontWeight: 'bold',
+    textAlign: 'left',
+  },
+  purveyorInfoData: {
+    flex: 2,
+    fontFamily: 'OpenSans',
+    fontSize: 12,
+    textAlign: 'right',
+  },
+  purveyorInfoDetails: {
+    flex: 1,
     fontFamily: 'OpenSans',
     fontSize: 14,
-  },
-  productQuantity: {
-    width: 50,
-    margin: 5,
+    color: '#fff',
     textAlign: 'right',
   },
   buttonText: {
@@ -239,7 +254,7 @@ let styles = StyleSheet.create({
   },
   button: {
     height: 56,
-    backgroundColor: '#F5A623',
+    backgroundColor: Colors.gold,
     alignSelf: 'center',
     width: 200,
     marginTop: 20,
@@ -250,10 +265,44 @@ let styles = StyleSheet.create({
   buttonDisabled: {
     backgroundColor: Colors.disabled,
   },
-  scrollView: {
-    backgroundColor: '#f2f2f2',
+  modalContainer: {
     flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
   },
+  modalInnerContainer: {
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  modalButtonText: {
+    textAlign: 'center',
+    color: Colors.lightBlue,
+    paddingTop: 15,
+  },
+  separator: {
+    marginTop: 10,
+    height: 0,
+    borderBottomColor: '#bbb',
+    borderBottomWidth: 1,
+  },
+  dayOfWeekContainer: {
+    flexDirection: 'row',
+    flex:2,
+    alignItems: 'center'
+  },
+  dayOfWeek: {
+    flex: 1,
+    textAlign: 'center',
+    margin: 3,
+    color: '#aaa',
+    backgroundColor: '#ddd',
+  },
+  dayOfWeekActive: {
+    color: '#222',
+    backgroundColor: Colors.gold
+  }
 })
 
 export default CartView

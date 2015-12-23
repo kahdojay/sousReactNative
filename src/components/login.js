@@ -1,5 +1,6 @@
 import { Icon, } from 'react-native-icons';
-import React from 'react-native'
+import React from 'react-native';
+import Colors from '../utilities/colors';
 
 const {
   StyleSheet,
@@ -127,7 +128,7 @@ let styles = StyleSheet.create({
   },
   button: {
     height: 56,
-    backgroundColor: '#F5A623',
+    backgroundColor: Colors.gold,
     alignSelf: 'center',
     width: 150,
     marginTop: 30,
@@ -136,7 +137,7 @@ let styles = StyleSheet.create({
   },
   buttonWithErrors: {
     height: 56,
-    backgroundColor: '#F5A623',
+    backgroundColor: Colors.gold,
     alignSelf: 'center',
     width: 150,
     marginTop: 10,

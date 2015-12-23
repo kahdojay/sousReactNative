@@ -2,6 +2,7 @@ import React from 'react-native';
 import _ from 'lodash';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import AddressBook from 'react-native-addressbook';
 
@@ -77,8 +78,8 @@ class InviteModal extends React.Component {
         transparent={true}
         visible={this.state.modalVisible}
       >
-        <View style={styles.container}>
-          <View style={styles.innerContainer}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalInnerContainer}>
             <Text style={[styles.header]}>{`Invite to ${this.props.currentTeam ? this.props.currentTeam.name : 'Team'}`}</Text>
             <Text style={styles.text}>{`Add someone to your team by sending them an SMS:`}</Text>
             <TextInput
@@ -125,15 +126,15 @@ var {
 } = Dimensions.get('window');
 
 var styles = StyleSheet.create({
-  container: {
+  modalContainer: {
     flex: 1,
     justifyContent: 'center',
     padding: 20,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     alignItems: 'center'
   },
-  innerContainer: {
-    borderRadius: 5,
+  modalInnerContainer: {
+    borderRadius: Sizes.modalInnerBorderRadius,
     backgroundColor: '#fff',
     padding: 20,
     alignItems: 'center'

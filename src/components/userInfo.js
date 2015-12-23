@@ -1,8 +1,9 @@
-import { Icon } from 'react-native-icons';
 import React from 'react-native';
-import { BackBtn } from '../utilities/navigation';
+import { Icon } from 'react-native-icons';
+import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 import { NavigationBarStyles } from '../utilities/styles';
-import { mainBackgroundColor, navbarColor } from '../utilities/colors';
+
 let {
   AppRegistry,
   StyleSheet,
@@ -180,7 +181,7 @@ let styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: mainBackgroundColor,
+    backgroundColor: Colors.mainBackgroundColor,
     alignItems: 'stretch',
   },
   navbar: {
@@ -250,7 +251,7 @@ let styles = StyleSheet.create({
     height: 50,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 5,
+    borderRadius: Sizes.inputBorderRadius,
     padding: 10,
   },
 })

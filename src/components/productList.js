@@ -3,12 +3,11 @@ import ProductListItem from './productListItem';
 import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
 
 const {
-  View,
   PropTypes,
-  StyleSheet,
-  Text,
   ScrollView,
+  Text,
   TouchableHighlight,
+  View,
 } = React;
 
 class ProductList extends React.Component {
@@ -18,6 +17,16 @@ class ProductList extends React.Component {
       products: null
     }
   }
+
+  // componentWillReceiveProps(nextProps) {
+  //   this.setState({
+  //     products: []
+  //   }, () => {
+  //     this.setState({
+  //       products: nextProps.products
+  //     })
+  //   })
+  // }
 
   componentWillMount() {
     this.setState({
@@ -92,6 +101,12 @@ class ProductList extends React.Component {
             key={idx}
             product={product}
             purveyors={purveyors}
+            onProductEdit={() => {
+              this.props.onProductEdit(product)
+            }}
+            onProductDelete={() => {
+              this.props.onProductDelete(product.id)
+            }}
             onUpdateProductInCart={(cartAction, cartAttributes) => {
               this.props.onUpdateProductInCart(cartAction, cartAttributes)
             }}
@@ -109,28 +124,6 @@ class ProductList extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    padding: 5,
-  },
-  roundedCorners: {
-    backgroundColor: productCompletedBackgroundColor,
-    width: 150,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  text: {
-    textAlign: 'center',
-    backgroundColor: productCompletedBackgroundColor,
-    fontWeight: 'bold',
-    color: greyText,
-    paddingTop: 5,
-    paddingBottom: 3,
-    width: 140,
-  },
-})
 
 ProductList.propTypes = {
 };

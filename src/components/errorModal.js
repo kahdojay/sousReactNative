@@ -1,6 +1,7 @@
-import React from 'react-native'
-import _ from 'lodash'
-import { Icon } from 'react-native-icons'
+import React from 'react-native';
+import _ from 'lodash';
+import { Icon } from 'react-native-icons';
+import Sizes from '../utilities/sizes';
 
 const {
   Modal,
@@ -87,8 +88,8 @@ class ErrorModal extends React.Component {
           transparent={true}
           visible={this.state.modalVisible}
         >
-          <View style={styles.container}>
-            <View style={styles.innerContainer}>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalInnerContainer}>
               <ScrollView style={styles.errorsContainer}>
                 {errorsArray}
               </ScrollView>
@@ -102,15 +103,15 @@ class ErrorModal extends React.Component {
 };
 
 var styles = StyleSheet.create({
-  container: {
+  modalContainer: {
     flex: 1,
     justifyContent: 'center',
     padding: 20,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     alignItems: 'center'
   },
-  innerContainer: {
-    borderRadius: 10,
+  modalInnerContainer: {
+    borderRadius: Sizes.modalInnerBorderRadius,
     backgroundColor: '#fff',
     padding: 20,
   },

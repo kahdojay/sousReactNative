@@ -1,11 +1,13 @@
-import { Icon } from 'react-native-icons';
 import React from 'react-native';
-import { mainBackgroundColor, navbarColor, darkBlue } from '../utilities/colors';
+import { Icon } from 'react-native-icons';
+import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 
 const {
-  StyleSheet,
-  ScrollView,
+  Image,
   PropTypes,
+  ScrollView,
+  StyleSheet,
   Text,
   TouchableHighlight,
   View,
@@ -26,11 +28,11 @@ class TeamMemberListing extends React.Component {
           icon = <Image source={{uri: user.imageUrl}} style={styles.avatarImage} />
         }
         teamMembers.push(
-          <View>
+          <View style={styles.row}>
             <View style={styles.member}>
               {icon}
               <Text key={userId} style={styles.memberName}>
-                {/* * /}{user.superUser === true ? <Text style={{textAlign: 'center', color: darkBlue, backgroundColor: 'transparent'}}>*</Text> : ''}{/* */}
+                {/* * /}{user.superUser === true ? <Text style={{textAlign: 'center', color: Colors.darkBlue, backgroundColor: 'transparent'}}>*</Text> : ''}{/* */}
                 {user.firstName} {user.lastName}
               </Text>
             </View>
@@ -56,7 +58,17 @@ class TeamMemberListing extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: mainBackgroundColor,
+    backgroundColor: Colors.mainBackgroundColor,
+  },
+  row: {
+    marginTop: 2,
+    marginBottom: 2,
+    marginRight: 5,
+    marginLeft: 5,
+    borderRadius: Sizes.rowBorderRadius,
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    alignItems: 'center'
   },
   member: {
     flexDirection: 'row',
@@ -75,7 +87,7 @@ const styles = StyleSheet.create({
   },
   avatarImage: {
     width: 40,
-    marginTop: 10,
+    marginTop: 5,
     height: 40,
     borderRadius: 20,
   },

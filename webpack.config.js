@@ -22,17 +22,19 @@ var config = {
       test: /\.js$/,
       include: [
         path.resolve(__dirname, 'src'),
-        path.resolve(__dirname, 'node_modules/react-native-checkbox'),
-        path.resolve(__dirname, 'node_modules/react-native-icons'),
-        path.resolve(__dirname, 'node_modules/react-native-invertible-scroll-view'),
-        path.resolve(__dirname, 'node_modules/react-native-navbar'),
-        path.resolve(__dirname, 'node_modules/react-native-image-picker'),
-        path.resolve(__dirname, 'node_modules/react-native-side-menu'),
         path.resolve(__dirname, 'node_modules/react-native-addressbook'),
+        path.resolve(__dirname, 'node_modules/react-native-checkbox'),
+        path.resolve(__dirname, 'node_modules/react-native-communications'),
+        path.resolve(__dirname, 'node_modules/react-native-icons'),
+        path.resolve(__dirname, 'node_modules/react-native-image-picker'),
+        path.resolve(__dirname, 'node_modules/react-native-invertible-scroll-view'),
         path.resolve(__dirname, 'node_modules/react-native-keyboard-spacer'),
         path.resolve(__dirname, 'node_modules/react-native-multipicker'),
+        path.resolve(__dirname, 'node_modules/react-native-navbar'),
         path.resolve(__dirname, 'node_modules/react-native-overlay'),
         path.resolve(__dirname, 'node_modules/react-native-remote-push'),
+        path.resolve(__dirname, 'node_modules/react-native-side-menu'),
+        path.resolve(__dirname, 'node_modules/react-native-swipeout'),
         // Note: add any other js or node modules that need babel processing
       ],
       loader: ['babel-loader'],
@@ -41,10 +43,16 @@ var config = {
         plugins: [],
         optional: 'runtime'
       }
+    },{
+      include: /\.json$/, loaders: ["json-loader"]
     }]
   },
 
   plugins: [],
+
+  resolve: {
+    extensions: ['', '.json', '.jsx', '.js']
+  }
 
 }
 

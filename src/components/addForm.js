@@ -1,5 +1,7 @@
 import { Icon, } from 'react-native-icons';
 import React from 'react-native';
+import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 
 const {
   View,
@@ -28,7 +30,7 @@ export default class AddForm extends React.Component {
             placeholder={this.props.placeholder}
             onChangeText={this.handleChangeText.bind(this)}
             onSubmitEditing={this.handleSubmit.bind(this)}
-            />
+          />
         </View>
         <TouchableHighlight
           onPress={this.handleSubmit.bind(this)}
@@ -72,7 +74,7 @@ let styles = StyleSheet.create({
     paddingLeft: 20,
     color: '#777',
     fontFamily: 'OpenSans',
-    borderRadius: 5,
+    borderRadius: Sizes.inputBorderRadius,
     fontWeight: 'bold'
   },
   shareContainer: {

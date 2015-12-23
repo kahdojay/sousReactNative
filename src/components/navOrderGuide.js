@@ -2,12 +2,12 @@ import React from 'react-native'
 import Colors from '../utilities/colors'
 
 const {
-  TouchableHighlight,
-  PropTypes,
-  Text,
   Image,
+  PropTypes,
   SegmentedControlIOS,
   StyleSheet,
+  Text,
+  TouchableHighlight,
   View,
 } = React;
 
@@ -19,7 +19,7 @@ class NavOrderGuide extends React.Component {
           Order Guide
         </Text>
         <SegmentedControlIOS
-          tintColor={Colors.navbarIconColor}
+          tintColor={Colors.lightBlue}
           style={styles.segmentedControl}
           values={['Category', 'Purveyor']}
           selectedIndex={this.props.selectedIndex}

@@ -1,20 +1,15 @@
 import React from 'react-native';
 import _ from 'lodash';
-import { Icon } from 'react-native-icons';
 import ProductList from '../components/productList';
-import { BackBtn } from '../utilities/navigation';
-import { NavigationBarStyles } from '../utilities/styles';
-import AddForm from './addForm';
 import Colors from '../utilities/colors';
 
 const {
-  StyleSheet,
-  View,
   PropTypes,
+  StyleSheet,
+  Text,
   TouchableHighlight,
   TouchableOpacity,
-  Text,
-  Image
+  View,
 } = React;
 
 class CategoryView extends React.Component {
@@ -28,9 +23,10 @@ class CategoryView extends React.Component {
       <View style={styles.container}>
         <ProductList
           cart={cart}
-          productsCount={category.products.length}
           products={products}
           purveyors={purveyors}
+          onProductEdit={this.props.onProductEdit}
+          onProductDelete={this.props.onProductDelete}
           onUpdateProductInCart={this.props.onUpdateProductInCart}
         />
       </View>
@@ -43,14 +39,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
   },
-  logoImage: {
-    width: 45,
-    height: 45,
-  },
-  iconMore: {
-    width: 40,
-    height: 40,
-  }
 });
 
 CategoryView.propTypes = {

@@ -39,36 +39,50 @@ export default function ProductActions(ddpClient, allActions){
         unit: productAttributes.unit,
         deleted: false,
       }
+      
       dispatch(() => {
         ddpClient.call('createProduct', [newProductAttributes]);
-
       })
-      dispatch(categoryActions.addProductToCategory(productAttributes.categoryId,newProductAttributes._id))
-      
-      return dispatch({
+      dispatch({
         type: ADD_PRODUCT,
+        teamId: currentTeam.id,
         product: newProductAttributes,
       });
+
+      return dispatch(categoryActions.addProductToCategory(productAttributes.categoryId,newProductAttributes._id))
     }
   }
 
   function updateProduct(productId, productAttributes){
-    // ddpClient.call('updateProduct', [productId, productAttributes]);
-    return {
-      type: UPDATE_PRODUCT,
-      productId: productId,
-      product: productAttributes
+    return (dispatch, getState) => {
+      const {session, teams } = getState();
+      const { currentTeam } = teams;
+      dispatch(() => {
+        ddpClient.call('updateProduct', [productId, productAttributes, session.userId]);
+      })
+      return dispatch({
+        type: UPDATE_PRODUCT,
+        teamId: currentTeam.id,
+        productId: productId,
+        product: productAttributes
+      })
     }
   }
 
   function deleteProduct(productId) {
     return (dispatch, getState) => {
-      const {session} = getState()
-      // ddpClient.call('deleteProduct', [productId, session.userId])
-      return {
+      const {session, teams } = getState();
+      const { currentTeam } = teams;
+      const productAttributes = {deleted: true};
+      dispatch(() => {
+        ddpClient.call('updateProduct', [productId, productAttributes, session.userId])
+      })
+      return dispatch({
         type: DELETE_PRODUCT,
-        productId: productId
-      }
+        teamId: currentTeam.id,
+        productId: productId,
+        product: productAttributes
+      })
     }
   }
 

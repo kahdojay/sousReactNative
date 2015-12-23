@@ -1,12 +1,5 @@
 import Shortid from 'shortid'
 
-function nameSort (a, b) {
-  if (a.name > b.name) { return 1; }
-  if (a.name < b.name) { return -1; }
-  // a must be equal to b
-  return 0;
-}
-
 function generateId (len = 17) {
 
   let id = '';
@@ -28,6 +21,5 @@ function generateId (len = 17) {
 }
 
 export default {
-  'nameSort': nameSort,
   'generateId': generateId
 }

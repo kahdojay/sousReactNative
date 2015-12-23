@@ -28,7 +28,7 @@ class TeamMemberRightInvite extends React.Component {
         <Icon
           name='fontawesome|user-plus'
           size={30}
-          color={Colors.navbarIconColor}
+          color={Colors.lightBlue}
           style={styles.icon}
         />
       </TouchableHighlight>

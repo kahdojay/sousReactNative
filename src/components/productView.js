@@ -2,7 +2,7 @@ import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import { BackBtn } from '../utilities/navigation';
 import { NavigationBarStyles } from '../utilities/styles';
-import { mainBackgroundColor, navbarColor } from '../utilities/colors';
+import Colors from '../utilities/colors';
 
 const {
   ScrollView,
@@ -144,7 +144,7 @@ class ProductView extends React.Component {
 const styles = StyleSheet.create({
   button: {
     height: 56,
-    backgroundColor: '#F5A623',
+    backgroundColor: Colors.gold,
     alignSelf: 'center',
     width: 150,
     justifyContent: 'center',
@@ -169,13 +169,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f7f7f7'
+    backgroundColor: Colors.mainBackgroundColor
   },
   mainContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f7f7f7'
+    backgroundColor: Colors.mainBackgroundColor
   },
   input: {
     height: 40,
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     height: 40,
-    borderColor: 'blue',
+    borderColor: Colors.blue,
     borderWidth: 1,
     flex: 1
   },

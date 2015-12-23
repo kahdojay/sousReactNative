@@ -1,7 +1,8 @@
 import React from 'react-native';
 import _ from 'lodash';
-import CheckBox from './checkbox'
+import CheckBox from './checkbox';
 import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 const {
   ScrollView,
   View,
@@ -32,8 +33,8 @@ class InviteView extends React.Component {
   render() {
     if (this.state.denied) {
       return (
-        <View style={styles.messageContainer}>
-          <View style={styles.message}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalInnerContainer}>
             <Text style={styles.centerText}>To invite your contacts, please go to:</Text>
             <Text style={styles.centerText}>Settings > Sous > Enable "Contacts"</Text>
             <Text style={styles.centerText}>In the "ALLOW SOUS TO ACCESS" area.</Text>
@@ -126,7 +127,7 @@ let styles = StyleSheet.create({
     height: 56,
     width: 150,
     margin: 5,
-    backgroundColor: '#F5A623',
+    backgroundColor: Colors.gold,
     alignSelf: 'center',
     justifyContent: 'center',
     borderRadius: 3,
@@ -138,15 +139,15 @@ let styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: 'OpenSans'
   },
-  messageContainer: {
+  modalContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  message: {
+  modalInnerContainer: {
     marginTop: -40,
     width: 280,
-    borderRadius: 5,
+    borderRadius: Sizes.modalInnerBorderRadius,
     backgroundColor: Colors.mainBackgroundColor,
   },
   centerText: {

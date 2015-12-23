@@ -2,6 +2,7 @@ import React from 'react-native';
 import _ from 'lodash';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 
 const {
   Modal,
@@ -42,8 +43,8 @@ class GenericModal extends React.Component {
         transparent={true}
         visible={this.state.modalVisible}
       >
-        <View style={styles.container}>
-          <View style={styles.innerContainer}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalInnerContainer}>
             <View style={styles.messageContainer}>{this.props.modalMessage}</View>
             <View style={styles.row}>
               <TouchableHighlight
@@ -67,15 +68,15 @@ var {
 } = Dimensions.get('window');
 
 var styles = StyleSheet.create({
-  container: {
+  modalContainer: {
     flex: 1,
     justifyContent: 'center',
     padding: 5,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     alignItems: 'center'
   },
-  innerContainer: {
-    borderRadius: 5,
+  modalInnerContainer: {
+    borderRadius: Sizes.modalInnerBorderRadius,
     backgroundColor: '#fff',
     alignItems: 'center'
   },

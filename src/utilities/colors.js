@@ -5,16 +5,17 @@ const Colors = {
   buttonPressUnderlay: '#C6861D',
   darkBlue: '#18008E',
   disabled: '#ccc',
-  footerButtonIconColor: '#C7C6C7',
   footerActiveHighlight: '#2700EB',
+  footerButtonIconColor: '#C7C6C7',
+  gold: '#F5A623',
+  green: '#7CD34B',
   greyText: '#9b9796',
   lightBlue: '#4C9EF5',
+  lightGreen: '#D6F7C4',
   mainBackgroundColor: '#f3f3f3',
   navbarColor: 'white',
-  navbarIconColor: '#4C9EF5',
   red: '#B11E00',
-  green: '#7CD34B',
   taskCompletedBackgroundColor: '#e1e1e1',
 }
 
-module.exports = Colors
+export default Colors

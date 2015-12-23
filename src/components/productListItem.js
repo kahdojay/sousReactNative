@@ -1,17 +1,20 @@
-import React from 'react-native'
-import ProductToggle from './productToggle'
-import { Icon } from 'react-native-icons'
-import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
+import React from 'react-native';
+import ProductToggle from './productToggle';
+import { Icon } from 'react-native-icons';
 import _ from 'lodash';
 import { CART } from '../actions/actionTypes';
+import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
+import Swipeout from 'react-native-swipeout';
 
 const {
-  TouchableHighlight,
-  PropTypes,
-  Text,
-  StyleSheet,
-  View,
   Modal,
+  PickerIOS,
+  PropTypes,
+  StyleSheet,
+  Text,
+  TouchableHighlight,
+  View,
 } = React;
 
 class ProductListItem extends React.Component {
@@ -25,7 +28,8 @@ class ProductListItem extends React.Component {
       quantity: 1,
       purveyorId: '',
       selectedPurveyorId: null,
-      note: ''
+      note: '',
+      editQuantity: false,
     }
     this.timeoutId = null
     this.loadTimeoutId = null
@@ -42,6 +46,12 @@ class ProductListItem extends React.Component {
     if(this.state.loaded === false){
       shouldUpdate = true;
     }
+    // if(this.state.product !== null){
+    //   // console.log(nextProps.product);
+    //   if(JSON.stringify(nextProps.product) !== JSON.stringify(this.state.product)){
+    //     shouldUpdate = true;
+    //   }
+    // }
     // console.log(nextState.shouldUpdate);
     return shouldUpdate;
   }
@@ -56,7 +66,8 @@ class ProductListItem extends React.Component {
 
   componentDidMount() {
     this.loadTimeoutId = setTimeout(() => {
-      this.setState({
+      this.setState(
+        {
           loaded: true,
           product: this.props.product,
           purveyors: this.props.purveyors,
@@ -108,20 +119,6 @@ class ProductListItem extends React.Component {
 
   }
 
-  increment() {
-    this.setState({
-      quantity: this.state.quantity + 1
-    }, this.cartUpdateFromLocalState.bind(this))
-  }
-
-  decrement() {
-    if (this.state.quantity > 1 ) {
-      this.setState({
-        quantity: this.state.quantity - 1
-      }, this.cartUpdateFromLocalState.bind(this))
-    }
-  }
-
   handleToggleProduct(purveyorId) {
     this.setState({
       added: !this.state.added,
@@ -140,18 +137,29 @@ class ProductListItem extends React.Component {
         </View>
       </View>
     );
-    if(this.state.product !== null){
+    let modal = (
+      <View />
+    );
+    let buttons = []
+    if(product !== null){
       let purveyorString = ""
       if(purveyors.hasOwnProperty(this.state.selectedPurveyorId) === true){
         purveyorString = purveyors[this.state.selectedPurveyorId].name || '-NOT SET-'
       } else {
         // Single purveyor, grab name off props.purveyors
-        const purveyorIds = Object.keys(purveyors)
-        purveyorString = purveyors[purveyorIds[0]].name
+        // const purveyorIds = Object.keys(purveyors)
+        // purveyorString = purveyors[purveyorIds[0]].name
+        purveyorString = 'Multiple purveyors'
+      }
+      let selectedStyle = []
+      let productDetailsColor = '#999'
+      if(this.state.added === true){
+        selectedStyle = styles.selectedRow
+        productDetailsColor = '#000'
       }
       productInfo = (
-        <View style={styles.row}>
-          <View style={styles.checkboxContainer}>
+        <View style={[styles.row, selectedStyle]}>
+          <View style={styles.main}>
             <ProductToggle
               added={this.state.added}
               availablePurveyors={product.purveyors}
@@ -160,50 +168,115 @@ class ProductListItem extends React.Component {
               onToggleCartProduct={(purveyorId) => {
                 this.handleToggleProduct(purveyorId)
               }}
-            />
+            >
+              <View>
+                <Text style={styles.productText}>
+                  {product.name}
+                </Text>
+                <Text style={{fontSize: 9,  color: productDetailsColor}} >
+                  {`${product.amount} ${product.unit}`}
+                </Text>
+                <Text style={{fontSize: 9,  color: productDetailsColor}} >
+                  {purveyorString}
+                </Text>
+              </View>
+            </ProductToggle>
           </View>
-          <View style={styles.main}>
-            <Text style={styles.productText}>
-              {product.name}
-            </Text>
-            <Text style={{fontSize: 9,  color: '#999'}} >
-              {product.amount + ' ' + product.unit}
-            </Text>
-            <Text style={{fontSize: 9,  color: '#999'}} >
-              {purveyorString}
-            </Text>
+          <View style={styles.quantityContainer}>
+            { this.state.added === true ?
+              <TouchableHighlight
+                onPress={() => {
+                  this.setState({
+                    editQuantity: true
+                  })
+                }}
+                underlayColor='transparent'
+              >
+                <Text style={styles.quantity}>{`${this.state.quantity}x`}</Text>
+              </TouchableHighlight>
+              : <Text style={styles.quantity}>{''}</Text>
+            }
           </View>
-          { this.state.added === true ?
-          [
-            <Text key={'quantity'} style={styles.quantity}>
-              {this.state.quantity > 1 ? ('X' + this.state.quantity) : ''}
-            </Text>,
-            <TouchableHighlight
-              key={'decrement'}
-              underlayColor="transparent"
-              onPress={this.decrement.bind(this)}
-              style={{flex: 1}}>
-              <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
-            </TouchableHighlight>,
-            <TouchableHighlight
-              key={'increment'}
-              underlayColor='transparent'
-              onPress={this.increment.bind(this)}
-              style={{flex: 1}}>
-              <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
-            </TouchableHighlight>
-          ] : [
-            <View key={'quantity'} style={{flex: 1}} />,
-            <View key={'decrement'} style={{flex: 1}} />,
-            <View key={'increment'} style={{flex:1}} />
-          ] }
         </View>
+      )
+      buttons = [{
+        backgroundColor: 'transparent',
+        component: (
+          <Icon name='material|edit' size={30} color={Colors.lightBlue} style={styles.iconEdit}/>
+        ),
+        onPress: this.props.onProductEdit
+      }, {
+        backgroundColor: 'transparent',
+        component: (
+          <Icon name='material|delete' size={30} color={Colors.lightBlue} style={styles.iconEdit}/>
+        ),
+        onPress: this.props.onProductDelete
+      }]
+
+      const quantities = _.range(1, 501)
+      let quantity = this.state.quantity * product.amount;
+      if(quantity.toString().indexOf('.') !== -1){
+        quantity = parseFloat(Math.floor(quantity * 1000)/1000)
+      }
+      let productUnit = product.unit;
+      if(this.state.quantity > 1){
+        if(product.unit == 'bunch'){
+          productUnit += 'es';
+        } else if(product.unit !== 'ea' && product.unit !== 'dozen' && product.unit !== 'cs'){
+          productUnit += 's';
+        }
+      }
+      modal = (
+        <Modal
+          animated={true}
+          transparent={true}
+          visible={this.state.editQuantity}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalInnerContainer}>
+              <PickerIOS
+                selectedValue={this.state.quantity}
+                onValueChange={(quantity) => {
+                  this.setState({
+                    quantity: quantity,
+                  })
+                }}
+                style={{width: 260, alignSelf: 'center'}}
+              >
+                {
+                  quantities.map((n, idx) => {
+                    return <PickerIOS.Item key={idx} value={n} label={n.toString()} />
+                  })
+                }
+              </PickerIOS>
+              <View style={styles.separator} />
+              <TouchableHighlight
+                onPress={() => {
+                  this.setState({
+                    editQuantity: false,
+                  }, this.cartUpdateFromLocalState.bind(this))
+                }}
+                underlayColor='transparent'
+              >
+                <Text style={styles.modalButtonText}>
+                  {`Update to ${quantity} ${productUnit}`}
+                </Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </Modal>
       )
     }
 
     return (
       <View style={styles.container}>
-        {productInfo}
+        <Swipeout
+          right={buttons}
+          backgroundColor={Colors.mainBackgroundColor}
+        >
+          {productInfo}
+        </Swipeout>
+        {modal}
       </View>
     )
   }
@@ -220,28 +293,62 @@ let styles = StyleSheet.create({
     width: 40,
     height: 40,
   },
-  quantity: {
+  iconEdit: {
     flex: 1,
-    fontSize: 16
+    alignSelf: 'center',
+    width: 54,
+    height: 40,
+    marginLeft: 2,
+    marginTop: 7,
+    marginBottom: 7,
+  },
+  quantityContainer: {
+    flex: 1.5,
+  },
+  quantity: {
+    fontSize: 20,
+    textAlign: 'right',
+    paddingRight: 5
   },
   row: {
-    borderRadius: 10,
+    borderRadius: Sizes.rowBorderRadius,
     flexDirection: 'row',
     backgroundColor: 'white',
     padding: 5,
-    alignItems: 'center',
+    paddingLeft: 15,
+    paddingRight: 15,
+    alignItems: 'center'
   },
-  checkboxContainer: {
-    flex: 1,
-    alignItems: 'center',
-    width: 40
+  selectedRow: {
+    backgroundColor: Colors.lightBlue
   },
   main: {
-    flex: 4,
+    flex: 5,
   },
   productText: {
     color: 'black',
     fontSize: 15
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
+  modalInnerContainer: {
+    borderRadius: Sizes.modalInnerBorderRadius,
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  modalButtonText: {
+    textAlign: 'center',
+    color: Colors.lightBlue,
+    paddingTop: 15,
+  },
+  separator: {
+    height: 0,
+    borderBottomColor: '#bbb',
+    borderBottomWidth: 1,
   },
 });
 

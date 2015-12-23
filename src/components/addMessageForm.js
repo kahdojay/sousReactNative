@@ -1,5 +1,7 @@
 import { Icon, } from 'react-native-icons';
 import React from 'react-native';
+import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 
 let {
   View,
@@ -31,7 +33,7 @@ export default class AddForm extends React.Component {
             placeholder={this.props.placeholder}
             onChangeText={this.handleChangeMessage.bind(this)}
             onSubmitEditing={this.handleSubmit.bind(this)}
-            />
+          />
         </View>
         <TouchableHighlight
           onPress={this.handleSubmit.bind(this)}
@@ -61,12 +63,12 @@ let styles = StyleSheet.create({
     height: 50,
     flexDirection: 'row',
     justifyContent: 'center',
-    backgroundColor: "#f2f2f2",
+    backgroundColor: Colors.mainBackgroundColor,
   },
   inputContainer: {
     flex: 5,
     flexDirection: 'row',
-    backgroundColor: '#f2f2f2',
+    backgroundColor: Colors.mainBackgroundColor,
     padding: 8
   },
   sendText: {
@@ -85,7 +87,7 @@ let styles = StyleSheet.create({
     backgroundColor: 'white',
     color: 'black',
     fontFamily: 'OpenSans',
-    borderRadius: 5,
+    borderRadius: Sizes.inputBorderRadius,
     paddingLeft: 10,
     borderWidth: 1,
     borderColor: '#ddd'
