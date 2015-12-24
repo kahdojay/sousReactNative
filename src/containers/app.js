@@ -1,4 +1,5 @@
 import React from 'react-native';
+import { Icon } from 'react-native-icons';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import NavigationBar from 'react-native-navbar';
@@ -82,7 +83,7 @@ class App extends React.Component {
       <NavigationBar style={styles.nav} />
     );
     this.navBarItem = (props, nextComponent) => {
-      return React.addons.cloneWithProps((
+      return React.cloneElement((
         <TouchableOpacity
           onPress={() => {
             // console.log('Oops, need to specify function')
@@ -228,7 +229,7 @@ class App extends React.Component {
   }
 
   getScene(route, nav) {
-    const { ui, session, teams, messages, dispatch, purveyors, products, categories, errors } = this.props;
+    const { ui, session, teams, messages, dispatch, purveyors, products, categories, errors, connect } = this.props;
 
     switch (route.name) {
       case 'Signup':
@@ -383,6 +384,7 @@ class App extends React.Component {
       case 'Feed':
         return (
           <Components.Feed
+            connected={(connect.status === actions.CONNECT.CONNECTED)}
             teamsUsers={teams.teamsUsers}
             messagesFetching={messages.isFetching}
             messages={this.state.currentTeamInfo.messages}
@@ -925,7 +927,7 @@ class App extends React.Component {
   getNavBar(route, nav) {
     const { dispatch, ui, teams, session } = this.props;
 
-    let navBar = <View />;
+    let navBar = null;
     let nextItem = <View />;
 
     // setup the header for unauthenticated routes
@@ -935,7 +937,7 @@ class App extends React.Component {
       switch(route.name) {
         //TODO: remove cloneWithProps as it's deprecated
         case 'AddOrderGuide':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             buttonsColor: '#ccc',
@@ -947,7 +949,7 @@ class App extends React.Component {
           })
           break;
         case 'TeamIndex':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             hidePrev: false,
@@ -959,14 +961,16 @@ class App extends React.Component {
           })
           break;
         case 'Feed':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             hidePrev: false,
             title: this.state.currentTeamInfo.team ? this.state.currentTeamInfo.team.name : 'Sous',
             titleColor: 'black',
             customPrev: (
-              <Components.FeedViewLeftButton />
+              <Components.FeedViewLeftButton
+                disabled={(this.state.currentTeamInfo.team === null)}
+              />
             ),
             customNext: (
               <Components.FeedViewRightButton />
@@ -974,7 +978,7 @@ class App extends React.Component {
           })
           break;
         case 'PurveyorIndex':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: (
@@ -992,7 +996,7 @@ class App extends React.Component {
           })
           break;
         case 'TeamView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             buttonsColor: '#ccc',
@@ -1003,7 +1007,7 @@ class App extends React.Component {
           })
           break;
         case 'PurveyorView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: (
@@ -1024,7 +1028,7 @@ class App extends React.Component {
           })
           break;
         case 'CategoryIndex':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             hidePrev: false,
@@ -1044,7 +1048,7 @@ class App extends React.Component {
           })
           break;
         case 'CategoryView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: (
@@ -1065,7 +1069,7 @@ class App extends React.Component {
           })
           break;
         case 'SearchView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: (
@@ -1086,7 +1090,7 @@ class App extends React.Component {
           const openOrders = _.filter(this.state.currentTeamInfo.orders, (order) => {
             return order.confirm.order === false
           })
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             hidePrev: false,
@@ -1099,7 +1103,7 @@ class App extends React.Component {
           })
           break;
         case 'OrderView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: (
@@ -1135,7 +1139,7 @@ class App extends React.Component {
           })
           break;
         // case 'ProductView':
-        //   navBar = React.addons.cloneWithProps(this.navBar, {
+        //   navBar = React.cloneElement(this.navBar, {
         //     navigator: nav,
         //     route: route,
         //     onNext: null,
@@ -1143,7 +1147,7 @@ class App extends React.Component {
         //   })
         //   break;
         case 'Profile':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             hidePrev: false,
@@ -1156,7 +1160,7 @@ class App extends React.Component {
           })
           break;
         case 'InviteView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: (
@@ -1168,7 +1172,7 @@ class App extends React.Component {
           })
           break;
         case 'CartView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: (
@@ -1181,7 +1185,7 @@ class App extends React.Component {
           })
           break;
         case 'ProductForm':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             ref: 'navBar',
             navigator: nav,
             route: route,
@@ -1220,7 +1224,7 @@ class App extends React.Component {
           })
           break;
         case 'TeamMemberListing':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: (
@@ -1244,10 +1248,10 @@ class App extends React.Component {
         case 'UserInfo':
         case 'UserTeam':
         case 'Loading':
-          navBar = <View />;
+          navBar = null;
           break;
         default:
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             hidePrev: false,
             navigator: nav,
             route: route,
@@ -1263,7 +1267,7 @@ class App extends React.Component {
     const { session } = this.props;
 
     // redirect to initial view
-    if (this.state.isAuthenticated){
+    if (this.state.isAuthenticated === true){
       if (route.name === 'Login' || route.name === 'Signup' || route.name === 'UserInfo') {
         if (this.state.firstName === '' || this.state.lastName === '') {
           route.name = 'UserInfo';
@@ -1356,10 +1360,10 @@ class App extends React.Component {
       />
     )
 
-    let CustomSideView = View
+    let CustomSideView = SideMenu
     let menu = View
     if(this.state.isAuthenticated === true && this.state.currentTeamInfo.team !== null){
-      CustomSideView = SideMenu
+      // CustomSideView = SideMenu
       menu = (
         <Components.Menu
           ref='menu'
@@ -1388,6 +1392,44 @@ class App extends React.Component {
       );
     }
 
+    let connectionStatus = null
+    if(connect.status === actions.CONNECT.OFFLINE){
+      connectionStatus = (
+        <TouchableHighlight
+          onPress={() => {
+            const learnMoreMsg = (
+              <View>
+                <Text style={{textAlign: 'center'}}>
+                  The app connection status is:
+                  <Text style={{fontWeight: 'bold'}}> Offline</Text>
+                </Text>
+                <Text style={{textAlign: 'center', marginTop: 10}}>
+                  <Text style={{fontWeight: 'bold'}}>Please note: </Text>
+                  Some functionality (like sending messages or
+                  submitting orders) will be disabled until the app
+                  can re-establish connection.
+                </Text>
+                <Text style={{textAlign: 'center', marginTop: 10}}>
+                  All other functionality will work as expected, and will propagate
+                  changes to the rest of your team upon re-connection.
+                </Text>
+              </View>
+            )
+            this.setState({
+              genericModalMessage: learnMoreMsg,
+              showGenericModal: true,
+            })
+          }}
+          underlayColor='transparent'
+        >
+          <View style={styles.offlineContainer}>
+            <Icon name='fontawesome|info' size={12} color={'white'} style={styles.offlineIcon} />
+            <Text style={styles.offlineText}>Connection offline, limited app features</Text>
+          </View>
+        </TouchableHighlight>
+      )
+    }
+
     return (
       <CustomSideView
         ref='customSideView'
@@ -1400,6 +1442,7 @@ class App extends React.Component {
           {errorModal}
           {inviteModal}
           {genericModal}
+          {connectionStatus}
           {scene}
           {session.inviteModalVisible === false ? <KeyboardSpacer /> : <View />}
         </View>
@@ -1462,10 +1505,9 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans'
   },
   logoImage: {
-    width: 45,
-    height: 45,
-    alignItems: 'center',
-    flex: .5
+    borderRadius: 15,
+    width: 80,
+    height: 70,
   },
   iconFace: {
     width: 70,
@@ -1475,12 +1517,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-end',
   },
-  signup: {
-    marginRight: 5,
-    right: 10,
-    position: 'absolute',
-    top: 27
-  },
+  // signup: {
+  //   marginRight: 5,
+  //   right: 10,
+  //   position: 'absolute',
+  //   top: 27
+  // },
   header: {
     color: 'white',
     fontWeight: 'bold',
@@ -1521,11 +1563,29 @@ const styles = StyleSheet.create({
     height: 100,
     alignSelf: 'center'
   },
-  logoImage: {
-    borderRadius: 15,
-    width: 80,
-    height: 70
+  offlineContainer: {
+    width: window.width,
+    height: 32,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.darkGrey,
+    padding: 4,
   },
+  offlineText: {
+    flex: 1,
+    color: 'white',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans',
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  offlineIcon: {
+    width: 24,
+    height: 24,
+    backgroundColor: Colors.lightBlue,
+    borderRadius: 12,
+    marginLeft: 12
+  }
 })
 
 function mapStateToProps(state) {

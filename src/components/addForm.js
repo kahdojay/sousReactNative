@@ -1,5 +1,5 @@
-import { Icon, } from 'react-native-icons';
 import React from 'react-native';
+import { Icon, } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 

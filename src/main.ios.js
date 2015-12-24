@@ -60,7 +60,7 @@ class SousAppBase extends React.Component {
   }
 
   render() {
-    if (this.state.rehydrated === false || this.props.connect.status === actions.CONNECT.OFFLINE) {
+    if (this.state.rehydrated === false) {
       return (
         <View style={styles.container}>
           <View style={styles.logoContainer}>
