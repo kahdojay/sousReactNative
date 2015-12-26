@@ -11,6 +11,7 @@ const {
   StyleSheet,
   Text,
   TouchableHighlight,
+  TouchableOpacity,
   View,
 } = React;
 
@@ -25,6 +26,13 @@ class CartView extends React.Component {
     }
   }
 
+  componentShouldUpdate() {
+    if(nextProps.connected !== false){
+      return true;
+    }
+    return false;
+  }
+
   componentWillReceiveProps(nextProps) {
     const numberOfOrders = Object.keys(nextProps.team.cart.orders).length
     this.setState({
@@ -33,7 +41,7 @@ class CartView extends React.Component {
   }
 
   handleSubmitPress(cartPurveyors) {
-    if (this.state.numberOfOrders > 0) {
+    if (this.props.connected === true && this.state.numberOfOrders > 0) {
       AlertIOS.alert(
         'Confirm',
         'Are you sure you want to send order?',
@@ -55,7 +63,6 @@ class CartView extends React.Component {
         ]
       )
     }
-    // TODO: handle empty cart error
   }
 
   renderPurveyorProducts(purveyorId, cart, products) {
@@ -177,16 +184,16 @@ class CartView extends React.Component {
             );
           })
         }
-        <TouchableHighlight
+        <TouchableOpacity
           onPress={this.handleSubmitPress.bind(this, cartPurveyors)}
           style={[
             styles.button,
-            this.state.numberOfOrders === 0 && styles.buttonDisabled
+            (this.props.connected === false || this.state.numberOfOrders === 0) && styles.buttonDisabled
           ]}
-          underlayColor={Colors.disabled}
+          activeOpacity={.75}
         >
           <Text style={styles.buttonText}>Submit Order</Text>
-        </TouchableHighlight>
+        </TouchableOpacity>
         {modal}
       </ScrollView>
     );
@@ -284,7 +291,7 @@ const styles = StyleSheet.create({
   separator: {
     marginTop: 10,
     height: 0,
-    borderBottomColor: '#bbb',
+    borderBottomColor: Colors.separatorColor,
     borderBottomWidth: 1,
   },
   dayOfWeekContainer: {

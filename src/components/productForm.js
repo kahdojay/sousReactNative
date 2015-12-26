@@ -1,6 +1,5 @@
 import React from 'react-native';
 import Dimensions from 'Dimensions';
-import {Icon}  from 'react-native-icons';
 import Colors from '../utilities/colors';
 import Overlay from 'react-native-overlay';
 import _ from 'lodash';
@@ -475,7 +474,7 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 0,
-    borderBottomColor: '#bbb',
+    borderBottomColor: Colors.separatorColor,
     borderBottomWidth: 1,
   },
 });

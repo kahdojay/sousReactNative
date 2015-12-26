@@ -1,5 +1,5 @@
-import { Icon } from 'react-native-icons';
 import React from 'react-native';
+import { Icon } from 'react-native-icons';
 import ErrorModal from './errorModal';
 import AddForm from './addForm';
 import Colors from '../utilities/colors';
@@ -21,17 +21,16 @@ class TeamIndex extends React.Component {
 
   render() {
     const {teams, messagesByTeams} = this.props
-    // let fetching =  <ActivityIndicatorIOS
-    //                     animating={true}
-    //                     color={'#808080'}
-    //                     size={'small'} />
+
     return (
       <View style={styles.container}>
         <View style={styles.teamContainer}>
           <AddForm
+            connected={this.props.connected}
             placeholder="Add a Team..."
             onSubmit={this.props.onAddTeam.bind(this)}
           />
+          <View style={styles.separator} />
           <ScrollView
             style={styles.scrollView}
             keyboardShouldPersistTaps={false}
@@ -50,6 +49,8 @@ class TeamIndex extends React.Component {
                 return (
                   <TeamIndexRow
                     key={index}
+                    connected={this.props.connected}
+                    selected={(this.props.currentTeam.id === team.id)}
                     team={team}
                     teamsUsers={teams.teamsUsers}
                     messages={teamMessages}
@@ -79,7 +80,12 @@ const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: Colors.mainBackgroundColor,
     marginTop: 0,
-    paddingTop: 0
+    paddingTop: 5
+  },
+  separator: {
+    height: 0,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
   },
 });
 

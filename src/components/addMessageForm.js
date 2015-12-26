@@ -16,6 +16,7 @@ export default class AddForm extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      disabled: false,
       message: {
         text: '',
         type: 'chat',
@@ -23,27 +24,61 @@ export default class AddForm extends React.Component {
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return !(this.state.disabled === nextProps.disabled)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      disabled: nextProps.disabled
+    })
+  }
+
   render() {
-    return (
-      <View style={styles.container}>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            value={this.state.message.text}
-            placeholder={this.props.placeholder}
-            onChangeText={this.handleChangeMessage.bind(this)}
-            onSubmitEditing={this.handleSubmit.bind(this)}
-          />
+
+    let input = (
+      <TextInput
+        style={styles.input}
+        value={this.state.message.text}
+        placeholderTextColor={'#aaa'}
+        placeholder={this.props.placeholder}
+        onChangeText={this.handleChangeMessage.bind(this)}
+        onSubmitEditing={this.handleSubmit.bind(this)}
+      />
+    )
+    let submit = (
+      <TouchableHighlight
+        key='send'
+        onPress={this.handleSubmit.bind(this)}
+        underlayColor={"#eee"}
+        style={styles.button}
+      >
+        <View style={styles.sendView}>
+          <Icon name='material|mail-send' size={30} colors={Colors.lightBlue} style={styles.sendIcon} />
         </View>
-        <TouchableHighlight
-          onPress={this.handleSubmit.bind(this)}
-          underlayColor={"#eee"}
-          style={styles.button}
-        >
-          <Text style={styles.sendText}>Send</Text>
-        </TouchableHighlight>
+      </TouchableHighlight>
+    )
+
+    let form = (
+      <View style={styles.container}>
+        <View key='input' style={styles.inputContainer}>
+          {input}
+        </View>
+        {submit}
       </View>
-    );
+    )
+
+    if(this.state.disabled === true){
+      form = (
+        <View style={styles.container}>
+          <View style={styles.offlineContainer}>
+            <Text style={styles.offlineText}>Disabled, connection offline.</Text>
+          </View>
+        </View>
+      )
+    }
+
+    return form;
   }
 
   handleChangeMessage(text) {
@@ -71,16 +106,15 @@ let styles = StyleSheet.create({
     backgroundColor: Colors.mainBackgroundColor,
     padding: 8
   },
-  sendText: {
-    fontFamily: 'OpenSans',
-    fontWeight: 'bold',
-    color: '#555',
+  sendView: {
+    // fontFamily: 'OpenSans',
+    // fontWeight: 'bold',
+    // color: '#555',
     alignSelf: 'center',
   },
-  icon: {
-    width: 30,
-    height: 30,
-    paddingLeft: 30,
+  sendIcon: {
+    width: 50,
+    height: 50,
   },
   input: {
     flex: 1,
@@ -90,7 +124,7 @@ let styles = StyleSheet.create({
     borderRadius: Sizes.inputBorderRadius,
     paddingLeft: 10,
     borderWidth: 1,
-    borderColor: '#ddd'
+    borderColor: '#ddd',
   },
   button: {
     flex: 1,
@@ -107,6 +141,14 @@ let styles = StyleSheet.create({
   },
   buttonText: {
     fontFamily: 'OpenSans'
+  },
+  offlineContainer: {
+    padding: 15
+  },
+  offlineText: {
+    color: '#aaa',
+    fontSize: 14,
+    textAlign: 'center'
   }
 })
 

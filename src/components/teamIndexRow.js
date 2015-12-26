@@ -1,7 +1,8 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import _ from 'lodash';
-import { greyText, taskCompletedBackgroundColor } from '../utilities/colors';
+import Sizes from '../utilities/sizes';
+import Colors from '../utilities/colors';
 import messageUtils from '../utilities/message';
 import moment from 'moment';
 
@@ -15,6 +16,13 @@ const {
 } = React;
 
 class TeamIndexRow extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      enabled: (this.props.connected === true && this.props.selected === false)
+    };
+  }
+
   render() {
     const { team, messages } = this.props
     const memberCount = _.compact(_.filter(team.users, (userId) => {
@@ -37,10 +45,23 @@ class TeamIndexRow extends React.Component {
     let progressColor = progress < 0.9 ? "#4A90E2" : "#7ED321";
     // let percentage = Math.floor(( numCompletedTasks / totalNumTasks)*100) || 0
 
+    let selectedColor = Colors.green
+    let changeColor = Colors.lightBlue
+    if(this.props.connected === false){
+      selectedColor = Colors.disabled
+      changeColor = Colors.disabled
+    }
+
     return (
       <TouchableOpacity
-        onPress={this.props.onPress}
-        style={styles.row}>
+        onPress={() => {
+          if(this.state.enabled){
+            this.props.onPress()
+          }
+        }}
+        style={styles.row}
+        activeOpacity={(this.state.enabled) ? .5 : 1}
+      >
         <View style={styles.textProgressArrowContainer}>
           <View
             style={styles.textProgressContainer} >
@@ -55,9 +76,12 @@ class TeamIndexRow extends React.Component {
               </Text>
             </View>
           </View>
-          <Icon name='material|chevron-right' size={40} color='#aaa' style={styles.iconArrow}/>
+          { this.props.selected === false ?
+            <Icon name='material|chevron-right' size={30} color={changeColor} style={styles.iconArrow}/>
+          :
+            <Icon name='material|check' size={30} color={selectedColor} style={styles.iconArrow}/>
+          }
         </View>
-        <View style={styles.separator} />
       </TouchableOpacity>
     );
   }
@@ -65,18 +89,21 @@ class TeamIndexRow extends React.Component {
 
 const styles = StyleSheet.create({
   row: {
-    flexDirection: 'column',
-    padding: 10
+    marginTop: 2,
+    marginBottom: 2,
+    marginRight: 5,
+    marginLeft: 5,
+    borderRadius: Sizes.rowBorderRadius,
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    alignItems: 'center',
+    padding: 5,
   },
   progress: {
     paddingTop: 5,
     margin: 5,
     height: 8,
     borderRadius: 10,
-  },
-  rightArrow: {
-    fontSize: 20,
-    color: '#ccc',
   },
   textProgressArrowContainer: {
     flex: 1,
@@ -95,7 +122,7 @@ const styles = StyleSheet.create({
   memberCount: {
     fontFamily: 'OpenSans',
     fontSize: 11,
-    color: '#999',
+    color: Colors.greyText,
     textAlign: 'center',
     fontWeight: 'bold',
   },
@@ -104,11 +131,6 @@ const styles = StyleSheet.create({
     color: '#777',
     fontSize: 13,
     marginLeft: 5,
-  },
-  separator: {
-    height: 5,
-    borderBottomColor: '#bbb',
-    borderBottomWidth: 1,
   },
   teamInfo: {
     flexDirection: 'column',
@@ -123,10 +145,8 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans'
   },
   iconArrow: {
-    width: 70,
-    height: 70,
-    marginTop: -20,
-    marginRight: -15
+    width: 50,
+    height: 50,
   },
 })
 

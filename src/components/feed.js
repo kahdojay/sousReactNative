@@ -6,6 +6,7 @@ import InvertibleScrollView from 'react-native-invertible-scroll-view';
 let SideMenu = require('react-native-side-menu');
 import Menu from './menu';
 import moment from 'moment';
+
 const {
   ActivityIndicatorIOS,
   PropTypes,
@@ -52,7 +53,7 @@ class Feed extends React.Component {
       // open: false,
       lastMessageCreatedAt: null,
       messages: null,
-      scrollToBottom: false,
+      scrollToBottom: false
     }
   }
 
@@ -72,21 +73,19 @@ class Feed extends React.Component {
   //   }
   // }
 
-  componentWillMount() {
-    this.props.onClearBadge()
-  }
-
   componentWillReceiveProps(nextProps) {
     // if(this.state.lastMessageCreatedAt === null){
     //   lastMessageCreatedAt
     // }
-    //
-    // console.log(nextProps.messages);
+
     this.processMessages(nextProps.messages)
   }
 
   componentDidMount() {
     this.processMessages(this.props.messages, true)
+    if(this.props.connected === true){
+      this.props.onClearBadge()
+    }
   }
 
   componentDidUpdate(){
@@ -204,7 +203,7 @@ class Feed extends React.Component {
         />
       ))
     }
-    if(messageList.length >= 20){
+    if(messageList.length >= 20 && this.props.connected === true){
       messageList.push((
         <View key={'get-more'}>
           <TouchableOpacity
@@ -227,6 +226,7 @@ class Feed extends React.Component {
           {messageList}
         </InvertibleScrollView>
         <AddMessageForm
+          disabled={(this.props.connected === false)}
           placeholder="Message..."
           onSubmit={this.onHandleSubmit.bind(this)}
         />

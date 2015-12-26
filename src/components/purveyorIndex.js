@@ -69,11 +69,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
-  separator: {
-    height: 5,
-    borderBottomColor: '#bbb',
-    borderBottomWidth: 1,
-  },
   scrollView: {
     backgroundColor: Colors.mainBackgroundColor,
     height: 500,

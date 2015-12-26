@@ -1,7 +1,7 @@
-import React from 'react-native'
-import { Icon } from 'react-native-icons'
-import moment from 'moment'
-import messageUtils from '../utilities/message'
+import React from 'react-native';
+import { Icon } from 'react-native-icons';
+import moment from 'moment';
+import messageUtils from '../utilities/message';
 
 const {
   Image,
@@ -49,7 +49,7 @@ class FeedListItem extends React.Component {
     if(moment(msg.createdAt).diff(this.props.now) < this.props.aDayAgo){
       displayDate = msgDate.format("ddd, M/D - h:mm a")
     }
-    let icon = <Icon name='fontawesome|user' size={40} color='#aaa' style={styles.avatar}/>
+    let icon = <Icon name='material|user' size={40} color='#aaa' style={styles.avatar}/>
     if (msg.imageUrl) {
       icon = <Image source={{uri: msg.imageUrl}} style={styles.avatarImage} />
     }

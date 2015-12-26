@@ -28,10 +28,10 @@ var CheckBox = React.createClass({
   },
 
   render() {
-    let iconName = 'fontawesome|square-o'
+    let iconName = 'material|square-o'
     let iconContainerStyle = {}
     if(this.props.checked){
-      iconName = 'fontawesome|check-square-o'
+      iconName = 'material|check-square'
       // iconContainerStyle = {marginLeft: 10}
     }
 
@@ -60,7 +60,6 @@ var styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
   },
   icon: {
     width: 40,

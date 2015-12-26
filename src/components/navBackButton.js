@@ -14,7 +14,7 @@ class NavBackButton extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      iconFont: this.props.iconFont || 'fontawesome|chevron-left',
+      iconFont: this.props.iconFont || 'material|chevron-left',
       navName: this.props.navName || 'Feed'
     }
   }

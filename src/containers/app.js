@@ -1,4 +1,5 @@
 import React from 'react-native';
+import { Icon } from 'react-native-icons';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import NavigationBar from 'react-native-navbar';
@@ -82,7 +83,7 @@ class App extends React.Component {
       <NavigationBar style={styles.nav} />
     );
     this.navBarItem = (props, nextComponent) => {
-      return React.addons.cloneWithProps((
+      return React.cloneElement((
         <TouchableOpacity
           onPress={() => {
             // console.log('Oops, need to specify function')
@@ -228,27 +229,29 @@ class App extends React.Component {
   }
 
   getScene(route, nav) {
-    const { ui, session, teams, messages, dispatch, purveyors, products, categories, errors } = this.props;
+    const { session, teams, messages, dispatch, purveyors, products, categories, errors, connect } = this.props;
 
     switch (route.name) {
       case 'Signup':
-        return (
-          <Components.Signup
-            session={session}
-            errors={errors.data}
-            onRegisterSession={(sessionParams) => {
+        return {
+          component: Components.Signup,
+          props: {
+            session: session,
+            errors: errors.data,
+            onRegisterSession: (sessionParams) => {
               _.debounce(() => {
                 dispatch(actions.registerSession(sessionParams))
               }, 25)()
-            }}
-            ui={ui}
-          />
-        )
+            },
+          },
+        }
+
       case 'AddOrderGuide':
-        return (
-          <Components.AddOrderGuide
-            emailAddress={session.email}
-            onLearnMore={() => {
+        return {
+          component: Components.AddOrderGuide,
+          props: {
+            emailAddress: session.email,
+            onLearnMore: () => {
               const learnMoreMsg = (
                 <View>
                   <Text style={{textAlign: 'center'}}>
@@ -269,8 +272,8 @@ class App extends React.Component {
                 genericModalMessage: learnMoreMsg,
                 showGenericModal: true
               })
-            }}
-            onSendEmail={(emailAddress) => {
+            },
+            onSendEmail: (emailAddress) => {
               dispatch(actions.sendEmail({
                 type: 'REQUEST_ORDER_GUIDE',
                 body: `Order guide request from: ${emailAddress}`
@@ -295,15 +298,17 @@ class App extends React.Component {
                   })
                 }
               })
-            }}
-          />
-        )
+            },
+          },
+        }
       case 'TeamIndex':
-        return (
-          <Components.TeamIndex
-            teams={teams}
-            messagesByTeams={messages.teams}
-            onUpdateTeam={(teamId) => {
+        return {
+          component: Components.TeamIndex,
+          props: {
+            currentTeam: this.state.currentTeamInfo.team,
+            teams: teams,
+            messagesByTeams: messages.teams,
+            onUpdateTeam: (teamId) => {
               _.debounce(() => {
                 // dispatch(actions.resetPurveyors());
                 dispatch(actions.resetMessages(teamId));
@@ -314,34 +319,34 @@ class App extends React.Component {
               nav.replacePreviousAndPop({
                 name: 'Feed',
               })
-            }}
-            onAddTeam={(name) => {
+            },
+            onAddTeam: (name) => {
               dispatch(actions.addTeam(name))
-            }}
-            onBack={() =>
+            },
+            onBack: () => {
               this._back.bind(this)
-            }
-          />
-        )
+            },
+          },
+        }
       case 'TeamView':
-        return (
-          <Components.TeamView
-            ui={ui}
-            teamTasks={this.state.currentTeamInfo.team.tasks}
-            onNavToTask={(recipeId) => {
+        return {
+          component: Components.TeamView,
+          props: {
+            teamTasks: this.state.currentTeamInfo.team.tasks,
+            onNavToTask: (recipeId) => {
               // console.log(recipeId)
               nav.push({
                 name: 'TaskView',
                 recipeId: recipeId,
               })
-            }}
-            onAddNewTask={(taskName) => {
+            },
+            onAddNewTask: (taskName) => {
               _.debounce(() => {
                 // console.log(taskName);
                 dispatch(actions.addTeamTask({name: taskName}))
               }, 25)()
-            }}
-            onTaskCompletionNotification={(task) => {
+            },
+            onTaskCompletionNotification: (task) => {
               _.debounce(() => {
                 // console.log("TASK: ", task);
                 // var text = `{{author}} completed ${task.name}`;
@@ -351,63 +356,65 @@ class App extends React.Component {
                 }
                 dispatch(actions.completeTeamTask(msg))
               }, 25)()
-            }}
-            onDeleteTeam={() => {
+            },
+            onDeleteTeam: () => {
               _.debounce(() => {
                 dispatch(actions.deleteTeam())
               }, 25)()
-            }}
-            onUpdateTeamTask={(taskId, taskAttributes) => {
+            },
+            onUpdateTeamTask: (taskId, taskAttributes) => {
               _.debounce(() => {
                 dispatch(actions.updateTeamTask(taskId, taskAttributes))
               }, 25)()
-            }}
-          />
-        )
+            },
+          },
+        }
       case 'TaskView':
-        var task = _.filter(this.state.currentTeamInfo.team.tasks, {recipeId: route.recipeId})[0]
-        return (
-          <Components.TaskView
-            keyboardVisible={ui.keyboard.visible }
-            task={task}
-            onUpdateTeamTask={(taskId, taskAttributes) => {
+        const task = _.filter(this.state.currentTeamInfo.team.tasks, {recipeId: route.recipeId})[0]
+        return {
+          component: Components.TaskView,
+          props: {
+            task: task,
+            onUpdateTeamTask: (taskId, taskAttributes) => {
               _.debounce(() => {
                 dispatch(actions.updateTeamTask(taskId, taskAttributes))
               }, 25)()
-            }}
-            onDeleteTaskPop={() => {
+            },
+            onDeleteTaskPop: () => {
               nav.pop()
-            }}
-          />
-        )
+            },
+          },
+        }
       case 'Feed':
-        return (
-          <Components.Feed
-            teamsUsers={teams.teamsUsers}
-            messagesFetching={messages.isFetching}
-            messages={this.state.currentTeamInfo.messages}
-            userEmail={session.login}
-            onClearBadge={() => {
+        return {
+          component: Components.Feed,
+          props: {
+            teamsUsers: teams.teamsUsers,
+            messagesFetching: messages.isFetching,
+            messages: this.state.currentTeamInfo.messages,
+            userEmail: session.login,
+            onClearBadge: () => {
               dispatch(actions.updateInstallation({
                 "badge": 0
               }))
-            }}
-            onGetMoreMessages={() => {
+            },
+            onGetMoreMessages: () => {
               dispatch(actions.getTeamMessages(this.state.currentTeamInfo.team.id));
-            }}
-            onCreateMessage={(msg) => {
+            },
+            onCreateMessage: (msg) => {
               _.debounce(() => {
                 dispatch(actions.createMessage(msg))
               }, 25)()
-            }}
-          />
-        )
+            },
+          },
+        }
       case 'PurveyorIndex':
-        return (
-          <Components.PurveyorIndex
-            selectedSegmentationIndex={1}
-            segmentationList={['Category', 'Purveyor', 'Search']}
-            onSegmentationChange={(evt) => {
+        return {
+          component: Components.PurveyorIndex,
+          props: {
+            selectedSegmentationIndex: 1,
+            segmentationList: ['Category', 'Purveyor', 'Search'],
+            onSegmentationChange: (evt) => {
               const navValue = evt.nativeEvent.value
               switch(navValue){
                 case 'Search':
@@ -429,10 +436,10 @@ class App extends React.Component {
                   // do nothing
                   break;
               }
-            }}
-            purveyors={this.state.currentTeamInfo.purveyors}
-            session={session}
-            onNavToPurveyor={(purveyorId) => {
+            },
+            purveyors: this.state.currentTeamInfo.purveyors,
+            session: session,
+            onNavToPurveyor: (purveyorId) => {
               const purveyor = this.state.currentTeamInfo.purveyors[purveyorId];
               this.setState({
                 purveyor: purveyor,
@@ -445,11 +452,11 @@ class App extends React.Component {
                   purveyorId: purveyor.id
                 })
               })
-            }}
-            onAddPurveyor={(name) => {
+            },
+            onAddPurveyor: (name) => {
               dispatch(actions.addPurveyor(name))
-            }}
-            onCreateProduct={() => {
+            },
+            onCreateProduct: () => {
               const sceneState = Object.assign({}, this.state.sceneState);
               sceneState.ProductForm.submitReady = false;
               sceneState.ProductForm.productId = null
@@ -461,9 +468,9 @@ class App extends React.Component {
                   name: 'ProductForm'
                 })
               })
-            }}
-          />
-        )
+            },
+          },
+        }
       case 'PurveyorView':
         // let purveyor = this.state.currentTeamInfo.purveyors[route.purveyorId]
         // let products = _.filter(this.state.currentTeamInfo.products, (product) => {
@@ -472,19 +479,19 @@ class App extends React.Component {
         const specificProductsPurveyor = _.sortBy(_.filter(this.state.currentTeamInfo.products, (product) => {
           return _.includes(product.purveyors, this.state.purveyor.id)
         }), 'name')
-        return (
-          <Components.PurveyorView
-            cart={this.state.currentTeamInfo.team.cart}
-            ui={ui}
-            purveyor={this.state.purveyor}
-            purveyors={this.state.currentTeamInfo.purveyors}
-            products={specificProductsPurveyor}
-            onProductDelete={(productId) => {
+        return {
+          component: Components.PurveyorView,
+          props: {
+            cart: this.state.currentTeamInfo.team.cart,
+            purveyor: this.state.purveyor,
+            purveyors: this.state.currentTeamInfo.purveyors,
+            products: specificProductsPurveyor,
+            onProductDelete: (productId) => {
               _.debounce(() => {
                 dispatch(actions.deleteProduct(productId));
               }, 25)()
-            }}
-            onProductEdit={(product) => {
+            },
+            onProductEdit: (product) => {
               const sceneState = Object.assign({}, this.state.sceneState);
               sceneState.ProductForm.submitReady = true;
               sceneState.ProductForm.productId = product.id
@@ -502,38 +509,39 @@ class App extends React.Component {
                   name: 'ProductForm'
                 })
               })
-            }}
-            onUpdateProductInCart={(cartAction, cartAttributes) => {
+            },
+            onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(cartAction, cartAttributes))
               }, 25)()
-            }}
-          />
-        )
+            },
+          },
+        }
       // case 'ProductView':
       //   let purveyor = _.filter(purveyors.data, { id: route.purveyorId })[0]
       //   let product = _.filter(purveyor.products, { productId: route.productId })[0]
-      //   return (
-      //     <Components.ProductView
-      //       keyboardVisible={ui.keyboard.visible}
-      //       product={product}
-      //       purveyorId={route.purveyorId}
-      //       onUpdatePurveyorProduct={(purveyorId, productId, productAttributes) => {
+      //   return {
+      //     component: Components.ProductView,
+      //     props: {
+      //       product: product,
+      //       purveyorId: route.purveyorId,
+      //       onUpdatePurveyorProduct: (purveyorId, productId, productAttributes) => {
       //         _.debounce(() => {
       //           dispatch(actions.updatePurveyorProduct(purveyorId, productId, productAttributes))
       //         }, 25)()
-      //       }}
-      //       onDeleteProduct={() => {
+      //       },
+      //       onDeleteProduct: () => {
       //         nav.pop()
-      //       }}
-      //     />
-      //   )
+      //       },
+      //     },
+      //   }
       case 'CategoryIndex':
-        return (
-          <Components.CategoryIndex
-            selectedSegmentationIndex={0}
-            segmentationList={['Category', 'Purveyor', 'Search']}
-            onSegmentationChange={(evt) => {
+        return {
+          component: Components.CategoryIndex,
+          props: {
+            selectedSegmentationIndex: 0,
+            segmentationList: ['Category', 'Purveyor', 'Search'],
+            onSegmentationChange: (evt) => {
               const navValue = evt.nativeEvent.value
               switch(navValue){
                 case 'Search':
@@ -555,10 +563,10 @@ class App extends React.Component {
                   // do nothing
                   break;
               }
-            }}
-            products={this.state.currentTeamInfo.products}
-            categories={this.state.currentTeamInfo.categories}
-            onNavigateToCategory={(categoryId) => {
+            },
+            products: this.state.currentTeamInfo.products,
+            categories: this.state.currentTeamInfo.categories,
+            onNavigateToCategory: (categoryId) => {
               const category = this.state.currentTeamInfo.categories[categoryId]
               this.setState({
                 category: category,
@@ -572,8 +580,8 @@ class App extends React.Component {
                   categoryId: category.id
                 })
               })
-            }}
-            onCreateProduct={() => {
+            },
+            onCreateProduct: () => {
               const sceneState = Object.assign({}, this.state.sceneState);
               sceneState.ProductForm.submitReady = false;
               sceneState.ProductForm.productId = null
@@ -585,27 +593,27 @@ class App extends React.Component {
                   name: 'ProductForm'
                 })
               })
-            }}
-          />
-        )
+            },
+          },
+        }
       case 'CategoryView':
         const specificProductsCategory = _.sortBy(_.map(this.state.category.products, (productId) => {
           const product = this.state.currentTeamInfo.products[productId]
           return product
         }), 'name')
-        return (
-          <Components.CategoryView
-            ui={ui}
-            category={this.state.category}
-            cart={this.state.currentTeamInfo.team.cart}
-            products={specificProductsCategory}
-            purveyors={this.state.currentTeamInfo.purveyors}
-            onProductDelete={(productId) => {
+        return {
+          component: Components.CategoryView,
+          props: {
+            category: this.state.category,
+            cart: this.state.currentTeamInfo.team.cart,
+            products: specificProductsCategory,
+            purveyors: this.state.currentTeamInfo.purveyors,
+            onProductDelete: (productId) => {
               _.debounce(() => {
                 dispatch(actions.deleteProduct(productId));
               }, 25)()
-            }}
-            onProductEdit={(product) => {
+            },
+            onProductEdit: (product) => {
               const sceneState = Object.assign({}, this.state.sceneState);
               sceneState.ProductForm.submitReady = true;
               sceneState.ProductForm.productId = product.id
@@ -623,20 +631,21 @@ class App extends React.Component {
                   name: 'ProductForm'
                 })
               })
-            }}
-            onUpdateProductInCart={(cartAction, cartAttributes) => {
+            },
+            onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(cartAction, cartAttributes))
               }, 25)()
-            }}
-          />
-        )
+            },
+          },
+        }
       case 'SearchView':
-        return (
-          <Components.SearchView
-            selectedSegmentationIndex={2}
-            segmentationList={['Category', 'Purveyor', 'Search']}
-            onSegmentationChange={(evt) => {
+        return {
+          component: Components.SearchView,
+          props: {
+            selectedSegmentationIndex: 2,
+            segmentationList: ['Category', 'Purveyor', 'Search'],
+            onSegmentationChange: (evt) => {
               const navValue = evt.nativeEvent.value
               switch(navValue){
                 case 'Search':
@@ -658,11 +667,11 @@ class App extends React.Component {
                   // do nothing
                   break;
               }
-            }}
-            products={this.state.currentTeamInfo.products}
-            cart={this.state.currentTeamInfo.team.cart}
-            purveyors={this.state.currentTeamInfo.purveyors}
-            onCreateProduct={() => {
+            },
+            products: this.state.currentTeamInfo.products,
+            cart: this.state.currentTeamInfo.team.cart,
+            purveyors: this.state.currentTeamInfo.purveyors,
+            onCreateProduct: () => {
               const sceneState = Object.assign({}, this.state.sceneState);
               sceneState.ProductForm.submitReady = false;
               sceneState.ProductForm.productId = null
@@ -674,13 +683,13 @@ class App extends React.Component {
                   name: 'ProductForm'
                 })
               })
-            }}
-            onProductDelete={(productId) => {
+            },
+            onProductDelete: (productId) => {
               _.debounce(() => {
                 dispatch(actions.deleteProduct(productId));
               }, 25)()
-            }}
-            onProductEdit={(product) => {
+            },
+            onProductEdit: (product) => {
               const sceneState = Object.assign({}, this.state.sceneState);
               sceneState.ProductForm.submitReady = true;
               sceneState.ProductForm.productId = product.id
@@ -698,43 +707,44 @@ class App extends React.Component {
                   name: 'ProductForm'
                 })
               })
-            }}
-            onUpdateProductInCart={(cartAction, cartAttributes) => {
+            },
+            onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(cartAction, cartAttributes))
               }, 25)()
-            }}
-          />
-        )
-        case 'OrderIndex':
-          return (
-            <Components.OrderIndex
-              showConfirmedOrders={this.state.sceneState.OrderIndex.showConfirmedOrders}
-              orders={this.state.currentTeamInfo.orders}
-              purveyors={this.state.currentTeamInfo.purveyors}
-              teamsUsers={teams.teamsUsers}
-              currentTeamUsers={this.state.currentTeamInfo.team.users}
-              onProcessShowOrders={(showConfirmedOrders) => {
-                const sceneState = Object.assign({}, this.state.sceneState);
-                sceneState.OrderIndex.showConfirmedOrders = showConfirmedOrders;
-                this.setState({
-                  sceneState: sceneState
+            },
+          },
+        }
+      case 'OrderIndex':
+        return {
+          component: Components.OrderIndex,
+          props: {
+            showConfirmedOrders: this.state.sceneState.OrderIndex.showConfirmedOrders,
+            orders: this.state.currentTeamInfo.orders,
+            purveyors: this.state.currentTeamInfo.purveyors,
+            teamsUsers: teams.teamsUsers,
+            currentTeamUsers: this.state.currentTeamInfo.team.users,
+            onProcessShowOrders: (showConfirmedOrders) => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.OrderIndex.showConfirmedOrders = showConfirmedOrders;
+              this.setState({
+                sceneState: sceneState
+              })
+            },
+            onNavToOrder: (orderId) => {
+              const order = this.state.currentTeamInfo.orders[orderId]
+              const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
+              this.setState({
+                order: order,
+                purveyor: purveyor,
+              },() => {
+                nav.push({
+                  name: 'OrderView'
                 })
-              }}
-              onNavToOrder={(orderId) => {
-                const order = this.state.currentTeamInfo.orders[orderId]
-                const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
-                this.setState({
-                  order: order,
-                  purveyor: purveyor,
-                },() => {
-                  nav.push({
-                    name: 'OrderView'
-                  })
-                })
-              }}
-            />
-          )
+              })
+            },
+          },
+        }
       case 'OrderView':
         const orderProducts = _.sortBy(_.map(Object.keys(this.state.order.orderDetails.products), (productId) => {
           return this.state.currentTeamInfo.products[productId]
@@ -742,44 +752,46 @@ class App extends React.Component {
         const orderMessages = _.sortBy(_.filter(this.state.currentTeamInfo.messages, (message) => {
           return message.hasOwnProperty('orderId') === true && message.orderId === this.state.order.id
         }), 'createdAt')
-        return (
-          <Components.OrderView
-            userId={session.userId}
-            order={this.state.order}
-            purveyor={this.state.purveyor}
-            products={orderProducts}
-            teamsUsers={teams.teamsUsers}
-            messages={orderMessages}
-            onConfirmOrder={(order) => {
+        return {
+          component: Components.OrderView,
+          props: {
+            userId: session.userId,
+            order: this.state.order,
+            purveyor: this.state.purveyor,
+            products: orderProducts,
+            teamsUsers: teams.teamsUsers,
+            messages: orderMessages,
+            onConfirmOrder: (order) => {
               _.debounce(() => {
                 dispatch(actions.updateOrder(order.id, {
                   confirm: order.confirm
                 }))
               }, 25)()
-            }}
-            onSendConfirmationMessage={(msg) => {
+            },
+            onSendConfirmationMessage: (msg) => {
               _.debounce(() => {
                 dispatch(actions.createMessage(msg))
               }, 25)()
-            }}
-            onNavToOrders={() => {
+            },
+            onNavToOrders: () => {
               nav.replacePreviousAndPop({
                 name: 'OrderIndex',
               })
-            }}
-          />
-        )
+            },
+          },
+        }
       case 'Profile':
-        return (
-          <Components.ProfileView
-            session={session}
-            onUpdateInfo={(data) => {
+        return {
+          component: Components.ProfileView,
+          props: {
+            session: session,
+            onUpdateInfo: (data) => {
               _.debounce(() => {
                 // console.log("DATA", data);
                 dispatch(actions.updateSession(data));
               }, 25)()
-            }}
-            onUpdateAvatar={(image) => {
+            },
+            onUpdateAvatar: (image) => {
               _.debounce(() => {
                 // console.log("IMAGE", image);
                 dispatch(actions.updateSession({
@@ -787,59 +799,62 @@ class App extends React.Component {
                   imageUrl: image.uri
                 }));
               }, 25)()
-            }}
-            onStoreImages={(data) => {
+            },
+            onStoreImages: (data) => {
               nav.push({
                 name: 'ImageGallery',
                 photos: data,
               });
-            }}
-          />
-        )
+            },
+          },
+        }
       case 'ProductForm':
-        return (
-          <Components.ProductForm
-            product={this.state.product}
-            team={this.state.currentTeamInfo.team}
-            categories={this.state.currentTeamInfo.categories}
-            purveyors={this.state.currentTeamInfo.purveyors}
-            onProcessProduct={(productAttributes) => {
+        return {
+          component: Components.ProductForm,
+          props: {
+            product: this.state.product,
+            team: this.state.currentTeamInfo.team,
+            categories: this.state.currentTeamInfo.categories,
+            purveyors: this.state.currentTeamInfo.purveyors,
+            onProcessProduct: (productAttributes) => {
               const sceneState = Object.assign({}, this.state.sceneState);
               sceneState.ProductForm.submitReady = true;
               sceneState.ProductForm.productAttributes = productAttributes
               this.setState({
                 sceneState: sceneState
               })
-            }}
-            onProductNotReady={() => {
+            },
+            onProductNotReady: () => {
               const sceneState = Object.assign({}, this.state.sceneState);
               sceneState.ProductForm.submitReady = false;
               this.setState({
                 sceneState: sceneState
               })
-            }}
-          />
-        )
+            },
+          },
+        }
       case 'UserInfo':
-        return (
-          <Components.UserInfo
-            onUpdateInfo={(data) => {
+        return {
+          component: Components.UserInfo,
+          props: {
+            onUpdateInfo: (data) => {
               _.debounce(() => {
                 dispatch(actions.updateSession(data));
               }, 25)()
-            }}
-          />
-        )
+            },
+          },
+        }
       case 'UserTeam':
-        return (
-          <Components.UserTeam
-            session={session}
-            onCreateTeam={(teamName) => {
+        return {
+          component: Components.UserTeam,
+          props: {
+            session: session,
+            onCreateTeam: (teamName) => {
               _.debounce(() => {
                 dispatch(actions.addTeam(teamName));
               }, 25)()
-            }}
-            onSearchForTeam={() => {
+            },
+            onSearchForTeam: () => {
               let searchForTeamMsg = (
                 <Text style={{textAlign: 'center'}}>
                   If you're trying to join another person's team,
@@ -850,82 +865,80 @@ class App extends React.Component {
                 genericModalMessage: searchForTeamMsg,
                 showGenericModal: true,
               })
-            }}
-          />
-        )
+            },
+          },
+        }
       case 'InviteView':
-        return (
-          <Components.InviteView
-            contacts={this.state.contactList}
-            denied={this.state.contactsPermissionDenied}
-            onSMSInvite={(contactList) => {
+        return {
+          component: Components.InviteView,
+          props: {
+            contacts: this.state.contactList,
+            denied: this.state.contactsPermissionDenied,
+            onSMSInvite: (contactList) => {
               _.debounce(() => {
                 dispatch(actions.inviteContacts(contactList))
               }, 25)()
               nav.replacePreviousAndPop({
                 name: 'Feed',
               });
-            }}
-          />
-        )
+            },
+          },
+        }
       case 'CartView':
         const cartPurveyorIds = Object.keys(this.state.currentTeamInfo.team.cart.orders)
         const cartPurveyors = _.sortBy(_.map(cartPurveyorIds, (purveyorId) => {
           return this.state.currentTeamInfo.purveyors[purveyorId]
         }), 'name')
-        return (
-          <Components.CartView
-            team={this.state.currentTeamInfo.team}
-            cartPurveyors={cartPurveyors}
-            products={this.state.currentTeamInfo.products}
-            onDeleteProduct={(purveyorId, productId) => {
+        return {
+          component: Components.CartView,
+          props: {
+            team: this.state.currentTeamInfo.team,
+            cartPurveyors: cartPurveyors,
+            products: this.state.currentTeamInfo.products,
+            onDeleteProduct: (purveyorId, productId) => {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(
                   'REMOVE_FROM_CART',
                   {purveyorId: purveyorId, productId: productId}
                 ))
               }, 25)()
-            }}
-            onUpdateProductInCart={(cartAction, cartAttributes) => {
+            },
+            onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
                 dispatch(actions.updateProductInCart(cartAction, cartAttributes))
               }, 25)()
-            }}
-            onSubmitOrder={() => {
+            },
+            onSubmitOrder: () => {
               _.debounce(() => {
                 dispatch(actions.sendCart());
               }, 25)()
               nav.replacePreviousAndPop({
                 name: 'Feed',
               });
-            }}
-          />
-        )
+            },
+          },
+        }
       case 'Loading':
-        return (
-          <View style={{flex: 1, alignItems: 'center'}}>
-            <View style={styles.logoContainer}>
-              <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-            </View>
-            <Text style={styles.loadingText}>LOADING</Text>
-          </View>
-        )
+        return {
+          component: Components.Loading
+        }
       case 'TeamMemberListing':
-        return (
-          <Components.TeamMemberListing
-            teamsUsers={teams.teamsUsers}
-            currentTeamUsers={this.state.currentTeamInfo.team.users}
-          />
-        )
+        return {
+          component: Components.TeamMemberListing,
+          props: {
+            teamsUsers: teams.teamsUsers,
+            currentTeamUsers: this.state.currentTeamInfo.team.users,
+          },
+        }
       default:
-        return <View />;
+        return;
     }
   }
 
   getNavBar(route, nav) {
-    const { dispatch, ui, teams, session } = this.props;
+    const { dispatch, teams, session } = this.props;
 
-    let navBar = <View />;
+    let navBar = null;
     let nextItem = <View />;
 
     // setup the header for unauthenticated routes
@@ -935,38 +948,40 @@ class App extends React.Component {
       switch(route.name) {
         //TODO: remove cloneWithProps as it's deprecated
         case 'AddOrderGuide':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
-            buttonsColor: '#ccc',
+            buttonsColor: Colors.greyText,
             customPrev: (
-              <Components.NavBackButton iconFont={'fontawesome|times'} />
+              <Components.NavBackButton iconFont={'material|close'} />
             ),
             title: 'Order Guide',
             hideNext: true,
           })
           break;
         case 'TeamIndex':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             hidePrev: false,
-            buttonsColor: '#ccc',
+            buttonsColor: Colors.greyText,
             customPrev: (
-              <Components.NavBackButton iconFont={'fontawesome|times'} />
+              <Components.NavBackButton iconFont={'material|close'} />
             ),
             title: 'Switch Teams',
           })
           break;
         case 'Feed':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             hidePrev: false,
             title: this.state.currentTeamInfo.team ? this.state.currentTeamInfo.team.name : 'Sous',
             titleColor: 'black',
             customPrev: (
-              <Components.FeedViewLeftButton />
+              <Components.FeedViewLeftButton
+                disabled={(this.state.currentTeamInfo.team === null)}
+              />
             ),
             customNext: (
               <Components.FeedViewRightButton />
@@ -974,11 +989,11 @@ class App extends React.Component {
           })
           break;
         case 'PurveyorIndex':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: (
-              <Components.NavBackButton iconFont={'fontawesome|times'} />
+              <Components.NavBackButton iconFont={'material|close'} />
             ),
             title: 'Order Guide',
             customNext: (
@@ -992,23 +1007,23 @@ class App extends React.Component {
           })
           break;
         case 'TeamView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
-            buttonsColor: '#ccc',
+            buttonsColor: Colors.greyText,
             title: this.state.currentTeamInfo.team.name,
             customPrev: (
-              <Components.NavBackButton iconFont={'fontawesome|times'} />
+              <Components.NavBackButton iconFont={'material|close'} />
             ),
           })
           break;
         case 'PurveyorView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: (
               <Components.NavBackButton
-                iconFont={'fontawesome|chevron-left'}
+                iconFont={'material|chevron-left'}
                 pop={true}
               />
             ),
@@ -1024,13 +1039,13 @@ class App extends React.Component {
           })
           break;
         case 'CategoryIndex':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             hidePrev: false,
-            buttonsColor: '#ccc',
+            buttonsColor: Colors.greyText,
             customPrev: (
-              <Components.NavBackButton iconFont={'fontawesome|times'} />
+              <Components.NavBackButton iconFont={'material|close'} />
             ),
             title: 'Order Guide',
             customNext: (
@@ -1044,13 +1059,13 @@ class App extends React.Component {
           })
           break;
         case 'CategoryView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: (
               <Components.NavBackButton
                 navName='CategoryIndex'
-                iconFont={'fontawesome|chevron-left'}
+                iconFont={'material|chevron-left'}
               />
             ),
             title: this.state.category.name,
@@ -1065,11 +1080,11 @@ class App extends React.Component {
           })
           break;
         case 'SearchView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: (
-              <Components.NavBackButton iconFont={'fontawesome|times'} />
+              <Components.NavBackButton iconFont={'material|close'} />
             ),
             title: 'Order Guide',
             customNext: (
@@ -1086,26 +1101,26 @@ class App extends React.Component {
           const openOrders = _.filter(this.state.currentTeamInfo.orders, (order) => {
             return order.confirm.order === false
           })
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             hidePrev: false,
-            buttonsColor: '#ccc',
+            buttonsColor: Colors.greyText,
             customPrev: (
-              <Components.NavBackButton iconFont={'fontawesome|times'} />
+              <Components.NavBackButton iconFont={'material|close'} />
             ),
             title: `${openOrders.length} Open Orders`,
             hideNext: true,
           })
           break;
         case 'OrderView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: (
               <Components.NavBackButton
                 navName='OrderIndex'
-                iconFont={'fontawesome|chevron-left'}
+                iconFont={'material|chevron-left'}
               />
             ),
             title: this.state.purveyor.name.substr(0,16) + (this.state.purveyor.name.length > 16 ? '...' : ''),
@@ -1135,7 +1150,7 @@ class App extends React.Component {
           })
           break;
         // case 'ProductView':
-        //   navBar = React.addons.cloneWithProps(this.navBar, {
+        //   navBar = React.cloneElement(this.navBar, {
         //     navigator: nav,
         //     route: route,
         //     onNext: null,
@@ -1143,51 +1158,51 @@ class App extends React.Component {
         //   })
         //   break;
         case 'Profile':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             hidePrev: false,
             customPrev: (
               <Components.NavBackButton
-                iconFont={'fontawesome|chevron-left'}
+                iconFont={'material|chevron-left'}
               />
             ),
             title: 'Account',
           })
           break;
         case 'InviteView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: (
               <Components.NavBackButton
-                iconFont={'fontawesome|times'}
+                iconFont={'material|close'}
               />
             ),
             title: 'Invite Teammates',
           })
           break;
         case 'CartView':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: (
               <Components.NavBackButton
                 pop={true}
-                iconFont={'fontawesome|chevron-left'}
+                iconFont={'material|chevron-left'}
               />
             ),
             title: 'Cart',
           })
           break;
         case 'ProductForm':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             ref: 'navBar',
             navigator: nav,
             route: route,
             customPrev: (
               <Components.NavBackButton
-                iconFont={'fontawesome|times'}
+                iconFont={'material|close'}
                 pop={true}
               />
             ),
@@ -1220,18 +1235,19 @@ class App extends React.Component {
           })
           break;
         case 'TeamMemberListing':
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: (
               <Components.NavBackButton
-                iconFont={'fontawesome|times'}
+                iconFont={'material|close'}
                 pop={true}
               />
             ),
             title: 'Team Members',
             customNext: (
               <Components.TeamMemberRightInvite
+                connected={(connect.status === actions.CONNECT.CONNECTED)}
                 toggleInviteModal={(value) => {
                   _.debounce(() => {
                     dispatch(actions.updateSession({ inviteModalVisible: value }))
@@ -1244,10 +1260,10 @@ class App extends React.Component {
         case 'UserInfo':
         case 'UserTeam':
         case 'Loading':
-          navBar = <View />;
+          navBar = null;
           break;
         default:
-          navBar = React.addons.cloneWithProps(this.navBar, {
+          navBar = React.cloneElement(this.navBar, {
             hidePrev: false,
             navigator: nav,
             route: route,
@@ -1263,7 +1279,7 @@ class App extends React.Component {
     const { session } = this.props;
 
     // redirect to initial view
-    if (this.state.isAuthenticated){
+    if (this.state.isAuthenticated === true){
       if (route.name === 'Login' || route.name === 'Signup' || route.name === 'UserInfo') {
         if (this.state.firstName === '' || this.state.lastName === '') {
           route.name = 'UserInfo';
@@ -1293,12 +1309,16 @@ class App extends React.Component {
   }
 
   renderScene(route, nav) {
-    const { dispatch, ui, session, teams, messages, purveyors, products, categories, errors, connect } = this.props;
+    const { dispatch, session, teams, messages, purveyors, products, categories, errors, connect } = this.props;
 
     route = this.getRoute(route, nav);
 
     let navBar = this.getNavBar(route, nav);
-    let scene = this.getScene(route, nav);
+    const sceneAttrs = this.getScene(route, nav);
+    let sceneComponentProps = sceneAttrs.props || {};
+    sceneComponentProps.connected = (connect.status === actions.CONNECT.CONNECTED);
+    let scene = React.createElement(sceneAttrs.component || View, sceneComponentProps, sceneAttrs.children || null);
+
     let errorModal = (
       <Components.ErrorModal
         onDeleteError={(errorIdList) => {
@@ -1356,10 +1376,10 @@ class App extends React.Component {
       />
     )
 
-    let CustomSideView = View
+    let CustomSideView = SideMenu
     let menu = View
     if(this.state.isAuthenticated === true && this.state.currentTeamInfo.team !== null){
-      CustomSideView = SideMenu
+      // CustomSideView = SideMenu
       menu = (
         <Components.Menu
           ref='menu'
@@ -1388,6 +1408,44 @@ class App extends React.Component {
       );
     }
 
+    let connectionStatus = null
+    if(connect.status === actions.CONNECT.OFFLINE){
+      connectionStatus = (
+        <TouchableHighlight
+          onPress={() => {
+            const learnMoreMsg = (
+              <View>
+                <Text style={{textAlign: 'center'}}>
+                  The app connection status is:
+                  <Text style={{fontWeight: 'bold'}}> Offline</Text>
+                </Text>
+                <Text style={{textAlign: 'center', marginTop: 10}}>
+                  <Text style={{fontWeight: 'bold'}}>Please note: </Text>
+                  Some functionality (like sending messages or
+                  submitting orders) will be disabled until the app
+                  can re-establish connection.
+                </Text>
+                <Text style={{textAlign: 'center', marginTop: 10}}>
+                  All other functionality will work as expected, and will propagate
+                  changes to the rest of your team upon re-connection.
+                </Text>
+              </View>
+            )
+            this.setState({
+              genericModalMessage: learnMoreMsg,
+              showGenericModal: true,
+            })
+          }}
+          underlayColor='transparent'
+        >
+          <View style={styles.offlineContainer}>
+            <Icon name='material|info' size={20} color={'white'} style={styles.offlineIcon} />
+            <Text style={styles.offlineText}>Connection offline, limited app features</Text>
+          </View>
+        </TouchableHighlight>
+      )
+    }
+
     return (
       <CustomSideView
         ref='customSideView'
@@ -1400,6 +1458,7 @@ class App extends React.Component {
           {errorModal}
           {inviteModal}
           {genericModal}
+          {connectionStatus}
           {scene}
           {session.inviteModalVisible === false ? <KeyboardSpacer /> : <View />}
         </View>
@@ -1450,87 +1509,33 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: '#ccc',
   },
-  navSignUp: {
-    justifyContent: 'center',
-  },
-  logo: {
-    color: 'white',
-    fontSize: 20,
-    flex: 4,
-    justifyContent: 'center',
+  offlineContainer: {
+    width: window.width,
+    height: 32,
+    flexDirection: 'row',
     alignItems: 'center',
-    fontFamily: 'OpenSans'
+    backgroundColor: Colors.darkGrey,
+    padding: 4,
   },
-  logoImage: {
-    width: 45,
-    height: 45,
-    alignItems: 'center',
-    flex: .5
-  },
-  iconFace: {
-    width: 70,
-    height: 70,
-  },
-  profileBtn: {
-    flex: 1,
-    alignItems: 'flex-end',
-  },
-  signup: {
-    marginRight: 5,
-    right: 10,
-    position: 'absolute',
-    top: 27
-  },
-  header: {
+  offlineText: {
+    flex: 8,
     color: 'white',
     fontWeight: 'bold',
-    fontFamily: 'OpenSans'
-  },
-  loadingText: {
-    textAlign: 'center',
-    marginTop: 20,
-    fontSize: 20,
     fontFamily: 'OpenSans',
-    fontWeight: 'bold',
-    color: '#555',
+    fontSize: 12,
   },
-  buttonText: {
-    alignSelf: 'center',
-    fontSize: 27,
-    color: 'white',
-    fontWeight: 'bold',
-    fontFamily: 'OpenSans'
-  },
-  logoutButton: {
-    backgroundColor: 'pink'
-  },
-  logoutButtonText: {
-    color: '#fff'
-  },
-  leftBtn: {
+  offlineIcon: {
     flex: 1,
-  },
-  logoContainer: {
-    marginTop: 50,
-    marginBottom: 15,
-    borderRadius: 100/2,
-    backgroundColor: Colors.button,
-    paddingLeft: 10,
-    paddingTop: 15,
-    width: 100,
-    height: 100,
-    alignSelf: 'center'
-  },
-  logoImage: {
-    borderRadius: 15,
-    width: 80,
-    height: 70
-  },
+    width: 24,
+    height: 24,
+    // backgroundColor: Colors.lightBlue,
+    // borderRadius: 12,
+    marginLeft: 12
+  }
 })
 
 function mapStateToProps(state) {
   return {
-    ui: state.ui,
     session: state.session,
     teams: state.teams,
     messages: state.messages,

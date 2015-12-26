@@ -168,8 +168,10 @@ const styles = StyleSheet.create({
     top: 1,
   },
   searchResultsContainer: {
+    borderTopColor: Colors.separatorColor,
     borderTopWidth: 1,
     marginTop: 5,
+    paddingTop: 5,
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
   },
