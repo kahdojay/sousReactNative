@@ -20,6 +20,17 @@ export default class AddForm extends React.Component {
     }
   }
 
+  handleChangeText(text) {
+    this.setState({text: text})
+  }
+
+  handleSubmit() {
+    if(this.props.connected === true && this.state.text !== '') {
+      this.props.onSubmit(this.state.text);
+      this.setState({text: ''})
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -33,26 +44,15 @@ export default class AddForm extends React.Component {
           />
           <TouchableHighlight
             onPress={this.handleSubmit.bind(this)}
-            underlayColor={"#eee"}
+            underlayColor='transparent'
             style={styles.button}>
             <View style={styles.addContainer}>
-              <Icon name='material|plus-circle' size={30} color={Colors.lightBlue} style={styles.addIcon}/>
+              <Icon name='material|plus-circle' size={30} color={this.props.connected === true ? Colors.lightBlue : Colors.disabled} style={styles.addIcon}/>
             </View>
           </TouchableHighlight>
         </View>
       </View>
     );
-  }
-
-  handleChangeText(text) {
-    this.setState({text: text})
-  }
-
-  handleSubmit() {
-    if (this.state.text !== '') {
-      this.props.onSubmit(this.state.text);
-      this.setState({text: ''})
-    }
   }
 }
 

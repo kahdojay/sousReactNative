@@ -129,6 +129,7 @@ function teams(state = initialState.teams, action) {
     });
 
   case SET_CURRENT_TEAM:
+    console.log(action)
     return Object.assign({}, state, {
       currentTeam: action.team
     });

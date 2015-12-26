@@ -60,7 +60,6 @@ var styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
   },
   icon: {
     width: 40,

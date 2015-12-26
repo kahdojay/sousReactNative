@@ -1,5 +1,5 @@
-import { Icon } from 'react-native-icons';
 import React from 'react-native';
+import { Icon } from 'react-native-icons';
 import ErrorModal from './errorModal';
 import AddForm from './addForm';
 import Colors from '../utilities/colors';
@@ -26,6 +26,7 @@ class TeamIndex extends React.Component {
       <View style={styles.container}>
         <View style={styles.teamContainer}>
           <AddForm
+            connected={this.props.connected}
             placeholder="Add a Team..."
             onSubmit={this.props.onAddTeam.bind(this)}
           />

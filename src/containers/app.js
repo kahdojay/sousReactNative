@@ -1247,6 +1247,7 @@ class App extends React.Component {
             title: 'Team Members',
             customNext: (
               <Components.TeamMemberRightInvite
+                connected={(connect.status === actions.CONNECT.CONNECTED)}
                 toggleInviteModal={(value) => {
                   _.debounce(() => {
                     dispatch(actions.updateSession({ inviteModalVisible: value }))
@@ -1438,7 +1439,7 @@ class App extends React.Component {
           underlayColor='transparent'
         >
           <View style={styles.offlineContainer}>
-            <Icon name='material|info' size={12} color={'white'} style={styles.offlineIcon} />
+            <Icon name='material|info' size={20} color={'white'} style={styles.offlineIcon} />
             <Text style={styles.offlineText}>Connection offline, limited app features</Text>
           </View>
         </TouchableHighlight>
@@ -1517,18 +1518,18 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   offlineText: {
-    flex: 1,
+    flex: 8,
     color: 'white',
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
     fontSize: 12,
-    textAlign: 'center',
   },
   offlineIcon: {
+    flex: 1,
     width: 24,
     height: 24,
-    backgroundColor: Colors.lightBlue,
-    borderRadius: 12,
+    // backgroundColor: Colors.lightBlue,
+    // borderRadius: 12,
     marginLeft: 12
   }
 })

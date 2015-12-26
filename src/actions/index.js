@@ -30,16 +30,18 @@ const purveyorActions = PurveyorActions(ddpClient)
 const orderActions = OrderActions(ddpClient)
 
 function connectApp(){
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const {connect} = getState()
     //--------------------------------------
     // Execute pre-connect actions
     //--------------------------------------
 
-    // dispatch(sessionActions.resetSession());
-    dispatch(sessionActions.resetSessionVersion());
-    dispatch(teamActions.resetTeams());
-    dispatch(messageActions.resetMessages());
-    // dispatch(purveyorActions.resetPurveyors());
+    if(connect.status === connectActions.CONNECT.CONNECTED){
+      // dispatch(sessionActions.resetSession());
+      dispatch(sessionActions.resetSessionVersion());
+      dispatch(messageActions.resetMessages());
+      // dispatch(purveyorActions.resetPurveyors());
+    }
 
     //--------------------------------------
     // Bind app events

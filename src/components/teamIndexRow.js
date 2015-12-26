@@ -45,6 +45,13 @@ class TeamIndexRow extends React.Component {
     let progressColor = progress < 0.9 ? "#4A90E2" : "#7ED321";
     // let percentage = Math.floor(( numCompletedTasks / totalNumTasks)*100) || 0
 
+    let selectedColor = Colors.green
+    let changeColor = Colors.lightBlue
+    if(this.props.connected === false){
+      selectedColor = Colors.disabled
+      changeColor = Colors.disabled
+    }
+
     return (
       <TouchableOpacity
         onPress={() => {
@@ -70,9 +77,9 @@ class TeamIndexRow extends React.Component {
             </View>
           </View>
           { this.props.selected === false ?
-            <Icon name='material|chevron-right' size={30} color={Colors.greyText} style={styles.iconArrow}/>
+            <Icon name='material|chevron-right' size={30} color={changeColor} style={styles.iconArrow}/>
           :
-            <Icon name='material|check' size={30} color={Colors.green} style={styles.iconArrow}/>
+            <Icon name='material|check' size={30} color={selectedColor} style={styles.iconArrow}/>
           }
         </View>
       </TouchableOpacity>
