@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import connect from './connect';
-import ui from './ui';
+// import ui from './ui';
 import team from './team';
 import session from './session';
 import message from './message';
@@ -13,7 +13,7 @@ import order from './order';
 const reducers = combineReducers(Object.assign(
   {},
   connect,
-  ui,
+  // ui,
   team,
   session,
   message,

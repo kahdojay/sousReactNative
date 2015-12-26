@@ -11,6 +11,7 @@ import FeedViewRightButton from './feedViewRightButton';
 import GenericModal from './genericModal';
 import InviteModal from '../components/inviteModal';
 import InviteView from './inviteView';
+import Loading from './loading';
 import Login from './login';
 import Menu from './menu';
 import NavBackButton from './navBackButton';
@@ -49,6 +50,7 @@ export default {
   GenericModal,
   InviteModal,
   InviteView,
+  Loading,
   Login,
   Menu,
   NavBackButton,

@@ -1,5 +1,5 @@
 import ConnectActions from './connect';
-import UIActions from './ui';
+// import UIActions from './ui';
 import SessionActions from './session';
 import TeamActions from './team';
 import MessageActions from './message';
@@ -12,7 +12,7 @@ import ddpClient from '../utilities/ddpClient';
 
 const errorActions = ErrorActions(ddpClient)
 const connectActions = ConnectActions(ddpClient)
-const uiActions = UIActions(ddpClient)
+// const uiActions = UIActions(ddpClient)
 const sessionActions = SessionActions(ddpClient, {
   'connectActions': connectActions
 })
@@ -38,7 +38,6 @@ function connectApp(){
     // dispatch(sessionActions.resetSession());
     dispatch(sessionActions.resetSessionVersion());
     dispatch(teamActions.resetTeams());
-    // dispatch(uiActions.resetUI()); //NOTE: why doesnt this work?
     dispatch(messageActions.resetMessages());
     // dispatch(purveyorActions.resetPurveyors());
 
@@ -46,14 +45,14 @@ function connectApp(){
     // Bind app events
     //--------------------------------------
 
-    dispatch(uiActions.bindKeyboard());
+    // dispatch(uiActions.bindKeyboard());
 
     //--------------------------------------
     // Connect DDP
     //--------------------------------------
 
     dispatch(connectActions.connectDDP({
-      'uiActions': uiActions,
+      // 'uiActions': uiActions,
       'sessionActions': sessionActions,
       'teamActions': teamActions,
       'messageActions': messageActions,
@@ -69,7 +68,7 @@ function connectApp(){
 export default Object.assign(
   {'connectApp': connectApp},
   connectActions,
-  uiActions,
+  // uiActions,
   sessionActions,
   teamActions,
   messageActions,

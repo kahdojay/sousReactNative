@@ -28,10 +28,10 @@ class TeamMemberListing extends React.Component {
           icon = <Image source={{uri: user.imageUrl}} style={styles.avatarImage} />
         }
         teamMembers.push(
-          <View style={styles.row}>
+          <View key={userId} style={styles.row}>
             <View style={styles.member}>
               {icon}
-              <Text key={userId} style={styles.memberName}>
+              <Text style={styles.memberName}>
                 {/* * /}{user.superUser === true ? <Text style={{textAlign: 'center', color: Colors.darkBlue, backgroundColor: 'transparent'}}>*</Text> : ''}{/* */}
                 {user.firstName} {user.lastName}
               </Text>

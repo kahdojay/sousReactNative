@@ -6,6 +6,7 @@ import InvertibleScrollView from 'react-native-invertible-scroll-view';
 let SideMenu = require('react-native-side-menu');
 import Menu from './menu';
 import moment from 'moment';
+
 const {
   ActivityIndicatorIOS,
   PropTypes,

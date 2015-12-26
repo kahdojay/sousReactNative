@@ -152,7 +152,7 @@ export default function ConnectActions(ddpClient) {
   */
   function subscribeDDPMessage(allActions){
     const {
-      uiActions,
+      // uiActions,
       sessionActions,
       teamActions,
       messageActions,

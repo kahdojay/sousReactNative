@@ -4,15 +4,16 @@ import React from 'react-native';
 import Colors from '../utilities/colors';
 
 const {
+  ActivityIndicatorIOS,
   Dimensions,
-  StyleSheet,
-  View,
-  Text,
   Image,
+  ScrollView,
+  StyleSheet,
+  Text,
   TextInput,
   TouchableHighlight,
-  ScrollView,
-  ActivityIndicatorIOS,
+  TouchableOpacity,
+  View,
 } = React;
 
 const runTimeDimensions = Dimensions.get('window')
@@ -27,6 +28,13 @@ class Signup extends React.Component {
       smsSent: this.props.session.smsSent,
       submitting: false
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if(nextProps.connected !== false){
+      return true;
+    }
+    return false;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -121,34 +129,58 @@ class Signup extends React.Component {
       </View>
     );
     const errorMessage = <Text style={styles.errorText}>Invalid entry, please try again.</Text>
+
+    let buttonStyle = styles.buttonActive
+    let buttonUnderlayColor = Colors.gold
+
+    if(this.props.connected === false){
+      buttonStyle = [styles.buttonActive, {backgroundColor: Colors.disabled}]
+      buttonUnderlayColor = Colors.disabled
+    }
+
     let signup = (
       <View style={styles.login}>
-        <Text style={styles.headerText}>Use your phone number to log in to Sous.</Text>
-        <Text style={styles.centered}>First, we will send you a <Text style={styles.boldText}>text message</Text> to verify your account.</Text>
-        <View style={styles.inputContainer}>
-          <View style={{borderBottomWidth: 1, borderBottomColor: 'black'}}>
-            <Icon name='material|phone' size={30} color='#aaa' style={styles.iconPhone}/>
-            <TextInput
-              ref='phone'
-              style={styles.input}
-              value={this.state.phoneNumber}
-              keyboardType='phone-pad'
-              onSubmitEditing={() => {this.onSignup()}}
-              onChange={(e) => {
-                this.setState({phoneNumber: e.nativeEvent.text, invalid: false})
-              }}
-            />
-          </View>
-        </View>
-        { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
-        <TouchableHighlight
-          underlayColor='#C6861D'
+        <TouchableOpacity
+          style={{paddingBottom: 20}}
+          activeOpacity={1}
           onPress={() => {
-            this.setState({ smsSent: false }, () => {
-              this.onSignup()
-            })
+            this.refs.phone.blur()
+            this.refs.scrollView.scrollTo(0)
           }}
-          style={styles.buttonActive}>
+        >
+          <Text style={styles.headerText}>Use your phone number to log in to Sous.</Text>
+          <Text style={styles.centered}>First, we will send you a <Text style={styles.boldText}>text message</Text> to verify your account.</Text>
+          <View style={styles.inputContainer}>
+            <View style={{borderBottomWidth: 1, borderBottomColor: 'black'}}>
+              <Icon name='material|phone' size={30} color='#aaa' style={styles.iconPhone}/>
+              <TextInput
+                ref='phone'
+                style={[styles.input]}
+                value={this.state.phoneNumber}
+                keyboardType='phone-pad'
+                onSubmitEditing={() => {this.onSignup()}}
+                onFocus={() => {
+                  this.refs.scrollView.scrollTo(140)
+                }}
+                onChange={(e) => {
+                  this.setState({phoneNumber: e.nativeEvent.text, invalid: false})
+                }}
+              />
+            </View>
+
+          </View>
+          { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
+        </TouchableOpacity>
+        <TouchableHighlight
+          underlayColor={buttonUnderlayColor}
+          onPress={() => {
+            if(this.props.connected === true){
+              this.setState({ smsSent: false }, () => {
+                this.onSignup()
+              })
+            }
+          }}
+          style={buttonStyle}>
           <Text style={styles.buttonText}>Send SMS</Text>
         </TouchableHighlight>
       </View>
@@ -157,39 +189,51 @@ class Signup extends React.Component {
       const formattedPhoneNumber = this.formatPhoneNumber(session.phoneNumber);
       signup = (
         <View style={styles.login}>
-          <Text style={styles.headerText}>We just sent a text to</Text>
-          <Text style={[styles.boldText, styles.centered, styles.largeText]}>{formattedPhoneNumber}</Text>
-          <TouchableHighlight
-            underlayColor='transparent'
+          <TouchableOpacity
+            style={{paddingBottom: 20}}
+            activeOpacity={1}
             onPress={() => {
-              this.setState({ smsSent: true, smsToken: null }, () => {
-                this.onSignup()
-              })
+              this.refs.code.blur()
+              this.refs.scrollView.scrollTo(0)
             }}
-            style={[styles.smallButton, styles.buttonLinkWrap]}>
-            <Text style={styles.buttonLink}>Send again</Text>
-          </TouchableHighlight>
-          <Text style={styles.centered}>Enter the verification code below to sign in.</Text>
-          <View style={styles.inputContainer}>
-            <View style={{borderBottomWidth: 1, borderBottomColor: 'black'}}>
-              <TextInput
-                ref='code'
-                style={styles.input}
-                value={this.state.smsToken}
-                keyboardType='phone-pad'
-                textAlign='center'
-                onSubmitEditing={() => {this.onVerify()}}
-                onChange={(e) => {
-                  this.setState({smsToken: e.nativeEvent.text, invalid: false})
-                }}
-              />
+          >
+            <Text style={styles.headerText}>We just sent a text to</Text>
+            <Text style={[styles.boldText, styles.centered, styles.largeText]}>{formattedPhoneNumber}</Text>
+            <TouchableHighlight
+              underlayColor='transparent'
+              onPress={() => {
+                this.setState({ smsSent: true, smsToken: null }, () => {
+                  this.onSignup()
+                })
+              }}
+              style={[styles.smallButton, styles.buttonLinkWrap]}>
+              <Text style={styles.buttonLink}>Send again</Text>
+            </TouchableHighlight>
+            <Text style={styles.centered}>Enter the verification code below to sign in.</Text>
+            <View style={styles.inputContainer}>
+              <View style={{borderBottomWidth: 1, borderBottomColor: 'black'}}>
+                <TextInput
+                  ref='code'
+                  style={styles.input}
+                  value={this.state.smsToken}
+                  keyboardType='phone-pad'
+                  textAlign='center'
+                  onSubmitEditing={() => {this.onVerify()}}
+                  onFocus={() => {
+                    this.refs.scrollView.scrollTo(140)
+                  }}
+                  onChange={(e) => {
+                    this.setState({smsToken: e.nativeEvent.text, invalid: false})
+                  }}
+                />
+              </View>
             </View>
-          </View>
-          { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
+            { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
+          </TouchableOpacity>
           <TouchableHighlight
-            underlayColor='#C6861D'
+            underlayColor={buttonUnderlayColor}
             onPress={() => {this.onVerify()}}
-            style={styles.buttonActive}
+            style={buttonStyle}
           >
             <Text style={styles.buttonText}>Verify</Text>
           </TouchableHighlight>
@@ -197,46 +241,33 @@ class Signup extends React.Component {
       );
     }
 
-    // //TODO refactor entire view to use flexbox so we can depend on
-    // if (this.props.ui.keyboard.visible) {
-    //   // console.log(runTimeDimensions)
-    //   if (runTimeDimensions.height < 500) {
-    //     this.refs.scrollView.scrollTo(200)
-    //   } else if (runTimeDimensions.height < 600) {
-    //     this.refs.scrollView.scrollTo(100)
-    //   }
-    // } else if (this.refs.scrollView){
-    //   this.refs.scrollView.scrollTo(0)
-    // }
     return (
-      <ScrollView
-        automaticallyAdjustContentInsets={false}
-        ref="scrollView"
-        style={[
-          styles.container,
-          this.props.ui.keyboard.visible && {height: this.props.ui.keyboard.screenY}
-        ]}
-      >
+      <View style={{flex: 1}}>
         <View style={styles.navbar}>
           <Text style={styles.signup}>Signup/Login</Text>
         </View>
-        <View style={styles.logoContainer}>
-          <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-        </View>
-        {this.state.submitting !== false ? fetching : signup}
-      </ScrollView>
+        <ScrollView
+          automaticallyAdjustContentInsets={false}
+          ref="scrollView"
+          style={styles.container}
+        >
+          <View style={styles.logoContainer}>
+            <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+          </View>
+          {this.state.submitting !== false ? fetching : signup}
+        </ScrollView>
+      </View>
     );
   }
 };
 
 let styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   navbar: {
     height: 40,
     backgroundColor: Colors.button,
-    flex: 1,
     justifyContent: 'center',
   },
   signup: {
@@ -338,7 +369,6 @@ let styles = StyleSheet.create({
     backgroundColor: Colors.gold,
     alignSelf: 'center',
     width: 150,
-    marginTop: 20,
     marginBottom: 50,
     justifyContent: 'center',
     borderRadius: 3,

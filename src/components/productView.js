@@ -72,11 +72,6 @@ class ProductView extends React.Component {
         saved: true,
       });
     }
-    if(nextProps.keyboardVisible === true){
-      this.scrollToBottom();
-    } else {
-      this.scrollToTop();
-    }
   }
 
   render() {
