@@ -1,6 +1,7 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import _ from 'lodash';
+import Sizes from '../utilities/sizes';
 import Colors from '../utilities/colors';
 import messageUtils from '../utilities/message';
 import moment from 'moment';
@@ -15,6 +16,12 @@ const {
 } = React;
 
 class TeamIndexRow extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      enabled: (this.props.connected === true && this.props.selected === false)
+    };
+  }
 
   render() {
     const { team, messages } = this.props
@@ -41,12 +48,12 @@ class TeamIndexRow extends React.Component {
     return (
       <TouchableOpacity
         onPress={() => {
-          if(this.props.selected === false){
+          if(this.state.enabled){
             this.props.onPress()
           }
         }}
         style={styles.row}
-        activeOpacity={(this.props.selected === false) ? .5 : 1}
+        activeOpacity={(this.state.enabled) ? .5 : 1}
       >
         <View style={styles.textProgressArrowContainer}>
           <View
@@ -68,7 +75,6 @@ class TeamIndexRow extends React.Component {
             <Icon name='material|check' size={30} color={Colors.green} style={styles.iconArrow}/>
           }
         </View>
-        <View style={styles.separator} />
       </TouchableOpacity>
     );
   }
@@ -76,8 +82,15 @@ class TeamIndexRow extends React.Component {
 
 const styles = StyleSheet.create({
   row: {
-    flexDirection: 'column',
-    padding: 10
+    marginTop: 2,
+    marginBottom: 2,
+    marginRight: 5,
+    marginLeft: 5,
+    borderRadius: Sizes.rowBorderRadius,
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    alignItems: 'center',
+    padding: 5,
   },
   progress: {
     paddingTop: 5,
@@ -112,11 +125,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginLeft: 5,
   },
-  separator: {
-    height: 5,
-    borderBottomColor: Colors.greyText,
-    borderBottomWidth: 1,
-  },
   teamInfo: {
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -130,10 +138,8 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans'
   },
   iconArrow: {
-    width: 70,
-    height: 70,
-    marginTop: -20,
-    marginRight: -15
+    width: 50,
+    height: 50,
   },
 })
 

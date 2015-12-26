@@ -29,6 +29,7 @@ class TeamIndex extends React.Component {
             placeholder="Add a Team..."
             onSubmit={this.props.onAddTeam.bind(this)}
           />
+          <View style={styles.separator} />
           <ScrollView
             style={styles.scrollView}
             keyboardShouldPersistTaps={false}
@@ -47,6 +48,7 @@ class TeamIndex extends React.Component {
                 return (
                   <TeamIndexRow
                     key={index}
+                    connected={this.props.connected}
                     selected={(this.props.currentTeam.id === team.id)}
                     team={team}
                     teamsUsers={teams.teamsUsers}
@@ -77,7 +79,12 @@ const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: Colors.mainBackgroundColor,
     marginTop: 0,
-    paddingTop: 0
+    paddingTop: 5
+  },
+  separator: {
+    height: 0,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
   },
 });
 

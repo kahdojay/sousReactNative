@@ -23,7 +23,7 @@ class TeamMemberListing extends React.Component {
     this.props.currentTeamUsers.forEach((userId) => {
       if(this.props.teamsUsers.hasOwnProperty(userId)){
         const user = this.props.teamsUsers[userId]
-        let icon = <Icon name='material|user' size={40} color='#aaa' style={styles.avatar}/>
+        let icon = <Icon name='material|account' size={50} color='#aaa' style={styles.avatar}/>
         if (user.hasOwnProperty('imageUrl') && user.imageUrl !== '') {
           icon = <Image source={{uri: user.imageUrl}} style={styles.avatarImage} />
         }
@@ -36,7 +36,6 @@ class TeamMemberListing extends React.Component {
                 {user.firstName} {user.lastName}
               </Text>
             </View>
-            <View style={styles.separator} />
           </View>
         );
       }
@@ -91,12 +90,8 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
   },
-  separator: {
-    height: 1,
-    borderBottomColor: '#eee',
-    borderBottomWidth: 1,
-  },
 });
+
 TeamMemberListing.propTypes = {
 };
 

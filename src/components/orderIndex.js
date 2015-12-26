@@ -118,7 +118,7 @@ class OrderIndex extends React.Component {
             this.setState({
               showConfirmedOrders: !this.state.showConfirmedOrders
             }, () => {
-              this.props.onProcessShowOrders(this.state.showConfirmedOrders)  
+              this.props.onProcessShowOrders(this.state.showConfirmedOrders)
             })
           }}
           underlayColor='transparent'
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 0,
-    borderBottomColor: '#bbb',
+    borderBottomColor: Colors.separatorColor,
     borderBottomWidth: 1,
   },
   row: {

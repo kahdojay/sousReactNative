@@ -17,6 +17,7 @@ const Colors = {
   navbarColor: 'white',
   red: '#B11E00',
   taskCompletedBackgroundColor: '#e1e1e1',
+  separatorColor: '#bbb',
 }
 
 export default Colors

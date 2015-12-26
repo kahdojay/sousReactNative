@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
   separator: {
     marginTop: 10,
     height: 0,
-    borderBottomColor: '#bbb',
+    borderBottomColor: Colors.separatorColor,
     borderBottomWidth: 1,
   },
   dayOfWeekContainer: {

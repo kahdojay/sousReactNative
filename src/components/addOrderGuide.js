@@ -119,9 +119,9 @@ let styles = StyleSheet.create({
     marginTop: 5,
   },
   separator: {
-    height: 1,
-    borderColor: '#eee',
-    borderWidth: 1,
+    height: 0,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
   },
   logoContainer: {
     marginTop: 10,

@@ -271,12 +271,12 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 0,
-    borderBottomColor: '#bbb',
+    borderBottomColor: Colors.separatorColor,
     borderBottomWidth: 1,
   },
   verticalSeparator: {
     width: 1,
-    backgroundColor: '#bbb',
+    backgroundColor: Colors.separatorColor,
   },
   scrollView: {
     flex: 1,

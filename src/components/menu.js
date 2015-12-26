@@ -1,8 +1,9 @@
-import _ from 'lodash'
-import { Icon } from 'react-native-icons';
 import React from 'react-native';
+import { Icon } from 'react-native-icons';
+import _ from 'lodash'
 import Dimensions from 'Dimensions';
 import pkgInfo from '../../package.json';
+import Colors from '../utilities/colors';
 
 const {
   StyleSheet,

@@ -1,7 +1,7 @@
-import React from 'react-native'
-import { Icon } from 'react-native-icons'
-import moment from 'moment'
-import messageUtils from '../utilities/message'
+import React from 'react-native';
+import { Icon } from 'react-native-icons';
+import moment from 'moment';
+import messageUtils from '../utilities/message';
 
 const {
   Image,
