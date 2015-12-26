@@ -28,7 +28,7 @@ module.exports = class Menu extends React.Component {
       return <View />;
     }
 
-    let avatar = <Icon name='fontawesome|user' size={40} color='white' style={styles.avatar} />
+    let avatar = <Icon name='material|user' size={40} color='white' style={styles.avatar} />
     if (session.imageUrl) {
       avatar = (
         <Image style={styles.avatar} source={{ uri: session.imageUrl }} />
@@ -66,7 +66,7 @@ module.exports = class Menu extends React.Component {
             >
               <View>
                 <View style={styles.menuTextContainer}>
-                  <Icon name='fontawesome|table' size={20} color='white' style={styles.menuIcon}/>
+                  <Icon name='material|format-list-numbered' size={20} color='white' style={styles.menuIcon}/>
                   <Text style={styles.menuItemText}>Prep List</Text>
                 </View>
                 <View style={styles.progressContainer}>
@@ -90,7 +90,7 @@ module.exports = class Menu extends React.Component {
                   underlayColor='#3e444f'
                 >
                   <View style={styles.menuTextContainer}>
-                    <Icon name='fontawesome|clipboard' size={20} color='white' style={styles.menuIcon}/>
+                    <Icon name='material|assignment' size={20} color='white' style={styles.menuIcon}/>
                     <Text style={styles.menuItemText}>Order Guide</Text>
                   </View>
                 </TouchableHighlight>,
@@ -101,7 +101,7 @@ module.exports = class Menu extends React.Component {
                   underlayColor='#3e444f'
                 >
                   <View style={styles.menuTextContainer}>
-                    <Icon name='fontawesome|list-alt' size={20} color='white' style={styles.menuIcon}/>
+                    <Icon name='material|assignment-check' size={20} color='white' style={styles.menuIcon}/>
                     <Text style={styles.menuItemText}>Receiving Guide</Text>
                   </View>
                 </TouchableHighlight>,
@@ -112,7 +112,7 @@ module.exports = class Menu extends React.Component {
                   underlayColor='#3e444f'
                 >
                   <View style={styles.menuTextContainer}>
-                    <Icon name='fontawesome|users' size={20} color='white' style={styles.menuIcon}/>
+                    <Icon name='material|accounts' size={20} color='white' style={styles.menuIcon}/>
                     <Text style={styles.menuItemText}>Team Members</Text>
                   </View>
                 </TouchableHighlight>
@@ -124,7 +124,7 @@ module.exports = class Menu extends React.Component {
               underlayColor='#3e444f'
             >
               <View style={styles.menuTextContainer}>
-                <Icon name='fontawesome|random' size={20} color='white' style={styles.menuIcon}/>
+                <Icon name='material|transform' size={20} color='white' style={styles.menuIcon}/>
                 <Text style={styles.menuItemText}>
                   Switch Teams
                 </Text>

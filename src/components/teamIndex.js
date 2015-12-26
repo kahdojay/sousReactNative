@@ -21,10 +21,7 @@ class TeamIndex extends React.Component {
 
   render() {
     const {teams, messagesByTeams} = this.props
-    // let fetching =  <ActivityIndicatorIOS
-    //                     animating={true}
-    //                     color={'#808080'}
-    //                     size={'small'} />
+
     return (
       <View style={styles.container}>
         <View style={styles.teamContainer}>
@@ -50,6 +47,7 @@ class TeamIndex extends React.Component {
                 return (
                   <TeamIndexRow
                     key={index}
+                    selected={(this.props.currentTeam.id === team.id)}
                     team={team}
                     teamsUsers={teams.teamsUsers}
                     messages={teamMessages}

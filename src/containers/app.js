@@ -305,6 +305,7 @@ class App extends React.Component {
         return {
           component: Components.TeamIndex,
           props: {
+            currentTeam: this.state.currentTeamInfo.team,
             teams: teams,
             messagesByTeams: messages.teams,
             onUpdateTeam: (teamId) => {
@@ -950,9 +951,9 @@ class App extends React.Component {
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
-            buttonsColor: '#ccc',
+            buttonsColor: Colors.greyText,
             customPrev: (
-              <Components.NavBackButton iconFont={'fontawesome|times'} />
+              <Components.NavBackButton iconFont={'material|close'} />
             ),
             title: 'Order Guide',
             hideNext: true,
@@ -963,9 +964,9 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             hidePrev: false,
-            buttonsColor: '#ccc',
+            buttonsColor: Colors.greyText,
             customPrev: (
-              <Components.NavBackButton iconFont={'fontawesome|times'} />
+              <Components.NavBackButton iconFont={'material|close'} />
             ),
             title: 'Switch Teams',
           })
@@ -992,7 +993,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             customPrev: (
-              <Components.NavBackButton iconFont={'fontawesome|times'} />
+              <Components.NavBackButton iconFont={'material|close'} />
             ),
             title: 'Order Guide',
             customNext: (
@@ -1009,10 +1010,10 @@ class App extends React.Component {
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
-            buttonsColor: '#ccc',
+            buttonsColor: Colors.greyText,
             title: this.state.currentTeamInfo.team.name,
             customPrev: (
-              <Components.NavBackButton iconFont={'fontawesome|times'} />
+              <Components.NavBackButton iconFont={'material|close'} />
             ),
           })
           break;
@@ -1022,7 +1023,7 @@ class App extends React.Component {
             route: route,
             customPrev: (
               <Components.NavBackButton
-                iconFont={'fontawesome|chevron-left'}
+                iconFont={'material|chevron-left'}
                 pop={true}
               />
             ),
@@ -1042,9 +1043,9 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             hidePrev: false,
-            buttonsColor: '#ccc',
+            buttonsColor: Colors.greyText,
             customPrev: (
-              <Components.NavBackButton iconFont={'fontawesome|times'} />
+              <Components.NavBackButton iconFont={'material|close'} />
             ),
             title: 'Order Guide',
             customNext: (
@@ -1064,7 +1065,7 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton
                 navName='CategoryIndex'
-                iconFont={'fontawesome|chevron-left'}
+                iconFont={'material|chevron-left'}
               />
             ),
             title: this.state.category.name,
@@ -1083,7 +1084,7 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             customPrev: (
-              <Components.NavBackButton iconFont={'fontawesome|times'} />
+              <Components.NavBackButton iconFont={'material|close'} />
             ),
             title: 'Order Guide',
             customNext: (
@@ -1104,9 +1105,9 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             hidePrev: false,
-            buttonsColor: '#ccc',
+            buttonsColor: Colors.greyText,
             customPrev: (
-              <Components.NavBackButton iconFont={'fontawesome|times'} />
+              <Components.NavBackButton iconFont={'material|close'} />
             ),
             title: `${openOrders.length} Open Orders`,
             hideNext: true,
@@ -1119,7 +1120,7 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton
                 navName='OrderIndex'
-                iconFont={'fontawesome|chevron-left'}
+                iconFont={'material|chevron-left'}
               />
             ),
             title: this.state.purveyor.name.substr(0,16) + (this.state.purveyor.name.length > 16 ? '...' : ''),
@@ -1163,7 +1164,7 @@ class App extends React.Component {
             hidePrev: false,
             customPrev: (
               <Components.NavBackButton
-                iconFont={'fontawesome|chevron-left'}
+                iconFont={'material|chevron-left'}
               />
             ),
             title: 'Account',
@@ -1175,7 +1176,7 @@ class App extends React.Component {
             route: route,
             customPrev: (
               <Components.NavBackButton
-                iconFont={'fontawesome|times'}
+                iconFont={'material|close'}
               />
             ),
             title: 'Invite Teammates',
@@ -1188,7 +1189,7 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton
                 pop={true}
-                iconFont={'fontawesome|chevron-left'}
+                iconFont={'material|chevron-left'}
               />
             ),
             title: 'Cart',
@@ -1201,7 +1202,7 @@ class App extends React.Component {
             route: route,
             customPrev: (
               <Components.NavBackButton
-                iconFont={'fontawesome|times'}
+                iconFont={'material|close'}
                 pop={true}
               />
             ),
@@ -1239,7 +1240,7 @@ class App extends React.Component {
             route: route,
             customPrev: (
               <Components.NavBackButton
-                iconFont={'fontawesome|times'}
+                iconFont={'material|close'}
                 pop={true}
               />
             ),
@@ -1437,7 +1438,7 @@ class App extends React.Component {
           underlayColor='transparent'
         >
           <View style={styles.offlineContainer}>
-            <Icon name='fontawesome|info' size={12} color={'white'} style={styles.offlineIcon} />
+            <Icon name='material|info' size={12} color={'white'} style={styles.offlineIcon} />
             <Text style={styles.offlineText}>Connection offline, limited app features</Text>
           </View>
         </TouchableHighlight>

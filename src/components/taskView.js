@@ -101,7 +101,7 @@ class TaskView extends React.Component {
               </View>
               <View style={styles.iconSideContainer}>
                 <Text style={styles.sideText}>Scale</Text>
-                <Icon name='fontawesome|check-square' size={50} color='#aaa' style={styles.iconSide}/>
+                <Icon name='material|check-square' size={50} color='#aaa' style={styles.iconSide}/>
               </View>
             </View>
           </View>*/}

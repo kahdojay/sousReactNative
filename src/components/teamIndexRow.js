@@ -1,7 +1,7 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import _ from 'lodash';
-import { greyText, taskCompletedBackgroundColor } from '../utilities/colors';
+import Colors from '../utilities/colors';
 import messageUtils from '../utilities/message';
 import moment from 'moment';
 
@@ -15,6 +15,7 @@ const {
 } = React;
 
 class TeamIndexRow extends React.Component {
+
   render() {
     const { team, messages } = this.props
     const memberCount = _.compact(_.filter(team.users, (userId) => {
@@ -39,8 +40,14 @@ class TeamIndexRow extends React.Component {
 
     return (
       <TouchableOpacity
-        onPress={this.props.onPress}
-        style={styles.row}>
+        onPress={() => {
+          if(this.props.selected === false){
+            this.props.onPress()
+          }
+        }}
+        style={styles.row}
+        activeOpacity={(this.props.selected === false) ? .5 : 1}
+      >
         <View style={styles.textProgressArrowContainer}>
           <View
             style={styles.textProgressContainer} >
@@ -55,7 +62,11 @@ class TeamIndexRow extends React.Component {
               </Text>
             </View>
           </View>
-          <Icon name='material|chevron-right' size={40} color='#aaa' style={styles.iconArrow}/>
+          { this.props.selected === false ?
+            <Icon name='material|chevron-right' size={30} color={Colors.greyText} style={styles.iconArrow}/>
+          :
+            <Icon name='material|check' size={30} color={Colors.green} style={styles.iconArrow}/>
+          }
         </View>
         <View style={styles.separator} />
       </TouchableOpacity>
@@ -74,10 +85,6 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 10,
   },
-  rightArrow: {
-    fontSize: 20,
-    color: '#ccc',
-  },
   textProgressArrowContainer: {
     flex: 1,
     flexDirection: 'row',
@@ -95,7 +102,7 @@ const styles = StyleSheet.create({
   memberCount: {
     fontFamily: 'OpenSans',
     fontSize: 11,
-    color: '#999',
+    color: Colors.greyText,
     textAlign: 'center',
     fontWeight: 'bold',
   },
@@ -107,7 +114,7 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 5,
-    borderBottomColor: '#bbb',
+    borderBottomColor: Colors.greyText,
     borderBottomWidth: 1,
   },
   teamInfo: {

@@ -26,7 +26,7 @@ class TeamMemberRightInvite extends React.Component {
         underlayColor='transparent'
       >
         <Icon
-          name='fontawesome|user-plus'
+          name='material|user-plus'
           size={30}
           color={Colors.lightBlue}
           style={styles.icon}

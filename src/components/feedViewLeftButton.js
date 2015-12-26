@@ -34,7 +34,7 @@ class FeedViewLeftButton extends React.Component {
         underlayColor='white'
         onPress={::this.handlePress}
       >
-        <Icon name='fontawesome|bars' size={30} color={iconColor} style={styles.hamburger} />
+        <Icon name='material|menu' size={30} color={iconColor} style={styles.hamburger} />
       </TouchableHighlight>
     );
   }

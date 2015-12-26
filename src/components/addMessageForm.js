@@ -53,7 +53,9 @@ export default class AddForm extends React.Component {
         underlayColor={"#eee"}
         style={styles.button}
       >
-        <Text style={styles.sendText}>Send</Text>
+        <View style={styles.sendView}>
+          <Icon name='material|mail-send' size={30} colors={Colors.lightBlue} style={styles.sendIcon} />
+        </View>
       </TouchableHighlight>
     )
 
@@ -104,16 +106,15 @@ let styles = StyleSheet.create({
     backgroundColor: Colors.mainBackgroundColor,
     padding: 8
   },
-  sendText: {
-    fontFamily: 'OpenSans',
-    fontWeight: 'bold',
-    color: '#555',
+  sendView: {
+    // fontFamily: 'OpenSans',
+    // fontWeight: 'bold',
+    // color: '#555',
     alignSelf: 'center',
   },
-  icon: {
-    width: 30,
-    height: 30,
-    paddingLeft: 30,
+  sendIcon: {
+    width: 50,
+    height: 50,
   },
   input: {
     flex: 1,

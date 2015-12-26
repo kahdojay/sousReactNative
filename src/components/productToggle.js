@@ -1,6 +1,5 @@
 import React from 'react-native';
 import _ from 'lodash';
-import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 
 const {
@@ -145,11 +144,6 @@ var styles = StyleSheet.create({
     borderTopColor: 'black',
     borderTopWidth: 1,
     width: 240,
-  },
-  icon: {
-    width: 16,
-    height: 16,
-    marginRight: 5
   },
 });
 

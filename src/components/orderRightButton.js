@@ -32,7 +32,7 @@ class OrderRightButton extends React.Component {
           }}
         >
           <Icon
-            name='fontawesome|envelope'
+            name='material|email'
             size={30}
             color={Colors.lightBlue}
             style={styles.icon}
@@ -45,7 +45,7 @@ class OrderRightButton extends React.Component {
           }}
         >
           <Icon
-            name='fontawesome|phone'
+            name='material|phone'
             size={30}
             color={Colors.lightBlue}
             style={styles.icon}
