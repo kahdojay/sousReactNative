@@ -106,6 +106,14 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
+  function processUnsubscribe() {
+    return (dispatch, getState) => {
+      const {connect} = getState()
+      console.log(connect)
+      // ddpClient.unsubscribe(channel)
+    }
+  }
+
   function subscribeDDP(session, teamIds){
     // console.log('subscribeDDP called for session: ', session)
     return (dispatch, getState) => {
@@ -169,18 +177,19 @@ export default function ConnectActions(ddpClient) {
       // Bind DDP client events
       //--------------------------------------
       ddpClient.on('message', (msg) => {
-        const {connect} = getState()
         var log = JSON.parse(msg);
         // console.log(`[${new Date()}] MAIN DDP MSG`, log);
 
         if(connect.status !== CONNECT.CONNECTED){
+          const {connect} = getState()
           // Treat an message as a "ping"
           clearTimeout(connect.timeoutId)
           dispatch({
             type: CONNECTION_STATUS,
             timeoutId: null,
             status: CONNECT.CONNECTED,
-            error: null
+            error: null,
+            attempt: connect.attempt,
           })
         }
 
@@ -266,7 +275,8 @@ export default function ConnectActions(ddpClient) {
           type: CONNECTION_STATUS,
           timeoutId: null,
           status: CONNECT.CONNECTED,
-          error: null
+          error: null,
+          attempt: 0,
         })
         // console.log('TEAMS', teams);
         // console.log('TEAM IDS', teamIds);
@@ -278,15 +288,17 @@ export default function ConnectActions(ddpClient) {
 
   function subscribeDDPSocketClose() {
     return (dispatch, getState) => {
-      const {connect} = getState()
       ddpClient.on('socket-close', (code, message) => {
+        const {connect} = getState()
         // console.log("Close: %s %s", code, message);
+        // processUnsubscribe()
         clearTimeout(connect.timeoutId)
         dispatch({
           type: CONNECTION_STATUS,
           timeoutId: null,
           status: CONNECT.OFFLINE,
-          error: 'Socket connection was closed, attempting to reconnect.'
+          error: 'Socket connection was closed, attempting to reconnect.',
+          attempt: connect.attempt,
         })
         // autoReconnect();
       })
@@ -294,14 +306,15 @@ export default function ConnectActions(ddpClient) {
   }
   function subscribeDDPSocketError() {
     return (dispatch, getState) => {
-      const {connect} = getState()
       ddpClient.on('socket-error', (code, message) => {
+        const {connect} = getState()
         clearTimeout(connect.timeoutId)
         dispatch({
           type: CONNECTION_STATUS,
           timeoutId: null,
           status: CONNECT.OFFLINE,
           error: 'Socket connnection errored out, attempting to reconnect.',
+          attempt: connect.attempt,
         })
       })
     }
@@ -314,22 +327,27 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
-  function connectDDPTimeoutId(timeoutId){
+  function connectDDPTimeoutId(timeoutId, timeoutMilliseconds){
     return (dispatch, getState) => {
       const {connect} = getState()
       clearTimeout(connect.timeoutId)
+      let attempt = connect.attempt
+      if(isNaN(attempt) === true){
+        attempt = 0
+      }
       dispatch({
         type: CONNECTION_STATUS,
         timeoutId: timeoutId,
         status: CONNECT.OFFLINE,
-        error: null
+        error: null,
+        attempt: (attempt + 1),
+        timeoutMilliseconds: timeoutMilliseconds,
       })
     }
   }
 
   function connectDDP(allActions){
     return (dispatch, getState) => {
-      const {connect} = getState()
       dispatch({
         type: RESET_CHANNELS,
       })
@@ -344,12 +362,14 @@ export default function ConnectActions(ddpClient) {
       //--------------------------------------
       ddpClient.connect((error, reconnectAttempt) => {
         if (error) {
+          const {connect} = getState()
           clearTimeout(connect.timeoutId)
           dispatch({
             type: CONNECTION_STATUS,
             status: CONNECT.OFFLINE,
             timeoutId: null,
-            error: error
+            error: error,
+            attempt: connect.attempt,
           })
         }
       });
@@ -367,8 +387,6 @@ export default function ConnectActions(ddpClient) {
       }
     }
   }
-
-  // TODO: how to handle disconnect?
 
   return {
     SEND_EMAIL,

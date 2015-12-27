@@ -12,6 +12,8 @@ const initialState = {
   connect: {
     channels: {},
     timeoutId: null,
+    timeoutMilliseconds: 0,
+    attempt: 0,
     status: CONNECT.CONNECTED,
     installationRegistered: false,
     error: null,
@@ -45,12 +47,20 @@ function connect(state = initialState.connect, action) {
     } else if( action.status === CONNECT.CONNECTED ){
       // .. ??
     }
-    return Object.assign({}, state, {
+    let updateState = {
       timeoutId: action.timeoutId,
       status: action.status,
       error: action.error,
-      channels: channels
-    });
+      channels: channels,
+    }
+    if(action.hasOwnProperty('attempt') === true){
+      updateState.attempt = action.attempt
+    }
+    if(action.hasOwnProperty('timeoutMilliseconds') === true){
+      updateState.timeoutMilliseconds = action.timeoutMilliseconds
+    }
+    return Object.assign({}, state, updateState);
+
   case SUBSCRIBE_CHANNEL:
     const newConnectState = Object.assign({}, state);
     newConnectState.channels[action.channel] = action.connectionId;
