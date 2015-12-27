@@ -42,9 +42,7 @@ export default function SessionActions(allActions){
     return (dispatch, getState) => {
       const { session } = getState();
       contactList.forEach((contact) => {
-        dispatch(() => {
-          connectActions.ddpCall('sendSMSInvite', [contact, session.teamId, session.userId]);
-        })
+        dispatch(connectActions.ddpCall('sendSMSInvite', [contact, session.teamId, session.userId]))
       })
     }
   }
@@ -62,13 +60,9 @@ export default function SessionActions(allActions){
         // dispatch(receiveSession({
         //   teamId: null
         // }))
-        dispatch(() => {
-          connectActions.ddpCall('sendSMSCode', [sessionParams.phoneNumber, session.authToken])
-        })
+        dispatch(connectActions.ddpCall('sendSMSCode', [sessionParams.phoneNumber, session.authToken]))
       } else {
-        dispatch(() => {
-          connectActions.ddpCall('loginWithSMS', [sessionParams.phoneNumber, sessionParams.smsToken])
-        })
+        dispatch(connectActions.ddpCall('loginWithSMS', [sessionParams.phoneNumber, sessionParams.smsToken]))
       }
       // resubscribe based on session data
       dispatch(connectActions.subscribeDDP(newSession, undefined));
@@ -85,16 +79,14 @@ export default function SessionActions(allActions){
           filteredSessionParams[key] = sessionParams[key];
         }
       })
-      dispatch(() => {
-        if(sessionParams.hasOwnProperty('imageData') === true){
-          connectActions.ddpCall('streamS3Image', [
-            sessionParams.imageData,
-            'avatar_' + session.userId + '.jpg',
-            session.userId,
-          ])
-        }
-        connectActions.ddpCall('updateUser', [session.userId, filteredSessionParams])
-      })
+      if(sessionParams.hasOwnProperty('imageData') === true){
+        dispatch(connectActions.ddpCall('streamS3Image', [
+          sessionParams.imageData,
+          'avatar_' + session.userId + '.jpg',
+          session.userId,
+        ]))
+      }
+      dispatch(connectActions.ddpCall('updateUser', [session.userId, filteredSessionParams]))
       // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
       return dispatch(receiveSession(sessionParams))
     }

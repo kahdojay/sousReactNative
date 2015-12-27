@@ -27,7 +27,7 @@ export default function ErrorActions(allActions){
   //       createdAt: (new Date()).getTime(),
   //     };
   //     console.log('newError', newError);
-  //     connectActions.ddpCall('createError', [newError])
+  //     dispatch(connectActions.ddpCall('createError', [newError]))
   //     return dispatch({
   //       type: CREATE_ERROR,
   //       error: newError
@@ -44,9 +44,7 @@ export default function ErrorActions(allActions){
 
   function deleteErrors(errorIdList) {
     return (dispatch) => {
-      dispatch(() => {
-        connectActions.ddpCall('deleteErrors', [errorIdList])
-      })
+      dispatch(connectActions.ddpCall('deleteErrors', [errorIdList]))
       return dispatch({
         type: DELETE_ERRORS,
         errorIdList: errorIdList

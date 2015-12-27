@@ -50,9 +50,7 @@ export default function MessageActions(allActions){
         newMessage.orderId = message.orderId
       }
       // console.log('newMessage', newMessage);
-      dispatch(() => {
-        connectActions.ddpCall('createMessage', [newMessage])
-      })
+      dispatch(connectActions.ddpCall('createMessage', [newMessage]))
       return dispatch({
         type: CREATE_MESSAGE,
         message: newMessage
@@ -116,22 +114,20 @@ export default function MessageActions(allActions){
         }
       }
       // console.log(messageDate)
-      dispatch(() => {
-        connectActions.ddpCall(
-          'getTeamMessages',
-          [teamId, messageDate, false],
-          (err, result) => {
-            // console.log('called function, result: ', result);
-            if(result.length > 0){
-              result.forEach((message) => {
-                dispatch(receiveMessages(message));
-              })
-            } else {
-              dispatch(noMessagesReceived())
-            }
+      dispatch(connectActions.ddpCall(
+        'getTeamMessages',
+        [teamId, messageDate, false],
+        (err, result) => {
+          // console.log('called function, result: ', result);
+          if(result.length > 0){
+            result.forEach((message) => {
+              dispatch(receiveMessages(message));
+            })
+          } else {
+            dispatch(noMessagesReceived())
           }
-        );
-      });
+        }
+      ));
       return dispatch(requestMessages());
     }
   }

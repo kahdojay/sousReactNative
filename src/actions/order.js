@@ -20,9 +20,7 @@ export default function OrderActions(allActions){
   function updateOrder(orderId, orderAttributes) {
     return (dispatch, getState) => {
       const {session} = getState()
-      dispatch(() => {
-        connectActions.ddpCall('updateOrder', [session.userId, orderId, orderAttributes])
-      })
+      dispatch(connectActions.ddpCall('updateOrder', [session.userId, orderId, orderAttributes]))
       return dispatch({
         type: UPDATE_ORDER,
         teamId: session.teamId,

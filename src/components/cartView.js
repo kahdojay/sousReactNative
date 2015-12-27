@@ -26,7 +26,7 @@ class CartView extends React.Component {
     }
   }
 
-  componentShouldUpdate() {
+  shouldComponentUpdate(nextProps) {
     if(nextProps.connected !== false){
       return true;
     }
@@ -76,6 +76,7 @@ class CartView extends React.Component {
       const cartProduct = cartProducts[product.id];
       return (
         <CartViewListItem
+          key={product.id}
           purveyorId={purveyorId}
           product={product}
           cartProduct={cartProduct}

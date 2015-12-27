@@ -19,8 +19,11 @@ export default function ConnectActions(ddpClient) {
   var connectedChannels = {}, noop = ()=>{}
 
   function ddpCall(method, args, methodCb = noop, serverCb = noop){
-    console.log(arguments)
-    return ddpClient.call(method, args, methodCb, serverCb);
+    return (dispatch, getState) => {
+      console.log(arguments)
+
+      ddpClient.call(method, args, methodCb, serverCb);
+    }
   }
 
   function registerInstallation(deviceAttributes) {

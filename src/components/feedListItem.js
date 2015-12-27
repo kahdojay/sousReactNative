@@ -85,7 +85,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   message: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingTop: 10,
   },
   messageContentContainer: {
     flex: 9,
@@ -126,8 +127,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   separator: {
-    marginTop: 10,
-    marginBottom: 10,
     height: 5,
     borderBottomColor: '#f1f1f1',
     borderBottomWidth: 1,

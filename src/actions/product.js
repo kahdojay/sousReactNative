@@ -41,9 +41,7 @@ export default function ProductActions(allActions){
         deleted: false,
       }
 
-      dispatch(() => {
-        connectActions.ddpCall('createProduct', [newProductAttributes]);
-      })
+      dispatch(connectActions.ddpCall('createProduct', [newProductAttributes]))
       dispatch({
         type: ADD_PRODUCT,
         teamId: currentTeam.id,
@@ -58,9 +56,7 @@ export default function ProductActions(allActions){
     return (dispatch, getState) => {
       const {session, teams } = getState();
       const { currentTeam } = teams;
-      dispatch(() => {
-        connectActions.ddpCall('updateProduct', [productId, productAttributes, session.userId]);
-      })
+      dispatch(connectActions.ddpCall('updateProduct', [productId, productAttributes, session.userId]))
       return dispatch({
         type: UPDATE_PRODUCT,
         teamId: currentTeam.id,
@@ -75,9 +71,7 @@ export default function ProductActions(allActions){
       const {session, teams } = getState();
       const { currentTeam } = teams;
       const productAttributes = {deleted: true};
-      dispatch(() => {
-        connectActions.ddpCall('updateProduct', [productId, productAttributes, session.userId])
-      })
+      dispatch(connectActions.ddpCall('updateProduct', [productId, productAttributes, session.userId]))
       return dispatch({
         type: DELETE_PRODUCT,
         teamId: currentTeam.id,

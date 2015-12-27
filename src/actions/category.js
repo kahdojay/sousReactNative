@@ -37,7 +37,7 @@ export default function CategoryActions(allActions){
   //       unit: categoryRow.unit,
   //       deleted: false,
   //     }
-  //     connectActions.ddpCall('createCategory', [newCategoryAttributes]);
+  //     dispatch(connectActions.ddpCall('createCategory', [newCategoryAttributes]);)
   //     return dispatch({
   //       type: ADD_CATEGORY,
   //       category: newCategoryAttributes
@@ -47,9 +47,7 @@ export default function CategoryActions(allActions){
   //
   // function updateCategory(categoryId, categoryAttributes){
   //   return (dispatch, getState) => {
-  //     dispatch(() => {
-  //       connectActions.ddpCall('updateCategory', [categoryId, categoryAttributes]);
-  //     })
+  //     dispatch(connectActions.ddpCall('updateCategory', [categoryId, categoryAttributes]))
   //     return dispatch({
   //       type: UPDATE_CATEGORY,
   //       categoryId: categoryId,
@@ -61,9 +59,7 @@ export default function CategoryActions(allActions){
   // function deleteCategory(categoryId) {
   //   return (dispatch, getState) => {
   //     const {session} = getState()
-  //     dispatch(() => {
-  //       dpClient.call('deleteCategory', [categoryId, session.userId])
-  //     })
+  //     dispatch(connectActions.ddpCall('deleteCategory', [categoryId, session.userId]))
   //     return dispatch({
   //       type: DELETE_CATEGORY,
   //       categoryId: categoryId
@@ -75,15 +71,13 @@ export default function CategoryActions(allActions){
     // console.log(categoryId, productId)
     return (dispatch, getState) => {
       const {teams} = getState()
-      dispatch(() => {
-        connectActions.ddpCall('addProductToCategory', [
-          {
-            _id: categoryId,
-            teamId: teams.currentTeam.id
-          },
-          productId
-        ])
-      })
+      dispatch(connectActions.ddpCall('addProductToCategory', [
+        {
+          _id: categoryId,
+          teamId: teams.currentTeam.id
+        },
+        productId
+      ]))
       return dispatch({
         type: ADD_PRODUCT_TO_CATEGORY,
         categoryId: categoryId,
