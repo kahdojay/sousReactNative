@@ -19,7 +19,13 @@ class CartView extends React.Component {
   constructor(props) {
     super(props)
     const numberOfOrders = Object.keys(this.props.team.cart.orders).length
+    const numberOfProducts = _.reduce(_.map(numberOfOrders, (orderId) => {
+      return Object.keys(this.props.team.cart.orders[orderId].products).length
+    }), (total, n) => {
+      return total + n
+    })
     this.state = {
+      numberOfProducts: numberOfProducts,
       numberOfOrders: numberOfOrders,
       showPurveyorInfo: false,
       purveyor: null,
@@ -27,16 +33,32 @@ class CartView extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
+    const numberOfOrdersUpdated = Object.keys(nextProps.team.cart.orders)
+    const numberOfProductsUpdated = _.reduce(_.map(numberOfOrdersUpdated, (orderId) => {
+      return Object.keys(nextProps.team.cart.orders[orderId].products).length
+    }), (total, n) => {
+      return total + n
+    })
     if(nextProps.connected !== false){
+      return true;
+    } else if(numberOfOrdersUpdated.length !== this.state.numberOfOrders){
+      return true;
+    } else if(numberOfProductsUpdated !== this.state.numberOfProducts){
       return true;
     }
     return false;
   }
 
   componentWillReceiveProps(nextProps) {
-    const numberOfOrders = Object.keys(nextProps.team.cart.orders).length
+    const numberOfOrders = Object.keys(nextProps.team.cart.orders)
+    const numberOfProducts = _.reduce(_.map(numberOfOrders, (orderId) => {
+      return Object.keys(nextProps.team.cart.orders[orderId].products).length
+    }), (total, n) => {
+      return total + n
+    })
     this.setState({
-      numberOfOrders: numberOfOrders
+      numberOfOrders: numberOfOrders.length,
+      numberOfProducts: numberOfProducts,
     })
   }
 

@@ -34,14 +34,16 @@ function offline(state = initialState.offline, action) {
   switch (action.type) {
 
   case OFFLINE_RESET_QUEUE:
-    const resetOfflineQueue = Object.assign({}, initialState.offline.queue);
+    const resetOfflineQueueState = Object.assign({}, initialState.offline);
+    const resetOfflineQueue = resetOfflineQueueState.queue;
     return {
       queue: resetOfflineQueue,
       lastUpdated: (new Date()).toISOString()
     }
 
   case OFFLINE_ADD_QUEUE:
-    const currentOfflineQueue = Object.assign({}, state.queue);
+    const currentOfflineQueueState = Object.assign({}, state);
+    const currentOfflineQueue = currentOfflineQueueState.queue;
     currentOfflineQueue.push(action.item)
     return {
       queue: currentOfflineQueue,

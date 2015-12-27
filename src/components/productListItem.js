@@ -36,14 +36,22 @@ class ProductListItem extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    let shouldUpdate = true;
+    let shouldUpdate = false;
     if(nextProps.cartItem === null && this.props.cartItem === null){
       shouldUpdate = false;
     }
     if(this.state.added === true && nextProps.cartItem === null){
       shouldUpdate = true;
+    } else if(this.state.added === false && nextProps.cartItem !== null){
+      shouldUpdate = true;
     }
     if(this.state.loaded === false){
+      shouldUpdate = true;
+    }
+    if(nextState.editQuantity !== this.state.editQuantity){
+      shouldUpdate = true;
+    }
+    if(nextState.quantity !== this.state.quantity){
       shouldUpdate = true;
     }
     // if(this.state.product !== null){
@@ -52,7 +60,7 @@ class ProductListItem extends React.Component {
     //     shouldUpdate = true;
     //   }
     // }
-    // console.log(nextState.shouldUpdate);
+    // console.log(shouldUpdate);
     return shouldUpdate;
   }
 
@@ -90,10 +98,12 @@ class ProductListItem extends React.Component {
     if (cartItem !== null) {
       newState = {
         added: true,
-        quantity: cartItem.quantity,
         purveyorId: cartPurveyorId,
         note: cartItem.note
       };
+      if(this.state.editQuantity === false){
+        newState.quantity = cartItem.quantity;
+      }
     } else {
       newState = {
         added: false,

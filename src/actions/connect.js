@@ -20,9 +20,24 @@ export default function ConnectActions(ddpClient) {
 
   function ddpCall(method, args, methodCb = noop, serverCb = noop){
     return (dispatch, getState) => {
-      console.log(arguments)
-
-      ddpClient.call(method, args, methodCb, serverCb);
+      const {connect} = getState()
+      if(connect.status === CONNECT.CONNECTED){
+        dispatch(() => {
+          ddpClient.call(method, args, methodCb, serverCb);
+        })
+      } else {
+        console.log(arguments)
+        return dispatch({
+          type: OFFLINE_ADD_QUEUE,
+          item: {
+            method: method,
+            args: args,
+            methodCb: methodCb,
+            serverCb: serverCb,
+            calledAt: (new Date()).toISOString()
+          }
+        })
+      }
     }
   }
 
@@ -182,16 +197,15 @@ export default function ConnectActions(ddpClient) {
     } = allActions
 
     return (dispatch, getState) => {
-      const {connect, session} = getState()
+      const {session} = getState()
       //--------------------------------------
       // Bind DDP client events
       //--------------------------------------
       ddpClient.on('message', (msg) => {
         var log = JSON.parse(msg);
         // console.log(`[${new Date()}] MAIN DDP MSG`, log);
-
+        const {connect} = getState()
         if(connect.status !== CONNECT.CONNECTED){
-          const {connect} = getState()
           // Treat an message as a "ping"
           clearTimeout(connect.timeoutId)
           dispatch({
