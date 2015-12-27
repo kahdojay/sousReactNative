@@ -11,7 +11,12 @@ import {
   DELETE_MESSAGE
 } from './actionTypes'
 
-export default function MessageActions(ddpClient) {
+export default function MessageActions(allActions){
+
+  const {
+    connectActions,
+  } = allActions
+
   function resetMessages(teamId = null){
     return {
       teamId: teamId,
@@ -46,7 +51,7 @@ export default function MessageActions(ddpClient) {
       }
       // console.log('newMessage', newMessage);
       dispatch(() => {
-        ddpClient.call('createMessage', [newMessage])
+        connectActions.ddpCall('createMessage', [newMessage])
       })
       return dispatch({
         type: CREATE_MESSAGE,
@@ -112,7 +117,7 @@ export default function MessageActions(ddpClient) {
       }
       // console.log(messageDate)
       dispatch(() => {
-        ddpClient.call(
+        connectActions.ddpCall(
           'getTeamMessages',
           [teamId, messageDate, false],
           (err, result) => {

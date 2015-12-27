@@ -9,7 +9,7 @@ import {
   UPDATE_SESSION,
 } from './actionTypes'
 
-export default function SessionActions(ddpClient, allActions){
+export default function SessionActions(allActions){
 
   const {
     connectActions
@@ -43,7 +43,7 @@ export default function SessionActions(ddpClient, allActions){
       const { session } = getState();
       contactList.forEach((contact) => {
         dispatch(() => {
-          ddpClient.call('sendSMSInvite', [contact, session.teamId, session.userId]);
+          connectActions.ddpCall('sendSMSInvite', [contact, session.teamId, session.userId]);
         })
       })
     }
@@ -63,11 +63,11 @@ export default function SessionActions(ddpClient, allActions){
         //   teamId: null
         // }))
         dispatch(() => {
-          ddpClient.call('sendSMSCode', [sessionParams.phoneNumber, session.authToken])
+          connectActions.ddpCall('sendSMSCode', [sessionParams.phoneNumber, session.authToken])
         })
       } else {
         dispatch(() => {
-          ddpClient.call('loginWithSMS', [sessionParams.phoneNumber, sessionParams.smsToken])
+          connectActions.ddpCall('loginWithSMS', [sessionParams.phoneNumber, sessionParams.smsToken])
         })
       }
       // resubscribe based on session data
@@ -87,13 +87,13 @@ export default function SessionActions(ddpClient, allActions){
       })
       dispatch(() => {
         if(sessionParams.hasOwnProperty('imageData') === true){
-          ddpClient.call('streamS3Image', [
+          connectActions.ddpCall('streamS3Image', [
             sessionParams.imageData,
             'avatar_' + session.userId + '.jpg',
             session.userId,
           ])
         }
-        ddpClient.call('updateUser', [session.userId, filteredSessionParams])
+        connectActions.ddpCall('updateUser', [session.userId, filteredSessionParams])
       })
       // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
       return dispatch(receiveSession(sessionParams))

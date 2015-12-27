@@ -23,12 +23,12 @@ import {
   CART
 } from './actionTypes'
 
-export default function TeamActions(ddpClient, allActions) {
+export default function TeamActions(allActions) {
 
   const {
+    connectActions,
     sessionActions,
     messageActions,
-    connectActions
   } = allActions
 
   function resetTeams(){
@@ -75,7 +75,7 @@ export default function TeamActions(ddpClient, allActions) {
         }
 
         dispatch(() => {
-          ddpClient.call('createTeam', [newTeamAttributes]);
+          connectActions.ddpCall('createTeam', [newTeamAttributes]);
         })
 
         dispatch({
@@ -136,7 +136,7 @@ export default function TeamActions(ddpClient, allActions) {
           unit: 0 // for future use
         }
         dispatch(() => {
-          ddpClient.call('addTeamTask', [session.userId, session.teamId, newTaskAttributes]);
+          connectActions.ddpCall('addTeamTask', [session.userId, session.teamId, newTaskAttributes]);
         })
         return dispatch({
           type: UPDATE_TEAM,
@@ -178,8 +178,8 @@ export default function TeamActions(ddpClient, allActions) {
       clearTimeout(teams.taskTimeoutId);
       const taskTimeoutId = setTimeout(() => {
         dispatch(() => {
-          // ddpClient.call('updateTeamTask', [session.teamId, recipeId, taskAttributes]);
-          ddpClient.call('updateTeam', [session.teamId, {
+          // connectActions.ddpCall('updateTeamTask', [session.teamId, recipeId, taskAttributes]);
+          connectActions.ddpCall('updateTeam', [session.teamId, {
             tasks: currentTeam.tasks
           }]);
         })
@@ -205,7 +205,7 @@ export default function TeamActions(ddpClient, allActions) {
     return (dispatch, getState) => {
       const {session} = getState();
       dispatch(() => {
-        ddpClient.call('updateTeam', [session.teamId, teamAttributes]);
+        connectActions.ddpCall('updateTeam', [session.teamId, teamAttributes]);
       })
       return dispatch({
         type: UPDATE_TEAM,
@@ -219,7 +219,7 @@ export default function TeamActions(ddpClient, allActions) {
   function deleteTeam() {
     return (dispatch, getState) => {
       const {session} = getState();
-      ddpClient.call('deleteTeam', [session.teamId, session.userId])
+      connectActions.ddpCall('deleteTeam', [session.teamId, session.userId])
       return dispatch({
         type: DELETE_TEAM,
         teamId: session.teamId
@@ -406,7 +406,7 @@ export default function TeamActions(ddpClient, allActions) {
       const cartTimeoutId = setTimeout(() => {
         // console.log('Dispatching updateTeam');
         dispatch(() => {
-          ddpClient.call('updateTeam', [session.teamId, {
+          connectActions.ddpCall('updateTeam', [session.teamId, {
             cart: updatedCart
           }]);
         })
@@ -427,7 +427,7 @@ export default function TeamActions(ddpClient, allActions) {
     return (dispatch, getState) => {
       const {session} = getState()
       const orderId = generateId();
-      ddpClient.call('sendCart', [session.userId, session.teamId, orderId])
+      connectActions.ddpCall('sendCart', [session.userId, session.teamId, orderId])
       // TODO: add each teams[session.teamId].cart.orders into teams[session.teamId].orders seperately
       return dispatch({
         type: ORDER_SENT

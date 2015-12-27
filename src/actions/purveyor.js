@@ -12,9 +12,12 @@ import {
   ORDER_PURVEYOR_PRODUCT
 } from './actionTypes'
 
-export default function PurveyorActions(ddpClient){
+export default function PurveyorActions(allActions){
 
-  const messageActions = MessageActions(ddpClient)
+  const {
+    connectActions,
+    messageActions,
+  } = allActions
 
   function resetPurveyors(){
     return {
@@ -33,7 +36,7 @@ export default function PurveyorActions(ddpClient){
         // products:    [],
         deleted:  false
       }
-      ddpClient.call('createPurveyor', [newPurveyorAttributes]);
+      connectActions.ddpCall('createPurveyor', [newPurveyorAttributes]);
       return dispatch({
         type: ADD_PURVEYOR,
         purveyor: newPurveyorAttributes
@@ -61,7 +64,7 @@ export default function PurveyorActions(ddpClient){
       price: 0.0,
       unit: productAttributes.unit || '0 oz'
     }
-    ddpClient.call('addPurveyorProduct', [purveyorId, newProductAttributes]);
+    connectActions.ddpCall('addPurveyorProduct', [purveyorId, newProductAttributes]);
     return {
       type: UPDATE_PURVEYOR,
       purveyorId: purveyorId,
@@ -70,7 +73,7 @@ export default function PurveyorActions(ddpClient){
   }
 
   function updatePurveyorProduct(purveyorId, productId, productAttributes){
-    ddpClient.call('updatePurveyorProduct', [purveyorId, productId, productAttributes]);
+    connectActions.ddpCall('updatePurveyorProduct', [purveyorId, productId, productAttributes]);
     return {
       type: UPDATE_PURVEYOR,
       purveyorId: purveyorId,
@@ -80,7 +83,7 @@ export default function PurveyorActions(ddpClient){
   }
 
   function updatePurveyor(purveyorId, purveyorAttributes){
-    ddpClient.call('updatePurveyor', [purveyorId, purveyorAttributes]);
+    connectActions.ddpCall('updatePurveyor', [purveyorId, purveyorAttributes]);
     return {
       type: UPDATE_PURVEYOR,
       purveyorId: purveyorId,
@@ -91,7 +94,7 @@ export default function PurveyorActions(ddpClient){
   function deletePurveyor(purveyorId) {
     return (dispatch, getState) => {
       const {session} = getState()
-      ddpClient.call('deletePurveyor', [purveyorId, session.userId])
+      connectActions.ddpCall('deletePurveyor', [purveyorId, session.userId])
       return {
         type: DELETE_PURVEYOR,
         purveyorId: purveyorId

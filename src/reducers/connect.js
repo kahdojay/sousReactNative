@@ -5,10 +5,16 @@ import {
   SUBSCRIBE_CHANNEL,
   UNSUBSCRIBE_CHANNEL,
   ERROR_CONNECTION,
-  CONNECT
+  CONNECT,
+  OFFLINE_RESET_QUEUE,
+  OFFLINE_ADD_QUEUE,
 } from '../actions'
 
 const initialState = {
+  offline: {
+    queue: [],
+    lastUpdated: null
+  },
   connect: {
     channels: {},
     timeoutId: null,
@@ -24,6 +30,29 @@ const initialState = {
   }
 }
 
+function offline(state = initialState.offline, action) {
+  switch (action.type) {
+
+  case OFFLINE_RESET_QUEUE:
+    const resetOfflineQueue = Object.assign({}, initialState.offline.queue);
+    return {
+      queue: resetOfflineQueue,
+      lastUpdated: (new Date()).toISOString()
+    }
+
+  case OFFLINE_ADD_QUEUE:
+    const currentOfflineQueue = Object.assign({}, state.queue);
+    currentOfflineQueue.push(action.item)
+    return {
+      queue: currentOfflineQueue,
+      lastUpdated: (new Date()).toISOString()
+    }
+
+  default:
+    return state;
+  }
+}
+
 function connect(state = initialState.connect, action) {
   switch (action.type) {
   case RESET_CHANNELS:
@@ -32,6 +61,7 @@ function connect(state = initialState.connect, action) {
       // status: CONNECT.OFFLINE, // if you do this you get offline flash modal when app starts
       // if you delete it you get flash of error modal
     });
+
   case REGISTER_INSTALLATION:
     return Object.assign({}, state, {
       installationRegistered: action.installationRegistered,
@@ -40,6 +70,7 @@ function connect(state = initialState.connect, action) {
         uuid: action.uuid
       })
     });
+
   case CONNECTION_STATUS:
     let channels = state.channels;
     if( action.status === CONNECT.OFFLINE ){
@@ -65,13 +96,15 @@ function connect(state = initialState.connect, action) {
     const newConnectState = Object.assign({}, state);
     newConnectState.channels[action.channel] = action.connectionId;
     return newConnectState
+
   default:
     return state;
   }
 }
 
 const connectReducers = {
-  'connect': connect
+  'connect': connect,
+  'offline': offline,
 }
 
 export default connectReducers

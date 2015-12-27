@@ -2,6 +2,8 @@ import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import moment from 'moment';
 import messageUtils from '../utilities/message';
+import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 
 const {
   Image,
@@ -49,7 +51,7 @@ class FeedListItem extends React.Component {
     if(moment(msg.createdAt).diff(this.props.now) < this.props.aDayAgo){
       displayDate = msgDate.format("ddd, M/D - h:mm a")
     }
-    let icon = <Icon name='material|user' size={40} color='#aaa' style={styles.avatar}/>
+    let icon = <Icon name='material|account' size={50} color='#aaa' style={styles.avatar}/>
     if (msg.imageUrl) {
       icon = <Image source={{uri: msg.imageUrl}} style={styles.avatarImage} />
     }
@@ -66,9 +68,7 @@ class FeedListItem extends React.Component {
           <View style={styles.messageContentContainer}>
             <View style={styles.messageTextContainer}>
               <Text style={styles.messageAuthor}>{msg.author}</Text>
-              <Text style={styles.messageTimestamp}>
-                {displayDate}
-              </Text>
+              <Text style={styles.messageTimestamp}>{displayDate}</Text>
             </View>
             {messageString}
           </View>
@@ -89,41 +89,45 @@ const styles = StyleSheet.create({
   },
   messageContentContainer: {
     flex: 9,
-    marginLeft: 10,
     paddingRight: 10,
   },
   messageTextContainer: {
     flex: 1,
     flexDirection: 'row',
+    alignItems: 'flex-end',
+    paddingBottom: 5,
+    paddingLeft: 5,
   },
   messageAuthor: {
     fontSize: 14,
-    margin: 5,
+    marginRight: 10,
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
+    color: Colors.greyText,
   },
   messageTimestamp: {
     fontSize: 12,
     fontFamily: 'OpenSans',
-    marginTop: 9,
-    marginLeft: 6,
     fontWeight: 'bold',
-    color: "#ddd"
+    color: Colors.disabled,
+    marginBottom: 1,
   },
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
     alignSelf: 'center',
-    backgroundColor: '#eee'
+    backgroundColor: '#eee',
   },
   avatarImage: {
     width: 40,
-    marginTop: 10,
+    marginTop: 5,
     height: 40,
     borderRadius: 20,
   },
   separator: {
+    marginTop: 10,
+    marginBottom: 10,
     height: 5,
     borderBottomColor: '#f1f1f1',
     borderBottomWidth: 1,

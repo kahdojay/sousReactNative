@@ -11,9 +11,10 @@ import {
   ORDER_PRODUCT_PRODUCT
 } from './actionTypes'
 
-export default function ProductActions(ddpClient, allActions){
+export default function ProductActions(allActions){
 
   const {
+    connectActions,
     categoryActions,
   } = allActions
 
@@ -39,9 +40,9 @@ export default function ProductActions(ddpClient, allActions){
         unit: productAttributes.unit,
         deleted: false,
       }
-      
+
       dispatch(() => {
-        ddpClient.call('createProduct', [newProductAttributes]);
+        connectActions.ddpCall('createProduct', [newProductAttributes]);
       })
       dispatch({
         type: ADD_PRODUCT,
@@ -58,7 +59,7 @@ export default function ProductActions(ddpClient, allActions){
       const {session, teams } = getState();
       const { currentTeam } = teams;
       dispatch(() => {
-        ddpClient.call('updateProduct', [productId, productAttributes, session.userId]);
+        connectActions.ddpCall('updateProduct', [productId, productAttributes, session.userId]);
       })
       return dispatch({
         type: UPDATE_PRODUCT,
@@ -75,7 +76,7 @@ export default function ProductActions(ddpClient, allActions){
       const { currentTeam } = teams;
       const productAttributes = {deleted: true};
       dispatch(() => {
-        ddpClient.call('updateProduct', [productId, productAttributes, session.userId])
+        connectActions.ddpCall('updateProduct', [productId, productAttributes, session.userId])
       })
       return dispatch({
         type: DELETE_PRODUCT,

@@ -11,7 +11,11 @@ import {
   ADD_PRODUCT_TO_CATEGORY,
 } from './actionTypes'
 
-export default function CategoryActions(ddpClient){
+export default function CategoryActions(allActions){
+
+  const {
+    connectActions,
+  } = allActions
 
   function resetCategories(){
     return {
@@ -33,7 +37,7 @@ export default function CategoryActions(ddpClient){
   //       unit: categoryRow.unit,
   //       deleted: false,
   //     }
-  //     ddpClient.call('createCategory', [newCategoryAttributes]);
+  //     connectActions.ddpCall('createCategory', [newCategoryAttributes]);
   //     return dispatch({
   //       type: ADD_CATEGORY,
   //       category: newCategoryAttributes
@@ -44,7 +48,7 @@ export default function CategoryActions(ddpClient){
   // function updateCategory(categoryId, categoryAttributes){
   //   return (dispatch, getState) => {
   //     dispatch(() => {
-  //       ddpClient.call('updateCategory', [categoryId, categoryAttributes]);
+  //       connectActions.ddpCall('updateCategory', [categoryId, categoryAttributes]);
   //     })
   //     return dispatch({
   //       type: UPDATE_CATEGORY,
@@ -72,7 +76,7 @@ export default function CategoryActions(ddpClient){
     return (dispatch, getState) => {
       const {teams} = getState()
       dispatch(() => {
-        ddpClient.call('addProductToCategory', [
+        connectActions.ddpCall('addProductToCategory', [
           {
             _id: categoryId,
             teamId: teams.currentTeam.id

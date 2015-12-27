@@ -6,7 +6,11 @@ import {
   DELETE_ERRORS
 } from './actionTypes'
 
-export default function ErrorActions(ddpClient) {
+export default function ErrorActions(allActions){
+
+  const {
+    connectActions,
+  } = allActions
 
   function resetErrors(){
     return {
@@ -23,7 +27,7 @@ export default function ErrorActions(ddpClient) {
   //       createdAt: (new Date()).getTime(),
   //     };
   //     console.log('newError', newError);
-  //     ddpClient.call('createError', [newError])
+  //     connectActions.ddpCall('createError', [newError])
   //     return dispatch({
   //       type: CREATE_ERROR,
   //       error: newError
@@ -39,10 +43,14 @@ export default function ErrorActions(ddpClient) {
   }
 
   function deleteErrors(errorIdList) {
-    ddpClient.call('deleteErrors', [errorIdList])
-    return {
-      type: DELETE_ERRORS,
-      errorIdList: errorIdList
+    return (dispatch) => {
+      dispatch(() => {
+        connectActions.ddpCall('deleteErrors', [errorIdList])
+      })
+      return dispatch({
+        type: DELETE_ERRORS,
+        errorIdList: errorIdList
+      })
     }
   }
 

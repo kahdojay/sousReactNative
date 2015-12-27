@@ -9,19 +9,26 @@ import {
   SUBSCRIBE_CHANNEL,
   UNSUBSCRIBE_CHANNEL,
   ERROR_CONNECTION,
-  CONNECT
+  CONNECT,
+  OFFLINE_RESET_QUEUE,
+  OFFLINE_ADD_QUEUE,
 } from './actionTypes'
 
 export default function ConnectActions(ddpClient) {
 
-  var connectedChannels = {}
+  var connectedChannels = {}, noop = ()=>{}
+
+  function ddpCall(method, args, methodCb = noop, serverCb = noop){
+    console.log(arguments)
+    return ddpClient.call(method, args, methodCb, serverCb);
+  }
 
   function registerInstallation(deviceAttributes) {
     return (dispatch, getState) => {
       const {session} = getState()
       // TODO: use connect.channels in processSubscription to retrigger registrations on team changes
       dispatch(() => {
-        ddpClient.call('registerInstallation', [session.userId, {
+        ddpCall('registerInstallation', [session.userId, {
           token: deviceAttributes.token,
           uuid: deviceAttributes.uuid,
         }])
@@ -39,7 +46,7 @@ export default function ConnectActions(ddpClient) {
     return (dispatch, getState) => {
       const {session} = getState()
       dispatch(() => {
-        ddpClient.call('updateInstallation', [session.userId, dataAttributes])
+        ddpCall('updateInstallation', [session.userId, dataAttributes])
       })
       return dispatch({
         type: UPDATE_INSTALLATION,
@@ -380,7 +387,7 @@ export default function ConnectActions(ddpClient) {
     return (dispatch) => {
       dispatch(() => {
         // console.log('Sending email: ', requestAttributes);
-        ddpClient.call('sendEmail', [requestAttributes])
+        ddpCall('sendEmail', [requestAttributes])
       })
       return {
         type: SEND_EMAIL
@@ -398,8 +405,11 @@ export default function ConnectActions(ddpClient) {
     UNSUBSCRIBE_CHANNEL,
     ERROR_CONNECTION,
     CONNECT,
+    OFFLINE_RESET_QUEUE,
+    OFFLINE_ADD_QUEUE,
     // 'connectSingleChannel': connectSingleChannel,
     // 'connectChannels': connectChannels,
+    'ddpCall': ddpCall,
     'registerInstallation': registerInstallation,
     'updateInstallation': updateInstallation,
     'registerInstallationDeclined': registerInstallationDeclined,
