@@ -1445,7 +1445,7 @@ class App extends React.Component {
 
     let connectionStatus = null
     if(connect.status === actions.CONNECT.OFFLINE){
-      let reconnectText = `attemping in ${Math.floor(this.state.connectionStats.reconnect/1000)}s`
+      let reconnectText = `reconnecting in ${Math.floor(this.state.connectionStats.reconnect/1000)}s`
       if(this.state.connectionStats.attempt === 0 || this.state.connectionStats.reconnect === 0){
         reconnectText = 'connecting...'
       }
