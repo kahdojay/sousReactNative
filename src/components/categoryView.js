@@ -25,6 +25,7 @@ class CategoryView extends React.Component {
           cart={cart}
           products={products}
           purveyors={purveyors}
+          showPurveyorInfo={true}
           onProductEdit={this.props.onProductEdit}
           onProductDelete={this.props.onProductDelete}
           onUpdateProductInCart={this.props.onUpdateProductInCart}

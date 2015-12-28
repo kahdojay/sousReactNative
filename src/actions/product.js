@@ -41,14 +41,13 @@ export default function ProductActions(allActions){
         deleted: false,
       }
 
-      dispatch(connectActions.ddpCall('createProduct', [newProductAttributes]))
       dispatch({
         type: ADD_PRODUCT,
         teamId: currentTeam.id,
         product: newProductAttributes,
       });
-
-      return dispatch(categoryActions.addProductToCategory(productAttributes.categoryId,newProductAttributes._id))
+      dispatch(connectActions.ddpCall('createProduct', [newProductAttributes]))
+      dispatch(categoryActions.addProductToCategory(productAttributes.categoryId,newProductAttributes._id))
     }
   }
 

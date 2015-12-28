@@ -87,19 +87,6 @@ class App extends React.Component {
     this.navBar = (
       <NavigationBar style={styles.nav} />
     );
-    this.navBarItem = (props, nextComponent) => {
-      return React.cloneElement((
-        <TouchableOpacity
-          onPress={() => {
-            // console.log('Oops, need to specify function')
-          }}
-        >
-          <View style={NavigationBarStyles.navBarRightButton}>
-            {nextComponent}
-          </View>
-        </TouchableOpacity>
-      ), props)
-    };
   }
 
   handleOpenWithTouchToClose() {
@@ -518,6 +505,7 @@ class App extends React.Component {
           component: Components.PurveyorView,
           props: {
             cart: this.state.currentTeamInfo.team.cart,
+            categories: this.state.currentTeamInfo.categories,
             purveyor: this.state.purveyor,
             purveyors: this.state.currentTeamInfo.purveyors,
             products: specificProductsPurveyor,
@@ -706,6 +694,7 @@ class App extends React.Component {
             products: this.state.currentTeamInfo.products,
             cart: this.state.currentTeamInfo.team.cart,
             purveyors: this.state.currentTeamInfo.purveyors,
+            categories: this.state.currentTeamInfo.categories,
             onCreateProduct: () => {
               const sceneState = Object.assign({}, this.state.sceneState);
               sceneState.ProductForm.submitReady = false;
@@ -1303,6 +1292,9 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             onNext: null,
+            customPrev: (
+              <Components.NavBackButton pop={true} />
+            ),
           })
           break;
       }

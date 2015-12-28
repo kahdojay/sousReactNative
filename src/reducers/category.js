@@ -54,9 +54,9 @@ function categories(state = initialState.categories, action) {
       // console.log(newCategoryTeamProductsState[action.teamId])
       if(newCategoryTeamProductsState[action.teamId].hasOwnProperty(action.categoryId)){
         // console.log(action)
-        // console.log(newCategoryTeamProductsState[action.teamId][action.categoryId].products)
+        console.log(newCategoryTeamProductsState[action.teamId][action.categoryId].products)
         newCategoryTeamProductsState[action.teamId][action.categoryId].products.push(action.productId)
-        // console.log(newCategoryTeamProductsState[action.teamId][action.categoryId].products)
+        console.log(newCategoryTeamProductsState[action.teamId][action.categoryId].products)
       }
     }
     return Object.assign({}, state, {

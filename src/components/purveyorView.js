@@ -23,7 +23,7 @@ class PurveyorView extends React.Component {
   }
 
   render() {
-    const {purveyors, products, cart} = this.props;
+    const {categories, purveyors, products, cart} = this.props;
 
     return (
       <View style={styles.container}>
@@ -37,7 +37,10 @@ class PurveyorView extends React.Component {
         */}
         <ProductList
           cart={cart}
+          showCategoryInfo={true}
+          showPurveyorInfo={false}
           products={products}
+          categories={categories}
           purveyors={purveyors}
           onProductEdit={this.props.onProductEdit}
           onProductDelete={this.props.onProductDelete}

@@ -12,11 +12,21 @@ import {
   CONNECT,
   OFFLINE_RESET_QUEUE,
   OFFLINE_ADD_QUEUE,
+  OFFLINE_NOOP,
 } from './actionTypes'
 
 export default function ConnectActions(ddpClient) {
 
-  var connectedChannels = {}, noop = ()=>{}
+  const connectedChannels = {}, noop = ()=>{}
+
+  const APPROVED_OFFLINE_METHODS = {
+    'addProductToCategory': { allow: true },
+    'createProduct': { allow: true },
+    'updateProduct': { allow: true },
+    'addTeamTask': { allow: true },
+    'updateTeam': { allow: true },
+    'createMessage': { allow: true },
+  }
 
   function ddpCall(method, args, methodCb = noop, serverCb = noop){
     return (dispatch, getState) => {
@@ -26,17 +36,24 @@ export default function ConnectActions(ddpClient) {
           ddpClient.call(method, args, methodCb, serverCb);
         })
       } else {
-        console.log(arguments)
-        return dispatch({
-          type: OFFLINE_ADD_QUEUE,
-          item: {
+        if(APPROVED_OFFLINE_METHODS.hasOwnProperty(method) === true && APPROVED_OFFLINE_METHODS[method].allow === true){
+          dispatch({
+            type: OFFLINE_ADD_QUEUE,
+            item: {
+              method: method,
+              args: args,
+              methodCb: methodCb,
+              serverCb: serverCb,
+              calledAt: (new Date()).toISOString()
+            }
+          })
+        } else {
+          console.log(arguments)
+          dispatch({
+            type: OFFLINE_NOOP,
             method: method,
-            args: args,
-            methodCb: methodCb,
-            serverCb: serverCb,
-            calledAt: (new Date()).toISOString()
-          }
-        })
+          })
+        }
       }
     }
   }
@@ -424,6 +441,7 @@ export default function ConnectActions(ddpClient) {
     CONNECT,
     OFFLINE_RESET_QUEUE,
     OFFLINE_ADD_QUEUE,
+    OFFLINE_NOOP,
     // 'connectSingleChannel': connectSingleChannel,
     // 'connectChannels': connectChannels,
     'ddpCall': ddpCall,

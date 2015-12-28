@@ -53,6 +53,7 @@ export default function MessageActions(allActions){
       dispatch(connectActions.ddpCall('createMessage', [newMessage]))
       return dispatch({
         type: CREATE_MESSAGE,
+        messageId: newMessage._id,
         message: newMessage
       });
     }

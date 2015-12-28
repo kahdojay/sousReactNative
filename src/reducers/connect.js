@@ -8,6 +8,7 @@ import {
   CONNECT,
   OFFLINE_RESET_QUEUE,
   OFFLINE_ADD_QUEUE,
+  OFFLINE_NOOP,
 } from '../actions'
 
 const initialState = {
@@ -50,6 +51,7 @@ function offline(state = initialState.offline, action) {
       lastUpdated: (new Date()).toISOString()
     }
 
+  case OFFLINE_NOOP:
   default:
     return state;
   }

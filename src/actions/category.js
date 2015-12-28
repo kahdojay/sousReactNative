@@ -71,19 +71,16 @@ export default function CategoryActions(allActions){
     // console.log(categoryId, productId)
     return (dispatch, getState) => {
       const {teams} = getState()
-      dispatch(connectActions.ddpCall('addProductToCategory', [
-        {
-          _id: categoryId,
-          teamId: teams.currentTeam.id
-        },
-        productId
-      ]))
-      return dispatch({
+
+      dispatch({
         type: ADD_PRODUCT_TO_CATEGORY,
         categoryId: categoryId,
         productId: productId,
         teamId: teams.currentTeam.id
       })
+
+      const categoryLookup = { _id: categoryId, teamId: teams.currentTeam.id }
+      dispatch(connectActions.ddpCall('addProductToCategory', [categoryLookup, productId]))
     }
   }
 

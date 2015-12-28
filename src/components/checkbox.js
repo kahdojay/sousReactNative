@@ -23,7 +23,7 @@ var CheckBox = React.createClass({
     return {
       label: 'Label',
       checked: false,
-      iconColor: 'black'
+      iconColor: '#444'
     }
   },
 
