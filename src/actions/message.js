@@ -49,11 +49,12 @@ export default function MessageActions(allActions){
       if(message.hasOwnProperty('orderId') === true){
         newMessage.orderId = message.orderId
       }
+      const messageId = newMessage._id
       // console.log('newMessage', newMessage);
       dispatch(connectActions.ddpCall('createMessage', [newMessage]))
       return dispatch({
         type: CREATE_MESSAGE,
-        messageId: newMessage._id,
+        messageId: messageId,
         message: newMessage
       });
     }
