@@ -44,12 +44,14 @@ export default function MessageActions(ddpClient) {
       if(message.hasOwnProperty('orderId') === true){
         newMessage.orderId = message.orderId
       }
+      const messageId = newMessage._id
       // console.log('newMessage', newMessage);
       dispatch(() => {
         ddpClient.call('createMessage', [newMessage])
       })
       return dispatch({
         type: CREATE_MESSAGE,
+        messageId: messageId,
         message: newMessage
       });
     }
