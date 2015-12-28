@@ -121,6 +121,8 @@ export default function MessageActions(ddpClient) {
             // console.log('called function, result: ', result);
             if(result.length > 0){
               result.forEach((message) => {
+                message.id = message._id
+                delete message._id
                 dispatch(receiveMessages(message));
               })
             } else {
