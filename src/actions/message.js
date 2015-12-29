@@ -116,22 +116,19 @@ export default function MessageActions(allActions){
         }
       }
       // console.log(messageDate)
-      dispatch(connectActions.ddpCall(
-        'getTeamMessages',
-        [teamId, messageDate, false],
-        (err, result) => {
-          // console.log('called function, result: ', result);
-          if(result.length > 0){
-            result.forEach((message) => {
-              message.id = message._id
-              delete message._id
-              dispatch(receiveMessages(message));
-            })
-          } else {
-            dispatch(noMessagesReceived())
-          }
+      const getTeamMessagesCallback = (err, result) => {
+        // console.log('called function, result: ', result);
+        if(result.length > 0){
+          result.forEach((message) => {
+            message.id = message._id
+            delete message._id
+            dispatch(receiveMessages(message));
+          })
+        } else {
+          dispatch(noMessagesReceived())
         }
-      ));
+      }
+      dispatch(connectActions.ddpCall('getTeamMessages',[teamId, messageDate, false], getTeamMessagesCallback))
       return dispatch(requestMessages());
     }
   }

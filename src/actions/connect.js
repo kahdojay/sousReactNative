@@ -21,11 +21,16 @@ export default function ConnectActions(ddpClient) {
 
   const APPROVED_OFFLINE_METHODS = {
     'addProductToCategory': { allow: true },
-    'createProduct': { allow: true },
-    'updateProduct': { allow: true },
     'addTeamTask': { allow: true },
-    'updateTeam': { allow: true },
     'createMessage': { allow: true },
+    'createProduct': { allow: true },
+    'createTeam': { allow: true },
+    'streamS3Image': { allow: true },
+    'updateOrder': { allow: true },
+    'updateProduct': { allow: true },
+    'updateTeam': { allow: true },
+    'updateTeamTask': { allow: true },
+    'updateUser': { allow: true },
   }
 
   function ddpCall(method, args, methodCb = noop, serverCb = noop){

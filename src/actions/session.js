@@ -80,11 +80,12 @@ export default function SessionActions(allActions){
         }
       })
       if(sessionParams.hasOwnProperty('imageData') === true){
-        dispatch(connectActions.ddpCall('streamS3Image', [
+        const ddpCallArguments = [
           sessionParams.imageData,
           'avatar_' + session.userId + '.jpg',
-          session.userId,
-        ]))
+          session.userId
+        ]
+        dispatch(connectActions.ddpCall('streamS3Image', ddpCallArguments))
       }
       dispatch(connectActions.ddpCall('updateUser', [session.userId, filteredSessionParams]))
       // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
