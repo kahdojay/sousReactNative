@@ -29,7 +29,7 @@ module.exports = class Menu extends React.Component {
       return <View />;
     }
 
-    let avatar = <Icon name='material|user' size={40} color='white' style={styles.avatar} />
+    let avatar = <Icon name='material|account' size={40} color='white' style={styles.avatar} />
     if (session.imageUrl) {
       avatar = (
         <Image style={styles.avatar} source={{ uri: session.imageUrl }} />
