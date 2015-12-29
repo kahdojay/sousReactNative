@@ -8,13 +8,16 @@ import {
   CONNECT,
   OFFLINE_RESET_QUEUE,
   OFFLINE_ADD_QUEUE,
+  OFFLINE_REMOVE_QUEUE,
   OFFLINE_NOOP,
+  OFFLINE_PROCESSING,
 } from '../actions'
 
 const initialState = {
   offline: {
-    queue: [],
-    lastUpdated: null
+    queue: {},
+    lastUpdated: null,
+    processing: false,
   },
   connect: {
     channels: {},
@@ -34,21 +37,40 @@ const initialState = {
 function offline(state = initialState.offline, action) {
   switch (action.type) {
 
+  case OFFLINE_PROCESSING:
+    return {
+      queue: state.queue,
+      processing: action.processing,
+      lastUpdated: (new Date()).toISOString(),
+    }
+
   case OFFLINE_RESET_QUEUE:
     const resetOfflineQueueState = Object.assign({}, initialState.offline);
     const resetOfflineQueue = resetOfflineQueueState.queue;
     return {
       queue: resetOfflineQueue,
-      lastUpdated: (new Date()).toISOString()
+      processing: resetOfflineQueueState.processing,
+      lastUpdated: (new Date()).toISOString(),
     }
 
   case OFFLINE_ADD_QUEUE:
     const currentOfflineQueueState = Object.assign({}, state);
     const currentOfflineQueue = currentOfflineQueueState.queue;
-    currentOfflineQueue.push(action.item)
+    currentOfflineQueue[action.item.calledAt] = action.item
     return {
       queue: currentOfflineQueue,
-      lastUpdated: (new Date()).toISOString()
+      processing: currentOfflineQueueState.processing,
+      lastUpdated: (new Date()).toISOString(),
+    }
+
+  case OFFLINE_REMOVE_QUEUE:
+    const removeOfflineQueueState = Object.assign({}, state);
+    const removeOfflineQueue = removeOfflineQueueState.queue;
+    delete removeOfflineQueue[action.calledAt]
+    return {
+      queue: removeOfflineQueue,
+      processing: removeOfflineQueueState.processing,
+      lastUpdated: (new Date()).toISOString(),
     }
 
   case OFFLINE_NOOP:
