@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { DDP } from '../resources/apiConfig';
 import moment from 'moment';
 import {
@@ -12,7 +13,9 @@ import {
   CONNECT,
   OFFLINE_RESET_QUEUE,
   OFFLINE_ADD_QUEUE,
+  OFFLINE_REMOVE_QUEUE,
   OFFLINE_NOOP,
+  OFFLINE_PROCESSING,
 } from './actionTypes'
 
 export default function ConnectActions(ddpClient) {
@@ -53,7 +56,6 @@ export default function ConnectActions(ddpClient) {
             }
           })
         } else {
-          console.log(arguments)
           dispatch({
             type: OFFLINE_NOOP,
             method: method,
@@ -63,16 +65,45 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
+  function sendOfflineQueue() {
+    return (dispatch, getState) => {
+      const {offline} = getState()
+      const queueKeys = Object.keys(offline.queue)
+      // console.log(offline.processing)
+      if(queueKeys.length > 0 && offline.processing === false){
+        dispatch({
+          type: OFFLINE_PROCESSING,
+          processing: true,
+        })
+        queueKeys.sort()
+        // console.log(queueKeys)
+        queueKeys.forEach((queueKey) => {
+          const item = offline.queue[queueKey]
+          _.debounce(() => {
+            dispatch(ddpCall(item.method, item.args, item.methodCb, item.serverCb))
+            dispatch({
+              type: OFFLINE_REMOVE_QUEUE,
+              calledAt: queueKey
+            })
+          }, 25)()
+        })
+        dispatch({
+          type: OFFLINE_PROCESSING,
+          processing: false,
+        })
+      }
+    }
+  }
+
   function registerInstallation(deviceAttributes) {
     return (dispatch, getState) => {
       const {session} = getState()
       // TODO: use connect.channels in processSubscription to retrigger registrations on team changes
-      dispatch(() => {
-        ddpCall('registerInstallation', [session.userId, {
-          token: deviceAttributes.token,
-          uuid: deviceAttributes.uuid,
-        }])
-      })
+      const installationAttributes = {
+        token: deviceAttributes.token,
+        uuid: deviceAttributes.uuid,
+      }
+      dispatch(ddpCall('registerInstallation', [session.userId, installationAttributes]))
       return dispatch({
         type: REGISTER_INSTALLATION,
         installationRegistered: true,
@@ -85,9 +116,7 @@ export default function ConnectActions(ddpClient) {
   function updateInstallation(dataAttributes) {
     return (dispatch, getState) => {
       const {session} = getState()
-      dispatch(() => {
-        ddpCall('updateInstallation', [session.userId, dataAttributes])
-      })
+      dispatch(ddpCall('updateInstallation', [session.userId, dataAttributes]))
       return dispatch({
         type: UPDATE_INSTALLATION,
       })
@@ -230,13 +259,7 @@ export default function ConnectActions(ddpClient) {
         if(connect.status !== CONNECT.CONNECTED){
           // Treat an message as a "ping"
           clearTimeout(connect.timeoutId)
-          dispatch({
-            type: CONNECTION_STATUS,
-            timeoutId: null,
-            status: CONNECT.CONNECTED,
-            error: null,
-            attempt: connect.attempt,
-          })
+          dispatch(connectionStatusConnected(connect.attempt))
         }
 
         // process the subscribe events to collections and their fields
@@ -317,13 +340,7 @@ export default function ConnectActions(ddpClient) {
       ddpClient.on('connected', () => {
         const {connect, session, teams} = getState()
         clearTimeout(connect.timeoutId)
-        dispatch({
-          type: CONNECTION_STATUS,
-          timeoutId: null,
-          status: CONNECT.CONNECTED,
-          error: null,
-          attempt: 0,
-        })
+        dispatch(connectionStatusConnected(0))
         // console.log('TEAMS', teams);
         // console.log('TEAM IDS', teamIds);
         const teamIds = _.pluck(teams.data, 'id')
@@ -422,12 +439,25 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
+  function connectionStatusConnected(attempt) {
+    return (dispatch, getState) => {
+
+      dispatch(sendOfflineQueue())
+
+      return dispatch({
+        type: CONNECTION_STATUS,
+        timeoutId: null,
+        status: CONNECT.CONNECTED,
+        error: null,
+        attempt: attempt,
+      })
+    }
+  }
+
   function sendEmail(requestAttributes){
     return (dispatch) => {
-      dispatch(() => {
-        // console.log('Sending email: ', requestAttributes);
-        ddpCall('sendEmail', [requestAttributes])
-      })
+      // console.log('Sending email: ', requestAttributes);
+      dispatch(ddpCall('sendEmail', [requestAttributes]))
       return {
         type: SEND_EMAIL
       }
@@ -446,7 +476,9 @@ export default function ConnectActions(ddpClient) {
     CONNECT,
     OFFLINE_RESET_QUEUE,
     OFFLINE_ADD_QUEUE,
+    OFFLINE_REMOVE_QUEUE,
     OFFLINE_NOOP,
+    OFFLINE_PROCESSING,
     // 'connectSingleChannel': connectSingleChannel,
     // 'connectChannels': connectChannels,
     'ddpCall': ddpCall,
