@@ -34,6 +34,10 @@ class App extends React.Component {
   constructor(props, ctx) {
     super(props, ctx);
     this.state = {
+      connectionStats: {
+        attempt: 0,
+        reconnect: 0,
+      },
       installationRegistered: this.props.connect.installationRegistered,
       touchToClose: false,
       open: false,
@@ -74,6 +78,7 @@ class App extends React.Component {
         }
       }
     }
+    this.reconnectTimeout = null
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
       'Login': {},
@@ -82,19 +87,6 @@ class App extends React.Component {
     this.navBar = (
       <NavigationBar style={styles.nav} />
     );
-    this.navBarItem = (props, nextComponent) => {
-      return React.cloneElement((
-        <TouchableOpacity
-          onPress={() => {
-            // console.log('Oops, need to specify function')
-          }}
-        >
-          <View style={NavigationBarStyles.navBarRightButton}>
-            {nextComponent}
-          </View>
-        </TouchableOpacity>
-      ), props)
-    };
   }
 
   handleOpenWithTouchToClose() {
@@ -144,12 +136,25 @@ class App extends React.Component {
         currentTeamInfo.lastUpdated.orders = nextProps.orders.lastUpdated;
       }
     }
+    let connectionStats = Object.assign({}, this.state.connectionStats)
+    let reconnectCountDown = false
+    if(nextProps.connect.attempt !== connectionStats.attempt){
+      connectionStats.attempt = nextProps.connect.attempt
+      connectionStats.reconnect = nextProps.connect.timeoutMilliseconds
+      reconnectCountDown = true
+    }
     this.setState({
+      connectionStats: connectionStats,
       installationRegistered: nextProps.connect.installationRegistered,
       isAuthenticated: nextProps.session.isAuthenticated,
       firstName: nextProps.session.firstName,
       lastName: nextProps.session.lastName,
       currentTeamInfo: currentTeamInfo,
+    }, () => {
+      if(reconnectCountDown === true){
+        this.countDownReconnect()
+        // console.log('here')
+      }
     })
   }
 
@@ -218,6 +223,23 @@ class App extends React.Component {
         }
       }
     }
+  }
+
+  countDownReconnect() {
+    clearTimeout(this.reconnectTimeout)
+    const reconnect = () => {
+      this.setState({
+        connectionStats: {
+          reconnect: (this.state.connectionStats.reconnect - 1000)
+        }
+      }, () => {
+        if(this.state.connectionStats.reconnect > 999){
+          this.countDownReconnect()
+        }
+      })
+    }
+
+    this.reconnectTimeout = setTimeout(reconnect, 1000)
   }
 
   authenticatedRoute(route){
@@ -483,6 +505,7 @@ class App extends React.Component {
           component: Components.PurveyorView,
           props: {
             cart: this.state.currentTeamInfo.team.cart,
+            categories: this.state.currentTeamInfo.categories,
             purveyor: this.state.purveyor,
             purveyors: this.state.currentTeamInfo.purveyors,
             products: specificProductsPurveyor,
@@ -671,6 +694,7 @@ class App extends React.Component {
             products: this.state.currentTeamInfo.products,
             cart: this.state.currentTeamInfo.team.cart,
             purveyors: this.state.currentTeamInfo.purveyors,
+            categories: this.state.currentTeamInfo.categories,
             onCreateProduct: () => {
               const sceneState = Object.assign({}, this.state.sceneState);
               sceneState.ProductForm.submitReady = false;
@@ -1268,6 +1292,9 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             onNext: null,
+            customPrev: (
+              <Components.NavBackButton pop={true} />
+            ),
           })
           break;
       }
@@ -1410,6 +1437,10 @@ class App extends React.Component {
 
     let connectionStatus = null
     if(connect.status === actions.CONNECT.OFFLINE){
+      let reconnectText = `reconnecting in ${Math.floor(this.state.connectionStats.reconnect/1000)}s`
+      if(this.state.connectionStats.attempt === 0 || this.state.connectionStats.reconnect === 0){
+        reconnectText = 'connecting...'
+      }
       connectionStatus = (
         <TouchableHighlight
           onPress={() => {
@@ -1439,8 +1470,10 @@ class App extends React.Component {
           underlayColor='transparent'
         >
           <View style={styles.offlineContainer}>
-            <Icon name='material|info' size={20} color={'white'} style={styles.offlineIcon} />
-            <Text style={styles.offlineText}>Connection offline, limited app features</Text>
+            <View style={styles.offlineInnerContainer}>
+              <Icon name='material|info' size={20} color={'white'} style={styles.offlineIcon} />
+              <Text style={styles.offlineText}>Connection offline, {reconnectText}</Text>
+            </View>
           </View>
         </TouchableHighlight>
       )
@@ -1512,20 +1545,21 @@ const styles = StyleSheet.create({
   offlineContainer: {
     width: window.width,
     height: 32,
-    flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: Colors.darkGrey,
+  },
+  offlineInnerContainer: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    alignItems: 'center',
     padding: 4,
   },
   offlineText: {
-    flex: 8,
     color: 'white',
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
     fontSize: 12,
   },
   offlineIcon: {
-    flex: 1,
     width: 24,
     height: 24,
     // backgroundColor: Colors.lightBlue,

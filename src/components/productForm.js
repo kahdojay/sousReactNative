@@ -308,7 +308,7 @@ class ProductForm extends React.Component {
       purveyorInputs.push((
         <View key={`purveyor-${idx}`} style={styles.inputContainer}>
           <Text style={styles.inputTitle}>
-            {idx > 0 ? 'Additional Purveyor' : 'Purveyor'}
+            Purveyor {idx > 0 ? (idx+1) : ''}
           </Text>
           <TouchableHighlight
             underlayColor='transparent'
@@ -321,12 +321,12 @@ class ProductForm extends React.Component {
                 pickerIdx: idx
               })
             }}
-            style={styles.inputFieldContainer}
+            style={[styles.inputFieldContainer, {flex: 2.5}]}
           >
             <Text style={styles.inputField}>
             {
               selectedPurveyor !== null ?
-                selectedPurveyor.name.substr(0,24) + (selectedPurveyor.name.length > 24 ? '...' : '')
+                selectedPurveyor.name.substr(0,20) + (selectedPurveyor.name.length > 20 ? '...' : '')
                 : 'Select Purveyor'
             }
             </Text>
@@ -360,7 +360,7 @@ class ProductForm extends React.Component {
           <Text style={styles.inputTitle}>Name</Text>
           <TextInput
             ref='name'
-            style={[styles.inputField, {flex: 2}]}
+            style={[styles.inputField, {flex: 3}]}
             value={this.state.name}
             placeholder='Name'
             onChange={(e) => {
@@ -453,12 +453,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   inputTitle: {
-    // v- this with looks good on iPhone 6 plus and 4s
-    width: window.width * .54,
+    // // v- this with looks good on iPhone 6 plus and 4s
+    // width: window.width * .54,
+    flex: 1,
     fontFamily: 'OpenSans',
     fontWeight: 'bold',
     fontSize: 14,
-    padding: 8,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 8,
     color: Colors.greyText,
   },
   inputFieldContainer: {
@@ -466,10 +469,11 @@ const styles = StyleSheet.create({
   },
   inputField: {
     padding: 8,
-    margin: 2,
+    paddingTop: 10,
+    paddingBottom: 10,
     fontFamily: 'OpenSans',
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 16,
     textAlign: 'right',
   },
   separator: {

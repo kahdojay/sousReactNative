@@ -11,7 +11,11 @@ import {
   ADD_PRODUCT_TO_CATEGORY,
 } from './actionTypes'
 
-export default function CategoryActions(ddpClient){
+export default function CategoryActions(allActions){
+
+  const {
+    connectActions,
+  } = allActions
 
   function resetCategories(){
     return {
@@ -33,7 +37,7 @@ export default function CategoryActions(ddpClient){
   //       unit: categoryRow.unit,
   //       deleted: false,
   //     }
-  //     ddpClient.call('createCategory', [newCategoryAttributes]);
+  //     dispatch(connectActions.ddpCall('createCategory', [newCategoryAttributes]);)
   //     return dispatch({
   //       type: ADD_CATEGORY,
   //       category: newCategoryAttributes
@@ -43,9 +47,7 @@ export default function CategoryActions(ddpClient){
   //
   // function updateCategory(categoryId, categoryAttributes){
   //   return (dispatch, getState) => {
-  //     dispatch(() => {
-  //       ddpClient.call('updateCategory', [categoryId, categoryAttributes]);
-  //     })
+  //     dispatch(connectActions.ddpCall('updateCategory', [categoryId, categoryAttributes]))
   //     return dispatch({
   //       type: UPDATE_CATEGORY,
   //       categoryId: categoryId,
@@ -57,9 +59,7 @@ export default function CategoryActions(ddpClient){
   // function deleteCategory(categoryId) {
   //   return (dispatch, getState) => {
   //     const {session} = getState()
-  //     dispatch(() => {
-  //       dpClient.call('deleteCategory', [categoryId, session.userId])
-  //     })
+  //     dispatch(connectActions.ddpCall('deleteCategory', [categoryId, session.userId]))
   //     return dispatch({
   //       type: DELETE_CATEGORY,
   //       categoryId: categoryId
@@ -71,21 +71,16 @@ export default function CategoryActions(ddpClient){
     // console.log(categoryId, productId)
     return (dispatch, getState) => {
       const {teams} = getState()
-      dispatch(() => {
-        ddpClient.call('addProductToCategory', [
-          {
-            _id: categoryId,
-            teamId: teams.currentTeam.id
-          },
-          productId
-        ])
-      })
-      return dispatch({
+
+      dispatch({
         type: ADD_PRODUCT_TO_CATEGORY,
         categoryId: categoryId,
         productId: productId,
         teamId: teams.currentTeam.id
       })
+
+      const categoryLookup = { _id: categoryId, teamId: teams.currentTeam.id }
+      dispatch(connectActions.ddpCall('addProductToCategory', [categoryLookup, productId]))
     }
   }
 

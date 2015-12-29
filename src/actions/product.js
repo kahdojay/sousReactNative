@@ -11,9 +11,10 @@ import {
   ORDER_PRODUCT_PRODUCT
 } from './actionTypes'
 
-export default function ProductActions(ddpClient, allActions){
+export default function ProductActions(allActions){
 
   const {
+    connectActions,
     categoryActions,
   } = allActions
 
@@ -39,17 +40,21 @@ export default function ProductActions(ddpClient, allActions){
         unit: productAttributes.unit,
         deleted: false,
       }
-      
-      dispatch(() => {
-        ddpClient.call('createProduct', [newProductAttributes]);
-      })
+
+      const productId = newProductAttributes._id
+
       dispatch({
         type: ADD_PRODUCT,
         teamId: currentTeam.id,
+        productId: productId,
         product: newProductAttributes,
       });
 
-      return dispatch(categoryActions.addProductToCategory(productAttributes.categoryId,newProductAttributes._id))
+      dispatch(() => {
+        ddpClient.call('createProduct', [newProductAttributes]);
+      })
+
+      return dispatch(categoryActions.addProductToCategory(productAttributes.categoryId,productId))
     }
   }
 
@@ -57,9 +62,7 @@ export default function ProductActions(ddpClient, allActions){
     return (dispatch, getState) => {
       const {session, teams } = getState();
       const { currentTeam } = teams;
-      dispatch(() => {
-        ddpClient.call('updateProduct', [productId, productAttributes, session.userId]);
-      })
+      dispatch(connectActions.ddpCall('updateProduct', [productId, productAttributes, session.userId]))
       return dispatch({
         type: UPDATE_PRODUCT,
         teamId: currentTeam.id,
@@ -74,9 +77,7 @@ export default function ProductActions(ddpClient, allActions){
       const {session, teams } = getState();
       const { currentTeam } = teams;
       const productAttributes = {deleted: true};
-      dispatch(() => {
-        ddpClient.call('updateProduct', [productId, productAttributes, session.userId])
-      })
+      dispatch(connectActions.ddpCall('updateProduct', [productId, productAttributes, session.userId]))
       return dispatch({
         type: DELETE_PRODUCT,
         teamId: currentTeam.id,

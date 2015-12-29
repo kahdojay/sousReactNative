@@ -5,13 +5,22 @@ import {
   SUBSCRIBE_CHANNEL,
   UNSUBSCRIBE_CHANNEL,
   ERROR_CONNECTION,
-  CONNECT
+  CONNECT,
+  OFFLINE_RESET_QUEUE,
+  OFFLINE_ADD_QUEUE,
+  OFFLINE_NOOP,
 } from '../actions'
 
 const initialState = {
+  offline: {
+    queue: [],
+    lastUpdated: null
+  },
   connect: {
     channels: {},
     timeoutId: null,
+    timeoutMilliseconds: 0,
+    attempt: 0,
     status: CONNECT.CONNECTED,
     installationRegistered: false,
     error: null,
@@ -19,6 +28,32 @@ const initialState = {
       token: null,
       uuid: null
     }
+  }
+}
+
+function offline(state = initialState.offline, action) {
+  switch (action.type) {
+
+  case OFFLINE_RESET_QUEUE:
+    const resetOfflineQueueState = Object.assign({}, initialState.offline);
+    const resetOfflineQueue = resetOfflineQueueState.queue;
+    return {
+      queue: resetOfflineQueue,
+      lastUpdated: (new Date()).toISOString()
+    }
+
+  case OFFLINE_ADD_QUEUE:
+    const currentOfflineQueueState = Object.assign({}, state);
+    const currentOfflineQueue = currentOfflineQueueState.queue;
+    currentOfflineQueue.push(action.item)
+    return {
+      queue: currentOfflineQueue,
+      lastUpdated: (new Date()).toISOString()
+    }
+
+  case OFFLINE_NOOP:
+  default:
+    return state;
   }
 }
 
@@ -30,6 +65,7 @@ function connect(state = initialState.connect, action) {
       // status: CONNECT.OFFLINE, // if you do this you get offline flash modal when app starts
       // if you delete it you get flash of error modal
     });
+
   case REGISTER_INSTALLATION:
     return Object.assign({}, state, {
       installationRegistered: action.installationRegistered,
@@ -38,6 +74,7 @@ function connect(state = initialState.connect, action) {
         uuid: action.uuid
       })
     });
+
   case CONNECTION_STATUS:
     let channels = state.channels;
     if( action.status === CONNECT.OFFLINE ){
@@ -45,23 +82,33 @@ function connect(state = initialState.connect, action) {
     } else if( action.status === CONNECT.CONNECTED ){
       // .. ??
     }
-    return Object.assign({}, state, {
+    let updateState = {
       timeoutId: action.timeoutId,
       status: action.status,
       error: action.error,
-      channels: channels
-    });
+      channels: channels,
+    }
+    if(action.hasOwnProperty('attempt') === true){
+      updateState.attempt = action.attempt
+    }
+    if(action.hasOwnProperty('timeoutMilliseconds') === true){
+      updateState.timeoutMilliseconds = action.timeoutMilliseconds
+    }
+    return Object.assign({}, state, updateState);
+
   case SUBSCRIBE_CHANNEL:
     const newConnectState = Object.assign({}, state);
     newConnectState.channels[action.channel] = action.connectionId;
     return newConnectState
+
   default:
     return state;
   }
 }
 
 const connectReducers = {
-  'connect': connect
+  'connect': connect,
+  'offline': offline,
 }
 
 export default connectReducers

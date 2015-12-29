@@ -11,7 +11,12 @@ import {
   DELETE_MESSAGE
 } from './actionTypes'
 
-export default function MessageActions(ddpClient) {
+export default function MessageActions(allActions){
+
+  const {
+    connectActions,
+  } = allActions
+
   function resetMessages(teamId = null){
     return {
       teamId: teamId,
@@ -44,12 +49,12 @@ export default function MessageActions(ddpClient) {
       if(message.hasOwnProperty('orderId') === true){
         newMessage.orderId = message.orderId
       }
+      const messageId = newMessage._id
       // console.log('newMessage', newMessage);
-      dispatch(() => {
-        ddpClient.call('createMessage', [newMessage])
-      })
+      dispatch(connectActions.ddpCall('createMessage', [newMessage]))
       return dispatch({
         type: CREATE_MESSAGE,
+        messageId: messageId,
         message: newMessage
       });
     }
@@ -111,22 +116,22 @@ export default function MessageActions(ddpClient) {
         }
       }
       // console.log(messageDate)
-      dispatch(() => {
-        ddpClient.call(
-          'getTeamMessages',
-          [teamId, messageDate, false],
-          (err, result) => {
-            // console.log('called function, result: ', result);
-            if(result.length > 0){
-              result.forEach((message) => {
-                dispatch(receiveMessages(message));
-              })
-            } else {
-              dispatch(noMessagesReceived())
-            }
+      dispatch(connectActions.ddpCall(
+        'getTeamMessages',
+        [teamId, messageDate, false],
+        (err, result) => {
+          // console.log('called function, result: ', result);
+          if(result.length > 0){
+            result.forEach((message) => {
+              message.id = message._id
+              delete message._id
+              dispatch(receiveMessages(message));
+            })
+          } else {
+            dispatch(noMessagesReceived())
           }
-        );
-      });
+        }
+      ));
       return dispatch(requestMessages());
     }
   }

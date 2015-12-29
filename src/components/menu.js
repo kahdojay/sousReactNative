@@ -73,6 +73,7 @@ module.exports = class Menu extends React.Component {
                 <View style={styles.progressContainer}>
                   <View style={styles.progressRow}>
                     <ProgressViewIOS
+                      progressTintColor={Colors.lightBlue}
                       style={styles.progressBar}
                       progress={progress/100}
                       trackTintColor='white'

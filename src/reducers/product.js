@@ -70,10 +70,11 @@ function products(state = initialState.products, action) {
   // add product
   case ADD_PRODUCT:
     var addProductTeamState = Object.assign({}, state.teams);
-    const addOriginalTeamProduct = getTeamProduct(addProductTeamState, action.teamId, action.productId)
+    const addOriginalTeamProduct = {} //getTeamProduct(addProductTeamState, action.teamId, action.productId)
     addProductTeamState[action.teamId][action.productId] = Object.assign(addOriginalTeamProduct, action.product, {
       updatedAt: (new Date()).toISOString()
     })
+    // console.log(addProductTeamState[action.teamId][action.productId]);
     return Object.assign({}, state, {
       errors: null,
       teams: addProductTeamState,

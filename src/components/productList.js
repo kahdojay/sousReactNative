@@ -59,7 +59,7 @@ class ProductList extends React.Component {
   }
 
   render() {
-    const {cart, purveyors} = this.props
+    const {categories, cart, purveyors, showPurveyorInfo, showCategoryInfo} = this.props
     let productList = []
     if(this.state.products !== null){
       _.forEach(_.filter(this.state.products, (product) => {
@@ -93,25 +93,37 @@ class ProductList extends React.Component {
             cartItem = cart.orders[purveyorId].products[product.id]
           }
         })
-        productList.push((
-          <ProductListItem
-            cartItem={cartItem}
-            cartPurveyorId={cartPurveyorId}
-            loadDelay={loadDelay}
-            key={idx}
-            product={product}
-            purveyors={purveyors}
-            onProductEdit={() => {
-              this.props.onProductEdit(product)
-            }}
-            onProductDelete={() => {
-              this.props.onProductDelete(product.id)
-            }}
-            onUpdateProductInCart={(cartAction, cartAttributes) => {
-              this.props.onUpdateProductInCart(cartAction, cartAttributes)
-            }}
-          />
-        ))
+
+        let productCategory = null
+        if(showCategoryInfo === true){
+          Object.keys(categories).forEach((categoryId) => {
+            const category = categories[categoryId]
+            if(productCategory === null && category.products.indexOf(product.id) !== -1){
+              productCategory = category
+            }
+          })
+        }
+
+        const props = {
+          cartItem: cartItem,
+          cartPurveyorId: cartPurveyorId,
+          loadDelay: loadDelay,
+          key: idx,
+          product: product,
+          category: (showCategoryInfo === true) ? productCategory : null,
+          purveyors: (showPurveyorInfo === true) ? purveyors: null,
+          onProductEdit: () => {
+            this.props.onProductEdit(product)
+          },
+          onProductDelete: () => {
+            this.props.onProductDelete(product.id)
+          },
+          onUpdateProductInCart: (cartAction, cartAttributes) => {
+            this.props.onUpdateProductInCart(cartAction, cartAttributes)
+          },
+        }
+
+        productList.push(React.createElement(ProductListItem, props))
       })
     }
     return (

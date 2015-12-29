@@ -17,7 +17,7 @@ class CategoryIndexRow extends React.Component {
     let { category, products } = this.props
 
     const categoryProducts = _.filter(products, (product) => {
-      return product.hasOwnProperty('deleted') === true && product.deleted === false
+      return product && product.hasOwnProperty('deleted') === true && product.deleted === false
     })
 
     return (

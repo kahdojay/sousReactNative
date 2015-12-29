@@ -10,24 +10,37 @@ import ErrorActions from './error';
 import OrderActions from './order';
 import ddpClient from '../utilities/ddpClient';
 
-const errorActions = ErrorActions(ddpClient)
 const connectActions = ConnectActions(ddpClient)
-// const uiActions = UIActions(ddpClient)
-const sessionActions = SessionActions(ddpClient, {
-  'connectActions': connectActions
-})
-const messageActions = MessageActions(ddpClient)
-const teamActions = TeamActions(ddpClient, {
-  'sessionActions': sessionActions,
+
+const errorActions = ErrorActions({
   'connectActions': connectActions,
-  'messageActions': messageActions
 })
-const categoryActions = CategoryActions(ddpClient)
-const productActions = ProductActions(ddpClient, {
+// const uiActions = UIActions(ddpClient)
+const sessionActions = SessionActions({
+  'connectActions': connectActions,
+})
+const messageActions = MessageActions({
+  'connectActions': connectActions,
+})
+const teamActions = TeamActions({
+  'connectActions': connectActions,
+  'sessionActions': sessionActions,
+  'messageActions': messageActions,
+})
+const categoryActions = CategoryActions({
+  'connectActions': connectActions,
+})
+const productActions = ProductActions({
+  'connectActions': connectActions,
   'categoryActions': categoryActions
 })
-const purveyorActions = PurveyorActions(ddpClient)
-const orderActions = OrderActions(ddpClient)
+const purveyorActions = PurveyorActions({
+  'connectActions': connectActions,
+  'messageActions': messageActions,
+})
+const orderActions = OrderActions({
+  'connectActions': connectActions,
+})
 
 function connectApp(){
   return (dispatch, getState) => {

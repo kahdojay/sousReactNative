@@ -27,6 +27,7 @@ class TeamView extends React.Component {
     return (
       <View style={styles.container}>
         <AddForm
+          connected={true}
           placeholder="Add a Task..."
           onSubmit={this.props.onAddNewTask}
         />

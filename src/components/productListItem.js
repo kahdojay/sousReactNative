@@ -36,24 +36,45 @@ class ProductListItem extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    let shouldUpdate = true;
-    if(nextProps.cartItem === null && this.props.cartItem === null){
-      shouldUpdate = false;
-    }
+    // if(nextProps.cartItem === null && this.props.cartItem === null){
+    //   return false;
+    // }
+    const debugUpdates = false
     if(this.state.added === true && nextProps.cartItem === null){
-      shouldUpdate = true;
+      if(debugUpdates) console.log('Added: ', this.state.added, nextProps.cartItem)
+      return true;
+    } else if(this.state.added === false && nextProps.cartItem !== null){
+      if(debugUpdates) console.log('Removed: ', this.state.added, nextProps.cartItem)
+      return true;
     }
     if(this.state.loaded === false){
-      shouldUpdate = true;
+      if(debugUpdates) console.log('Loaded: ', this.state.loaded)
+      return true;
+    }
+    if(nextState.added !== this.state.added){
+      if(debugUpdates) console.log('Add/Remove Local: ', nextState.added, this.state.added)
+      return true;
+    }
+    if(nextState.editQuantity !== this.state.editQuantity){
+      if(debugUpdates) console.log('Edit Quantity: ', nextState.editQuantity, this.state.editQuantity)
+      return true;
+    }
+    if(nextState.quantity !== this.state.quantity){
+      if(debugUpdates) console.log('Quantity: ', nextState.quantity, this.state.quantity)
+      return true;
+    }
+    if(nextProps.product.deleted !== this.props.product.deleted){
+      if(debugUpdates) console.log('Deleted: ', nextProps.product.deleted, this.state.product.deleted)
+      return true;
     }
     // if(this.state.product !== null){
-    //   // console.log(nextProps.product);
+    //   // if(debugUpdates) console.log(nextProps.product);
     //   if(JSON.stringify(nextProps.product) !== JSON.stringify(this.state.product)){
-    //     shouldUpdate = true;
+    //     return true;
     //   }
     // }
-    // console.log(nextState.shouldUpdate);
-    return shouldUpdate;
+    // if(debugUpdates) console.log(shouldUpdate);
+    return false;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -90,10 +111,12 @@ class ProductListItem extends React.Component {
     if (cartItem !== null) {
       newState = {
         added: true,
-        quantity: cartItem.quantity,
         purveyorId: cartPurveyorId,
         note: cartItem.note
       };
+      if(this.state.editQuantity === false){
+        newState.quantity = cartItem.quantity;
+      }
     } else {
       newState = {
         added: false,
@@ -128,7 +151,7 @@ class ProductListItem extends React.Component {
 
   render() {
     const {product} = this.state
-    const {purveyors} = this.props;
+    const {purveyors, category} = this.props;
 
     let productInfo = (
       <View style={styles.row}>
@@ -142,20 +165,42 @@ class ProductListItem extends React.Component {
     );
     let buttons = []
     if(product !== null){
-      let purveyorString = ""
-      if(purveyors.hasOwnProperty(this.state.selectedPurveyorId) === true){
-        purveyorString = purveyors[this.state.selectedPurveyorId].name || '-NOT SET-'
-      } else {
-        // Single purveyor, grab name off props.purveyors
-        // const purveyorIds = Object.keys(purveyors)
-        // purveyorString = purveyors[purveyorIds[0]].name
-        purveyorString = 'Multiple purveyors'
+      if(product.deleted === true){
+        return <View />;
       }
+      let purveyorInfo = null
+      let categoryInfo = null
+      let productInfoSeparator = null
       let selectedStyle = []
       let productDetailsColor = '#999'
       if(this.state.added === true){
         selectedStyle = styles.selectedRow
         productDetailsColor = '#000'
+      }
+
+      if(purveyors !== null){
+        if(purveyors.hasOwnProperty(this.state.selectedPurveyorId) === true){
+          purveyorInfo = (
+            <Text style={{fontSize: 9,  color: productDetailsColor}}>{purveyors[this.state.selectedPurveyorId].name || '-NOT SET-'}</Text>
+          )
+        } else {
+          // Single purveyor, grab name off props.purveyors
+          // const purveyorIds = Object.keys(purveyors)
+          // purveyorInfo = purveyors[purveyorIds[0]].name
+          purveyorInfo = (
+            <Text style={{fontSize: 9,  color: productDetailsColor}}>Multiple purveyors</Text>
+          )
+        }
+      }
+      if(category !== null) {
+        categoryInfo = (
+          <Text style={{fontSize: 9,  color: productDetailsColor}}>{category.name}</Text>
+        )
+      }
+      if(purveyors !== null && category !== null){
+        productInfoSeparator = (
+          <Icon name='material|chevron-right' size={16} color={productDetailsColor} style={{width: 16, height: 11}}/>
+        )
       }
       productInfo = (
         <View style={[styles.row, selectedStyle]}>
@@ -176,9 +221,9 @@ class ProductListItem extends React.Component {
                 <Text style={{fontSize: 9,  color: productDetailsColor}} >
                   {`${product.amount} ${product.unit}`}
                 </Text>
-                <Text style={{fontSize: 9,  color: productDetailsColor}} >
-                  {purveyorString}
-                </Text>
+                <View style={{flexDirection: 'row'}}>
+                  {purveyorInfo}{productInfoSeparator}{categoryInfo}
+                </View>
               </View>
             </ProductToggle>
           </View>

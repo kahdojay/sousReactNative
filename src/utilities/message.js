@@ -32,13 +32,11 @@ function formatMessage(msg, messageLength = null) {
     );
   } else if (msg.type === 'orderConfirmation') {
     messageString = (
-      <Text>
-        <Text style={styles.messageText}>
-          <Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
-          order checked in.
-        </Text>
+      <Text style={styles.messageText}>
+        <Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
+        order checked in.
         { message !== '' ?
-          <Text style={styles.messageText}>
+          <Text>
             {' '}
             <Text style={{color: Colors.gold, fontStyle: 'italic'}}>Note:</Text>
             {' '}
