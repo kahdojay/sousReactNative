@@ -69,7 +69,7 @@ export default function ConnectActions(ddpClient) {
     return (dispatch, getState) => {
       const {offline} = getState()
       const queueKeys = Object.keys(offline.queue)
-      console.log(offline.processing)
+      // console.log(offline.processing)
       if(queueKeys.length > 0 && offline.processing === false){
         dispatch({
           type: OFFLINE_PROCESSING,
