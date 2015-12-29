@@ -124,24 +124,34 @@ class App extends React.Component {
     if(currentTeamInfo.team !== null){
       if(nextProps.purveyors.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.purveyors = nextProps.purveyors.teams[currentTeamInfo.team.id]
-        currentTeamInfo.lastUpdated.purveyors = nextProps.purveyors.lastUpdated;
+      } else {
+        currentTeamInfo.purveyors = {}
       }
+      currentTeamInfo.lastUpdated.purveyors = nextProps.purveyors.lastUpdated;
       if(nextProps.categories.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.categories = nextProps.categories.teams[currentTeamInfo.team.id]
-        currentTeamInfo.lastUpdated.categories = nextProps.categories.lastUpdated;
+      } else {
+        currentTeamInfo.categories = {}
       }
+      currentTeamInfo.lastUpdated.categories = nextProps.categories.lastUpdated;
       if(nextProps.products.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.products = nextProps.products.teams[currentTeamInfo.team.id]
-        currentTeamInfo.lastUpdated.products = nextProps.products.lastUpdated;
+      } else {
+        currentTeamInfo.products = {}
       }
+      currentTeamInfo.lastUpdated.products = nextProps.products.lastUpdated;
       if(nextProps.messages.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.messages = nextProps.messages.teams[currentTeamInfo.team.id]
-        currentTeamInfo.lastUpdated.messages = nextProps.messages.lastUpdated;
+      } else {
+        currentTeamInfo.messages = {}
       }
+      currentTeamInfo.lastUpdated.messages = nextProps.messages.lastUpdated;
       if(nextProps.orders.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.orders = nextProps.orders.teams[currentTeamInfo.team.id]
-        currentTeamInfo.lastUpdated.orders = nextProps.orders.lastUpdated;
+      } else {
+        currentTeamInfo.orders = {}
       }
+      currentTeamInfo.lastUpdated.orders = nextProps.orders.lastUpdated;
     }
     this.setState({
       installationRegistered: nextProps.connect.installationRegistered,
