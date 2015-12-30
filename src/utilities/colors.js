@@ -10,6 +10,7 @@ const Colors = {
   gold: '#F5A623',
   green: '#7CD34B',
   greyText: '#9b9796',
+  lightGrey: '#bbb',
   darkGrey: '#444',
   lightBlue: '#4C9EF5',
   lightGreen: '#D6F7C4',
