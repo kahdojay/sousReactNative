@@ -970,7 +970,7 @@ class App extends React.Component {
   }
 
   getNavBar(route, nav) {
-    const { dispatch, teams, session } = this.props;
+    const { dispatch, teams, session, connect } = this.props;
 
     let navBar = null;
     let nextItem = <View />;
