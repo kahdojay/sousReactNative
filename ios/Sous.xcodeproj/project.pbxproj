@@ -38,6 +38,7 @@
 		89EFDE5F1BCC097F001FBBEF /* OpenSans-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE561BCC097F001FBBEF /* OpenSans-LightItalic.ttf */; };
 		89EFDE601BCC097F001FBBEF /* OpenSans-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE571BCC097F001FBBEF /* OpenSans-Semibold.ttf */; };
 		89EFDE611BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE581BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf */; };
+		A531FDAA1BE3EC2F00E90569 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = A531FDA91BE3EC2F00E90569 /* main.jsbundle */; };
 		A5380FE61BE05DFA00FADB96 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A5380FE51BE05DFA00FADB96 /* AppDelegate.m */; };
 		A5380FEA1BE05E2E00FADB96 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A5380FE71BE05E2E00FADB96 /* Images.xcassets */; };
 		A5380FEC1BE05E2E00FADB96 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A5380FE91BE05E2E00FADB96 /* main.m */; };
@@ -211,6 +212,7 @@
 		89EFDE561BCC097F001FBBEF /* OpenSans-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-LightItalic.ttf"; sourceTree = "<group>"; };
 		89EFDE571BCC097F001FBBEF /* OpenSans-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Semibold.ttf"; sourceTree = "<group>"; };
 		89EFDE581BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-SemiboldItalic.ttf"; sourceTree = "<group>"; };
+		A531FDA91BE3EC2F00E90569 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = SOURCE_ROOT; };
 		A5380FE41BE05DFA00FADB96 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A5380FE51BE05DFA00FADB96 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		A5380FE71BE05E2E00FADB96 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -775,6 +777,7 @@
 				89EFDE5D1BCC097F001FBBEF /* OpenSans-Italic.ttf in Resources */,
 				89EFDE591BCC097F001FBBEF /* OpenSans-Bold.ttf in Resources */,
 				89EFDE5B1BCC097F001FBBEF /* OpenSans-ExtraBold.ttf in Resources */,
+				A531FDAA1BE3EC2F00E90569 /* main.jsbundle in Resources */,
 				89EFDE5E1BCC097F001FBBEF /* OpenSans-Light.ttf in Resources */,
 				89A667011BC2F38A00F45CFD /* OpenSans-Regular.ttf in Resources */,
 				A5380FEF1BE05E4400FADB96 /* LaunchScreen.xib in Resources */,

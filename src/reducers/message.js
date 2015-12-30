@@ -19,16 +19,16 @@ const initialState = {
   }
 };
 
-function addTeamMessage(newMessageTeamState, message){
+function addTeamMessage(newMessageTeamState, message, messageId){
   message = cleanupAttributes(message)
   if(newMessageTeamState.hasOwnProperty(message.teamId) === false){
     newMessageTeamState[message.teamId] = {};
   }
   let originalTeamMessage = {}
-  if(newMessageTeamState[message.teamId].hasOwnProperty(message.id)){
-    originalTeamMessage = newMessageTeamState[message.teamId][message.id]
+  if(newMessageTeamState[message.teamId].hasOwnProperty(messageId)){
+    originalTeamMessage = newMessageTeamState[message.teamId][messageId]
   }
-  newMessageTeamState[message.teamId][message.id] = Object.assign(originalTeamMessage, message)
+  newMessageTeamState[message.teamId][messageId] = Object.assign(originalTeamMessage, message)
   return newMessageTeamState
 }
 
@@ -62,7 +62,7 @@ function messages(state = initialState.messages, action) {
   // receive the messages
   case RECEIVE_MESSAGES:
     // console.log('message action received: ', action)
-    const newReceivedTeamsMessagesState = addTeamMessage(Object.assign({}, state.teams), action.message);
+    const newReceivedTeamsMessagesState = addTeamMessage(Object.assign({}, state.teams), action.message, action.message.id);
     // console.log(newReceivedTeamsMessagesState)
     return Object.assign({}, state, {
       isFetching: false,
@@ -73,8 +73,8 @@ function messages(state = initialState.messages, action) {
 
   // create message
   case CREATE_MESSAGE:
-    const newCreatedTeamsMessagesState = addTeamMessage(Object.assign({}, state.teams), action.message);
-    // console.log(action.type, action.message.id)
+    const newCreatedTeamsMessagesState = addTeamMessage(Object.assign({}, state.teams), action.message, action.messageId);
+    // console.log(action.type, action.messageId)
     return Object.assign({}, state, {
       isFetching: false,
       errors: null,

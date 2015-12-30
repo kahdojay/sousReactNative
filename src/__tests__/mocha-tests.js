@@ -135,7 +135,7 @@ describe('Teams', () => {
     // check connection
     checkConnection(done);
     checkAuthenticated(done);
-    this.timeout(5000);
+    this.timeout(10000);
 
     if(session.userId !== null){
       ddpClient.call('getUsersTeams', [session.userId], (err, results) => {
@@ -181,7 +181,7 @@ describe('Teams', () => {
             teamId = result.id
             teams[result.id] = result
             ddpClient.call('addUserToTeam', [session.userId, teamId], (err, result) => {
-              assert.equal(result, 1)
+              assert.equal(result.updated, 1)
               done()
             })
           });
@@ -240,7 +240,7 @@ describe('Ordering', () => {
     // check connection
     checkConnection(done);
     checkAuthenticated(done);
-    this.timeout(15000);
+    this.timeout(30000);
 
     ddpClient.call('getTeamOrderGuide', [session.teamId], (err, result) => {
       if(teams.hasOwnProperty(session.teamId) === false){
