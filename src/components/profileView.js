@@ -101,11 +101,9 @@ class ProfileView extends React.Component {
       avatar = <Icon name="material|account-circle" size={100} style={styles.userIcon} />
     }
     let phoneNumber = (
-      <TouchableHighlight
-        underlayColor={Colors.darkBlue}
-        style={styles.phoneNumber}>
+      <View style={styles.phoneNumber}>
         <Text style={styles.phoneText}>{this.props.session.phoneNumber}</Text>
-      </TouchableHighlight>
+      </View>
     )
     if (this.state.editPhoneNumber) {
       phoneNumber = (
