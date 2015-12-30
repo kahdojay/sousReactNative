@@ -39,17 +39,18 @@ export default function ProductActions(ddpClient, allActions){
         unit: productAttributes.unit,
         deleted: false,
       }
-      
+      const productId = newProductAttributes._id
       dispatch(() => {
         ddpClient.call('createProduct', [newProductAttributes]);
       })
       dispatch({
         type: ADD_PRODUCT,
         teamId: currentTeam.id,
+        productId: productId,
         product: newProductAttributes,
       });
 
-      return dispatch(categoryActions.addProductToCategory(productAttributes.categoryId,newProductAttributes._id))
+      return dispatch(categoryActions.addProductToCategory(productAttributes.categoryId,productId))
     }
   }
 
