@@ -13,6 +13,7 @@ const {
   SwitchIOS,
   Image,
   TouchableHighlight,
+  TouchableOpacity,
   StyleSheet,
   ActionSheetIOS,
 } = React;
@@ -117,8 +118,7 @@ class ProfileView extends React.Component {
     }
     let saveChanges = (
       <View style={styles.saveContainer}>
-        <TouchableHighlight
-          underlayColor='#bbb'
+        <TouchableOpacity
           onPress={() => {
             let {firstName, lastName, email, notifications, phoneNumber} = this.state;
             let data = {
@@ -131,9 +131,11 @@ class ProfileView extends React.Component {
             };
             this.props.onUpdateInfo(data);
           }}
-          style={styles.saveButton}>
+          style={styles.saveButton}
+          activeOpacity={.75}
+        >
           <Text style={styles.saveText}>Save Changes</Text>
-        </TouchableHighlight>
+        </TouchableOpacity>
       </View>
     )
     return (
@@ -301,7 +303,7 @@ let styles = StyleSheet.create({
     justifyContent: 'center',
   },
   saveButton: {
-    backgroundColor: '#ddd',
+    backgroundColor: Colors.gold,
     padding: 10,
     width: 150,
     borderRadius: 7,
@@ -309,7 +311,7 @@ let styles = StyleSheet.create({
   saveText:{
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#777',
+    color: 'white',
     textAlign: 'center',
   },
   container: {
