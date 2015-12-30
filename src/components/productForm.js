@@ -1,7 +1,6 @@
 import React from 'react-native';
 import Dimensions from 'Dimensions';
 import Colors from '../utilities/colors';
-import Overlay from 'react-native-overlay';
 import _ from 'lodash';
 
 const {
