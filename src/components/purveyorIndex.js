@@ -39,13 +39,6 @@ class PurveyorIndex extends React.Component {
 
     return (
       <View style={styles.container}>
-        <TouchableHighlight
-          underlayColor='#eee'
-          onPress={this.props.onCreateProduct}
-          style={styles.createButton}
-        >
-          <Text style={styles.createButtonText}>Create New Product</Text>
-        </TouchableHighlight>
         <SegmentedControlIOS
           tintColor={Colors.lightBlue}
           style={styles.segmentedControl}
@@ -56,9 +49,17 @@ class PurveyorIndex extends React.Component {
         <ScrollView
           automaticallyAdjustContentInsets={false}
           keyboardShouldPersistTaps={false}
+          style={styles.purveyorsContainer}
         >
           {purveyorsList}
         </ScrollView>
+        <TouchableHighlight
+          underlayColor='#eee'
+          onPress={this.props.onCreateProduct}
+          style={styles.createButton}
+        >
+          <Text style={styles.createButtonText}>Create New Product</Text>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -68,6 +69,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
+  },
+  purveyorsContainer: {
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
+    paddingVertical: 5,
   },
   scrollView: {
     backgroundColor: Colors.mainBackgroundColor,
@@ -82,6 +90,7 @@ const styles = StyleSheet.create({
     height: 36
   },
   createButton: {
+    backgroundColor: 'white',
   },
   createButtonText: {
     color: Colors.lightBlue,

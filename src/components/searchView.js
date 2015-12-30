@@ -57,13 +57,6 @@ class SearchView extends React.Component {
     )
     return (
       <View style={styles.container}>
-        <TouchableHighlight
-          underlayColor='#eee'
-          onPress={this.props.onCreateProduct}
-          style={styles.createButton}
-        >
-          <Text style={styles.createButtonText}>Create New Product</Text>
-        </TouchableHighlight>
         <SegmentedControlIOS
           tintColor={Colors.lightBlue}
           style={styles.segmentedControl}
@@ -76,7 +69,7 @@ class SearchView extends React.Component {
             <TextInput
               style={styles.input}
               value={this.state.search}
-              placeholder='Type to search for product...'
+              placeholder='search by name'
               onChangeText={(text) => {
                 this.setState({
                   search: text
@@ -117,9 +110,16 @@ class SearchView extends React.Component {
                 onProductDelete={this.props.onProductDelete}
                 onUpdateProductInCart={this.props.onUpdateProductInCart}
               />
-            : <Text style={styles.noFoundText}>Sorry, no products found.</Text>)
+            : <Text style={styles.noFoundText}>No results for '{ this.state.search }'</Text>)
           : <View /> }
         </View>
+        <TouchableHighlight
+          underlayColor='#eee'
+          onPress={this.props.onCreateProduct}
+          style={styles.createButton}
+        >
+          <Text style={styles.createButtonText}>Create New Product</Text>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
     height: 36
   },
   createButton: {
+    backgroundColor: 'white',
   },
   createButtonText: {
     color: Colors.lightBlue,
@@ -144,19 +145,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  searchContainer: {
-
-  },
   searchInputContainer: {
     margin: 10,
     flexDirection: 'row',
     position: 'relative',
   },
   input: {
+    textAlign: 'center',
     flex: 1,
     height: 32,
-    backgroundColor: '#d6d6d6',
-    paddingLeft: 20,
+    backgroundColor: Colors.mainBackgroundColor,
     color: '#777',
     fontFamily: 'OpenSans',
     borderRadius: Sizes.inputBorderRadius,
@@ -171,11 +169,12 @@ const styles = StyleSheet.create({
     top: 1,
   },
   searchResultsContainer: {
+    flex: 1,
     borderTopColor: Colors.separatorColor,
     borderTopWidth: 1,
-    marginTop: 5,
-    paddingTop: 5,
-    flex: 1,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
+    paddingVertical: 5,
     backgroundColor: Colors.mainBackgroundColor,
   },
   activity: {
@@ -188,6 +187,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     textAlign: 'center',
     paddingTop: 15,
+    paddingBottom: 15,
   }
 });
 
