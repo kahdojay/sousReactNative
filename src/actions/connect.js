@@ -221,6 +221,7 @@ export default function ConnectActions(ddpClient) {
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CATEGORIES.channel, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PRODUCTS.channel, [session.userId, teamIds]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CART_ITEMS.channel, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ORDERS.channel, [session.userId, teamIds]))
         }
         if(session.userId !== null){
@@ -265,6 +266,7 @@ export default function ConnectActions(ddpClient) {
         // process the subscribe events to collections and their fields
         if (log.hasOwnProperty('fields')){
           // console.log("MAIN DDP WITH FIELDS MSG", log);
+          // console.log("COLLECTION: ", log.collection);
           var data = log.fields;
           data.id = log.id;
           switch(log.collection){
@@ -323,6 +325,9 @@ export default function ConnectActions(ddpClient) {
               break;
             case 'orders':
               dispatch(orderActions.receiveOrders(data))
+              break;
+            case 'cart_items':
+              dispatch(cartItemActions.receiveCartItems(data))
               break;
             default:
               // console.log("TODO: wire up collection: ", log.collection);

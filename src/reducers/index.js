@@ -9,6 +9,7 @@ import product from './product';
 import category from './category';
 import error from './error';
 import order from './order';
+import cartItem from './cartItem';
 
 const reducers = combineReducers(Object.assign(
   {},
@@ -22,6 +23,7 @@ const reducers = combineReducers(Object.assign(
   category,
   error,
   order,
+  cartItem,
 ));
 
 export default reducers;
