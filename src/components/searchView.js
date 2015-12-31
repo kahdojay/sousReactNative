@@ -64,10 +64,10 @@ class SearchView extends React.Component {
           selectedIndex={this.props.selectedSegmentationIndex}
           onChange={this.props.onSegmentationChange}
         />
-        <View style={styles.searchContainer}>
+        <View>
           <View style={styles.searchInputContainer}>
             <TextInput
-              style={styles.input}
+              style={styles.searchInput}
               value={this.state.search}
               placeholder='product name'
               onChangeText={(text) => {
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     position: 'relative',
   },
-  input: {
+  searchInput: {
     textAlign: 'center',
     flex: 1,
     height: 32,
