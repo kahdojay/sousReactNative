@@ -26,7 +26,6 @@ class InviteView extends React.Component {
   }
 
   searchForContacts() {
-    console.log('querying: ', this.state.query)
     if(this.state.query !== ''){
       this.setState({
         searching: true,
@@ -43,22 +42,30 @@ class InviteView extends React.Component {
           searching: false,
           searchedContacts: searchedContacts.slice(0,10)
         })
-        console.log('found: ', searchedContacts)
       })
     } else {
       this.setState({
         searchedContacts: []
       })
     }
-    console.log('resultant state: ', this.state)
   }
 
-  toggleSelectContact(contactNumber) {
-    let selected = this.state.selectedContacts
-    let idx = selected.indexOf(contactNumber)
+  getSelectedIndex(contactNumber) {
+    let contactNumbers = this.state.selectedContacts.map(function(contactObj) { return contactObj.number })
+    return contactNumbers.indexOf(contactNumber)
+  }
 
+  toggleSelectContact(contactNumber, firstName, lastName) {
+    let contact = {
+      number: contactNumber,
+      firstName: firstName,
+      lastName: lastName
+    }
+    let selected = this.state.selectedContacts
+    let idx = this.getSelectedIndex(contactNumber)
+    
     if (idx === -1)
-      selected.push(contactNumber)
+      selected.push(contact)
     else
       selected.splice(idx, 1)
 
@@ -85,6 +92,8 @@ class InviteView extends React.Component {
     let idx = 0
 
     sortedContacts.forEach((contact) => {
+      let firstName = contact.firstName ? _.capitalize(contact.firstName) : ''
+      let lastName = contact.lastName ? _.capitalize(contact.lastName) : ''
       contact.phoneNumbers.forEach((numberDetails) => {
         let contactNumber = this.formatNumber(numberDetails.number)
         displayContacts.push(
@@ -92,15 +101,15 @@ class InviteView extends React.Component {
             key={idx} 
             underlayColor="#eee"
             onPress={() => {
-              this.toggleSelectContact(contactNumber)
+              this.toggleSelectContact(contactNumber, firstName, lastName)
             }}
           >
             <View style={styles.contactRow} >
               <CheckBox
-                checked={this.state.selectedContacts.indexOf(contactNumber) !== -1}
+                checked={this.getSelectedIndex(contactNumber) !== -1}
                 label=''
                 onChange={() => {
-                  this.toggleSelectContact(contactNumber)
+                  this.toggleSelectContact(contactNumber, firstName, lastName)
                 }}
               />
               <View style={styles.contactDetails}>
@@ -162,7 +171,7 @@ class InviteView extends React.Component {
       <View style={styles.submitContainer}>
         <TouchableHighlight
           style={styles.submitButton}
-          underlayColor={Colors.buttonPress}
+          underlayColor={Colors.lightBlue}
           onPress={() => {
             this.props.onSMSInvite(this.state.selectedContacts)
           }}>

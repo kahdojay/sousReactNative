@@ -909,8 +909,24 @@ class App extends React.Component {
             contacts: this.state.contactList,
             denied: this.state.contactsPermissionDenied,
             onSMSInvite: (contactList) => {
+              if (contactList.length === 0)
+                return
+
               _.debounce(() => {
                 dispatch(actions.inviteContacts(contactList))
+              }, 25)()
+              
+              let invitees = contactList.map(function(contact) { return contact.firstName }).toString().replace(/,/g , ', ')
+
+              let msg = {
+                text: `${session.firstName} invited to ${this.props.teams.currentTeam.name}: ${invitees}`
+              }
+
+              let author = 'Sous'
+              let imageUrl = 'https://sous-assets-production.s3.amazonaws.com/uploads/89b217dc-4ec5-43e8-9569-8fc85e6fdd52/New+Sous+Logo+Circle+Small.png'
+
+              _.debounce(() => {
+                dispatch(actions.createMessage(msg, author, imageUrl))
               }, 25)()
               nav.replacePreviousAndPop({
                 name: 'Feed',
