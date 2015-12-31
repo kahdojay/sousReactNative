@@ -1457,18 +1457,10 @@ class App extends React.Component {
             const learnMoreMsg = (
               <View>
                 <Text style={{textAlign: 'center'}}>
-                  The app connection status is:
-                  <Text style={{fontWeight: 'bold'}}> Offline</Text>
+                  <Text style={{fontWeight: 'bold'}}>No Internet Connection</Text>
                 </Text>
                 <Text style={{textAlign: 'center', marginTop: 10}}>
-                  <Text style={{fontWeight: 'bold'}}>Please note: </Text>
-                  Some functionality (like sending messages or
-                  submitting orders) will be disabled until the app
-                  can re-establish connection.
-                </Text>
-                <Text style={{textAlign: 'center', marginTop: 10}}>
-                  All other functionality will work as expected, and will propagate
-                  changes to the rest of your team upon re-connection.
+                  You can still add Order Guide products to your cart, but please reconnect before submitting orders or sending messages.
                 </Text>
               </View>
             )
