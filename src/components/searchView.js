@@ -69,7 +69,7 @@ class SearchView extends React.Component {
             <TextInput
               style={styles.input}
               value={this.state.search}
-              placeholder='search by name'
+              placeholder='product name'
               onChangeText={(text) => {
                 this.setState({
                   search: text
@@ -135,6 +135,8 @@ const styles = StyleSheet.create({
     height: 36
   },
   createButton: {
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
     backgroundColor: 'white',
   },
   createButtonText: {
@@ -172,8 +174,6 @@ const styles = StyleSheet.create({
     flex: 1,
     borderTopColor: Colors.separatorColor,
     borderTopWidth: 1,
-    borderBottomColor: Colors.separatorColor,
-    borderBottomWidth: 1,
     paddingVertical: 5,
     backgroundColor: Colors.mainBackgroundColor,
   },

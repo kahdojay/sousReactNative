@@ -73,8 +73,6 @@ const styles = StyleSheet.create({
   purveyorsContainer: {
     borderTopColor: Colors.separatorColor,
     borderTopWidth: 1,
-    borderBottomColor: Colors.separatorColor,
-    borderBottomWidth: 1,
     paddingVertical: 5,
   },
   scrollView: {
@@ -90,6 +88,8 @@ const styles = StyleSheet.create({
     height: 36
   },
   createButton: {
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
     backgroundColor: 'white',
   },
   createButtonText: {
