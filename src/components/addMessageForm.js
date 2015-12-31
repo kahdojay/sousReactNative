@@ -25,7 +25,13 @@ export default class AddForm extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return !(this.state.disabled === nextProps.disabled)
+    if(this.state.disabled !== nextProps.disabled){
+      return true;
+    }
+    if(this.state.message.text !== nextState.message.text){
+      return true;
+    }
+    return false;
   }
 
   componentWillReceiveProps(nextProps) {
