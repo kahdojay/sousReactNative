@@ -49,8 +49,12 @@ class FeedListItem extends React.Component {
     const msgDate = moment(msg.createdAt)
     let displayDate = `Today, ${msgDate.format("h:mm a")}`;
     if(moment(msg.createdAt).diff(this.props.now) < this.props.aDayAgo){
+      displayDate = msgDate.format("ddd h:mm a")
+    }
+    if(moment(msg.createdAt).diff(this.props.now) < this.props.aWeekAgo){
       displayDate = msgDate.format("ddd, M/D - h:mm a")
     }
+
     let icon = <Icon name='material|account' size={50} color='#aaa' style={styles.avatar}/>
     if (msg.imageUrl) {
       icon = <Image source={{uri: msg.imageUrl}} style={styles.avatarImage} />
@@ -90,11 +94,13 @@ const styles = StyleSheet.create({
   },
   messageContentContainer: {
     flex: 9,
+    paddingLeft: 10,
     paddingRight: 10,
   },
   messageTextContainer: {
     flex: 1,
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'flex-end',
     paddingBottom: 5,
     paddingLeft: 5,
@@ -104,13 +110,11 @@ const styles = StyleSheet.create({
     marginRight: 10,
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
-    color: Colors.greyText,
   },
   messageTimestamp: {
-    fontSize: 12,
+    fontSize: 10,
     fontFamily: 'OpenSans',
-    fontWeight: 'bold',
-    color: Colors.disabled,
+    color: Colors.lightGrey,
     marginBottom: 1,
   },
   avatar: {

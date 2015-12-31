@@ -171,6 +171,7 @@ class Feed extends React.Component {
     let retMessages = []
     const now = new Date()
     const aDayAgo = -(1000 * 60 * 60 * 24)
+    const aWeekAgo = aDayAgo * 7
     if(this.state.messages !== null && this.state.messages.length > 0){
       this.state.messages.forEach((msg, index) => {
         retMessages.push(
@@ -178,6 +179,7 @@ class Feed extends React.Component {
             key={msg.id}
             now={now}
             aDayAgo={aDayAgo}
+            aWeekAgo={aWeekAgo}
             msg={msg}
           />
         )
