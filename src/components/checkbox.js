@@ -46,7 +46,7 @@ var CheckBox = React.createClass({
         underlayColor='transparent'
       >
         <View style={[styles.container, iconContainerStyle]}>
-          <Icon name={iconName} size={30} color={this.props.iconColor} style={[styles.icon]}/>
+          <Icon name={iconName} size={20} color={this.props.iconColor} style={[styles.icon]}/>
           {this.props.label !== '' ?
             <Text style={[this.props.labelStyle, styles.label]}>{this.props.label}</Text>
           : <View />}
