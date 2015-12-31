@@ -86,7 +86,7 @@ class InviteModal extends React.Component {
           <View style={styles.modalContainer}>
             <View style={styles.modalInnerContainer}>
               <Text style={[styles.header]}>{`Invite to ${this.props.currentTeam.name}`}</Text>
-              <Text style={styles.modalText}>{`Add a friend or co-worker to your team:`}</Text>
+              <Text style={styles.modalText}>{`Add a friend or co-worker to your team`}</Text>
               <TextInput
                 style={styles.input}
                 keyboardType='numeric'
