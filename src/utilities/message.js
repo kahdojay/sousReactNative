@@ -58,10 +58,10 @@ function formatMessage(msg, messageLength = null) {
 
 const styles = StyleSheet.create({
   messageText: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'OpenSans',
     marginLeft: 5,
-    marginBottom: 10
+    marginBottom: 5
   },
 });
 
