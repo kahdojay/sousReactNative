@@ -23,6 +23,12 @@ class TeamIndexRow extends React.Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      enabled: (nextProps.connected === true && nextProps.selected === false)
+    })
+  }
+
   render() {
     const { team, messages } = this.props
     const memberCount = _.compact(_.filter(team.users, (userId) => {

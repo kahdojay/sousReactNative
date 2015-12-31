@@ -18,6 +18,31 @@ const {
 } = React;
 
 class TeamIndex extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      loaded: false,
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if(this.props.connected !== nextProps.connected){
+      return true;
+    }
+    if(this.state.loaded !== nextState.loaded){
+      return true;
+    }
+    if(this.props.teams.length !== nextProps.teams.length){
+      return true;
+    }
+    return false;
+  }
+
+  componentDidMount() {
+    this.setState({
+      loaded: true
+    })
+  }
 
   render() {
     const {teams, messagesByTeams} = this.props
@@ -50,7 +75,7 @@ class TeamIndex extends React.Component {
                   <TeamIndexRow
                     key={index}
                     connected={this.props.connected}
-                    selected={(this.props.currentTeam.id === team.id)}
+                    selected={(this.props.currentTeam !== null && this.props.currentTeam.id === team.id)}
                     team={team}
                     teamsUsers={teams.teamsUsers}
                     messages={teamMessages}
