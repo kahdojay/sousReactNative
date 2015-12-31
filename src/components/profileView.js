@@ -370,7 +370,7 @@ let styles = StyleSheet.create({
     flexDirection: 'column',
   },
   phoneNumber: {
-    backgroundColor: '#1E00B1',
+    backgroundColor: Colors.blue,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

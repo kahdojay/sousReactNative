@@ -386,7 +386,7 @@ class App extends React.Component {
                   text: task.name,
                   type: 'taskCompletion',
                 }
-                dispatch(actions.completeTeamTask(msg))
+                dispatch(actions.completeTeamTask(msg, session.firstName))
               }, 25)()
             },
             onDeleteTeam: () => {
@@ -923,7 +923,7 @@ class App extends React.Component {
               }
 
               let author = 'Sous'
-              let imageUrl = 'https://sous-assets-production.s3.amazonaws.com/uploads/89b217dc-4ec5-43e8-9569-8fc85e6fdd52/New+Sous+Logo+Circle+Small.png'
+              let imageUrl = Urls.msgLogo
 
               _.debounce(() => {
                 dispatch(actions.createMessage(msg, author, imageUrl))
