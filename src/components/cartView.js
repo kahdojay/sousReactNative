@@ -18,9 +18,9 @@ const {
 class CartView extends React.Component {
   constructor(props) {
     super(props)
-    const numberOfOrders = Object.keys(this.props.team.cart.orders).length
+    const numberOfOrders = Object.keys(this.props.cartItems).length
     const numberOfProducts = _.reduce(_.map(numberOfOrders, (orderId) => {
-      return Object.keys(this.props.team.cart.orders[orderId].products).length
+      return Object.keys(this.props.cartItems[orderId]).length
     }), (total, n) => {
       return total + n
     })
@@ -33,9 +33,9 @@ class CartView extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    const numberOfOrdersUpdated = Object.keys(nextProps.team.cart.orders)
+    const numberOfOrdersUpdated = Object.keys(nextProps.cartItems)
     const numberOfProductsUpdated = _.reduce(_.map(numberOfOrdersUpdated, (orderId) => {
-      return Object.keys(nextProps.team.cart.orders[orderId].products).length
+      return Object.keys(nextProps.cartItems[orderId]).length
     }), (total, n) => {
       return total + n
     })
@@ -50,9 +50,9 @@ class CartView extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const numberOfOrders = Object.keys(nextProps.team.cart.orders)
+    const numberOfOrders = Object.keys(nextProps.cartItems)
     const numberOfProducts = _.reduce(_.map(numberOfOrders, (orderId) => {
-      return Object.keys(nextProps.team.cart.orders[orderId].products).length
+      return Object.keys(nextProps.cartItems[orderId]).length
     }), (total, n) => {
       return total + n
     })
@@ -87,21 +87,22 @@ class CartView extends React.Component {
     }
   }
 
-  renderPurveyorProducts(purveyorId, cart, products) {
-    const cartProducts = cart.orders[purveyorId].products
-    const cartPurveyorProductIds = Object.keys(cartProducts)
-    const cartPurveyorProducts = _.sortBy(_.map(cartPurveyorProductIds, (productId) => {
-      return products[productId]
-    }), 'name')
+  renderPurveyorProducts(purveyorId, cartItems, products) {
+    const purveyorCartItems = _.sortBy(_.map(Object.keys(cartItems[purveyorId]), (cartItemId) => {
+      const product = products[cartItems[purveyorId][cartItemId].productId]
+      return {
+        cartItem: cartItems[purveyorId][cartItemId],
+        product: product
+      }
+    }), 'product.name')
 
-    return cartPurveyorProducts.map((product) => {
-      const cartProduct = cartProducts[product.id];
+    return purveyorCartItems.map((cartItemPkg) => {
       return (
         <CartViewListItem
-          key={product.id}
-          purveyorId={purveyorId}
-          product={product}
-          cartProduct={cartProduct}
+          key={cartItemPkg.cartItem.id}
+          purveyorId={cartItemPkg.cartItem.purveyorId}
+          product={cartItemPkg.product}
+          cartItem={cartItemPkg.cartItem}
           onUpdateProductInCart={this.props.onUpdateProductInCart}
           onDeleteProduct={this.props.onDeleteProduct}
         />
@@ -131,7 +132,7 @@ class CartView extends React.Component {
   }
 
   render() {
-    const {team, cartPurveyors, products} = this.props
+    const {cartItems, cartPurveyors, products} = this.props
 
     const modal = (
       <Modal
@@ -202,7 +203,7 @@ class CartView extends React.Component {
                     </TouchableHighlight>
                   </View>
                 </View>
-                {this.renderPurveyorProducts(purveyor.id, team.cart, products)}
+                {this.renderPurveyorProducts(purveyor.id, cartItems, products)}
               </View>
             );
           })

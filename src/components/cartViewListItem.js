@@ -19,20 +19,20 @@ class CartViewListItem extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      quantity: this.props.cartProduct.quantity,
+      quantity: this.props.cartItem.quantity,
       editQuantity: false,
     }
   }
 
   render() {
-    const {purveyorId, product, cartProduct} = this.props;
+    const {purveyorId, product, cartItem} = this.props;
     let quantity = this.state.quantity * product.amount;
     if(quantity.toString().indexOf('.') !== -1){
       quantity = parseFloat(Math.floor(quantity * 1000)/1000)
     }
     const productName = product.name || '';
     let productUnit = product.unit;
-    if(cartProduct.quantity > 1){
+    if(cartItem.quantity > 1){
       if(product.unit == 'bunch'){
         productUnit += 'es';
       } else if(product.unit !== 'ea' && product.unit !== 'dozen' && product.unit !== 'cs'){

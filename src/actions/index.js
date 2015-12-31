@@ -8,6 +8,7 @@ import ProductActions from './product';
 import CategoryActions from './category';
 import ErrorActions from './error';
 import OrderActions from './order';
+import CartItemActions from './cartItem';
 import ddpClient from '../utilities/ddpClient';
 
 const connectActions = ConnectActions(ddpClient)
@@ -22,11 +23,6 @@ const sessionActions = SessionActions({
 const messageActions = MessageActions({
   'connectActions': connectActions,
 })
-const teamActions = TeamActions({
-  'connectActions': connectActions,
-  'sessionActions': sessionActions,
-  'messageActions': messageActions,
-})
 const categoryActions = CategoryActions({
   'connectActions': connectActions,
 })
@@ -40,6 +36,15 @@ const purveyorActions = PurveyorActions({
 })
 const orderActions = OrderActions({
   'connectActions': connectActions,
+})
+const cartItemActions = CartItemActions({
+  'connectActions': connectActions,
+})
+const teamActions = TeamActions({
+  'connectActions': connectActions,
+  'sessionActions': sessionActions,
+  'messageActions': messageActions,
+  'cartItemActions': cartItemActions,
 })
 
 function connectApp(){
@@ -75,7 +80,8 @@ function connectApp(){
       'categoryActions': categoryActions,
       'productActions': productActions,
       'errorActions': errorActions,
-      'orderActions': orderActions
+      'orderActions': orderActions,
+      'cartItemActions': cartItemActions,
     }));
   }
 }
@@ -92,4 +98,5 @@ export default Object.assign(
   categoryActions,
   errorActions,
   orderActions,
+  cartItemActions,
 )

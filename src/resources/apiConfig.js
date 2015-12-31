@@ -14,7 +14,8 @@ export const DDP = {
     TEAMS_USERS: {channel: 'teams-users', collection: 'users'},
     PRODUCTS: {channel: 'products', collection: 'products'},
     ORDERS: {channel: 'orders', collection: 'orders'},
-    ERRORS: {channel: 'errors', collection: 'errors'}
+    CART_ITEMS: {channel: 'cart-items', collection: 'cart_items'},
+    ERRORS: {channel: 'errors', collection: 'errors'},
   },
 }
 // TODO: change the actions/connect.js to use DDP.SUBSCRIBE_LIST.<CHANNEL>.collection instead of hardcoding the collection

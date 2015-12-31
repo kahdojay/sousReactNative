@@ -29,6 +29,7 @@ export default function TeamActions(allActions) {
     connectActions,
     sessionActions,
     messageActions,
+    cartItemActions,
   } = allActions
 
   function resetTeams(){
@@ -256,6 +257,7 @@ export default function TeamActions(allActions) {
       if(messageCount < 20){
         dispatch(messageActions.getTeamMessages(team.id))
       }
+      dispatch(cartItemActions.getTeamCartItems(team.id))
 
       return dispatch({
         type: RECEIVE_TEAMS,
