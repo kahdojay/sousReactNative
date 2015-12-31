@@ -16,127 +16,161 @@ class InviteView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      contacts: this.props.contacts,
-      denied: this.props.denied,
+      selectedContacts: [],
     }
   }
 
-  /* returns first phone number for selected contacts */
-  sendSMS() {
-    const resultSet = _.chain(this.state.contacts)
-      .filter(function(c) { return c.selected; })
-      .map('phoneNumbers[0].number')
-      .value();
-    this.props.onSMSInvite(resultSet);
+  toggleSelectContact(contactNumber) {
+    let selected = this.state.selectedContacts
+    let idx = selected.indexOf(contactNumber)
+
+    if (idx === -1)
+      selected.push(contactNumber)
+    else
+      selected.splice(idx, 1)
+
+    this.setState({
+      selectedContacts: selected
+    })
+  }
+
+  formatNumber(contactNumber) {
+    let pat = /(\(|\)|\s|\-)/g
+    let newNumber = contactNumber.replace(pat, '')
+    if (newNumber.toString().length === 10)
+      newNumber = newNumber.slice(0,3) + '.' + newNumber.slice(3,6) + '.' + newNumber.slice(6,10)
+    return newNumber
   }
 
   render() {
-    if (this.state.denied) {
+    let userContacts = this.props.contacts.map(function (contact, idx) {
+      contact.firstName = contact.firstName ? _.capitalize(contact.firstName) : ''
+      return contact
+    })
+    let sortedContacts = _.sortBy(userContacts, 'firstName')
+    let displayContacts = []
+    let idx = 0
+
+    sortedContacts.forEach((contact) => {
+      contact.phoneNumbers.forEach((numberDetails) => {
+        let contactNumber = this.formatNumber(numberDetails.number)
+        displayContacts.push(
+          <TouchableHighlight 
+            key={idx} 
+            underlayColor="#eee"
+            onPress={() => {
+              this.toggleSelectContact(contactNumber)
+            }}
+          >
+            <View style={styles.contactRow} >
+              <View style={styles.selectIndicator} >
+                <CheckBox
+                  checked={this.state.selectedContacts.indexOf(contactNumber) !== -1}
+                  label=''
+                  onChange={() => {
+                    this.toggleSelectContact(contactNumber)
+                  }}
+                />
+              </View>
+              <View style={styles.contactDetails}>
+                <View style={styles.nameContainer} >
+                  <Text style={{fontWeight: 'bold'}}>{contact.firstName} </Text>
+                  <Text>{contact.lastName}</Text>
+                </View>
+                <Text style={styles.phoneNumber}>{contactNumber}</Text>
+              </View>
+            </View>
+          </TouchableHighlight>
+        )
+        idx += 1
+      })
+    })
+
+    let deniedModal = 
+    <View style={styles.modalContainer}>
+      <View style={styles.modalInnerContainer}>
+        <Text style={styles.centerText}>To invite your contacts, please go to:</Text>
+        <Text style={styles.centerText}>Settings > Sous > Enable "Contacts"</Text>
+      </View>
+    </View>
+
+    if (this.props.denied) {
       return (
-        <View style={styles.modalContainer}>
-          <View style={styles.modalInnerContainer}>
-            <Text style={styles.centerText}>To invite your contacts, please go to:</Text>
-            <Text style={styles.centerText}>Settings > Sous > Enable "Contacts"</Text>
-            <Text style={styles.centerText}>In the "ALLOW SOUS TO ACCESS" area.</Text>
-          </View>
-        </View>
+        {deniedModal}
       );
     } else {
-      let submitButton = <View />;
-      let contacts = <View />;
-      if(this.state.contacts.length > 0) {
-        contacts = []
-        this.state.contacts.forEach((contact, idx) => {
-          contacts.push(
-            <TouchableHighlight key={idx} underlayColor="#eee" >
-              <View style={styles.contactRow} >
-                <View style={styles.row} >
-                  <Text style={styles.contactFirstName}>{contact.firstName} </Text>
-                  <Text style={styles.contactLastName}>{contact.lastName}</Text>
-                </View>
-                <View style={{paddingTop: 5}} >
-                  <CheckBox
-                    checked={contact.selected}
-                    label=''
-                    onChange={(checked) => {
-                      this.setState({
-                        contacts: this.state.contacts.map(function(c) {
-                          if (c.recordID === contact.recordID) {
-                            c.selected = !c.selected;
-                          }
-                          return c;
-                        })
-                      })
-                    }}
-                  />
-                </View>
-              </View>
-            </TouchableHighlight>
-          );
-        });
-        submitButton = (
-          <TouchableHighlight
-            style={styles.button}
-            underlayColor={Colors.buttonPress}
-            onPress={::this.sendSMS}>
-            <Text style={styles.buttonText}>Send SMS</Text>
-          </TouchableHighlight>
-        );
-      }
-
       return (
-        <ScrollView
-          automaticallyAdjustContentInsets={false}
-          style={styles.container}
-        >
-          {submitButton}
-          {contacts}
-          {submitButton}
-        </ScrollView>
+        <View style={styles.container}>
+          <ScrollView
+            automaticallyAdjustContentInsets={false}
+            style={styles.contactsContainer}
+          >
+            {displayContacts}
+          </ScrollView>
+          <View style={styles.submitContainer}>
+            <TouchableHighlight
+              style={styles.submit}
+              underlayColor={Colors.buttonPress}
+              onPress={() => {
+                this.props.onSMSInvite(this.state.selectedContacts)
+              }}>
+              <Text style={styles.submitText}>Send SMS</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
       );
     }
   }
 }
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  contactsContainer: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
   contactRow: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     paddingRight: 10,
     paddingLeft: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
-  row: {
+  selectIndicator: {
+    paddingTop: 5,
+  },
+  contactDetails: {
+  },
+  nameContainer: {
     flexDirection: 'row',
+    fontFamily: 'OpenSans',
   },
-  container: {
+  phoneNumber: {
+    fontSize: 10,
+    color: Colors.lightGrey,
+  },
+  submitContainer: {
+    flexDirection: 'row',
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
+  },
+  submit: {
     flex: 1,
-    backgroundColor: 'white',
-  },
-  contactFirstName: {
-    fontFamily: 'OpenSans',
-    fontWeight: 'bold',
-  },
-  contactLastName: {
-    fontFamily: 'OpenSans',
-  },
-  button: {
-    height: 56,
-    width: 150,
-    margin: 5,
-    backgroundColor: Colors.gold,
+    height: 32,
+    backgroundColor: Colors.blue,
     alignSelf: 'center',
     justifyContent: 'center',
-    borderRadius: 3,
+    borderRadius: 2,
   },
-  buttonText: {
+  submitText: {
     alignSelf: 'center',
-    fontSize: 22,
+    fontSize: 16,
     color: 'white',
-    fontWeight: 'bold',
     fontFamily: 'OpenSans'
   },
   modalContainer: {
