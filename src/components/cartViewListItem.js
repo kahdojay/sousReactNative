@@ -46,7 +46,7 @@ class CartViewListItem extends React.Component {
         <Icon name='material|delete' size={30} color={Colors.lightBlue} style={styles.iconRemove}/>
       ),
       onPress: () => {
-        this.props.onDeleteProduct(purveyorId, product.id)
+        this.props.onDeleteProduct(cartItem)
       }
     }]
 
@@ -81,12 +81,10 @@ class CartViewListItem extends React.Component {
                   editQuantity: false,
                 }, () => {
                   if (this.state.quantity > .1) {
-                    const cartAttributes = {
-                      purveyorId: purveyorId,
-                      productId: product.id,
+                    const cartAttributes = Object.assign({}, cartItem, {
                       quantity: this.state.quantity,
-                    };
-                    this.props.onUpdateProductInCart(CART.ADD, cartAttributes)
+                    });
+                    this.props.onUpdateProductInCart(cartAttributes)
                   }
                 })
               }}

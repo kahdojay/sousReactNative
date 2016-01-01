@@ -135,10 +135,9 @@ class ProductListItem extends React.Component {
       quantity: this.state.quantity,
       note: this.state.note
     };
-    this.props.onUpdateProductInCart(
-      (this.state.added === true ? CART.ADD : CART.REMOVE),
-      cartAttributes
-    );
+    if(this.state.added === true){
+      this.props.onUpdateProductInCart(cartAttributes);
+    }
 
   }
 

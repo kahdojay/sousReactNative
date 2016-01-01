@@ -18,11 +18,11 @@ class CategoryView extends React.Component {
   }
 
   render() {
-    const {cart, category, products, purveyors} = this.props;
+    const {cartItems, category, products, purveyors} = this.props;
     return (
       <View style={styles.container}>
         <ProductList
-          cart={cart}
+          cartItems={cartItems}
           products={products}
           purveyors={purveyors}
           showPurveyorInfo={true}

@@ -5,7 +5,6 @@ import {
   REQUEST_CART_ITEMS,
   NO_CART_ITEMS,
   ADD_CART_ITEM,
-  UPDATE_CART_ITEM,
   DELETE_CART_ITEM,
 } from '../actions';
 
@@ -21,23 +20,35 @@ const initialState = {
 function processCartItem(newCartItemTeamState, cartItem, cartItemId){
   cartItem = cleanupAttributes(cartItem)
   let cartItemLocator = cartItem.purveyorId
+  let cartItemGroup = 'cart'
   if(cartItem.orderId !== null){
     cartItemLocator = cartItem.orderId
+    cartItemGroup = 'orders'
   }
   if(newCartItemTeamState.hasOwnProperty(cartItem.teamId) === false){
-    newCartItemTeamState[cartItem.teamId] = {};
+    newCartItemTeamState[cartItem.teamId] = {
+      cart: {},
+      orders: {},
+    };
   }
   let originalTeamOrder = {}
-  if(newCartItemTeamState[cartItem.teamId].hasOwnProperty(cartItemLocator) === true){
-    originalTeamOrder = newCartItemTeamState[cartItem.teamId][cartItemLocator]
+  if(newCartItemTeamState[cartItem.teamId][cartItemGroup].hasOwnProperty(cartItemLocator) === true){
+    originalTeamOrder = newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator]
   }
-  newCartItemTeamState[cartItem.teamId][cartItemLocator] = originalTeamOrder
+  newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator] = originalTeamOrder
 
   let originalTeamCartItem = {}
-  if(newCartItemTeamState[cartItem.teamId][cartItemLocator].hasOwnProperty(cartItemId) === true){
-    originalTeamCartItem = newCartItemTeamState[cartItem.teamId][cartItemLocator][cartItemId]
+  if(newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator].hasOwnProperty(cartItemId) === true){
+    originalTeamCartItem = newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId]
+  } else if(
+    cartItem.orderId !== null &&
+    newCartItemTeamState[cartItem.teamId]['cart'].hasOwnProperty(cartItem.purveyorId) === true &&
+    newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId].hasOwnProperty(cartItemId) === true
+  ){
+    originalTeamCartItem = newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItemId]
+    delete newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItemId]
   }
-  newCartItemTeamState[cartItem.teamId][cartItemLocator][cartItemId] = Object.assign(originalTeamCartItem, cartItem)
+  newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId] = Object.assign(originalTeamCartItem, cartItem)
   return newCartItemTeamState
 }
 
@@ -72,21 +83,15 @@ function cartItems(state = initialState.cartItems, action) {
       lastUpdated: (new Date()).toISOString(),
     });
 
-  case UPDATE_CART_ITEM:
-    const newUpdateTeamsCartItemsState = processCartItem(Object.assign({}, state.teams), action.cartItem, ation.cartItem.id);
-    return Object.assign({}, state, {
-      teams: newUpdateTeamsCartItemsState,
-      isFetching: false,
-      errors: null,
-      lastUpdated: (new Date()).toISOString(),
-    });
-
   case DELETE_CART_ITEM:
     const newDeletedTeamsCartItemsState = Object.assign({}, state.teams);
     if(newDeletedTeamsCartItemsState.hasOwnProperty(action.teamId) === true){
-      if(newDeletedTeamsCartItemsState[action.teamId].hasOwnProperty(action.cartItem.purveyorId) === true){
-        if(newDeletedTeamsCartItemsState[action.teamId][action.cartItem.purveyorId].hasOwnProperty(action.cartItem.id) === true){
-          delete newDeletedTeamsCartItemsState[action.teamId][action.cartItem.purveyorId][action.cartItem.id]
+      if(newDeletedTeamsCartItemsState[action.teamId]['cart'].hasOwnProperty(action.cartItem.purveyorId) === true){
+        if(newDeletedTeamsCartItemsState[action.teamId]['cart'][action.cartItem.purveyorId].hasOwnProperty(action.cartItem.id) === true){
+          delete newDeletedTeamsCartItemsState[action.teamId]['cart'][action.cartItem.purveyorId][action.cartItem.id]
+        }
+        if(Object.keys(newDeletedTeamsCartItemsState[action.teamId]['cart'][action.cartItem.purveyorId]).length === 0){
+          delete newDeletedTeamsCartItemsState[action.teamId]['cart'][action.cartItem.purveyorId]
         }
       }
     }
