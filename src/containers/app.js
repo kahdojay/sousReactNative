@@ -645,7 +645,7 @@ class App extends React.Component {
           component: Components.CategoryView,
           props: {
             category: this.state.category,
-            cart: this.state.currentTeamInfo.team.cart,
+            cartItems: this.state.currentTeamInfo.cartItems['cart'],
             products: specificProductsCategory,
             purveyors: this.state.currentTeamInfo.purveyors,
             onProductDelete: (productId) => {
@@ -674,6 +674,7 @@ class App extends React.Component {
             },
             onUpdateProductInCart: (cartAttributes) => {
               _.debounce(() => {
+                console.log(cartAttributes)
                 dispatch(actions.addCartItem(cartAttributes))
               }, 25)()
             },
@@ -926,7 +927,7 @@ class App extends React.Component {
           },
         }
       case 'CartView':
-        const cartPurveyorIds = Object.keys(this.state.currentTeamInfo.cartItems)
+        const cartPurveyorIds = Object.keys(this.state.currentTeamInfo.cartItems['cart'])
         const cartPurveyors = _.sortBy(_.map(cartPurveyorIds, (purveyorId) => {
           return this.state.currentTeamInfo.purveyors[purveyorId]
         }), 'name')
@@ -934,7 +935,7 @@ class App extends React.Component {
           component: Components.CartView,
           props: {
             // team: this.state.currentTeamInfo.team,
-            cartItems: this.state.currentTeamInfo.cartItems,
+            cartItems: this.state.currentTeamInfo.cartItems['cart'],
             cartPurveyors: cartPurveyors,
             products: this.state.currentTeamInfo.products,
             onDeleteProduct: (cartItem) => {
@@ -1040,7 +1041,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cartItems={this.state.currentTeamInfo.cartItems}
+                cartItems={this.state.currentTeamInfo.cartItems['cart']}
               />
             )
           })
@@ -1072,7 +1073,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cartItems={this.state.currentTeamInfo.cartItems}
+                cartItems={this.state.currentTeamInfo.cartItems['cart']}
               />
             )
           })
@@ -1092,7 +1093,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cartItems={this.state.currentTeamInfo.cartItems}
+                cartItems={this.state.currentTeamInfo.cartItems['cart']}
               />
             )
           })
@@ -1113,7 +1114,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cartItems={this.state.currentTeamInfo.cartItems}
+                cartItems={this.state.currentTeamInfo.cartItems['cart']}
               />
             )
           })
@@ -1131,7 +1132,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cartItems={this.state.currentTeamInfo.cartItems}
+                cartItems={this.state.currentTeamInfo.cartItems['cart']}
               />
             )
           })

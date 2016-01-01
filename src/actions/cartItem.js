@@ -5,7 +5,6 @@ import {
   REQUEST_CART_ITEMS,
   NO_CART_ITEMS,
   ADD_CART_ITEM,
-  UPDATE_CART_ITEM,
   DELETE_CART_ITEM,
 } from './actionTypes';
 
@@ -17,6 +16,14 @@ export default function CartItemActions(allActions) {
   function noCartItemsReceived() {
     return {
       type: NO_CART_ITEMS
+    }
+  }
+
+  function resetCartItems() {
+    return (dispatch) => {
+      return dispatch({
+        type: RESET_CART_ITEMS,
+      })
     }
   }
 
@@ -41,6 +48,13 @@ export default function CartItemActions(allActions) {
     }
   }
 
+  function updateCartItem(cartItem) {
+    return (dispatch) => {
+      dispatch(connectActions.ddpCall('updateCartItem', [session.userId, session.teamId, cartItem.id, cartItem]))
+      return dispatch(receiveCartItems(cartItem))
+    }
+  }
+
   function deleteCartItem(cartItem) {
     return (dispatch, getState) => {
       const {session} = getState()
@@ -49,14 +63,6 @@ export default function CartItemActions(allActions) {
         type: DELETE_CART_ITEM,
         teamId: session.teamId,
         cartItem: cartItem,
-      })
-    }
-  }
-
-  function resetCartItems() {
-    return (dispatch) => {
-      return dispatch({
-        type: RESET_CART_ITEMS,
       })
     }
   }
@@ -99,9 +105,9 @@ export default function CartItemActions(allActions) {
     REQUEST_CART_ITEMS,
     NO_CART_ITEMS,
     ADD_CART_ITEM,
-    UPDATE_CART_ITEM,
     DELETE_CART_ITEM,
     addCartItem,
+    updateCartItem,
     deleteCartItem,
     resetCartItems,
     receiveCartItems,

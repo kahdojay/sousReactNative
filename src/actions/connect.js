@@ -23,12 +23,15 @@ export default function ConnectActions(ddpClient) {
   const connectedChannels = {}, noop = ()=>{}
 
   const APPROVED_OFFLINE_METHODS = {
+    'addCartItem': { allow: true },
     'addProductToCategory': { allow: true },
     'addTeamTask': { allow: true },
     'createMessage': { allow: true },
     'createProduct': { allow: true },
     'createTeam': { allow: true },
+    'deleteCartItem': { allow: true },
     'streamS3Image': { allow: true },
+    'updateCartItem': { allow: true },
     'updateOrder': { allow: true },
     'updateProduct': { allow: true },
     'updateTeam': { allow: true },
@@ -40,6 +43,7 @@ export default function ConnectActions(ddpClient) {
     return (dispatch, getState) => {
       const {connect} = getState()
       if(connect.status === CONNECT.CONNECTED){
+        console.log(method)
         dispatch(() => {
           ddpClient.call(method, args, methodCb, serverCb);
         })

@@ -34,7 +34,7 @@ class CartRightButton extends React.Component {
 
     return (
       <TouchableHighlight
-        underlayColor='white'
+        underlayColor='transparent'
         onPress={::this.handlePress} >
         <Icon name='material|shopping-cart' size={30} color={Colors.lightBlue} style={styles.cart}>
           {badgeValue !== '' ? <Icon name='material|circle' size={24} color={Colors.red} style={styles.badge}><Text style={styles.badgeText}>{badgeValue}</Text></Icon> : <View/> }
