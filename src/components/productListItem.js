@@ -288,6 +288,17 @@ class ProductListItem extends React.Component {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalInnerContainer}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalHeaderText}>
+                  Select Amount
+                </Text>
+                <TouchableHighlight
+                  onPress={() => { this.setState({ editQuantity: false }) }}
+                  underlayColor='transparent'
+                >
+                  <Icon name='material|close' size={25} color='#999' style={styles.iconClose} />
+                </TouchableHighlight>
+              </View>
               <PickerIOS
                 selectedValue={this.state.quantity}
                 onValueChange={(quantity) => {
@@ -295,7 +306,7 @@ class ProductListItem extends React.Component {
                     quantity: quantity,
                   })
                 }}
-                style={{width: 260, alignSelf: 'center'}}
+                style={styles.picker}
               >
                 {
                   quantities.map((n, idx) => {
@@ -390,9 +401,35 @@ let styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)'
   },
   modalInnerContainer: {
+    alignItems: 'center',
     borderRadius: Sizes.modalInnerBorderRadius,
     backgroundColor: '#fff',
     padding: 20,
+  },
+  modalHeader: {
+    width: 260,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5,
+  },
+  iconClose: {
+    width: 10,
+    height: 10,
+    position: 'absolute',
+  },
+  modalHeaderText: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 20,
+    color: Colors.lightBlue,
+  },
+  picker: {
+    width: 260, 
+    alignSelf: 'center',
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
   },
   modalButtonText: {
     textAlign: 'center',
