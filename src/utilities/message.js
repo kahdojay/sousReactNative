@@ -4,8 +4,8 @@ import { Icon } from 'react-native-icons';
 
 const {
   View,
-  Text,
   StyleSheet,
+  Text,
 } = React;
 
 function formatMessage(msg, messageLength = null) {
@@ -32,19 +32,40 @@ function formatMessage(msg, messageLength = null) {
     );
   } else if (msg.type === 'orderConfirmation') {
     messageString = (
-      <Text style={styles.messageText}>
-        <Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
-        order checked in.
-        { message !== '' ?
-          <Text>
-            {' '}
-            <Text style={{color: Colors.gold, fontStyle: 'italic'}}>Note:</Text>
-            {' '}
-            {message}
-          </Text>
-        : null }
+        <Text style={styles.messageText}>
+          <Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
+          order received.
+          {'\n'}
+          <Text style={{color: 'blue'}}>View Order Details</Text>
+          { message !== '' ?
+            <Text>
+              {'\n'}
+              <Text style={{fontStyle: 'italic'}}>Note:</Text>
+              {' '}
+              {message}
+            </Text>
+          : null }
+        </Text>
+    );
+    if (messageLength !== null)
+      messageString = <Text><Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
+        order received.</Text>
+  } else if (msg.type === 'welcome') {
+    messageString = (
+      <Text style={styles.welcomeTextContainer}>
+        <Text style={styles.welcomeText}>
+          Welcome to Sous! If you haven’t already set up your <Text style={{fontWeight: 'bold'}}>order guide</Text>, we can help set that up.{'\n\n'}
+        </Text>
+        <Text style={styles.welcomeText}>
+          Whenever you send a message or a purveyor order, your team gets notified here. View <Text style={{fontWeight: 'bold'}}>Team Members</Text> in the left menu to edit your team.{'\n\n'}
+        </Text>
+        <Text style={styles.welcomeText}>
+          We’re in beta and we love feedback. Chat with us here or email <Text style={{fontWeight: 'bold'}}>sous@sousapp.com</Text> with any questions, issues, or ideas on how we can improve Sous.
+        </Text>
       </Text>
     );
+    if (messageLength !== null)
+      messageString = <Text>Welcome to Sous!</Text>
   } else {
     if(messageLength !== null && message.length > messageLength){
       message = message.substring(0, messageLength) + '...'
@@ -58,13 +79,16 @@ function formatMessage(msg, messageLength = null) {
 
 const styles = StyleSheet.create({
   messageText: {
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'OpenSans',
     marginLeft: 5,
-    marginBottom: 10
+    marginBottom: 5
+  },
+  welcomeText: {
+    marginVertical: 5,
   },
 });
 
 export default {
-  'formatMessage': formatMessage
+  'formatMessage': formatMessage,
 }

@@ -386,7 +386,7 @@ class App extends React.Component {
                   text: task.name,
                   type: 'taskCompletion',
                 }
-                dispatch(actions.completeTeamTask(msg))
+                dispatch(actions.completeTeamTask(msg, session.firstName))
               }, 25)()
             },
             onDeleteTeam: () => {
@@ -437,6 +437,18 @@ class App extends React.Component {
               _.debounce(() => {
                 dispatch(actions.createMessage(msg))
               }, 25)()
+            },
+            onNavToOrder: (orderId) => {
+              const order = this.state.currentTeamInfo.orders[orderId]
+              const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
+              this.setState({
+                order: order,
+                purveyor: purveyor,
+              },() => {
+                nav.push({
+                  name: 'OrderView'
+                })
+              })
             },
           },
         }
@@ -909,8 +921,24 @@ class App extends React.Component {
             contacts: this.state.contactList,
             denied: this.state.contactsPermissionDenied,
             onSMSInvite: (contactList) => {
+              if (contactList.length === 0)
+                return
+
               _.debounce(() => {
                 dispatch(actions.inviteContacts(contactList))
+              }, 25)()
+              
+              let invitees = contactList.map(function(contact) { return contact.firstName }).toString().replace(/,/g , ', ')
+
+              let msg = {
+                text: `${session.firstName} invited to ${this.props.teams.currentTeam.name}: ${invitees}`
+              }
+
+              let author = 'Sous'
+              let imageUrl = Urls.msgLogo
+
+              _.debounce(() => {
+                dispatch(actions.createMessage(msg, author, imageUrl))
               }, 25)()
               nav.replacePreviousAndPop({
                 name: 'Feed',
@@ -970,7 +998,7 @@ class App extends React.Component {
   }
 
   getNavBar(route, nav) {
-    const { dispatch, teams, session } = this.props;
+    const { dispatch, teams, session, connect } = this.props;
 
     let navBar = null;
     let nextItem = <View />;
@@ -1153,7 +1181,7 @@ class App extends React.Component {
             route: route,
             customPrev: (
               <Components.NavBackButton
-                navName='OrderIndex'
+                pop={true}
                 iconFont={'material|chevron-left'}
               />
             ),
@@ -1457,18 +1485,10 @@ class App extends React.Component {
             const learnMoreMsg = (
               <View>
                 <Text style={{textAlign: 'center'}}>
-                  The app connection status is:
-                  <Text style={{fontWeight: 'bold'}}> Offline</Text>
+                  <Text style={{fontWeight: 'bold'}}>No Internet Connection</Text>
                 </Text>
                 <Text style={{textAlign: 'center', marginTop: 10}}>
-                  <Text style={{fontWeight: 'bold'}}>Please note: </Text>
-                  Some functionality (like sending messages or
-                  submitting orders) will be disabled until the app
-                  can re-establish connection.
-                </Text>
-                <Text style={{textAlign: 'center', marginTop: 10}}>
-                  All other functionality will work as expected, and will propagate
-                  changes to the rest of your team upon re-connection.
+                  You can still add Order Guide products to your cart, but please reconnect before submitting orders or sending messages.
                 </Text>
               </View>
             )
