@@ -52,17 +52,16 @@ class ProductFormRightCheckbox extends React.Component {
 let styles = StyleSheet.create({
   iconOutline: {
     flexDirection: 'column',
-    width: 60,
-    height: 60,
-    marginTop: 5,
+    width: 50,
+    height: 50,
+    marginTop: 12,
     justifyContent: 'center',
     alignItems: 'center'
   },
   icon: {
     flex: 1,
-    width: 20,
-    height: 20,
-    marginTop: -3,
+    width: 15,
+    height: 15,
   },
 })
 

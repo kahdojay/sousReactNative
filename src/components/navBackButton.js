@@ -48,7 +48,7 @@ let styles = StyleSheet.create({
   navBack: {
     width: 50,
     height: 50,
-    marginTop: 6,
+    marginTop: 12,
   }
 })
 

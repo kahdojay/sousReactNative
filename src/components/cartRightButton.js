@@ -47,7 +47,7 @@ let styles = StyleSheet.create({
   cart: {
     width: 50,
     height: 50,
-    marginTop: 6,
+    marginTop: 12,
     marginRight: 3,
   },
   badge: {
