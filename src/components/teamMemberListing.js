@@ -2,6 +2,7 @@ import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
+import Urls from '../resources/urls';
 
 const {
   Image,
@@ -20,9 +21,27 @@ class TeamMemberListing extends React.Component {
 
   getTeamMembers() {
     const teamMembers = [];
+
+
+    teamMembers.push(
+      <View style={styles.row}>
+        <View style={styles.member}>
+          <Image source={{uri: Urls.msgLogo}} style={styles.avatarImage} />
+          <Text style={styles.memberName}>
+            Sous Support
+          </Text>
+        </View>
+      </View>
+    );
+
+
     this.props.currentTeamUsers.forEach((userId) => {
       if(this.props.teamsUsers.hasOwnProperty(userId)){
         const user = this.props.teamsUsers[userId]
+
+        if(user.superUser === true)
+          return
+
         let icon = <Icon name='material|account' size={50} color='#aaa' style={styles.avatar}/>
         if (user.hasOwnProperty('imageUrl') && user.imageUrl !== '') {
           icon = <Image source={{uri: user.imageUrl}} style={styles.avatarImage} />
@@ -32,7 +51,6 @@ class TeamMemberListing extends React.Component {
             <View style={styles.member}>
               {icon}
               <Text style={styles.memberName}>
-                {/* * /}{user.superUser === true ? <Text style={{textAlign: 'center', color: Colors.darkBlue, backgroundColor: 'transparent'}}>*</Text> : ''}{/* */}
                 {user.firstName} {user.lastName}
               </Text>
             </View>
