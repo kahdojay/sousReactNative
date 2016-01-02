@@ -56,6 +56,7 @@ export default function CartItemActions(allActions) {
   }
 
   function deleteCartItem(cartItem) {
+    console.log(cartItem)
     return (dispatch, getState) => {
       const {session} = getState()
       dispatch(connectActions.ddpCall('deleteCartItem', [session.userId, session.teamId, cartItem.id]))

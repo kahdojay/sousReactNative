@@ -30,6 +30,7 @@ class ProductListItem extends React.Component {
       selectedPurveyorId: null,
       note: '',
       editQuantity: false,
+      cartItem: null,
     }
     this.timeoutId = null
     this.loadTimeoutId = null
@@ -112,7 +113,8 @@ class ProductListItem extends React.Component {
       newState = {
         added: true,
         purveyorId: cartPurveyorId,
-        note: cartItem.note
+        note: cartItem.note,
+        cartItem: cartItem,
       };
       if(this.state.editQuantity === false){
         newState.quantity = cartItem.quantity;
@@ -122,13 +124,15 @@ class ProductListItem extends React.Component {
         added: false,
         quantity: 1,
         purveyorId: cartPurveyorId,
-        note: ''
+        note: '',
+        cartItem: null,
       };
     }
     this.setState(newState);
   }
 
   cartUpdateFromLocalState() {
+    console.log(this.state.cartItem)
     const cartAttributes = {
       purveyorId: this.state.selectedPurveyorId,
       productId: this.state.product.id,

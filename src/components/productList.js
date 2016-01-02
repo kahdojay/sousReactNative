@@ -60,6 +60,7 @@ class ProductList extends React.Component {
 
   render() {
     const {categories, cartItems, purveyors, showPurveyorInfo, showCategoryInfo} = this.props
+
     let productList = []
     if(this.state.products !== null){
       _.forEach(_.filter(this.state.products, (product) => {

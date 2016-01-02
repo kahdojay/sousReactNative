@@ -17,13 +17,15 @@ const initialState = {
   }
 };
 
-function processCartItem(newCartItemTeamState, cartItem, cartItemId){
+function processCartItem(newCartItemTeamState, cartItem, cartItemIdRef){
   cartItem = cleanupAttributes(cartItem)
   let cartItemLocator = cartItem.purveyorId
   let cartItemGroup = 'cart'
+  let cartItemId = cartItem.productId
   if(cartItem.orderId !== null){
     cartItemLocator = cartItem.orderId
     cartItemGroup = 'orders'
+    cartItemId = cartItem.id
   }
   if(newCartItemTeamState.hasOwnProperty(cartItem.teamId) === false){
     newCartItemTeamState[cartItem.teamId] = {

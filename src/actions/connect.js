@@ -250,6 +250,7 @@ export default function ConnectActions(ddpClient) {
       categoryActions,
       errorActions,
       orderActions,
+      cartItemActions,
     } = allActions
 
     return (dispatch, getState) => {
