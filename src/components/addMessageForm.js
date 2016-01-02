@@ -113,9 +113,6 @@ let styles = StyleSheet.create({
     padding: 8
   },
   sendView: {
-    // fontFamily: 'OpenSans',
-    // fontWeight: 'bold',
-    // color: '#555',
     alignSelf: 'center',
   },
   sendIcon: {

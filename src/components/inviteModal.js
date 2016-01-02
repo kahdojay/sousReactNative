@@ -12,6 +12,7 @@ const {
   Text,
   TextInput,
   TouchableHighlight,
+  TouchableOpacity,
   View,
   Dimensions,
   ScrollView,
@@ -73,49 +74,56 @@ class InviteModal extends React.Component {
 
   render() {
     return (
-      <Modal
-        animated={true}
-        transparent={true}
-        visible={this.state.modalVisible}
+      <TouchableOpacity
+        onPress={() => this.handleDismiss()}
+        underlayColor='transparent'
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalInnerContainer}>
-            <Text style={[styles.header]}>{`Invite to ${this.props.currentTeam ? this.props.currentTeam.name : 'Team'}`}</Text>
-            <Text style={styles.text}>{`Add someone to your team by sending them an SMS:`}</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType='numeric'
-              textAlign='center'
-              onChangeText={(text) => this.setState({text})}
-              value={this.state.text}
-              />
-            <View style={styles.row}>
-              <TouchableHighlight
-                onPress={() => this.handleDismiss()}
-                style={styles.option}
-                underlayColor='transparent'
-              >
-                <Text style={styles.buttonText}>Dismiss</Text>
-              </TouchableHighlight>
-              <TouchableHighlight
-                onPress={() => this.handleSubmit()}
-                style={styles.option}
-                underlayColor='transparent'
-              >
-                <Text style={styles.buttonText}>Send</Text>
-              </TouchableHighlight>
+        <Modal
+          animated={true}
+          transparent={true}
+          visible={this.state.modalVisible}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalInnerContainer}>
+              <Text style={[styles.header]}>{`Invite to ${this.props.currentTeam ? this.props.currentTeam.name : 'Team'}`}</Text>
+              <Text style={styles.modalText}>{`Add a friend or co-worker to your team`}</Text>
+              <TextInput
+                style={styles.input}
+                keyboardType='numeric'
+                placeholder={'Phone #'}
+                textAlign='center'
+                onChangeText={(text) => this.setState({text})}
+                value={this.state.text}
+                />
+              <View style={styles.row}>
+                <View style={styles.buttonContainer}>
+                  <TouchableHighlight
+                    onPress={() => this.handleSubmit()}
+                    style={styles.option}
+                    underlayColor='transparent'
+                  >
+                    <View style={styles.buttonTextContainer}>
+                      <Text style={styles.buttonText}>Send SMS</Text>
+                    </View>
+                  </TouchableHighlight>
+                </View>
+                <View style={styles.buttonContainer}>
+                  <TouchableHighlight
+                    onPress={() => this.navigateToInviteView()}
+                    style={styles.option}
+                    underlayColor='transparent'
+                  >
+                    <View style={styles.buttonTextContainer}>
+                      <Text style={styles.buttonText}>Search Contacts</Text>
+                    </View>
+                  </TouchableHighlight>
+                </View>
+              </View>
             </View>
-            <TouchableHighlight
-              onPress={() => this.navigateToInviteView()}
-              style={styles.option}
-              underlayColor='transparent'
-            >
-              <Text style={styles.buttonText}>Search Contacts</Text>
-            </TouchableHighlight>
+            <KeyboardSpacer />
           </View>
-          <KeyboardSpacer />
-        </View>
-      </Modal>
+        </Modal>
+      </TouchableOpacity>
     );
   }
 };
@@ -129,59 +137,64 @@ var styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    alignItems: 'center'
   },
   modalInnerContainer: {
     borderRadius: Sizes.modalInnerBorderRadius,
     backgroundColor: '#fff',
     padding: 20,
-    alignItems: 'center'
+    margin: 20,
+    justifyContent: 'space-around',
   },
   header: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginTop: 20,
-    paddingBottom: 10,
+    alignSelf: 'center',
+    fontSize: 22,
     fontFamily: 'OpenSans',
-    color: Colors.blue,
+    color: Colors.lightBlue,
   },
-  text: {
+  modalText: {
+    color: Colors.darkGrey,
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'OpenSans',
     marginLeft: 5,
     marginBottom: 10
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderRadius: Sizes.inputBorderRadius,
+    borderColor: Colors.lightGrey,
     borderWidth: 1,
-    marginTop: 5,
-    marginBottom: 5,
+    marginBottom: 15,
   },
   row: {
     flex: 1,
     flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  buttonContainer: {
+    borderRadius: Sizes.inputBorderRadius,
+    flex: 1,
     justifyContent: 'center',
-    marginTop: 10,
-    alignItems: 'center'
+    borderWidth: 1,
+    borderColor: Colors.lightGrey,
   },
   option: {
-    marginLeft: 5,
-    marginRight: 5,
     flex: 1,
+  },
+  buttonTextContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    paddingTop: 14,
   },
   buttonText: {
     flex: 1,
+    fontFamily: 'OpenSans',
     fontWeight: 'bold',
-    paddingLeft: 10,
-    paddingRight: 10,
+    fontSize: 12,
     height: 35,
-    justifyContent: 'center',
-    color: Colors.blue,
+    color: Colors.lightBlue,
   },
 });
 

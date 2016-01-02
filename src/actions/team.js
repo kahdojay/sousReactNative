@@ -52,7 +52,6 @@ export default function TeamActions(allActions) {
           message: 'Team already exists',
         }]));
       } else {
-
         let teamCode = slug(name, {
           replacement: '',
         })
@@ -107,9 +106,9 @@ export default function TeamActions(allActions) {
     }
   }
 
-  function completeTeamTask(message) {
+  function completeTeamTask(message, author) {
     return (dispatch) => {
-      dispatch(messageActions.createMessage(message, 'Sous', Urls.msgLogo))
+      dispatch(messageActions.createMessage(message, author, Urls.msgLogo))
       return dispatch({
         type: COMPLETE_TEAM_TASK
       });
