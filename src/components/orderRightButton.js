@@ -59,12 +59,12 @@ class OrderRightButton extends React.Component {
 let styles = StyleSheet.create({
   iconContainer: {
     flexDirection: 'row',
-    marginTop: 11,
+    marginTop: 12,
     marginRight: 3,
   },
   icon: {
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
   },
 })
 
