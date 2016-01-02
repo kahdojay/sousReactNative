@@ -51,7 +51,6 @@ export default function TeamActions(allActions) {
           message: 'Team already exists',
         }]));
       } else {
-
         let teamCode = slug(name, {
           replacement: '',
         })

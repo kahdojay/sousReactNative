@@ -34,10 +34,10 @@ function formatMessage(msg, messageLength = null) {
     messageString = (
       <Text style={styles.messageText}>
         <Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
-        order checked in.
+        order received.
         { message !== '' ?
           <Text>
-            {' '}
+            {'\n'}
             <Text style={{color: Colors.gold, fontStyle: 'italic'}}>Note:</Text>
             {' '}
             {message}
@@ -45,6 +45,25 @@ function formatMessage(msg, messageLength = null) {
         : null }
       </Text>
     );
+    if (messageLength !== null)
+      messageString = <Text><Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
+        order received.</Text>
+  } else if (msg.type === 'welcome') {
+    messageString = (
+      <Text style={styles.welcomeTextContainer}>
+        <Text style={styles.welcomeText}>
+          Welcome to Sous! If you haven’t already set up your <Text style={{fontWeight: 'bold'}}>order guide</Text>, we can help set that up.{'\n\n'}
+        </Text>
+        <Text style={styles.welcomeText}>
+          Whenever you send a message or a purveyor order, your team gets notified here. View <Text style={{fontWeight: 'bold'}}>Team Members</Text> in the left menu to edit your team.{'\n\n'}
+        </Text>
+        <Text style={styles.welcomeText}>
+          We’re in beta and we love feedback. Chat with us here or email <Text style={{fontWeight: 'bold'}}>sous@sousapp.com</Text> with any questions, issues, or ideas on how we can improve Sous.
+        </Text>
+      </Text>
+    );
+    if (messageLength !== null)
+      messageString = <Text>Welcome to Sous!</Text>
   } else {
     if(messageLength !== null && message.length > messageLength){
       message = message.substring(0, messageLength) + '...'
@@ -63,8 +82,11 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     marginBottom: 5
   },
+  welcomeText: {
+    marginVertical: 5,
+  },
 });
 
 export default {
-  'formatMessage': formatMessage
+  'formatMessage': formatMessage,
 }

@@ -52,7 +52,7 @@ class TeamIndex extends React.Component {
         <View style={styles.teamContainer}>
           <AddForm
             connected={this.props.connected}
-            placeholder="Add a Team..."
+            placeholder="Add a Team"
             onSubmit={this.props.onAddTeam.bind(this)}
           />
           <View style={styles.separator} />
