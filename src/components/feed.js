@@ -181,6 +181,7 @@ class Feed extends React.Component {
             aDayAgo={aDayAgo}
             aWeekAgo={aWeekAgo}
             msg={msg}
+            onNavToOrder={this.props.onNavToOrder}
           />
         )
       });

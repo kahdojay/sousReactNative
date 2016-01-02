@@ -8,8 +8,9 @@ import Sizes from '../utilities/sizes';
 const {
   Image,
   PropTypes,
-  Text,
   StyleSheet,
+  Text,
+  TouchableHighlight,
   View,
 } = React;
 
@@ -74,7 +75,19 @@ class FeedListItem extends React.Component {
               <Text style={styles.messageAuthor}>{msg.author}</Text>
               <Text style={styles.messageTimestamp}>{displayDate}</Text>
             </View>
-            {messageString}
+            { (msg.orderId && msg.orderId !== undefined) ?  
+              <TouchableHighlight
+                underlayColor='transparent'
+                onPress={() => {
+                  this.props.onNavToOrder(msg.orderId)
+                }}
+              >
+              {messageString}
+              </TouchableHighlight>
+              :
+              {messageString}
+            }
+
           </View>
         </View>
         <View style={styles.separator} />

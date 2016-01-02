@@ -4,8 +4,8 @@ import { Icon } from 'react-native-icons';
 
 const {
   View,
-  Text,
   StyleSheet,
+  Text,
 } = React;
 
 function formatMessage(msg, messageLength = null) {
@@ -32,18 +32,20 @@ function formatMessage(msg, messageLength = null) {
     );
   } else if (msg.type === 'orderConfirmation') {
     messageString = (
-      <Text style={styles.messageText}>
-        <Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
-        order received.
-        { message !== '' ?
-          <Text>
-            {'\n'}
-            <Text style={{color: Colors.gold, fontStyle: 'italic'}}>Note:</Text>
-            {' '}
-            {message}
-          </Text>
-        : null }
-      </Text>
+        <Text style={styles.messageText}>
+          <Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
+          order received.
+          {'\n'}
+          <Text style={{color: 'blue'}}>View Order Details</Text>
+          { message !== '' ?
+            <Text>
+              {'\n'}
+              <Text style={{fontStyle: 'italic'}}>Note:</Text>
+              {' '}
+              {message}
+            </Text>
+          : null }
+        </Text>
     );
     if (messageLength !== null)
       messageString = <Text><Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>

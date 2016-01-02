@@ -208,11 +208,6 @@ class OrderView extends React.Component {
               <View style={[styles.buttonContainerLink, styles.buttonContainer, buttonDisabledStyle]}>
                 <Text style={[styles.confirmedText]}>Delivery confirmed by: {`${confirmUser.firstName} ${confirmUser.lastName[0]}.`}</Text>
                 <Text style={[styles.confirmedText]}>{order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('M/D/YY h:mm a') : ''}</Text>
-                { messages.length > 0 ?
-                  <View style={styles.orderMessage}>
-                    {messageUtils.formatMessage(messages[(messages.length-1)])}
-                  </View>
-                : <View /> }
               </View>
             }
             {modal}

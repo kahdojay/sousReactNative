@@ -438,6 +438,18 @@ class App extends React.Component {
                 dispatch(actions.createMessage(msg))
               }, 25)()
             },
+            onNavToOrder: (orderId) => {
+              const order = this.state.currentTeamInfo.orders[orderId]
+              const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
+              this.setState({
+                order: order,
+                purveyor: purveyor,
+              },() => {
+                nav.push({
+                  name: 'OrderView'
+                })
+              })
+            },
           },
         }
       case 'PurveyorIndex':
@@ -1169,7 +1181,7 @@ class App extends React.Component {
             route: route,
             customPrev: (
               <Components.NavBackButton
-                navName='OrderIndex'
+                pop={true}
                 iconFont={'material|chevron-left'}
               />
             ),
