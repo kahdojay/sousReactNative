@@ -58,6 +58,7 @@
     "chalk": "^1.1.1",
     "jest-cli": "^0.8.0",
     "json-loader": "^0.5.3",
+    "mocha": "^2.3.4",
     "react-native-webpack-server": "^0.7.1",
     "react-transform-hmr": "^1.0.1",
     "rewire": "^2.5.1",
