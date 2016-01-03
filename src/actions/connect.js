@@ -43,7 +43,7 @@ export default function ConnectActions(ddpClient) {
     return (dispatch, getState) => {
       const {connect} = getState()
       if(connect.status === CONNECT.CONNECTED){
-        console.log(method)
+        // console.log(method)
         dispatch(() => {
           ddpClient.call(method, args, methodCb, serverCb);
         })

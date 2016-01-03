@@ -148,7 +148,7 @@ class App extends React.Component {
       currentTeamInfo.lastUpdated.cartItems = nextProps.cartItems.lastUpdated;
       if(nextProps.orders.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.orders = nextProps.orders.teams[currentTeamInfo.team.id]
-        console.log('cWRP: ', nextProps.orders.teams[currentTeamInfo.team.id]["Tp3cqFkgne8Amznft"].confirm)
+        // console.log('cWRP: ', nextProps.orders.teams[currentTeamInfo.team.id]["Tp3cqFkgne8Amznft"].confirm)
       } else {
         currentTeamInfo.orders = {}
       }
@@ -803,7 +803,7 @@ class App extends React.Component {
           },
         }
       case 'OrderIndex':
-        console.log(this.state.currentTeamInfo.orders["Tp3cqFkgne8Amznft"].confirm)
+        // console.log(this.state.currentTeamInfo.orders["Tp3cqFkgne8Amznft"].confirm)
         return {
           component: Components.OrderIndex,
           props: {

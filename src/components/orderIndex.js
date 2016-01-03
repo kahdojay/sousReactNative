@@ -78,7 +78,7 @@ class OrderIndex extends React.Component {
         const orderedAtDate = moment(order.orderedAt)
         let confirmedOrderStyle = {}
         let confirmedOrderMetaInfoStyle = {}
-        console.log(order.confirm.order)
+        // console.log(order.confirm.order)
         if(order.confirm.order === true){
           confirmedOrderStyle = styles.confirmedOrder
           confirmedOrderMetaInfoStyle = styles.confirmedOrderMetaInfo
