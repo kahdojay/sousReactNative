@@ -1,5 +1,6 @@
 import { generateId } from '../utilities/utils';
 import {
+  CART,
   RESET_CART_ITEMS,
   RECEIVE_CART_ITEM,
   REQUEST_CART_ITEMS,
@@ -49,14 +50,14 @@ export default function CartItemActions(allActions) {
   }
 
   function updateCartItem(cartItem) {
-    return (dispatch) => {
+    return (dispatch, getState) => {
+      const {session} = getState()
       dispatch(connectActions.ddpCall('updateCartItem', [session.userId, session.teamId, cartItem.id, cartItem]))
       return dispatch(receiveCartItems(cartItem))
     }
   }
 
   function deleteCartItem(cartItem) {
-    console.log(cartItem)
     return (dispatch, getState) => {
       const {session} = getState()
       dispatch(connectActions.ddpCall('deleteCartItem', [session.userId, session.teamId, cartItem.id]))
@@ -101,6 +102,7 @@ export default function CartItemActions(allActions) {
 
 
   return {
+    CART,
     RESET_CART_ITEMS,
     RECEIVE_CART_ITEM,
     REQUEST_CART_ITEMS,

@@ -562,9 +562,20 @@ class App extends React.Component {
                 })
               })
             },
-            onUpdateProductInCart: (cartAttributes) => {
+            onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
-                dispatch(actions.addCartItem(cartAttributes))
+                switch(cartAction){
+                  case actions.CART.DELETE:
+                    dispatch(actions.deleteCartItem(cartAttributes))
+                    break;
+                  case actions.CART.UPDATE:
+                    dispatch(actions.updateCartItem(cartAttributes))
+                    break;
+                  case actions.CART.ADD:
+                  default:
+                    dispatch(actions.addCartItem(cartAttributes))
+                    break;
+                }
               }, 25)()
             },
           },
@@ -684,10 +695,20 @@ class App extends React.Component {
                 })
               })
             },
-            onUpdateProductInCart: (cartAttributes) => {
+            onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
-                console.log(cartAttributes)
-                dispatch(actions.addCartItem(cartAttributes))
+                switch(cartAction){
+                  case actions.CART.DELETE:
+                    dispatch(actions.deleteCartItem(cartAttributes))
+                    break;
+                  case actions.CART.UPDATE:
+                    dispatch(actions.updateCartItem(cartAttributes))
+                    break;
+                  case actions.CART.ADD:
+                  default:
+                    dispatch(actions.addCartItem(cartAttributes))
+                    break;
+                }
               }, 25)()
             },
           },
@@ -762,9 +783,20 @@ class App extends React.Component {
                 })
               })
             },
-            onUpdateProductInCart: (cartAttributes) => {
+            onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
-                dispatch(actions.addCartItem(cartAttributes))
+                switch(cartAction){
+                  case actions.CART.DELETE:
+                    dispatch(actions.deleteCartItem(cartAttributes))
+                    break;
+                  case actions.CART.UPDATE:
+                    dispatch(actions.updateCartItem(cartAttributes))
+                    break;
+                  case actions.CART.ADD:
+                  default:
+                    dispatch(actions.addCartItem(cartAttributes))
+                    break;
+                }
               }, 25)()
             },
           },
@@ -935,7 +967,7 @@ class App extends React.Component {
               _.debounce(() => {
                 dispatch(actions.inviteContacts(contactList))
               }, 25)()
-              
+
               let invitees = contactList.map(function(contact) { return contact.firstName }).toString().replace(/,/g , ', ')
 
               let msg = {
@@ -966,14 +998,17 @@ class App extends React.Component {
             cartItems: this.state.currentTeamInfo.cartItems['cart'],
             cartPurveyors: cartPurveyors,
             products: this.state.currentTeamInfo.products,
-            onDeleteProduct: (cartItem) => {
+            onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
-                dispatch(actions.deleteCartItem(cartItem))
-              }, 25)()
-            },
-            onUpdateProductInCart: (cartAttributes) => {
-              _.debounce(() => {
-                dispatch(actions.updateCartItem(cartAttributes))
+                switch(cartAction){
+                  case actions.CART.DELETE:
+                    dispatch(actions.deleteCartItem(cartAttributes))
+                    break;
+                  case actions.CART.UPDATE:
+                  default:
+                    dispatch(actions.updateCartItem(cartAttributes))
+                    break;
+                }
               }, 25)()
             },
             onSubmitOrder: () => {

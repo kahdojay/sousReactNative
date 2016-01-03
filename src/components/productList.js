@@ -119,9 +119,7 @@ class ProductList extends React.Component {
           onProductDelete: () => {
             this.props.onProductDelete(product.id)
           },
-          onUpdateProductInCart: (cartAttributes) => {
-            this.props.onUpdateProductInCart(cartAttributes)
-          },
+          onUpdateProductInCart: this.props.onUpdateProductInCart,
         }
 
         productList.push(React.createElement(ProductListItem, props))

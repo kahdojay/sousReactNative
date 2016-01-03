@@ -1,9 +1,7 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
-import {
-  CART
-} from '../actions/actionTypes';
+import { CART } from '../actions/actionTypes';
 import Swipeout from 'react-native-swipeout';
 
 const {
@@ -46,7 +44,7 @@ class CartViewListItem extends React.Component {
         <Icon name='material|delete' size={30} color={Colors.lightBlue} style={styles.iconRemove}/>
       ),
       onPress: () => {
-        this.props.onDeleteProduct(cartItem)
+        this.props.onUpdateProductInCart(CART.DELETE, cartItem)
       }
     }]
 
@@ -84,7 +82,7 @@ class CartViewListItem extends React.Component {
                     const cartAttributes = Object.assign({}, cartItem, {
                       quantity: this.state.quantity,
                     });
-                    this.props.onUpdateProductInCart(cartAttributes)
+                    this.props.onUpdateProductInCart(CART.UPDATE, cartAttributes)
                   }
                 })
               }}

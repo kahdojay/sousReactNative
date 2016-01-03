@@ -89,8 +89,8 @@ function cartItems(state = initialState.cartItems, action) {
     const newDeletedTeamsCartItemsState = Object.assign({}, state.teams);
     if(newDeletedTeamsCartItemsState.hasOwnProperty(action.teamId) === true){
       if(newDeletedTeamsCartItemsState[action.teamId]['cart'].hasOwnProperty(action.cartItem.purveyorId) === true){
-        if(newDeletedTeamsCartItemsState[action.teamId]['cart'][action.cartItem.purveyorId].hasOwnProperty(action.cartItem.id) === true){
-          delete newDeletedTeamsCartItemsState[action.teamId]['cart'][action.cartItem.purveyorId][action.cartItem.id]
+        if(newDeletedTeamsCartItemsState[action.teamId]['cart'][action.cartItem.purveyorId].hasOwnProperty(action.cartItem.productId) === true){
+          delete newDeletedTeamsCartItemsState[action.teamId]['cart'][action.cartItem.purveyorId][action.cartItem.productId]
         }
         if(Object.keys(newDeletedTeamsCartItemsState[action.teamId]['cart'][action.cartItem.purveyorId]).length === 0){
           delete newDeletedTeamsCartItemsState[action.teamId]['cart'][action.cartItem.purveyorId]

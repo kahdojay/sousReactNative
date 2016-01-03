@@ -132,17 +132,23 @@ class ProductListItem extends React.Component {
   }
 
   cartUpdateFromLocalState() {
-    console.log(this.state.cartItem)
-    const cartAttributes = {
+    const cartAttributes = Object.assign({}, this.state.cartItem, {
       purveyorId: this.state.selectedPurveyorId,
       productId: this.state.product.id,
       quantity: this.state.quantity,
       note: this.state.note
-    };
+    })
+    let cartAction = null
     if(this.state.added === true){
-      this.props.onUpdateProductInCart(cartAttributes);
+      if(cartAttributes.hasOwnProperty('id') === true){
+        cartAction = CART.UPDATE
+      } else {
+        cartAction = CART.ADD
+      }
+    } else {
+      cartAction = CART.DELETE
     }
-
+    this.props.onUpdateProductInCart(cartAction, cartAttributes);
   }
 
   handleToggleProduct(purveyorId) {
