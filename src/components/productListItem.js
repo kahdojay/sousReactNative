@@ -294,12 +294,12 @@ class ProductListItem extends React.Component {
                 <Text style={styles.modalHeaderText}>
                   Select Amount
                 </Text>
-                <TouchableHighlight
+                {/*<TouchableHighlight
                   onPress={() => { this.setState({ editQuantity: false }) }}
                   underlayColor='transparent'
                 >
                   <Icon name='material|close' size={25} color='#999' style={styles.iconClose} />
-                </TouchableHighlight>
+                </TouchableHighlight>*/}
               </View>
               <PickerIOS
                 selectedValue={this.state.quantity}
@@ -349,7 +349,7 @@ class ProductListItem extends React.Component {
   }
 }
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     paddingTop: 3,
     paddingBottom: 3,
@@ -414,16 +414,17 @@ let styles = StyleSheet.create({
     alignItems: 'center',
     padding: 5,
   },
-  iconClose: {
-    width: 10,
-    height: 10,
-    position: 'absolute',
-  },
   modalHeaderText: {
     flex: 1,
     textAlign: 'center',
     fontSize: 20,
     color: Colors.lightBlue,
+  },
+  iconClose: {
+    width: 15,
+    height: 15,
+    position: 'absolute',
+    bottom: 10,
   },
   picker: {
     width: 260, 

@@ -41,7 +41,7 @@ class CartViewListItem extends React.Component {
     const buttons = [{
       backgroundColor: 'transparent',
       component: (
-        <Icon name='material|delete' size={30} color={Colors.lightBlue} style={styles.iconRemove}/>
+        <Icon name='material|close' size={30} color={Colors.lightBlue} style={styles.iconRemove}/>
       ),
       onPress: () => {
         this.props.onUpdateProductInCart(CART.DELETE, cartItem)
