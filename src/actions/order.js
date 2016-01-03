@@ -31,9 +31,11 @@ export default function OrderActions(allActions){
   }
 
   function receiveOrders(order) {
-    return {
-      type: RECEIVE_ORDERS,
-      order: order
+    return (dispatch) => {
+      return dispatch({
+        type: RECEIVE_ORDERS,
+        order: order
+      })
     }
   }
 

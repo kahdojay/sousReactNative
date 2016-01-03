@@ -40,15 +40,18 @@ function processCartItem(newCartItemTeamState, cartItem, cartItemIdRef){
   newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator] = originalTeamOrder
 
   let originalTeamCartItem = {}
-  if(newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator].hasOwnProperty(cartItemId) === true){
-    originalTeamCartItem = newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId]
-  } else if(
+  if(
     cartItem.orderId !== null &&
     newCartItemTeamState[cartItem.teamId]['cart'].hasOwnProperty(cartItem.purveyorId) === true &&
-    newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId].hasOwnProperty(cartItemId) === true
+    newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId].hasOwnProperty(cartItem.productId) === true
   ){
-    originalTeamCartItem = newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItemId]
-    delete newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItemId]
+    originalTeamCartItem = Object.assign({}, newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId])
+    delete newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId]
+    if(Object.keys(newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId]).length === 0){
+      delete newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId]
+    }
+  } else if(newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator].hasOwnProperty(cartItemId) === true){
+    originalTeamCartItem = newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId]
   }
   newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId] = Object.assign(originalTeamCartItem, cartItem)
   return newCartItemTeamState

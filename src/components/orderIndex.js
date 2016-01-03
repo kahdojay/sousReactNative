@@ -20,6 +20,7 @@ class OrderIndex extends React.Component {
     super(props)
     this.state = {
       orders: null,
+      cartItems: null,
       purveyors: null,
       teamsUsers: null,
       loaded: false,
@@ -30,6 +31,7 @@ class OrderIndex extends React.Component {
   componentWillMount(){
     this.setState({
       orders: this.props.orders,
+      cartItems: this.props.cartItems,
       purveyors: this.props.purveyors,
       teamsUsers: this.props.teamsUsers,
       showConfirmedOrders: this.props.showConfirmedOrders,
@@ -46,7 +48,7 @@ class OrderIndex extends React.Component {
   }
 
   render() {
-    const { orders, purveyors, teamsUsers } = this.state
+    const { orders, cartItems, purveyors, teamsUsers } = this.state
 
     if(this.state.loaded === false){
       return (
@@ -55,8 +57,10 @@ class OrderIndex extends React.Component {
     }
 
     let fullOrders = _.map(orders, (order) => {
+      const orderItems = cartItems[order.id]
       const purveyor = purveyors[order.purveyorId]
       return Object.assign({}, order, {
+        orderItems: orderItems,
         purveyor: purveyor,
         user: teamsUsers[order.userId]
       })
@@ -70,10 +74,11 @@ class OrderIndex extends React.Component {
         show = true
       }
       if(show === true) {
-        const itemCount = Object.keys(order.orderDetails.products).length
+        const itemCount = Object.keys(order.orderItems).length
         const orderedAtDate = moment(order.orderedAt)
         let confirmedOrderStyle = {}
         let confirmedOrderMetaInfoStyle = {}
+        console.log(order.confirm.order)
         if(order.confirm.order === true){
           confirmedOrderStyle = styles.confirmedOrder
           confirmedOrderMetaInfoStyle = styles.confirmedOrderMetaInfo
