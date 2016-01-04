@@ -57,6 +57,11 @@ class CartViewListItem extends React.Component {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalInnerContainer}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalHeaderText}>
+                Select Amount
+              </Text>
+            </View>
             <PickerIOS
               selectedValue={this.state.quantity}
               onValueChange={(quantity) => {
@@ -64,7 +69,7 @@ class CartViewListItem extends React.Component {
                   quantity: quantity,
                 })
               }}
-              style={{width: 260, alignSelf: 'center'}}
+              style={styles.picker}
             >
               {
                 quantities.map((n, idx) => {
@@ -72,7 +77,6 @@ class CartViewListItem extends React.Component {
                 })
               }
             </PickerIOS>
-            <View style={styles.separator} />
             <TouchableHighlight
               onPress={() => {
                 this.setState({
@@ -146,6 +150,14 @@ const styles = StyleSheet.create({
     marginTop: 7,
     marginBottom: 7,
   },
+  picker: {
+    width: 260, 
+    alignSelf: 'center',
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
+  },
   productTitle: {
     flex: 1,
     paddingTop: 10,
@@ -169,6 +181,18 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#fff',
     padding: 20,
+  },
+  modalHeader: {
+    width: 260,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5,
+  },
+  modalHeaderText: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 20,
+    color: Colors.lightBlue,
   },
   modalButtonText: {
     textAlign: 'center',
