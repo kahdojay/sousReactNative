@@ -96,7 +96,6 @@ class CartViewListItem extends React.Component {
         </View>
       </Modal>
     )
-
     return (
       <View>
         <Swipeout

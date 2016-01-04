@@ -236,18 +236,25 @@ class ProductListItem extends React.Component {
               </View>
             </ProductToggle>
           </View>
-          <View style={styles.quantityContainer}>
+          <View>
             { this.state.added === true ?
-              <TouchableHighlight
-                onPress={() => {
-                  this.setState({
-                    editQuantity: true
-                  })
-                }}
-                underlayColor='transparent'
-              >
-                <Text style={styles.quantity}>{`${this.state.quantity}x`}</Text>
-              </TouchableHighlight>
+              <View style={styles.innerQuantityContainer}>
+                <TouchableHighlight
+                  onPress={() => {
+                    this.setState({
+                      editQuantity: true
+                    })
+                  }}
+                  underlayColor='transparent'
+                >
+                  <Text style={styles.quantity}>{`${this.state.quantity}x`}</Text>
+                </TouchableHighlight>
+                { product.par && product.par !== '' ? 
+                  <Text style={styles.par}>Par: {product.par}</Text>
+                  :
+                  <View/>
+                }
+              </View>
               : <Text style={styles.quantity}>{''}</Text>
             }
           </View>
@@ -367,13 +374,16 @@ const styles = StyleSheet.create({
     marginTop: 7,
     marginBottom: 7,
   },
-  quantityContainer: {
-    flex: 1.5,
+  innerQuantityContainer: {
+    alignItems: 'center',
   },
   quantity: {
     fontSize: 20,
     textAlign: 'right',
-    paddingRight: 5
+    paddingRight: 5,
+  },
+  par: {
+    fontSize: 10,
   },
   row: {
     borderRadius: Sizes.rowBorderRadius,
