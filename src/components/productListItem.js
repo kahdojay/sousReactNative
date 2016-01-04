@@ -238,7 +238,7 @@ class ProductListItem extends React.Component {
               </View>
             </ProductToggle>
           </View>
-          <View>
+          <View style={styles.outerQuantityContainer}>
             { this.state.added === true ?
               <View style={styles.innerQuantityContainer}>
                 <TouchableHighlight
@@ -323,7 +323,6 @@ class ProductListItem extends React.Component {
                   })
                 }
               </PickerIOS>
-              <View style={styles.separator} />
               <TouchableHighlight
                 onPress={() => {
                   this.setState({
@@ -376,6 +375,12 @@ const styles = StyleSheet.create({
     marginTop: 7,
     marginBottom: 7,
   },
+  main: {
+    flex: 5,
+  },
+  outerQuantityContainer: {
+    flex: 1,
+  },
   innerQuantityContainer: {
     alignItems: 'center',
   },
@@ -398,9 +403,6 @@ const styles = StyleSheet.create({
   },
   selectedRow: {
     backgroundColor: Colors.lightBlue
-  },
-  main: {
-    flex: 5,
   },
   productText: {
     color: 'black',
