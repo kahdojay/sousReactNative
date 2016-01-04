@@ -2,21 +2,24 @@ import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
-let UIImagePickerManager = require('NativeModules').UIImagePickerManager;
+// let UIImagePickerManager = require('NativeModules').UIImagePickerManager;
 
 const {
-  View,
-  Text,
-  TextInput,
+  ActionSheetIOS,
+  Image,
+  NativeModules,
   PropTypes,
   ScrollView,
+  StyleSheet,
   SwitchIOS,
-  Image,
+  Text,
+  TextInput,
   TouchableHighlight,
   TouchableOpacity,
-  StyleSheet,
-  ActionSheetIOS,
+  View,
 } = React;
+
+const { UIImagePickerManager } = NativeModules;
 
 class ProfileView extends React.Component {
   constructor(props) {
@@ -149,7 +152,7 @@ class ProfileView extends React.Component {
             <View style={styles.avatar}>
               {avatar}
             </View>
-            {/* * /}
+            {/* */}
             <TouchableHighlight
               underlayColor={Colors.mainBackgroundColor}
               onPress={() => this.showActionSheet()}
