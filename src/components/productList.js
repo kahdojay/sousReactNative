@@ -59,7 +59,8 @@ class ProductList extends React.Component {
   }
 
   render() {
-    const {categories, cart, purveyors, showPurveyorInfo, showCategoryInfo} = this.props
+    const {categories, cartItems, purveyors, showPurveyorInfo, showCategoryInfo} = this.props
+
     let productList = []
     if(this.state.products !== null){
       _.forEach(_.filter(this.state.products, (product) => {
@@ -88,9 +89,9 @@ class ProductList extends React.Component {
         let cartItem = null
         let cartPurveyorId = ''
         product.purveyors.map((purveyorId) => {
-          if (cart.orders.hasOwnProperty(purveyorId) === true && cart.orders[purveyorId].products.hasOwnProperty(product.id)) {
+          if (cartItems.hasOwnProperty(purveyorId) === true && cartItems[purveyorId].hasOwnProperty(product.id)) {
             cartPurveyorId = purveyorId
-            cartItem = cart.orders[purveyorId].products[product.id]
+            cartItem = cartItems[purveyorId][product.id]
           }
         })
 
@@ -118,9 +119,7 @@ class ProductList extends React.Component {
           onProductDelete: () => {
             this.props.onProductDelete(product.id)
           },
-          onUpdateProductInCart: (cartAction, cartAttributes) => {
-            this.props.onUpdateProductInCart(cartAction, cartAttributes)
-          },
+          onUpdateProductInCart: this.props.onUpdateProductInCart,
         }
 
         productList.push(React.createElement(ProductListItem, props))

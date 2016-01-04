@@ -30,6 +30,7 @@ class ProductListItem extends React.Component {
       selectedPurveyorId: null,
       note: '',
       editQuantity: false,
+      cartItem: null,
     }
     this.timeoutId = null
     this.loadTimeoutId = null
@@ -112,7 +113,8 @@ class ProductListItem extends React.Component {
       newState = {
         added: true,
         purveyorId: cartPurveyorId,
-        note: cartItem.note
+        note: cartItem.note,
+        cartItem: cartItem,
       };
       if(this.state.editQuantity === false){
         newState.quantity = cartItem.quantity;
@@ -122,24 +124,31 @@ class ProductListItem extends React.Component {
         added: false,
         quantity: 1,
         purveyorId: cartPurveyorId,
-        note: ''
+        note: '',
+        cartItem: null,
       };
     }
     this.setState(newState);
   }
 
   cartUpdateFromLocalState() {
-    const cartAttributes = {
+    const cartAttributes = Object.assign({}, this.state.cartItem, {
       purveyorId: this.state.selectedPurveyorId,
       productId: this.state.product.id,
       quantity: this.state.quantity,
       note: this.state.note
-    };
-    this.props.onUpdateProductInCart(
-      (this.state.added === true ? CART.ADD : CART.REMOVE),
-      cartAttributes
-    );
-
+    })
+    let cartAction = null
+    if(this.state.added === true){
+      if(cartAttributes.hasOwnProperty('id') === true){
+        cartAction = CART.UPDATE
+      } else {
+        cartAction = CART.ADD
+      }
+    } else {
+      cartAction = CART.DELETE
+    }
+    this.props.onUpdateProductInCart(cartAction, cartAttributes);
   }
 
   handleToggleProduct(purveyorId) {

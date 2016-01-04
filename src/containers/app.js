@@ -68,6 +68,7 @@ class App extends React.Component {
         categories: {},
         products: {},
         orders: {},
+        cartItems: {'cart':{}, 'orders':{}},
         messages: {},
         lastUpdated: {
           purveyors: null,
@@ -112,7 +113,7 @@ class App extends React.Component {
   }}
 
   componentWillReceiveProps(nextProps) {
-    let currentTeamInfo = this.state.currentTeamInfo
+    let currentTeamInfo = Object.assign({}, this.state.currentTeamInfo)
     currentTeamInfo.team = nextProps.teams.currentTeam
     if(currentTeamInfo.team !== null){
       if(nextProps.purveyors.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
@@ -139,8 +140,15 @@ class App extends React.Component {
         currentTeamInfo.messages = {}
       }
       currentTeamInfo.lastUpdated.messages = nextProps.messages.lastUpdated;
+      if(nextProps.cartItems.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
+        currentTeamInfo.cartItems = nextProps.cartItems.teams[currentTeamInfo.team.id]
+      } else {
+        currentTeamInfo.cartItems = {'cart': {},'orders': {}}
+      }
+      currentTeamInfo.lastUpdated.cartItems = nextProps.cartItems.lastUpdated;
       if(nextProps.orders.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.orders = nextProps.orders.teams[currentTeamInfo.team.id]
+        // console.log('cWRP: ', nextProps.orders.teams[currentTeamInfo.team.id]["Tp3cqFkgne8Amznft"].confirm)
       } else {
         currentTeamInfo.orders = {}
       }
@@ -557,7 +565,18 @@ class App extends React.Component {
             },
             onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
-                dispatch(actions.updateProductInCart(cartAction, cartAttributes))
+                switch(cartAction){
+                  case actions.CART.DELETE:
+                    dispatch(actions.deleteCartItem(cartAttributes))
+                    break;
+                  case actions.CART.UPDATE:
+                    dispatch(actions.updateCartItem(cartAttributes))
+                    break;
+                  case actions.CART.ADD:
+                  default:
+                    dispatch(actions.addCartItem(cartAttributes))
+                    break;
+                }
               }, 25)()
             },
           },
@@ -650,7 +669,7 @@ class App extends React.Component {
           component: Components.CategoryView,
           props: {
             category: this.state.category,
-            cart: this.state.currentTeamInfo.team.cart,
+            cartItems: this.state.currentTeamInfo.cartItems['cart'],
             products: specificProductsCategory,
             purveyors: this.state.currentTeamInfo.purveyors,
             onProductDelete: (productId) => {
@@ -679,7 +698,18 @@ class App extends React.Component {
             },
             onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
-                dispatch(actions.updateProductInCart(cartAction, cartAttributes))
+                switch(cartAction){
+                  case actions.CART.DELETE:
+                    dispatch(actions.deleteCartItem(cartAttributes))
+                    break;
+                  case actions.CART.UPDATE:
+                    dispatch(actions.updateCartItem(cartAttributes))
+                    break;
+                  case actions.CART.ADD:
+                  default:
+                    dispatch(actions.addCartItem(cartAttributes))
+                    break;
+                }
               }, 25)()
             },
           },
@@ -756,17 +786,30 @@ class App extends React.Component {
             },
             onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
-                dispatch(actions.updateProductInCart(cartAction, cartAttributes))
+                switch(cartAction){
+                  case actions.CART.DELETE:
+                    dispatch(actions.deleteCartItem(cartAttributes))
+                    break;
+                  case actions.CART.UPDATE:
+                    dispatch(actions.updateCartItem(cartAttributes))
+                    break;
+                  case actions.CART.ADD:
+                  default:
+                    dispatch(actions.addCartItem(cartAttributes))
+                    break;
+                }
               }, 25)()
             },
           },
         }
       case 'OrderIndex':
+        // console.log(this.state.currentTeamInfo.orders["Tp3cqFkgne8Amznft"].confirm)
         return {
           component: Components.OrderIndex,
           props: {
             showConfirmedOrders: this.state.sceneState.OrderIndex.showConfirmedOrders,
             orders: this.state.currentTeamInfo.orders,
+            cartItems: this.state.currentTeamInfo.cartItems['orders'],
             purveyors: this.state.currentTeamInfo.purveyors,
             teamsUsers: teams.teamsUsers,
             currentTeamUsers: this.state.currentTeamInfo.team.users,
@@ -792,12 +835,17 @@ class App extends React.Component {
           },
         }
       case 'OrderView':
-        const orderProducts = _.sortBy(_.map(Object.keys(this.state.order.orderDetails.products), (productId) => {
-          return this.state.currentTeamInfo.products[productId]
+        const cartItems = this.state.currentTeamInfo.cartItems['orders'][this.state.order.id]
+        const orderProducts = _.sortBy(_.map(Object.keys(cartItems), (cartItemId) => {
+          const cartItem = cartItems[cartItemId]
+          return {
+            product: this.state.currentTeamInfo.products[cartItem.productId],
+            cartItem: cartItem,
+          }
         }), 'name')
-        const orderMessages = _.sortBy(_.filter(this.state.currentTeamInfo.messages, (message) => {
-          return message.hasOwnProperty('orderId') === true && message.orderId === this.state.order.id
-        }), 'createdAt')
+        // const orderMessages = _.sortBy(_.filter(this.state.currentTeamInfo.messages, (message) => {
+        //   return message.hasOwnProperty('orderId') === true && message.orderId === this.state.order.id
+        // }), 'createdAt')
         return {
           component: Components.OrderView,
           props: {
@@ -806,7 +854,19 @@ class App extends React.Component {
             purveyor: this.state.purveyor,
             products: orderProducts,
             teamsUsers: teams.teamsUsers,
-            messages: orderMessages,
+            // messages: orderMessages,
+            onConfirmOrderProduct: (cartItem, confirm) => {
+              _.debounce(() => {
+                dispatch(actions.updateCartItem({
+                  id: cartItem.id,
+                  teamId: cartItem.teamId,
+                  purveyorId: cartItem.purveyorId,
+                  orderId: cartItem.orderId,
+                  productId: cartItem.productId,
+                  status: cartItem.status,
+                }))
+              }, 25)()
+            },
             onConfirmOrder: (order) => {
               _.debounce(() => {
                 dispatch(actions.updateOrder(order.id, {
@@ -927,7 +987,7 @@ class App extends React.Component {
               _.debounce(() => {
                 dispatch(actions.inviteContacts(contactList))
               }, 25)()
-              
+
               let invitees = contactList.map(function(contact) { return contact.firstName }).toString().replace(/,/g , ', ')
 
               let msg = {
@@ -947,27 +1007,28 @@ class App extends React.Component {
           },
         }
       case 'CartView':
-        const cartPurveyorIds = Object.keys(this.state.currentTeamInfo.team.cart.orders)
+        const cartPurveyorIds = Object.keys(this.state.currentTeamInfo.cartItems['cart'])
         const cartPurveyors = _.sortBy(_.map(cartPurveyorIds, (purveyorId) => {
           return this.state.currentTeamInfo.purveyors[purveyorId]
         }), 'name')
         return {
           component: Components.CartView,
           props: {
-            team: this.state.currentTeamInfo.team,
+            // team: this.state.currentTeamInfo.team,
+            cartItems: this.state.currentTeamInfo.cartItems['cart'],
             cartPurveyors: cartPurveyors,
             products: this.state.currentTeamInfo.products,
-            onDeleteProduct: (purveyorId, productId) => {
-              _.debounce(() => {
-                dispatch(actions.updateProductInCart(
-                  'REMOVE_FROM_CART',
-                  {purveyorId: purveyorId, productId: productId}
-                ))
-              }, 25)()
-            },
             onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
-                dispatch(actions.updateProductInCart(cartAction, cartAttributes))
+                switch(cartAction){
+                  case actions.CART.DELETE:
+                    dispatch(actions.deleteCartItem(cartAttributes))
+                    break;
+                  case actions.CART.UPDATE:
+                  default:
+                    dispatch(actions.updateCartItem(cartAttributes))
+                    break;
+                }
               }, 25)()
             },
             onSubmitOrder: () => {
@@ -1063,7 +1124,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cart={this.state.currentTeamInfo.team.cart}
+                cartItems={this.state.currentTeamInfo.cartItems['cart']}
               />
             )
           })
@@ -1095,7 +1156,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cart={this.state.currentTeamInfo.team.cart}
+                cartItems={this.state.currentTeamInfo.cartItems['cart']}
               />
             )
           })
@@ -1115,7 +1176,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cart={this.state.currentTeamInfo.team.cart}
+                cartItems={this.state.currentTeamInfo.cartItems['cart']}
               />
             )
           })
@@ -1136,7 +1197,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cart={this.state.currentTeamInfo.team.cart}
+                cartItems={this.state.currentTeamInfo.cartItems['cart']}
               />
             )
           })
@@ -1154,7 +1215,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cart={this.state.currentTeamInfo.team.cart}
+                cartItems={this.state.currentTeamInfo.cartItems['cart']}
               />
             )
           })
@@ -1605,8 +1666,9 @@ function mapStateToProps(state) {
     messages: state.messages,
     purveyors: state.purveyors,
     products: state.products,
-    orders: state.orders,
     categories: state.categories,
+    cartItems: state.cartItems,
+    orders: state.orders,
     errors: state.errors,
     connect: state.connect,
   }

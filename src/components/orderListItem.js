@@ -18,7 +18,7 @@ class OrderListItem extends React.Component {
     this.state = {
       orderConfirm: null,
       product: null,
-      productDetails: null,
+      cartItem: null,
       productConfirm: null,
       loaded: false
     }
@@ -28,14 +28,14 @@ class OrderListItem extends React.Component {
     this.setState({
       orderConfirm: this.props.orderConfirm,
       product: this.props.product,
-      productDetails: this.props.productDetails,
+      cartItem: this.props.cartItem,
       productConfirm: this.props.productConfirm,
       loaded: true
     })
   }
 
   render() {
-    const {orderConfirm, product, productDetails, productConfirm} = this.state
+    const {orderConfirm, product, cartItem, productConfirm} = this.state
     let productRow = null
     if(this.state.loaded === false){
       productRow = (
@@ -44,7 +44,7 @@ class OrderListItem extends React.Component {
     } else {
       productRow = (
         <View style={styles.row}>
-          <Text style={styles.quantity}>{productDetails.quantity}</Text>
+          <Text style={styles.quantity}>{cartItem.quantity}</Text>
           <View style={styles.productInfo}>
             <Text>{product.name}</Text>
             <Text>{product.amount} {product.unit}</Text>
@@ -60,7 +60,10 @@ class OrderListItem extends React.Component {
                   this.setState({
                     productConfirm: !productConfirm
                   },() => {
-                    this.props.onHandleProductConfirm(product.id, this.state.productConfirm)
+                    const updateCartItem = Object.assign({}, cartItem, {
+                      status: this.state.productConfirm === true ? 'RECEIVED' : 'ORDERED'
+                    })
+                    this.props.onHandleProductConfirm(updateCartItem)
                   })
                 }
               }}

@@ -21,16 +21,20 @@ class CartRightButton extends React.Component {
   }
 
   render() {
-    const { cart } = this.props;
-    const badgeValue = (Object.keys(cart.orders).length > 0 ?
-                          _.sum(cart.orders, function (cartPurveyor) {
-                            return Object.keys(cartPurveyor.products).length
-                          }) : '')
+    const { cartItems } = this.props;
+    console.log(cartItems)
+    const badgeValue = (
+      Object.keys(cartItems).length > 0 ?
+        _.sum(cartItems, function (cartPurveyor) {
+          return Object.keys(cartPurveyor).length
+        })
+      : ''
+    )
     // ...
 
     return (
       <TouchableHighlight
-        underlayColor='white'
+        underlayColor='transparent'
         onPress={::this.handlePress} >
         <Icon name='material|shopping-cart' size={30} color={Colors.lightBlue} style={styles.cart}>
           {badgeValue !== '' ? <Icon name='material|circle' size={24} color={Colors.red} style={styles.badge}><Text style={styles.badgeText}>{badgeValue}</Text></Icon> : <View/> }
