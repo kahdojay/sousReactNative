@@ -2,7 +2,6 @@ import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
-// let UIImagePickerManager = require('NativeModules').UIImagePickerManager;
 
 const {
   ActionSheetIOS,
@@ -11,7 +10,6 @@ const {
   PropTypes,
   ScrollView,
   StyleSheet,
-  SwitchIOS,
   Text,
   TextInput,
   TouchableHighlight,
@@ -34,37 +32,16 @@ class ProfileView extends React.Component {
       notifications: this.props.session.notifications || false,
     }
   }
+
   showActionSheet(){
     var options = {
-      title: 'Select Avatar',
-      cancelButtonTitle: 'Cancel',
-      takePhotoButtonTitle: 'Take Photo...',
-      takePhotoButtonHidden: false,
-      chooseFromLibraryButtonTitle: 'Choose from Library...',
-      chooseFromLibraryButtonHidden: false,
-      customButtons: {
-         // [Button Text] : [String returned upon selection]
-      },
+      title: 'Select Profile Image',
       maxWidth: 100,
       maxHeight: 100,
-      returnBase64Image: false,
-      returnIsVertical: false,
-      quality: 1,
-      allowsEditing: true, // Built in iOS functionality to resize/reposition the image
-      noData: false,
-      //storageOptions: {   // if provided, the image will get saved in the documents directory (rather than tmp directory)
-      //  skipBackup: true, // will set attribute so the image is not backed up to iCloud
-      //  path: "images",   // will save image at /Documents/images rather than the root
-      //}
+      quality: .5,
+      allowsEditing: true,
     };
 
-    // The first arg will be the options object for customization, the second is
-    // your callback which sends bool: didCancel, object: response.
-    //
-    // response.data is the base64 encoded image data
-    // response.uri is the uri to the local file asset on the device
-    // response.isVertical will be true if the image is vertically oriented
-    // response.width & response.height give you the image dimensions
     UIImagePickerManager.showImagePicker(options, (didCancel, response) => {
       // console.log('Response = ', response);
 
@@ -81,9 +58,11 @@ class ProfileView extends React.Component {
       }
     });
   }
+
   logImageError(err) {
     // console.log("IMAGE ERROR", err);
   }
+
   storeImages(data){
     this.props.onStoreImages(data)
   }
@@ -94,36 +73,44 @@ class ProfileView extends React.Component {
     return JSON.stringify(propValues) == JSON.stringify(stateValues);
   }
   render() {
-    // console.log("PROFILE", this.props);
-    let avatar = (
-      <Image
-        style={styles.userIcon}
-        source={{uri: this.props.session.imageUrl}}
-      />
-    )
-    if (!this.props.session.imageUrl) {
-      avatar = <Icon name="material|account-circle" size={100} style={styles.userIcon} />
+    const {session} = this.props
+    const {firstName, lastName, imageUrl, email, notifications, phoneNumber, updatedAt} = session
+    let avatarUrl = `${imageUrl}`
+    if(avatarUrl.indexOf('data:image') === -1){
+      avatarUrl = `${imageUrl}?cb=${updatedAt}`
     }
-    let phoneNumber = (
+    let avatar = (
+      <Image source={{uri: avatarUrl}} style={styles.userIcon} />
+    )
+    if (!imageUrl) {
+      avatar = (
+        <Icon name="material|account-circle" size={100} style={styles.userIcon} />
+      )
+    }
+    let phoneNumberComponent = (
       <View style={styles.phoneNumber}>
-        <Text style={styles.phoneText}>{this.props.session.phoneNumber}</Text>
+        <Text style={styles.phoneText}>{phoneNumber}</Text>
       </View>
     )
     if (this.state.editPhoneNumber) {
-      phoneNumber = (
+      phoneNumberComponent = (
         <View style={styles.infoField}>
           <TextInput
-            onChange={(e) => this.setState({phoneNumber: e.nativeEvent.text})}
+            onChange={(e) => {
+              this.setState({
+                phoneNumber: e.nativeEvent.text,
+              })
+            }}
             style={styles.inputField}
-            value={this.state.phoneNumber}></TextInput>
+            value={phoneNumber}
+          />
         </View>
       )
     }
-    let saveChanges = (
+    const saveChanges = (
       <View style={styles.saveContainer}>
         <TouchableOpacity
           onPress={() => {
-            let {firstName, lastName, email, notifications, phoneNumber} = this.state;
             let data = {
               firstName: firstName,
               lastName: lastName,
@@ -149,22 +136,18 @@ class ProfileView extends React.Component {
       >
         <View style={styles.wrapper}>
           <View>
-            <View style={styles.avatar}>
-              {avatar}
-            </View>
-            {/* */}
             <TouchableHighlight
               underlayColor={Colors.mainBackgroundColor}
               onPress={() => this.showActionSheet()}
-              style={styles.avatar}>
+              style={styles.avatar}
+            >
               <View>
                 {avatar}
                 <Text style={styles.changeAvatarText}>Change Avatar</Text>
               </View>
             </TouchableHighlight>
-            {/* */}
           </View>
-          {phoneNumber}
+          {phoneNumberComponent}
           <View style={styles.userInfoContainer}>
             <View style={styles.userProfile}>
               <View style={styles.infoField}>
@@ -174,7 +157,7 @@ class ProfileView extends React.Component {
                   onChange={(e) => {
                     this.setState({firstName: e.nativeEvent.text})
                   }}
-                  value={this.state.firstName}></TextInput>
+                  value={firstName}></TextInput>
               </View>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>Last Name</Text>
@@ -183,7 +166,7 @@ class ProfileView extends React.Component {
                     this.setState({lastName: e.nativeEvent.text})
                   }}
                   style={styles.inputField}
-                  value={this.state.lastName}></TextInput>
+                  value={lastName}></TextInput>
               </View>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>E-mail Address</Text>
@@ -192,7 +175,7 @@ class ProfileView extends React.Component {
                   onChange={(e) => {
                     this.setState({email: e.nativeEvent.text})
                   }}
-                  value={this.state.email}></TextInput>
+                  value={email}></TextInput>
               </View>
             </View>
             {! this.needsSave() ? saveChanges : <View></View>}

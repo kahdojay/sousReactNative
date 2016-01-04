@@ -23,7 +23,7 @@ class TeamMemberListing extends React.Component {
     this.props.currentTeamUsers.forEach((userId) => {
       if(this.props.teamsUsers.hasOwnProperty(userId)){
         const user = this.props.teamsUsers[userId]
-        let icon = <Icon name='material|account' size={50} color='#aaa' style={styles.avatar}/>
+        let icon = <Icon name='material|account-circle' size={50} color='#aaa' style={styles.avatar}/>
         if (user.hasOwnProperty('imageUrl') && user.imageUrl !== '') {
           icon = <Image source={{uri: user.imageUrl}} style={styles.avatarImage} />
         }

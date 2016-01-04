@@ -56,7 +56,7 @@ class FeedListItem extends React.Component {
       displayDate = msgDate.format("ddd, M/D - h:mm a")
     }
 
-    let icon = <Icon name='material|account' size={50} color='#aaa' style={styles.avatar}/>
+    let icon = <Icon name='material|account-circle' size={50} color='#aaa' style={styles.avatar}/>
     if (msg.imageUrl) {
       icon = <Image source={{uri: msg.imageUrl}} style={styles.avatarImage} />
     }
@@ -75,7 +75,7 @@ class FeedListItem extends React.Component {
               <Text style={styles.messageAuthor}>{msg.author}</Text>
               <Text style={styles.messageTimestamp}>{displayDate}</Text>
             </View>
-            { (msg.orderId && msg.orderId !== undefined) ?  
+            { (msg.orderId && msg.orderId !== undefined) ?
               <TouchableHighlight
                 underlayColor='transparent'
                 onPress={() => {

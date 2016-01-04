@@ -9,11 +9,15 @@ const {
   View,
   Text,
   Image,
+  Modal,
+  NativeModules,
   TextInput,
   TouchableHighlight,
   ScrollView,
   ActivityIndicatorIOS,
 } = React;
+
+const { UIImagePickerManager } = NativeModules;
 
 const runTimeDimensions = Dimensions.get('window')
 
@@ -22,25 +26,82 @@ class AddOrderGuide extends React.Component {
     super(props)
     this.state = {
       inputError: false,
-      emailAddress: this.props.emailAddress
+      emailAddress: this.props.emailAddress,
+      showOrderGuideSelector: false,
+      selectedPhotos: [],
     }
   }
 
+  showActionSheet(){
+    var options = {
+      title: 'Select Order Guide Images',
+      maxWidth: 2048,
+      maxHeight: 2048,
+      quality: 1,
+    };
+
+    UIImagePickerManager.showImagePicker(options, (didCancel, response) => {
+      // console.log('Response = ', response);
+
+      if (didCancel) {
+        // console.log('User cancelled image picker');
+      } else {
+        // const source = {uri: response.uri.replace('file://', ''), isStatic: true};
+        const source = {
+          data: response.data,
+          isStatic: true,
+          uri: 'data:image/jpeg;base64,' + response.data,
+        };
+        let selectedPhotos = this.state.selectedPhotos
+        selectedPhotos.push(source)
+        this.setState({
+          selectedPhotos: selectedPhotos,
+          showOrderGuideSelector: true,
+        })
+      }
+    });
+  }
+
   render() {
+
+    const modal = (
+      <Modal
+        animated={true}
+        transparent={true}
+        visible={this.state.showOrderGuideSelector}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalInnerContainer}>
+            <Text>Loading. {this.state.selectedPhotos.length}</Text>
+            <View style={styles.separator} />
+            <TouchableHighlight
+              onPress={() => {
+                this.setState({
+                  showOrderGuideSelector: false
+                }, () => {
+                  this.showActionSheet()
+                })
+              }}
+              underlayColor='transparent'
+            >
+              <Text style={styles.modalButtonText}>Add</Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </Modal>
+    )
+
     return (
       <ScrollView
         automaticallyAdjustContentInsets={false}
         ref="scrollView"
         style={styles.container}
       >
-        <View style={styles.logoContainer}>
-          <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-        </View>
+        {modal}
         <View style={styles.orderGuideContainer}>
-          <Text style={styles.headerText}>Every Order, One Tap</Text>
           <View style={styles.instructions}>
-            <Text style={styles.centered}>Send orders to your suppliers from Sous</Text>
-            <Text style={styles.centered}>for free.</Text>
+            <Text style={[styles.centered, styles.headerText]}>Send orders to your suppliers</Text>
+            <Text style={[styles.centered, styles.headerText]}>from Sous for free.</Text>
           </View>
           <TouchableHighlight
             underlayColor='transparent'
@@ -71,7 +132,17 @@ class AddOrderGuide extends React.Component {
               </View>
             : <View style={styles.inputErrorContainer} /> }
           </View>
-
+          <TouchableHighlight
+            underlayColor='white'
+            onPress={() => {
+              this.setState({
+                showOrderGuideSelector: true
+              })
+            }}
+            style={[styles.buttonActive, {backgroundColor: 'white'}]}
+          >
+            <Text style={[styles.buttonText, {color: Colors.button}]}>Send an Order Guide</Text>
+          </TouchableHighlight>
           <TouchableHighlight
             underlayColor={Colors.darkBlue}
             onPress={() => {
@@ -95,10 +166,11 @@ class AddOrderGuide extends React.Component {
 
 let styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: Colors.mainBackgroundColor,
   },
   headerText: {
-    fontSize: 22,
+    fontSize: 18,
     alignSelf: 'center',
     textAlign: 'center',
     paddingLeft: 8,
@@ -117,11 +189,6 @@ let styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 10,
     marginTop: 5,
-  },
-  separator: {
-    height: 0,
-    borderBottomColor: Colors.separatorColor,
-    borderBottomWidth: 1,
   },
   logoContainer: {
     marginTop: 10,
@@ -143,22 +210,22 @@ let styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 5,
     paddingRight: 5,
+    paddingTop: 10,
     flexDirection: 'column',
     justifyContent: 'center',
   },
   instructions: {
-    marginTop: 10,
-    marginBottom: 5,
+    marginTop: 15,
+    marginBottom: 15,
   },
   sendEmail: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: Colors.mainBackgroundColor,
     margin: 10,
+    paddingBottom: 10,
   },
   infoField: {
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: '#fff',
+    backgroundColor: Colors.mainBackgroundColor,
     height: 45,
     paddingLeft: 5,
     paddingTop: 15,
@@ -191,9 +258,9 @@ let styles = StyleSheet.create({
     height: 46,
     backgroundColor: Colors.button,
     alignSelf: 'center',
-    width: 250,
-    marginTop: 20,
-    marginBottom: 50,
+    width: 280,
+    marginTop: 10,
+    marginBottom: 10,
     justifyContent: 'center',
     borderRadius: 3,
   },
@@ -205,8 +272,8 @@ let styles = StyleSheet.create({
     borderRadius: 3,
   },
   buttonLinkWrap: {
-    backgroundColor: 'white',
-    width: 120
+    backgroundColor: Colors.mainBackgroundColor,
+    width: 120,
   },
   buttonText: {
     alignSelf: 'center',
@@ -240,6 +307,28 @@ let styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
+  modalInnerContainer: {
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  modalButtonText: {
+    textAlign: 'center',
+    color: Colors.lightBlue,
+    paddingTop: 15,
+  },
+  separator: {
+    marginTop: 10,
+    height: 0,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
   },
 })
 

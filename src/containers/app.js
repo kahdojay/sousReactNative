@@ -304,8 +304,14 @@ class App extends React.Component {
                   </Text>
                   <Text style={{textAlign: 'center', marginTop: 10}}>
                     To get started press
-                    <Text style={{fontWeight: 'bold'}}> Contact Sous.</Text>
+                    <Text style={{fontWeight: 'bold'}}> Send an Order Guide.</Text>
                   </Text>
+                  <Text style={{textAlign: 'center', marginTop: 10}}>
+                    Or press
+                    <Text style={{fontWeight: 'bold'}}> Contact Sous </Text>
+                    to email us directly.
+                  </Text>
+
                 </View>
               )
               this.setState({
@@ -902,7 +908,7 @@ class App extends React.Component {
                 // console.log("IMAGE", image);
                 dispatch(actions.updateSession({
                   imageData: image.data,
-                  imageUrl: image.uri
+                  // imageUrl: image.uri,
                 }));
               }, 25)()
             },
