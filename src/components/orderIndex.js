@@ -59,10 +59,11 @@ class OrderIndex extends React.Component {
     let fullOrders = _.map(orders, (order) => {
       const orderItems = cartItems[order.id]
       const purveyor = purveyors[order.purveyorId]
+      const user = teamsUsers.hasOwnProperty(order.userId) === true ? teamsUsers[order.userId] : null
       return Object.assign({}, order, {
         orderItems: orderItems,
         purveyor: purveyor,
-        user: teamsUsers[order.userId]
+        user: user
       })
     })
 
@@ -83,6 +84,11 @@ class OrderIndex extends React.Component {
           confirmedOrderStyle = styles.confirmedOrder
           confirmedOrderMetaInfoStyle = styles.confirmedOrderMetaInfo
         }
+
+        let orderUserName = ''
+        if(order.user !== null){
+          orderUserName = `${order.user.firstName} ${order.user.lastName}`
+        }
         return (
           <TouchableHighlight
             key={order.id}
@@ -97,7 +103,7 @@ class OrderIndex extends React.Component {
                   {order.purveyor.name}
                   <Text style={[styles.metaInfo,confirmedOrderMetaInfoStyle]}> {`${itemCount} Item${itemCount > 1 ? 's' : ''}`}</Text>
                 </Text>
-                <Text style={[styles.metaInfo,confirmedOrderMetaInfoStyle]}>{`${order.user.firstName} ${order.user.lastName[0]}.`}</Text>
+                <Text style={[styles.metaInfo,confirmedOrderMetaInfoStyle]}>{orderUserName}</Text>
               </View>
               <View style={{flex:1}}>
                 <Text style={[styles.metaInfo, styles.bold, styles.rightAlign,confirmedOrderMetaInfoStyle]}>{orderedAtDate.format('M/D/YY')}</Text>

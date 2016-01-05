@@ -138,6 +138,7 @@ class ProductListItem extends React.Component {
       quantity: this.state.quantity,
       note: this.state.note
     })
+
     let cartAction = null
     if(this.state.added === true){
       if(cartAttributes.hasOwnProperty('id') === true){
@@ -174,6 +175,9 @@ class ProductListItem extends React.Component {
     );
     let buttons = []
     if(product !== null){
+
+      console.log(product.id)
+
       if(product.deleted === true){
         return <View />;
       }

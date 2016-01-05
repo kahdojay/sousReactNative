@@ -22,7 +22,6 @@ class CartRightButton extends React.Component {
 
   render() {
     const { cartItems } = this.props;
-    console.log(cartItems)
     const badgeValue = (
       Object.keys(cartItems).length > 0 ?
         _.sum(cartItems, function (cartPurveyor) {

@@ -50,9 +50,7 @@ export default function ProductActions(allActions){
         product: newProductAttributes,
       });
 
-      dispatch(() => {
-        ddpClient.call('createProduct', [newProductAttributes]);
-      })
+      dispatch(connectActions.ddpCall('createProduct', [newProductAttributes]))
 
       return dispatch(categoryActions.addProductToCategory(productAttributes.categoryId,productId))
     }
