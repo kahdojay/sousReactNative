@@ -56,14 +56,14 @@ class ProductForm extends React.Component {
 
   showFieldPicker(field) {
     this.refs.name.blur()
-    this.setState({ 
-      modalVisible: true, 
+    this.setState({
+      modalVisible: true,
       fieldPicker: field,
     })
   }
 
   submitPicker() {
-    this.setState({ 
+    this.setState({
       modalVisible: false,
       fieldPicker: null,
     })
@@ -102,16 +102,16 @@ class ProductForm extends React.Component {
       </Modal>
     )
 
-    let fields = ['Purveyor', 'Category', 'Amount', 'Units'].map(function(field) { return (
+    let fields = ['Purveyor', 'Category', 'Amount', 'Units'].map((field) => {
+      return (
         <PickerFieldRow
           field={field}
-          onShowFieldPicker={() => { 
+          onShowFieldPicker={() => {
             this.showFieldPicker(field)
           }}
-        >
-        </PickerFieldRow>
+        />
       )
-    }, this)
+    })
 
     return (
       <View>
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   picker: {
-    width: 260, 
+    width: 260,
     alignSelf: 'center',
     borderTopColor: Colors.separatorColor,
     borderTopWidth: 1,

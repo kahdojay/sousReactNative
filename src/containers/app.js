@@ -11,6 +11,7 @@ import Colors from '../utilities/colors';
 import Urls from '../resources/urls';
 import * as actions from '../actions';
 import * as Components from '../components';
+import * as TextComponents from '../components/text';
 import Dimensions from 'Dimensions';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import PushManager from 'react-native-remote-push/RemotePushIOS';
@@ -1609,18 +1610,10 @@ class App extends React.Component {
       connectionStatus = (
         <TouchableHighlight
           onPress={() => {
-            const learnMoreMsg = (
-              <View>
-                <Text style={{textAlign: 'center'}}>
-                  <Text style={{fontWeight: 'bold'}}>No Internet Connection</Text>
-                </Text>
-                <Text style={{textAlign: 'center', marginTop: 10}}>
-                  You can still add Order Guide products to your cart, but please reconnect before submitting orders or sending messages.
-                </Text>
-              </View>
-            )
             this.setState({
-              genericModalMessage: learnMoreMsg,
+              genericModalMessage: (
+                <TextComponents.LearnMoreMessage />
+              ),
               showGenericModal: true,
             })
           }}
