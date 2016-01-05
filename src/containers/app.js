@@ -327,7 +327,9 @@ class App extends React.Component {
             onSendEmail: (emailAddress) => {
               dispatch(actions.sendEmail({
                 type: 'REQUEST_ORDER_GUIDE',
-                body: `Order guide request from: ${emailAddress}`
+                fromEmail: emailAddress,
+                fromName: `${session.firstName} ${session.lastName}`,
+                body: `Order guide request from: ${emailAddress}`,
               }));
               dispatch(actions.updateSession({
                 email: emailAddress
@@ -356,17 +358,25 @@ class App extends React.Component {
         return {
           component: Components.OrderGuideUpload,
           props: {
-            onUploadOrderGuide: (selectedPhotos) => {
+            emailAddress: session.email,
+            onUploadOrderGuide: (emailAddress, selectedPhotos) => {
               const attachments = _.map(selectedPhotos, (source, idx) => {
                 return {
                   "type": "image/jpeg",
-                  "name": `${this.state.currentTeamInfo.team.teamCode}-Order_Guide-${(idx+1)}`,
+                  "name": `${this.state.currentTeamInfo.team.teamCode}-Order_Guide-${(idx+1)}.jpeg`,
                   "content": source.data,
                 }
               })
               dispatch(actions.sendEmail({
                 type: 'UPLOAD_ORDER_GUIDE',
+                fromEmail: emailAddress,
+                fromName: `${session.firstName} ${session.lastName}`,
+                subject: `Order Guide Upload - ${this.state.currentTeamInfo.team.name}`,
+                body: `Order Guide from ${this.state.currentTeamInfo.team.name}`,
                 attachments: attachments,
+              }))
+              dispatch(actions.updateSession({
+                email: emailAddress
               }))
               const learnMoreMsg = (
                 <View>

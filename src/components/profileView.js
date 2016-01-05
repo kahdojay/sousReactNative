@@ -2,6 +2,7 @@ import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
+import EmailUtils from '../utilities/email';
 
 const {
   ActionSheetIOS,
@@ -13,7 +14,6 @@ const {
   Text,
   TextInput,
   TouchableHighlight,
-  TouchableOpacity,
   View,
 } = React;
 
@@ -28,9 +28,22 @@ class ProfileView extends React.Component {
       firstName: this.props.session.firstName,
       lastName: this.props.session.lastName,
       email: this.props.session.email,
+      imageUrl: this.props.session.imageUrl,
+      updatedAt: this.props.session.updatedAt,
       saveChanges: false,
-      notifications: this.props.session.notifications || false,
+      inputError: false,
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      phoneNumber: nextProps.session.phoneNumber,
+      firstName: nextProps.session.firstName,
+      lastName: nextProps.session.lastName,
+      email: nextProps.session.email,
+      imageUrl: nextProps.session.imageUrl,
+      updatedAt: nextProps.session.updatedAt,
+    })
   }
 
   showActionSheet(){
@@ -66,15 +79,18 @@ class ProfileView extends React.Component {
   storeImages(data){
     this.props.onStoreImages(data)
   }
+
   needsSave() {
-    let propValues = [ this.props.session.firstName, this.props.session.lastName, this.props.session.email, this.props.session.notifications, this.props.session.phoneNumber ];
-    let stateValues = [ this.state.firstName, this.state.lastName, this.state.email, this.state.notifications, this.state.phoneNumber ];
-    // console.log("PROPS", propValues == stateValues);
-    return JSON.stringify(propValues) == JSON.stringify(stateValues);
+    let propValues = [ this.props.session.firstName, this.props.session.lastName, this.props.session.email ];
+    let stateValues = [ this.state.firstName, this.state.lastName, this.state.email ];
+    // console.log("PROPS", propValues !== stateValues);
+    this.setState({
+      saveChanges: (JSON.stringify(propValues) !== JSON.stringify(stateValues))
+    })
   }
+
   render() {
-    const {session} = this.props
-    const {firstName, lastName, imageUrl, email, notifications, phoneNumber, updatedAt} = session
+    const {firstName, lastName, imageUrl, email, phoneNumber, updatedAt} = this.state
     let avatarUrl = `${imageUrl}`
     if(avatarUrl.indexOf('data:image') === -1){
       avatarUrl = `${imageUrl}?cb=${updatedAt}`
@@ -107,27 +123,46 @@ class ProfileView extends React.Component {
         </View>
       )
     }
-    const saveChanges = (
-      <View style={styles.saveContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            let data = {
-              firstName: firstName,
-              lastName: lastName,
-              email: email,
-              notifications: notifications,
-              username: phoneNumber,
-              phoneNumber: phoneNumber,
-            };
-            this.props.onUpdateInfo(data);
-          }}
-          style={styles.saveButton}
-          activeOpacity={.75}
-        >
-          <Text style={styles.saveText}>Save Changes</Text>
-        </TouchableOpacity>
-      </View>
-    )
+    let saveChanges = null
+
+    if(this.state.saveChanges === true){
+      console.log('about to update based on state change/check')
+      saveChanges = (
+        <View style={styles.saveContainer}>
+          <TouchableHighlight
+            onPress={() => {
+              let data = {
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                email: this.state.email,
+                updatedAt: (new Date()).toISOString(),
+              };
+              let allowSave = true
+              if(this.state.email !== ''){
+                allowSave = EmailUtils.validateEmailAddress(this.state.email)
+              }
+              if(allowSave === true){
+                this.setState({
+                  inputError: false,
+                  saveChanges: false,
+                }, () => {
+                  this.props.onUpdateInfo(data);
+                })
+              } else {
+                this.setState({
+                  inputError: true
+                })
+              }
+            }}
+            underlayColor={Colors.gold}
+            style={styles.saveButton}
+          >
+            <Text style={styles.saveText}>Save Changes</Text>
+          </TouchableHighlight>
+        </View>
+      )
+    }
+
     return (
    		<ScrollView
         style={styles.scrollView}
@@ -155,30 +190,51 @@ class ProfileView extends React.Component {
                 <TextInput
                   style={styles.inputField}
                   onChange={(e) => {
-                    this.setState({firstName: e.nativeEvent.text})
+                    this.setState({
+                      firstName: e.nativeEvent.text
+                    }, () => {
+                      this.needsSave()
+                    })
                   }}
-                  value={firstName}></TextInput>
+                  value={firstName}
+                />
               </View>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>Last Name</Text>
                 <TextInput
                   onChange={(e) => {
-                    this.setState({lastName: e.nativeEvent.text})
+                    this.setState({
+                      lastName: e.nativeEvent.text
+                    }, () => {
+                      this.needsSave()
+                    })
                   }}
                   style={styles.inputField}
-                  value={lastName}></TextInput>
+                  value={lastName}
+                />
               </View>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>E-mail Address</Text>
                 <TextInput
                   style={styles.inputField}
                   onChange={(e) => {
-                    this.setState({email: e.nativeEvent.text})
+                    this.setState({
+                      email: e.nativeEvent.text,
+                      inputError: false,
+                    }, () => {
+                      this.needsSave()
+                    })
                   }}
-                  value={email}></TextInput>
+                  value={email}
+                />
               </View>
             </View>
-            {! this.needsSave() ? saveChanges : <View></View>}
+            { this.state.inputError === true ?
+              <View style={styles.inputErrorContainer}>
+                <Text style={styles.inputErrorText}>Please enter a valid email address.</Text>
+              </View>
+            : <View style={styles.inputErrorContainer} /> }
+            {saveChanges}
           </View>
         </View>
       </ScrollView>
@@ -289,6 +345,7 @@ let styles = StyleSheet.create({
     justifyContent: 'center',
   },
   saveButton: {
+    marginTop: 10,
     backgroundColor: Colors.gold,
     padding: 10,
     width: 150,
@@ -381,6 +438,13 @@ let styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: Sizes.inputBorderRadius,
     padding: 10,
+  },
+  inputErrorContainer: {
+    height: 10,
+  },
+  inputErrorText: {
+    color: Colors.red,
+    alignSelf: 'center'
   },
 })
 

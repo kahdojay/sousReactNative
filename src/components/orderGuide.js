@@ -2,6 +2,7 @@ import { Icon, } from 'react-native-icons';
 import _ from 'lodash';
 import React from 'react-native';
 import Colors from '../utilities/colors';
+import EmailUtils from '../utilities/email';
 
 const {
   Dimensions,
@@ -16,8 +17,6 @@ const {
   ScrollView,
   ActivityIndicatorIOS,
 } = React;
-
-const runTimeDimensions = Dimensions.get('window')
 
 class OrderGuide extends React.Component {
   constructor(props) {
@@ -59,7 +58,8 @@ class OrderGuide extends React.Component {
                         emailAddress: e.nativeEvent.text
                       })
                     }}
-                    placeholder={"Your Email Address"}/>
+                    placeholder={"Your Email Address"}
+                  />
                 </View>
                 { this.state.inputError === true ?
                   <View style={styles.inputErrorContainer}>
@@ -70,8 +70,13 @@ class OrderGuide extends React.Component {
               <View style={[styles.separator, {marginTop: 10}]} />
               <TouchableHighlight
                 onPress={() => {
-                  if(this.state.emailAddress !== ''){
-                    this.props.onSendEmail(this.state.emailAddress)
+                  const emailValid = EmailUtils.validateEmailAddress(this.state.emailAddress)
+                  if(emailValid === true){
+                    this.setState({
+                      showAddEmailAddress: false,
+                    }, () => {
+                      this.props.onSendEmail(this.state.emailAddress)
+                    })
                   } else {
                     this.setState({
                       inputError: true
@@ -124,7 +129,7 @@ class OrderGuide extends React.Component {
           <TouchableHighlight
             underlayColor={Colors.darkBlue}
             onPress={() => {
-              if(this.state.emailAddress !== ''){
+              if(this.state.emailAddress !== '' && this.state.emailAddress !== null){
                 this.props.onSendEmail(this.state.emailAddress)
               } else {
                 this.setState({

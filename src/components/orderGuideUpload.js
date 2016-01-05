@@ -2,6 +2,7 @@ import React from 'react-native';
 import _ from 'lodash';
 import { Icon, } from 'react-native-icons';
 import Colors from '../utilities/colors';
+import EmailUtils from '../utilities/email';
 
 const {
   Dimensions,
@@ -13,6 +14,7 @@ const {
   NativeModules,
   TextInput,
   TouchableHighlight,
+  TouchableOpacity,
   ScrollView,
   ActivityIndicatorIOS,
 } = React;
@@ -26,15 +28,16 @@ class OrderGuideUpload extends React.Component {
       inputError: false,
       emailAddress: this.props.emailAddress,
       selectedPhotos: [],
+      showAddEmailAddress: false,
     }
   }
 
   showActionSheet(){
     var options = {
       title: 'Select Order Guide Images',
-      maxWidth: 2048,
-      maxHeight: 2048,
-      quality: 1,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      quality: .75,
     };
 
     UIImagePickerManager.showImagePicker(options, (didCancel, response) => {
@@ -63,6 +66,71 @@ class OrderGuideUpload extends React.Component {
   }
 
   render() {
+
+    const modal = (
+      <Modal
+        animated={true}
+        transparent={true}
+        visible={this.state.showAddEmailAddress}
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => {
+            this.setState({
+              showAddEmailAddress: false,
+            })
+          }}
+          style={{flex: 1,}}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalInnerContainer}>
+              <View style={styles.sendEmail}>
+                <View style={styles.infoField}>
+                  <TextInput
+                    style={styles.input}
+                    value={this.state.emailAddress}
+                    onChange={(e) => {
+                      this.setState({
+                        inputError: false,
+                        emailAddress: e.nativeEvent.text
+                      })
+                    }}
+                    placeholder={"Your Email Address"}
+                  />
+                </View>
+                { this.state.inputError === true ?
+                  <View style={styles.inputErrorContainer}>
+                    <Text style={styles.inputErrorText}>Please enter a valid email address.</Text>
+                  </View>
+                : <View style={styles.inputErrorContainer} /> }
+              </View>
+              <View style={[styles.separator, {marginTop: 10}]} />
+              <TouchableHighlight
+                onPress={() => {
+                  const emailValid = EmailUtils.validateEmailAddress(this.state.emailAddress)
+                  if(emailValid === true){
+                    if(this.state.selectedPhotos.length > 0){
+                      this.setState({
+                        showAddEmailAddress: false,
+                      }, () => {
+                        this.props.onUploadOrderGuide(this.state.emailAddress, this.state.selectedPhotos)
+                      })
+                    }
+                  } else {
+                    this.setState({
+                      inputError: true
+                    })
+                  }
+                }}
+                underlayColor='transparent'
+              >
+                <Text style={styles.modalButtonText}>Send</Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+    )
 
     const selectedPhotos = _.map(this.state.selectedPhotos, (source, idx) => {
       let image = (
@@ -141,13 +209,20 @@ class OrderGuideUpload extends React.Component {
           underlayColor={uploadButtonUnderlayColor}
           onPress={() => {
             if(this.state.selectedPhotos.length > 0){
-              this.props.onUploadOrderGuide(this.state.selectedPhotos)
+              if(this.state.emailAddress !== '' && this.state.emailAddress !== null){
+                this.props.onUploadOrderGuide(this.state.emailAddress, this.state.selectedPhotos)
+              } else {
+                this.setState({
+                  showAddEmailAddress: true
+                })
+              }
             }
           }}
           style={[styles.uploadButton, uploadButtonStyle]}
         >
           <Text style={[styles.uploadButtonText, uploadButtonTextStyle]}>Upload Order Guide</Text>
         </TouchableHighlight>
+        {modal}
       </View>
     );
   }
@@ -222,7 +297,58 @@ let styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     fontSize: 16,
     fontWeight: 'bold',
-  }
+  },
+
+  sendEmail: {
+    flex: 1,
+    paddingBottom: 10,
+  },
+  infoField: {
+    height: 45,
+    paddingLeft: 5,
+    paddingTop: 15,
+    flexDirection: 'row',
+  },
+  inputErrorContainer: {
+    height: 10,
+  },
+  inputErrorText: {
+    color: Colors.red,
+    alignSelf: 'center'
+  },
+  input: {
+    flex: 1,
+    padding: 4,
+    marginRight: 5,
+    marginBottom: 5,
+    fontSize: 14,
+    borderRadius: 8,
+    color: '#333',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans',
+    textAlign: 'center',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  },
+  modalInnerContainer: {
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    padding: 20,
+  },
+  modalButtonText: {
+    textAlign: 'center',
+    color: Colors.lightBlue,
+    paddingTop: 15,
+  },
+  separator: {
+    height: 0,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
+  },
 })
 
 export default OrderGuideUpload
