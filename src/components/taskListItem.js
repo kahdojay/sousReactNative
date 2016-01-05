@@ -166,7 +166,7 @@ let styles = StyleSheet.create({
     alignItems: 'center',
   },
   rowCompleted: {
-    backgroundColor: Colors.taskCompletedBackgroundColor,
+    backgroundColor: Colors.light,
   },
   checkboxContainer: {
     flex: 1,

@@ -356,8 +356,37 @@ class App extends React.Component {
         return {
           component: Components.OrderGuideUpload,
           props: {
-
-          }
+            onUploadOrderGuide: (selectedPhotos) => {
+              const attachments = _.map(selectedPhotos, (source, idx) => {
+                return {
+                  "type": "image/jpeg",
+                  "name": `${this.state.currentTeamInfo.team.teamCode}-Order_Guide-${(idx+1)}`,
+                  "content": source.data,
+                }
+              })
+              dispatch(actions.sendEmail({
+                type: 'UPLOAD_ORDER_GUIDE',
+                attachments: attachments,
+              }))
+              const learnMoreMsg = (
+                <View>
+                  <Text style={{textAlign: 'center'}}>
+                    Thanks for uploading your order guide - we typically respond within
+                    <Text style={{fontWeight: 'bold'}}> 24 hours </Text>
+                  </Text>
+                </View>
+              )
+              this.setState({
+                genericModalMessage: learnMoreMsg,
+                showGenericModal: true,
+                genericModalCallback: () => {
+                  nav.replacePreviousAndPop({
+                    name: 'Feed',
+                  })
+                }
+              })
+            },
+          },
         }
       case 'TeamIndex':
         return {

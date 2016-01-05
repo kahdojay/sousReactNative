@@ -34,7 +34,6 @@ class OrderGuideUpload extends React.Component {
       title: 'Select Order Guide Images',
       maxWidth: 2048,
       maxHeight: 2048,
-      noData: true,
       quality: 1,
     };
 
@@ -77,10 +76,9 @@ class OrderGuideUpload extends React.Component {
         </View>
       )
       if(source.hasOwnProperty('uri') === true){
-        console.log(source.uri)
         image = (
           <View style={styles.itemContainer}>
-            <Image source={{uri: source.uri}} style={{height: 150, width: 125,}} />
+            <Image source={{uri: source.uri.replace('file://', ''), isStatic: source.isStatic}} style={{height: 150, width: 125,}} />
             <TouchableHighlight
               underlayColor='transparent'
               onPress={() => {
@@ -102,33 +100,55 @@ class OrderGuideUpload extends React.Component {
       return image
     })
 
+    let uploadButtonUnderlayColor = Colors.light
+    let uploadButtonStyle = {}
+    let uploadButtonTextStyle = {}
+    if(this.state.selectedPhotos.length === 0){
+      uploadButtonUnderlayColor = Colors.disabled
+      uploadButtonStyle = {backgroundColor: Colors.disabled}
+      uploadButtonTextStyle = {color: Colors.darkGrey}
+    }
+
     return (
-      <ScrollView
-        automaticallyAdjustContentInsets={false}
-        ref="scrollView"
-        style={styles.container}
-      >
-        <View style={styles.uploadArea}>
-          {selectedPhotos}
-          <TouchableHighlight
-            underlayColor='transparent'
-            onPress={() => {
-              let selectedPhotos = this.state.selectedPhotos
-              selectedPhotos.push({loading: true})
-              this.setState({
-                selectedPhotos: selectedPhotos,
-              })
-              this.showActionSheet()
-            }}
-            style={styles.itemContainer}
-          >
-            <View style={styles.addButton}>
-              <Icon name='material|plus' size={40} color={Colors.lightBlue} style={{width: 50, height: 50,}} />
-              <Text style={{color: Colors.lightBlue}}>Add</Text>
-            </View>
-          </TouchableHighlight>
-        </View>
-      </ScrollView>
+      <View style={styles.container}>
+        <ScrollView
+          automaticallyAdjustContentInsets={false}
+          ref="scrollView"
+          style={{}}
+        >
+          <View style={styles.uploadArea}>
+            {selectedPhotos}
+            <TouchableHighlight
+              underlayColor='transparent'
+              onPress={() => {
+                let selectedPhotos = this.state.selectedPhotos
+                selectedPhotos.push({loading: true})
+                this.setState({
+                  selectedPhotos: selectedPhotos,
+                })
+                this.showActionSheet()
+              }}
+              style={styles.itemContainer}
+            >
+              <View style={styles.addButton}>
+                <Icon name='material|plus' size={40} color={Colors.lightBlue} style={{width: 50, height: 50,}} />
+                <Text style={{color: Colors.lightBlue}}>Add</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+        </ScrollView>
+        <TouchableHighlight
+          underlayColor={uploadButtonUnderlayColor}
+          onPress={() => {
+            if(this.state.selectedPhotos.length > 0){
+              this.props.onUploadOrderGuide(this.state.selectedPhotos)
+            }
+          }}
+          style={[styles.uploadButton, uploadButtonStyle]}
+        >
+          <Text style={[styles.uploadButtonText, uploadButtonTextStyle]}>Upload Order Guide</Text>
+        </TouchableHighlight>
+      </View>
     );
   }
 };
@@ -188,6 +208,20 @@ let styles = StyleSheet.create({
     height: 22,
     backgroundColor: Colors.red,
     borderRadius: 11,
+  },
+  uploadButton: {
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
+    backgroundColor: 'white',
+  },
+  uploadButtonText: {
+    color: Colors.lightBlue,
+    textAlign: 'center',
+    padding: 10,
+    paddingBottom: 12,
+    fontFamily: 'OpenSans',
+    fontSize: 16,
+    fontWeight: 'bold',
   }
 })
 

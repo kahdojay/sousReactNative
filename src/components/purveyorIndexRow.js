@@ -1,7 +1,7 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import _ from 'lodash';
-import { greyText, taskCompletedBackgroundColor } from '../utilities/colors';
+import Colors from '../utilities/colors';
 
 const {
   View,
@@ -52,10 +52,6 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 10,
   },
-  rightArrow: {
-    fontSize: 20,
-    color: '#ccc',
-  },
   textProgressArrowContainer: {
     flex: 1,
     flexDirection: 'row',
@@ -67,7 +63,7 @@ const styles = StyleSheet.create({
   },
   seperator: {
     height: 5,
-    borderBottomColor: '#bbb',
+    borderBottomColor: Colors.lightGrey,
     borderBottomWidth: 1,
   },
   purveyorInfo: {

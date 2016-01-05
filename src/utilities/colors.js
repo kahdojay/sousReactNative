@@ -17,7 +17,7 @@ const Colors = {
   mainBackgroundColor: '#f3f3f3',
   navbarColor: 'white',
   red: '#B11E00',
-  taskCompletedBackgroundColor: '#e1e1e1',
+  light: '#e1e1e1',
   separatorColor: '#bbb',
 }
 
