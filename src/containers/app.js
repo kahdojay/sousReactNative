@@ -216,12 +216,12 @@ class App extends React.Component {
         });
       }
     }
-    
+
     if(this.refs.appNavigator){
       const routeName = this.refs.appNavigator.getCurrentRoutes()[0].name
 
       // execute this condition to check certain routes when teams are present
-      const checkRoutesForTeamsPresent = ['Loading']//, 'UserTeam']
+      const checkRoutesForTeamsPresent = ['Loading','UserTeam']
       if(checkRoutesForTeamsPresent.indexOf(routeName) !== -1){
         if(this.state.currentTeamInfo.team !== null){
           setTimeout(() => {
