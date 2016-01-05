@@ -40,7 +40,6 @@ class TeamMemberListing extends React.Component {
         const user = this.props.teamsUsers[userId]
         if(user.superUser === true)
           return
-
         let icon = <Icon name='material|account-circle' size={50} color='#aaa' style={styles.avatar}/>
         if (user.hasOwnProperty('imageUrl') && user.imageUrl !== '') {
           icon = <Image source={{uri: user.imageUrl}} style={styles.avatarImage} />
