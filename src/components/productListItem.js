@@ -176,8 +176,6 @@ class ProductListItem extends React.Component {
     let buttons = []
     if(product !== null){
 
-      console.log(product.id)
-
       if(product.deleted === true){
         return <View />;
       }

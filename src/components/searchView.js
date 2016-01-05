@@ -46,7 +46,7 @@ class SearchView extends React.Component {
   }
 
   render() {
-    const { products, purveyors, categories, cart } = this.props
+    const { products, purveyors, categories, cartItems } = this.props
     const fetching = (
       <ActivityIndicatorIOS
         animating={true}
@@ -100,7 +100,7 @@ class SearchView extends React.Component {
           { this.state.search !== '' ?
             ((this.state.products.length > 0) ?
               <ProductList
-                cart={cart}
+                cartItems={cartItems}
                 showCategoryInfo={true}
                 showPurveyorInfo={true}
                 products={this.state.products}

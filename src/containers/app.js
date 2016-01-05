@@ -590,7 +590,7 @@ class App extends React.Component {
         return {
           component: Components.PurveyorView,
           props: {
-            cart: this.state.currentTeamInfo.team.cart,
+            cartItems: this.state.currentTeamInfo.cartItems['cart'],
             categories: this.state.currentTeamInfo.categories,
             purveyor: this.state.purveyor,
             purveyors: this.state.currentTeamInfo.purveyors,
@@ -800,7 +800,7 @@ class App extends React.Component {
               }
             },
             products: this.state.currentTeamInfo.products,
-            cart: this.state.currentTeamInfo.team.cart,
+            cartItems: this.state.currentTeamInfo.cartItems['cart'],
             purveyors: this.state.currentTeamInfo.purveyors,
             categories: this.state.currentTeamInfo.categories,
             onCreateProduct: () => {
