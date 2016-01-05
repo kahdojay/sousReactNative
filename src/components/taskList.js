@@ -123,14 +123,14 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   roundedCorners: {
-    backgroundColor: Colors.taskCompletedBackgroundColor,
+    backgroundColor: Colors.light,
     width: 150,
     borderRadius: Sizes.inputBorderRadius,
     alignItems: 'center',
   },
   text: {
     textAlign: 'center',
-    backgroundColor: Colors.taskCompletedBackgroundColor,
+    backgroundColor: Colors.light,
     fontWeight: 'bold',
     color: Colors.greyText,
     paddingTop: 5,

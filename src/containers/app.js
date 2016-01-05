@@ -286,9 +286,9 @@ class App extends React.Component {
           },
         }
 
-      case 'AddOrderGuide':
+      case 'OrderGuide':
         return {
-          component: Components.AddOrderGuide,
+          component: Components.OrderGuide,
           props: {
             emailAddress: session.email,
             onLearnMore: () => {
@@ -304,13 +304,24 @@ class App extends React.Component {
                   </Text>
                   <Text style={{textAlign: 'center', marginTop: 10}}>
                     To get started press
-                    <Text style={{fontWeight: 'bold'}}> Contact Sous.</Text>
+                    <Text style={{fontWeight: 'bold'}}> Send an Order Guide.</Text>
                   </Text>
+                  <Text style={{textAlign: 'center', marginTop: 10}}>
+                    Or press
+                    <Text style={{fontWeight: 'bold'}}> Contact Sous </Text>
+                    to email us directly.
+                  </Text>
+
                 </View>
               )
               this.setState({
                 genericModalMessage: learnMoreMsg,
                 showGenericModal: true
+              })
+            },
+            onNavToOrderGuideUpload: () => {
+              nav.push({
+                name: 'OrderGuideUpload',
               })
             },
             onSendEmail: (emailAddress) => {
@@ -325,6 +336,42 @@ class App extends React.Component {
                 <View>
                   <Text style={{textAlign: 'center'}}>
                     Thanks for reaching out - we typically respond within
+                    <Text style={{fontWeight: 'bold'}}> 24 hours </Text>
+                  </Text>
+                </View>
+              )
+              this.setState({
+                genericModalMessage: learnMoreMsg,
+                showGenericModal: true,
+                genericModalCallback: () => {
+                  nav.replacePreviousAndPop({
+                    name: 'Feed',
+                  })
+                }
+              })
+            },
+          },
+        }
+      case 'OrderGuideUpload':
+        return {
+          component: Components.OrderGuideUpload,
+          props: {
+            onUploadOrderGuide: (selectedPhotos) => {
+              const attachments = _.map(selectedPhotos, (source, idx) => {
+                return {
+                  "type": "image/jpeg",
+                  "name": `${this.state.currentTeamInfo.team.teamCode}-Order_Guide-${(idx+1)}`,
+                  "content": source.data,
+                }
+              })
+              dispatch(actions.sendEmail({
+                type: 'UPLOAD_ORDER_GUIDE',
+                attachments: attachments,
+              }))
+              const learnMoreMsg = (
+                <View>
+                  <Text style={{textAlign: 'center'}}>
+                    Thanks for uploading your order guide - we typically respond within
                     <Text style={{fontWeight: 'bold'}}> 24 hours </Text>
                   </Text>
                 </View>
@@ -902,7 +949,7 @@ class App extends React.Component {
                 // console.log("IMAGE", image);
                 dispatch(actions.updateSession({
                   imageData: image.data,
-                  imageUrl: image.uri
+                  // imageUrl: image.uri,
                 }));
               }, 25)()
             },
@@ -1069,8 +1116,7 @@ class App extends React.Component {
       navBar = <View />
     } else {
       switch(route.name) {
-        //TODO: remove cloneWithProps as it's deprecated
-        case 'AddOrderGuide':
+        case 'OrderGuide':
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
@@ -1080,6 +1126,17 @@ class App extends React.Component {
             ),
             title: 'Order Guide',
             hideNext: true,
+          })
+          break;
+        case 'OrderGuideUpload':
+          navBar = React.cloneElement(this.navBar, {
+            navigator: nav,
+            route: route,
+            title: 'Order Guide Upload',
+            hideNext: true,
+            customPrev: (
+              <Components.NavBackButton pop={true} />
+            ),
           })
           break;
         case 'TeamIndex':
@@ -1422,7 +1479,7 @@ class App extends React.Component {
       }
       if(Object.keys(this.state.currentTeamInfo.purveyors).length === 0){
         if(route.name === 'CategoryIndex' || route.name === 'PurveyorIndex') {
-          route.name = 'AddOrderGuide';
+          route.name = 'OrderGuide';
         }
       }
     }

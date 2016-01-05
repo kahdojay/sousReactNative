@@ -16,6 +16,7 @@
 		110F5ECF1BCF2D5700234ED6 /* libReactNativeIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 110F5ECE1BCF2D4900234ED6 /* libReactNativeIcons.a */; };
 		110F5ED01BCF2DDF00234ED6 /* Material-Design-Iconic-Font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 117817961BCDD8EE009F23E6 /* Material-Design-Iconic-Font.ttf */; };
 		110F5ED11BCF2DDF00234ED6 /* FontAwesome.otf in Resources */ = {isa = PBXBuildFile; fileRef = 117817971BCDD8EE009F23E6 /* FontAwesome.otf */; };
+		1171E5DD1C3AEDBD007AECED /* UIImagePickerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1171E5DC1C3AEDBD007AECED /* UIImagePickerManager.m */; };
 		119B21331C0F6F37000402CA /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 119B21321C0F6F37000402CA /* main.jsbundle */; };
 		119B21341C0F6F37000402CA /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 119B21321C0F6F37000402CA /* main.jsbundle */; };
 		11DFC36D1C2608EA00F8A2D5 /* libRCTDeviceUUID.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11DFC35F1C2608C300F8A2D5 /* libRCTDeviceUUID.a */; };
@@ -27,7 +28,6 @@
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		8918EAB21BD801C20068EBBA /* libRNMultiPickerIOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8918EAB11BD801AF0068EBBA /* libRNMultiPickerIOS.a */; };
 		8918EB061BD8227C0068EBBA /* libRNOverlay.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8918EB051BD822690068EBBA /* libRNOverlay.a */; };
-		899803FF1BCEC7E00011F96A /* UIImagePickerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 899803FE1BCEC7E00011F96A /* UIImagePickerManager.m */; };
 		89A667011BC2F38A00F45CFD /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89A667001BC2F38A00F45CFD /* OpenSans-Regular.ttf */; };
 		89EFDE591BCC097F001FBBEF /* OpenSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE501BCC097F001FBBEF /* OpenSans-Bold.ttf */; };
 		89EFDE5A1BCC097F001FBBEF /* OpenSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE511BCC097F001FBBEF /* OpenSans-BoldItalic.ttf */; };
@@ -187,6 +187,8 @@
 		110C20FF1C26372E0074F7D3 /* RemotePushDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemotePushDelegate.h; path = "../node_modules/react-native-remote-push/RemotePushDelegate.h"; sourceTree = "<group>"; };
 		110C21001C26372E0074F7D3 /* RemotePushDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RemotePushDelegate.m; path = "../node_modules/react-native-remote-push/RemotePushDelegate.m"; sourceTree = "<group>"; };
 		110F5EC91BCF2D4900234ED6 /* ReactNativeIcons.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeIcons.xcodeproj; path = "../node_modules/react-native-icons/ios/ReactNativeIcons.xcodeproj"; sourceTree = "<group>"; };
+		1171E5DB1C3AEDBD007AECED /* UIImagePickerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UIImagePickerManager.h; path = "../node_modules/react-native-image-picker/ios/UIImagePickerManager.h"; sourceTree = "<group>"; };
+		1171E5DC1C3AEDBD007AECED /* UIImagePickerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIImagePickerManager.m; path = "../node_modules/react-native-image-picker/ios/UIImagePickerManager.m"; sourceTree = "<group>"; };
 		117817961BCDD8EE009F23E6 /* Material-Design-Iconic-Font.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Material-Design-Iconic-Font.ttf"; sourceTree = "<group>"; };
 		117817971BCDD8EE009F23E6 /* FontAwesome.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome.otf; sourceTree = "<group>"; };
 		119B21321C0F6F37000402CA /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = SOURCE_ROOT; };
@@ -200,8 +202,6 @@
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		8918EA9F1BD801AE0068EBBA /* RNMultiPicker.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNMultiPicker.xcodeproj; path = "../node_modules/react-native-multipicker/RNMultiPicker.xcodeproj"; sourceTree = "<group>"; };
 		8918EAF21BD822690068EBBA /* RNOverlay.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNOverlay.xcodeproj; path = "../node_modules/react-native-overlay/RNOverlay.xcodeproj"; sourceTree = "<group>"; };
-		899803FD1BCEC7E00011F96A /* UIImagePickerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIImagePickerManager.h; sourceTree = "<group>"; };
-		899803FE1BCEC7E00011F96A /* UIImagePickerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIImagePickerManager.m; sourceTree = "<group>"; };
 		89A667001BC2F38A00F45CFD /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Regular.ttf"; sourceTree = SOURCE_ROOT; };
 		89EFDE501BCC097F001FBBEF /* OpenSans-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Bold.ttf"; sourceTree = "<group>"; };
 		89EFDE511BCC097F001FBBEF /* OpenSans-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-BoldItalic.ttf"; sourceTree = "<group>"; };
@@ -387,6 +387,8 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				1171E5DB1C3AEDBD007AECED /* UIImagePickerManager.h */,
+				1171E5DC1C3AEDBD007AECED /* UIImagePickerManager.m */,
 				110C20FF1C26372E0074F7D3 /* RemotePushDelegate.h */,
 				110C21001C26372E0074F7D3 /* RemotePushDelegate.m */,
 				11DFC36E1C2619AB00F8A2D5 /* RCTRemotePushManager.xcodeproj */,
@@ -394,7 +396,6 @@
 				8918EAF21BD822690068EBBA /* RNOverlay.xcodeproj */,
 				8918EA9F1BD801AE0068EBBA /* RNMultiPicker.xcodeproj */,
 				110F5EC91BCF2D4900234ED6 /* ReactNativeIcons.xcodeproj */,
-				899803FC1BCEC7E00011F96A /* UIImagePickerManager */,
 				C430DD901BCEC63F00962F41 /* RCTAddressBook.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
 				00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */,
@@ -454,16 +455,6 @@
 				8918EB051BD822690068EBBA /* libRNOverlay.a */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		899803FC1BCEC7E00011F96A /* UIImagePickerManager */ = {
-			isa = PBXGroup;
-			children = (
-				899803FD1BCEC7E00011F96A /* UIImagePickerManager.h */,
-				899803FE1BCEC7E00011F96A /* UIImagePickerManager.m */,
-			);
-			name = UIImagePickerManager;
-			path = "../node_modules/react-native-image-picker/UIImagePickerManager";
 			sourceTree = "<group>";
 		};
 		89A666FD1BC2F34F00F45CFD /* Resources */ = {
@@ -807,7 +798,7 @@
 				A5380FE61BE05DFA00FADB96 /* AppDelegate.m in Sources */,
 				A5380FEC1BE05E2E00FADB96 /* main.m in Sources */,
 				110C21011C26372E0074F7D3 /* RemotePushDelegate.m in Sources */,
-				899803FF1BCEC7E00011F96A /* UIImagePickerManager.m in Sources */,
+				1171E5DD1C3AEDBD007AECED /* UIImagePickerManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -893,7 +884,7 @@
 					"$(SRCROOT)/../node_modules/react-native/Libraries/PushNotificationIOS",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Sous/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sousapp.sousRN;
@@ -920,7 +911,7 @@
 					"$(SRCROOT)/../node_modules/react-native/Libraries/PushNotificationIOS",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Sous/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sousapp.sousRN;

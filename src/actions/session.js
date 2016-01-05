@@ -86,6 +86,8 @@ export default function SessionActions(allActions){
           session.userId
         ]
         dispatch(connectActions.ddpCall('streamS3Image', ddpCallArguments))
+        // sessionParams.imageUrl = `data:image/jpeg;base64,${sessionParams.imageData}`
+        delete sessionParams.imageData
       }
       dispatch(connectActions.ddpCall('updateUser', [session.userId, filteredSessionParams]))
       // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)

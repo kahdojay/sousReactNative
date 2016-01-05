@@ -29,11 +29,13 @@ module.exports = class Menu extends React.Component {
       return <View />;
     }
 
-    let avatar = <Icon name='material|account' size={40} color='white' style={styles.avatar} />
+    let avatar = (
+      <Icon name='material|account-circle' size={60} color={Colors.lightGrey} style={styles.avatar} />
+    )
     if (session.imageUrl) {
       avatar = (
-        <Image style={styles.avatar} source={{ uri: session.imageUrl }} />
-      );
+        <Image style={styles.avatar} source={{ uri: `${session.imageUrl}?cb=${session.updatedAt}` }} />
+      )
     }
     const totalTasks = _.filter(team.tasks, { deleted: false } ).length
     const completeTasksCount = _.filter(team.tasks, { deleted: false, completed: true }).length
@@ -48,7 +50,7 @@ module.exports = class Menu extends React.Component {
       <View style={styles.menu}>
         <View style={styles.avatarContainer}>
           <TouchableHighlight
-            underlayColor={'#5f697a'}
+            underlayColor='transparent'
             onPress={this.props.onNavToProfile}
           >
             <View style={{alignItems: 'center'}}>
@@ -163,6 +165,8 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
+    borderWidth: 1,
+    borderColor: Colors.lightGrey,
   },
   name: {
     flex: 1,
