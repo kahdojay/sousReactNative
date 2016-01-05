@@ -286,9 +286,9 @@ class App extends React.Component {
           },
         }
 
-      case 'AddOrderGuide':
+      case 'OrderGuide':
         return {
-          component: Components.AddOrderGuide,
+          component: Components.OrderGuide,
           props: {
             emailAddress: session.email,
             onLearnMore: () => {
@@ -319,6 +319,11 @@ class App extends React.Component {
                 showGenericModal: true
               })
             },
+            onNavToOrderGuideUpload: () => {
+              nav.push({
+                name: 'OrderGuideUpload',
+              })
+            },
             onSendEmail: (emailAddress) => {
               dispatch(actions.sendEmail({
                 type: 'REQUEST_ORDER_GUIDE',
@@ -346,6 +351,13 @@ class App extends React.Component {
               })
             },
           },
+        }
+      case 'OrderGuideUpload':
+        return {
+          component: Components.OrderGuideUpload,
+          props: {
+
+          }
         }
       case 'TeamIndex':
         return {
@@ -1075,8 +1087,7 @@ class App extends React.Component {
       navBar = <View />
     } else {
       switch(route.name) {
-        //TODO: remove cloneWithProps as it's deprecated
-        case 'AddOrderGuide':
+        case 'OrderGuide':
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
@@ -1086,6 +1097,17 @@ class App extends React.Component {
             ),
             title: 'Order Guide',
             hideNext: true,
+          })
+          break;
+        case 'OrderGuideUpload':
+          navBar = React.cloneElement(this.navBar, {
+            navigator: nav,
+            route: route,
+            title: 'Order Guide Upload',
+            hideNext: true,
+            customPrev: (
+              <Components.NavBackButton pop={true} />
+            ),
           })
           break;
         case 'TeamIndex':
@@ -1428,7 +1450,7 @@ class App extends React.Component {
       }
       if(Object.keys(this.state.currentTeamInfo.purveyors).length === 0){
         if(route.name === 'CategoryIndex' || route.name === 'PurveyorIndex') {
-          route.name = 'AddOrderGuide';
+          route.name = 'OrderGuide';
         }
       }
     }
