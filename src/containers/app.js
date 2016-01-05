@@ -216,8 +216,13 @@ class App extends React.Component {
         });
       }
     }
+    
     if(this.refs.appNavigator){
-      if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'Loading'){
+      const routeName = this.refs.appNavigator.getCurrentRoutes()[0].name
+
+      // execute this condition to check certain routes when teams are present
+      const checkRoutesForTeamsPresent = ['Loading']//, 'UserTeam']
+      if(checkRoutesForTeamsPresent.indexOf(routeName) !== -1){
         if(this.state.currentTeamInfo.team !== null){
           setTimeout(() => {
             this.refs.appNavigator.replacePrevious({
@@ -231,15 +236,9 @@ class App extends React.Component {
             });
           }, 10)
         }
-      } else if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'UserTeam'){
-        if(this.state.currentTeamInfo.team !== null){
-          setTimeout(() => {
-            this.refs.appNavigator.replacePrevious({
-              name: 'Feed'
-            });
-          }, 10)
-        }
       }
+
+      // ...
     }
   }
 
