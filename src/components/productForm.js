@@ -1,8 +1,8 @@
 import React from 'react-native';
-import Dimensions from 'Dimensions';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import _ from 'lodash';
+import PickerModal from './modal/pickerModal';
 
 const {
   Modal,
@@ -22,6 +22,10 @@ class PickerFieldRow extends React.Component {
   }
 
   render() {
+    let inputFieldLabel = `Select ${this.props.field}`
+    if(this.props.selectedValue !== null){
+      inputFieldLabel = this.props.selectedValue
+    }
     return (
       <View style={styles.inputContainer}>
         <Text style={styles.inputTitle}>{this.props.field}</Text>
@@ -31,7 +35,7 @@ class PickerFieldRow extends React.Component {
           style={styles.inputFieldContainer}
         >
           <Text style={styles.inputField}>
-            Select {this.props.field}
+            {inputFieldLabel}
           </Text>
         </TouchableHighlight>
       </View>
@@ -45,6 +49,7 @@ class ProductForm extends React.Component {
     this.state = {
       newProduct: {},
       fieldPicker: null,
+      fieldPickerIdx: null,
       modalVisible: false,
       selectedName: '',
       selectedCategory: null,
@@ -52,13 +57,15 @@ class ProductForm extends React.Component {
       selectedAmount: null,
       selectedUnits: null,
     }
+    this.fields = ['Purveyor','Category','Amount','Units']
   }
 
-  showFieldPicker(field) {
+  showFieldPicker(field, idx) {
     this.refs.name.blur()
     this.setState({
       modalVisible: true,
       fieldPicker: field,
+      fieldPickerIdx: idx,
     })
   }
 
@@ -66,6 +73,7 @@ class ProductForm extends React.Component {
     this.setState({
       modalVisible: false,
       fieldPicker: null,
+      fieldPickerIdx: null,
     })
 
     this.checkValidForm();
@@ -76,42 +84,93 @@ class ProductForm extends React.Component {
   // submit form?
 
   render() {
-    let modal = (
-      <Modal
-        animated={true}
-        transparent={true}
-        visible={this.state.modalVisible}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalInnerContainer}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalHeaderText}>
-                Select {this.state.fieldPicker}
-              </Text>
-            </View>
-            <TouchableHighlight
-              onPress={() => { this.submitPicker() }}
-              underlayColor='transparent'
-            >
-              <Text style={styles.modalButtonText}>
-                {`Update`}
-              </Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      </Modal>
-    )
+    let fields = []
+    let items = []
+    let leftButtonText = 'Update'
+    let selectedValue = null
 
-    let fields = ['Purveyor', 'Category', 'Amount', 'Units'].map((field) => {
-      return (
+    this.fields.forEach((field, idx) => {
+      let selectedValue = null
+      const selectedValueId = `selected${field}`
+      if(this.state.hasOwnProperty(selectedValueId) === true) {
+        selectedValue = this.state[selectedValueId]
+        if(field === 'Category'){
+          const categoryId = this.state[selectedValueId]
+          selectedValue = this.props.categories[categoryId].name
+        }
+      }
+      fields.push(
         <PickerFieldRow
+          key={field}
           field={field}
+          selectedValue={selectedValue}
           onShowFieldPicker={() => {
-            this.showFieldPicker(field)
+            this.showFieldPicker(field, idx)
           }}
         />
       )
     })
+
+    if(this.state.fieldPicker !== null){
+      items = []
+      // get the items by switching by fieldPicker
+      switch (this.state.fieldPicker) {
+
+        case 'Purveyor':
+          selectedValue = this.state.selectedPurveyor
+          break;
+
+        case 'Category':
+          const categories = _.sortBy(this.props.categories, 'name')
+          items = []
+          items = items.concat(_.map(categories, (category, idx) => {
+            return {
+              key: category.id,
+              value: category.id,
+              label: category.name,
+            }
+          }))
+          selectedValue = this.state.selectedCategory
+          break;
+
+        case 'Amount':
+          items = []
+          // items.push({
+          //   key: null,
+          //   value: null,
+          //   label: 'Select Amount',
+          // })
+          items = items.concat(_.map(_.range(1, 501), (n, idx) => {
+            return {
+              key: idx,
+              value: n,
+              label: n.toString(),
+            }
+          }))
+          selectedValue = this.state.selectedAmount
+          // selectedValue = items[1].value
+          // leftButtonText = `Update to {{value}}`
+          break;
+
+        case 'Units':
+          const units = ['bag', 'bunch', 'cs', 'dozen', 'ea', 'g', 'kg', 'lb', 'oz', 'pack', 'tub']
+          items = []
+          items = items.concat(_.map(units, (unit, idx) => {
+            return {
+              key: idx,
+              value: unit,
+              label: unit,
+            }
+          }))
+          selectedValue = this.state.selectedUnits
+          break;
+
+        default:
+          break;
+      }
+    }
+
+
 
     return (
       <View>
@@ -127,7 +186,7 @@ class ProductForm extends React.Component {
               value={this.state.name}
               placeholder='Name'
               onChange={(e) => {
-                this.setState({name: e.nativeEvent.text}, () => {
+                this.setState({selectedName: e.nativeEvent.text}, () => {
                   console.log('select name')
                   // this.checkValidForm();
                 });
@@ -136,13 +195,38 @@ class ProductForm extends React.Component {
           </View>
           {fields}
         </ScrollView>
-        {modal}
+        <PickerModal
+          modalVisible={this.state.modalVisible}
+          headerText={`Select ${this.state.fieldPicker}`}
+          leftButtonText={leftButtonText}
+          items={items}
+          selectedValue={selectedValue}
+          onHideModal={() => {
+            this.setState({
+              modalVisible: false,
+            })
+          }}
+          onSubmitValue={(value) => {
+            // console.log(value)
+            const updateState = {
+              modalVisible: false,
+            }
+            const selectedValueId = `selected${this.state.fieldPicker}`
+            if(this.state.hasOwnProperty(selectedValueId) === true) {
+              let selectedValue = null
+              if(value !== null && value.hasOwnProperty('selectedValue') === true){
+                selectedValue = value.selectedValue
+              }
+              updateState[selectedValueId] = selectedValue
+            }
+
+            this.setState(updateState)
+          }}
+        />
       </View>
     );
   }
 };
-
-const window = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -159,8 +243,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   inputTitle: {
-    // // v- this with looks good on iPhone 6 plus and 4s
-    // width: window.width * .54,
     flex: 1,
     fontFamily: 'OpenSans',
     fontWeight: 'bold',
