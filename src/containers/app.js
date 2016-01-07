@@ -268,6 +268,51 @@ class App extends React.Component {
     return isAuthenticated;
   }
 
+  onCreateProduct(route, nav) {
+    const sceneState = Object.assign({}, this.state.sceneState);
+    sceneState.ProductForm.submitReady = false;
+    sceneState.ProductForm.productId = null
+    sceneState.ProductForm.productAttributes = {}
+    this.setState({
+      sceneState: sceneState,
+      category: null,
+      product: null,
+    }, () => {
+      nav.push({
+        name: 'ProductForm'
+      })
+    })
+  }
+
+  onProductEdit(route, nav, product) {
+    let productCategory = null
+    Object.keys(this.state.currentTeamInfo.categories).forEach((categoryId) => {
+      const category = this.state.currentTeamInfo.categories[categoryId]
+      if(category.products.indexOf(product.id) !== -1){
+        productCategory = category
+      }
+    })
+    const sceneState = Object.assign({}, this.state.sceneState);
+    sceneState.ProductForm.submitReady = true;
+    sceneState.ProductForm.productId = product.id
+    sceneState.ProductForm.productAttributes = {
+      name: product.name,
+      purveyors: product.purveyors,
+      amount: product.amount,
+      unit: product.unit,
+      categoryId: productCategory.id,
+    }
+    this.setState({
+      sceneState: sceneState,
+      category: productCategory,
+      product: product,
+    }, () => {
+      nav.push({
+        name: 'ProductForm'
+      })
+    })
+  }
+
   getScene(route, nav) {
     const { session, teams, messages, dispatch, purveyors, products, categories, errors, connect } = this.props;
 
@@ -565,19 +610,7 @@ class App extends React.Component {
             onAddPurveyor: (name) => {
               dispatch(actions.addPurveyor(name))
             },
-            onCreateProduct: () => {
-              const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductForm.submitReady = false;
-              sceneState.ProductForm.productId = null
-              sceneState.ProductForm.productAttributes = {}
-              this.setState({
-                product: null
-              }, () => {
-                nav.push({
-                  name: 'ProductForm'
-                })
-              })
-            },
+            onCreateProduct: this.onCreateProduct.bind(this, route, nav),
           },
         }
       case 'PurveyorView':
@@ -601,25 +634,7 @@ class App extends React.Component {
                 dispatch(actions.deleteProduct(productId));
               }, 25)()
             },
-            onProductEdit: (product) => {
-              const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductForm.submitReady = true;
-              sceneState.ProductForm.productId = product.id
-              sceneState.ProductForm.productAttributes = {
-                name: product.name,
-                purveyors: product.purveyors,
-                amount: product.amount,
-                unit: product.unit,
-                categoryId: this.state.category.id,
-              }
-              this.setState({
-                product: product
-              }, () => {
-                nav.push({
-                  name: 'ProductForm'
-                })
-              })
-            },
+            onProductEdit: this.onProductEdit.bind(this, route, nav),
             onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
                 switch(cartAction){
@@ -702,19 +717,7 @@ class App extends React.Component {
                 })
               })
             },
-            onCreateProduct: () => {
-              const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductForm.submitReady = false;
-              sceneState.ProductForm.productId = null
-              sceneState.ProductForm.productAttributes = {}
-              this.setState({
-                product: null
-              }, () => {
-                nav.push({
-                  name: 'ProductForm'
-                })
-              })
-            },
+            onCreateProduct: this.onCreateProduct.bind(this, route, nav),
           },
         }
       case 'CategoryView':
@@ -734,25 +737,7 @@ class App extends React.Component {
                 dispatch(actions.deleteProduct(productId));
               }, 25)()
             },
-            onProductEdit: (product) => {
-              const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductForm.submitReady = true;
-              sceneState.ProductForm.productId = product.id
-              sceneState.ProductForm.productAttributes = {
-                name: product.name,
-                purveyors: product.purveyors,
-                amount: product.amount,
-                unit: product.unit,
-                categoryId: this.state.category.id,
-              }
-              this.setState({
-                product: product
-              }, () => {
-                nav.push({
-                  name: 'ProductForm'
-                })
-              })
-            },
+            onProductEdit: this.onProductEdit.bind(this, route, nav),
             onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
                 switch(cartAction){
@@ -804,43 +789,13 @@ class App extends React.Component {
             cartItems: this.state.currentTeamInfo.cartItems['cart'],
             purveyors: this.state.currentTeamInfo.purveyors,
             categories: this.state.currentTeamInfo.categories,
-            onCreateProduct: () => {
-              const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductForm.submitReady = false;
-              sceneState.ProductForm.productId = null
-              sceneState.ProductForm.productAttributes = {}
-              this.setState({
-                product: null
-              }, () => {
-                nav.push({
-                  name: 'ProductForm'
-                })
-              })
-            },
+            onCreateProduct: this.onCreateProduct.bind(this, route, nav),
             onProductDelete: (productId) => {
               _.debounce(() => {
                 dispatch(actions.deleteProduct(productId));
               }, 25)()
             },
-            onProductEdit: (product) => {
-              const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductForm.submitReady = true;
-              sceneState.ProductForm.productId = product.id
-              sceneState.ProductForm.productAttributes = {
-                name: product.name,
-                purveyors: product.purveyors,
-                amount: product.amount,
-                unit: product.unit,
-                categoryId: this.state.category.id,
-              }
-              this.setState({
-                product: product
-              }, () => {
-                nav.push({
-                  name: 'ProductForm'
-                })
-              })
-            },
+            onProductEdit: this.onProductEdit.bind(this, route, nav),
             onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
                 switch(cartAction){
