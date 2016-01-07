@@ -4,6 +4,7 @@ const Sizes = {
   descriptionBorderRadius: 8,
   progressBorderRadius: 10,
   modalInnerBorderRadius: 10,
+  modalOuterMargin: 20,
 }
 
 export default Sizes

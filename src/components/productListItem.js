@@ -183,10 +183,10 @@ class ProductListItem extends React.Component {
       let categoryInfo = null
       let productInfoSeparator = null
       let selectedStyle = []
-      let productDetailsColor = '#999'
+      let productDetailsColor = Colors.greyText
       if(this.state.added === true){
         selectedStyle = styles.selectedRow
-        productDetailsColor = '#000'
+        productDetailsColor = 'black'
       }
 
       if(purveyors !== null){
@@ -238,18 +238,25 @@ class ProductListItem extends React.Component {
               </View>
             </ProductToggle>
           </View>
-          <View style={styles.quantityContainer}>
+          <View style={styles.outerQuantityContainer}>
             { this.state.added === true ?
-              <TouchableHighlight
-                onPress={() => {
-                  this.setState({
-                    editQuantity: true
-                  })
-                }}
-                underlayColor='transparent'
-              >
-                <Text style={styles.quantity}>{`${this.state.quantity}x`}</Text>
-              </TouchableHighlight>
+              <View style={styles.innerQuantityContainer}>
+                <TouchableHighlight
+                  onPress={() => {
+                    this.setState({
+                      editQuantity: true
+                    })
+                  }}
+                  underlayColor='transparent'
+                >
+                  <Text style={styles.quantity}>{`${this.state.quantity}x`}</Text>
+                </TouchableHighlight>
+                { product.par && product.par !== '' ?
+                  <Text style={styles.par}>Par: {product.par}</Text>
+                  :
+                  <View/>
+                }
+              </View>
               : <Text style={styles.quantity}>{''}</Text>
             }
           </View>
@@ -290,6 +297,17 @@ class ProductListItem extends React.Component {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalInnerContainer}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalHeaderText}>
+                  Select Amount
+                </Text>
+                {/*<TouchableHighlight
+                  onPress={() => { this.setState({ editQuantity: false }) }}
+                  underlayColor='transparent'
+                >
+                  <Icon name='material|close' size={25} color='#999' style={styles.iconClose} />
+                </TouchableHighlight>*/}
+              </View>
               <PickerIOS
                 selectedValue={this.state.quantity}
                 onValueChange={(quantity) => {
@@ -297,7 +315,7 @@ class ProductListItem extends React.Component {
                     quantity: quantity,
                   })
                 }}
-                style={{width: 260, alignSelf: 'center'}}
+                style={styles.picker}
               >
                 {
                   quantities.map((n, idx) => {
@@ -305,7 +323,6 @@ class ProductListItem extends React.Component {
                   })
                 }
               </PickerIOS>
-              <View style={styles.separator} />
               <TouchableHighlight
                 onPress={() => {
                   this.setState({
@@ -338,7 +355,7 @@ class ProductListItem extends React.Component {
   }
 }
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     paddingTop: 3,
     paddingBottom: 3,
@@ -358,13 +375,22 @@ let styles = StyleSheet.create({
     marginTop: 7,
     marginBottom: 7,
   },
-  quantityContainer: {
-    flex: 1.5,
+  main: {
+    flex: 5,
+  },
+  outerQuantityContainer: {
+    flex: 1,
+  },
+  innerQuantityContainer: {
+    alignItems: 'center',
   },
   quantity: {
     fontSize: 20,
     textAlign: 'right',
-    paddingRight: 5
+    paddingRight: 5,
+  },
+  par: {
+    fontSize: 10,
   },
   row: {
     borderRadius: Sizes.rowBorderRadius,
@@ -378,9 +404,6 @@ let styles = StyleSheet.create({
   selectedRow: {
     backgroundColor: Colors.lightBlue
   },
-  main: {
-    flex: 5,
-  },
   productText: {
     color: 'black',
     fontSize: 15
@@ -392,9 +415,36 @@ let styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)'
   },
   modalInnerContainer: {
+    alignItems: 'center',
     borderRadius: Sizes.modalInnerBorderRadius,
     backgroundColor: '#fff',
     padding: 20,
+  },
+  modalHeader: {
+    width: 260,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5,
+  },
+  modalHeaderText: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 20,
+    color: Colors.lightBlue,
+  },
+  iconClose: {
+    width: 15,
+    height: 15,
+    position: 'absolute',
+    bottom: 10,
+  },
+  picker: {
+    width: 260,
+    alignSelf: 'center',
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
   },
   modalButtonText: {
     textAlign: 'center',

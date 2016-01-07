@@ -11,6 +11,7 @@ import Colors from '../utilities/colors';
 import Urls from '../resources/urls';
 import * as actions from '../actions';
 import * as Components from '../components';
+import * as TextComponents from '../components/text';
 import Dimensions from 'Dimensions';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import PushManager from 'react-native-remote-push/RemotePushIOS';
@@ -265,6 +266,51 @@ class App extends React.Component {
       isAuthenticated = true;
     }
     return isAuthenticated;
+  }
+
+  onCreateProduct(route, nav) {
+    const sceneState = Object.assign({}, this.state.sceneState);
+    sceneState.ProductForm.submitReady = false;
+    sceneState.ProductForm.productId = null
+    sceneState.ProductForm.productAttributes = {}
+    this.setState({
+      sceneState: sceneState,
+      category: null,
+      product: null,
+    }, () => {
+      nav.push({
+        name: 'ProductForm'
+      })
+    })
+  }
+
+  onProductEdit(route, nav, product) {
+    let productCategory = null
+    Object.keys(this.state.currentTeamInfo.categories).forEach((categoryId) => {
+      const category = this.state.currentTeamInfo.categories[categoryId]
+      if(category.products.indexOf(product.id) !== -1){
+        productCategory = category
+      }
+    })
+    const sceneState = Object.assign({}, this.state.sceneState);
+    sceneState.ProductForm.submitReady = true;
+    sceneState.ProductForm.productId = product.id
+    sceneState.ProductForm.productAttributes = {
+      name: product.name,
+      purveyors: product.purveyors,
+      amount: product.amount,
+      unit: product.unit,
+      categoryId: productCategory.id,
+    }
+    this.setState({
+      sceneState: sceneState,
+      category: productCategory,
+      product: product,
+    }, () => {
+      nav.push({
+        name: 'ProductForm'
+      })
+    })
   }
 
   getScene(route, nav) {
@@ -564,19 +610,7 @@ class App extends React.Component {
             onAddPurveyor: (name) => {
               dispatch(actions.addPurveyor(name))
             },
-            onCreateProduct: () => {
-              const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductForm.submitReady = false;
-              sceneState.ProductForm.productId = null
-              sceneState.ProductForm.productAttributes = {}
-              this.setState({
-                product: null
-              }, () => {
-                nav.push({
-                  name: 'ProductForm'
-                })
-              })
-            },
+            onCreateProduct: this.onCreateProduct.bind(this, route, nav),
           },
         }
       case 'PurveyorView':
@@ -600,25 +634,7 @@ class App extends React.Component {
                 dispatch(actions.deleteProduct(productId));
               }, 25)()
             },
-            onProductEdit: (product) => {
-              const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductForm.submitReady = true;
-              sceneState.ProductForm.productId = product.id
-              sceneState.ProductForm.productAttributes = {
-                name: product.name,
-                purveyors: product.purveyors,
-                amount: product.amount,
-                unit: product.unit,
-                categoryId: this.state.category.id,
-              }
-              this.setState({
-                product: product
-              }, () => {
-                nav.push({
-                  name: 'ProductForm'
-                })
-              })
-            },
+            onProductEdit: this.onProductEdit.bind(this, route, nav),
             onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
                 switch(cartAction){
@@ -701,19 +717,7 @@ class App extends React.Component {
                 })
               })
             },
-            onCreateProduct: () => {
-              const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductForm.submitReady = false;
-              sceneState.ProductForm.productId = null
-              sceneState.ProductForm.productAttributes = {}
-              this.setState({
-                product: null
-              }, () => {
-                nav.push({
-                  name: 'ProductForm'
-                })
-              })
-            },
+            onCreateProduct: this.onCreateProduct.bind(this, route, nav),
           },
         }
       case 'CategoryView':
@@ -733,25 +737,7 @@ class App extends React.Component {
                 dispatch(actions.deleteProduct(productId));
               }, 25)()
             },
-            onProductEdit: (product) => {
-              const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductForm.submitReady = true;
-              sceneState.ProductForm.productId = product.id
-              sceneState.ProductForm.productAttributes = {
-                name: product.name,
-                purveyors: product.purveyors,
-                amount: product.amount,
-                unit: product.unit,
-                categoryId: this.state.category.id,
-              }
-              this.setState({
-                product: product
-              }, () => {
-                nav.push({
-                  name: 'ProductForm'
-                })
-              })
-            },
+            onProductEdit: this.onProductEdit.bind(this, route, nav),
             onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
                 switch(cartAction){
@@ -803,43 +789,13 @@ class App extends React.Component {
             cartItems: this.state.currentTeamInfo.cartItems['cart'],
             purveyors: this.state.currentTeamInfo.purveyors,
             categories: this.state.currentTeamInfo.categories,
-            onCreateProduct: () => {
-              const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductForm.submitReady = false;
-              sceneState.ProductForm.productId = null
-              sceneState.ProductForm.productAttributes = {}
-              this.setState({
-                product: null
-              }, () => {
-                nav.push({
-                  name: 'ProductForm'
-                })
-              })
-            },
+            onCreateProduct: this.onCreateProduct.bind(this, route, nav),
             onProductDelete: (productId) => {
               _.debounce(() => {
                 dispatch(actions.deleteProduct(productId));
               }, 25)()
             },
-            onProductEdit: (product) => {
-              const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.ProductForm.submitReady = true;
-              sceneState.ProductForm.productId = product.id
-              sceneState.ProductForm.productAttributes = {
-                name: product.name,
-                purveyors: product.purveyors,
-                amount: product.amount,
-                unit: product.unit,
-                categoryId: this.state.category.id,
-              }
-              this.setState({
-                product: product
-              }, () => {
-                nav.push({
-                  name: 'ProductForm'
-                })
-              })
-            },
+            onProductEdit: this.onProductEdit.bind(this, route, nav),
             onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
                 switch(cartAction){
@@ -974,6 +930,7 @@ class App extends React.Component {
         return {
           component: Components.ProductForm,
           props: {
+            productCategory: this.state.category,
             product: this.state.product,
             team: this.state.currentTeamInfo.team,
             categories: this.state.currentTeamInfo.categories,
@@ -1609,18 +1566,10 @@ class App extends React.Component {
       connectionStatus = (
         <TouchableHighlight
           onPress={() => {
-            const learnMoreMsg = (
-              <View>
-                <Text style={{textAlign: 'center'}}>
-                  <Text style={{fontWeight: 'bold'}}>No Internet Connection</Text>
-                </Text>
-                <Text style={{textAlign: 'center', marginTop: 10}}>
-                  You can still add Order Guide products to your cart, but please reconnect before submitting orders or sending messages.
-                </Text>
-              </View>
-            )
             this.setState({
-              genericModalMessage: learnMoreMsg,
+              genericModalMessage: (
+                <TextComponents.LearnMoreMessage />
+              ),
               showGenericModal: true,
             })
           }}
