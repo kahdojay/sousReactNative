@@ -975,6 +975,7 @@ class App extends React.Component {
         return {
           component: Components.ProductForm,
           props: {
+            productCategory: this.state.category,
             product: this.state.product,
             team: this.state.currentTeamInfo.team,
             categories: this.state.currentTeamInfo.categories,

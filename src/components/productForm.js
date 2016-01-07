@@ -57,11 +57,11 @@ class ProductForm extends React.Component {
       fieldPicker: null,
       fieldPickerIdx: null,
       modalVisible: false,
-      selectedName: '',
-      selectedCategory: null,
-      selectedPurveyor: null,
-      selectedAmount: null,
-      selectedUnits: null,
+      selectedName: this.props.product ? this.props.product.name : '',
+      selectedCategory: this.props.productCategory ? this.props.productCategory.id : null,
+      selectedPurveyor: this.props.product ? this.props.product.purveyors : null,
+      selectedAmount: this.props.product ? this.props.product.amount : null,
+      selectedUnits: this.props.product ? this.props.product.unit : null,
     }
     this.fields = ['Purveyor','Category','Amount','Units']
   }
@@ -173,14 +173,22 @@ class ProductForm extends React.Component {
           break;
 
         case 'Amount':
-          items = _.map(_.range(1, 501), (n, idx) => {
+          items = _.map(['1/8','1/4','1/2'], (frac, idx) => {
+            const dec = frac.split('/')
+            return {
+              key: `d-${idx}`,
+              value: parseFloat(dec[0]/dec[1]),
+              label: frac,
+            }
+          })
+          items = items.concat(_.map(_.range(1, 501), (n, idx) => {
             return {
               key: idx,
               value: n,
               label: n.toString(),
             }
-          })
-          selectedValue = this.state.selectedAmount
+          }))
+          selectedValue = parseFloat(this.state.selectedAmount)
           break;
 
         case 'Units':
