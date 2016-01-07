@@ -14,7 +14,8 @@ class ProductList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      products: null
+      products: null,
+      allowScroll: true,
     }
   }
 
@@ -120,6 +121,11 @@ class ProductList extends React.Component {
             this.props.onProductDelete(product.id)
           },
           onUpdateProductInCart: this.props.onUpdateProductInCart,
+          onAllowScroll: (allowScroll) => {
+            this.setState({
+              allowScroll: allowScroll,
+            })
+          }
         }
 
         productList.push(React.createElement(ProductListItem, props))
@@ -129,6 +135,7 @@ class ProductList extends React.Component {
       <ScrollView
         automaticallyAdjustContentInsets={false}
         keyboardShouldPersistTaps={false}
+        scrollEnabled={this.state.allowScroll}
       >
         {productList}
       </ScrollView>
