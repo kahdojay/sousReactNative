@@ -75,16 +75,6 @@ class ProductForm extends React.Component {
     })
   }
 
-  // submitPicker() {
-  //   this.setState({
-  //     modalVisible: false,
-  //     fieldPicker: null,
-  //     fieldPickerIdx: null,
-  //   })
-  //
-  //   this.checkValidForm();
-  // }
-
   checkValidForm(){
     if (
       this.state.selectedPurveyor.length > 0 &&
@@ -105,8 +95,6 @@ class ProductForm extends React.Component {
       this.props.onProductNotReady();
     }
   }
-
-  // submit form?
 
   render() {
     let fields = []
@@ -193,8 +181,6 @@ class ProductForm extends React.Component {
             }
           })
           selectedValue = this.state.selectedAmount
-          // selectedValue = items[1].value
-          // leftButtonText = `Update to {{value}}`
           break;
 
         case 'Units':
@@ -228,8 +214,9 @@ class ProductForm extends React.Component {
               value={this.state.selectedName}
               placeholder='Name'
               onChange={(e) => {
-                this.setState({selectedName: e.nativeEvent.text}, () => {
-                  // console.log('select name')
+                this.setState({
+                  selectedName: e.nativeEvent.text,
+                }, () => {
                   this.checkValidForm();
                 });
               }}
