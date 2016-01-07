@@ -141,6 +141,7 @@ const styles = StyleSheet.create({
   },
   modalHeaderText: {
     flex: 1,
+    fontFamily: 'OpenSans',
     textAlign: 'center',
     fontSize: 20,
     color: Colors.lightBlue,
@@ -164,6 +165,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     flex: 1,
+    fontFamily: 'OpenSans',
     fontWeight: 'bold',
     padding: 16,
     textAlign: 'center',

@@ -22,9 +22,15 @@ class PickerFieldRow extends React.Component {
   }
 
   render() {
-    let inputFieldLabel = `Select ${this.props.field}`
+    let selectFieldText = `Select ${this.props.field}`
+    if(this.props.selectFieldText){
+      selectFieldText = this.props.selectFieldText
+    }
     if(this.props.selectedValue !== null){
-      inputFieldLabel = this.props.selectedValue
+      selectFieldText = this.props.selectedValue.toString()
+      if(selectFieldText.length > 20){
+        selectFieldText = selectFieldText.substr(0,20) + '...'
+      }
     }
     return (
       <View style={styles.inputContainer}>
@@ -35,7 +41,7 @@ class PickerFieldRow extends React.Component {
           style={styles.inputFieldContainer}
         >
           <Text style={styles.inputField}>
-            {inputFieldLabel}
+            {selectFieldText}
           </Text>
         </TouchableHighlight>
       </View>
@@ -69,40 +75,76 @@ class ProductForm extends React.Component {
     })
   }
 
-  submitPicker() {
-    this.setState({
-      modalVisible: false,
-      fieldPicker: null,
-      fieldPickerIdx: null,
-    })
+  // submitPicker() {
+  //   this.setState({
+  //     modalVisible: false,
+  //     fieldPicker: null,
+  //     fieldPickerIdx: null,
+  //   })
+  //
+  //   this.checkValidForm();
+  // }
 
-    this.checkValidForm();
+  checkValidForm(){
+    if (
+      this.state.selectedPurveyor.length > 0 &&
+      this.state.selectedCategory &&
+      this.state.selectedAmount &&
+      this.state.selectedUnits &&
+      this.state.selectedName !== ''
+    ) {
+      const productAttributes = {
+        name: this.state.selectedName,
+        purveyors: this.state.selectedPurveyor,
+        amount: this.state.selectedAmount,
+        unit: this.state.selectedUnits,
+        categoryId: this.state.selectedCategory,
+      }
+      this.props.onProcessProduct(productAttributes);
+    } else {
+      this.props.onProductNotReady();
+    }
   }
-
-  checkValidForm(){}
 
   // submit form?
 
   render() {
     let fields = []
     let items = []
+    let headerText = `Select ${this.state.fieldPicker}`
     let leftButtonText = 'Update'
     let selectedValue = null
+    let pickerType = 'PickerIOS'
 
     this.fields.forEach((field, idx) => {
       let selectedValue = null
+      let selectFieldText = `Select ${field}`
       const selectedValueId = `selected${field}`
+
+      if(field === 'Purveyor'){
+        selectFieldText = `Select ${field}(s)`
+      }
+
       if(this.state.hasOwnProperty(selectedValueId) === true) {
         selectedValue = this.state[selectedValueId]
+        if(field === 'Purveyor' && selectedValue !== null){
+          const purveyorIds = this.state[selectedValueId]
+          selectedValue = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Selected`
+          if(purveyorIds.length === 0){
+            selectedValue = null
+          }
+        }
         if(field === 'Category'){
           const categoryId = this.state[selectedValueId]
-          selectedValue = this.props.categories[categoryId].name
+          selectedValue = categoryId ? this.props.categories[categoryId].name : null
         }
       }
+
       fields.push(
         <PickerFieldRow
           key={field}
           field={field}
+          selectFieldText={selectFieldText}
           selectedValue={selectedValue}
           onShowFieldPicker={() => {
             this.showFieldPicker(field, idx)
@@ -117,36 +159,39 @@ class ProductForm extends React.Component {
       switch (this.state.fieldPicker) {
 
         case 'Purveyor':
+          const purveyors = _.sortBy(this.props.purveyors, 'name')
+          items = _.map(purveyors, (purveyor, idx) => {
+            return {
+              key: purveyor.id,
+              value: purveyor.id,
+              label: purveyor.name,
+            }
+          })
+          headerText = `Select ${this.state.fieldPicker}(s)`
           selectedValue = this.state.selectedPurveyor
+          pickerType = 'ListView'
           break;
 
         case 'Category':
           const categories = _.sortBy(this.props.categories, 'name')
-          items = []
-          items = items.concat(_.map(categories, (category, idx) => {
+          items = _.map(categories, (category, idx) => {
             return {
               key: category.id,
               value: category.id,
               label: category.name,
             }
-          }))
+          })
           selectedValue = this.state.selectedCategory
           break;
 
         case 'Amount':
-          items = []
-          // items.push({
-          //   key: null,
-          //   value: null,
-          //   label: 'Select Amount',
-          // })
-          items = items.concat(_.map(_.range(1, 501), (n, idx) => {
+          items = _.map(_.range(1, 501), (n, idx) => {
             return {
               key: idx,
               value: n,
               label: n.toString(),
             }
-          }))
+          })
           selectedValue = this.state.selectedAmount
           // selectedValue = items[1].value
           // leftButtonText = `Update to {{value}}`
@@ -154,14 +199,13 @@ class ProductForm extends React.Component {
 
         case 'Units':
           const units = ['bag', 'bunch', 'cs', 'dozen', 'ea', 'g', 'kg', 'lb', 'oz', 'pack', 'tub']
-          items = []
-          items = items.concat(_.map(units, (unit, idx) => {
+          items = _.map(units, (unit, idx) => {
             return {
               key: idx,
               value: unit,
               label: unit,
             }
-          }))
+          })
           selectedValue = this.state.selectedUnits
           break;
 
@@ -170,10 +214,8 @@ class ProductForm extends React.Component {
       }
     }
 
-
-
     return (
-      <View>
+      <View style={{flex:1}}>
         <ScrollView
           automaticallyAdjustContentInsets={false}
           style={styles.scrollView}
@@ -183,12 +225,12 @@ class ProductForm extends React.Component {
             <TextInput
               ref='name'
               style={[styles.inputField, {flex: 3}]}
-              value={this.state.name}
+              value={this.state.selectedName}
               placeholder='Name'
               onChange={(e) => {
                 this.setState({selectedName: e.nativeEvent.text}, () => {
-                  console.log('select name')
-                  // this.checkValidForm();
+                  // console.log('select name')
+                  this.checkValidForm();
                 });
               }}
             />
@@ -197,9 +239,10 @@ class ProductForm extends React.Component {
         </ScrollView>
         <PickerModal
           modalVisible={this.state.modalVisible}
-          headerText={`Select ${this.state.fieldPicker}`}
+          headerText={headerText}
           leftButtonText={leftButtonText}
           items={items}
+          pickerType={pickerType}
           selectedValue={selectedValue}
           onHideModal={() => {
             this.setState({
@@ -207,7 +250,6 @@ class ProductForm extends React.Component {
             })
           }}
           onSubmitValue={(value) => {
-            // console.log(value)
             const updateState = {
               modalVisible: false,
             }
@@ -220,7 +262,9 @@ class ProductForm extends React.Component {
               updateState[selectedValueId] = selectedValue
             }
 
-            this.setState(updateState)
+            this.setState(updateState, () => {
+              this.checkValidForm();
+            })
           }}
         />
       </View>
@@ -253,7 +297,7 @@ const styles = StyleSheet.create({
     color: Colors.greyText,
   },
   inputFieldContainer: {
-    flex: 1,
+    flex: 3,
   },
   inputField: {
     padding: 8,
@@ -263,47 +307,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     textAlign: 'right',
-  },
-  pickerContainer: {
-    paddingBottom: 20,
-    marginBottom: 20,
-  },
-  picker: {
-    width: 260,
-    alignSelf: 'center',
-    borderTopColor: Colors.separatorColor,
-    borderTopWidth: 1,
-    borderBottomColor: Colors.separatorColor,
-    borderBottomWidth: 1,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
-  },
-  modalInnerContainer: {
-    alignItems: 'center',
-    borderRadius: Sizes.modalInnerBorderRadius,
-    backgroundColor: '#fff',
-    padding: 20,
-  },
-  modalHeader: {
-    width: 260,
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 5,
-  },
-  modalHeaderText: {
-    flex: 1,
-    textAlign: 'center',
-    fontSize: 20,
-    color: Colors.lightBlue,
-  },
-  modalButtonText: {
-    textAlign: 'center',
-    color: Colors.lightBlue,
-    paddingTop: 15,
   },
 });
 

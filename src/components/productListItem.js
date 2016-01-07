@@ -183,10 +183,10 @@ class ProductListItem extends React.Component {
       let categoryInfo = null
       let productInfoSeparator = null
       let selectedStyle = []
-      let productDetailsColor = '#999'
+      let productDetailsColor = Colors.greyText
       if(this.state.added === true){
         selectedStyle = styles.selectedRow
-        productDetailsColor = '#000'
+        productDetailsColor = 'black'
       }
 
       if(purveyors !== null){
@@ -251,7 +251,7 @@ class ProductListItem extends React.Component {
                 >
                   <Text style={styles.quantity}>{`${this.state.quantity}x`}</Text>
                 </TouchableHighlight>
-                { product.par && product.par !== '' ? 
+                { product.par && product.par !== '' ?
                   <Text style={styles.par}>Par: {product.par}</Text>
                   :
                   <View/>
@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
     bottom: 10,
   },
   picker: {
-    width: 260, 
+    width: 260,
     alignSelf: 'center',
     borderTopColor: Colors.separatorColor,
     borderTopWidth: 1,
