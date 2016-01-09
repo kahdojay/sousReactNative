@@ -57,9 +57,7 @@ class Signup extends React.Component {
         }
       }
     }
-    setTimeout(() => {
-      this.setState(newState)
-    }, 2000)
+    this.setState(newState)
   }
 
   setFetching(submitting) {

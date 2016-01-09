@@ -4,7 +4,6 @@ import CategoryIndexRow from './categoryIndexRow';
 import Colors from '../utilities/colors';
 
 const {
-  ActivityIndicatorIOS,
   Image,
   PropTypes,
   ScrollView,

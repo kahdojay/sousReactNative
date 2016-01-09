@@ -16,6 +16,7 @@ import {
   OFFLINE_REMOVE_QUEUE,
   OFFLINE_NOOP,
   OFFLINE_PROCESSING,
+  RECEIVE_SETTINGS_CONFIG,
 } from './actionTypes'
 
 export default function ConnectActions(ddpClient) {
@@ -351,6 +352,7 @@ export default function ConnectActions(ddpClient) {
         const {connect, session, teams} = getState()
         clearTimeout(connect.timeoutId)
         dispatch(connectionStatusConnected(0))
+        dispatch(getSettingsConfig())
         // console.log('TEAMS', teams);
         // console.log('TEAM IDS', teamIds);
         const teamIds = _.pluck(teams.data, 'id')
@@ -468,9 +470,21 @@ export default function ConnectActions(ddpClient) {
     return (dispatch) => {
       // console.log('Sending email: ', requestAttributes);
       dispatch(ddpCall('sendEmail', [requestAttributes]))
-      return {
+      return dispatch({
         type: SEND_EMAIL
+      })
+    }
+  }
+
+  function getSettingsConfig() {
+    return (dispatch) => {
+      const settingsConfigCb = (err, settingsConfig) => {
+        dispatch({
+          type: RECEIVE_SETTINGS_CONFIG,
+          settingsConfig: settingsConfig,
+        })
       }
+      dispatch(ddpCall('getSettingsConfig', [], settingsConfigCb))
     }
   }
 
@@ -489,6 +503,7 @@ export default function ConnectActions(ddpClient) {
     OFFLINE_REMOVE_QUEUE,
     OFFLINE_NOOP,
     OFFLINE_PROCESSING,
+    RECEIVE_SETTINGS_CONFIG,
     // 'connectSingleChannel': connectSingleChannel,
     // 'connectChannels': connectChannels,
     'ddpCall': ddpCall,
@@ -501,5 +516,6 @@ export default function ConnectActions(ddpClient) {
     'connectDDPTimeoutId': connectDDPTimeoutId,
     'subscribeDDP': subscribeDDP,
     'sendEmail': sendEmail,
+    'getSettingsConfig': getSettingsConfig,
   }
 }

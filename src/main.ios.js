@@ -8,6 +8,7 @@ import App from './containers/app';
 import * as actions from './actions';
 import reducers from './reducers';
 import Colors from './utilities/colors';
+import Loading from './components/loading';
 
 const {
   AppRegistry,
@@ -77,12 +78,7 @@ class SousAppBase extends React.Component {
   render() {
     if (this.state.rehydrated === false) {
       return (
-        <View style={styles.container}>
-          <View style={styles.logoContainer}>
-            <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-          </View>
-          <Text style={styles.connecting}>LOADING</Text>
-        </View>
+        <Loading />
       )
     } else {
       return (

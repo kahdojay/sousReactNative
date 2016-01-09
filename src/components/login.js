@@ -3,13 +3,13 @@ import React from 'react-native';
 import Colors from '../utilities/colors';
 
 const {
+  ActivityIndicatorIOS,
+  Image,
   StyleSheet,
-  View,
   Text,
   TextInput,
-  Image,
   TouchableHighlight,
-  ActivityIndicatorIOS,
+  View,
 } = React;
 
 class Login extends React.Component {
@@ -39,7 +39,7 @@ class Login extends React.Component {
     let fetching =  (
       <ActivityIndicatorIOS
         animating={true}
-        color={'#808080'}
+        color={Colors.greyText}
         style={styles.activity}
         size={'large'}
       />

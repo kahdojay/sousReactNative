@@ -1,7 +1,7 @@
 import React from 'react-native';
 import FeedListItem from './feedListItem';
 import AddMessageForm from './addMessageForm';
-import { mainBackgroundColor, darkBlue } from '../utilities/colors';
+import Colors from '../utilities/colors';
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
 let SideMenu = require('react-native-side-menu');
 import Menu from './menu';
@@ -200,7 +200,7 @@ class Feed extends React.Component {
         <ActivityIndicatorIOS
           key={'loading'}
           animating={true}
-          color={'#808080'}
+          color={Colors.greyText}
           style={styles.activity}
           size={'large'}
         />

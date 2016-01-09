@@ -11,6 +11,7 @@ import {
   OFFLINE_REMOVE_QUEUE,
   OFFLINE_NOOP,
   OFFLINE_PROCESSING,
+  RECEIVE_SETTINGS_CONFIG,
 } from '../actions'
 
 const initialState = {
@@ -31,7 +32,8 @@ const initialState = {
       token: null,
       uuid: null
     }
-  }
+  },
+  settingsConfig: {},
 }
 
 function offline(state = initialState.offline, action) {
@@ -74,6 +76,17 @@ function offline(state = initialState.offline, action) {
     }
 
   case OFFLINE_NOOP:
+  default:
+    return state;
+  }
+}
+
+function settingsConfig(state = initialState.settingsConfig, action) {
+  switch (action.type) {
+
+  case RECEIVE_SETTINGS_CONFIG:
+    return Object.assign({}, action.settingsConfig);
+
   default:
     return state;
   }
@@ -131,6 +144,7 @@ function connect(state = initialState.connect, action) {
 const connectReducers = {
   'connect': connect,
   'offline': offline,
+  'settingsConfig': settingsConfig,
 }
 
 export default connectReducers
