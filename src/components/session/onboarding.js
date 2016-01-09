@@ -22,6 +22,7 @@ class Slide extends React.Component {
 
   render() {
     const {text, uri} = this.props;
+    console.log(uri)
     return (
       <View style={styles.slide}>
         <View style={styles.slideTextContainer}>
@@ -142,11 +143,11 @@ const styles = StyleSheet.create({
   },
   slideImageContainer: {
     flex: 1,
-    justifyContent: 'center',
     overflow: 'hidden',
   },
   slideImage: {
-    backgroundColor: 'teal',
+    width: 320,
+    height: (heightDivisions*3),
   },
   bottomContainer: {
     flex: 1,
