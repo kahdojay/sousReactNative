@@ -5,6 +5,7 @@ import Sizes from '../utilities/sizes';
 import Colors from '../utilities/colors';
 import messageUtils from '../utilities/message';
 import moment from 'moment';
+import Swipeout from 'react-native-swipeout';
 
 const {
   View,
@@ -58,37 +59,55 @@ class TeamIndexRow extends React.Component {
       changeColor = Colors.disabled
     }
 
+    const buttons = [{
+      backgroundColor: 'transparent',
+      component: (
+        <Icon name='material|account' size={30} color={Colors.lightBlue} style={styles.iconRemove}>
+          <Icon name='material|close' size={16} color={Colors.lightBlue} style={{width: 15, height: 15, marginTop: 15, marginLeft: 7,}} />
+        </Icon>
+      ),
+      onPress: () => {
+        this.props.onLeaveTeam()
+      }
+    }]
+
     return (
-      <TouchableOpacity
-        onPress={() => {
-          if(this.state.enabled){
-            this.props.onPress()
-          }
-        }}
-        style={styles.row}
-        activeOpacity={(this.state.enabled) ? .5 : 1}
+      <Swipeout
+        right={buttons}
+        close={true}
+        backgroundColor={Colors.mainBackgroundColor}
       >
-        <View style={styles.textProgressArrowContainer}>
-          <View
-            style={styles.textProgressContainer} >
+        <TouchableOpacity
+          onPress={() => {
+            if(this.state.enabled){
+              this.props.onPress()
+            }
+          }}
+          style={styles.row}
+          activeOpacity={(this.state.enabled) ? .5 : 1}
+        >
+          <View style={styles.textProgressArrowContainer}>
             <View
-              style={styles.teamInfo} >
-              <View style={styles.teamTextContainer}>
-                <Text style={styles.rowText}>{this.props.team.name}</Text>
-                <Text style={styles.memberCount}>{memberCount} members</Text>
+              style={styles.textProgressContainer} >
+              <View
+                style={styles.teamInfo} >
+                <View style={styles.teamTextContainer}>
+                  <Text style={styles.rowText}>{this.props.team.name}</Text>
+                  <Text style={styles.memberCount}>{memberCount} members</Text>
+                </View>
+                <Text style={styles.messagePreview}>
+                  {mostRecentMessage}
+                </Text>
               </View>
-              <Text style={styles.messagePreview}>
-                {mostRecentMessage}
-              </Text>
             </View>
+            { this.props.selected === false ?
+              <Icon name='material|chevron-right' size={30} color={changeColor} style={styles.iconArrow}/>
+            :
+              <Icon name='material|check' size={30} color={selectedColor} style={styles.iconArrow}/>
+            }
           </View>
-          { this.props.selected === false ?
-            <Icon name='material|chevron-right' size={30} color={changeColor} style={styles.iconArrow}/>
-          :
-            <Icon name='material|check' size={30} color={selectedColor} style={styles.iconArrow}/>
-          }
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </Swipeout>
     );
   }
 }
@@ -153,6 +172,15 @@ const styles = StyleSheet.create({
   iconArrow: {
     width: 50,
     height: 50,
+  },
+  iconRemove: {
+    flex: 1,
+    alignSelf: 'center',
+    width: 54,
+    height: 30,
+    marginLeft: 2,
+    marginTop: 7,
+    marginBottom: 7,
   },
 })
 

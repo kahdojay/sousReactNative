@@ -486,6 +486,12 @@ class App extends React.Component {
             onAddTeam: (name) => {
               dispatch(actions.addTeam(name))
             },
+            onLeaveTeam: () => {
+              // dispatch(actions.resetMessages(teamId));
+              // dispatch(actions.setCurrentTeam(teamId));
+              // dispatch(actions.updateSession({ teamId: teamId }));
+              // dispatch(actions.updateTeam())
+            },
             onBack: () => {
               this._back.bind(this)
             },
