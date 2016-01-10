@@ -22,12 +22,13 @@ class Slide extends React.Component {
 
   render() {
     const {text, uri} = this.props;
-    console.log(uri)
     return (
       <View style={styles.slide}>
-        <View style={styles.slideTextContainer}>
-          <Text style={styles.slideText}>{text}</Text>
-        </View>
+        {text ?
+          <View style={styles.slideTextContainer}>
+            <Text style={styles.slideText}>{text}</Text>
+          </View>
+        : null }
         <View style={styles.slideImageContainer}>
           <Image source={{uri: uri}} style={styles.slideImage} />
         </View>
@@ -43,6 +44,7 @@ class Onboarding extends React.Component {
     super(props)
     this.state = {
       slideIndex: 0,
+      showLastSlideButton: false,
     }
   }
 
@@ -61,6 +63,16 @@ class Onboarding extends React.Component {
     const slideState = Object.assign({}, state)
     this.setState({
       slideIndex: slideState.index,
+    }, () => {
+      const {slides, slidesConfig} = this.props.settingsConfig.onboardingSettings
+      const {lastSlideButton} = slidesConfig
+      if(slideState.index === (slides.length - 1)){
+        setTimeout(() => {
+          this.setState({
+            showLastSlideButton: true,
+          })
+        }, lastSlideButton.loadDelay || 0)
+      }
     })
   }
 
@@ -75,21 +87,27 @@ class Onboarding extends React.Component {
     }
     const {onboardingSettings} = settingsConfig
     const {slides, slidesConfig} = onboardingSettings
+    const {lastSlideButton} = slidesConfig
     const {slideIndex} = this.state
     const swiperSlides = this.getSlides(slides)
+    let btnBkgColor = Colors.gold
 
-    let lastSlideButton = null
-    if(this.state.slideIndex === (slides.length - 1)){
-      lastSlideButton = (
+    if(lastSlideButton['bkgColor']) {
+      btnBkgColor = lastSlideButton.bkgColor
+    }
+
+    let slideButton = null
+    if(this.state.showLastSlideButton === true){
+      slideButton = (
         <TouchableHighlight
-          underlayColor={Colors.gold}
+          underlayColor={btnBkgColor}
           onPress={() => {
             this.props.onNavToFeed()
           }}
           style={styles.lastSlideButton}
         >
-          <Text style={styles.lastSlideButtonText}>
-            {slidesConfig.lastSlideButtonText || 'Let\'s Get Started!'}
+          <Text style={[styles.lastSlideButtonText, {backgroundColor: btnBkgColor}]}>
+            {lastSlideButton.label || 'Let\'s Get Started!'}
           </Text>
         </TouchableHighlight>
       )
@@ -98,17 +116,19 @@ class Onboarding extends React.Component {
     return (
       <View style={styles.container}>
         <Swiper
+          autoplay={(slidesConfig.autoplay === true ? true : false)}
           loop={false}
           style={styles.swiperContainer}
-          height={(heightDivisions*4)}
+          height={((heightDivisions*4.5)-1)}
           onMomentumScrollEnd={::this.processSlide}
           index={slideIndex}
+          showsPagination={false}
           paginationStyle={styles.swiperPagination}
         >
           {swiperSlides}
         </Swiper>
         <View style={styles.bottomContainer}>
-          {lastSlideButton}
+          {slideButton}
         </View>
       </View>
     )
@@ -128,6 +148,7 @@ const styles = StyleSheet.create({
   slide: {
     flex: 1,
     backgroundColor: 'transparent',
+    justifyContent: 'flex-start',
   },
   slideTextContainer: {
     borderBottomWidth: 1,
@@ -144,10 +165,11 @@ const styles = StyleSheet.create({
   slideImageContainer: {
     flex: 1,
     overflow: 'hidden',
+    justifyContent: 'flex-start',
   },
   slideImage: {
-    width: 320,
-    height: (heightDivisions*3),
+    width: window.width,
+    height: (window.height + heightDivisions),
   },
   bottomContainer: {
     flex: 1,
