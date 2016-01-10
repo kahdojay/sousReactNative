@@ -117,7 +117,7 @@ class Onboarding extends React.Component {
       <View style={styles.container}>
         <Swiper
           autoplay={(slidesConfig.autoplay === true ? true : false)}
-          loop={false}
+          loop={(slidesConfig.loop === true ? true : false)}
           style={styles.swiperContainer}
           height={((heightDivisions*4.5)-1)}
           onMomentumScrollEnd={::this.processSlide}
