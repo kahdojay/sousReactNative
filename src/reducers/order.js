@@ -27,7 +27,14 @@ function orders(state = initialState.orders, action) {
   switch (action.type) {
   // reset the orders
   case RESET_ORDERS:
-    return Object.assign({}, initialState.orders);
+    let resetOrderState = Object.assign({}, initialState.orders);
+    if(action.hasOwnProperty('teamId') === true && action.teamId !== null){
+      resetOrderState = Object.assign({}, state);
+      if(resetOrderState.teams.hasOwnProperty(action.teamId) === true){
+        delete resetOrderState.teams[action.teamId];
+      }
+    }
+    return resetOrderState;
 
   // receive the orders
   case RECEIVE_ORDERS:

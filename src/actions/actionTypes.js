@@ -39,6 +39,7 @@ export const GET_TEAMS = 'GET_TEAMS';
 export const ADD_TEAM = 'ADD_TEAM';
 export const UPDATE_TEAM = 'UPDATE_TEAM';
 export const DELETE_TEAM = 'DELETE_TEAM';
+export const LEAVE_TEAM = 'LEAVE_TEAM';
 export const REQUEST_TEAMS = 'REQUEST_TEAMS';
 export const RECEIVE_TEAMS = 'RECEIVE_TEAMS';
 export const RECEIVE_TEAMS_USERS = 'RECEIVE_TEAMS_USERS';

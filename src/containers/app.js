@@ -474,10 +474,7 @@ class App extends React.Component {
             onUpdateTeam: (teamId) => {
               _.debounce(() => {
                 // dispatch(actions.resetPurveyors());
-                dispatch(actions.resetMessages(teamId));
-                dispatch(actions.getTeamMessages(teamId));
                 dispatch(actions.setCurrentTeam(teamId));
-                dispatch(actions.updateSession({ teamId: teamId }));
               }, 25)()
               nav.replacePreviousAndPop({
                 name: 'Feed',
@@ -486,11 +483,26 @@ class App extends React.Component {
             onAddTeam: (name) => {
               dispatch(actions.addTeam(name))
             },
-            onLeaveTeam: () => {
-              // dispatch(actions.resetMessages(teamId));
-              // dispatch(actions.setCurrentTeam(teamId));
-              // dispatch(actions.updateSession({ teamId: teamId }));
-              // dispatch(actions.updateTeam())
+            onLeaveTeam: (teamId) => {
+              _.debounce(() => {
+                dispatch(actions.leaveCurrentTeam(teamId));
+              }, 25)()
+              nav.replacePreviousAndPop({
+                name: 'Feed',
+              })
+            },
+            onShowLeaveError: () => {
+              this.setState({
+                genericModalMessage: (
+                  <TextComponents.LeaveTeamErrorMessage />
+                ),
+                showGenericModal: true,
+                // genericModalCallback: () => {
+                //   nav.replacePreviousAndPop({
+                //     name: 'Feed',
+                //   })
+                // }
+              })
             },
             onBack: () => {
               this._back.bind(this)

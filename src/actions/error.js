@@ -12,9 +12,10 @@ export default function ErrorActions(allActions){
     connectActions,
   } = allActions
 
-  function resetErrors(){
+  function resetErrors(teamId = null){
     return {
-      type: RESET_ERRORS
+      teamId: teamId,
+      type: RESET_ERRORS,
     }
   }
 

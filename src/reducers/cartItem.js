@@ -61,7 +61,14 @@ function cartItems(state = initialState.cartItems, action) {
   switch (action.type) {
   // reset the cartItems
   case RESET_CART_ITEMS:
-    return Object.assign({}, initialState.cartItems);
+    let resetCartItemState = Object.assign({}, initialState.cartItems);
+    if(action.hasOwnProperty('teamId') === true && action.teamId !== null){
+      resetCartItemState = Object.assign({}, state);
+      if(resetCartItemState.teams.hasOwnProperty(action.teamId) === true){
+        delete resetCartItemState.teams[action.teamId];
+      }
+    }
+    return resetCartItemState;
 
   case REQUEST_CART_ITEMS:
     return Object.assign({}, state, {

@@ -18,8 +18,9 @@ export default function ProductActions(allActions){
     categoryActions,
   } = allActions
 
-  function resetProducts(){
+  function resetProducts(teamId = null){
     return {
+      teamId: teamId,
       type: RESET_PRODUCTS
     }
   }

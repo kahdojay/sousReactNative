@@ -190,7 +190,7 @@ export default function ConnectActions(ddpClient) {
   function processUnsubscribe() {
     return (dispatch, getState) => {
       const {connect} = getState()
-      console.log(connect)
+      // console.log(connect)
       // ddpClient.unsubscribe(channel)
     }
   }

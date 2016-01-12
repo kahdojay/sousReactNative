@@ -17,9 +17,10 @@ export default function CategoryActions(allActions){
     connectActions,
   } = allActions
 
-  function resetCategories(){
+  function resetCategories(teamId = null){
     return {
-      type: RESET_CATEGORIES
+      teamId: teamId,
+      type: RESET_CATEGORIES,
     }
   }
 

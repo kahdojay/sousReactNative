@@ -67,7 +67,12 @@ class TeamIndexRow extends React.Component {
         </Icon>
       ),
       onPress: () => {
-        this.props.onLeaveTeam()
+        if(this.props.teamsCount > 1){
+          this.props.onLeaveTeam(team.id)
+        } else {
+          this.props.onShowLeaveError()
+        }
+        return
       }
     }]
 
@@ -87,8 +92,7 @@ class TeamIndexRow extends React.Component {
           activeOpacity={(this.state.enabled) ? .5 : 1}
         >
           <View style={styles.textProgressArrowContainer}>
-            <View
-              style={styles.textProgressContainer} >
+            <View style={styles.textProgressContainer}>
               <View
                 style={styles.teamInfo} >
                 <View style={styles.teamTextContainer}>
@@ -100,11 +104,13 @@ class TeamIndexRow extends React.Component {
                 </Text>
               </View>
             </View>
-            { this.props.selected === false ?
-              <Icon name='material|chevron-right' size={30} color={changeColor} style={styles.iconArrow}/>
-            :
-              <Icon name='material|check' size={30} color={selectedColor} style={styles.iconArrow}/>
-            }
+            <View style={styles.iconContainer}>
+              { this.props.selected === false ?
+                <Icon name='material|chevron-right' size={30} color={changeColor} style={styles.iconArrow}/>
+              :
+                <Icon name='material|check' size={30} color={selectedColor} style={styles.iconArrow}/>
+              }
+            </View>
           </View>
         </TouchableOpacity>
       </Swipeout>
@@ -133,16 +139,15 @@ const styles = StyleSheet.create({
   textProgressArrowContainer: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   textProgressContainer: {
-    flex: 1,
+    flex: 5,
   },
   teamTextContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
   memberCount: {
     fontFamily: 'OpenSans',
@@ -159,7 +164,6 @@ const styles = StyleSheet.create({
   },
   teamInfo: {
     flexDirection: 'column',
-    justifyContent: 'space-between',
     alignItems: 'stretch',
   },
   rowText: {
@@ -168,6 +172,10 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     fontSize: 20,
     fontFamily: 'OpenSans'
+  },
+  iconContainer: {
+    flex: 1,
+    justifyContent: 'center',
   },
   iconArrow: {
     width: 50,

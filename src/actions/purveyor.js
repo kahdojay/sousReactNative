@@ -19,9 +19,10 @@ export default function PurveyorActions(allActions){
     messageActions,
   } = allActions
 
-  function resetPurveyors(){
+  function resetPurveyors(teamId = null){
     return {
-      type: RESET_PURVEYORS
+      teamId: teamId,
+      type: RESET_PURVEYORS,
     }
   }
 
