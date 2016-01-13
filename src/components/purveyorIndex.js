@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
   segmentedControl: {
     fontWeight: 'bold',
     height: 36,
+    fontFamily: 'OpenSans',
   },
   createButton: {
     borderTopColor: Colors.separatorColor,

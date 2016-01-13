@@ -47,7 +47,7 @@ class CategoryIndex extends React.Component {
             values={this.props.segmentationList}
             selectedIndex={this.props.selectedSegmentationIndex}
             onChange={this.props.onSegmentationChange}
-            />
+          />
         </View>
         <ScrollView
           automaticallyAdjustContentInsets={false}
@@ -86,7 +86,8 @@ const styles = StyleSheet.create({
   },
   segmentedControl: {
     fontWeight: 'bold',
-    height: 36
+    height: 36,
+    fontFamily: 'OpenSans',
   },
   createButton: {
     borderTopColor: Colors.separatorColor,

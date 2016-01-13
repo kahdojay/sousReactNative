@@ -60,6 +60,9 @@ class App extends React.Component {
         OrderIndex: {
           showConfirmedOrders: false,
         },
+        SearchView: {
+          hideHeader: false,
+        }
       },
       currentTeamInfo: {
         team: this.props.teams.currentTeam,
@@ -851,6 +854,14 @@ class App extends React.Component {
                 }
               }, 25)()
             },
+            onHideHeader: (hideHeader) => {
+              console.log(hideHeader)
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.SearchView.hideHeader = hideHeader;
+              this.setState({
+                sceneState: sceneState,
+              })
+            },
           },
         }
       case 'OrderIndex':
@@ -1315,27 +1326,32 @@ class App extends React.Component {
           })
           break;
         case 'SearchView':
-          navBar = React.cloneElement(this.navBar, {
-            navigator: nav,
-            route: route,
-            customPrev: (
-              <Components.NavBackButton iconFont={'material|close'} />
-            ),
-            // title: 'Order Guide',
-            customTitle: (
-              <TextComponents.NavBarTitle
-                content={'Order Guide'}
-              />
-            ),
-            customNext: (
-              <Components.CartRightButton
-                onNavToCart={() => {
-                  nav.push({ name: 'CartView', });
-                }}
-                cartItems={this.state.currentTeamInfo.cartItems['cart']}
-              />
-            )
-          })
+          console.log(this.state.sceneState.SearchView.hideHeader)
+          if(this.state.sceneState.SearchView.hideHeader === true){
+            navBar = null
+          } else {
+            navBar = React.cloneElement(this.navBar, {
+              navigator: nav,
+              route: route,
+              customPrev: (
+                <Components.NavBackButton iconFont={'material|close'} />
+              ),
+              // title: 'Order Guide',
+              customTitle: (
+                <TextComponents.NavBarTitle
+                  content={'Order Guide'}
+                />
+              ),
+              customNext: (
+                <Components.CartRightButton
+                  onNavToCart={() => {
+                    nav.push({ name: 'CartView', });
+                  }}
+                  cartItems={this.state.currentTeamInfo.cartItems['cart']}
+                />
+              )
+            })
+          }
           break;
         case 'OrderIndex':
           const openOrders = _.filter(this.state.currentTeamInfo.orders, (order) => {
