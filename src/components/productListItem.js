@@ -184,9 +184,11 @@ class ProductListItem extends React.Component {
       let productInfoSeparator = null
       let selectedStyle = []
       let productDetailsColor = Colors.greyText
+      let productColor = 'black'
       if(this.state.added === true){
         selectedStyle = styles.selectedRow
-        productDetailsColor = 'black'
+        productDetailsColor = 'white'
+        productColor = 'white'
       }
       let availablePurveyors = product.purveyors
 
@@ -230,7 +232,7 @@ class ProductListItem extends React.Component {
               }}
             >
               <View>
-                <Text style={styles.productText}>
+                <Text style={[styles.productText, {color: productColor}]}>
                   {product.name}
                 </Text>
                 <Text style={{fontSize: 9,  color: productDetailsColor}} >
@@ -253,10 +255,10 @@ class ProductListItem extends React.Component {
                   }}
                   underlayColor='transparent'
                 >
-                  <Text style={styles.quantity}>{`${this.state.quantity}x`}</Text>
+                  <Text style={[styles.quantity, {color: productColor}]}>{`${this.state.quantity}x`}</Text>
                 </TouchableHighlight>
                 { product.par && product.par !== '' ?
-                  <Text style={styles.par}>Par: {product.par}</Text>
+                  <Text style={[styles.par, {color: productColor}]}>Par: {product.par}</Text>
                   :
                   <View/>
                 }
