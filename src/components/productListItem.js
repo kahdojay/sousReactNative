@@ -270,7 +270,7 @@ class ProductListItem extends React.Component {
                 <Text style={styles.quantity}>{''}</Text>
               )
             }
-            { product.par && product.par !== '' ?
+            { product.par && product.par !== '' && product.par !== '0' ?
               <Text style={[styles.par, {color: productDetailsColor}]}>Par: {product.par}</Text>
               : <Text style={[styles.par, {color: productDetailsColor}]}>{''}</Text>
             }
