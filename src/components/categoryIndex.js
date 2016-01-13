@@ -40,13 +40,15 @@ class CategoryIndex extends React.Component {
 
     return (
       <View style={styles.container}>
-        <SegmentedControlIOS
-          tintColor={Colors.lightBlue}
-          style={styles.segmentedControl}
-          values={this.props.segmentationList}
-          selectedIndex={this.props.selectedSegmentationIndex}
-          onChange={this.props.onSegmentationChange}
-        />
+        <View style={styles.segmentedControlContainer}>
+          <SegmentedControlIOS
+            tintColor={Colors.lightBlue}
+            style={styles.segmentedControl}
+            values={this.props.segmentationList}
+            selectedIndex={this.props.selectedSegmentationIndex}
+            onChange={this.props.onSegmentationChange}
+          />
+        </View>
         <ScrollView
           automaticallyAdjustContentInsets={false}
           keyboardShouldPersistTaps={false}
@@ -69,21 +71,23 @@ class CategoryIndex extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: Colors.mainBackgroundColor,
   },
   categoriesContainer: {
-    borderTopColor: Colors.separatorColor,
-    borderTopWidth: 1,
     paddingVertical: 5,
   },
-  separator: {
-    height: 0,
+  segmentedControlContainer: {
+    paddingTop: 3,
+    paddingBottom: 3,
+    paddingRight: 5,
+    paddingLeft: 5,
     borderBottomColor: Colors.separatorColor,
     borderBottomWidth: 1,
   },
   segmentedControl: {
     fontWeight: 'bold',
-    height: 36
+    height: 36,
+    fontFamily: 'OpenSans',
   },
   createButton: {
     borderTopColor: Colors.separatorColor,

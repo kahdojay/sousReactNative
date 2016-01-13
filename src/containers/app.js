@@ -3,7 +3,7 @@ import { Icon } from 'react-native-icons';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import NavigationBar from 'react-native-navbar';
-import NavigationBarStyles from 'react-native-navbar/styles'
+import NavigationBarStyles from 'react-native-navbar/styles';
 import { connect } from 'react-redux/native';
 import SideMenu from 'react-native-side-menu';
 import { BackBtn } from '../utilities/navigation';
@@ -60,6 +60,9 @@ class App extends React.Component {
         OrderIndex: {
           showConfirmedOrders: false,
         },
+        SearchView: {
+          hideHeader: false,
+        }
       },
       currentTeamInfo: {
         team: this.props.teams.currentTeam,
@@ -665,7 +668,8 @@ class App extends React.Component {
             cartItems: this.state.currentTeamInfo.cartItems['cart'],
             categories: this.state.currentTeamInfo.categories,
             purveyor: this.state.purveyor,
-            purveyors: this.state.currentTeamInfo.purveyors,
+            // purveyors: this.state.currentTeamInfo.purveyors,
+            purveyors: [this.state.purveyor],
             products: specificProductsPurveyor,
             onProductDelete: (productId) => {
               _.debounce(() => {
@@ -849,6 +853,14 @@ class App extends React.Component {
                     break;
                 }
               }, 25)()
+            },
+            onHideHeader: (hideHeader) => {
+              console.log(hideHeader)
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.SearchView.hideHeader = hideHeader;
+              this.setState({
+                sceneState: sceneState,
+              })
             },
           },
         }
@@ -1133,7 +1145,12 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton iconFont={'material|close'} />
             ),
-            title: 'Order Guide',
+            // title: 'Order Guide',
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'Order Guide'}
+              />
+            ),
             hideNext: true,
           })
           break;
@@ -1141,7 +1158,12 @@ class App extends React.Component {
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
-            title: 'Order Guide Upload',
+            // title: 'Order Guide Upload',
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'Order Guide Upload'}
+              />
+            ),
             hideNext: true,
             customPrev: (
               <Components.NavBackButton pop={true} />
@@ -1157,7 +1179,12 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton iconFont={'material|close'} />
             ),
-            title: 'Switch Teams',
+            // title: 'Switch Teams',
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'Switch Teams'}
+              />
+            ),
           })
           break;
         case 'Feed':
@@ -1165,7 +1192,12 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             hidePrev: false,
-            title: this.state.currentTeamInfo.team ? this.state.currentTeamInfo.team.name : 'Sous',
+            // title: this.state.currentTeamInfo.team ? this.state.currentTeamInfo.team.name : 'Sous',
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={this.state.currentTeamInfo.team ? this.state.currentTeamInfo.team.name : 'Sous'}
+              />
+            ),
             titleColor: 'black',
             customPrev: (
               <Components.FeedViewLeftButton
@@ -1184,7 +1216,12 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton iconFont={'material|close'} />
             ),
-            title: 'Order Guide',
+            // title: 'Order Guide',
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'Order Guide'}
+              />
+            ),
             customNext: (
               <Components.CartRightButton
                 onNavToCart={() => {
@@ -1200,7 +1237,12 @@ class App extends React.Component {
             navigator: nav,
             route: route,
             buttonsColor: Colors.greyText,
-            title: this.state.currentTeamInfo.team.name,
+            // title: this.state.currentTeamInfo.team.name,
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={this.state.currentTeamInfo.team.name}
+              />
+            ),
             customPrev: (
               <Components.NavBackButton iconFont={'material|close'} />
             ),
@@ -1216,7 +1258,12 @@ class App extends React.Component {
                 pop={true}
               />
             ),
-            title: this.state.purveyor.name.substr(0,20) + (this.state.purveyor.name.length > 20 ? '...' : ''),
+            // title: this.state.purveyor.name.substr(0,20) + (this.state.purveyor.name.length > 20 ? '...' : ''),
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={this.state.purveyor.name.substr(0,20) + (this.state.purveyor.name.length > 20 ? '...' : '')}
+              />
+            ),
             customNext: (
               <Components.CartRightButton
                 onNavToCart={() => {
@@ -1236,7 +1283,12 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton iconFont={'material|close'} />
             ),
-            title: 'Order Guide',
+            // title: 'Order Guide',
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'Order Guide'}
+              />
+            ),
             customNext: (
               <Components.CartRightButton
                 onNavToCart={() => {
@@ -1257,7 +1309,12 @@ class App extends React.Component {
                 iconFont={'material|chevron-left'}
               />
             ),
-            title: this.state.category.name,
+            // title: this.state.category.name,
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={this.state.category.name}
+              />
+            ),
             customNext: (
               <Components.CartRightButton
                 onNavToCart={() => {
@@ -1269,22 +1326,32 @@ class App extends React.Component {
           })
           break;
         case 'SearchView':
-          navBar = React.cloneElement(this.navBar, {
-            navigator: nav,
-            route: route,
-            customPrev: (
-              <Components.NavBackButton iconFont={'material|close'} />
-            ),
-            title: 'Order Guide',
-            customNext: (
-              <Components.CartRightButton
-                onNavToCart={() => {
-                  nav.push({ name: 'CartView', });
-                }}
-                cartItems={this.state.currentTeamInfo.cartItems['cart']}
-              />
-            )
-          })
+          console.log(this.state.sceneState.SearchView.hideHeader)
+          if(this.state.sceneState.SearchView.hideHeader === true){
+            navBar = null
+          } else {
+            navBar = React.cloneElement(this.navBar, {
+              navigator: nav,
+              route: route,
+              customPrev: (
+                <Components.NavBackButton iconFont={'material|close'} />
+              ),
+              // title: 'Order Guide',
+              customTitle: (
+                <TextComponents.NavBarTitle
+                  content={'Order Guide'}
+                />
+              ),
+              customNext: (
+                <Components.CartRightButton
+                  onNavToCart={() => {
+                    nav.push({ name: 'CartView', });
+                  }}
+                  cartItems={this.state.currentTeamInfo.cartItems['cart']}
+                />
+              )
+            })
+          }
           break;
         case 'OrderIndex':
           const openOrders = _.filter(this.state.currentTeamInfo.orders, (order) => {
@@ -1298,7 +1365,12 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton iconFont={'material|close'} />
             ),
-            title: `${openOrders.length} Open Orders`,
+            // title: `${openOrders.length} Open Orders`,
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={`${openOrders.length} Open Orders`}
+              />
+            ),
             hideNext: true,
           })
           break;
@@ -1312,7 +1384,12 @@ class App extends React.Component {
                 iconFont={'material|chevron-left'}
               />
             ),
-            title: this.state.purveyor.name.substr(0,16) + (this.state.purveyor.name.length > 16 ? '...' : ''),
+            // title: this.state.purveyor.name.substr(0,16) + (this.state.purveyor.name.length > 16 ? '...' : ''),
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={this.state.purveyor.name.substr(0,16) + (this.state.purveyor.name.length > 16 ? '...' : '')}
+              />
+            ),
             customNext: (
               <Components.OrderRightButton
                 purveyor={this.state.purveyor}
@@ -1356,7 +1433,12 @@ class App extends React.Component {
                 iconFont={'material|chevron-left'}
               />
             ),
-            title: 'Account',
+            // title: 'Account',
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'Account'}
+              />
+            ),
           })
           break;
         case 'InviteView':
@@ -1368,7 +1450,12 @@ class App extends React.Component {
                 iconFont={'material|close'}
               />
             ),
-            title: 'Invite Teammates',
+            // title: 'Invite Teammates',
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'Invite Teammates'}
+              />
+            ),
           })
           break;
         case 'CartView':
@@ -1381,7 +1468,12 @@ class App extends React.Component {
                 iconFont={'material|chevron-left'}
               />
             ),
-            title: 'Cart',
+            // title: 'Cart',
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'Cart'}
+              />
+            ),
           })
           break;
         case 'ProductForm':
@@ -1395,7 +1487,12 @@ class App extends React.Component {
                 pop={true}
               />
             ),
-            title: (this.state.product === null) ? 'Add New Product' : 'Edit Product',
+            // title: (this.state.product === null) ? 'Add New Product' : 'Edit Product',
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={(this.state.product === null) ? 'Add New Product' : 'Edit Product'}
+              />
+            ),
             customNext: (
               <Components.ProductFormRightCheckbox
                 submitReady={this.state.sceneState.ProductForm.submitReady}
@@ -1433,7 +1530,12 @@ class App extends React.Component {
                 pop={true}
               />
             ),
-            title: 'Team Members',
+            // title: 'Team Members',
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'Team Members'}
+              />
+            ),
             customNext: (
               <Components.TeamMemberRightInvite
                 connected={(connect.status === actions.CONNECT.CONNECTED)}

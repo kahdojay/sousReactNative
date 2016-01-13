@@ -39,13 +39,15 @@ class PurveyorIndex extends React.Component {
 
     return (
       <View style={styles.container}>
-        <SegmentedControlIOS
-          tintColor={Colors.lightBlue}
-          style={styles.segmentedControl}
-          values={this.props.segmentationList}
-          selectedIndex={this.props.selectedSegmentationIndex}
-          onChange={this.props.onSegmentationChange}
-        />
+        <View style={styles.segmentedControlContainer}>
+          <SegmentedControlIOS
+            tintColor={Colors.lightBlue}
+            style={styles.segmentedControl}
+            values={this.props.segmentationList}
+            selectedIndex={this.props.selectedSegmentationIndex}
+            onChange={this.props.onSegmentationChange}
+          />
+        </View>
         <ScrollView
           automaticallyAdjustContentInsets={false}
           keyboardShouldPersistTaps={false}
@@ -68,24 +70,23 @@ class PurveyorIndex extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: Colors.mainBackgroundColor,
   },
   purveyorsContainer: {
-    borderTopColor: Colors.separatorColor,
-    borderTopWidth: 1,
     paddingVertical: 5,
   },
-  scrollView: {
-    backgroundColor: Colors.mainBackgroundColor,
-    height: 500,
-    paddingLeft: 20,
-    paddingRight: 0,
-    marginTop: 0,
-    paddingTop: 0
+  segmentedControlContainer: {
+    paddingTop: 3,
+    paddingBottom: 3,
+    paddingRight: 5,
+    paddingLeft: 5,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
   },
   segmentedControl: {
     fontWeight: 'bold',
-    height: 36
+    height: 36,
+    fontFamily: 'OpenSans',
   },
   createButton: {
     borderTopColor: Colors.separatorColor,

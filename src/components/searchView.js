@@ -18,29 +18,36 @@ class SearchView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      hideHeader: false,
       searching: false,
       search: '',
-      products: []
+      products: [],
     }
   }
 
   searchForProducts() {
     if(this.state.search !== ''){
       this.setState({
+        hideHeader: true,
         searching: true,
         products: [],
       }, () => {
-        const products = _.filter(this.props.products, (product) => {
+        const products = _.sortBy(_.filter(this.props.products, (product) => {
           return product.name.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1
-        })
+        }), 'name')
         this.setState({
           searching: false,
           products: products.slice(0,10)
         })
+        this.props.onHideHeader(this.state.hideHeader);
       })
     } else {
       this.setState({
+        hideHeader: false,
+        searching: false,
         products: []
+      }, () => {
+        this.props.onHideHeader(this.state.hideHeader);
       })
     }
   }
@@ -57,13 +64,18 @@ class SearchView extends React.Component {
     )
     return (
       <View style={styles.container}>
-        <SegmentedControlIOS
-          tintColor={Colors.lightBlue}
-          style={styles.segmentedControl}
-          values={this.props.segmentationList}
-          selectedIndex={this.props.selectedSegmentationIndex}
-          onChange={this.props.onSegmentationChange}
-        />
+        { this.state.hideHeader === false ?
+          <View style={styles.segmentedControlContainer}>
+            <SegmentedControlIOS
+              tintColor={Colors.lightBlue}
+              style={styles.segmentedControl}
+              values={this.props.segmentationList}
+              selectedIndex={this.props.selectedSegmentationIndex}
+              onChange={this.props.onSegmentationChange}
+            />
+          </View>
+          : null
+        }
         <View>
           <View style={styles.searchInputContainer}>
             <TextInput
@@ -83,9 +95,12 @@ class SearchView extends React.Component {
               <TouchableHighlight
                 onPress={() => {
                   this.setState({
+                    hideHeader: false,
                     searching: false,
                     search: '',
                     products: []
+                  }, () => {
+                    this.props.onHideHeader(this.state.hideHeader);
                   })
                 }}
                 underlayColor='transparent'
@@ -130,9 +145,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
+  segmentedControlContainer: {
+    paddingTop: 3,
+    paddingBottom: 3,
+    paddingRight: 5,
+    paddingLeft: 5,
+  },
   segmentedControl: {
     fontWeight: 'bold',
-    height: 36
+    height: 36,
+    fontFamily: 'OpenSans',
   },
   createButton: {
     borderTopColor: Colors.separatorColor,
@@ -148,7 +170,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   searchInputContainer: {
-    margin: 10,
+    paddingTop: 5,
+    paddingBottom: 7,
+    paddingRight: 5,
+    paddingLeft: 5,
     flexDirection: 'row',
     position: 'relative',
   },

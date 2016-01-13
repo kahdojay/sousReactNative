@@ -184,10 +184,20 @@ class ProductListItem extends React.Component {
       let productInfoSeparator = null
       let selectedStyle = []
       let productDetailsColor = Colors.greyText
+      let productColor = 'black'
+      let productQuantityBorderStyle = {}
       if(this.state.added === true){
         selectedStyle = styles.selectedRow
-        productDetailsColor = 'black'
+        productDetailsColor = 'white'
+        productColor = 'white'
+        productQuantityBorderStyle = {
+          borderColor: 'white',
+          borderWidth: .5,
+          borderRadius: 15,
+          padding: 4,
+        }
       }
+      let availablePurveyors = product.purveyors
 
       if(purveyors !== null){
         if(purveyors.hasOwnProperty(this.state.selectedPurveyorId) === true){
@@ -202,7 +212,10 @@ class ProductListItem extends React.Component {
             <Text style={{fontSize: 9,  color: productDetailsColor}}>Multiple purveyors</Text>
           )
         }
+      } else {
+        availablePurveyors = [this.state.selectedPurveyorId]
       }
+
       if(category !== null) {
         categoryInfo = (
           <Text style={{fontSize: 9,  color: productDetailsColor}}>{category.name}</Text>
@@ -218,7 +231,7 @@ class ProductListItem extends React.Component {
           <View style={styles.main}>
             <ProductToggle
               added={this.state.added}
-              availablePurveyors={product.purveyors}
+              availablePurveyors={availablePurveyors}
               allPurveyors={purveyors}
               currentlySelectedPurveyorId={this.state.selectedPurveyorId}
               onToggleCartProduct={(purveyorId) => {
@@ -226,7 +239,7 @@ class ProductListItem extends React.Component {
               }}
             >
               <View>
-                <Text style={styles.productText}>
+                <Text style={[styles.productText, {color: productColor}]}>
                   {product.name}
                 </Text>
                 <Text style={{fontSize: 9,  color: productDetailsColor}} >
@@ -239,8 +252,9 @@ class ProductListItem extends React.Component {
             </ProductToggle>
           </View>
           <View style={styles.outerQuantityContainer}>
+            <View style={styles.innerQuantityContainer}>
             { this.state.added === true ?
-              <View style={styles.innerQuantityContainer}>
+              (
                 <TouchableHighlight
                   onPress={() => {
                     this.setState({
@@ -249,16 +263,18 @@ class ProductListItem extends React.Component {
                   }}
                   underlayColor='transparent'
                 >
-                  <Text style={styles.quantity}>{`${this.state.quantity}x`}</Text>
+                  <Text style={[styles.quantity, productQuantityBorderStyle, {color: productColor}]}>{`${this.state.quantity}x`}</Text>
                 </TouchableHighlight>
-                { product.par && product.par !== '' ?
-                  <Text style={styles.par}>Par: {product.par}</Text>
-                  :
-                  <View/>
-                }
-              </View>
-              : <Text style={styles.quantity}>{''}</Text>
+              )
+              : (
+                <Text style={styles.quantity}>{''}</Text>
+              )
             }
+            { product.par && product.par !== '' && product.par !== '0' ?
+              <Text style={[styles.par, {color: productDetailsColor}]}>Par: {product.par}</Text>
+              : <Text style={[styles.par, {color: productDetailsColor}]}>{''}</Text>
+            }
+            </View>
           </View>
         </View>
       )
@@ -388,9 +404,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'right',
     paddingRight: 5,
+    padding: 5,
   },
   par: {
     fontSize: 10,
+    textAlign: 'center',
   },
   row: {
     borderRadius: Sizes.rowBorderRadius,
