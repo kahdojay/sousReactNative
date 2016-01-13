@@ -2,6 +2,7 @@ import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import _ from 'lodash';
 import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 
 const {
   View,
@@ -44,8 +45,17 @@ class PurveyorIndexRow extends React.Component {
 const styles = StyleSheet.create({
   row: {
     flex: 1,
-    flexDirection: 'column',
-    padding: 10,
+    borderRadius: Sizes.rowBorderRadius,
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    padding: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
+    alignItems: 'center',
+    marginTop: 3,
+    marginBottom: 3,
+    marginRight: 5,
+    marginLeft: 5,
   },
   progress: {
     margin: 5,

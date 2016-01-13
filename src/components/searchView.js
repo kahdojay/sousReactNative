@@ -20,7 +20,7 @@ class SearchView extends React.Component {
     this.state = {
       searching: false,
       search: '',
-      products: []
+      products: [],
     }
   }
 
@@ -30,9 +30,9 @@ class SearchView extends React.Component {
         searching: true,
         products: [],
       }, () => {
-        const products = _.filter(this.props.products, (product) => {
+        const products = _.sortBy(_.filter(this.props.products, (product) => {
           return product.name.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1
-        })
+        }), 'name')
         this.setState({
           searching: false,
           products: products.slice(0,10)
@@ -40,6 +40,7 @@ class SearchView extends React.Component {
       })
     } else {
       this.setState({
+        searching: false,
         products: []
       })
     }
@@ -57,13 +58,15 @@ class SearchView extends React.Component {
     )
     return (
       <View style={styles.container}>
-        <SegmentedControlIOS
-          tintColor={Colors.lightBlue}
-          style={styles.segmentedControl}
-          values={this.props.segmentationList}
-          selectedIndex={this.props.selectedSegmentationIndex}
-          onChange={this.props.onSegmentationChange}
-        />
+        <View style={styles.segmentedControlContainer}>
+          <SegmentedControlIOS
+            tintColor={Colors.lightBlue}
+            style={styles.segmentedControl}
+            values={this.props.segmentationList}
+            selectedIndex={this.props.selectedSegmentationIndex}
+            onChange={this.props.onSegmentationChange}
+            />
+        </View>
         <View>
           <View style={styles.searchInputContainer}>
             <TextInput
@@ -130,6 +133,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
+  segmentedControlContainer: {
+    paddingTop: 3,
+    paddingBottom: 3,
+    paddingRight: 5,
+    paddingLeft: 5,
+  },
   segmentedControl: {
     fontWeight: 'bold',
     height: 36
@@ -148,7 +157,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   searchInputContainer: {
-    margin: 10,
+    paddingTop: 5,
+    paddingBottom: 7,
+    paddingRight: 5,
+    paddingLeft: 5,
     flexDirection: 'row',
     position: 'relative',
   },
