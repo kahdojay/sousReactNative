@@ -46,7 +46,7 @@ export default function TeamActions(allActions) {
     }
   }
 
-  function addTeam(name) {
+  function addTeam(name, demoTeam = false) {
     return (dispatch, getState) => {
       let {session, teams, messages} = getState();
 
@@ -82,7 +82,11 @@ export default function TeamActions(allActions) {
           deleted: false
         }
 
-        dispatch(connectActions.ddpCall('createTeam', [newTeamAttributes]))
+        if(demoTeam === true){
+          newTeamAttributes.demoTeam = true;
+        }
+
+        dispatch(connectActions.ddpCall('createTeam', [session.teamId, newTeamAttributes]))
 
         dispatch({
           type: ADD_TEAM,

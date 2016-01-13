@@ -997,6 +997,11 @@ class App extends React.Component {
             onUpdateInfo: (data) => {
               _.debounce(() => {
                 dispatch(actions.updateSession(data));
+                if(session.teamId === null) {
+                  const teamName = `${data.firstName}'s Team`
+                  const demoTeam = true
+                  dispatch(actions.addTeam(teamName, demoTeam));
+                }
               }, 25)()
             },
           },
