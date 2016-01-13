@@ -24,6 +24,7 @@ export default function SessionActions(allActions){
     imageUrl: true,
     notifications: true,
     teamId: true,
+    viewedOnboarding: true,
   };
 
   function resetSessionVersion() {

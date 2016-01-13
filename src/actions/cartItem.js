@@ -20,9 +20,10 @@ export default function CartItemActions(allActions) {
     }
   }
 
-  function resetCartItems() {
+  function resetCartItems(teamId = null) {
     return (dispatch) => {
       return dispatch({
+        teamId: teamId,
         type: RESET_CART_ITEMS,
       })
     }

@@ -11,9 +11,10 @@ export default function OrderActions(allActions){
     connectActions,
   } = allActions
 
-  function resetOrders(){
+  function resetOrders(teamId = null){
     return {
-      type: RESET_ORDERS
+      teamId: teamId,
+      type: RESET_ORDERS,
     }
   }
 

@@ -20,7 +20,7 @@ export default function MessageActions(allActions){
   function resetMessages(teamId = null){
     return {
       teamId: teamId,
-      type: RESET_MESSAGES
+      type: RESET_MESSAGES,
     }
   }
 

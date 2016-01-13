@@ -46,6 +46,7 @@ class TeamIndex extends React.Component {
 
   render() {
     const {teams, messagesByTeams} = this.props
+    const teamsCount = teams.data.length
 
     return (
       <View style={styles.container}>
@@ -77,11 +78,14 @@ class TeamIndex extends React.Component {
                     connected={this.props.connected}
                     selected={(this.props.currentTeam !== null && this.props.currentTeam.id === team.id)}
                     team={team}
+                    teamsCount={teamsCount}
                     teamsUsers={teams.teamsUsers}
                     messages={teamMessages}
                     onPress={() => {
                       this.props.onUpdateTeam(team.id);
                     }}
+                    onLeaveTeam={this.props.onLeaveTeam}
+                    onShowLeaveError={this.props.onShowLeaveError}
                   />
                 );
               }

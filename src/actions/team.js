@@ -3,33 +3,41 @@ import slug from 'slug'
 import { DDP } from '../resources/apiConfig'
 import { generateId } from '../utilities/utils'
 import MessageActions from './message'
-import { getIdx, updateByIdx, updateDataState } from '../utilities/reducer'
+import { getIdx } from '../utilities/reducer'
 import Urls from '../resources/urls';
 import {
-  SET_TASK_TIMEOUT_ID,
+  ADD_TEAM,
+  CART,
+  COMPLETE_TEAM_TASK,
+  DELETE_TEAM,
+  ERROR_TEAMS,
+  GET_TEAMS,
+  LEAVE_TEAM,
+  ORDER_SENT,
+  RECEIVE_TEAMS_USERS,
+  RECEIVE_TEAMS,
+  REQUEST_TEAMS,
+  RESET_TEAMS,
   SET_CART_TIMEOUT_ID,
   SET_CURRENT_TEAM,
-  RESET_TEAMS,
-  GET_TEAMS,
-  REQUEST_TEAMS,
-  RECEIVE_TEAMS,
-  RECEIVE_TEAMS_USERS,
-  ERROR_TEAMS,
-  ADD_TEAM,
+  SET_TASK_TIMEOUT_ID,
   UPDATE_TEAM,
-  DELETE_TEAM,
-  COMPLETE_TEAM_TASK,
-  ORDER_SENT,
-  CART
 } from './actionTypes'
 
 export default function TeamActions(allActions) {
 
+  const noop = ()=>{}
+
   const {
-    connectActions,
-    sessionActions,
-    messageActions,
     cartItemActions,
+    categoryActions,
+    connectActions,
+    errorActions,
+    messageActions,
+    orderActions,
+    productActions,
+    purveyorActions,
+    sessionActions,
   } = allActions
 
   function resetTeams(){
@@ -38,7 +46,7 @@ export default function TeamActions(allActions) {
     }
   }
 
-  function addTeam(name) {
+  function addTeam(name, demoTeam = false) {
     return (dispatch, getState) => {
       let {session, teams, messages} = getState();
 
@@ -74,7 +82,11 @@ export default function TeamActions(allActions) {
           deleted: false
         }
 
-        dispatch(connectActions.ddpCall('createTeam', [newTeamAttributes]))
+        if(demoTeam === true){
+          newTeamAttributes.demoTeam = true;
+        }
+
+        dispatch(connectActions.ddpCall('createTeam', [session.teamId, newTeamAttributes]))
 
         dispatch({
           type: ADD_TEAM,
@@ -194,15 +206,19 @@ export default function TeamActions(allActions) {
     }
   }
 
-  function updateTeam(teamAttributes){
+  function updateTeam(teamAttributes, updateTeamCb = noop){
     return (dispatch, getState) => {
       const {session} = getState();
-      dispatch(connectActions.ddpCall('updateTeam', [session.teamId, teamAttributes]))
+      let teamId = session.teamId;
+      if(teamAttributes.id){
+        teamId = teamAttributes.id
+      }
+
+      dispatch(connectActions.ddpCall('updateTeam', [teamId, teamAttributes], updateTeamCb))
       return dispatch({
         type: UPDATE_TEAM,
-        teamId: session.teamId,
+        teamId: teamId,
         team: teamAttributes,
-        sessionTeamId: session.teamId
       })
     }
   }
@@ -261,7 +277,6 @@ export default function TeamActions(allActions) {
       return dispatch({
         type: RECEIVE_TEAMS,
         team: team,
-        sessionTeamId: session.teamId
       })
     }
   }
@@ -421,6 +436,9 @@ export default function TeamActions(allActions) {
       const {teams} = getState()
       var team = _.filter(teams.data, { id: teamId })[0]
       // console.log(team)
+      dispatch(messageActions.resetMessages(teamId));
+      dispatch(messageActions.getTeamMessages(teamId));
+      dispatch(sessionActions.updateSession({ teamId: teamId }));
       return dispatch({
         type: SET_CURRENT_TEAM,
         team: team
@@ -428,32 +446,80 @@ export default function TeamActions(allActions) {
     }
   }
 
+  function leaveCurrentTeam(teamId) {
+    return (dispatch, getState) => {
+      const {session, teams} = getState()
+
+      // console.log('leaving teamId: ', teamId)
+
+      let teamUsers = teams.currentTeam.users;
+      const userTeamIdx = teamUsers.indexOf(session.userId);
+      if(userTeamIdx !== -1){
+        delete teamUsers[userTeamIdx];
+      }
+      teamUsers = teamUsers.filter((v) => { return v !== undefined && v !== null; })
+
+      // console.log('reset users: ', teamUsers)
+
+      // update team to remove the current user
+      dispatch(updateTeam({id: teamId, users: teamUsers}))
+
+
+      let allTeamIds = _.pluck(teams.data, 'id');
+      const currentTeamIdx = allTeamIds.indexOf(teamId);
+      delete allTeamIds[currentTeamIdx];
+      allTeamIds = allTeamIds.filter((v) => { return v !== undefined && v !== null; })
+      const newTeamId = allTeamIds[0];
+
+      // console.log('setting new teamId: ', newTeamId)
+
+      // set a new team id
+      dispatch(setCurrentTeam(newTeamId));
+
+      // reset the objects for other resources
+      dispatch(purveyorActions.resetPurveyors(teamId));
+      dispatch(categoryActions.resetCategories(teamId));
+      dispatch(productActions.resetProducts(teamId));
+      dispatch(orderActions.resetOrders(teamId));
+      dispatch(cartItemActions.resetCartItems(teamId));
+      dispatch(messageActions.resetMessages(teamId));
+
+      // delete the team data from the team that was just left
+      return dispatch({
+        type: LEAVE_TEAM,
+        teamId: teamId,
+      })
+    }
+  }
+
   return {
-    SET_TASK_TIMEOUT_ID,
+    ADD_TEAM,
+    DELETE_TEAM,
+    ERROR_TEAMS,
+    GET_TEAMS,
+    LEAVE_TEAM,
+    ORDER_SENT,
+    RECEIVE_TEAMS_USERS,
+    RECEIVE_TEAMS,
+    REQUEST_TEAMS,
+    RESET_TEAMS,
     SET_CART_TIMEOUT_ID,
     SET_CURRENT_TEAM,
-    RESET_TEAMS,
-    GET_TEAMS,
-    REQUEST_TEAMS,
-    RECEIVE_TEAMS,
-    RECEIVE_TEAMS_USERS,
-    ERROR_TEAMS,
-    ADD_TEAM,
+    SET_TASK_TIMEOUT_ID,
     UPDATE_TEAM,
-    DELETE_TEAM,
-    ORDER_SENT,
+    // getTeams,
+    // updateProductInCart,
     addTeam,
     addTeamTask,
-    updateTeamTask,
-    updateTeam,
+    completeTeamTask,
     deleteTeam,
-    // getTeams,
+    leaveCurrentTeam,
     receiveTeams,
     receiveTeamsUsers,
-    // updateProductInCart,
-    sendCart,
     resetTeams,
+    sendCart,
     setCurrentTeam,
-    completeTeamTask,
+    updateTeam,
+    updateTeamTask,
   }
 }

@@ -11,6 +11,7 @@ import Colors from '../utilities/colors';
 import Urls from '../resources/urls';
 import * as actions from '../actions';
 import * as Components from '../components';
+import * as SessionComponents from '../components/session';
 import * as TextComponents from '../components/text';
 import Dimensions from 'Dimensions';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
@@ -19,16 +20,13 @@ import Communications from 'react-native-communications';
 import DeviceUUID from 'react-native-device-uuid';
 
 const {
-  PropTypes,
-  View,
-  Text,
-  ActionSheetIOS,
-  Image,
-  StyleSheet,
   Navigator,
-  TouchableHighlight,
-  TouchableOpacity,
+  PropTypes,
   ScrollView,
+  StyleSheet,
+  Text,
+  TouchableHighlight,
+  View,
 } = React;
 
 class App extends React.Component {
@@ -83,7 +81,6 @@ class App extends React.Component {
     this.reconnectTimeout = null
     this.initialRoute = 'Signup'
     this.unauthenticatedRoutes = {
-      'Login': {},
       'Signup': {}
     }
     this.navBar = (
@@ -181,6 +178,14 @@ class App extends React.Component {
     if(this.refs.appNavigator){
       if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'TeamIndex'){
         if(this.state.currentTeamInfo.team !== null){
+          setTimeout(() => {
+            this.refs.appNavigator.replacePrevious({
+              name: 'Feed'
+            });
+          }, 10)
+        }
+      } else if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'session/onboarding'){
+        if(nextProps.session.viewedOnboarding === true){
           setTimeout(() => {
             this.refs.appNavigator.replacePrevious({
               name: 'Feed'
@@ -314,9 +319,25 @@ class App extends React.Component {
   }
 
   getScene(route, nav) {
-    const { session, teams, messages, dispatch, purveyors, products, categories, errors, connect } = this.props;
+    const { session, teams, messages, dispatch, purveyors, products, categories, errors, connect, settingsConfig } = this.props;
 
     switch (route.name) {
+      case 'session/onboarding':
+        return {
+          component: SessionComponents.Onboarding,
+          props: {
+            settingsConfig: settingsConfig,
+            onNavToFeed: () => {
+              dispatch(actions.updateSession({
+                viewedOnboarding: true
+              }))
+              nav.replacePreviousAndPop({
+                name: 'Feed',
+              })
+            }
+          },
+        }
+
       case 'Signup':
         return {
           component: Components.Signup,
@@ -453,10 +474,7 @@ class App extends React.Component {
             onUpdateTeam: (teamId) => {
               _.debounce(() => {
                 // dispatch(actions.resetPurveyors());
-                dispatch(actions.resetMessages(teamId));
-                dispatch(actions.getTeamMessages(teamId));
                 dispatch(actions.setCurrentTeam(teamId));
-                dispatch(actions.updateSession({ teamId: teamId }));
               }, 25)()
               nav.replacePreviousAndPop({
                 name: 'Feed',
@@ -464,6 +482,27 @@ class App extends React.Component {
             },
             onAddTeam: (name) => {
               dispatch(actions.addTeam(name))
+            },
+            onLeaveTeam: (teamId) => {
+              _.debounce(() => {
+                dispatch(actions.leaveCurrentTeam(teamId));
+              }, 25)()
+              nav.replacePreviousAndPop({
+                name: 'Feed',
+              })
+            },
+            onShowLeaveError: () => {
+              this.setState({
+                genericModalMessage: (
+                  <TextComponents.LeaveTeamErrorMessage />
+                ),
+                showGenericModal: true,
+                // genericModalCallback: () => {
+                //   nav.replacePreviousAndPop({
+                //     name: 'Feed',
+                //   })
+                // }
+              })
             },
             onBack: () => {
               this._back.bind(this)
@@ -534,7 +573,6 @@ class App extends React.Component {
             teamsUsers: teams.teamsUsers,
             messagesFetching: messages.isFetching,
             messages: this.state.currentTeamInfo.messages,
-            userEmail: session.login,
             onClearBadge: () => {
               dispatch(actions.updateInstallation({
                 "badge": 0
@@ -959,6 +997,11 @@ class App extends React.Component {
             onUpdateInfo: (data) => {
               _.debounce(() => {
                 dispatch(actions.updateSession(data));
+                if(session.teamId === null) {
+                  const teamName = `${data.firstName}'s Team`
+                  const demoTeam = true
+                  dispatch(actions.addTeam(teamName, demoTeam));
+                }
               }, 25)()
             },
           },
@@ -1403,6 +1446,7 @@ class App extends React.Component {
             ),
           })
           break;
+        case 'session/onboarding':
         case 'UserInfo':
         case 'UserTeam':
         case 'Loading':
@@ -1429,28 +1473,29 @@ class App extends React.Component {
 
     // redirect to initial view
     if (this.state.isAuthenticated === true){
-      if (route.name === 'Login' || route.name === 'Signup' || route.name === 'UserInfo') {
+      if (route.name === 'Signup' || route.name === 'UserInfo' || route.name === 'UserTeam') {
         if (this.state.firstName === '' || this.state.lastName === '') {
           route.name = 'UserInfo';
+        } else if(session.teamId === null) {
+          route.name = 'UserTeam';
+        } else if(session.viewedOnboarding !== true) {
+          route.name = 'session/onboarding';
+        } else if(this.state.currentTeamInfo.team !== null){
+          route.name = 'Feed';
         } else {
-          if(this.state.currentTeamInfo.team !== null){
-            // else send to Feed
-            route.name = 'Feed';
-          } else if(session.teamId === null) {
-            route.name = 'UserTeam';
-          } else {
-            route.name = 'Loading';
-          }
+          route.name = 'Loading';
         }
+      } else if(session.viewedOnboarding !== true) {
+        route.name = 'session/onboarding';
       }
-      if(Object.keys(this.state.currentTeamInfo.purveyors).length === 0){
-        if(route.name === 'CategoryIndex' || route.name === 'PurveyorIndex') {
+      if(route.name === 'CategoryIndex' || route.name === 'PurveyorIndex') {
+        if(Object.keys(this.state.currentTeamInfo.purveyors).length === 0){
           route.name = 'OrderGuide';
         }
       }
     }
-    // redirect to login if requested view requires authentication
-    else if(route.name !== 'Login' && route.name !== 'Signup') {
+    // redirect to signup if requested view requires authentication
+    else if(route.name !== 'Signup') {
       route.name = 'Signup'
     }
 
@@ -1525,10 +1570,18 @@ class App extends React.Component {
       />
     )
 
-    let CustomSideView = SideMenu
-    let menu = View
-    if(this.state.isAuthenticated === true && this.state.currentTeamInfo.team !== null){
-      // CustomSideView = SideMenu
+    let CustomSideView = View
+    let menu = <View />
+    const noSideMenuRoutes = [
+      'Signup',
+      'UserInfo',
+      'UserTeam',
+      'session/onboarding',
+      'Loading',
+    ]
+    // if(this.state.isAuthenticated === true && this.state.currentTeamInfo.team !== null && session.viewedOnboarding === true){
+    if(noSideMenuRoutes.indexOf(route.name) === -1){
+      CustomSideView = SideMenu
       menu = (
         <Components.Menu
           ref='menu'
@@ -1686,6 +1739,7 @@ function mapStateToProps(state) {
     orders: state.orders,
     errors: state.errors,
     connect: state.connect,
+    settingsConfig: state.settingsConfig,
   }
 }
 

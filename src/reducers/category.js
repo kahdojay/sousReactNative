@@ -22,7 +22,15 @@ function categories(state = initialState.categories, action) {
   switch (action.type) {
   // reset the categories
   case RESET_CATEGORIES:
-    return Object.assign({}, initialState.categories);
+    let resetCategoryState = Object.assign({}, initialState.categories);
+    if(action.hasOwnProperty('teamId') === true && action.teamId !== null){
+      resetCategoryState = Object.assign({}, state);
+      if(resetCategoryState.teams.hasOwnProperty(action.teamId) === true){
+        delete resetCategoryState.teams[action.teamId];
+      }
+    }
+    return resetCategoryState;
+
   // request the categories
   case REQUEST_CATEGORIES:
     return Object.assign({}, state, {

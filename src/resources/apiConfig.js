@@ -20,4 +20,4 @@ export const DDP = {
 }
 // TODO: change the actions/connect.js to use DDP.SUBSCRIBE_LIST.<CHANNEL>.collection instead of hardcoding the collection
 
-export const SESSION_VERSION = 1448129295000
+export const SESSION_VERSION = 1452291100000

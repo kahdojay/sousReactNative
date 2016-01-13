@@ -11,41 +11,37 @@ import OrderActions from './order';
 import CartItemActions from './cartItem';
 import ddpClient from '../utilities/ddpClient';
 
+let allActions = {}
 const connectActions = ConnectActions(ddpClient)
+allActions['connectActions'] = connectActions
 
-const errorActions = ErrorActions({
-  'connectActions': connectActions,
-})
+const errorActions = ErrorActions(allActions)
+allActions['errorActions'] = errorActions
+
 // const uiActions = UIActions(ddpClient)
-const sessionActions = SessionActions({
-  'connectActions': connectActions,
-})
-const messageActions = MessageActions({
-  'connectActions': connectActions,
-})
-const categoryActions = CategoryActions({
-  'connectActions': connectActions,
-})
-const productActions = ProductActions({
-  'connectActions': connectActions,
-  'categoryActions': categoryActions
-})
-const purveyorActions = PurveyorActions({
-  'connectActions': connectActions,
-  'messageActions': messageActions,
-})
-const orderActions = OrderActions({
-  'connectActions': connectActions,
-})
-const cartItemActions = CartItemActions({
-  'connectActions': connectActions,
-})
-const teamActions = TeamActions({
-  'connectActions': connectActions,
-  'sessionActions': sessionActions,
-  'messageActions': messageActions,
-  'cartItemActions': cartItemActions,
-})
+const sessionActions = SessionActions(allActions)
+allActions['sessionActions'] = sessionActions
+
+const messageActions = MessageActions(allActions)
+allActions['messageActions'] = messageActions
+
+const categoryActions = CategoryActions(allActions)
+allActions['categoryActions'] = categoryActions
+
+const productActions = ProductActions(allActions)
+allActions['productActions'] = productActions
+
+const purveyorActions = PurveyorActions(allActions)
+allActions['purveyorActions'] = purveyorActions
+
+const orderActions = OrderActions(allActions)
+allActions['orderActions'] = orderActions
+
+const cartItemActions = CartItemActions(allActions)
+allActions['cartItemActions'] = cartItemActions
+
+const teamActions = TeamActions(allActions)
+allActions['teamActions'] = teamActions
 
 function connectApp(){
   return (dispatch, getState) => {
@@ -71,18 +67,7 @@ function connectApp(){
     // Connect DDP
     //--------------------------------------
 
-    dispatch(connectActions.connectDDP({
-      // 'uiActions': uiActions,
-      'sessionActions': sessionActions,
-      'teamActions': teamActions,
-      'messageActions': messageActions,
-      'purveyorActions': purveyorActions,
-      'categoryActions': categoryActions,
-      'productActions': productActions,
-      'errorActions': errorActions,
-      'orderActions': orderActions,
-      'cartItemActions': cartItemActions,
-    }));
+    dispatch(connectActions.connectDDP(allActions));
   }
 }
 
