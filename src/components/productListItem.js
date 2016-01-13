@@ -188,6 +188,7 @@ class ProductListItem extends React.Component {
         selectedStyle = styles.selectedRow
         productDetailsColor = 'black'
       }
+      let availablePurveyors = product.purveyors
 
       if(purveyors !== null){
         if(purveyors.hasOwnProperty(this.state.selectedPurveyorId) === true){
@@ -202,7 +203,10 @@ class ProductListItem extends React.Component {
             <Text style={{fontSize: 9,  color: productDetailsColor}}>Multiple purveyors</Text>
           )
         }
+      } else {
+        availablePurveyors = [this.state.selectedPurveyorId]
       }
+
       if(category !== null) {
         categoryInfo = (
           <Text style={{fontSize: 9,  color: productDetailsColor}}>{category.name}</Text>
@@ -218,7 +222,7 @@ class ProductListItem extends React.Component {
           <View style={styles.main}>
             <ProductToggle
               added={this.state.added}
-              availablePurveyors={product.purveyors}
+              availablePurveyors={availablePurveyors}
               allPurveyors={purveyors}
               currentlySelectedPurveyorId={this.state.selectedPurveyorId}
               onToggleCartProduct={(purveyorId) => {
