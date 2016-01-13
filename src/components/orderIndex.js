@@ -67,7 +67,7 @@ class OrderIndex extends React.Component {
       })
     })
 
-    let ordersList = _.map(_.sortBy(fullOrders, 'orderedAt'), (order) => {
+    let ordersList = _.map(_.sortBy(fullOrders, 'orderedAt').reverse(), (order) => {
       let show = false
       if(this.state.showConfirmedOrders === false && order.confirm.order === false){
         show = true
@@ -100,7 +100,7 @@ class OrderIndex extends React.Component {
             <View style={[styles.row, confirmedOrderStyle]}>
               <View style={{flex:2}}>
                 <Text style={[styles.purveyorName, styles.bold]}>
-                  {order.purveyor.name}
+                  {order.purveyor ? order.purveyor.name : ''}
                   <Text style={[styles.metaInfo,confirmedOrderMetaInfoStyle]}> {`${itemCount} Item${itemCount > 1 ? 's' : ''}`}</Text>
                 </Text>
                 <Text style={[styles.metaInfo,confirmedOrderMetaInfoStyle]}>{orderUserName}</Text>
