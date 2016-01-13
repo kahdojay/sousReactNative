@@ -185,10 +185,17 @@ class ProductListItem extends React.Component {
       let selectedStyle = []
       let productDetailsColor = Colors.greyText
       let productColor = 'black'
+      let productQuantityBorderStyle = {}
       if(this.state.added === true){
         selectedStyle = styles.selectedRow
         productDetailsColor = 'white'
         productColor = 'white'
+        productQuantityBorderStyle = {
+          borderColor: 'white',
+          borderWidth: .5,
+          borderRadius: 15,
+          padding: 4,
+        }
       }
       let availablePurveyors = product.purveyors
 
@@ -245,8 +252,9 @@ class ProductListItem extends React.Component {
             </ProductToggle>
           </View>
           <View style={styles.outerQuantityContainer}>
+            <View style={styles.innerQuantityContainer}>
             { this.state.added === true ?
-              <View style={styles.innerQuantityContainer}>
+              (
                 <TouchableHighlight
                   onPress={() => {
                     this.setState({
@@ -255,16 +263,18 @@ class ProductListItem extends React.Component {
                   }}
                   underlayColor='transparent'
                 >
-                  <Text style={[styles.quantity, {color: productColor}]}>{`${this.state.quantity}x`}</Text>
+                  <Text style={[styles.quantity, productQuantityBorderStyle, {color: productColor}]}>{`${this.state.quantity}x`}</Text>
                 </TouchableHighlight>
-                { product.par && product.par !== '' ?
-                  <Text style={[styles.par, {color: productColor}]}>Par: {product.par}</Text>
-                  :
-                  <View/>
-                }
-              </View>
-              : <Text style={styles.quantity}>{''}</Text>
+              )
+              : (
+                <Text style={styles.quantity}>{''}</Text>
+              )
             }
+            { product.par && product.par !== '' ?
+              <Text style={[styles.par, {color: productDetailsColor}]}>Par: {product.par}</Text>
+              : <Text style={[styles.par, {color: productDetailsColor}]}>{''}</Text>
+            }
+            </View>
           </View>
         </View>
       )
@@ -394,9 +404,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'right',
     paddingRight: 5,
+    padding: 5,
   },
   par: {
     fontSize: 10,
+    textAlign: 'center',
   },
   row: {
     borderRadius: Sizes.rowBorderRadius,
