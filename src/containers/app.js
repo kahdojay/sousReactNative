@@ -627,7 +627,8 @@ class App extends React.Component {
             cartItems: this.state.currentTeamInfo.cartItems['cart'],
             categories: this.state.currentTeamInfo.categories,
             purveyor: this.state.purveyor,
-            purveyors: this.state.currentTeamInfo.purveyors,
+            // purveyors: this.state.currentTeamInfo.purveyors,
+            purveyors: [this.state.purveyor],
             products: specificProductsPurveyor,
             onProductDelete: (productId) => {
               _.debounce(() => {
