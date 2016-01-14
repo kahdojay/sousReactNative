@@ -1048,15 +1048,16 @@ class App extends React.Component {
           props: {
             contacts: this.state.contactList,
             denied: this.state.contactsPermissionDenied,
-            onSMSInvite: (contactList) => {
-              if (contactList.length === 0)
+            onSMSInvite: (contacts) => {
+              if (contacts.length === 0)
                 return
 
               _.debounce(() => {
+                const contactList = _.map(contacts, 'number')
                 dispatch(actions.inviteContacts(contactList))
               }, 25)()
 
-              let invitees = contactList.map(function(contact) { return contact.firstName }).toString().replace(/,/g , ', ')
+              let invitees = _.pluck(contacts,'firstName').toString().replace(/,/g , ', ')
 
               let msg = {
                 text: `${session.firstName} invited to ${this.props.teams.currentTeam.name}: ${invitees}`

@@ -86,7 +86,7 @@ class InviteModal extends React.Component {
           }
         }}
         rightButton={{
-          text: 'Search',
+          text: 'Search Contacts',
           onPress: () => {
             this.navigateToInviteView()
           }
@@ -122,9 +122,6 @@ var styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderRadius: Sizes.inputBorderRadius,
-    borderColor: Colors.lightGrey,
-    borderWidth: 1,
     marginBottom: 15,
   },
 });
