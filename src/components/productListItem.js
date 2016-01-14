@@ -362,6 +362,9 @@ class ProductListItem extends React.Component {
         <Swipeout
           right={buttons}
           backgroundColor={Colors.mainBackgroundColor}
+          scroll={(allowScroll) => {
+            this.props.onAllowScroll(allowScroll)
+          }}
         >
           {productInfo}
         </Swipeout>
