@@ -170,7 +170,6 @@ const styles = StyleSheet.create({
     padding: 16,
     textAlign: 'center',
     color: Colors.lightBlue,
-    width: modalContainerWidth,
   },
   separator: {
     height: 0,
