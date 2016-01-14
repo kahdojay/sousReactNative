@@ -51,6 +51,15 @@ class GenericModal extends React.Component {
     let leftButton = null
     let rightButton = null
     let buttonSeparator = null
+    let modalSubHeader = null
+
+    if(this.props.hasOwnProperty('modalSubHeaderText') === true){
+      modalSubHeader = (
+        <Text style={styles.modalSubHeaderText}>
+          {this.props.modalSubHeaderText}
+        </Text>
+      )
+    }
 
     if(this.props.hasOwnProperty('modalHeaderText') === true){
       modalHeader = (
@@ -58,6 +67,15 @@ class GenericModal extends React.Component {
           <Text style={styles.modalHeaderText}>
             {this.props.modalHeaderText}
           </Text>
+          {modalSubHeader}
+        </View>
+      )
+    }
+
+    if(this.props.hasOwnProperty('modalHeader') === true){
+      modalHeader = (
+        <View style={styles.modalHeader}>
+          {this.props.modalHeader}
         </View>
       )
     }
@@ -144,12 +162,21 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     textAlign: 'center',
     fontSize: 20,
-    color: Colors.lightBlue,
+    color: Colors.darkGrey,
+  },
+  modalSubHeaderText: {
+    marginTop: 10,
+    flex: 1,
+    fontFamily: 'OpenSans',
+    textAlign: 'center',
+    fontSize: 12,
+    color: Colors.darkGrey,
   },
   messageContainer: {
     flex: 1,
     margin: 5,
     width: modalContainerWidth,
+    padding: 10,
   },
   buttonRow: {
     width: modalContainerWidth,

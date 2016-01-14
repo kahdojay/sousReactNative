@@ -79,6 +79,7 @@ class InviteModal extends React.Component {
         modalVisible={this.state.modalVisible}
         onHideModal={::this.handleDismiss}
         modalHeaderText={`Invite to ${this.props.currentTeam ? this.props.currentTeam.name : 'Team'}`}
+        modalSubHeaderText={`Add a friend or co-worker to your team`}
         leftButton={{
           text: 'Send SMS',
           onPress: () => {
@@ -86,13 +87,12 @@ class InviteModal extends React.Component {
           }
         }}
         rightButton={{
-          text: 'Search Contacts',
+          text: 'Contacts',
           onPress: () => {
             this.navigateToInviteView()
           }
         }}
       >
-        <Text style={styles.modalText}>{`Add a friend or co-worker to your team`}</Text>
         <TextInput
           style={styles.input}
           keyboardType='numeric'

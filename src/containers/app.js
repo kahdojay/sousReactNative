@@ -13,6 +13,7 @@ import * as actions from '../actions';
 import * as Components from '../components';
 import * as SessionComponents from '../components/session';
 import * as TextComponents from '../components/text';
+import * as ModalComponents from '../components/modal';
 import Dimensions from 'Dimensions';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import PushManager from 'react-native-remote-push/RemotePushIOS';
@@ -1655,22 +1656,25 @@ class App extends React.Component {
       />
     )
 
+    const genericModalDismiss = () => {
+      const cb = this.state.genericModalCallback();
+      this.setState({
+        genericModalMessage: '',
+        showGenericModal: false,
+        genericModalCallback: () => {}
+      }, cb);
+    }
     const genericModal = (
-      <Components.GenericModal
-        ref='genericModal'
-        modalMessage={this.state.genericModalMessage}
-        currentTeam={this.state.currentTeamInfo.team}
+      <ModalComponents.GenericModal
         modalVisible={this.state.showGenericModal}
-        hideModal={() => {
-          const cb = this.state.genericModalCallback();
-          this.setState({
-            genericModalMessage: '',
-            showGenericModal: false,
-            genericModalCallback: () => {}
-          }, cb);
-          // TODO: do we need to make the callback execute on hide?
+        onHideModal={genericModalDismiss}
+        leftButton={{
+          text: 'Ok',
+          onPress: genericModalDismiss
         }}
-      />
+      >
+        {this.state.genericModalMessage}
+      </ModalComponents.GenericModal>
     )
 
     let CustomSideView = View
