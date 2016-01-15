@@ -51,7 +51,6 @@ export const CART = {
   DELETE: 'DELETE_FROM_CART',
   RESET: 'RESET_CART',
 };
-export const ORDER_SENT = 'ORDER_SENT';
 
 export const RESET_MESSAGES = 'RESET_MESSAGES';
 export const GET_MESSAGES = 'GET_MESSAGES';
@@ -72,6 +71,7 @@ export const RESET_ORDERS = 'RESET_ORDERS';
 export const RECEIVE_ORDERS = 'RECEIVE_ORDERS';
 export const UPDATE_ORDER = 'UPDATE_ORDER';
 
+export const ORDER_SENT = 'ORDER_SENT';
 export const RESET_CART_ITEMS = 'RESET_CART_ITEMS';
 export const RECEIVE_CART_ITEM = 'RECEIVE_CART_ITEM';
 export const REQUEST_CART_ITEMS = 'REQUEST_CART_ITEMS';

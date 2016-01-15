@@ -13,7 +13,6 @@ import {
   ERROR_TEAMS,
   GET_TEAMS,
   LEAVE_TEAM,
-  ORDER_SENT,
   RECEIVE_TEAMS_USERS,
   RECEIVE_TEAMS,
   REQUEST_TEAMS,
@@ -420,16 +419,6 @@ export default function TeamActions(allActions) {
   //   }
   // }
 
-  function sendCart(purveyorIds) {
-    return (dispatch, getState) => {
-      const {session} = getState()
-      dispatch(connectActions.ddpCall('sendCartItems', [session.userId, session.teamId, purveyorIds]))
-      return dispatch({
-        type: ORDER_SENT
-      })
-    }
-  }
-
   function setCurrentTeam(teamId){
     return (dispatch, getState) => {
       const {teams} = getState()
@@ -497,7 +486,6 @@ export default function TeamActions(allActions) {
     ERROR_TEAMS,
     GET_TEAMS,
     LEAVE_TEAM,
-    ORDER_SENT,
     RECEIVE_TEAMS_USERS,
     RECEIVE_TEAMS,
     REQUEST_TEAMS,
@@ -516,7 +504,6 @@ export default function TeamActions(allActions) {
     receiveTeams,
     receiveTeamsUsers,
     resetTeams,
-    sendCart,
     setCurrentTeam,
     updateTeam,
     updateTeamTask,
