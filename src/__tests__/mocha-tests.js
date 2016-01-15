@@ -253,10 +253,19 @@ describe('Ordering', () => {
         orders[session.teamId] = {}
         const firstProduct = result.products[0]
         const purveyorId = firstProduct.purveyors[0]
+        const cartItemId = generateId()
         const cartAttributes = {
+          purveyorId: purveyorId,
           productId: firstProduct._id,
           quantity: 2,
           note: '',
+          _id: cartItemId,
+          userId: session.userId,
+          teamId: session.teamId,
+          status: 'NEW',
+          orderId: null,
+          createdAt: (new Date()).toISOString(),
+          updatedAt: (new Date()).toISOString(),
         }
 
         // SUBSCRIBE TO THE ORDERS CHANNEL
@@ -288,8 +297,8 @@ describe('Ordering', () => {
 
         // PLACE THE ORDER
 
-        ddpClient.call('addCartItem', [session.userId, session.teamId, purveyorId, cartAttributes], (err, result) => {
-          ddpClient.call('sendCart', [session.userId, session.teamId])
+        ddpClient.call('addCartItem', [session.userId, session.teamId, cartAttributes], (err, result) => {
+          ddpClient.call('sendCartItems', [session.userId, session.teamId, [purveyorId]])
         });
 
         function checkOrders(){
