@@ -62,7 +62,6 @@ function cartItems(state = initialState.cartItems, action) {
   switch (action.type) {
   case ORDER_SENT:
     let orderSentCartItemTeamState = Object.assign({}, state.teams);
-    console.log(orderSentCartItemTeamState[action.teamId].cart)
     if(orderSentCartItemTeamState.hasOwnProperty(action.teamId) === true){
       action.purveyorIds.forEach((purveyorId) => {
         if(orderSentCartItemTeamState[action.teamId].cart.hasOwnProperty(purveyorId) === true){
@@ -70,7 +69,6 @@ function cartItems(state = initialState.cartItems, action) {
         }
       })
     }
-    console.log(orderSentCartItemTeamState[action.teamId].cart)
     return Object.assign({}, state, {
       teams: orderSentCartItemTeamState,
       isFetching: false,
