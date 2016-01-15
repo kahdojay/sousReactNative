@@ -110,7 +110,7 @@ class ProductList extends React.Component {
           cartItem: cartItem,
           cartPurveyorId: cartPurveyorId,
           loadDelay: loadDelay,
-          key: idx,
+          key: product.id,
           product: product,
           category: (showCategoryInfo === true) ? productCategory : null,
           purveyors: (showPurveyorInfo === true) ? purveyors: null,
@@ -118,7 +118,14 @@ class ProductList extends React.Component {
             this.props.onProductEdit(product)
           },
           onProductDelete: () => {
-            this.props.onProductDelete(product.id)
+            let products = _.filter(this.state.products, (tmpProd) => {
+              return tmpProd.deleted !== true && tmpProd.id !== product.id
+            })
+            this.setState({
+              products: products,
+            }, () => {
+              this.props.onProductDelete(product.id)
+            })
           },
           onUpdateProductInCart: this.props.onUpdateProductInCart,
           onAllowScroll: (allowScroll) => {
