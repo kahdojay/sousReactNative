@@ -32,8 +32,9 @@ class CartView extends React.Component {
       purveyorIds: [],
       showPurveyorInfo: false,
       purveyor: null,
-      showConfirationModal: false,
+      showConfirmationModal: false,
       confirmationMessage: 'Send order?',
+      navigateToFeed: true,
     }
   }
 
@@ -70,14 +71,19 @@ class CartView extends React.Component {
   handleSubmitPress(cartPurveyors, singlePurveyor) {
     if (this.props.connected === true && this.state.numberOfOrders > 0) {
       let confirmationMessage = 'Send orders to all purveyors?'
+      let navigateToFeed = true
       if(singlePurveyor === true){
         confirmationMessage = `Send order to ${cartPurveyors[0].name}?`
+        if(this.props.cartPurveyors.length > cartPurveyors.length){
+          navigateToFeed = false
+        }
       }
       const purveyorIds = _.pluck(cartPurveyors, 'id');
       this.setState({
         purveyorIds: purveyorIds,
-        showConfirationModal: true,
+        showConfirmationModal: true,
         confirmationMessage: confirmationMessage,
+        navigateToFeed: navigateToFeed,
       })
     }
   }
@@ -168,17 +174,17 @@ class CartView extends React.Component {
     )
     const confirmationModal = (
       <GenericModal
-        modalVisible={this.state.showConfirationModal}
+        modalVisible={this.state.showConfirmationModal}
         onHideModal={() => {
           this.setState({
-            showConfirationModal: false
+            showConfirmationModal: false
           })
         }}
         leftButton={{
           text: 'No',
           onPress: () => {
             this.setState({
-              showConfirationModal: false
+              showConfirmationModal: false
             })
           }
         }}
@@ -186,11 +192,11 @@ class CartView extends React.Component {
           text: 'Yes',
           onPress: () => {
             this.setState({
-              showConfirationModal: false,
+              showConfirmationModal: false,
             }, () => {
               if(this.state.numberOfOrders > 0){
                 // console.log(this.state.purveyorIds);
-                this.props.onSubmitOrder(this.state.purveyorIds);
+                this.props.onSubmitOrder(this.state.purveyorIds, this.state.navigateToFeed);
               }
             })
           }

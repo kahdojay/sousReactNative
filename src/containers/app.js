@@ -1101,13 +1101,15 @@ class App extends React.Component {
                 }
               }, 25)()
             },
-            onSubmitOrder: (purveyorIds) => {
+            onSubmitOrder: (purveyorIds, navigateToFeed) => {
               _.debounce(() => {
                 dispatch(actions.sendCart(purveyorIds));
               }, 25)()
-              nav.replacePreviousAndPop({
-                name: 'Feed',
-              });
+              if(navigateToFeed === true){                
+                nav.replacePreviousAndPop({
+                  name: 'Feed',
+                });
+              }
             },
           },
         }
