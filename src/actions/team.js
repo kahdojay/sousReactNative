@@ -85,7 +85,7 @@ export default function TeamActions(allActions) {
           newTeamAttributes.demoTeam = true;
         }
 
-        dispatch(connectActions.ddpCall('createTeam', [session.teamId, newTeamAttributes]))
+        dispatch(connectActions.ddpCall('createTeam', [newTeamAttributes, session.userId]))
 
         dispatch({
           type: ADD_TEAM,
