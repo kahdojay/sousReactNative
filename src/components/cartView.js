@@ -1,7 +1,9 @@
 import React from 'react-native';
 import _ from 'lodash';
+import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import CartViewListItem from './cartViewListItem';
+import GenericModal from './modal/genericModal';
 
 const {
   AlertIOS,
@@ -27,8 +29,11 @@ class CartView extends React.Component {
     this.state = {
       numberOfProducts: numberOfProducts,
       numberOfOrders: numberOfOrders,
+      purveyorIds: [],
       showPurveyorInfo: false,
       purveyor: null,
+      showConfirationModal: false,
+      confirmationMessage: 'Send order?',
     }
   }
 
@@ -62,28 +67,18 @@ class CartView extends React.Component {
     })
   }
 
-  handleSubmitPress(cartPurveyors) {
+  handleSubmitPress(cartPurveyors, singlePurveyor) {
     if (this.props.connected === true && this.state.numberOfOrders > 0) {
-      AlertIOS.alert(
-        'Confirm',
-        'Are you sure you want to send order?',
-        [
-          {
-            text: 'No',
-            onPress: () => {
-              // console.log('Order not sent')
-            }
-          },
-          {
-            text: 'Yes',
-            onPress: () => {
-              if(this.state.numberOfOrders > 0){
-                this.props.onSubmitOrder();
-              }
-            }
-          }
-        ]
-      )
+      let confirmationMessage = 'Send orders to all purveyors?'
+      if(singlePurveyor === true){
+        confirmationMessage = `Send order to ${cartPurveyors[0].name}?`
+      }
+      const purveyorIds = _.pluck(cartPurveyors, 'id');
+      this.setState({
+        purveyorIds: purveyorIds,
+        showConfirationModal: true,
+        confirmationMessage: confirmationMessage,
+      })
     }
   }
 
@@ -133,49 +128,79 @@ class CartView extends React.Component {
   render() {
     const {cartItems, cartPurveyors, products} = this.props
 
+    const purveyorInfoDismiss = () => {
+      this.setState({
+        showPurveyorInfo: false,
+        purveyor: null,
+      })
+    }
     const modal = (
-      <Modal
-        animated={true}
-        transparent={true}
-        visible={this.state.showPurveyorInfo}
+      <GenericModal
+        modalVisible={this.state.showPurveyorInfo}
+        onHideModal={purveyorInfoDismiss}
+        modalHeaderText={this.state.purveyor ? this.state.purveyor.name : ''}
+        leftButton={{
+          text: 'Ok',
+          onPress: purveyorInfoDismiss
+        }}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalInnerContainer}>
-            { this.state.purveyor !== null ?
-              <View>
-                <View style={styles.purveyorInfoRow}>
-                  <Text style={styles.purveyorInfoLabel}>Order Cutoff Time</Text>
-                  <Text style={styles.purveyorInfoData}>{this.state.purveyor.orderCutoffTime}</Text>
-                </View>
-                <View style={styles.purveyorInfoRow}>
-                  <Text style={styles.purveyorInfoLabel}>Order Minimum</Text>
-                  <Text style={styles.purveyorInfoData}>{this.state.purveyor.orderMinimum}</Text>
-                </View>
-                <View style={styles.purveyorInfoRow}>
-                  <Text style={styles.purveyorInfoLabel}>Delivery Days</Text>
-                  {this.renderDeliveryDays()}
-                </View>
-                {/* * /}<View style={styles.purveyorInfoRow}>
-                  <Text style={styles.purveyorInfoLabel}>Notes</Text>
-                  <Text style={styles.purveyorInfoData}>{this.state.purveyor.notes}</Text>
-                </View>{/**/}
-              </View>
-            : <Text>Loading ...</Text> }
-            <View style={styles.separator} />
-            <TouchableHighlight
-              onPress={() => {
-                this.setState({
-                  showPurveyorInfo: false,
-                  purveyor: null,
-                })
-              }}
-              underlayColor='transparent'
-            >
-              <Text style={styles.modalButtonText}>Ok</Text>
-            </TouchableHighlight>
+        { this.state.purveyor !== null ?
+          <View>
+            <View style={styles.purveyorInfoRow}>
+              <Text style={styles.purveyorInfoLabel}>Order Cutoff Time</Text>
+              <Text style={styles.purveyorInfoData}>{this.state.purveyor.orderCutoffTime}</Text>
+            </View>
+            <View style={styles.purveyorInfoRow}>
+              <Text style={styles.purveyorInfoLabel}>Order Minimum</Text>
+              <Text style={styles.purveyorInfoData}>{this.state.purveyor.orderMinimum}</Text>
+            </View>
+            <View style={styles.purveyorInfoRow}>
+              <Text style={styles.purveyorInfoLabel}>Delivery Days</Text>
+              {this.renderDeliveryDays()}
+            </View>
+            {/* * /}<View style={styles.purveyorInfoRow}>
+              <Text style={styles.purveyorInfoLabel}>Notes</Text>
+              <Text style={styles.purveyorInfoData}>{this.state.purveyor.notes}</Text>
+            </View>{/**/}
           </View>
+        : <Text>Loading ...</Text> }
+      </GenericModal>
+    )
+    const confirmationModal = (
+      <GenericModal
+        modalVisible={this.state.showConfirationModal}
+        onHideModal={() => {
+          this.setState({
+            showConfirationModal: false
+          })
+        }}
+        leftButton={{
+          text: 'No',
+          onPress: () => {
+            this.setState({
+              showConfirationModal: false
+            })
+          }
+        }}
+        rightButton={{
+          text: 'Yes',
+          onPress: () => {
+            this.setState({
+              showConfirationModal: false,
+            }, () => {
+              if(this.state.numberOfOrders > 0){
+                // console.log(this.state.purveyorIds);
+                this.props.onSubmitOrder(this.state.purveyorIds);
+              }
+            })
+          }
+        }}
+      >
+        <View>
+          <Text style={[styles.centeredText, styles.boldText, {fontFamily: 'OpenSans'}]}>Confirm</Text>
+          <Text style={[styles.centeredText, {margin: 15, fontSize: 12,fontFamily: 'OpenSans'}]}>{this.state.confirmationMessage}</Text>
         </View>
-      </Modal>
+      </GenericModal>
     )
 
     return (
@@ -186,9 +211,6 @@ class CartView extends React.Component {
               <View key={purveyor.id} style={styles.purveyorContainer}>
                 <View style={styles.purveyorInfo}>
                   <View style={styles.purveyorInfoLeft}>
-                    <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
-                  </View>
-                  <View style={styles.purveyorInfoRight}>
                     <TouchableHighlight
                       onPress={() => {
                         this.setState({
@@ -198,7 +220,21 @@ class CartView extends React.Component {
                       }}
                       underlayColor='transparent'
                     >
-                      <Text style={styles.purveyorInfoDetails}>Show details</Text>
+                      <View style={styles.purveyorTitleContainer}>
+                        <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
+                        <Icon name='material|info' size={20} color='white' style={styles.detailsIcon} />
+                      </View>
+                    </TouchableHighlight>
+                  </View>
+                  <View style={styles.purveyorInfoRight}>
+                    <TouchableHighlight
+                      underlayColor='transparent'
+                      onPress={() => {
+                        const singlePurveyor = true
+                        this.handleSubmitPress([purveyor], singlePurveyor)
+                      }}
+                    >
+                      <Icon name='material|check-circle' size={30} color='white' style={styles.submitOrderIcon} />
                     </TouchableHighlight>
                   </View>
                 </View>
@@ -215,9 +251,10 @@ class CartView extends React.Component {
           ]}
           activeOpacity={.75}
         >
-          <Text style={styles.buttonText}>Submit Order</Text>
+          <Text style={styles.buttonText}>Submit Orders</Text>
         </TouchableOpacity>
         {modal}
+        {confirmationModal}
       </ScrollView>
     );
   }
@@ -236,16 +273,22 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.darkBlue,
     borderRadius: 2,
     marginTop: 1,
-    padding: 10,
     flexDirection: 'row'
   },
   purveyorInfoLeft: {
-    flex: 2
+    flex: 3,
   },
   purveyorInfoRight: {
-    flex: 1
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+  },
+  purveyorTitleContainer: {
+    padding: 10,
+    flexDirection: 'row',
   },
   purveyorTitle: {
+    flex: 5,
     fontWeight: 'bold',
     color: 'white',
     fontFamily: 'OpenSans',
@@ -268,12 +311,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'right',
   },
-  purveyorInfoDetails: {
+  detailsIcon: {
     flex: 1,
-    fontFamily: 'OpenSans',
-    fontSize: 14,
-    color: '#fff',
-    textAlign: 'right',
+    width: 28,
+    height: 28,
+  },
+  submitOrderIcon: {
+    width: 50,
+    height: 50,
   },
   buttonText: {
     alignSelf: 'center',
@@ -295,28 +340,6 @@ const styles = StyleSheet.create({
   buttonDisabled: {
     backgroundColor: Colors.disabled,
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
-  },
-  modalInnerContainer: {
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    padding: 20,
-  },
-  modalButtonText: {
-    textAlign: 'center',
-    color: Colors.lightBlue,
-    paddingTop: 15,
-  },
-  separator: {
-    marginTop: 10,
-    height: 0,
-    borderBottomColor: Colors.separatorColor,
-    borderBottomWidth: 1,
-  },
   dayOfWeekContainer: {
     flexDirection: 'row',
     flex:2,
@@ -332,7 +355,13 @@ const styles = StyleSheet.create({
   dayOfWeekActive: {
     color: '#222',
     backgroundColor: Colors.gold
-  }
+  },
+  centeredText: {
+    textAlign: 'center',
+  },
+  boldText: {
+    fontWeight: 'bold',
+  },
 })
 
 export default CartView

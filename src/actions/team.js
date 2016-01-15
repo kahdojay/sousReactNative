@@ -420,11 +420,10 @@ export default function TeamActions(allActions) {
   //   }
   // }
 
-  function sendCart() {
+  function sendCart(purveyorIds) {
     return (dispatch, getState) => {
       const {session} = getState()
-      const orderId = generateId();
-      dispatch(connectActions.ddpCall('sendCart', [session.userId, session.teamId, orderId]))
+      dispatch(connectActions.ddpCall('sendCartItems', [session.userId, session.teamId, purveyorIds]))
       return dispatch({
         type: ORDER_SENT
       })

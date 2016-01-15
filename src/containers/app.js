@@ -1101,9 +1101,9 @@ class App extends React.Component {
                 }
               }, 25)()
             },
-            onSubmitOrder: () => {
+            onSubmitOrder: (purveyorIds) => {
               _.debounce(() => {
-                dispatch(actions.sendCart());
+                dispatch(actions.sendCart(purveyorIds));
               }, 25)()
               nav.replacePreviousAndPop({
                 name: 'Feed',
@@ -1389,7 +1389,7 @@ class App extends React.Component {
             // title: this.state.purveyor.name.substr(0,16) + (this.state.purveyor.name.length > 16 ? '...' : ''),
             customTitle: (
               <TextComponents.NavBarTitle
-                content={this.state.purveyor.name.substr(0,16) + (this.state.purveyor.name.length > 16 ? '...' : '')}
+                content={this.state.purveyor.name.substr(0,12) + (this.state.purveyor.name.length > 12 ? '...' : '')}
               />
             ),
             customNext: (
