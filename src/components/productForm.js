@@ -77,6 +77,7 @@ class ProductForm extends React.Component {
 
   checkValidForm(){
     if (
+      this.state.selectedPurveyor !== null &&
       this.state.selectedPurveyor.length > 0 &&
       this.state.selectedCategory &&
       this.state.selectedAmount &&

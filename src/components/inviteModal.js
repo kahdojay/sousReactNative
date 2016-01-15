@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
+import GenericModal from './modal/genericModal';
 import AddressBook from 'react-native-addressbook';
 
 const {
@@ -74,56 +74,34 @@ class InviteModal extends React.Component {
 
   render() {
     return (
-      <TouchableOpacity
-        onPress={() => this.handleDismiss()}
-        underlayColor='transparent'
+      <GenericModal
+        ref='genericModal'
+        modalVisible={this.state.modalVisible}
+        onHideModal={::this.handleDismiss}
+        modalHeaderText={`Invite to ${this.props.currentTeam ? this.props.currentTeam.name : 'Team'}`}
+        modalSubHeaderText={`Add a friend or co-worker to your team`}
+        leftButton={{
+          text: 'Send SMS',
+          onPress: () => {
+            this.handleSubmit()
+          }
+        }}
+        rightButton={{
+          text: 'Contacts',
+          onPress: () => {
+            this.navigateToInviteView()
+          }
+        }}
       >
-        <Modal
-          animated={true}
-          transparent={true}
-          visible={this.state.modalVisible}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalInnerContainer}>
-              <Text style={[styles.header]}>{`Invite to ${this.props.currentTeam ? this.props.currentTeam.name : 'Team'}`}</Text>
-              <Text style={styles.modalText}>{`Add a friend or co-worker to your team`}</Text>
-              <TextInput
-                style={styles.input}
-                keyboardType='numeric'
-                placeholder={'Phone #'}
-                textAlign='center'
-                onChangeText={(text) => this.setState({text})}
-                value={this.state.text}
-                />
-              <View style={styles.row}>
-                <View style={styles.buttonContainer}>
-                  <TouchableHighlight
-                    onPress={() => this.handleSubmit()}
-                    style={styles.option}
-                    underlayColor='transparent'
-                  >
-                    <View style={styles.buttonTextContainer}>
-                      <Text style={styles.buttonText}>Send SMS</Text>
-                    </View>
-                  </TouchableHighlight>
-                </View>
-                <View style={styles.buttonContainer}>
-                  <TouchableHighlight
-                    onPress={() => this.navigateToInviteView()}
-                    style={styles.option}
-                    underlayColor='transparent'
-                  >
-                    <View style={styles.buttonTextContainer}>
-                      <Text style={styles.buttonText}>Search Contacts</Text>
-                    </View>
-                  </TouchableHighlight>
-                </View>
-              </View>
-            </View>
-            <KeyboardSpacer />
-          </View>
-        </Modal>
-      </TouchableOpacity>
+        <TextInput
+          style={styles.input}
+          keyboardType='numeric'
+          placeholder={'Phone #'}
+          textAlign='center'
+          onChangeText={(text) => this.setState({text})}
+          value={this.state.text}
+        />
+      </GenericModal>
     );
   }
 };
@@ -134,24 +112,6 @@ var {
 } = Dimensions.get('window');
 
 var styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalInnerContainer: {
-    borderRadius: Sizes.modalInnerBorderRadius,
-    backgroundColor: '#fff',
-    padding: 20,
-    margin: 20,
-    justifyContent: 'space-around',
-  },
-  header: {
-    alignSelf: 'center',
-    fontSize: 22,
-    fontFamily: 'OpenSans',
-    color: Colors.lightBlue,
-  },
   modalText: {
     color: Colors.darkGrey,
     textAlign: 'center',
@@ -162,39 +122,7 @@ var styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderRadius: Sizes.inputBorderRadius,
-    borderColor: Colors.lightGrey,
-    borderWidth: 1,
     marginBottom: 15,
-  },
-  row: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  buttonContainer: {
-    borderRadius: Sizes.inputBorderRadius,
-    flex: 1,
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: Colors.lightGrey,
-  },
-  option: {
-    flex: 1,
-  },
-  buttonTextContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingTop: 14,
-  },
-  buttonText: {
-    flex: 1,
-    fontFamily: 'OpenSans',
-    fontWeight: 'bold',
-    fontSize: 12,
-    height: 35,
-    color: Colors.lightBlue,
   },
 });
 

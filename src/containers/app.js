@@ -13,6 +13,7 @@ import * as actions from '../actions';
 import * as Components from '../components';
 import * as SessionComponents from '../components/session';
 import * as TextComponents from '../components/text';
+import * as ModalComponents from '../components/modal';
 import Dimensions from 'Dimensions';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import PushManager from 'react-native-remote-push/RemotePushIOS';
@@ -1048,15 +1049,16 @@ class App extends React.Component {
           props: {
             contacts: this.state.contactList,
             denied: this.state.contactsPermissionDenied,
-            onSMSInvite: (contactList) => {
-              if (contactList.length === 0)
+            onSMSInvite: (contacts) => {
+              if (contacts.length === 0)
                 return
 
               _.debounce(() => {
+                const contactList = _.map(contacts, 'number')
                 dispatch(actions.inviteContacts(contactList))
               }, 25)()
 
-              let invitees = contactList.map(function(contact) { return contact.firstName }).toString().replace(/,/g , ', ')
+              let invitees = _.pluck(contacts,'firstName').toString().replace(/,/g , ', ')
 
               let msg = {
                 text: `${session.firstName} invited to ${this.props.teams.currentTeam.name}: ${invitees}`
@@ -1099,13 +1101,15 @@ class App extends React.Component {
                 }
               }, 25)()
             },
-            onSubmitOrder: () => {
+            onSubmitOrder: (purveyorIds, navigateToFeed) => {
               _.debounce(() => {
-                dispatch(actions.sendCart());
+                dispatch(actions.sendCart(purveyorIds));
               }, 25)()
-              nav.replacePreviousAndPop({
-                name: 'Feed',
-              });
+              if(navigateToFeed === true){                
+                nav.replacePreviousAndPop({
+                  name: 'Feed',
+                });
+              }
             },
           },
         }
@@ -1387,7 +1391,7 @@ class App extends React.Component {
             // title: this.state.purveyor.name.substr(0,16) + (this.state.purveyor.name.length > 16 ? '...' : ''),
             customTitle: (
               <TextComponents.NavBarTitle
-                content={this.state.purveyor.name.substr(0,16) + (this.state.purveyor.name.length > 16 ? '...' : '')}
+                content={this.state.purveyor.name.substr(0,12) + (this.state.purveyor.name.length > 12 ? '...' : '')}
               />
             ),
             customNext: (
@@ -1654,22 +1658,25 @@ class App extends React.Component {
       />
     )
 
+    const genericModalDismiss = () => {
+      const cb = this.state.genericModalCallback();
+      this.setState({
+        genericModalMessage: '',
+        showGenericModal: false,
+        genericModalCallback: () => {}
+      }, cb);
+    }
     const genericModal = (
-      <Components.GenericModal
-        ref='genericModal'
-        modalMessage={this.state.genericModalMessage}
-        currentTeam={this.state.currentTeamInfo.team}
+      <ModalComponents.GenericModal
         modalVisible={this.state.showGenericModal}
-        hideModal={() => {
-          const cb = this.state.genericModalCallback();
-          this.setState({
-            genericModalMessage: '',
-            showGenericModal: false,
-            genericModalCallback: () => {}
-          }, cb);
-          // TODO: do we need to make the callback execute on hide?
+        onHideModal={genericModalDismiss}
+        leftButton={{
+          text: 'Ok',
+          onPress: genericModalDismiss
         }}
-      />
+      >
+        {this.state.genericModalMessage}
+      </ModalComponents.GenericModal>
     )
 
     let CustomSideView = View

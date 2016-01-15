@@ -1,6 +1,7 @@
 import { generateId } from '../utilities/utils';
 import {
   CART,
+  ORDER_SENT,
   RESET_CART_ITEMS,
   RECEIVE_CART_ITEM,
   REQUEST_CART_ITEMS,
@@ -101,20 +102,34 @@ export default function CartItemActions(allActions) {
     }
   }
 
+  function sendCart(purveyorIds) {
+    return (dispatch, getState) => {
+      const {session} = getState()
+      dispatch(connectActions.ddpCall('sendCartItems', [session.userId, session.teamId, purveyorIds]))
+      return dispatch({
+        type: ORDER_SENT,
+        teamId: session.teamId,
+        purveyorIds: purveyorIds,
+      })
+    }
+  }
+
 
   return {
+    ADD_CART_ITEM,
     CART,
-    RESET_CART_ITEMS,
+    DELETE_CART_ITEM,
+    NO_CART_ITEMS,
+    ORDER_SENT,
     RECEIVE_CART_ITEM,
     REQUEST_CART_ITEMS,
-    NO_CART_ITEMS,
-    ADD_CART_ITEM,
-    DELETE_CART_ITEM,
+    RESET_CART_ITEMS,
     addCartItem,
-    updateCartItem,
     deleteCartItem,
-    resetCartItems,
-    receiveCartItems,
     getTeamCartItems,
+    receiveCartItems,
+    resetCartItems,
+    sendCart,
+    updateCartItem,
   }
 }

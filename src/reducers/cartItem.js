@@ -1,11 +1,12 @@
 import { cleanupAttributes } from '../utilities/reducer'
 import {
-  RESET_CART_ITEMS,
-  RECEIVE_CART_ITEM,
-  REQUEST_CART_ITEMS,
-  NO_CART_ITEMS,
   ADD_CART_ITEM,
   DELETE_CART_ITEM,
+  NO_CART_ITEMS,
+  ORDER_SENT,
+  RECEIVE_CART_ITEM,
+  REQUEST_CART_ITEMS,
+  RESET_CART_ITEMS,
 } from '../actions';
 
 const initialState = {
@@ -59,6 +60,22 @@ function processCartItem(newCartItemTeamState, cartItem, cartItemIdRef){
 
 function cartItems(state = initialState.cartItems, action) {
   switch (action.type) {
+  case ORDER_SENT:
+    let orderSentCartItemTeamState = Object.assign({}, state.teams);
+    if(orderSentCartItemTeamState.hasOwnProperty(action.teamId) === true){
+      action.purveyorIds.forEach((purveyorId) => {
+        if(orderSentCartItemTeamState[action.teamId].cart.hasOwnProperty(purveyorId) === true){
+          delete orderSentCartItemTeamState[action.teamId].cart[purveyorId]
+        }
+      })
+    }
+    return Object.assign({}, state, {
+      teams: orderSentCartItemTeamState,
+      isFetching: false,
+      errors: null,
+      lastUpdated: (new Date()).toISOString(),
+    });
+
   // reset the cartItems
   case RESET_CART_ITEMS:
     let resetCartItemState = Object.assign({}, initialState.cartItems);
