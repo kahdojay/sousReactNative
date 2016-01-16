@@ -2,6 +2,7 @@ import { Icon, } from 'react-native-icons';
 import _ from 'lodash';
 import React from 'react-native';
 import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 
 const {
   ActivityIndicatorIOS,
@@ -361,7 +362,7 @@ let styles = StyleSheet.create({
     height: 50,
     width: runTimeDimensions.width * .70,
     fontSize: 20,
-    color: '#333',
+    color: Colors.inputTextColor,
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
     alignItems: 'center',

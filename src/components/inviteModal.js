@@ -25,6 +25,7 @@ class InviteModal extends React.Component {
       modalVisible: false,
       transparent: true,
       text: '',
+      inputError: false,
     };
   }
 
@@ -40,8 +41,10 @@ class InviteModal extends React.Component {
 
   handleSubmit() {
     if (this.state.text === null || this.state.text === '') {
-      this.setState({text: ''});
-      this.props.hideInviteModal()
+      this.setState({
+        text: '',
+        inputError: true,
+      });
     } else {
       this.props.onSMSInvite([this.state.text]);
       this.setState({text: ''});
@@ -92,16 +95,28 @@ class InviteModal extends React.Component {
           }
         }}
       >
-        <View style={styles.inputWrapper}>
-          <TextInput
-            style={styles.input}
-            keyboardType='numeric'
-            placeholder={'Phone #'}
-            placeholderTextColor={Colors.inputPlaceholderColor}
-            textAlign='center'
-            onChangeText={(text) => this.setState({text})}
-            value={this.state.text}
-          />
+        <View>
+          <View style={styles.inputWrapper}>
+            <TextInput
+              style={styles.input}
+              keyboardType='numeric'
+              placeholder={'Phone #'}
+              placeholderTextColor={Colors.inputPlaceholderColor}
+              textAlign='center'
+              onChangeText={(text) => {
+                this.setState({
+                  text: text,
+                  inputError: false,
+                })
+              }}
+              value={this.state.text}
+            />
+          </View>
+          { this.state.inputError === true ?
+            <View style={styles.inputErrorContainer}>
+              <Text style={styles.inputErrorText}>Please enter a valid email address.</Text>
+            </View>
+          : <View style={styles.inputErrorContainer}><Text>{' '}</Text></View> }
         </View>
       </GenericModal>
     );
@@ -128,7 +143,20 @@ var styles = StyleSheet.create({
     marginBottom: 15,
   },
   input: {
-    height: 32,
+    flex: 1,
+    padding: 4,
+    fontSize: Sizes.inputFieldFontSize,
+    color: Colors.inputTextColor,
+    fontFamily: 'OpenSans',
+    textAlign: 'center',
+    height: Sizes.inputFieldHeight,
+  },
+  inputErrorContainer: {
+    flex: 1,
+  },
+  inputErrorText: {
+    color: Colors.red,
+    alignSelf: 'center',
   },
 });
 

@@ -304,12 +304,12 @@ const styles = StyleSheet.create({
     padding: 4,
     paddingLeft: 8,
     paddingRight: 8,
-    fontFamily: 'OpenSans',
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: Sizes.inputFieldFontSize,
+    color: Colors.inputTextColor,
+    fontFamily: 'OpenSans',
     textAlign: 'right',
-    height: 32,
-    backgroundColor: 'white',
+    height: Sizes.inputFieldHeight,
   },
 });
 

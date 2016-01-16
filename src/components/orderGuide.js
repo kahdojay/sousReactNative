@@ -2,6 +2,7 @@ import { Icon, } from 'react-native-icons';
 import _ from 'lodash';
 import React from 'react-native';
 import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 import EmailUtils from '../utilities/email';
 import GenericModal from './modal/genericModal';
 
@@ -207,12 +208,11 @@ let styles = StyleSheet.create({
   input: {
     flex: 1,
     padding: 4,
-    fontSize: 14,
-    color: '#333',
-    fontWeight: 'bold',
+    fontSize: Sizes.inputFieldFontSize,
+    color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
     textAlign: 'center',
-    height: 32,
+    height: Sizes.inputFieldHeight,
   },
   buttonContainer: {
     flexDirection: 'row',

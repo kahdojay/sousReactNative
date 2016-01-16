@@ -112,7 +112,7 @@ class OrderView extends React.Component {
             modalHeaderText='Confirmation Message'
             onHideModal={() => {
               this.setState({
-                showAddEmailAddress: false,
+                showConfirm: false,
               })
             }}
             leftButton={{
@@ -281,9 +281,10 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     padding: 4,
-    fontSize: 14,
-    color: '#333',
+    fontSize: Sizes.inputFieldFontSize,
+    color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
+    textAlign: 'center',
     height: 40,
   },
 });
