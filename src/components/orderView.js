@@ -26,12 +26,19 @@ class OrderView extends React.Component {
       order: null,
       products: null,
       purveyor: null,
-      messages: null,
+      // messages: null,
       teamsUsers: null,
       loaded: false,
       showConfirm: false,
       confirmationMessage: '',
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      order: nextProps.order,
+      products: nextProps.products,
+    })
   }
 
   componentWillMount(){
@@ -40,11 +47,12 @@ class OrderView extends React.Component {
       order: this.props.order,
       products: this.props.products,
       purveyor: this.props.purveyor,
-      messages: this.props.messages,
+      // messages: this.props.messages,
       teamsUsers: this.props.teamsUsers,
       loaded: true,
     })
   }
+
 
   confirmOrder() {
     let orderConfirm = Object.assign({}, this.state.order.confirm)
@@ -67,37 +75,31 @@ class OrderView extends React.Component {
     })
   }
 
-  confirmOrderProduct(productId, confirm) {
-    let orderConfirm = Object.assign({}, this.state.order.confirm)
-    orderConfirm.userId = this.state.userId
-    orderConfirm.products[productId] = confirm
-    this.setState({
-      order: Object.assign({}, this.state.order, {
-        confirm: orderConfirm
-      })
-    }, () => {
-      this.props.onConfirmOrder(this.state.order)
-    })
-  }
-
   render() {
-    const {order, purveyor, products, messages, teamsUsers} = this.state;
+    const {
+      order,
+      purveyor,
+      products,
+      // messages,
+      teamsUsers,
+    } = this.state;
 
     let productsList = null
     let modal = null
 
     if(this.state.loaded === true){
-      productsList = _.map(products, (product) => {
-        const productDetails = order.orderDetails.products[product.id]
-        const productConfirm = (order.confirm.products.hasOwnProperty(product.id) === true && order.confirm.products[product.id] === true)
+      productsList = _.map(products, (productPkg) => {
+        const product = productPkg.product
+        const cartItem = productPkg.cartItem
+        const productConfirm = (cartItem.status === 'RECEIVED')
         return (
           <OrderListItem
-            orderConfirm={order.confirm}
             key={product.id}
+            orderConfirm={order.confirm}
             product={product}
-            productDetails={productDetails}
+            cartItem={cartItem}
             productConfirm={productConfirm}
-            onHandleProductConfirm={::this.confirmOrderProduct}
+            onHandleProductConfirm={this.props.onConfirmOrderProduct}
           />
         )
       })
@@ -208,11 +210,6 @@ class OrderView extends React.Component {
               <View style={[styles.buttonContainerLink, styles.buttonContainer, buttonDisabledStyle]}>
                 <Text style={[styles.confirmedText]}>Delivery confirmed by: {`${confirmUser.firstName} ${confirmUser.lastName[0]}.`}</Text>
                 <Text style={[styles.confirmedText]}>{order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('M/D/YY h:mm a') : ''}</Text>
-                { messages.length > 0 ?
-                  <View style={styles.orderMessage}>
-                    {messageUtils.formatMessage(messages[(messages.length-1)])}
-                  </View>
-                : <View /> }
               </View>
             }
             {modal}
@@ -271,12 +268,12 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 0,
-    borderBottomColor: '#bbb',
+    borderBottomColor: Colors.separatorColor,
     borderBottomWidth: 1,
   },
   verticalSeparator: {
     width: 1,
-    backgroundColor: '#bbb',
+    backgroundColor: Colors.separatorColor,
   },
   scrollView: {
     flex: 1,

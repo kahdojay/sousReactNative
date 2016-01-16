@@ -23,7 +23,15 @@ function purveyors(state = initialState.purveyors, action) {
   switch (action.type) {
   // reset the purveyors
   case RESET_PURVEYORS:
-    return Object.assign({}, initialState.purveyors);
+    let resetPurveyorState = Object.assign({}, initialState.purveyors);
+    if(action.hasOwnProperty('teamId') === true && action.teamId !== null){
+      resetPurveyorState = Object.assign({}, state);
+      if(resetPurveyorState.teams.hasOwnProperty(action.teamId) === true){
+        delete resetPurveyorState.teams[action.teamId];
+      }
+    }
+    return resetPurveyorState;
+
   // request the purveyors
   case REQUEST_PURVEYORS:
     return Object.assign({}, state, {

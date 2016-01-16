@@ -12,6 +12,7 @@ import {
   ADD_TEAM,
   UPDATE_TEAM,
   DELETE_TEAM,
+  LEAVE_TEAM,
   COMPLETE_TEAM_TASK
 } from '../actions';
 
@@ -44,12 +45,9 @@ function teams(state = initialState.teams, action) {
     // console.log('team action received: ', action)
     const receiveTeamState = Object.assign({}, state);
     const receiveTeamIdx = getIdx(receiveTeamState.data, action.team.id);
+    // console.log(receiveTeamState.data)
     const receiveTeamsDataState = updateDataState(receiveTeamState.data, action.team)
     // console.log(action.type, action.team.id)
-    // let receiveCurrentTeam = receiveTeamState.currentTeam;
-    // if(action.sessionTeamId === action.team.id){
-    //   receiveCurrentTeam = receiveTeamsDataState[receiveTeamIdx];
-    // }
 
     return Object.assign({}, state, {
       isFetching: false, // TODO: do we need to phase this out?
@@ -66,6 +64,18 @@ function teams(state = initialState.teams, action) {
       teamsUsers: teamsUsersState.teamsUsers,
     });
 
+  case LEAVE_TEAM:
+    const leaveTeamState = Object.assign({}, state);
+    const leaveTeamIdx = getIdx(leaveTeamState.data, action.teamId);
+    leaveTeamState.data = [
+      ...leaveTeamState.data.slice(0, leaveTeamIdx),
+      ...leaveTeamState.data.slice(leaveTeamIdx+1),
+    ]
+    return Object.assign({}, state, {
+      data: leaveTeamState.data,
+      lastUpdated: (new Date()).toISOString(),
+    });
+
   // delete the team
   case DELETE_TEAM:
     const deleteTeamState = Object.assign({}, state);
@@ -73,7 +83,7 @@ function teams(state = initialState.teams, action) {
     const deteleteTeamsDataState = updateByIdx(deleteTeamState.data, deleteTeamIdx, { deleted: true });
     return Object.assign({}, state, {
       data: deteleteTeamsDataState,
-      lastUpdated: (new Date()).toISOString()
+      lastUpdated: (new Date()).toISOString(),
     });
 
   // add team
@@ -86,7 +96,7 @@ function teams(state = initialState.teams, action) {
     return Object.assign({}, state, {
       data: addTeamsDataState,
       currentTeam: action.team,
-      lastUpdated: (new Date()).toISOString()
+      lastUpdated: (new Date()).toISOString(),
     });
 
   // update team
@@ -117,11 +127,6 @@ function teams(state = initialState.teams, action) {
       });
     }
 
-    // let updateCurrentTeam = updateTeamState.currentTeam;
-    // if(action.sessionTeamId === action.teamId){
-    //   updateCurrentTeam = updateTeamsDataState[updateTeamIdx];
-    // }
-
     return Object.assign({}, state, {
       data: updateTeamsDataState,
       // currentTeam: updateCurrentTeam,
@@ -129,6 +134,7 @@ function teams(state = initialState.teams, action) {
     });
 
   case SET_CURRENT_TEAM:
+    // console.log(action)
     return Object.assign({}, state, {
       currentTeam: action.team
     });

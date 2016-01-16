@@ -20,6 +20,7 @@ class OrderIndex extends React.Component {
     super(props)
     this.state = {
       orders: null,
+      cartItems: null,
       purveyors: null,
       teamsUsers: null,
       loaded: false,
@@ -30,6 +31,7 @@ class OrderIndex extends React.Component {
   componentWillMount(){
     this.setState({
       orders: this.props.orders,
+      cartItems: this.props.cartItems,
       purveyors: this.props.purveyors,
       teamsUsers: this.props.teamsUsers,
       showConfirmedOrders: this.props.showConfirmedOrders,
@@ -46,7 +48,7 @@ class OrderIndex extends React.Component {
   }
 
   render() {
-    const { orders, purveyors, teamsUsers } = this.state
+    const { orders, cartItems, purveyors, teamsUsers } = this.state
 
     if(this.state.loaded === false){
       return (
@@ -55,14 +57,17 @@ class OrderIndex extends React.Component {
     }
 
     let fullOrders = _.map(orders, (order) => {
+      const orderItems = cartItems[order.id]
       const purveyor = purveyors[order.purveyorId]
+      const user = teamsUsers.hasOwnProperty(order.userId) === true ? teamsUsers[order.userId] : null
       return Object.assign({}, order, {
+        orderItems: orderItems,
         purveyor: purveyor,
-        user: teamsUsers[order.userId]
+        user: user
       })
     })
 
-    let ordersList = _.map(_.sortBy(fullOrders, 'orderedAt'), (order) => {
+    let ordersList = _.map(_.sortBy(fullOrders, 'orderedAt').reverse(), (order) => {
       let show = false
       if(this.state.showConfirmedOrders === false && order.confirm.order === false){
         show = true
@@ -70,13 +75,19 @@ class OrderIndex extends React.Component {
         show = true
       }
       if(show === true) {
-        const itemCount = Object.keys(order.orderDetails.products).length
+        const itemCount = Object.keys(order.orderItems).length
         const orderedAtDate = moment(order.orderedAt)
         let confirmedOrderStyle = {}
         let confirmedOrderMetaInfoStyle = {}
+        // console.log(order.confirm.order)
         if(order.confirm.order === true){
           confirmedOrderStyle = styles.confirmedOrder
           confirmedOrderMetaInfoStyle = styles.confirmedOrderMetaInfo
+        }
+
+        let orderUserName = ''
+        if(order.user !== null){
+          orderUserName = `${order.user.firstName} ${order.user.lastName}`
         }
         return (
           <TouchableHighlight
@@ -89,10 +100,10 @@ class OrderIndex extends React.Component {
             <View style={[styles.row, confirmedOrderStyle]}>
               <View style={{flex:2}}>
                 <Text style={[styles.purveyorName, styles.bold]}>
-                  {order.purveyor.name}
+                  {order.purveyor ? order.purveyor.name : ''}
                   <Text style={[styles.metaInfo,confirmedOrderMetaInfoStyle]}> {`${itemCount} Item${itemCount > 1 ? 's' : ''}`}</Text>
                 </Text>
-                <Text style={[styles.metaInfo,confirmedOrderMetaInfoStyle]}>{`${order.user.firstName} ${order.user.lastName[0]}.`}</Text>
+                <Text style={[styles.metaInfo,confirmedOrderMetaInfoStyle]}>{orderUserName}</Text>
               </View>
               <View style={{flex:1}}>
                 <Text style={[styles.metaInfo, styles.bold, styles.rightAlign,confirmedOrderMetaInfoStyle]}>{orderedAtDate.format('M/D/YY')}</Text>
@@ -118,7 +129,7 @@ class OrderIndex extends React.Component {
             this.setState({
               showConfirmedOrders: !this.state.showConfirmedOrders
             }, () => {
-              this.props.onProcessShowOrders(this.state.showConfirmedOrders)  
+              this.props.onProcessShowOrders(this.state.showConfirmedOrders)
             })
           }}
           underlayColor='transparent'
@@ -146,7 +157,7 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 0,
-    borderBottomColor: '#bbb',
+    borderBottomColor: Colors.separatorColor,
     borderBottomWidth: 1,
   },
   row: {

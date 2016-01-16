@@ -3,13 +3,13 @@ import React from 'react-native';
 import Colors from '../utilities/colors';
 
 const {
+  ActivityIndicatorIOS,
+  Image,
   StyleSheet,
-  View,
   Text,
   TextInput,
-  Image,
   TouchableHighlight,
-  ActivityIndicatorIOS,
+  View,
 } = React;
 
 class Login extends React.Component {
@@ -36,11 +36,14 @@ class Login extends React.Component {
   }
 
   render() {
-    let fetching =  <ActivityIndicatorIOS
-                        animating={true}
-                        color={'#808080'}
-                        style={styles.activity}
-                        size={'large'} />
+    let fetching =  (
+      <ActivityIndicatorIOS
+        animating={true}
+        color={Colors.greyText}
+        style={styles.activity}
+        size={'large'}
+      />
+    )
     let errorMessage = <Text style={styles.errorText}>Invalid Login</Text>
     return (
       <View style={styles.container}>

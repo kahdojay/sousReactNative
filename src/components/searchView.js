@@ -18,35 +18,42 @@ class SearchView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      hideHeader: false,
       searching: false,
       search: '',
-      products: []
+      products: [],
     }
   }
 
   searchForProducts() {
     if(this.state.search !== ''){
       this.setState({
+        hideHeader: true,
         searching: true,
         products: [],
       }, () => {
-        const products = _.filter(this.props.products, (product) => {
+        const products = _.sortBy(_.filter(this.props.products, (product) => {
           return product.name.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1
-        })
+        }), 'name')
         this.setState({
           searching: false,
           products: products.slice(0,10)
         })
+        this.props.onHideHeader(this.state.hideHeader);
       })
     } else {
       this.setState({
+        hideHeader: false,
+        searching: false,
         products: []
+      }, () => {
+        this.props.onHideHeader(this.state.hideHeader);
       })
     }
   }
 
   render() {
-    const { products, purveyors, cart } = this.props
+    const { products, purveyors, categories, cartItems } = this.props
     const fetching = (
       <ActivityIndicatorIOS
         animating={true}
@@ -57,26 +64,24 @@ class SearchView extends React.Component {
     )
     return (
       <View style={styles.container}>
-        <TouchableHighlight
-          underlayColor='#eee'
-          onPress={this.props.onCreateProduct}
-          style={styles.createButton}
-        >
-          <Text style={styles.createButtonText}>Create New Product</Text>
-        </TouchableHighlight>
-        <SegmentedControlIOS
-          tintColor={Colors.lightBlue}
-          style={styles.segmentedControl}
-          values={this.props.segmentationList}
-          selectedIndex={this.props.selectedSegmentationIndex}
-          onChange={this.props.onSegmentationChange}
-        />
-        <View style={styles.searchContainer}>
+        { this.state.hideHeader === false ?
+          <View style={styles.segmentedControlContainer}>
+            <SegmentedControlIOS
+              tintColor={Colors.lightBlue}
+              style={styles.segmentedControl}
+              values={this.props.segmentationList}
+              selectedIndex={this.props.selectedSegmentationIndex}
+              onChange={this.props.onSegmentationChange}
+            />
+          </View>
+          : null
+        }
+        <View>
           <View style={styles.searchInputContainer}>
             <TextInput
-              style={styles.input}
+              style={styles.searchInput}
               value={this.state.search}
-              placeholder='Type to search for product...'
+              placeholder='product name'
               onChangeText={(text) => {
                 this.setState({
                   search: text
@@ -90,9 +95,12 @@ class SearchView extends React.Component {
               <TouchableHighlight
                 onPress={() => {
                   this.setState({
+                    hideHeader: false,
                     searching: false,
                     search: '',
                     products: []
+                  }, () => {
+                    this.props.onHideHeader(this.state.hideHeader);
                   })
                 }}
                 underlayColor='transparent'
@@ -107,16 +115,26 @@ class SearchView extends React.Component {
           { this.state.search !== '' ?
             ((this.state.products.length > 0) ?
               <ProductList
-                cart={cart}
+                cartItems={cartItems}
+                showCategoryInfo={true}
+                showPurveyorInfo={true}
                 products={this.state.products}
+                categories={categories}
                 purveyors={purveyors}
                 onProductEdit={this.props.onProductEdit}
                 onProductDelete={this.props.onProductDelete}
                 onUpdateProductInCart={this.props.onUpdateProductInCart}
               />
-            : <Text style={styles.noFoundText}>Sorry, no products found.</Text>)
+            : <Text style={styles.noFoundText}>No results for '{ this.state.search }'</Text>)
           : <View /> }
         </View>
+        <TouchableHighlight
+          underlayColor='#eee'
+          onPress={this.props.onCreateProduct}
+          style={styles.createButton}
+        >
+          <Text style={styles.createButtonText}>Create New Product</Text>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -127,11 +145,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
   },
+  segmentedControlContainer: {
+    paddingTop: 3,
+    paddingBottom: 3,
+    paddingRight: 5,
+    paddingLeft: 5,
+  },
   segmentedControl: {
     fontWeight: 'bold',
-    height: 36
+    height: 36,
+    fontFamily: 'OpenSans',
   },
   createButton: {
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
+    backgroundColor: 'white',
   },
   createButtonText: {
     color: Colors.lightBlue,
@@ -141,19 +169,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  searchContainer: {
-
-  },
   searchInputContainer: {
-    margin: 10,
+    paddingTop: 5,
+    paddingBottom: 7,
+    paddingRight: 5,
+    paddingLeft: 5,
     flexDirection: 'row',
     position: 'relative',
   },
-  input: {
+  searchInput: {
+    textAlign: 'center',
     flex: 1,
     height: 32,
-    backgroundColor: '#d6d6d6',
-    paddingLeft: 20,
+    backgroundColor: Colors.mainBackgroundColor,
     color: '#777',
     fontFamily: 'OpenSans',
     borderRadius: Sizes.inputBorderRadius,
@@ -168,9 +196,10 @@ const styles = StyleSheet.create({
     top: 1,
   },
   searchResultsContainer: {
-    borderTopWidth: 1,
-    marginTop: 5,
     flex: 1,
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
+    paddingVertical: 5,
     backgroundColor: Colors.mainBackgroundColor,
   },
   activity: {
@@ -183,6 +212,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     textAlign: 'center',
     paddingTop: 15,
+    paddingBottom: 15,
   }
 });
 

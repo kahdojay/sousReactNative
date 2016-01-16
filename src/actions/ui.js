@@ -5,7 +5,11 @@ import {
   KEYBOARD_WILL_HIDE
 } from './actionTypes'
 
-export default function UIActions(ddpClient) {
+export default function UIActions(allActions){
+
+  const {
+    connectActions,
+  } = allActions
 
   function resetUI(){
     return {

@@ -27,7 +27,7 @@ class FeedViewRightButton extends React.Component {
         onPress={this.handlePress.bind(this)}
       >
         <Icon
-          name='fontawesome|comment-o'
+          name='material|comment-outline'
           size={30}
           color={Colors.lightBlue}
           style={styles.bubble}

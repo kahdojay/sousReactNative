@@ -1,11 +1,12 @@
 import React from 'react-native';
 import FeedListItem from './feedListItem';
 import AddMessageForm from './addMessageForm';
-import { mainBackgroundColor, darkBlue } from '../utilities/colors';
+import Colors from '../utilities/colors';
 import InvertibleScrollView from 'react-native-invertible-scroll-view';
 let SideMenu = require('react-native-side-menu');
 import Menu from './menu';
 import moment from 'moment';
+
 const {
   ActivityIndicatorIOS,
   PropTypes,
@@ -52,7 +53,7 @@ class Feed extends React.Component {
       // open: false,
       lastMessageCreatedAt: null,
       messages: null,
-      scrollToBottom: false,
+      scrollToBottom: false
     }
   }
 
@@ -72,21 +73,19 @@ class Feed extends React.Component {
   //   }
   // }
 
-  componentWillMount() {
-    this.props.onClearBadge()
-  }
-
   componentWillReceiveProps(nextProps) {
     // if(this.state.lastMessageCreatedAt === null){
     //   lastMessageCreatedAt
     // }
-    //
-    // console.log(nextProps.messages);
+
     this.processMessages(nextProps.messages)
   }
 
   componentDidMount() {
     this.processMessages(this.props.messages, true)
+    if(this.props.connected === true){
+      this.props.onClearBadge()
+    }
   }
 
   componentDidUpdate(){
@@ -172,6 +171,7 @@ class Feed extends React.Component {
     let retMessages = []
     const now = new Date()
     const aDayAgo = -(1000 * 60 * 60 * 24)
+    const aWeekAgo = aDayAgo * 7
     if(this.state.messages !== null && this.state.messages.length > 0){
       this.state.messages.forEach((msg, index) => {
         retMessages.push(
@@ -179,7 +179,9 @@ class Feed extends React.Component {
             key={msg.id}
             now={now}
             aDayAgo={aDayAgo}
+            aWeekAgo={aWeekAgo}
             msg={msg}
+            onNavToOrder={this.props.onNavToOrder}
           />
         )
       });
@@ -198,13 +200,13 @@ class Feed extends React.Component {
         <ActivityIndicatorIOS
           key={'loading'}
           animating={true}
-          color={'#808080'}
+          color={Colors.greyText}
           style={styles.activity}
           size={'large'}
         />
       ))
     }
-    if(messageList.length >= 20){
+    if(messageList.length >= 20 && this.props.connected === true){
       messageList.push((
         <View key={'get-more'}>
           <TouchableOpacity
@@ -227,6 +229,7 @@ class Feed extends React.Component {
           {messageList}
         </InvertibleScrollView>
         <AddMessageForm
+          disabled={(this.props.connected === false)}
           placeholder="Message..."
           onSubmit={this.onHandleSubmit.bind(this)}
         />

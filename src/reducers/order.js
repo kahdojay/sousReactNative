@@ -27,7 +27,14 @@ function orders(state = initialState.orders, action) {
   switch (action.type) {
   // reset the orders
   case RESET_ORDERS:
-    return Object.assign({}, initialState.orders);
+    let resetOrderState = Object.assign({}, initialState.orders);
+    if(action.hasOwnProperty('teamId') === true && action.teamId !== null){
+      resetOrderState = Object.assign({}, state);
+      if(resetOrderState.teams.hasOwnProperty(action.teamId) === true){
+        delete resetOrderState.teams[action.teamId];
+      }
+    }
+    return resetOrderState;
 
   // receive the orders
   case RECEIVE_ORDERS:
@@ -36,7 +43,9 @@ function orders(state = initialState.orders, action) {
       newOrderTeamState[action.order.teamId] = {};
     }
     const originalTeamOrder = getTeamOrder(newOrderTeamState, action.order.teamId, action.order.id)
+    // console.log('PRE RECEIVE_ORDERS ', originalTeamOrder.confirm)
     newOrderTeamState[action.order.teamId][action.order.id] = Object.assign({}, originalTeamOrder, action.order)
+    // console.log('RECEIVE_ORDERS ', newOrderTeamState[action.order.teamId][action.order.id].confirm)
     return Object.assign({}, state, {
       errors: null,
       teams: newOrderTeamState,
@@ -50,6 +59,7 @@ function orders(state = initialState.orders, action) {
     updateOrderTeamState[action.teamId][action.orderId] = Object.assign({}, updateOriginalTeamOrder, action.order, {
       updatedAt: (new Date()).toISOString()
     })
+    // console.log('UPDATE_ORDER ', updateOrderTeamState[action.order.teamId][action.orderId].confirm)
     return Object.assign({}, state, {
       errors: null,
       teams: updateOrderTeamState,

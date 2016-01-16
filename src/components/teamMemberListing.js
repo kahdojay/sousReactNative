@@ -2,6 +2,7 @@ import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
+import Urls from '../resources/urls';
 
 const {
   Image,
@@ -20,23 +21,37 @@ class TeamMemberListing extends React.Component {
 
   getTeamMembers() {
     const teamMembers = [];
+
+
+    teamMembers.push(
+      <View style={styles.row}>
+        <View style={styles.member}>
+          <Image source={{uri: Urls.msgLogo}} style={styles.avatarImage} />
+          <Text style={styles.memberName}>
+            Sous Support
+          </Text>
+        </View>
+      </View>
+    );
+
+
     this.props.currentTeamUsers.forEach((userId) => {
       if(this.props.teamsUsers.hasOwnProperty(userId)){
         const user = this.props.teamsUsers[userId]
-        let icon = <Icon name='fontawesome|user' size={40} color='#aaa' style={styles.avatar}/>
+        if(user.superUser === true)
+          return
+        let icon = <Icon name='material|account-circle' size={50} color='#aaa' style={styles.avatar}/>
         if (user.hasOwnProperty('imageUrl') && user.imageUrl !== '') {
           icon = <Image source={{uri: user.imageUrl}} style={styles.avatarImage} />
         }
         teamMembers.push(
-          <View style={styles.row}>
+          <View key={userId} style={styles.row}>
             <View style={styles.member}>
               {icon}
-              <Text key={userId} style={styles.memberName}>
-                {/* * /}{user.superUser === true ? <Text style={{textAlign: 'center', color: Colors.darkBlue, backgroundColor: 'transparent'}}>*</Text> : ''}{/* */}
+              <Text style={styles.memberName}>
                 {user.firstName} {user.lastName}
               </Text>
             </View>
-            <View style={styles.separator} />
           </View>
         );
       }
@@ -91,12 +106,8 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
   },
-  separator: {
-    height: 1,
-    borderBottomColor: '#eee',
-    borderBottomWidth: 1,
-  },
 });
+
 TeamMemberListing.propTypes = {
 };
 

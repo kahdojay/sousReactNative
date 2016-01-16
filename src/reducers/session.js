@@ -27,6 +27,7 @@ const initialState = {
     username: null,
     userId: null,
     version: 0,
+    viewedOnboarding: null,
   }
 };
 

@@ -23,15 +23,15 @@ var CheckBox = React.createClass({
     return {
       label: 'Label',
       checked: false,
-      iconColor: 'black'
+      iconColor: '#444'
     }
   },
 
   render() {
-    let iconName = 'fontawesome|square-o'
+    let iconName = 'material|square-o'
     let iconContainerStyle = {}
     if(this.props.checked){
-      iconName = 'fontawesome|check-square-o'
+      iconName = 'material|check-square'
       // iconContainerStyle = {marginLeft: 10}
     }
 
@@ -46,7 +46,7 @@ var CheckBox = React.createClass({
         underlayColor='transparent'
       >
         <View style={[styles.container, iconContainerStyle]}>
-          <Icon name={iconName} size={30} color={this.props.iconColor} style={[styles.icon]}/>
+          <Icon name={iconName} size={20} color={this.props.iconColor} style={[styles.icon]}/>
           {this.props.label !== '' ?
             <Text style={[this.props.labelStyle, styles.label]}>{this.props.label}</Text>
           : <View />}
@@ -60,7 +60,6 @@ var styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
   },
   icon: {
     width: 40,

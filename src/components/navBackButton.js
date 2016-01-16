@@ -14,7 +14,7 @@ class NavBackButton extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      iconFont: this.props.iconFont || 'fontawesome|chevron-left',
+      iconFont: this.props.iconFont || 'material|chevron-left',
       navName: this.props.navName || 'Feed'
     }
   }
@@ -38,17 +38,17 @@ class NavBackButton extends React.Component {
       <TouchableHighlight
         underlayColor='white'
         onPress={this.handlePress.bind(this)} >
-        <Icon name={`${this.state.iconFont}`} size={30} color={Colors.lightBlue} style={styles.hamburger} />
+        <Icon name={`${this.state.iconFont}`} size={30} color={Colors.lightBlue} style={styles.navBack} />
       </TouchableHighlight>
     );
   }
 }
 
 let styles = StyleSheet.create({
-  hamburger: {
+  navBack: {
     width: 50,
     height: 50,
-    marginTop: 6,
+    marginTop: 12,
   }
 })
 

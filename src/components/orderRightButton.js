@@ -32,7 +32,7 @@ class OrderRightButton extends React.Component {
           }}
         >
           <Icon
-            name='fontawesome|envelope'
+            name='material|email'
             size={30}
             color={Colors.lightBlue}
             style={styles.icon}
@@ -45,7 +45,7 @@ class OrderRightButton extends React.Component {
           }}
         >
           <Icon
-            name='fontawesome|phone'
+            name='material|phone'
             size={30}
             color={Colors.lightBlue}
             style={styles.icon}
@@ -59,12 +59,12 @@ class OrderRightButton extends React.Component {
 let styles = StyleSheet.create({
   iconContainer: {
     flexDirection: 'row',
-    marginTop: 11,
+    marginTop: 12,
     marginRight: 3,
   },
   icon: {
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
   },
 })
 

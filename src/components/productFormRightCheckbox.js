@@ -14,7 +14,7 @@ class ProductFormRightCheckbox extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      iconFont: this.props.iconFont || 'fontawesome|check',
+      iconFont: this.props.iconFont || 'material|check',
     }
   }
 
@@ -32,7 +32,7 @@ class ProductFormRightCheckbox extends React.Component {
         }}
       >
         <Icon
-          name='fontawesome|square-o'
+          name='material|square-o'
           size={40}
           color={this.props.submitReady ? Colors.green : '#ccc'}
           style={styles.iconOutline}
@@ -52,17 +52,16 @@ class ProductFormRightCheckbox extends React.Component {
 let styles = StyleSheet.create({
   iconOutline: {
     flexDirection: 'column',
-    width: 60,
-    height: 60,
-    marginTop: 5,
+    width: 50,
+    height: 50,
+    marginTop: 12,
     justifyContent: 'center',
     alignItems: 'center'
   },
   icon: {
     flex: 1,
-    width: 20,
-    height: 20,
-    marginTop: -3,
+    width: 15,
+    height: 15,
   },
 })
 

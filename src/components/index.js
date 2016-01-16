@@ -1,4 +1,3 @@
-import AddOrderGuide from './addOrderGuide';
 import CartView from './cartView';
 import CartRightButton from './CartRightButton';
 import CategoryIndex from './categoryIndex';
@@ -11,11 +10,14 @@ import FeedViewRightButton from './feedViewRightButton';
 import GenericModal from './genericModal';
 import InviteModal from '../components/inviteModal';
 import InviteView from './inviteView';
+import Loading from './loading';
 import Login from './login';
 import Menu from './menu';
 import NavBackButton from './navBackButton';
 import NavOrderGuide from './navOrderGuide';
 import NavbarTitle from './NavbarTitle';
+import OrderGuide from './orderGuide';
+import OrderGuideUpload from './orderGuideUpload';
 import OrderIndex from './orderIndex';
 import OrderRightButton from './orderRightButton'
 import OrderView from './orderView';
@@ -36,7 +38,6 @@ import UserInfo from './userInfo';
 import UserTeam from './userTeam';
 
 export default {
-  AddOrderGuide,
   CartView,
   CartRightButton,
   CategoryIndex,
@@ -49,11 +50,14 @@ export default {
   GenericModal,
   InviteModal,
   InviteView,
+  Loading,
   Login,
   Menu,
   NavBackButton,
   NavbarTitle,
   NavOrderGuide,
+  OrderGuide,
+  OrderGuideUpload,
   OrderIndex,
   OrderRightButton,
   OrderView,

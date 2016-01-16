@@ -16,18 +16,25 @@ class FeedViewLeftButton extends React.Component {
   }
 
   handlePress(e) {
-    this.context.menuActions.toggle();
+    if(this.props.disabled === false){
+      this.context.menuActions.toggle();
+    }
   }
 
   render() {
     let { navigator, route } = this.props;
 
+    let iconColor = Colors.lightBlue
+    if(this.props.disabled === true){
+      iconColor = Colors.disabled
+    }
+
     return (
       <TouchableHighlight
         underlayColor='white'
-        onPress={this.handlePress.bind(this)}
+        onPress={::this.handlePress}
       >
-        <Icon name='fontawesome|bars' size={30} color={Colors.lightBlue} style={styles.hamburger} />
+        <Icon name='material|menu' size={30} color={iconColor} style={styles.hamburger} />
       </TouchableHighlight>
     );
   }

@@ -9,7 +9,7 @@ import {
   UPDATE_SESSION,
 } from './actionTypes'
 
-export default function SessionActions(ddpClient, allActions){
+export default function SessionActions(allActions){
 
   const {
     connectActions
@@ -24,6 +24,7 @@ export default function SessionActions(ddpClient, allActions){
     imageUrl: true,
     notifications: true,
     teamId: true,
+    viewedOnboarding: true,
   };
 
   function resetSessionVersion() {
@@ -39,12 +40,11 @@ export default function SessionActions(ddpClient, allActions){
   }
 
   function inviteContacts(contactList) {
+    console.log(contactList)
     return (dispatch, getState) => {
       const { session } = getState();
-      contactList.forEach((contact) => {
-        dispatch(() => {
-          ddpClient.call('sendSMSInvite', [contact, session.teamId, session.userId]);
-        })
+      contactList.forEach((phoneNumber) => {
+        dispatch(connectActions.ddpCall('sendSMSInvite', [phoneNumber, session.teamId, session.userId]))
       })
     }
   }
@@ -62,13 +62,9 @@ export default function SessionActions(ddpClient, allActions){
         // dispatch(receiveSession({
         //   teamId: null
         // }))
-        dispatch(() => {
-          ddpClient.call('sendSMSCode', [sessionParams.phoneNumber, session.authToken])
-        })
+        dispatch(connectActions.ddpCall('sendSMSCode', [sessionParams.phoneNumber, session.authToken]))
       } else {
-        dispatch(() => {
-          ddpClient.call('loginWithSMS', [sessionParams.phoneNumber, sessionParams.smsToken])
-        })
+        dispatch(connectActions.ddpCall('loginWithSMS', [sessionParams.phoneNumber, sessionParams.smsToken]))
       }
       // resubscribe based on session data
       dispatch(connectActions.subscribeDDP(newSession, undefined));
@@ -85,16 +81,17 @@ export default function SessionActions(ddpClient, allActions){
           filteredSessionParams[key] = sessionParams[key];
         }
       })
-      dispatch(() => {
-        if(sessionParams.hasOwnProperty('imageData') === true){
-          ddpClient.call('streamS3Image', [
-            sessionParams.imageData,
-            'avatar_' + session.userId + '.jpg',
-            session.userId,
-          ])
-        }
-        ddpClient.call('updateUser', [session.userId, filteredSessionParams])
-      })
+      if(sessionParams.hasOwnProperty('imageData') === true){
+        const ddpCallArguments = [
+          sessionParams.imageData,
+          'avatar_' + session.userId + '.jpg',
+          session.userId
+        ]
+        dispatch(connectActions.ddpCall('streamS3Image', ddpCallArguments))
+        // sessionParams.imageUrl = `data:image/jpeg;base64,${sessionParams.imageData}`
+        delete sessionParams.imageData
+      }
+      dispatch(connectActions.ddpCall('updateUser', [session.userId, filteredSessionParams]))
       // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
       return dispatch(receiveSession(sessionParams))
     }

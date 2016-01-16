@@ -20,15 +20,17 @@ class TeamMemberRightInvite extends React.Component {
     return (
       <TouchableHighlight
         onPress={() => {
-          this.props.toggleInviteModal(true)
+          if(this.props.connected === true){
+            this.props.toggleInviteModal(true)
+          }
         }}
         style={{justifyContent: 'center',}}
         underlayColor='transparent'
       >
         <Icon
-          name='fontawesome|user-plus'
+          name='material|accounts-add'
           size={30}
-          color={Colors.lightBlue}
+          color={(this.props.connected === true ? Colors.lightBlue : Colors.disabled)}
           style={styles.icon}
         />
       </TouchableHighlight>

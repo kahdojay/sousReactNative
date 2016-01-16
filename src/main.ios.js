@@ -8,6 +8,7 @@ import App from './containers/app';
 import * as actions from './actions';
 import reducers from './reducers';
 import Colors from './utilities/colors';
+import Loading from './components/loading';
 
 const {
   AppRegistry,
@@ -32,12 +33,14 @@ class SousAppBase extends React.Component {
   }
 
   componentWillMount() {
+    const {connect} = store.getState()
     // connect the app with server
-    var timeoutId = setTimeout(() => {
+    const willMountTimeoutMilliseconds = 1000
+    const willMountTimeoutId = setTimeout(() => {
       // connect the app with server
       store.dispatch(actions.connectApp())
     }, 1000)
-    store.dispatch(actions.connectDDPTimeoutId(timeoutId))
+    store.dispatch(actions.connectDDPTimeoutId(willMountTimeoutId, willMountTimeoutMilliseconds))
     // persist the store
     persistStore(
       store,
@@ -51,23 +54,31 @@ class SousAppBase extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if(nextProps.connect.status === actions.CONNECT.OFFLINE && nextProps.connect.timeoutId === null){
-      var timeoutId = setTimeout(() => {
+      const {connect} = store.getState()
+      let willReceivePropsTimeoutMilliseconds = 1500
+      if(connect.attempt > 21){
+        willReceivePropsTimeoutMilliseconds = 15000
+      } else if(connect.attempt > 13){
+        willReceivePropsTimeoutMilliseconds = 15000
+      } else if(connect.attempt > 8){
+        willReceivePropsTimeoutMilliseconds = 10000
+      } else if(connect.attempt > 5){
+        willReceivePropsTimeoutMilliseconds = 5000
+      } else if (connect.attempt > 3) {
+        willReceivePropsTimeoutMilliseconds = 3000
+      }
+      const willReceivePropsTimeoutId = setTimeout(() => {
         // connect the app with server
         store.dispatch(actions.connectDDPClient())
-      }, 1500)
-      store.dispatch(actions.connectDDPTimeoutId(timeoutId))
+      }, willReceivePropsTimeoutMilliseconds)
+      store.dispatch(actions.connectDDPTimeoutId(willReceivePropsTimeoutId, willReceivePropsTimeoutMilliseconds))
     }
   }
 
   render() {
-    if (this.state.rehydrated === false || this.props.connect.status === actions.CONNECT.OFFLINE) {
+    if (this.state.rehydrated === false) {
       return (
-        <View style={styles.container}>
-          <View style={styles.logoContainer}>
-            <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-          </View>
-          <Text style={styles.connecting}>LOADING</Text>
-        </View>
+        <Loading />
       )
     } else {
       return (

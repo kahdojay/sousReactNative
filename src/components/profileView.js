@@ -2,20 +2,22 @@ import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
-let UIImagePickerManager = require('NativeModules').UIImagePickerManager;
+import EmailUtils from '../utilities/email';
 
 const {
-  View,
-  Text,
-  TextInput,
+  ActionSheetIOS,
+  Image,
+  NativeModules,
   PropTypes,
   ScrollView,
-  SwitchIOS,
-  Image,
-  TouchableHighlight,
   StyleSheet,
-  ActionSheetIOS,
+  Text,
+  TextInput,
+  TouchableHighlight,
+  View,
 } = React;
+
+const { UIImagePickerManager } = NativeModules;
 
 class ProfileView extends React.Component {
   constructor(props) {
@@ -26,41 +28,33 @@ class ProfileView extends React.Component {
       firstName: this.props.session.firstName,
       lastName: this.props.session.lastName,
       email: this.props.session.email,
+      imageUrl: this.props.session.imageUrl,
+      updatedAt: this.props.session.updatedAt,
       saveChanges: false,
-      notifications: this.props.session.notifications || false,
+      inputError: false,
     }
   }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      phoneNumber: nextProps.session.phoneNumber,
+      firstName: nextProps.session.firstName,
+      lastName: nextProps.session.lastName,
+      email: nextProps.session.email,
+      imageUrl: nextProps.session.imageUrl,
+      updatedAt: nextProps.session.updatedAt,
+    })
+  }
+
   showActionSheet(){
     var options = {
-      title: 'Select Avatar',
-      cancelButtonTitle: 'Cancel',
-      takePhotoButtonTitle: 'Take Photo...',
-      takePhotoButtonHidden: false,
-      chooseFromLibraryButtonTitle: 'Choose from Library...',
-      chooseFromLibraryButtonHidden: false,
-      customButtons: {
-         // [Button Text] : [String returned upon selection]
-      },
+      title: 'Select Profile Image',
       maxWidth: 100,
       maxHeight: 100,
-      returnBase64Image: false,
-      returnIsVertical: false,
-      quality: 1,
-      allowsEditing: true, // Built in iOS functionality to resize/reposition the image
-      noData: false,
-      //storageOptions: {   // if provided, the image will get saved in the documents directory (rather than tmp directory)
-      //  skipBackup: true, // will set attribute so the image is not backed up to iCloud
-      //  path: "images",   // will save image at /Documents/images rather than the root
-      //}
+      quality: .5,
+      allowsEditing: true,
     };
 
-    // The first arg will be the options object for customization, the second is
-    // your callback which sends bool: didCancel, object: response.
-    //
-    // response.data is the base64 encoded image data
-    // response.uri is the uri to the local file asset on the device
-    // response.isVertical will be true if the image is vertically oriented
-    // response.width & response.height give you the image dimensions
     UIImagePickerManager.showImagePicker(options, (didCancel, response) => {
       // console.log('Response = ', response);
 
@@ -77,67 +71,98 @@ class ProfileView extends React.Component {
       }
     });
   }
+
   logImageError(err) {
     // console.log("IMAGE ERROR", err);
   }
+
   storeImages(data){
     this.props.onStoreImages(data)
   }
+
   needsSave() {
-    let propValues = [ this.props.session.firstName, this.props.session.lastName, this.props.session.email, this.props.session.notifications, this.props.session.phoneNumber ];
-    let stateValues = [ this.state.firstName, this.state.lastName, this.state.email, this.state.notifications, this.state.phoneNumber ];
-    // console.log("PROPS", propValues == stateValues);
-    return JSON.stringify(propValues) == JSON.stringify(stateValues);
+    let propValues = [ this.props.session.firstName, this.props.session.lastName, this.props.session.email ];
+    let stateValues = [ this.state.firstName, this.state.lastName, this.state.email ];
+    // console.log("PROPS", propValues !== stateValues);
+    this.setState({
+      saveChanges: (JSON.stringify(propValues) !== JSON.stringify(stateValues))
+    })
   }
+
   render() {
-    // console.log("PROFILE", this.props);
-    let avatar = (
-      <Image
-        style={styles.userIcon}
-        source={{uri: this.props.session.imageUrl}}
-      />
-    )
-    if (!this.props.session.imageUrl) {
-      avatar = <Icon name="material|account-circle" size={100} style={styles.userIcon} />
+    const {firstName, lastName, imageUrl, email, phoneNumber, updatedAt} = this.state
+    let avatarUrl = `${imageUrl}`
+    if(avatarUrl.indexOf('data:image') === -1){
+      avatarUrl = `${imageUrl}?cb=${updatedAt}`
     }
-    let phoneNumber = (
-      <TouchableHighlight
-        underlayColor={Colors.darkBlue}
-        style={styles.phoneNumber}>
-        <Text style={styles.phoneText}>{this.props.session.phoneNumber}</Text>
-      </TouchableHighlight>
+    let avatar = (
+      <Image source={{uri: avatarUrl}} style={styles.userIcon} />
+    )
+    if (!imageUrl) {
+      avatar = (
+        <Icon name="material|account-circle" size={100} style={styles.userIcon} />
+      )
+    }
+    let phoneNumberComponent = (
+      <View style={styles.phoneNumber}>
+        <Text style={styles.phoneText}>{phoneNumber}</Text>
+      </View>
     )
     if (this.state.editPhoneNumber) {
-      phoneNumber = (
+      phoneNumberComponent = (
         <View style={styles.infoField}>
           <TextInput
-            onChange={(e) => this.setState({phoneNumber: e.nativeEvent.text})}
+            onChange={(e) => {
+              this.setState({
+                phoneNumber: e.nativeEvent.text,
+              })
+            }}
             style={styles.inputField}
-            value={this.state.phoneNumber}></TextInput>
+            value={phoneNumber}
+          />
         </View>
       )
     }
-    let saveChanges = (
-      <View style={styles.saveContainer}>
-        <TouchableHighlight
-          underlayColor='#bbb'
-          onPress={() => {
-            let {firstName, lastName, email, notifications, phoneNumber} = this.state;
-            let data = {
-              firstName: firstName,
-              lastName: lastName,
-              email: email,
-              notifications: notifications,
-              username: phoneNumber,
-              phoneNumber: phoneNumber,
-            };
-            this.props.onUpdateInfo(data);
-          }}
-          style={styles.saveButton}>
-          <Text style={styles.saveText}>Save Changes</Text>
-        </TouchableHighlight>
-      </View>
-    )
+    let saveChanges = null
+
+    if(this.state.saveChanges === true){
+      console.log('about to update based on state change/check')
+      saveChanges = (
+        <View style={styles.saveContainer}>
+          <TouchableHighlight
+            onPress={() => {
+              let data = {
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                email: this.state.email,
+                updatedAt: (new Date()).toISOString(),
+              };
+              let allowSave = true
+              if(this.state.email !== ''){
+                allowSave = EmailUtils.validateEmailAddress(this.state.email)
+              }
+              if(allowSave === true){
+                this.setState({
+                  inputError: false,
+                  saveChanges: false,
+                }, () => {
+                  this.props.onUpdateInfo(data);
+                })
+              } else {
+                this.setState({
+                  inputError: true
+                })
+              }
+            }}
+            underlayColor={Colors.gold}
+            style={styles.saveButton}
+          >
+            <Text style={styles.saveText}>Save Changes</Text>
+          </TouchableHighlight>
+        </View>
+      )
+    }
+
     return (
    		<ScrollView
         style={styles.scrollView}
@@ -146,22 +171,18 @@ class ProfileView extends React.Component {
       >
         <View style={styles.wrapper}>
           <View>
-            <View style={styles.avatar}>
-              {avatar}
-            </View>
-            {/* * /}
             <TouchableHighlight
               underlayColor={Colors.mainBackgroundColor}
               onPress={() => this.showActionSheet()}
-              style={styles.avatar}>
+              style={styles.avatar}
+            >
               <View>
                 {avatar}
                 <Text style={styles.changeAvatarText}>Change Avatar</Text>
               </View>
             </TouchableHighlight>
-            {/* */}
           </View>
-          {phoneNumber}
+          {phoneNumberComponent}
           <View style={styles.userInfoContainer}>
             <View style={styles.userProfile}>
               <View style={styles.infoField}>
@@ -169,30 +190,51 @@ class ProfileView extends React.Component {
                 <TextInput
                   style={styles.inputField}
                   onChange={(e) => {
-                    this.setState({firstName: e.nativeEvent.text})
+                    this.setState({
+                      firstName: e.nativeEvent.text
+                    }, () => {
+                      this.needsSave()
+                    })
                   }}
-                  value={this.state.firstName}></TextInput>
+                  value={firstName}
+                />
               </View>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>Last Name</Text>
                 <TextInput
                   onChange={(e) => {
-                    this.setState({lastName: e.nativeEvent.text})
+                    this.setState({
+                      lastName: e.nativeEvent.text
+                    }, () => {
+                      this.needsSave()
+                    })
                   }}
                   style={styles.inputField}
-                  value={this.state.lastName}></TextInput>
+                  value={lastName}
+                />
               </View>
               <View style={styles.infoField}>
                 <Text style={styles.inputName}>E-mail Address</Text>
                 <TextInput
                   style={styles.inputField}
                   onChange={(e) => {
-                    this.setState({email: e.nativeEvent.text})
+                    this.setState({
+                      email: e.nativeEvent.text,
+                      inputError: false,
+                    }, () => {
+                      this.needsSave()
+                    })
                   }}
-                  value={this.state.email}></TextInput>
+                  value={email}
+                />
               </View>
             </View>
-            {! this.needsSave() ? saveChanges : <View></View>}
+            { this.state.inputError === true ?
+              <View style={styles.inputErrorContainer}>
+                <Text style={styles.inputErrorText}>Please enter a valid email address.</Text>
+              </View>
+            : <View style={styles.inputErrorContainer} /> }
+            {saveChanges}
           </View>
         </View>
       </ScrollView>
@@ -303,7 +345,8 @@ let styles = StyleSheet.create({
     justifyContent: 'center',
   },
   saveButton: {
-    backgroundColor: '#ddd',
+    marginTop: 10,
+    backgroundColor: Colors.gold,
     padding: 10,
     width: 150,
     borderRadius: 7,
@@ -311,7 +354,7 @@ let styles = StyleSheet.create({
   saveText:{
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#777',
+    color: 'white',
     textAlign: 'center',
   },
   container: {
@@ -370,7 +413,7 @@ let styles = StyleSheet.create({
     flexDirection: 'column',
   },
   phoneNumber: {
-    backgroundColor: '#1E00B1',
+    backgroundColor: Colors.blue,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -395,6 +438,13 @@ let styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: Sizes.inputBorderRadius,
     padding: 10,
+  },
+  inputErrorContainer: {
+    height: 10,
+  },
+  inputErrorText: {
+    color: Colors.red,
+    alignSelf: 'center'
   },
 })
 

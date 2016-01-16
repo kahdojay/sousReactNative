@@ -88,9 +88,9 @@ let styles = StyleSheet.create({
     justifyContent: 'center',
   },
   separator: {
-    height: 1,
-    borderColor: '#eee',
-    borderWidth: 1,
+    height: 0,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
   },
   headerContainer: {
 

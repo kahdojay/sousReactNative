@@ -252,16 +252,21 @@ describe('Ordering', () => {
 
         orders[session.teamId] = {}
         const firstProduct = result.products[0]
+        const purveyorId = firstProduct.purveyors[0]
+        const cartItemId = generateId()
         const cartAttributes = {
-          purveyorId: firstProduct.purveyors[0],
+          purveyorId: purveyorId,
           productId: firstProduct._id,
           quantity: 2,
           note: '',
+          _id: cartItemId,
+          userId: session.userId,
+          teamId: session.teamId,
+          status: 'NEW',
+          orderId: null,
+          createdAt: (new Date()).toISOString(),
+          updatedAt: (new Date()).toISOString(),
         }
-
-        let updatedCart = Object.assign({}, teams[session.teamId].cart)
-        const teamOrderId = generateId();
-        let cartProductPurveyor = null;
 
         // SUBSCRIBE TO THE ORDERS CHANNEL
 
@@ -280,9 +285,7 @@ describe('Ordering', () => {
                     checkOrders()
                   }
                 } else if(log.msg === 'added') {
-                  if(data.teamOrderId === teamOrderId){
-                    orders[session.teamId][data.id] = data
-                  }
+                  orders[session.teamId][data.id] = data
                 }
               break;
             default:
@@ -294,40 +297,8 @@ describe('Ordering', () => {
 
         // PLACE THE ORDER
 
-        // add the date
-        if (updatedCart.date === null) {
-          updatedCart.date = (new Date()).toISOString()
-        }
-
-        // add the product purveyor
-        if (updatedCart.orders.hasOwnProperty(cartAttributes.purveyorId) === false) {
-          const orderId = generateId()
-          updatedCart.orders[cartAttributes.purveyorId] = {
-            id: orderId,
-            total: 0.0,
-            deliveryInstruction: '',
-            products: {}
-          };
-        }
-
-        // get the product purveyor
-        cartProductPurveyor = updatedCart.orders[cartAttributes.purveyorId];
-
-        // add the product
-        if(cartProductPurveyor.products.hasOwnProperty(cartAttributes.productId) === false) {
-          cartProductPurveyor.products[cartAttributes.productId] = {}
-        }
-
-        // update the cart item
-        cartProductPurveyor.products[cartAttributes.productId] = {
-          quantity: cartAttributes.quantity,
-          note: cartAttributes.note
-        }
-        // update the product purveyor
-        updatedCart.orders[cartAttributes.purveyorId] = cartProductPurveyor;
-
-        ddpClient.call('updateTeam', [session.teamId, { cart: updatedCart }], (result) => {
-          ddpClient.call('sendCart', [session.userId, session.teamId, teamOrderId])
+        ddpClient.call('addCartItem', [session.userId, session.teamId, cartAttributes], (err, result) => {
+          ddpClient.call('sendCartItems', [session.userId, session.teamId, [purveyorId]])
         });
 
         function checkOrders(){

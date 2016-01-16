@@ -14,19 +14,27 @@ class ProductList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      products: null
+      products: null,
+      allowScroll: true,
     }
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   this.setState({
-  //     products: []
-  //   }, () => {
-  //     this.setState({
-  //       products: nextProps.products
-  //     })
-  //   })
-  // }
+  shouldComponentUpdate(nextProps) {
+    if(nextProps.products.length !== this.state.products.length){
+      return true;
+    }
+    return false;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      products: []
+    }, () => {
+      this.setState({
+        products: nextProps.products
+      })
+    })
+  }
 
   componentWillMount() {
     this.setState({
@@ -59,7 +67,8 @@ class ProductList extends React.Component {
   }
 
   render() {
-    const {cart, purveyors} = this.props
+    const {categories, cartItems, purveyors, showPurveyorInfo, showCategoryInfo} = this.props
+
     let productList = []
     if(this.state.products !== null){
       _.forEach(_.filter(this.state.products, (product) => {
@@ -88,36 +97,59 @@ class ProductList extends React.Component {
         let cartItem = null
         let cartPurveyorId = ''
         product.purveyors.map((purveyorId) => {
-          if (cart.orders.hasOwnProperty(purveyorId) === true && cart.orders[purveyorId].products.hasOwnProperty(product.id)) {
+          if (cartItems.hasOwnProperty(purveyorId) === true && cartItems[purveyorId].hasOwnProperty(product.id)) {
             cartPurveyorId = purveyorId
-            cartItem = cart.orders[purveyorId].products[product.id]
+            cartItem = cartItems[purveyorId][product.id]
           }
         })
-        productList.push((
-          <ProductListItem
-            cartItem={cartItem}
-            cartPurveyorId={cartPurveyorId}
-            loadDelay={loadDelay}
-            key={idx}
-            product={product}
-            purveyors={purveyors}
-            onProductEdit={() => {
-              this.props.onProductEdit(product)
-            }}
-            onProductDelete={() => {
+
+        let productCategory = null
+        if(showCategoryInfo === true){
+          Object.keys(categories).forEach((categoryId) => {
+            const category = categories[categoryId]
+            if(productCategory === null && category.products.indexOf(product.id) !== -1){
+              productCategory = category
+            }
+          })
+        }
+
+        const props = {
+          cartItem: cartItem,
+          cartPurveyorId: cartPurveyorId,
+          loadDelay: loadDelay,
+          key: product.id,
+          product: product,
+          category: (showCategoryInfo === true) ? productCategory : null,
+          purveyors: (showPurveyorInfo === true) ? purveyors: null,
+          onProductEdit: () => {
+            this.props.onProductEdit(product)
+          },
+          onProductDelete: () => {
+            let products = _.filter(this.state.products, (tmpProd) => {
+              return tmpProd.deleted !== true && tmpProd.id !== product.id
+            })
+            this.setState({
+              products: products,
+            }, () => {
               this.props.onProductDelete(product.id)
-            }}
-            onUpdateProductInCart={(cartAction, cartAttributes) => {
-              this.props.onUpdateProductInCart(cartAction, cartAttributes)
-            }}
-          />
-        ))
+            })
+          },
+          onUpdateProductInCart: this.props.onUpdateProductInCart,
+          onAllowScroll: (allowScroll) => {
+            this.setState({
+              allowScroll: allowScroll,
+            })
+          }
+        }
+
+        productList.push(React.createElement(ProductListItem, props))
       })
     }
     return (
       <ScrollView
         automaticallyAdjustContentInsets={false}
         keyboardShouldPersistTaps={false}
+        scrollEnabled={this.state.allowScroll}
       >
         {productList}
       </ScrollView>

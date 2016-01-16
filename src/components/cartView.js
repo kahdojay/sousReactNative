@@ -1,7 +1,9 @@
 import React from 'react-native';
 import _ from 'lodash';
+import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import CartViewListItem from './cartViewListItem';
+import GenericModal from './modal/genericModal';
 
 const {
   AlertIOS,
@@ -11,69 +13,98 @@ const {
   StyleSheet,
   Text,
   TouchableHighlight,
+  TouchableOpacity,
   View,
 } = React;
 
 class CartView extends React.Component {
   constructor(props) {
     super(props)
-    const numberOfOrders = Object.keys(this.props.team.cart.orders).length
+    const numberOfOrders = Object.keys(this.props.cartItems).length
+    const numberOfProducts = _.reduce(_.map(numberOfOrders, (orderId) => {
+      return Object.keys(this.props.cartItems[orderId]).length
+    }), (total, n) => {
+      return total + n
+    })
     this.state = {
+      numberOfProducts: numberOfProducts,
       numberOfOrders: numberOfOrders,
+      purveyorIds: [],
       showPurveyorInfo: false,
       purveyor: null,
+      showConfirmationModal: false,
+      confirmationMessage: 'Send order?',
+      navigateToFeed: true,
     }
+  }
+
+  shouldComponentUpdate(nextProps) {
+    const numberOfOrdersUpdated = Object.keys(nextProps.cartItems)
+    const numberOfProductsUpdated = _.reduce(_.map(numberOfOrdersUpdated, (orderId) => {
+      return Object.keys(nextProps.cartItems[orderId]).length
+    }), (total, n) => {
+      return total + n
+    })
+    if(nextProps.connected !== false){
+      return true;
+    } else if(numberOfOrdersUpdated.length !== this.state.numberOfOrders){
+      return true;
+    } else if(numberOfProductsUpdated !== this.state.numberOfProducts){
+      return true;
+    }
+    return false;
   }
 
   componentWillReceiveProps(nextProps) {
-    const numberOfOrders = Object.keys(nextProps.team.cart.orders).length
+    const numberOfOrders = Object.keys(nextProps.cartItems)
+    const numberOfProducts = _.reduce(_.map(numberOfOrders, (orderId) => {
+      return Object.keys(nextProps.cartItems[orderId]).length
+    }), (total, n) => {
+      return total + n
+    })
     this.setState({
-      numberOfOrders: numberOfOrders
+      numberOfOrders: numberOfOrders.length,
+      numberOfProducts: numberOfProducts,
     })
   }
 
-  handleSubmitPress(cartPurveyors) {
-    if (this.state.numberOfOrders > 0) {
-      AlertIOS.alert(
-        'Confirm',
-        'Are you sure you want to send order?',
-        [
-          {
-            text: 'No',
-            onPress: () => {
-              // console.log('Order not sent')
-            }
-          },
-          {
-            text: 'Yes',
-            onPress: () => {
-              if(this.state.numberOfOrders > 0){
-                this.props.onSubmitOrder();
-              }
-            }
-          }
-        ]
-      )
+  handleSubmitPress(cartPurveyors, singlePurveyor) {
+    if (this.props.connected === true && this.state.numberOfOrders > 0) {
+      let confirmationMessage = 'Send orders to all purveyors?'
+      let navigateToFeed = true
+      if(singlePurveyor === true){
+        confirmationMessage = `Send order to ${cartPurveyors[0].name}?`
+        if(this.props.cartPurveyors.length > cartPurveyors.length){
+          navigateToFeed = false
+        }
+      }
+      const purveyorIds = _.pluck(cartPurveyors, 'id');
+      this.setState({
+        purveyorIds: purveyorIds,
+        showConfirmationModal: true,
+        confirmationMessage: confirmationMessage,
+        navigateToFeed: navigateToFeed,
+      })
     }
-    // TODO: handle empty cart error
   }
 
-  renderPurveyorProducts(purveyorId, cart, products) {
-    const cartProducts = cart.orders[purveyorId].products
-    const cartPurveyorProductIds = Object.keys(cartProducts)
-    const cartPurveyorProducts = _.sortBy(_.map(cartPurveyorProductIds, (productId) => {
-      return products[productId]
-    }), 'name')
+  renderPurveyorProducts(purveyorId, cartItems, products) {
+    const purveyorCartItems = _.sortBy(_.map(Object.keys(cartItems[purveyorId]), (cartItemId) => {
+      const product = products[cartItems[purveyorId][cartItemId].productId]
+      return {
+        cartItem: cartItems[purveyorId][cartItemId],
+        product: product
+      }
+    }), 'product.name')
 
-    return cartPurveyorProducts.map((product) => {
-      const cartProduct = cartProducts[product.id];
+    return purveyorCartItems.map((cartItemPkg) => {
       return (
         <CartViewListItem
-          purveyorId={purveyorId}
-          product={product}
-          cartProduct={cartProduct}
+          key={cartItemPkg.cartItem.id}
+          purveyorId={cartItemPkg.cartItem.purveyorId}
+          product={cartItemPkg.product}
+          cartItem={cartItemPkg.cartItem}
           onUpdateProductInCart={this.props.onUpdateProductInCart}
-          onDeleteProduct={this.props.onDeleteProduct}
         />
       )
     });
@@ -101,51 +132,81 @@ class CartView extends React.Component {
   }
 
   render() {
-    const {team, cartPurveyors, products} = this.props
+    const {cartItems, cartPurveyors, products} = this.props
 
+    const purveyorInfoDismiss = () => {
+      this.setState({
+        showPurveyorInfo: false,
+        purveyor: null,
+      })
+    }
     const modal = (
-      <Modal
-        animated={true}
-        transparent={true}
-        visible={this.state.showPurveyorInfo}
+      <GenericModal
+        modalVisible={this.state.showPurveyorInfo}
+        onHideModal={purveyorInfoDismiss}
+        modalHeaderText={this.state.purveyor ? this.state.purveyor.name : ''}
+        leftButton={{
+          text: 'Ok',
+          onPress: purveyorInfoDismiss
+        }}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalInnerContainer}>
-            { this.state.purveyor !== null ?
-              <View>
-                <View style={styles.purveyorInfoRow}>
-                  <Text style={styles.purveyorInfoLabel}>Order Cutoff Time</Text>
-                  <Text style={styles.purveyorInfoData}>{this.state.purveyor.orderCutoffTime}</Text>
-                </View>
-                <View style={styles.purveyorInfoRow}>
-                  <Text style={styles.purveyorInfoLabel}>Order Minimum</Text>
-                  <Text style={styles.purveyorInfoData}>{this.state.purveyor.orderMinimum}</Text>
-                </View>
-                <View style={styles.purveyorInfoRow}>
-                  <Text style={styles.purveyorInfoLabel}>Delivery Days</Text>
-                  {this.renderDeliveryDays()}
-                </View>
-                {/* * /}<View style={styles.purveyorInfoRow}>
-                  <Text style={styles.purveyorInfoLabel}>Notes</Text>
-                  <Text style={styles.purveyorInfoData}>{this.state.purveyor.notes}</Text>
-                </View>{/**/}
-              </View>
-            : <Text>Loading ...</Text> }
-            <View style={styles.separator} />
-            <TouchableHighlight
-              onPress={() => {
-                this.setState({
-                  showPurveyorInfo: false,
-                  purveyor: null,
-                })
-              }}
-              underlayColor='transparent'
-            >
-              <Text style={styles.modalButtonText}>Ok</Text>
-            </TouchableHighlight>
+        { this.state.purveyor !== null ?
+          <View>
+            <View style={styles.purveyorInfoRow}>
+              <Text style={styles.purveyorInfoLabel}>Order Cutoff Time</Text>
+              <Text style={styles.purveyorInfoData}>{this.state.purveyor.orderCutoffTime}</Text>
+            </View>
+            <View style={styles.purveyorInfoRow}>
+              <Text style={styles.purveyorInfoLabel}>Order Minimum</Text>
+              <Text style={styles.purveyorInfoData}>{this.state.purveyor.orderMinimum}</Text>
+            </View>
+            <View style={styles.purveyorInfoRow}>
+              <Text style={styles.purveyorInfoLabel}>Delivery Days</Text>
+              {this.renderDeliveryDays()}
+            </View>
+            {/* * /}<View style={styles.purveyorInfoRow}>
+              <Text style={styles.purveyorInfoLabel}>Notes</Text>
+              <Text style={styles.purveyorInfoData}>{this.state.purveyor.notes}</Text>
+            </View>{/**/}
           </View>
+        : <Text>Loading ...</Text> }
+      </GenericModal>
+    )
+    const confirmationModal = (
+      <GenericModal
+        modalVisible={this.state.showConfirmationModal}
+        onHideModal={() => {
+          this.setState({
+            showConfirmationModal: false
+          })
+        }}
+        leftButton={{
+          text: 'No',
+          onPress: () => {
+            this.setState({
+              showConfirmationModal: false
+            })
+          }
+        }}
+        rightButton={{
+          text: 'Yes',
+          onPress: () => {
+            this.setState({
+              showConfirmationModal: false,
+            }, () => {
+              if(this.state.numberOfOrders > 0){
+                // console.log(this.state.purveyorIds);
+                this.props.onSubmitOrder(this.state.purveyorIds, this.state.navigateToFeed);
+              }
+            })
+          }
+        }}
+      >
+        <View>
+          <Text style={[styles.centeredText, styles.boldText, {fontFamily: 'OpenSans'}]}>Confirm</Text>
+          <Text style={[styles.centeredText, {margin: 15, fontSize: 12,fontFamily: 'OpenSans'}]}>{this.state.confirmationMessage}</Text>
         </View>
-      </Modal>
+      </GenericModal>
     )
 
     return (
@@ -156,9 +217,6 @@ class CartView extends React.Component {
               <View key={purveyor.id} style={styles.purveyorContainer}>
                 <View style={styles.purveyorInfo}>
                   <View style={styles.purveyorInfoLeft}>
-                    <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
-                  </View>
-                  <View style={styles.purveyorInfoRight}>
                     <TouchableHighlight
                       onPress={() => {
                         this.setState({
@@ -168,26 +226,41 @@ class CartView extends React.Component {
                       }}
                       underlayColor='transparent'
                     >
-                      <Text style={styles.purveyorInfoDetails}>Show details</Text>
+                      <View style={styles.purveyorTitleContainer}>
+                        <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
+                        <Icon name='material|info' size={20} color='white' style={styles.detailsIcon} />
+                      </View>
+                    </TouchableHighlight>
+                  </View>
+                  <View style={styles.purveyorInfoRight}>
+                    <TouchableHighlight
+                      underlayColor='transparent'
+                      onPress={() => {
+                        const singlePurveyor = true
+                        this.handleSubmitPress([purveyor], singlePurveyor)
+                      }}
+                    >
+                      <Icon name='material|check-circle' size={30} color='white' style={styles.submitOrderIcon} />
                     </TouchableHighlight>
                   </View>
                 </View>
-                {this.renderPurveyorProducts(purveyor.id, team.cart, products)}
+                {this.renderPurveyorProducts(purveyor.id, cartItems, products)}
               </View>
             );
           })
         }
-        <TouchableHighlight
+        <TouchableOpacity
           onPress={this.handleSubmitPress.bind(this, cartPurveyors)}
           style={[
             styles.button,
-            this.state.numberOfOrders === 0 && styles.buttonDisabled
+            (this.props.connected === false || this.state.numberOfOrders === 0) && styles.buttonDisabled
           ]}
-          underlayColor={Colors.disabled}
+          activeOpacity={.75}
         >
-          <Text style={styles.buttonText}>Submit Order</Text>
-        </TouchableHighlight>
+          <Text style={styles.buttonText}>Submit Orders</Text>
+        </TouchableOpacity>
         {modal}
+        {confirmationModal}
       </ScrollView>
     );
   }
@@ -206,16 +279,22 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.darkBlue,
     borderRadius: 2,
     marginTop: 1,
-    padding: 10,
     flexDirection: 'row'
   },
   purveyorInfoLeft: {
-    flex: 2
+    flex: 3,
   },
   purveyorInfoRight: {
-    flex: 1
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+  },
+  purveyorTitleContainer: {
+    padding: 10,
+    flexDirection: 'row',
   },
   purveyorTitle: {
+    flex: 5,
     fontWeight: 'bold',
     color: 'white',
     fontFamily: 'OpenSans',
@@ -238,12 +317,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'right',
   },
-  purveyorInfoDetails: {
+  detailsIcon: {
     flex: 1,
-    fontFamily: 'OpenSans',
-    fontSize: 14,
-    color: '#fff',
-    textAlign: 'right',
+    width: 28,
+    height: 28,
+  },
+  submitOrderIcon: {
+    width: 50,
+    height: 50,
   },
   buttonText: {
     alignSelf: 'center',
@@ -265,28 +346,6 @@ const styles = StyleSheet.create({
   buttonDisabled: {
     backgroundColor: Colors.disabled,
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
-  },
-  modalInnerContainer: {
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    padding: 20,
-  },
-  modalButtonText: {
-    textAlign: 'center',
-    color: Colors.lightBlue,
-    paddingTop: 15,
-  },
-  separator: {
-    marginTop: 10,
-    height: 0,
-    borderBottomColor: '#bbb',
-    borderBottomWidth: 1,
-  },
   dayOfWeekContainer: {
     flexDirection: 'row',
     flex:2,
@@ -302,7 +361,13 @@ const styles = StyleSheet.create({
   dayOfWeekActive: {
     color: '#222',
     backgroundColor: Colors.gold
-  }
+  },
+  centeredText: {
+    textAlign: 'center',
+  },
+  boldText: {
+    fontWeight: 'bold',
+  },
 })
 
 export default CartView

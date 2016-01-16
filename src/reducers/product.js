@@ -32,7 +32,15 @@ function products(state = initialState.products, action) {
   switch (action.type) {
   // reset the products
   case RESET_PRODUCTS:
-    return Object.assign({}, initialState.products);
+    let resetProductState = Object.assign({}, initialState.products);
+    if(action.hasOwnProperty('teamId') === true && action.teamId !== null){
+      resetProductState = Object.assign({}, state);
+      if(resetProductState.teams.hasOwnProperty(action.teamId) === true){
+        delete resetProductState.teams[action.teamId];
+      }
+    }
+    return resetProductState;
+
   // request the products
   case REQUEST_PRODUCTS:
     return Object.assign({}, state, {
@@ -70,10 +78,11 @@ function products(state = initialState.products, action) {
   // add product
   case ADD_PRODUCT:
     var addProductTeamState = Object.assign({}, state.teams);
-    const addOriginalTeamProduct = getTeamProduct(addProductTeamState, action.teamId, action.productId)
+    const addOriginalTeamProduct = {} //getTeamProduct(addProductTeamState, action.teamId, action.productId)
     addProductTeamState[action.teamId][action.productId] = Object.assign(addOriginalTeamProduct, action.product, {
       updatedAt: (new Date()).toISOString()
     })
+    // console.log(addProductTeamState[action.teamId][action.productId]);
     return Object.assign({}, state, {
       errors: null,
       teams: addProductTeamState,

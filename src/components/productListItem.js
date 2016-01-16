@@ -30,30 +30,52 @@ class ProductListItem extends React.Component {
       selectedPurveyorId: null,
       note: '',
       editQuantity: false,
+      cartItem: null,
     }
     this.timeoutId = null
     this.loadTimeoutId = null
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    let shouldUpdate = true;
-    if(nextProps.cartItem === null && this.props.cartItem === null){
-      shouldUpdate = false;
-    }
+    // if(nextProps.cartItem === null && this.props.cartItem === null){
+    //   return false;
+    // }
+    const debugUpdates = false
     if(this.state.added === true && nextProps.cartItem === null){
-      shouldUpdate = true;
+      if(debugUpdates) console.log('Added: ', this.state.added, nextProps.cartItem)
+      return true;
+    } else if(this.state.added === false && nextProps.cartItem !== null){
+      if(debugUpdates) console.log('Removed: ', this.state.added, nextProps.cartItem)
+      return true;
     }
     if(this.state.loaded === false){
-      shouldUpdate = true;
+      if(debugUpdates) console.log('Loaded: ', this.state.loaded)
+      return true;
+    }
+    if(nextState.added !== this.state.added){
+      if(debugUpdates) console.log('Add/Remove Local: ', nextState.added, this.state.added)
+      return true;
+    }
+    if(nextState.editQuantity !== this.state.editQuantity){
+      if(debugUpdates) console.log('Edit Quantity: ', nextState.editQuantity, this.state.editQuantity)
+      return true;
+    }
+    if(nextState.quantity !== this.state.quantity){
+      if(debugUpdates) console.log('Quantity: ', nextState.quantity, this.state.quantity)
+      return true;
+    }
+    if(nextProps.product.deleted !== this.props.product.deleted){
+      if(debugUpdates) console.log('Deleted: ', nextProps.product.deleted, this.state.product.deleted)
+      return true;
     }
     // if(this.state.product !== null){
-    //   // console.log(nextProps.product);
+    //   // if(debugUpdates) console.log(nextProps.product);
     //   if(JSON.stringify(nextProps.product) !== JSON.stringify(this.state.product)){
-    //     shouldUpdate = true;
+    //     return true;
     //   }
     // }
-    // console.log(nextState.shouldUpdate);
-    return shouldUpdate;
+    // if(debugUpdates) console.log(shouldUpdate);
+    return false;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -90,33 +112,44 @@ class ProductListItem extends React.Component {
     if (cartItem !== null) {
       newState = {
         added: true,
-        quantity: cartItem.quantity,
         purveyorId: cartPurveyorId,
-        note: cartItem.note
+        note: cartItem.note,
+        cartItem: cartItem,
       };
+      if(this.state.editQuantity === false){
+        newState.quantity = cartItem.quantity;
+      }
     } else {
       newState = {
         added: false,
         quantity: 1,
         purveyorId: cartPurveyorId,
-        note: ''
+        note: '',
+        cartItem: null,
       };
     }
     this.setState(newState);
   }
 
   cartUpdateFromLocalState() {
-    const cartAttributes = {
+    const cartAttributes = Object.assign({}, this.state.cartItem, {
       purveyorId: this.state.selectedPurveyorId,
       productId: this.state.product.id,
       quantity: this.state.quantity,
       note: this.state.note
-    };
-    this.props.onUpdateProductInCart(
-      (this.state.added === true ? CART.ADD : CART.REMOVE),
-      cartAttributes
-    );
+    })
 
+    let cartAction = null
+    if(this.state.added === true){
+      if(cartAttributes.hasOwnProperty('id') === true){
+        cartAction = CART.UPDATE
+      } else {
+        cartAction = CART.ADD
+      }
+    } else {
+      cartAction = CART.DELETE
+    }
+    this.props.onUpdateProductInCart(cartAction, cartAttributes);
   }
 
   handleToggleProduct(purveyorId) {
@@ -128,7 +161,7 @@ class ProductListItem extends React.Component {
 
   render() {
     const {product} = this.state
-    const {purveyors} = this.props;
+    const {purveyors, category} = this.props;
 
     let productInfo = (
       <View style={styles.row}>
@@ -142,27 +175,63 @@ class ProductListItem extends React.Component {
     );
     let buttons = []
     if(product !== null){
-      let purveyorString = ""
-      if(purveyors.hasOwnProperty(this.state.selectedPurveyorId) === true){
-        purveyorString = purveyors[this.state.selectedPurveyorId].name || '-NOT SET-'
-      } else {
-        // Single purveyor, grab name off props.purveyors
-        // const purveyorIds = Object.keys(purveyors)
-        // purveyorString = purveyors[purveyorIds[0]].name
-        purveyorString = 'Multiple purveyors'
+
+      if(product.deleted === true){
+        return <View />;
       }
+      let purveyorInfo = null
+      let categoryInfo = null
+      let productInfoSeparator = null
       let selectedStyle = []
-      let productDetailsColor = '#999'
+      let productDetailsColor = Colors.greyText
+      let productColor = 'black'
+      let productQuantityBorderStyle = {}
       if(this.state.added === true){
         selectedStyle = styles.selectedRow
-        productDetailsColor = '#000'
+        productDetailsColor = 'white'
+        productColor = 'white'
+        productQuantityBorderStyle = {
+          borderColor: 'white',
+          borderWidth: .5,
+          borderRadius: 15,
+          padding: 4,
+        }
+      }
+      let availablePurveyors = product.purveyors
+
+      if(purveyors !== null){
+        if(purveyors.hasOwnProperty(this.state.selectedPurveyorId) === true){
+          purveyorInfo = (
+            <Text style={{fontSize: 9,  color: productDetailsColor}}>{purveyors[this.state.selectedPurveyorId].name || '-NOT SET-'}</Text>
+          )
+        } else {
+          // Single purveyor, grab name off props.purveyors
+          // const purveyorIds = Object.keys(purveyors)
+          // purveyorInfo = purveyors[purveyorIds[0]].name
+          purveyorInfo = (
+            <Text style={{fontSize: 9,  color: productDetailsColor}}>Multiple purveyors</Text>
+          )
+        }
+      } else {
+        availablePurveyors = [this.state.selectedPurveyorId]
+      }
+
+      if(category !== null) {
+        categoryInfo = (
+          <Text style={{fontSize: 9,  color: productDetailsColor}}>{category.name}</Text>
+        )
+      }
+      if(purveyors !== null && category !== null){
+        productInfoSeparator = (
+          <Icon name='material|chevron-right' size={16} color={productDetailsColor} style={{width: 16, height: 11}}/>
+        )
       }
       productInfo = (
         <View style={[styles.row, selectedStyle]}>
           <View style={styles.main}>
             <ProductToggle
               added={this.state.added}
-              availablePurveyors={product.purveyors}
+              availablePurveyors={availablePurveyors}
               allPurveyors={purveyors}
               currentlySelectedPurveyorId={this.state.selectedPurveyorId}
               onToggleCartProduct={(purveyorId) => {
@@ -170,32 +239,42 @@ class ProductListItem extends React.Component {
               }}
             >
               <View>
-                <Text style={styles.productText}>
+                <Text style={[styles.productText, {color: productColor}]}>
                   {product.name}
                 </Text>
                 <Text style={{fontSize: 9,  color: productDetailsColor}} >
                   {`${product.amount} ${product.unit}`}
                 </Text>
-                <Text style={{fontSize: 9,  color: productDetailsColor}} >
-                  {purveyorString}
-                </Text>
+                <View style={{flexDirection: 'row'}}>
+                  {purveyorInfo}{productInfoSeparator}{categoryInfo}
+                </View>
               </View>
             </ProductToggle>
           </View>
-          <View style={styles.quantityContainer}>
+          <View style={styles.outerQuantityContainer}>
+            <View style={styles.innerQuantityContainer}>
             { this.state.added === true ?
-              <TouchableHighlight
-                onPress={() => {
-                  this.setState({
-                    editQuantity: true
-                  })
-                }}
-                underlayColor='transparent'
-              >
-                <Text style={styles.quantity}>{`${this.state.quantity}x`}</Text>
-              </TouchableHighlight>
-              : <Text style={styles.quantity}>{''}</Text>
+              (
+                <TouchableHighlight
+                  onPress={() => {
+                    this.setState({
+                      editQuantity: true
+                    })
+                  }}
+                  underlayColor='transparent'
+                >
+                  <Text style={[styles.quantity, productQuantityBorderStyle, {color: productColor}]}>{`${this.state.quantity}x`}</Text>
+                </TouchableHighlight>
+              )
+              : (
+                <Text style={styles.quantity}>{''}</Text>
+              )
             }
+            { product.par && product.par !== '' && product.par !== '0' ?
+              <Text style={[styles.par, {color: productDetailsColor}]}>Par: {product.par}</Text>
+              : <Text style={[styles.par, {color: productDetailsColor}]}>{''}</Text>
+            }
+            </View>
           </View>
         </View>
       )
@@ -234,6 +313,17 @@ class ProductListItem extends React.Component {
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalInnerContainer}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalHeaderText}>
+                  Select Amount
+                </Text>
+                {/*<TouchableHighlight
+                  onPress={() => { this.setState({ editQuantity: false }) }}
+                  underlayColor='transparent'
+                >
+                  <Icon name='material|close' size={25} color='#999' style={styles.iconClose} />
+                </TouchableHighlight>*/}
+              </View>
               <PickerIOS
                 selectedValue={this.state.quantity}
                 onValueChange={(quantity) => {
@@ -241,7 +331,7 @@ class ProductListItem extends React.Component {
                     quantity: quantity,
                   })
                 }}
-                style={{width: 260, alignSelf: 'center'}}
+                style={styles.picker}
               >
                 {
                   quantities.map((n, idx) => {
@@ -249,7 +339,6 @@ class ProductListItem extends React.Component {
                   })
                 }
               </PickerIOS>
-              <View style={styles.separator} />
               <TouchableHighlight
                 onPress={() => {
                   this.setState({
@@ -273,6 +362,9 @@ class ProductListItem extends React.Component {
         <Swipeout
           right={buttons}
           backgroundColor={Colors.mainBackgroundColor}
+          scroll={(allowScroll) => {
+            this.props.onAllowScroll(allowScroll)
+          }}
         >
           {productInfo}
         </Swipeout>
@@ -282,7 +374,7 @@ class ProductListItem extends React.Component {
   }
 }
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     paddingTop: 3,
     paddingBottom: 3,
@@ -302,13 +394,24 @@ let styles = StyleSheet.create({
     marginTop: 7,
     marginBottom: 7,
   },
-  quantityContainer: {
-    flex: 1.5,
+  main: {
+    flex: 5,
+  },
+  outerQuantityContainer: {
+    flex: 1,
+  },
+  innerQuantityContainer: {
+    alignItems: 'center',
   },
   quantity: {
     fontSize: 20,
     textAlign: 'right',
-    paddingRight: 5
+    paddingRight: 5,
+    padding: 5,
+  },
+  par: {
+    fontSize: 10,
+    textAlign: 'center',
   },
   row: {
     borderRadius: Sizes.rowBorderRadius,
@@ -322,9 +425,6 @@ let styles = StyleSheet.create({
   selectedRow: {
     backgroundColor: Colors.lightBlue
   },
-  main: {
-    flex: 5,
-  },
   productText: {
     color: 'black',
     fontSize: 15
@@ -336,9 +436,36 @@ let styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)'
   },
   modalInnerContainer: {
+    alignItems: 'center',
     borderRadius: Sizes.modalInnerBorderRadius,
     backgroundColor: '#fff',
     padding: 20,
+  },
+  modalHeader: {
+    width: 260,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 5,
+  },
+  modalHeaderText: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 20,
+    color: Colors.lightBlue,
+  },
+  iconClose: {
+    width: 15,
+    height: 15,
+    position: 'absolute',
+    bottom: 10,
+  },
+  picker: {
+    width: 260,
+    alignSelf: 'center',
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
   },
   modalButtonText: {
     textAlign: 'center',
@@ -347,7 +474,7 @@ let styles = StyleSheet.create({
   },
   separator: {
     height: 0,
-    borderBottomColor: '#bbb',
+    borderBottomColor: Colors.separatorColor,
     borderBottomWidth: 1,
   },
 });
