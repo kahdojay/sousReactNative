@@ -19,15 +19,22 @@ class ProductList extends React.Component {
     }
   }
 
-  // componentWillReceiveProps(nextProps) {
-  //   this.setState({
-  //     products: []
-  //   }, () => {
-  //     this.setState({
-  //       products: nextProps.products
-  //     })
-  //   })
-  // }
+  shouldComponentUpdate(nextProps) {
+    if(nextProps.products.length !== this.state.products.length){
+      return true;
+    }
+    return false;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      products: []
+    }, () => {
+      this.setState({
+        products: nextProps.products
+      })
+    })
+  }
 
   componentWillMount() {
     this.setState({

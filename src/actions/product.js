@@ -53,7 +53,7 @@ export default function ProductActions(allActions){
 
       dispatch(connectActions.ddpCall('createProduct', [newProductAttributes]))
 
-      return dispatch(categoryActions.addProductToCategory(productAttributes.categoryId,productId))
+      return dispatch(categoryActions.addProductCategory(productAttributes.categoryId,productId))
     }
   }
 
@@ -61,13 +61,17 @@ export default function ProductActions(allActions){
     return (dispatch, getState) => {
       const {session, teams } = getState();
       const { currentTeam } = teams;
-      dispatch(connectActions.ddpCall('updateProduct', [productId, productAttributes, session.userId]))
-      return dispatch({
+
+      dispatch(categoryActions.updateProductCategory(productAttributes.previousCategoryId, productAttributes.categoryId,productId))
+
+      dispatch({
         type: UPDATE_PRODUCT,
         teamId: currentTeam.id,
         productId: productId,
         product: productAttributes
       })
+
+      return dispatch(connectActions.ddpCall('updateProduct', [productId, productAttributes, session.userId]))
     }
   }
 

@@ -8,7 +8,8 @@ import {
   ADD_CATEGORY,
   UPDATE_CATEGORY,
   DELETE_CATEGORY,
-  ADD_PRODUCT_TO_CATEGORY,
+  ADD_PRODUCT_CATEGORY,
+  REMOVE_PRODUCT_CATEGORY,
 } from './actionTypes'
 
 export default function CategoryActions(allActions){
@@ -68,20 +69,44 @@ export default function CategoryActions(allActions){
   //   }
   // }
 
-  function addProductToCategory(categoryId, productId){
+  function addProductCategory(categoryId, productId){
     // console.log(categoryId, productId)
     return (dispatch, getState) => {
       const {teams} = getState()
 
       dispatch({
-        type: ADD_PRODUCT_TO_CATEGORY,
+        type: ADD_PRODUCT_CATEGORY,
         categoryId: categoryId,
         productId: productId,
         teamId: teams.currentTeam.id
       })
 
       const categoryLookup = { _id: categoryId, teamId: teams.currentTeam.id }
-      dispatch(connectActions.ddpCall('addProductToCategory', [categoryLookup, productId]))
+      dispatch(connectActions.ddpCall('addProductCategory', [categoryLookup, productId]))
+    }
+  }
+
+  function updateProductCategory(previousCategoryId, categoryId, productId){
+    // console.log(categoryId, productId)
+    return (dispatch, getState) => {
+      const {teams} = getState()
+
+      dispatch({
+        type: REMOVE_PRODUCT_CATEGORY,
+        categoryId: previousCategoryId,
+        productId: productId,
+        teamId: teams.currentTeam.id
+      })
+
+      dispatch({
+        type: ADD_PRODUCT_CATEGORY,
+        categoryId: categoryId,
+        productId: productId,
+        teamId: teams.currentTeam.id
+      })
+
+      const categoryLookup = { _id: categoryId, teamId: teams.currentTeam.id }
+      dispatch(connectActions.ddpCall('updateProductCategory', [categoryLookup, productId]))
     }
   }
 
@@ -113,11 +138,13 @@ export default function CategoryActions(allActions){
     ADD_CATEGORY,
     UPDATE_CATEGORY,
     DELETE_CATEGORY,
-    ADD_PRODUCT_TO_CATEGORY,
+    ADD_PRODUCT_CATEGORY,
+    REMOVE_PRODUCT_CATEGORY,
     // addCategory,
     // updateCategory,
     // deleteCategory,
-    addProductToCategory,
+    addProductCategory,
+    updateProductCategory,
     receiveCategories,
     resetCategories,
   }

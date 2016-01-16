@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {
   RESET_CATEGORIES,
   GET_CATEGORIES,
@@ -7,7 +8,8 @@ import {
   ADD_CATEGORY,
   UPDATE_CATEGORY,
   DELETE_CATEGORY,
-  ADD_PRODUCT_TO_CATEGORY,
+  ADD_PRODUCT_CATEGORY,
+  REMOVE_PRODUCT_CATEGORY,
 } from '../actions';
 
 const initialState = {
@@ -55,7 +57,7 @@ function categories(state = initialState.categories, action) {
     });
 
   // add product to categories
-  case ADD_PRODUCT_TO_CATEGORY:
+  case ADD_PRODUCT_CATEGORY:
     const newCategoryTeamProductsState = Object.assign({}, state.teams);
     if(newCategoryTeamProductsState.hasOwnProperty(action.teamId) === true){
       // console.log(newCategoryTeamProductsState[action.teamId])
@@ -69,6 +71,25 @@ function categories(state = initialState.categories, action) {
     return Object.assign({}, state, {
       errors: null,
       teams: newCategoryTeamProductsState,
+      lastUpdated: (new Date()).toISOString()
+    });
+
+  case REMOVE_PRODUCT_CATEGORY:
+    const removeCategoryTeamProductsState = Object.assign({}, state.teams);
+    if(removeCategoryTeamProductsState.hasOwnProperty(action.teamId) === true){
+      if(removeCategoryTeamProductsState[action.teamId].hasOwnProperty(action.categoryId)){
+        const removeProductIdx = removeCategoryTeamProductsState[action.teamId][action.categoryId].products.indexOf(action.productId)
+        if(removeProductIdx !== -1){
+          const removeCategoryProducts = _.filter(removeCategoryTeamProductsState[action.teamId][action.categoryId].products, (productId) => {
+            return productId !== action.productId
+          })
+          removeCategoryTeamProductsState[action.teamId][action.categoryId].products = removeCategoryProducts
+        }
+      }
+    }
+    return Object.assign({}, state, {
+      errors: null,
+      teams: removeCategoryTeamProductsState,
       lastUpdated: (new Date()).toISOString()
     });
 

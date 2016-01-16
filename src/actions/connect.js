@@ -25,7 +25,7 @@ export default function ConnectActions(ddpClient) {
 
   const APPROVED_OFFLINE_METHODS = {
     'addCartItem': { allow: true },
-    'addProductToCategory': { allow: true },
+    'addProductCategory': { allow: true },
     'addTeamTask': { allow: true },
     'createMessage': { allow: true },
     'createProduct': { allow: true },

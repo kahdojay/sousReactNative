@@ -309,6 +309,7 @@ class App extends React.Component {
       purveyors: product.purveyors,
       amount: product.amount,
       unit: product.unit,
+      previousCategoryId: productCategory.id,
       categoryId: productCategory.id,
     }
     this.setState({
@@ -988,8 +989,9 @@ class App extends React.Component {
             purveyors: this.state.currentTeamInfo.purveyors,
             onProcessProduct: (productAttributes) => {
               const sceneState = Object.assign({}, this.state.sceneState);
+              const existingProductAttributes = Object.assign({}, sceneState.ProductForm.productAttributes);
               sceneState.ProductForm.submitReady = true;
-              sceneState.ProductForm.productAttributes = productAttributes
+              sceneState.ProductForm.productAttributes = Object.assign({}, existingProductAttributes, productAttributes);
               this.setState({
                 sceneState: sceneState
               })
@@ -1105,7 +1107,7 @@ class App extends React.Component {
               _.debounce(() => {
                 dispatch(actions.sendCart(purveyorIds));
               }, 25)()
-              if(navigateToFeed === true){                
+              if(navigateToFeed === true){
                 nav.replacePreviousAndPop({
                   name: 'Feed',
                 });
