@@ -92,14 +92,17 @@ class InviteModal extends React.Component {
           }
         }}
       >
-        <TextInput
-          style={styles.input}
-          keyboardType='numeric'
-          placeholder={'Phone #'}
-          textAlign='center'
-          onChangeText={(text) => this.setState({text})}
-          value={this.state.text}
-        />
+        <View style={styles.inputWrapper}>
+          <TextInput
+            style={styles.input}
+            keyboardType='numeric'
+            placeholder={'Phone #'}
+            placeholderTextColor={Colors.inputPlaceholderColor}
+            textAlign='center'
+            onChangeText={(text) => this.setState({text})}
+            value={this.state.text}
+          />
+        </View>
       </GenericModal>
     );
   }
@@ -119,9 +122,13 @@ var styles = StyleSheet.create({
     marginLeft: 5,
     marginBottom: 10
   },
-  input: {
-    height: 40,
+  inputWrapper: {
+    borderBottomColor: Colors.inputUnderline,
+    borderBottomWidth: 1,
     marginBottom: 15,
+  },
+  input: {
+    height: 32,
   },
 });
 
