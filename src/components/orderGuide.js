@@ -213,7 +213,6 @@ let styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     textAlign: 'center',
     height: 32,
-    backgroundColor: 'white',
   },
   buttonContainer: {
     flexDirection: 'row',
