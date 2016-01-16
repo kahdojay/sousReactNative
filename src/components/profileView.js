@@ -315,6 +315,7 @@ let styles = StyleSheet.create({
   changeAvatarText: {
     fontFamily: 'OpenSans',
     fontSize: 14,
+    color: Colors.lightBlue,
   },
   deactivateContainer: {
     flex: 1,

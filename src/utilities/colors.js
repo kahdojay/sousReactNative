@@ -10,6 +10,8 @@ const Colors = {
   gold: '#F5A623',
   green: '#7CD34B',
   greyText: '#9b9796',
+  inputPlaceholderColor: '#7DB8F7',
+  inputUnderline: '#4C9EF5',
   lightGrey: '#bbb',
   darkGrey: '#444',
   lightBlue: '#4C9EF5',

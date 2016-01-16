@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { Icon, } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import EmailUtils from '../utilities/email';
+import GenericModal from './modal/genericModal';
 
 const {
   Dimensions,
@@ -10,7 +11,6 @@ const {
   View,
   Text,
   Image,
-  Modal,
   NativeModules,
   TextInput,
   TouchableHighlight,
@@ -66,71 +66,6 @@ class OrderGuideUpload extends React.Component {
   }
 
   render() {
-
-    const modal = (
-      <Modal
-        animated={true}
-        transparent={true}
-        visible={this.state.showAddEmailAddress}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => {
-            this.setState({
-              showAddEmailAddress: false,
-            })
-          }}
-          style={{flex: 1,}}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalInnerContainer}>
-              <View style={styles.sendEmail}>
-                <View style={styles.infoField}>
-                  <TextInput
-                    style={styles.input}
-                    value={this.state.emailAddress}
-                    onChange={(e) => {
-                      this.setState({
-                        inputError: false,
-                        emailAddress: e.nativeEvent.text
-                      })
-                    }}
-                    placeholder={"Your Email Address"}
-                  />
-                </View>
-                { this.state.inputError === true ?
-                  <View style={styles.inputErrorContainer}>
-                    <Text style={styles.inputErrorText}>Please enter a valid email address.</Text>
-                  </View>
-                : <View style={styles.inputErrorContainer} /> }
-              </View>
-              <View style={[styles.separator, {marginTop: 10}]} />
-              <TouchableHighlight
-                onPress={() => {
-                  const emailValid = EmailUtils.validateEmailAddress(this.state.emailAddress)
-                  if(emailValid === true){
-                    if(this.state.selectedPhotos.length > 0){
-                      this.setState({
-                        showAddEmailAddress: false,
-                      }, () => {
-                        this.props.onUploadOrderGuide(this.state.emailAddress, this.state.selectedPhotos)
-                      })
-                    }
-                  } else {
-                    this.setState({
-                      inputError: true
-                    })
-                  }
-                }}
-                underlayColor='transparent'
-              >
-                <Text style={styles.modalButtonText}>Send</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        </TouchableOpacity>
-      </Modal>
-    )
 
     const selectedPhotos = _.map(this.state.selectedPhotos, (source, idx) => {
       let image = (
@@ -222,7 +157,57 @@ class OrderGuideUpload extends React.Component {
         >
           <Text style={[styles.uploadButtonText, uploadButtonTextStyle]}>Upload Order Guide</Text>
         </TouchableHighlight>
-        {modal}
+        <GenericModal
+          ref='errorModal'
+          modalVisible={this.state.showAddEmailAddress}
+          onHideModal={() => {
+            this.setState({
+              showAddEmailAddress: false,
+            })
+          }}
+          leftButton={{
+            text: 'Send',
+            onPress: () => {
+              const emailValid = EmailUtils.validateEmailAddress(this.state.emailAddress)
+              if(this.state.emailAddress && emailValid === true){
+                this.setState({
+                  showAddEmailAddress: false,
+                }, () => {
+                  this.props.onSendEmail(this.state.emailAddress)
+                })
+              } else {
+                this.setState({
+                  inputError: true
+                })
+              }
+            }
+          }}
+        >
+          <View style={styles.sendEmail}>
+            <View style={[styles.infoField, {borderBottomColor: (this.state.inputError === true) ? Colors.red : Colors.inputUnderline}]}>
+              <TextInput
+                style={styles.input}
+                value={this.state.emailAddress}
+                onChange={(e) => {
+                  this.setState({
+                    inputError: false,
+                    emailAddress: e.nativeEvent.text
+                  })
+                }}
+                placeholder={"Your Email Address"}
+                placeholderTextColor={Colors.inputPlaceholderColor}
+              />
+            </View>
+            { this.state.inputError === true ?
+              <View style={styles.inputErrorContainer}>
+                <Text style={styles.inputErrorText}>Please enter a valid email address.</Text>
+              </View>
+            : <View style={styles.inputErrorContainer}><Text>{' '}</Text></View> }
+            <Text>
+              {this.state.inputError}
+            </Text>
+          </View>
+        </GenericModal>
       </View>
     );
   }
@@ -298,56 +283,31 @@ let styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-
   sendEmail: {
     flex: 1,
-    paddingBottom: 10,
+    paddingTop: 10,
   },
   infoField: {
-    height: 45,
-    paddingLeft: 5,
-    paddingTop: 15,
-    flexDirection: 'row',
+    borderBottomColor: Colors.inputUnderline,
+    borderBottomWidth: 1,
   },
   inputErrorContainer: {
-    height: 10,
+    flex: 1,
   },
   inputErrorText: {
     color: Colors.red,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   input: {
     flex: 1,
     padding: 4,
-    marginRight: 5,
-    marginBottom: 5,
     fontSize: 14,
-    borderRadius: 8,
     color: '#333',
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
     textAlign: 'center',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
-  },
-  modalInnerContainer: {
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    padding: 20,
-  },
-  modalButtonText: {
-    textAlign: 'center',
-    color: Colors.lightBlue,
-    paddingTop: 15,
-  },
-  separator: {
-    height: 0,
-    borderBottomColor: Colors.separatorColor,
-    borderBottomWidth: 1,
+    height: 32,
+    backgroundColor: 'white',
   },
 })
 

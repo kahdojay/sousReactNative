@@ -40,7 +40,6 @@ export default function SessionActions(allActions){
   }
 
   function inviteContacts(contactList) {
-    console.log(contactList)
     return (dispatch, getState) => {
       const { session } = getState();
       contactList.forEach((phoneNumber) => {

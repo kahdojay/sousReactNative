@@ -151,8 +151,8 @@ class Signup extends React.Component {
           <Text style={styles.headerText}>Use your phone number to log in to Sous.</Text>
           <Text style={styles.centered}>First, we will send you a <Text style={styles.boldText}>text message</Text> to verify your account.</Text>
           <View style={styles.inputContainer}>
-            <View style={{borderBottomWidth: 1, borderBottomColor: 'black'}}>
-              <Icon name='material|phone' size={30} color='#aaa' style={styles.iconPhone}/>
+            <View style={styles.inputWrapper}>
+              <Icon name='material|phone' size={30} color={Colors.inputPlaceholderColor} style={styles.iconPhone}/>
               <TextInput
                 ref='phone'
                 style={[styles.input]}
@@ -165,9 +165,10 @@ class Signup extends React.Component {
                 onChange={(e) => {
                   this.setState({phoneNumber: e.nativeEvent.text, invalid: false})
                 }}
+                placeholder={'Phone Number'}
+                placeholderTextColor={Colors.inputPlaceholderColor}
               />
             </View>
-
           </View>
           { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
         </TouchableOpacity>
@@ -211,10 +212,10 @@ class Signup extends React.Component {
             </TouchableHighlight>
             <Text style={styles.centered}>Enter the verification code below to sign in.</Text>
             <View style={styles.inputContainer}>
-              <View style={{borderBottomWidth: 1, borderBottomColor: 'black'}}>
+              <View style={styles.inputWrapper}>
                 <TextInput
                   ref='code'
-                  style={styles.input}
+                  style={[styles.input, , {width: (runTimeDimensions.width * .5)}]}
                   value={this.state.smsToken}
                   keyboardType='phone-pad'
                   textAlign='center'
@@ -225,6 +226,8 @@ class Signup extends React.Component {
                   onChange={(e) => {
                     this.setState({smsToken: e.nativeEvent.text, invalid: false})
                   }}
+                  placeholder={'Code'}
+                  placeholderTextColor={Colors.inputPlaceholderColor}
                 />
               </View>
             </View>
@@ -325,11 +328,16 @@ let styles = StyleSheet.create({
     justifyContent: 'center',
   },
   inputContainer: {
+    marginTop: 10,
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'transparent',
+  },
+  inputWrapper: {
+    borderBottomColor: Colors.inputUnderline,
+    borderBottomWidth: 1,
   },
   errorPlaceholder: {
     height: 0
@@ -340,9 +348,9 @@ let styles = StyleSheet.create({
   },
   iconPhone: {
     position: 'absolute',
-    top: 10,
-    left: -40,
-    width: 70,
+    top: 0,
+    left: 0,
+    width: 30,
     height: 50,
   },
   iconLock: {
@@ -350,8 +358,8 @@ let styles = StyleSheet.create({
     height: 70,
   },
   input: {
-    height: 60,
-    width: runTimeDimensions.width * .5,
+    height: 50,
+    width: runTimeDimensions.width * .70,
     fontSize: 20,
     color: '#333',
     fontWeight: 'bold',
@@ -403,7 +411,7 @@ let styles = StyleSheet.create({
   buttonLink: {
     alignSelf: 'center',
     fontSize: 16,
-    color: Colors.button,
+    color: Colors.lightBlue,
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
   },
