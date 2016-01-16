@@ -6,10 +6,9 @@ import { CART } from '../actions/actionTypes';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import Swipeout from 'react-native-swipeout';
+import PickerModal from './modal/pickerModal';
 
 const {
-  Modal,
-  PickerIOS,
   PropTypes,
   StyleSheet,
   Text,
@@ -305,55 +304,37 @@ class ProductListItem extends React.Component {
           productUnit += 's';
         }
       }
+      let quantityItems = []
+      quantityItems = quantityItems.concat(_.map(_.range(1, 501), (n, idx) => {
+        return {
+          key: idx,
+          value: n,
+          label: n.toString(),
+        }
+      }))
       modal = (
-        <Modal
-          animated={true}
-          transparent={true}
-          visible={this.state.editQuantity}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalInnerContainer}>
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalHeaderText}>
-                  Select Amount
-                </Text>
-                {/*<TouchableHighlight
-                  onPress={() => { this.setState({ editQuantity: false }) }}
-                  underlayColor='transparent'
-                >
-                  <Icon name='material|close' size={25} color='#999' style={styles.iconClose} />
-                </TouchableHighlight>*/}
-              </View>
-              <PickerIOS
-                selectedValue={this.state.quantity}
-                onValueChange={(quantity) => {
-                  this.setState({
-                    quantity: quantity,
-                  })
-                }}
-                style={styles.picker}
-              >
-                {
-                  quantities.map((n, idx) => {
-                    return <PickerIOS.Item key={idx} value={n} label={n.toString()} />
-                  })
-                }
-              </PickerIOS>
-              <TouchableHighlight
-                onPress={() => {
-                  this.setState({
-                    editQuantity: false,
-                  }, this.cartUpdateFromLocalState.bind(this))
-                }}
-                underlayColor='transparent'
-              >
-                <Text style={styles.modalButtonText}>
-                  {`Update to ${quantity} ${productUnit}`}
-                </Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        </Modal>
+        <PickerModal
+          modalVisible={this.state.editQuantity}
+          headerText='Select Amount'
+          leftButtonText='Update'
+          items={quantityItems}
+          pickerType='PickerIOS'
+          selectedValue={this.state.quantity}
+          onHideModal={() => {
+            this.setState({
+              editQuantity: false,
+            })
+          }}
+          onSubmitValue={(value) => {
+            if(value !== null && value.hasOwnProperty('selectedValue') === true){
+              const selectedValue = value.selectedValue
+              this.setState({
+                quantity: selectedValue,
+                editQuantity: false,
+              }, this.cartUpdateFromLocalState.bind(this))
+            }
+          }}
+        />
       )
     }
 

@@ -75,6 +75,14 @@ class PickerModal extends React.Component {
     }
 
     const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1.key !== r2.key});
+    let listViewHeightStyle = {
+      height: 200,
+    }
+    if(items.length < 5){
+      listViewHeightStyle = {
+        height: ((200/3.75)*items.length),
+      }
+    }
     return (
       <ListView
         pageSize={5}
@@ -110,7 +118,7 @@ class PickerModal extends React.Component {
             </TouchableHighlight>
           )
         }}
-        style={styles.listView}
+        style={[styles.listView, listViewHeightStyle]}
       />
     )
   }
@@ -195,6 +203,7 @@ const styles = StyleSheet.create({
   listView: {
     width: modalContainerWidth,
     height: 200,
+    marginTop: -20,
   },
   listViewRowContainer: {
     marginBottom: 4,

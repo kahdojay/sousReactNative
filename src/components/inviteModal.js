@@ -7,7 +7,6 @@ import GenericModal from './modal/genericModal';
 import AddressBook from 'react-native-addressbook';
 
 const {
-  Modal,
   StyleSheet,
   Text,
   TextInput,

@@ -5,8 +5,6 @@ import _ from 'lodash';
 import PickerModal from './modal/pickerModal';
 
 const {
-  Modal,
-  PickerIOS,
   ScrollView,
   StyleSheet,
   Text,

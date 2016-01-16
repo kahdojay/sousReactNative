@@ -6,9 +6,6 @@ import CartViewListItem from './cartViewListItem';
 import GenericModal from './modal/genericModal';
 
 const {
-  AlertIOS,
-  Modal,
-  PickerIOS,
   ScrollView,
   StyleSheet,
   Text,
