@@ -470,6 +470,7 @@ class App extends React.Component {
           },
         }
       case 'TeamIndex':
+        console.log(teams.data)
         return {
           component: Components.TeamIndex,
           props: {
@@ -857,7 +858,6 @@ class App extends React.Component {
               }, 25)()
             },
             onHideHeader: (hideHeader) => {
-              console.log(hideHeader)
               const sceneState = Object.assign({}, this.state.sceneState);
               sceneState.SearchView.hideHeader = hideHeader;
               this.setState({
@@ -1332,7 +1332,6 @@ class App extends React.Component {
           })
           break;
         case 'SearchView':
-          console.log(this.state.sceneState.SearchView.hideHeader)
           if(this.state.sceneState.SearchView.hideHeader === true){
             navBar = null
           } else {
@@ -1577,8 +1576,7 @@ class App extends React.Component {
   }
 
   getRoute(route, nav) {
-    const { session } = this.props;
-
+    const { session, settingsConfig } = this.props;
     // redirect to initial view
     if (this.state.isAuthenticated === true){
       if (route.name === 'Signup' || route.name === 'UserInfo' || route.name === 'UserTeam') {
@@ -1586,14 +1584,14 @@ class App extends React.Component {
           route.name = 'UserInfo';
         } else if(session.teamId === null) {
           route.name = 'UserTeam';
-        } else if(session.viewedOnboarding !== true) {
+        } else if(session.viewedOnboarding !== true && settingsConfig.hasOwnProperty('onboardingSettings') === true ) {
           route.name = 'session/onboarding';
         } else if(this.state.currentTeamInfo.team !== null){
           route.name = 'Feed';
         } else {
           route.name = 'Loading';
         }
-      } else if(session.viewedOnboarding !== true) {
+      } else if(session.viewedOnboarding !== true && settingsConfig.hasOwnProperty('onboardingSettings') === true) {
         route.name = 'session/onboarding';
       }
       if(route.name === 'CategoryIndex' || route.name === 'PurveyorIndex') {

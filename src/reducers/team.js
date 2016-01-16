@@ -90,7 +90,7 @@ function teams(state = initialState.teams, action) {
   case ADD_TEAM:
     const addTeamState = Object.assign({}, state);
     const addTeamsDataState = updateDataState(addTeamState.data, action.team);
-    const addTeamIdx = getIdx(addTeamsDataState, action.team.id);
+    // const addTeamIdx = getIdx(addTeamsDataState, action.team.id);
 
     // console.log(action.type, action.team.id)
     return Object.assign({}, state, {

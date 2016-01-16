@@ -54,6 +54,7 @@ function connectApp(){
       // dispatch(sessionActions.resetSession());
       dispatch(sessionActions.resetSessionVersion());
       dispatch(messageActions.resetMessages());
+      // dispatch(cartItemActions.resetCartItems());
       // dispatch(purveyorActions.resetPurveyors());
     }
 

@@ -25,18 +25,19 @@ class TeamIndex extends React.Component {
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if(this.props.connected !== nextProps.connected){
-      return true;
-    }
-    if(this.state.loaded !== nextState.loaded){
-      return true;
-    }
-    if(this.props.teams.length !== nextProps.teams.length){
-      return true;
-    }
-    return false;
-  }
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   if(this.props.connected !== nextProps.connected){
+  //     return true;
+  //   }
+  //   if(this.state.loaded !== nextState.loaded){
+  //     return true;
+  //   }
+  //   console.log(this.props.teams.data.length, nextProps.teams.data.length)
+  //   if(this.props.teams.data.length !== nextProps.teams.data.length){
+  //     return true;
+  //   }
+  //   return false;
+  // }
 
   componentDidMount() {
     this.setState({

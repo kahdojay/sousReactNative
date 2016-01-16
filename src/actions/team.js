@@ -63,8 +63,8 @@ export default function TeamActions(allActions) {
           replacement: '',
         })
         teamCode = teamCode.toUpperCase()
+        // TODO: add any other filters besides TEAM?
         teamCode = teamCode.replace('TEAM', '')
-        // TODO: add any other filters?
         // TODO: check for unique teamCode?
         var newTeamAttributes = {
           _id: generateId(),
@@ -85,15 +85,15 @@ export default function TeamActions(allActions) {
           newTeamAttributes.demoTeam = true;
         }
 
-        dispatch(connectActions.ddpCall('createTeam', [newTeamAttributes, session.userId]))
-
         dispatch({
           type: ADD_TEAM,
-          team: newTeamAttributes,
+          team: Object.assign({}, newTeamAttributes),
           sessionTeamId: session.teamId
-        });
+        })
 
         dispatch(sessionActions.updateSession({teamId: newTeamAttributes.id}))
+
+        dispatch(connectActions.ddpCall('createTeam', [newTeamAttributes, session.userId]))
 
         const teamUserData = {
           'id': session.userId,
