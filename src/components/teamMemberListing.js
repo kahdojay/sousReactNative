@@ -20,6 +20,7 @@ class TeamMemberListing extends React.Component {
   }
 
   getTeamMembers() {
+    const {currentTeamUsers, teamsUsers, userId} = this.props
     const teamMembers = [];
 
 
@@ -34,11 +35,10 @@ class TeamMemberListing extends React.Component {
       </View>
     );
 
-
-    this.props.currentTeamUsers.forEach((userId) => {
-      if(this.props.teamsUsers.hasOwnProperty(userId)){
-        const user = this.props.teamsUsers[userId]
-        if(user.superUser === true)
+    currentTeamUsers.forEach((userId) => {
+      if(teamsUsers.hasOwnProperty(userId)){
+        const user = teamsUsers[userId]
+        if(user.superUser === true && user.id !== userId)
           return
         let icon = <Icon name='material|account-circle' size={50} color='#aaa' style={styles.avatar}/>
         if (user.hasOwnProperty('imageUrl') && user.imageUrl !== '') {
@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.mainBackgroundColor,
   },
   row: {
+    flex: 1,
     marginTop: 2,
     marginBottom: 2,
     marginRight: 5,
@@ -83,28 +84,28 @@ const styles = StyleSheet.create({
     borderRadius: Sizes.rowBorderRadius,
     flexDirection: 'row',
     backgroundColor: 'white',
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingLeft: 5,
   },
   member: {
     flexDirection: 'row',
     padding: 5,
-    backgroundColor: '#fff',
   },
   memberName: {
-    padding: 15
+    padding: 15,
   },
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
     alignSelf: 'center',
-    backgroundColor: '#eee'
+    backgroundColor: '#eee',
   },
   avatarImage: {
     width: 40,
-    marginTop: 5,
     height: 40,
     borderRadius: 20,
+    alignSelf: 'center',
   },
 });
 

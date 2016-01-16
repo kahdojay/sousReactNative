@@ -91,7 +91,7 @@ export default function TeamActions(allActions) {
           sessionTeamId: session.teamId
         })
 
-        dispatch(sessionActions.updateSession({teamId: newTeamAttributes.id}))
+        dispatch(sessionActions.updateSession({teamId: newTeamAttributes._id}))
 
         dispatch(connectActions.ddpCall('createTeam', [newTeamAttributes, session.userId]))
 

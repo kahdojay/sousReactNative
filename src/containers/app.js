@@ -470,7 +470,6 @@ class App extends React.Component {
           },
         }
       case 'TeamIndex':
-        console.log(teams.data)
         return {
           component: Components.TeamIndex,
           props: {
@@ -1120,9 +1119,11 @@ class App extends React.Component {
           component: Components.Loading
         }
       case 'TeamMemberListing':
+        console.log(this.state.currentTeamInfo.team.users)
         return {
           component: Components.TeamMemberListing,
           props: {
+            userId: session.userId,
             teamsUsers: teams.teamsUsers,
             currentTeamUsers: this.state.currentTeamInfo.team.users,
           },
@@ -1688,6 +1689,7 @@ class App extends React.Component {
       'session/onboarding',
       'Loading',
     ]
+
     // if(this.state.isAuthenticated === true && this.state.currentTeamInfo.team !== null && session.viewedOnboarding === true){
     if(noSideMenuRoutes.indexOf(route.name) === -1){
       CustomSideView = SideMenu
