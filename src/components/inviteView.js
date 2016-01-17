@@ -77,11 +77,7 @@ class InviteView extends React.Component {
   }
 
   render() {
-    let userContacts = this.props.contacts.map(function (contact, idx) {
-      contact.firstName = contact.firstName ? _.capitalize(contact.firstName) : ''
-      return contact
-    })
-    let sortedContacts =  this.state.searchedContacts.length > 0 ? this.state.searchedContacts : _.sortBy(userContacts, 'firstName')
+    let sortedContacts =  this.state.searchedContacts.length > 0 ? this.state.searchedContacts : this.props.contacts
     let displayContacts = []
     let idx = 0
 
