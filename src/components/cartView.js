@@ -206,46 +206,55 @@ class CartView extends React.Component {
       </GenericModal>
     )
 
-    return (
-      <ScrollView style={styles.scrollView}>
-        {
-          _.map(cartPurveyors, (purveyor) => {
-            return (
-              <View key={purveyor.id} style={styles.purveyorContainer}>
-                <View style={styles.purveyorInfo}>
-                  <View style={styles.purveyorInfoLeft}>
-                    <TouchableHighlight
-                      onPress={() => {
-                        this.setState({
-                          showPurveyorInfo: true,
-                          purveyor: purveyor,
-                        })
-                      }}
-                      underlayColor='transparent'
-                    >
-                      <View style={styles.purveyorTitleContainer}>
-                        <Icon name='material|info' size={20} color='white' style={styles.detailsIcon} />
-                        <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
-                      </View>
-                    </TouchableHighlight>
+    let cartViewDetails = (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyContainerText}>Your cart is empty - add items from your Order Guide to start an order.</Text>
+      </View>
+    )
+    if(this.state.numberOfOrders > 0){
+      cartViewDetails = _.map(cartPurveyors, (purveyor) => {
+        return (
+          <View key={purveyor.id} style={styles.purveyorContainer}>
+            <View style={styles.purveyorInfo}>
+              <View style={styles.purveyorInfoLeft}>
+                <TouchableHighlight
+                  onPress={() => {
+                    this.setState({
+                      showPurveyorInfo: true,
+                      purveyor: purveyor,
+                    })
+                  }}
+                  underlayColor='transparent'
+                >
+                  <View style={styles.purveyorTitleContainer}>
+                    <Icon name='material|info' size={20} color='white' style={styles.detailsIcon} />
+                    <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
                   </View>
-                  <View style={styles.purveyorInfoRight}>
-                    <TouchableHighlight
-                      underlayColor='transparent'
-                      onPress={() => {
-                        const singlePurveyor = true
-                        this.handleSubmitPress([purveyor], singlePurveyor)
-                      }}
-                    >
-                      <Icon name='material|check-circle' size={30} color='white' style={styles.submitOrderIcon} />
-                    </TouchableHighlight>
-                  </View>
-                </View>
-                {this.renderPurveyorProducts(purveyor.id, cartItems, products)}
+                </TouchableHighlight>
               </View>
-            );
-          })
-        }
+              <View style={styles.purveyorInfoRight}>
+                <TouchableHighlight
+                  underlayColor='transparent'
+                  onPress={() => {
+                    const singlePurveyor = true
+                    this.handleSubmitPress([purveyor], singlePurveyor)
+                  }}
+                >
+                  <Icon name='material|check-circle' size={30} color='white' style={styles.submitOrderIcon} />
+                </TouchableHighlight>
+              </View>
+            </View>
+            {this.renderPurveyorProducts(purveyor.id, cartItems, products)}
+          </View>
+        );
+      })
+    }
+
+    return (
+      <View style={styles.container}>
+        <ScrollView style={styles.scrollView}>
+          {cartViewDetails}
+        </ScrollView>
         <TouchableOpacity
           onPress={this.handleSubmitPress.bind(this, cartPurveyors)}
           style={[
@@ -258,14 +267,18 @@ class CartView extends React.Component {
         </TouchableOpacity>
         {modal}
         {confirmationModal}
-      </ScrollView>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.mainBackgroundColor,
+  },
   scrollView: {
-    backgroundColor: '#f2f2f2',
+    backgroundColor: Colors.mainBackgroundColor,
     flex: 1,
   },
   purveyorContainer: {
@@ -323,22 +336,18 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
   },
-  buttonText: {
-    alignSelf: 'center',
-    fontSize: 22,
-    color: 'white',
-    fontWeight: 'bold',
-    fontFamily: 'OpenSans'
-  },
   button: {
-    height: 56,
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
     backgroundColor: Colors.gold,
-    alignSelf: 'center',
-    width: 200,
-    marginTop: 20,
-    marginBottom: 20,
-    justifyContent: 'center',
-    borderRadius: 3,
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+    padding: 10,
+    fontFamily: 'OpenSans',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   buttonDisabled: {
     backgroundColor: Colors.disabled,
@@ -364,6 +373,15 @@ const styles = StyleSheet.create({
   },
   boldText: {
     fontWeight: 'bold',
+  },
+  emptyContainer: {
+    padding: 25,
+  },
+  emptyContainerText: {
+    textAlign: 'center',
+    fontSize: 16,
+    fontFamily: 'OpenSans',
+    color: Colors.lightGrey,
   },
 })
 
