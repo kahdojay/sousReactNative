@@ -6,7 +6,6 @@ import OrderListItem from './orderListItem';
 import moment from 'moment';
 import messageUtils from '../utilities/message';
 import GenericModal from './modal/genericModal';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 const {
   PropTypes,
@@ -159,7 +158,6 @@ class OrderView extends React.Component {
                   onEndEditing={() => {}}
                 />
               </View>
-              <KeyboardSpacer />
             </View>
           </GenericModal>
         )
