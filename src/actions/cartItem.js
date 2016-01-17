@@ -105,11 +105,15 @@ export default function CartItemActions(allActions) {
   function sendCart(purveyorIds) {
     return (dispatch, getState) => {
       const {session} = getState()
-      dispatch(connectActions.ddpCall('sendCartItems', [session.userId, session.teamId, purveyorIds]))
+      let orderPkg = {}
+      purveyorIds.forEach((purveyorId) => {
+        orderPkg[purveyorId] = generateId()
+      })
+      dispatch(connectActions.ddpCall('sendCartItems', [session.userId, session.teamId, orderPkg]))
       return dispatch({
         type: ORDER_SENT,
         teamId: session.teamId,
-        purveyorIds: purveyorIds,
+        orderPkg: orderPkg,
       })
     }
   }
