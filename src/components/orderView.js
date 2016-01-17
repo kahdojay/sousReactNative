@@ -3,10 +3,10 @@ import _ from 'lodash';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import OrderListItem from './orderListItem';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
 import moment from 'moment';
 import messageUtils from '../utilities/message';
 import GenericModal from './modal/genericModal';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 const {
   PropTypes,
@@ -159,6 +159,7 @@ class OrderView extends React.Component {
                   onEndEditing={() => {}}
                 />
               </View>
+              <KeyboardSpacer />
             </View>
           </GenericModal>
         )
