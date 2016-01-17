@@ -5,6 +5,7 @@ import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import GenericModal from './modal/genericModal';
 import AddressBook from 'react-native-addressbook';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 const {
   ActivityIndicatorIOS,
@@ -132,6 +133,7 @@ class InviteModal extends React.Component {
                 <Text style={styles.inputErrorText}>Please enter a valid email address.</Text>
               </View>
             : <View style={styles.inputErrorContainer}><Text>{' '}</Text></View> }
+            <KeyboardSpacer />
           </View>
         )
         }
