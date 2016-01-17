@@ -2,7 +2,7 @@ import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
-import EmailUtils from '../utilities/email';
+import DataUtils from '../utilities/data';
 
 const {
   ActionSheetIOS,
@@ -139,7 +139,7 @@ class ProfileView extends React.Component {
               };
               let allowSave = true
               if(this.state.email !== ''){
-                allowSave = EmailUtils.validateEmailAddress(this.state.email)
+                allowSave = DataUtils.validateEmailAddress(this.state.email)
               }
               if(allowSave === true){
                 this.setState({
@@ -315,6 +315,7 @@ let styles = StyleSheet.create({
   changeAvatarText: {
     fontFamily: 'OpenSans',
     fontSize: 14,
+    color: Colors.lightBlue,
   },
   deactivateContainer: {
     flex: 1,

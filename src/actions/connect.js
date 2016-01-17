@@ -190,7 +190,7 @@ export default function ConnectActions(ddpClient) {
   function processUnsubscribe() {
     return (dispatch, getState) => {
       const {connect} = getState()
-      // console.log(connect)
+      console.log(connect)
       // ddpClient.unsubscribe(channel)
     }
   }
@@ -233,6 +233,35 @@ export default function ConnectActions(ddpClient) {
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS.channel, [session.userId]))
         }
       }
+    }
+  }
+
+  function resetAppState(allActions) {
+    return (dispatch, getState) => {
+      const {session} = getState()
+      const {phoneNumber, smsToken} = session
+
+      const newSession = {
+        phoneNumber: phoneNumber,
+        smsToken: smsToken,
+      }
+
+      processUnsubscribe()
+
+      // const {
+      //   // uiActions,
+      //   sessionActions,
+      //   teamActions,
+      //   messageActions,
+      //   purveyorActions,
+      //   productActions,
+      //   categoryActions,
+      //   errorActions,
+      //   orderActions,
+      //   cartItemActions,
+      // } = allActions
+      //
+      // dispatch(sessionActions.registerSession(newSession));
     }
   }
 
@@ -296,6 +325,10 @@ export default function ConnectActions(ddpClient) {
               // console.log("MAIN DDP WITH FIELDS MSG: ", log);
               // console.log("SESSION USERID: ", session.userId)
 
+              if(data.hasOwnProperty('resetAppState') === true && data.resetAppState === true){
+                resetAppState(allActions)
+              }
+
               let profileData = false
               if(data.hasOwnProperty('authToken') === true){
                 profileData = true
@@ -320,6 +353,7 @@ export default function ConnectActions(ddpClient) {
                   'firstName': data.firstName,
                   'lastName': data.lastName,
                   'username': data.username,
+                  'email': data.email,
                   'superUser': data.superUser,
                   'imageUrl': data.imageUrl,
                 }
@@ -366,7 +400,6 @@ export default function ConnectActions(ddpClient) {
       ddpClient.on('socket-close', (code, message) => {
         const {connect} = getState()
         // console.log("Close: %s %s", code, message);
-        // processUnsubscribe()
         clearTimeout(connect.timeoutId)
         dispatch({
           type: CONNECTION_STATUS,

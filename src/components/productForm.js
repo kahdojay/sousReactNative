@@ -5,8 +5,6 @@ import _ from 'lodash';
 import PickerModal from './modal/pickerModal';
 
 const {
-  Modal,
-  PickerIOS,
   ScrollView,
   StyleSheet,
   Text,
@@ -217,19 +215,21 @@ class ProductForm extends React.Component {
         >
           <View key={'name'} style={styles.inputContainer}>
             <Text style={styles.inputTitle}>Name</Text>
-            <TextInput
-              ref='name'
-              style={[styles.inputField, {flex: 3}]}
-              value={this.state.selectedName}
-              placeholder='Name'
-              onChange={(e) => {
-                this.setState({
-                  selectedName: e.nativeEvent.text,
-                }, () => {
-                  this.checkValidForm();
-                });
-              }}
-            />
+            <View style={[styles.inputFieldContainer, styles.inputFieldUnderline]}>
+              <TextInput
+                ref='name'
+                style={[styles.inputField,{}]}
+                value={this.state.selectedName}
+                placeholder='Name'
+                onChange={(e) => {
+                  this.setState({
+                    selectedName: e.nativeEvent.text,
+                  }, () => {
+                    this.checkValidForm();
+                  });
+                }}
+              />
+            </View>
           </View>
           {fields}
         </ScrollView>
@@ -294,15 +294,22 @@ const styles = StyleSheet.create({
   },
   inputFieldContainer: {
     flex: 3,
+    marginRight: 4,
+  },
+  inputFieldUnderline: {
+    borderBottomColor: Colors.inputUnderline,
+    borderBottomWidth: 1,
   },
   inputField: {
-    padding: 8,
-    paddingTop: 10,
-    paddingBottom: 10,
-    fontFamily: 'OpenSans',
+    padding: 4,
+    paddingLeft: 8,
+    paddingRight: 8,
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: Sizes.inputFieldFontSize,
+    color: Colors.inputTextColor,
+    fontFamily: 'OpenSans',
     textAlign: 'right',
+    height: Sizes.inputFieldHeight,
   },
 });
 

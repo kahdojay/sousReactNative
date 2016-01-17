@@ -7,6 +7,15 @@ function validateEmailAddress(email){
   return false;
 }
 
+function formatPhoneNumber(contactNumber) {
+  let pat = /(\(|\)|\s|\-)/g
+  let newNumber = contactNumber.replace(pat, '')
+  if (newNumber.toString().length === 10)
+    newNumber = newNumber.slice(0,3) + '.' + newNumber.slice(3,6) + '.' + newNumber.slice(6,10)
+  return newNumber
+}
+
 export default {
   'validateEmailAddress': validateEmailAddress,
+  'formatPhoneNumber': formatPhoneNumber,
 }

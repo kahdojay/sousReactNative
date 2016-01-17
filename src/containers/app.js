@@ -402,9 +402,11 @@ class App extends React.Component {
                 fromName: `${session.firstName} ${session.lastName}`,
                 body: `Order guide request from: ${emailAddress}`,
               }));
-              dispatch(actions.updateSession({
+              const sessionData = {
                 email: emailAddress
-              }))
+              }
+              dispatch(actions.updateSession(sessionData))
+              dispatch(actions.receiveSessionTeamsUser(sessionData))
               const learnMoreMsg = (
                 <View>
                   <Text style={{textAlign: 'center'}}>
@@ -446,9 +448,11 @@ class App extends React.Component {
                 body: `Order Guide from ${this.state.currentTeamInfo.team.name}`,
                 attachments: attachments,
               }))
-              dispatch(actions.updateSession({
+              const sessionData = {
                 email: emailAddress
-              }))
+              }
+              dispatch(actions.updateSession(sessionData))
+              dispatch(actions.receiveSessionTeamsUser(sessionData))
               const learnMoreMsg = (
                 <View>
                   <Text style={{textAlign: 'center'}}>
@@ -857,7 +861,6 @@ class App extends React.Component {
               }, 25)()
             },
             onHideHeader: (hideHeader) => {
-              console.log(hideHeader)
               const sceneState = Object.assign({}, this.state.sceneState);
               sceneState.SearchView.hideHeader = hideHeader;
               this.setState({
@@ -958,7 +961,8 @@ class App extends React.Component {
             onUpdateInfo: (data) => {
               _.debounce(() => {
                 // console.log("DATA", data);
-                dispatch(actions.updateSession(data));
+                dispatch(actions.updateSession(data))
+                dispatch(actions.receiveSessionTeamsUser(data))
               }, 25)()
             },
             onUpdateAvatar: (image) => {
@@ -1123,6 +1127,8 @@ class App extends React.Component {
         return {
           component: Components.TeamMemberListing,
           props: {
+            settingsConfig: settingsConfig,
+            userId: session.userId,
             teamsUsers: teams.teamsUsers,
             currentTeamUsers: this.state.currentTeamInfo.team.users,
           },
@@ -1332,7 +1338,6 @@ class App extends React.Component {
           })
           break;
         case 'SearchView':
-          console.log(this.state.sceneState.SearchView.hideHeader)
           if(this.state.sceneState.SearchView.hideHeader === true){
             navBar = null
           } else {
@@ -1577,8 +1582,7 @@ class App extends React.Component {
   }
 
   getRoute(route, nav) {
-    const { session } = this.props;
-
+    const { session, settingsConfig } = this.props;
     // redirect to initial view
     if (this.state.isAuthenticated === true){
       if (route.name === 'Signup' || route.name === 'UserInfo' || route.name === 'UserTeam') {
@@ -1586,14 +1590,14 @@ class App extends React.Component {
           route.name = 'UserInfo';
         } else if(session.teamId === null) {
           route.name = 'UserTeam';
-        } else if(session.viewedOnboarding !== true) {
+        } else if(session.viewedOnboarding !== true && settingsConfig.hasOwnProperty('onboardingSettings') === true ) {
           route.name = 'session/onboarding';
         } else if(this.state.currentTeamInfo.team !== null){
           route.name = 'Feed';
         } else {
           route.name = 'Loading';
         }
-      } else if(session.viewedOnboarding !== true) {
+      } else if(session.viewedOnboarding !== true && settingsConfig.hasOwnProperty('onboardingSettings') === true) {
         route.name = 'session/onboarding';
       }
       if(route.name === 'CategoryIndex' || route.name === 'PurveyorIndex') {
@@ -1690,6 +1694,7 @@ class App extends React.Component {
       'session/onboarding',
       'Loading',
     ]
+
     // if(this.state.isAuthenticated === true && this.state.currentTeamInfo.team !== null && session.viewedOnboarding === true){
     if(noSideMenuRoutes.indexOf(route.name) === -1){
       CustomSideView = SideMenu

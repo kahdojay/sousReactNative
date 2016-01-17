@@ -6,9 +6,9 @@ import OrderListItem from './orderListItem';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import moment from 'moment';
 import messageUtils from '../utilities/message';
+import GenericModal from './modal/genericModal';
 
 const {
-  Modal,
   PropTypes,
   ScrollView,
   StyleSheet,
@@ -106,72 +106,61 @@ class OrderView extends React.Component {
 
       if(order.confirm.order === false){
         modal = (
-          <Modal
-            animated={true}
-            transparent={true}
-            visible={this.state.showConfirm}
+          <GenericModal
+            ref='errorModal'
+            modalVisible={this.state.showConfirm}
+            modalHeaderText='Confirmation Message'
+            onHideModal={() => {
+              this.setState({
+                showConfirm: false,
+              })
+            }}
+            leftButton={{
+              text: 'Cancel',
+              onPress: () => {
+                if(order.confirm.order === false){
+                  this.setState({
+                    showConfirm: false,
+                  })
+                }
+              }
+            }}
+            rightButton={{
+              text: 'Confirm',
+              onPress: () => {
+                if(order.confirm.order === false){
+                  this.setState({
+                    showConfirm: false,
+                  }, () => {
+                    this.confirmOrder()
+                  })
+                }
+              }
+            }}
           >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalInnerContainer}>
-                <Text style={styles.messageHeading}>Confirmation Message</Text>
-                <View style={styles.inputContainer}>
-                  <Text>
-                    <Text style={styles.orderText}>{purveyor.name}</Text> order checked in.
-                  </Text>
-                  <TextInput
-                    multiline={true}
-                    style={styles.input}
-                    placeholderTextColor={'#999'}
-                    value={this.state.confirmationMessage}
-                    placeholder='Add a note to the message.'
-                    onChangeText={(text) => {
-                      if(order.confirm.order === false){
-                        this.setState({
-                          confirmationMessage: text
-                        })
-                      }
-                    }}
-                    onEndEditing={() => {
-
-                    }}
-                  />
-                </View>
-                <View style={styles.separator} />
-                <View style={{flexDirection: 'row'}}>
-                  <TouchableHighlight
-                    onPress={() => {
-                      if(order.confirm.order === false){
-                        this.setState({
-                          showConfirm: false,
-                        })
-                      }
-                    }}
-                    underlayColor='transparent'
-                    style={{flex: 1}}
-                  >
-                    <Text style={styles.modalButtonText}>Cancel</Text>
-                  </TouchableHighlight>
-                  <View style={[styles.verticalSeparator,{marginTop: 5, height: 36}]} />
-                  <TouchableHighlight
-                    onPress={() => {
-                      if(order.confirm.order === false){
-                        this.setState({
-                          showConfirm: false,
-                        }, () => {
-                          this.confirmOrder()
-                        })
-                      }
-                    }}
-                    underlayColor='transparent'
-                    style={{flex: 1}}
-                  >
-                    <Text style={styles.modalButtonText}>Confirm</Text>
-                  </TouchableHighlight>
-                </View>
+            <View style={styles.inputContainer}>
+              <Text>
+                <Text style={styles.orderText}>{purveyor.name}</Text> order checked in.
+              </Text>
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  multiline={true}
+                  style={styles.input}
+                  placeholderTextColor={Colors.inputPlaceholderColor}
+                  value={this.state.confirmationMessage}
+                  placeholder='Add a note to the message.'
+                  onChangeText={(text) => {
+                    if(order.confirm.order === false){
+                      this.setState({
+                        confirmationMessage: text
+                      })
+                    }
+                  }}
+                  onEndEditing={() => {}}
+                />
               </View>
-              <KeyboardSpacer />
             </View>
-          </Modal>
+          </GenericModal>
         )
       }
     }
@@ -271,55 +260,32 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.separatorColor,
     borderBottomWidth: 1,
   },
-  verticalSeparator: {
-    width: 1,
-    backgroundColor: Colors.separatorColor,
-  },
   scrollView: {
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
     paddingTop: 5,
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
-  },
-  modalInnerContainer: {
-    borderRadius: Sizes.modalInnerBorderRadius,
-    backgroundColor: '#fff',
-    padding: 20,
-  },
-  modalButtonText: {
-    textAlign: 'center',
-    color: Colors.lightBlue,
-    paddingTop: 15,
-  },
-  messageHeading: {
-    fontWeight: 'bold',
-    fontSize: 18,
-    fontFamily: 'OpenSans',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
   inputContainer: {
     flex: 1,
     padding: 10,
-    backgroundColor: '#f3f3f3',
     marginBottom: 20,
-    borderRadius: Sizes.inputBorderRadius,
   },
   orderText: {
     fontWeight: 'bold',
     color: Colors.blue
   },
+  inputWrapper: {
+    borderBottomColor: Colors.inputUnderline,
+    borderBottomWidth: 1,
+  },
   input: {
     flex: 1,
-    height: 36,
-    color: '#777',
-    fontSize: 14,
+    padding: 4,
+    fontSize: Sizes.inputFieldFontSize,
+    color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
+    textAlign: 'center',
+    height: 40,
   },
 });
 

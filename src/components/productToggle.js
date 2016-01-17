@@ -1,9 +1,9 @@
 import React from 'react-native';
 import _ from 'lodash';
 import Colors from '../utilities/colors';
+import PickerModal from './modal/pickerModal';
 
 const {
-  Modal,
   StyleSheet,
   SwitchIOS,
   Text,
@@ -44,6 +44,7 @@ class ProductToggle extends React.Component {
 
   _handlePurveyorSelect(purveyorId) {
     this._setModalVisible(false)
+    console.log(purveyorId)
     this.props.onToggleCartProduct(purveyorId)
   }
 
@@ -73,37 +74,36 @@ class ProductToggle extends React.Component {
 
       const purveyorsArray = this.props.availablePurveyors.map((purveyorId, idx) => {
         const purveyor = _.find(this.props.allPurveyors, { id: purveyorId });
-        const purveyorName = purveyor ? purveyor.name : '';
-        return (
-          <TouchableWrapper
-            key={idx}
-            style={styles.modalButton}
-            onPress={this._handlePurveyorSelect.bind(this, purveyorId)}
-          >
-            <View style={{flexDirection: 'row'}}>
-              <Text>{purveyorName}</Text>
-            </View>
-          </TouchableWrapper>
-        )
+        return purveyor
+      })
+      const purveyors = _.sortBy(purveyorsArray, 'name')
+      const purveyorItems = _.map(purveyors, (purveyor, idx) => {
+        return {
+          key: purveyor.id,
+          value: purveyor.id,
+          label: purveyor.name,
+        }
       })
 
       modal = (
-        <Modal
-          animated={true}
-          transparent={true}
-          visible={this.state.modalVisible}
-        >
-          <TouchableHighlight
-            onPress={() => this._setModalVisible(false)}
-            style={styles.modalContainer}
-            underlayColor="rgba(0, 0, 0, 0.5)"
-          >
-            <View style={styles.modalInnerContainer}>
-              <Text style={styles.modalHeader}>Select Purveyor</Text>
-              {purveyorsArray}
-            </View>
-          </TouchableHighlight>
-        </Modal>
+        <PickerModal
+          modalVisible={this.state.modalVisible}
+          headerText='Select Purveyor'
+          leftButtonText='Update'
+          items={purveyorItems}
+          selectedValue={purveyorItems[0].value}
+          onHideModal={() => {
+            this._setModalVisible(false)
+          }}
+          onSubmitValue={(value) => {
+            if(value !== null && value.hasOwnProperty('selectedValue') === true){
+              const selectedValue = value.selectedValue
+              this._handlePurveyorSelect(selectedValue)
+            } else {
+              this._setModalVisible(false)
+            }
+          }}
+        />
       )
     }
 

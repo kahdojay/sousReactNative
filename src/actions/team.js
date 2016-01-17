@@ -63,8 +63,8 @@ export default function TeamActions(allActions) {
           replacement: '',
         })
         teamCode = teamCode.toUpperCase()
+        // TODO: add any other filters besides TEAM?
         teamCode = teamCode.replace('TEAM', '')
-        // TODO: add any other filters?
         // TODO: check for unique teamCode?
         var newTeamAttributes = {
           _id: generateId(),
@@ -85,24 +85,18 @@ export default function TeamActions(allActions) {
           newTeamAttributes.demoTeam = true;
         }
 
-        dispatch(connectActions.ddpCall('createTeam', [newTeamAttributes, session.userId]))
-
         dispatch({
           type: ADD_TEAM,
-          team: newTeamAttributes,
+          team: Object.assign({}, newTeamAttributes),
           sessionTeamId: session.teamId
-        });
+        })
 
-        dispatch(sessionActions.updateSession({teamId: newTeamAttributes.id}))
+        dispatch(sessionActions.updateSession({teamId: newTeamAttributes._id}))
 
-        const teamUserData = {
-          'id': session.userId,
-          'firstName': session.firstName,
-          'lastName': session.lastName,
-          'username': session.username,
-          'superUser': session.superUser,
-        }
-        dispatch(receiveTeamsUsers(teamUserData))
+        dispatch(connectActions.ddpCall('createTeam', [newTeamAttributes, session.userId]))
+
+
+        dispatch(receiveSessionTeamsUser())
 
         // add the teamId to the session
         session = Object.assign({}, session, {
@@ -277,6 +271,22 @@ export default function TeamActions(allActions) {
         type: RECEIVE_TEAMS,
         team: team,
       })
+    }
+  }
+
+  function receiveSessionTeamsUser(userData) {
+    const newUserData = userData || {}
+    return (dispatch, getState) => {
+      const {session} = getState()
+      const teamUserData = {
+        'id': session.userId,
+        'firstName': session.firstName,
+        'lastName': session.lastName,
+        'email': session.email,
+        'superUser': session.superUser,
+        'imageUrl': session.imageUrl,
+      }
+      return dispatch(receiveTeamsUsers(Object.assign({}, teamUserData, newUserData)))
     }
   }
 
@@ -503,6 +513,7 @@ export default function TeamActions(allActions) {
     leaveCurrentTeam,
     receiveTeams,
     receiveTeamsUsers,
+    receiveSessionTeamsUser,
     resetTeams,
     setCurrentTeam,
     updateTeam,

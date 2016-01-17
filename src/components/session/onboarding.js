@@ -78,7 +78,7 @@ class Onboarding extends React.Component {
 
   render() {
     const {settingsConfig} = this.props
-    if((settingsConfig && settingsConfig['slides'] && settingsConfig['slides'].length > 0) === false){
+    if((settingsConfig['onboardingSettings'] && settingsConfig['onboardingSettings']['slides'] && settingsConfig['onboardingSettings']['slides'].length > 0) !== true){
       return (
         <View style={styles.errorTextContainer}>
           <Loading />

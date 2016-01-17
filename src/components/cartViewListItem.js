@@ -3,10 +3,9 @@ import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import { CART } from '../actions/actionTypes';
 import Swipeout from 'react-native-swipeout';
+import PickerModal from './modal/pickerModal';
 
 const {
-  Modal,
-  PickerIOS,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -48,58 +47,15 @@ class CartViewListItem extends React.Component {
       }
     }]
 
-    const quantities = _.range(1, 501)
-    const modal = (
-      <Modal
-        animated={true}
-        transparent={true}
-        visible={this.state.editQuantity}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalInnerContainer}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalHeaderText}>
-                Select Amount
-              </Text>
-            </View>
-            <PickerIOS
-              selectedValue={this.state.quantity}
-              onValueChange={(quantity) => {
-                this.setState({
-                  quantity: quantity,
-                })
-              }}
-              style={styles.picker}
-            >
-              {
-                quantities.map((n, idx) => {
-                  return <PickerIOS.Item key={idx} value={n} label={n.toString()} />
-                })
-              }
-            </PickerIOS>
-            <TouchableHighlight
-              onPress={() => {
-                this.setState({
-                  editQuantity: false,
-                }, () => {
-                  if (this.state.quantity > .1) {
-                    const cartAttributes = Object.assign({}, cartItem, {
-                      quantity: this.state.quantity,
-                    });
-                    this.props.onUpdateProductInCart(CART.UPDATE, cartAttributes)
-                  }
-                })
-              }}
-              underlayColor='transparent'
-            >
-              <Text style={styles.modalButtonText}>
-                {`Update to ${quantity} ${productUnit}`}
-              </Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      </Modal>
-    )
+    let quantityItems = []
+    quantityItems = quantityItems.concat(_.map(_.range(1, 501), (n, idx) => {
+      return {
+        key: idx,
+        value: n,
+        label: n.toString(),
+      }
+    }))
+
     return (
       <View>
         <Swipeout
@@ -116,12 +72,41 @@ class CartViewListItem extends React.Component {
                 })
               }}
               underlayColor='transparent'
+              style={styles.productQuantityContainer}
             >
               <Text style={styles.productQuantity}>{quantity} {productUnit}</Text>
             </TouchableHighlight>
           </View>
         </Swipeout>
-        {modal}
+        <PickerModal
+          modalVisible={this.state.editQuantity}
+          headerText='Select Amount'
+          leftButtonText='Update'
+          items={quantityItems}
+          pickerType='PickerIOS'
+          selectedValue={this.state.quantity}
+          onHideModal={() => {
+            this.setState({
+              editQuantity: false,
+            })
+          }}
+          onSubmitValue={(value) => {
+            if(value !== null && value.hasOwnProperty('selectedValue') === true){
+              const selectedValue = value.selectedValue
+              this.setState({
+                quantity: selectedValue,
+                editQuantity: false,
+              }, () => {
+                if (this.state.quantity > .1) {
+                  const cartAttributes = Object.assign({}, cartItem, {
+                    quantity: this.state.quantity,
+                  });
+                  this.props.onUpdateProductInCart(CART.UPDATE, cartAttributes)
+                }
+              })
+            }
+          }}
+        />
       </View>
     )
   }
@@ -151,7 +136,7 @@ const styles = StyleSheet.create({
     marginBottom: 7,
   },
   picker: {
-    width: 260, 
+    width: 260,
     alignSelf: 'center',
     borderTopColor: Colors.separatorColor,
     borderTopWidth: 1,
@@ -159,16 +144,18 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   productTitle: {
-    flex: 1,
+    flex: 2,
     paddingTop: 10,
     paddingLeft: 5,
     paddingBottom: 10,
     fontFamily: 'OpenSans',
     fontSize: 14,
   },
+  productQuantityContainer: {
+    flex: 1,
+  },
   productQuantity: {
-    width: 50,
-    margin: 5,
+    padding: 5,
     textAlign: 'right',
   },
   modalContainer: {

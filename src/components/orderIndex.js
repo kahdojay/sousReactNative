@@ -124,6 +124,7 @@ class OrderIndex extends React.Component {
         >
           {ordersList}
         </ScrollView>
+        <View style={styles.separator} />
         <TouchableHighlight
           onPress={() => {
             this.setState({

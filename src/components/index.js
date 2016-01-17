@@ -7,7 +7,6 @@ import Feed from './feed';
 import FeedListItem from './feedListItem';
 import FeedViewLeftButton from './feedViewLeftButton';
 import FeedViewRightButton from './feedViewRightButton';
-import GenericModal from './genericModal';
 import InviteModal from '../components/inviteModal';
 import InviteView from './inviteView';
 import Loading from './loading';
@@ -47,7 +46,6 @@ export default {
   FeedListItem,
   FeedViewLeftButton,
   FeedViewRightButton,
-  GenericModal,
   InviteModal,
   InviteView,
   Loading,

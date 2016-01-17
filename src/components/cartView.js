@@ -6,9 +6,6 @@ import CartViewListItem from './cartViewListItem';
 import GenericModal from './modal/genericModal';
 
 const {
-  AlertIOS,
-  Modal,
-  PickerIOS,
   ScrollView,
   StyleSheet,
   Text,
@@ -227,8 +224,8 @@ class CartView extends React.Component {
                       underlayColor='transparent'
                     >
                       <View style={styles.purveyorTitleContainer}>
-                        <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
                         <Icon name='material|info' size={20} color='white' style={styles.detailsIcon} />
+                        <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
                       </View>
                     </TouchableHighlight>
                   </View>
@@ -290,15 +287,20 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   purveyorTitleContainer: {
-    padding: 10,
     flexDirection: 'row',
+    padding: 10,
   },
   purveyorTitle: {
-    flex: 5,
+    flex: 7,
     fontWeight: 'bold',
     color: 'white',
     fontFamily: 'OpenSans',
     fontSize: 18,
+    lineHeight: 26,
+  },
+  detailsIcon: {
+    flex: 1,
+    height: 26,
   },
   purveyorInfoRow: {
     paddingTop: 5,
@@ -316,11 +318,6 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     fontSize: 12,
     textAlign: 'right',
-  },
-  detailsIcon: {
-    flex: 1,
-    width: 28,
-    height: 28,
   },
   submitOrderIcon: {
     width: 50,

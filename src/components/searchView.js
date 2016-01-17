@@ -180,9 +180,9 @@ const styles = StyleSheet.create({
   searchInput: {
     textAlign: 'center',
     flex: 1,
-    height: 32,
+    height: Sizes.inputFieldHeight,
     backgroundColor: Colors.mainBackgroundColor,
-    color: '#777',
+    color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
     borderRadius: Sizes.inputBorderRadius,
     fontWeight: 'bold',

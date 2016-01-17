@@ -2,7 +2,9 @@ import { Icon, } from 'react-native-icons';
 import _ from 'lodash';
 import React from 'react-native';
 import Colors from '../utilities/colors';
-import EmailUtils from '../utilities/email';
+import Sizes from '../utilities/sizes';
+import DataUtils from '../utilities/data';
+import GenericModal from './modal/genericModal';
 
 const {
   Dimensions,
@@ -10,7 +12,6 @@ const {
   View,
   Text,
   Image,
-  Modal,
   TextInput,
   TouchableHighlight,
   TouchableOpacity,
@@ -29,69 +30,6 @@ class OrderGuide extends React.Component {
   }
 
   render() {
-
-    const modal = (
-      <Modal
-        animated={true}
-        transparent={true}
-        visible={this.state.showAddEmailAddress}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => {
-            this.setState({
-              showAddEmailAddress: false,
-            })
-          }}
-          style={{flex: 1,}}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalInnerContainer}>
-              <View style={styles.sendEmail}>
-                <View style={styles.infoField}>
-                  <TextInput
-                    style={styles.input}
-                    value={this.state.emailAddress}
-                    onChange={(e) => {
-                      this.setState({
-                        inputError: false,
-                        emailAddress: e.nativeEvent.text
-                      })
-                    }}
-                    placeholder={"Your Email Address"}
-                  />
-                </View>
-                { this.state.inputError === true ?
-                  <View style={styles.inputErrorContainer}>
-                    <Text style={styles.inputErrorText}>Please enter a valid email address.</Text>
-                  </View>
-                : <View style={styles.inputErrorContainer} /> }
-              </View>
-              <View style={[styles.separator, {marginTop: 10}]} />
-              <TouchableHighlight
-                onPress={() => {
-                  const emailValid = EmailUtils.validateEmailAddress(this.state.emailAddress)
-                  if(emailValid === true){
-                    this.setState({
-                      showAddEmailAddress: false,
-                    }, () => {
-                      this.props.onSendEmail(this.state.emailAddress)
-                    })
-                  } else {
-                    this.setState({
-                      inputError: true
-                    })
-                  }
-                }}
-                underlayColor='transparent'
-              >
-                <Text style={styles.modalButtonText}>Send</Text>
-              </TouchableHighlight>
-            </View>
-          </View>
-        </TouchableOpacity>
-      </Modal>
-    )
 
     return (
       <ScrollView
@@ -142,7 +80,57 @@ class OrderGuide extends React.Component {
             <Text style={styles.buttonText}>Contact Sous</Text>
           </TouchableHighlight>
         </View>
-        {modal}
+        <GenericModal
+          ref='errorModal'
+          modalVisible={this.state.showAddEmailAddress}
+          onHideModal={() => {
+            this.setState({
+              showAddEmailAddress: false,
+            })
+          }}
+          leftButton={{
+            text: 'Send',
+            onPress: () => {
+              const emailValid = DataUtils.validateEmailAddress(this.state.emailAddress)
+              if(this.state.emailAddress && emailValid === true){
+                this.setState({
+                  showAddEmailAddress: false,
+                }, () => {
+                  this.props.onSendEmail(this.state.emailAddress)
+                })
+              } else {
+                this.setState({
+                  inputError: true
+                })
+              }
+            }
+          }}
+        >
+          <View style={styles.sendEmail}>
+            <View style={[styles.infoField, {borderBottomColor: (this.state.inputError === true) ? Colors.red : Colors.inputUnderline}]}>
+              <TextInput
+                style={styles.input}
+                value={this.state.emailAddress}
+                onChange={(e) => {
+                  this.setState({
+                    inputError: false,
+                    emailAddress: e.nativeEvent.text
+                  })
+                }}
+                placeholder={"Your Email Address"}
+                placeholderTextColor={Colors.inputPlaceholderColor}
+              />
+            </View>
+            { this.state.inputError === true ?
+              <View style={styles.inputErrorContainer}>
+                <Text style={styles.inputErrorText}>Please enter a valid email address.</Text>
+              </View>
+            : <View style={styles.inputErrorContainer}><Text>{' '}</Text></View> }
+            <Text>
+              {this.state.inputError}
+            </Text>
+          </View>
+        </GenericModal>
       </ScrollView>
     );
   }
@@ -204,36 +192,31 @@ let styles = StyleSheet.create({
   },
   sendEmail: {
     flex: 1,
-    paddingBottom: 10,
+    paddingTop: 10,
   },
   infoField: {
-    height: 45,
-    paddingLeft: 5,
-    paddingTop: 15,
-    flexDirection: 'row',
+    borderBottomColor: Colors.inputUnderline,
+    borderBottomWidth: 1,
   },
   inputErrorContainer: {
-    height: 10,
+    flex: 1,
   },
   inputErrorText: {
     color: Colors.red,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   input: {
     flex: 1,
     padding: 4,
-    marginRight: 5,
-    marginBottom: 5,
-    fontSize: 14,
-    borderRadius: 8,
-    color: '#333',
-    fontWeight: 'bold',
+    fontSize: Sizes.inputFieldFontSize,
+    color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
     textAlign: 'center',
+    height: Sizes.inputFieldHeight,
   },
   buttonContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   buttonActive: {
     height: 46,
@@ -276,39 +259,6 @@ let styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     fontFamily: 'OpenSans'
-  },
-  activity: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center'
-  },
-  activityContainer: {
-    paddingTop: 50,
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
-  },
-  modalInnerContainer: {
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    padding: 20,
-  },
-  modalButtonText: {
-    textAlign: 'center',
-    color: Colors.lightBlue,
-    paddingTop: 15,
-  },
-  separator: {
-    height: 0,
-    borderBottomColor: Colors.separatorColor,
-    borderBottomWidth: 1,
   },
 })
 
