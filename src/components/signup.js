@@ -156,7 +156,7 @@ class Signup extends React.Component {
               <Icon name='material|phone' size={30} color={Colors.inputPlaceholderColor} style={styles.iconPhone}/>
               <TextInput
                 ref='phone'
-                style={[styles.input]}
+                style={styles.input}
                 value={this.state.phoneNumber}
                 keyboardType='phone-pad'
                 onSubmitEditing={() => {this.onSignup()}}
@@ -216,7 +216,7 @@ class Signup extends React.Component {
               <View style={styles.inputWrapper}>
                 <TextInput
                   ref='code'
-                  style={[styles.input, , {width: (runTimeDimensions.width * .5)}]}
+                  style={[styles.input, {width: (runTimeDimensions.width * .5)}]}
                   value={this.state.smsToken}
                   keyboardType='phone-pad'
                   textAlign='center'
@@ -362,8 +362,8 @@ let styles = StyleSheet.create({
     height: 50,
     width: runTimeDimensions.width * .70,
     fontSize: 20,
-    color: Colors.inputTextColor,
     fontWeight: 'bold',
+    color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
     alignItems: 'center',
     alignSelf: 'center',

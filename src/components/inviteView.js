@@ -4,6 +4,8 @@ import CheckBox from './checkbox';
 import Colors from '../utilities/colors';
 import { Icon } from 'react-native-icons';
 import Sizes from '../utilities/sizes';
+import DataUtils from '../utilities/data';
+
 const {
   ScrollView,
   View,
@@ -63,7 +65,7 @@ class InviteView extends React.Component {
     }
     let selected = this.state.selectedContacts
     let idx = this.getSelectedIndex(contactNumber)
-    
+
     if (idx === -1)
       selected.push(contact)
     else
@@ -72,14 +74,6 @@ class InviteView extends React.Component {
     this.setState({
       selectedContacts: selected
     })
-  }
-
-  formatNumber(contactNumber) {
-    let pat = /(\(|\)|\s|\-)/g
-    let newNumber = contactNumber.replace(pat, '')
-    if (newNumber.toString().length === 10)
-      newNumber = newNumber.slice(0,3) + '.' + newNumber.slice(3,6) + '.' + newNumber.slice(6,10)
-    return newNumber
   }
 
   render() {
@@ -95,29 +89,37 @@ class InviteView extends React.Component {
       let firstName = contact.firstName ? _.capitalize(contact.firstName) : ''
       let lastName = contact.lastName ? _.capitalize(contact.lastName) : ''
       contact.phoneNumbers.forEach((numberDetails) => {
-        let contactNumber = this.formatNumber(numberDetails.number)
+        const contactNumber = DataUtils.formatPhoneNumber(numberDetails.number)
+        let selectedStyle = {}
+        let contactDetailsColor = Colors.greyText
+        let contactColor = 'black'
+        if(this.getSelectedIndex(contactNumber) !== -1){
+          contactDetailsColor = 'white'
+          contactColor = 'white'
+          selectedStyle = styles.selectedRow
+        }
         displayContacts.push(
-          <TouchableHighlight 
-            key={idx} 
+          <TouchableHighlight
+            key={idx}
             underlayColor="#eee"
             onPress={() => {
               this.toggleSelectContact(contactNumber, firstName, lastName)
             }}
           >
-            <View style={styles.contactRow} >
-              <CheckBox
+            <View style={[styles.row, selectedStyle]}>
+              {/* * /}<CheckBox
                 checked={this.getSelectedIndex(contactNumber) !== -1}
                 label=''
                 onChange={() => {
                   this.toggleSelectContact(contactNumber, firstName, lastName)
                 }}
-              />
+              />{/* */}
               <View style={styles.contactDetails}>
                 <View style={styles.nameContainer} >
-                  <Text style={{fontWeight: 'bold'}}>{contact.firstName} </Text>
-                  <Text>{contact.lastName}</Text>
+                  <Text style={[styles.text, styles.textBold, {color: contactColor}]}>{contact.firstName} </Text>
+                  <Text style={[styles.text, {color: contactColor}]}>{contact.lastName}</Text>
                 </View>
-                <Text style={styles.phoneNumber}>{contactNumber}</Text>
+                <Text style={[styles.phoneNumber, {color: contactDetailsColor}]}>{contactNumber}</Text>
               </View>
             </View>
           </TouchableHighlight>
@@ -126,15 +128,7 @@ class InviteView extends React.Component {
       })
     })
 
-    let deniedModal = 
-      <View style={styles.modalContainer}>
-        <View style={styles.modalInnerContainer}>
-          <Text style={styles.centerText}>To invite your contacts, please go to:</Text>
-          <Text style={styles.centerText}>Settings > Sous > Enable "Contacts"</Text>
-        </View>
-      </View>
-
-    let searchBar =
+    let searchBar = (
       <View>
         <View style={styles.searchInputContainer}>
           <TextInput
@@ -166,22 +160,27 @@ class InviteView extends React.Component {
           : <View /> }
         </View>
       </View>
+    )
 
-    let sendSMSButton =
-      <View style={styles.submitContainer}>
-        <TouchableHighlight
-          style={styles.submitButton}
-          underlayColor={Colors.lightBlue}
-          onPress={() => {
-            this.props.onSMSInvite(this.state.selectedContacts)
-          }}>
-          <Text style={styles.submitText}>Send SMS</Text>
-        </TouchableHighlight>
-      </View>
+    let sendSMSButton = (
+      <TouchableHighlight
+        style={styles.submitContainer}
+        underlayColor='white'
+        onPress={() => {
+          this.props.onSMSInvite(this.state.selectedContacts)
+        }}>
+        <Text style={styles.submitText}>Send SMS</Text>
+      </TouchableHighlight>
+    )
 
     if (this.props.denied) {
       return (
-        {deniedModal}
+        <View style={styles.modalContainer}>
+          <View style={styles.modalInnerContainer}>
+            <Text style={styles.centerText}>To invite your contacts, please go to:</Text>
+            <Text style={styles.centerText}>Settings > Sous > Enable "Contacts"</Text>
+          </View>
+        </View>
       );
     } else {
       return (
@@ -204,20 +203,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  textBold: {
+    fontWeight: 'bold',
+  },
+  text: {
+    fontFamily: 'OpenSans',
+    fontSize: 16,
+  },
   searchInputContainer: {
-    margin: 10,
+    paddingTop: 5,
+    paddingBottom: 7,
+    paddingRight: 5,
+    paddingLeft: 5,
     flexDirection: 'row',
     position: 'relative',
   },
   searchInput: {
     textAlign: 'center',
     flex: 1,
-    height: 26,
+    height: Sizes.inputFieldHeight,
     backgroundColor: Colors.mainBackgroundColor,
-    color: '#777',
+    color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
-    fontSize: 14,
     borderRadius: Sizes.inputBorderRadius,
+    fontWeight: 'bold',
   },
   iconClose: {
     width: 30,
@@ -228,43 +237,51 @@ const styles = StyleSheet.create({
   },
   contactsContainer: {
     flex: 1,
-    backgroundColor: 'white',
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
+    paddingVertical: 5,
+    backgroundColor: Colors.mainBackgroundColor,
   },
-  contactRow: {
+  row: {
     flex: 1,
+    marginTop: 2,
+    marginBottom: 2,
+    marginRight: 5,
+    marginLeft: 5,
+    borderRadius: Sizes.rowBorderRadius,
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    backgroundColor: 'white',
     alignItems: 'center',
-    paddingRight: 10,
-    paddingLeft: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.separatorColor,
+    padding: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
+  },
+  selectedRow: {
+    backgroundColor: Colors.lightBlue
+  },
+  contactDetails: {
+
   },
   nameContainer: {
     flexDirection: 'row',
+    marginBottom: 2,
   },
   phoneNumber: {
     fontSize: 10,
     color: Colors.lightGrey,
   },
   submitContainer: {
-    flexDirection: 'row',
     borderTopColor: Colors.separatorColor,
     borderTopWidth: 1,
-  },
-  submitButton: {
-    flex: 1,
-    height: 32,
-    backgroundColor: Colors.blue,
-    alignSelf: 'center',
-    justifyContent: 'center',
-    borderRadius: 2,
+    backgroundColor: 'white',
   },
   submitText: {
-    alignSelf: 'center',
+    color: Colors.lightBlue,
+    textAlign: 'center',
+    padding: 10,
+    fontFamily: 'OpenSans',
     fontSize: 16,
-    color: 'white',
-    fontFamily: 'OpenSans'
+    fontWeight: 'bold',
   },
   modalContainer: {
     flex: 1,

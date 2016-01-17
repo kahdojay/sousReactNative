@@ -181,7 +181,7 @@ class ProductListItem extends React.Component {
       let purveyorInfo = null
       let categoryInfo = null
       let productInfoSeparator = null
-      let selectedStyle = []
+      let selectedStyle = {}
       let productDetailsColor = Colors.greyText
       let productColor = 'black'
       let productQuantityBorderStyle = {}
@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
   },
   productText: {
     color: 'black',
-    fontSize: 15
+    fontSize: 15,
   },
   modalContainer: {
     flex: 1,

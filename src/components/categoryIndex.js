@@ -57,7 +57,7 @@ class CategoryIndex extends React.Component {
           {categoriesList}
         </ScrollView>
         <TouchableHighlight
-          underlayColor='#eee'
+          underlayColor='white'
           onPress={this.props.onCreateProduct}
           style={styles.createButton}
         >

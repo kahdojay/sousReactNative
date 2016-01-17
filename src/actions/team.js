@@ -95,14 +95,8 @@ export default function TeamActions(allActions) {
 
         dispatch(connectActions.ddpCall('createTeam', [newTeamAttributes, session.userId]))
 
-        const teamUserData = {
-          'id': session.userId,
-          'firstName': session.firstName,
-          'lastName': session.lastName,
-          'username': session.username,
-          'superUser': session.superUser,
-        }
-        dispatch(receiveTeamsUsers(teamUserData))
+
+        dispatch(receiveSessionTeamsUser())
 
         // add the teamId to the session
         session = Object.assign({}, session, {
@@ -277,6 +271,22 @@ export default function TeamActions(allActions) {
         type: RECEIVE_TEAMS,
         team: team,
       })
+    }
+  }
+
+  function receiveSessionTeamsUser(userData) {
+    const newUserData = userData || {}
+    return (dispatch, getState) => {
+      const {session} = getState()
+      const teamUserData = {
+        'id': session.userId,
+        'firstName': session.firstName,
+        'lastName': session.lastName,
+        'email': session.email,
+        'superUser': session.superUser,
+        'imageUrl': session.imageUrl,
+      }
+      return dispatch(receiveTeamsUsers(Object.assign({}, teamUserData, newUserData)))
     }
   }
 
@@ -503,6 +513,7 @@ export default function TeamActions(allActions) {
     leaveCurrentTeam,
     receiveTeams,
     receiveTeamsUsers,
+    receiveSessionTeamsUser,
     resetTeams,
     setCurrentTeam,
     updateTeam,

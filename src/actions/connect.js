@@ -353,6 +353,7 @@ export default function ConnectActions(ddpClient) {
                   'firstName': data.firstName,
                   'lastName': data.lastName,
                   'username': data.username,
+                  'email': data.email,
                   'superUser': data.superUser,
                   'imageUrl': data.imageUrl,
                 }

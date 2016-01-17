@@ -15,7 +15,7 @@ export default function SessionActions(allActions){
     connectActions
   } = allActions;
 
-  const allowedUserFields = {
+  const ALLOWED_USER_FIELDS = {
     phoneNumber: true,
     username: true,
     email: true,
@@ -76,7 +76,7 @@ export default function SessionActions(allActions){
       const {session} = getState()
       const filteredSessionParams = {}
       Object.keys(sessionParams).map((key) => {
-        if(allowedUserFields.hasOwnProperty(key) === true){
+        if(ALLOWED_USER_FIELDS.hasOwnProperty(key) === true){
           filteredSessionParams[key] = sessionParams[key];
         }
       })
@@ -91,6 +91,7 @@ export default function SessionActions(allActions){
         delete sessionParams.imageData
       }
       dispatch(connectActions.ddpCall('updateUser', [session.userId, filteredSessionParams]))
+
       // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
       return dispatch(receiveSession(sessionParams))
     }

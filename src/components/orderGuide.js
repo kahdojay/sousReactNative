@@ -3,7 +3,7 @@ import _ from 'lodash';
 import React from 'react-native';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
-import EmailUtils from '../utilities/email';
+import DataUtils from '../utilities/data';
 import GenericModal from './modal/genericModal';
 
 const {
@@ -91,7 +91,7 @@ class OrderGuide extends React.Component {
           leftButton={{
             text: 'Send',
             onPress: () => {
-              const emailValid = EmailUtils.validateEmailAddress(this.state.emailAddress)
+              const emailValid = DataUtils.validateEmailAddress(this.state.emailAddress)
               if(this.state.emailAddress && emailValid === true){
                 this.setState({
                   showAddEmailAddress: false,

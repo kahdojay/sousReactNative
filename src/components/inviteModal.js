@@ -7,14 +7,13 @@ import GenericModal from './modal/genericModal';
 import AddressBook from 'react-native-addressbook';
 
 const {
+  ActivityIndicatorIOS,
   StyleSheet,
   Text,
   TextInput,
   TouchableHighlight,
   TouchableOpacity,
   View,
-  Dimensions,
-  ScrollView,
 } = React;
 
 class InviteModal extends React.Component {
@@ -26,6 +25,7 @@ class InviteModal extends React.Component {
       transparent: true,
       text: '',
       inputError: false,
+      showLoading: false,
     };
   }
 
@@ -91,42 +91,54 @@ class InviteModal extends React.Component {
         rightButton={{
           text: 'Contacts',
           onPress: () => {
-            this.navigateToInviteView()
+            this.setState({
+              showLoading: true,
+            }, () => {
+              this.navigateToInviteView()
+            })
           }
         }}
       >
-        <View>
-          <View style={styles.inputWrapper}>
-            <TextInput
-              style={styles.input}
-              keyboardType='numeric'
-              placeholder={'Phone #'}
-              placeholderTextColor={Colors.inputPlaceholderColor}
-              textAlign='center'
-              onChangeText={(text) => {
-                this.setState({
-                  text: text,
-                  inputError: false,
-                })
-              }}
-              value={this.state.text}
-            />
-          </View>
-          { this.state.inputError === true ?
-            <View style={styles.inputErrorContainer}>
-              <Text style={styles.inputErrorText}>Please enter a valid email address.</Text>
+        {this.state.showLoading === true ?
+        (
+          <ActivityIndicatorIOS
+            key={'loading'}
+            animating={true}
+            color={Colors.greyText}
+            style={styles.activity}
+            size={'large'}
+          />
+        )
+        : (
+          <View>
+            <View style={styles.inputWrapper}>
+              <TextInput
+                style={styles.input}
+                keyboardType='numeric'
+                placeholder={'Phone #'}
+                placeholderTextColor={Colors.inputPlaceholderColor}
+                textAlign='center'
+                onChangeText={(text) => {
+                  this.setState({
+                    text: text,
+                    inputError: false,
+                  })
+                }}
+                value={this.state.text}
+              />
             </View>
-          : <View style={styles.inputErrorContainer}><Text>{' '}</Text></View> }
-        </View>
+            { this.state.inputError === true ?
+              <View style={styles.inputErrorContainer}>
+                <Text style={styles.inputErrorText}>Please enter a valid email address.</Text>
+              </View>
+            : <View style={styles.inputErrorContainer}><Text>{' '}</Text></View> }
+          </View>
+        )
+        }
       </GenericModal>
     );
   }
 };
-
-var {
-  height: deviceHeight,
-  width: deviceWidth,
-} = Dimensions.get('window');
 
 var styles = StyleSheet.create({
   modalText: {
@@ -157,6 +169,10 @@ var styles = StyleSheet.create({
   inputErrorText: {
     color: Colors.red,
     alignSelf: 'center',
+  },
+  activity: {
+    alignSelf: 'center',
+    margin: 36,
   },
 });
 

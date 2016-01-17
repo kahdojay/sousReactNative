@@ -56,7 +56,7 @@ class PurveyorIndex extends React.Component {
           {purveyorsList}
         </ScrollView>
         <TouchableHighlight
-          underlayColor='#eee'
+          underlayColor='white'
           onPress={this.props.onCreateProduct}
           style={styles.createButton}
         >

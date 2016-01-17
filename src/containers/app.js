@@ -402,9 +402,11 @@ class App extends React.Component {
                 fromName: `${session.firstName} ${session.lastName}`,
                 body: `Order guide request from: ${emailAddress}`,
               }));
-              dispatch(actions.updateSession({
+              const sessionData = {
                 email: emailAddress
-              }))
+              }
+              dispatch(actions.updateSession(sessionData))
+              dispatch(actions.receiveSessionTeamsUser(sessionData))
               const learnMoreMsg = (
                 <View>
                   <Text style={{textAlign: 'center'}}>
@@ -446,9 +448,11 @@ class App extends React.Component {
                 body: `Order Guide from ${this.state.currentTeamInfo.team.name}`,
                 attachments: attachments,
               }))
-              dispatch(actions.updateSession({
+              const sessionData = {
                 email: emailAddress
-              }))
+              }
+              dispatch(actions.updateSession(sessionData))
+              dispatch(actions.receiveSessionTeamsUser(sessionData))
               const learnMoreMsg = (
                 <View>
                   <Text style={{textAlign: 'center'}}>
@@ -957,7 +961,8 @@ class App extends React.Component {
             onUpdateInfo: (data) => {
               _.debounce(() => {
                 // console.log("DATA", data);
-                dispatch(actions.updateSession(data));
+                dispatch(actions.updateSession(data))
+                dispatch(actions.receiveSessionTeamsUser(data))
               }, 25)()
             },
             onUpdateAvatar: (image) => {
@@ -1119,7 +1124,6 @@ class App extends React.Component {
           component: Components.Loading
         }
       case 'TeamMemberListing':
-        console.log(this.state.currentTeamInfo.team.users)
         return {
           component: Components.TeamMemberListing,
           props: {
