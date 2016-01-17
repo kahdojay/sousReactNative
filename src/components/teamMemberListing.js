@@ -21,10 +21,25 @@ class TeamMemberListing extends React.Component {
   }
 
   getTeamMembers() {
-    const {currentTeamUsers, teamsUsers, userId} = this.props
+    const {currentTeamUsers, teamsUsers, userId, settingsConfig} = this.props
     const teamMembers = [];
 
-
+    let memberContactDetails = []
+    if(settingsConfig && settingsConfig.hasOwnProperty('supportSettings') === true){  
+      if(settingsConfig.supportSettings && settingsConfig.supportSettings.phoneNumber){
+        if(memberContactDetails.length > 0){
+          memberContactDetails.push(<Text key='supportPhoneNumberSeparator' style={styles.detailsSeparator}>{' • '}</Text>)
+        }
+        const supportPhoneNumber = DataUtils.formatPhoneNumber(settingsConfig.supportSettings.phoneNumber)
+        memberContactDetails.push(<Text key='supportPhoneNumber' style={styles.phoneNumber}>{supportPhoneNumber}</Text>)
+      }
+      if(settingsConfig.supportSettings && settingsConfig.supportSettings.emailAddress){
+        if(memberContactDetails.length > 0){
+          memberContactDetails.push(<Text key='supportEmailAddressSeparator' style={styles.detailsSeparator}>{' • '}</Text>)
+        }
+        memberContactDetails.push(<Text key='supportEmailAddress' style={styles.emailAddress}>{settingsConfig.supportSettings.emailAddress}</Text>)
+      }
+    }
     teamMembers.push(
       <View style={styles.row}>
         <View style={styles.member}>
@@ -32,6 +47,9 @@ class TeamMemberListing extends React.Component {
           <View style={styles.memberInfoContainer}>
             <View style={styles.memberName}>
               <Text style={[styles.text, styles.textBold]}>Sous Support</Text>
+            </View>
+            <View style={styles.memberContactDetails}>
+              {memberContactDetails}
             </View>
           </View>
         </View>

@@ -1127,6 +1127,7 @@ class App extends React.Component {
         return {
           component: Components.TeamMemberListing,
           props: {
+            settingsConfig: settingsConfig,
             userId: session.userId,
             teamsUsers: teams.teamsUsers,
             currentTeamUsers: this.state.currentTeamInfo.team.users,
