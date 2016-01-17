@@ -63,8 +63,11 @@ function cartItems(state = initialState.cartItems, action) {
   case ORDER_SENT:
     let orderSentCartItemTeamState = Object.assign({}, state.teams);
     if(orderSentCartItemTeamState.hasOwnProperty(action.teamId) === true){
-      action.purveyorIds.forEach((purveyorId) => {
+      Object.keys(action.orderPkg).forEach((purveyorId) => {
         if(orderSentCartItemTeamState[action.teamId].cart.hasOwnProperty(purveyorId) === true){
+          const orderId = action.orderPkg[purveyorId]
+          const purveyorCartItems = Object.assign({}, orderSentCartItemTeamState[action.teamId].cart[purveyorId])
+          orderSentCartItemTeamState[action.teamId].orders[orderId] = purveyorCartItems
           delete orderSentCartItemTeamState[action.teamId].cart[purveyorId]
         }
       })

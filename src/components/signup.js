@@ -141,38 +141,29 @@ class Signup extends React.Component {
 
     let signup = (
       <View style={styles.login}>
-        <TouchableOpacity
-          style={{paddingBottom: 20}}
-          activeOpacity={1}
-          onPress={() => {
-            this.refs.phone.blur()
-            this.refs.scrollView.scrollTo(0)
-          }}
-        >
-          <Text style={styles.headerText}>Use your phone number to log in to Sous.</Text>
-          <Text style={styles.centered}>First, we will send you a <Text style={styles.boldText}>text message</Text> to verify your account.</Text>
-          <View style={styles.inputContainer}>
-            <View style={styles.inputWrapper}>
-              <Icon name='material|phone' size={30} color={Colors.inputPlaceholderColor} style={styles.iconPhone}/>
-              <TextInput
-                ref='phone'
-                style={styles.input}
-                value={this.state.phoneNumber}
-                keyboardType='phone-pad'
-                onSubmitEditing={() => {this.onSignup()}}
-                onFocus={() => {
-                  this.refs.scrollView.scrollTo(140)
-                }}
-                onChange={(e) => {
-                  this.setState({phoneNumber: e.nativeEvent.text, invalid: false})
-                }}
-                placeholder={'Phone Number'}
-                placeholderTextColor={Colors.inputPlaceholderColor}
-              />
-            </View>
+        <Text style={styles.headerText}>Use your phone number to log in to Sous.</Text>
+        <Text style={styles.centered}>First, we will send you a <Text style={styles.boldText}>text message</Text> to verify your account.</Text>
+        <View style={styles.inputContainer}>
+          <View style={styles.inputWrapper}>
+            <Icon name='material|phone' size={30} color={Colors.inputPlaceholderColor} style={styles.iconPhone}/>
+            <TextInput
+              ref='phone'
+              style={styles.input}
+              value={this.state.phoneNumber}
+              keyboardType='phone-pad'
+              onSubmitEditing={() => {this.onSignup()}}
+              onFocus={() => {
+                this.refs.scrollView.scrollTo(140)
+              }}
+              onChange={(e) => {
+                this.setState({phoneNumber: e.nativeEvent.text, invalid: false})
+              }}
+              placeholder={'Phone Number'}
+              placeholderTextColor={Colors.inputPlaceholderColor}
+            />
           </View>
-          { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
-        </TouchableOpacity>
+        </View>
+        { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
         <TouchableHighlight
           underlayColor={buttonUnderlayColor}
           onPress={() => {
@@ -191,49 +182,40 @@ class Signup extends React.Component {
       const formattedPhoneNumber = this.formatPhoneNumber(session.phoneNumber);
       signup = (
         <View style={styles.login}>
-          <TouchableOpacity
-            style={{paddingBottom: 20}}
-            activeOpacity={1}
+          <Text style={styles.headerText}>We just sent a text to</Text>
+          <Text style={[styles.boldText, styles.centered, styles.largeText]}>{formattedPhoneNumber}</Text>
+          <TouchableHighlight
+            underlayColor='transparent'
             onPress={() => {
-              this.refs.code.blur()
-              this.refs.scrollView.scrollTo(0)
+              this.setState({ smsSent: true, smsToken: null }, () => {
+                this.onSignup()
+              })
             }}
-          >
-            <Text style={styles.headerText}>We just sent a text to</Text>
-            <Text style={[styles.boldText, styles.centered, styles.largeText]}>{formattedPhoneNumber}</Text>
-            <TouchableHighlight
-              underlayColor='transparent'
-              onPress={() => {
-                this.setState({ smsSent: true, smsToken: null }, () => {
-                  this.onSignup()
-                })
-              }}
-              style={[styles.smallButton, styles.buttonLinkWrap]}>
-              <Text style={styles.buttonLink}>Send again</Text>
-            </TouchableHighlight>
-            <Text style={styles.centered}>Enter the verification code below to sign in.</Text>
-            <View style={styles.inputContainer}>
-              <View style={styles.inputWrapper}>
-                <TextInput
-                  ref='code'
-                  style={[styles.input, {width: (runTimeDimensions.width * .5)}]}
-                  value={this.state.smsToken}
-                  keyboardType='phone-pad'
-                  textAlign='center'
-                  onSubmitEditing={() => {this.onVerify()}}
-                  onFocus={() => {
-                    this.refs.scrollView.scrollTo(140)
-                  }}
-                  onChange={(e) => {
-                    this.setState({smsToken: e.nativeEvent.text, invalid: false})
-                  }}
-                  placeholder={'Code'}
-                  placeholderTextColor={Colors.inputPlaceholderColor}
-                />
-              </View>
+            style={[styles.smallButton, styles.buttonLinkWrap]}>
+            <Text style={styles.buttonLink}>Send again</Text>
+          </TouchableHighlight>
+          <Text style={styles.centered}>Enter the verification code below to sign in.</Text>
+          <View style={styles.inputContainer}>
+            <View style={styles.inputWrapper}>
+              <TextInput
+                ref='code'
+                style={[styles.input, {width: (runTimeDimensions.width * .5)}]}
+                value={this.state.smsToken}
+                keyboardType='phone-pad'
+                textAlign='center'
+                onSubmitEditing={() => {this.onVerify()}}
+                onFocus={() => {
+                  this.refs.scrollView.scrollTo(140)
+                }}
+                onChange={(e) => {
+                  this.setState({smsToken: e.nativeEvent.text, invalid: false})
+                }}
+                placeholder={'Code'}
+                placeholderTextColor={Colors.inputPlaceholderColor}
+              />
             </View>
-            { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
-          </TouchableOpacity>
+          </View>
+          { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
           <TouchableHighlight
             underlayColor={buttonUnderlayColor}
             onPress={() => {this.onVerify()}}
@@ -250,16 +232,33 @@ class Signup extends React.Component {
         <View style={styles.navbar}>
           <Text style={styles.signup}>Signup/Login</Text>
         </View>
-        <ScrollView
-          automaticallyAdjustContentInsets={false}
-          ref="scrollView"
-          style={styles.container}
+        <TouchableOpacity
+          style={{paddingBottom: 20}}
+          activeOpacity={1}
+          onPress={() => {
+            if(this.refs.phone){
+              this.refs.phone.blur()
+            }
+            if(this.refs.code){
+              this.refs.code.blur()
+            }
+            this.refs.scrollView.scrollTo(0)
+          }}
         >
-          <View style={styles.logoContainer}>
-            <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-          </View>
-          {this.state.submitting !== false ? fetching : signup}
-        </ScrollView>
+          <ScrollView
+            automaticallyAdjustContentInsets={false}
+            ref="scrollView"
+            style={styles.container}
+            onScroll={() => {
+
+            }}
+          >
+            <View style={styles.logoContainer}>
+              <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+            </View>
+            {this.state.submitting !== false ? fetching : signup}
+          </ScrollView>
+        </TouchableOpacity>
       </View>
     );
   }

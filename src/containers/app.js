@@ -1049,10 +1049,14 @@ class App extends React.Component {
           },
         }
       case 'InviteView':
+        const userContacts = _.sortBy(this.state.contactList.map(function (contact, idx) {
+          contact.firstName = contact.firstName ? _.capitalize(contact.firstName) : ''
+          return contact
+        }), 'firstName')
         return {
           component: Components.InviteView,
           props: {
-            contacts: this.state.contactList,
+            contacts: userContacts,
             denied: this.state.contactsPermissionDenied,
             onSMSInvite: (contacts) => {
               if (contacts.length === 0)

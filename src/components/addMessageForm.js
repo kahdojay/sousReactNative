@@ -60,7 +60,7 @@ export default class AddForm extends React.Component {
         style={styles.button}
       >
         <View style={styles.sendView}>
-          <Icon name='material|mail-send' size={30} colors={Colors.lightBlue} style={styles.sendIcon} />
+          <Text style={styles.buttonText}>Send</Text>
         </View>
       </TouchableHighlight>
     )
@@ -110,7 +110,8 @@ let styles = StyleSheet.create({
     flex: 5,
     flexDirection: 'row',
     backgroundColor: Colors.mainBackgroundColor,
-    padding: 8
+    padding: 8,
+    paddingRight: 0,
   },
   sendView: {
     alignSelf: 'center',
@@ -143,7 +144,10 @@ let styles = StyleSheet.create({
     color: 'white'
   },
   buttonText: {
-    fontFamily: 'OpenSans'
+    fontFamily: 'OpenSans',
+    fontSize: 14,
+    textAlign: 'center',
+    color: Colors.lightBlue,
   },
   offlineContainer: {
     padding: 15
