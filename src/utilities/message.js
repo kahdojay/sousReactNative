@@ -54,13 +54,16 @@ function formatMessage(msg, messageLength = null) {
     messageString = (
       <Text style={styles.welcomeTextContainer}>
         <Text style={styles.welcomeText}>
-          Welcome to Sous! If you haven’t already set up your <Text style={{fontWeight: 'bold'}}>order guide</Text>, we can help set that up.{'\n\n'}
+          Welcome to Sous! If your haven't already uploaded your <Text style={{fontWeight: 'bold'}}>order guide</Text>, we can help you set it up.{'\n\n'}
         </Text>
         <Text style={styles.welcomeText}>
-          Whenever you send a message or a purveyor order, your team gets notified here. View <Text style={{fontWeight: 'bold'}}>Team Members</Text> in the left menu to edit your team.{'\n\n'}
+          When an order is placed, it will notify the team in this window.  You can also use this space to send messages to your team - tap <Text style={{fontWeight: 'bold'}}>Team Members</Text> on the navigation bar to see who's using the app.{'\n\n'}
         </Text>
         <Text style={styles.welcomeText}>
-          We’re in beta and we love feedback. Chat with us here or email <Text style={{fontWeight: 'bold'}}>sous@sousapp.com</Text> with any questions, issues, or ideas on how we can improve Sous.
+          Finally, you can contact us at Sous Support <Text style={{fontWeight: 'bold'}}>24/7</Text> with any issues you may have.
+          Feel free to message us in the app, and feel free to e-mail us at
+          <Text style={{fontWeight: 'bold'}}> sous@sousapp.com </Text>
+          with any advice on how we can improve.
         </Text>
       </Text>
     );
