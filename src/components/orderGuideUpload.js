@@ -5,7 +5,6 @@ import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import DataUtils from '../utilities/data';
 import GenericModal from './modal/genericModal';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 const {
   Dimensions,
@@ -205,7 +204,6 @@ class OrderGuideUpload extends React.Component {
                 <Text style={styles.inputErrorText}>Please enter a valid email address.</Text>
               </View>
             : <View style={styles.inputErrorContainer}><Text>{' '}</Text></View> }
-            <KeyboardSpacer />
           </View>
         </GenericModal>
       </View>

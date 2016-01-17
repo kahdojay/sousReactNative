@@ -1,6 +1,7 @@
 import React from 'react-native';
 import Colors from '../../utilities/colors';
 import Sizes from '../../utilities/sizes';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 const {
   Dimensions,
@@ -122,6 +123,7 @@ class GenericModal extends React.Component {
                 </View>
               </View>
             </TouchableOpacity>
+            <KeyboardSpacer />
           </View>
         </TouchableOpacity>
       </Modal>

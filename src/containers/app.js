@@ -15,7 +15,6 @@ import * as SessionComponents from '../components/session';
 import * as TextComponents from '../components/text';
 import * as ModalComponents from '../components/modal';
 import Dimensions from 'Dimensions';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
 import PushManager from 'react-native-remote-push/RemotePushIOS';
 import Communications from 'react-native-communications';
 import DeviceUUID from 'react-native-device-uuid';
@@ -1768,7 +1767,6 @@ class App extends React.Component {
           {genericModal}
           {connectionStatus}
           {scene}
-          {session.inviteModalVisible === false ? <KeyboardSpacer /> : <View />}
         </View>
       </CustomSideView>
     );
