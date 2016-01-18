@@ -60,7 +60,6 @@ class CartViewListItem extends React.Component {
       <View>
         <Swipeout
           right={buttons}
-          close={true}
           backgroundColor={Colors.mainBackgroundColor}
         >
           <View key={product.id} style={styles.productContainer}>
