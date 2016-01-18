@@ -23,7 +23,7 @@ class InviteView extends React.Component {
       selectedContacts: [],
       query: '',
       searching: false,
-      searchedContacts: []
+      searchedContacts: this.props.contacts,
     }
   }
 
@@ -31,7 +31,7 @@ class InviteView extends React.Component {
     if(this.state.query !== ''){
       this.setState({
         searching: true,
-        searchedContacts: [],
+        searchedContacts: this.props.contacts,
       }, () => {
         const searchedContacts = _.filter(this.props.contacts, (contact) => {
           let fullName = ''
@@ -47,7 +47,7 @@ class InviteView extends React.Component {
       })
     } else {
       this.setState({
-        searchedContacts: []
+        searchedContacts: this.props.contacts,
       })
     }
   }
@@ -77,11 +77,10 @@ class InviteView extends React.Component {
   }
 
   render() {
-    let sortedContacts =  this.state.searchedContacts.length > 0 ? this.state.searchedContacts : this.props.contacts
+    // let sortedContacts =  this.state.searchedContacts.length > 0 ? this.state.searchedContacts : this.props.contacts
     let displayContacts = []
-    let idx = 0
 
-    sortedContacts.forEach((contact) => {
+    this.state.searchedContacts.forEach((contact, idx) => {
       let firstName = contact.firstName ? _.capitalize(contact.firstName) : ''
       let lastName = contact.lastName ? _.capitalize(contact.lastName) : ''
       contact.phoneNumbers.forEach((numberDetails) => {
@@ -120,7 +119,6 @@ class InviteView extends React.Component {
             </View>
           </TouchableHighlight>
         )
-        idx += 1
       })
     })
 
@@ -146,7 +144,7 @@ class InviteView extends React.Component {
                 this.setState({
                   searching: false,
                   query: '',
-                  searchedContacts: []
+                  searchedContacts: this.props.contacts,
                 })
               }}
               underlayColor='transparent'

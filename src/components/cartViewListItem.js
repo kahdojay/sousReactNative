@@ -120,7 +120,10 @@ const styles = StyleSheet.create({
     marginTop: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingLeft: 5,
     paddingRight: 5,
+    paddingTop: 5,
+    paddingBottom: 5,
   },
   icon: {
     width: 30,
@@ -130,7 +133,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignSelf: 'center',
     width: 54,
-    height: 30,
+    height: 40,
     marginLeft: 2,
     marginTop: 7,
     marginBottom: 7,
@@ -157,39 +160,6 @@ const styles = StyleSheet.create({
   productQuantity: {
     padding: 5,
     textAlign: 'right',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
-  },
-  modalInnerContainer: {
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    padding: 20,
-  },
-  modalHeader: {
-    width: 260,
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 5,
-  },
-  modalHeaderText: {
-    flex: 1,
-    textAlign: 'center',
-    fontSize: 20,
-    color: Colors.lightBlue,
-  },
-  modalButtonText: {
-    textAlign: 'center',
-    color: Colors.lightBlue,
-    paddingTop: 15,
-  },
-  separator: {
-    height: 0,
-    borderBottomColor: Colors.separatorColor,
-    borderBottomWidth: 1,
   },
 })
 
