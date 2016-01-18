@@ -25,6 +25,7 @@ class InviteView extends React.Component {
       searching: false,
       searchedContacts: this.props.contacts,
     }
+    this.allContacts = this.renderContacts(this.props.contacts)
   }
 
   searchForContacts() {
@@ -76,11 +77,10 @@ class InviteView extends React.Component {
     })
   }
 
-  render() {
-    // let sortedContacts =  this.state.searchedContacts.length > 0 ? this.state.searchedContacts : this.props.contacts
+  renderContacts(contacts) {
     let displayContacts = []
-
-    this.state.searchedContacts.forEach((contact, idx) => {
+    
+    contacts.forEach((contact) => {
       let firstName = contact.firstName ? _.capitalize(contact.firstName) : ''
       let lastName = contact.lastName ? _.capitalize(contact.lastName) : ''
       contact.phoneNumbers.forEach((numberDetails) => {
@@ -121,6 +121,12 @@ class InviteView extends React.Component {
         )
       })
     })
+
+    return displayContacts
+  }
+
+  render() {
+    let displayContacts = this.state.searchedContacts.length > 0 ? this.renderContacts(this.state.searchedContacts) : this.allContacts
 
     let searchBar = (
       <View>
