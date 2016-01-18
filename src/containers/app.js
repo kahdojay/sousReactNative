@@ -1050,6 +1050,7 @@ class App extends React.Component {
         }
       case 'InviteView':
         const userContacts = _.sortBy(this.state.contactList.map(function (contact, idx) {
+          contact.id = `contact-${idx}`
           contact.firstName = contact.firstName ? _.capitalize(contact.firstName) : ''
           return contact
         }), 'firstName')

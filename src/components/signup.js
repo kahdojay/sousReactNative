@@ -361,7 +361,6 @@ let styles = StyleSheet.create({
     height: 50,
     width: runTimeDimensions.width * .70,
     fontSize: 20,
-    fontWeight: 'bold',
     color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
     alignItems: 'center',

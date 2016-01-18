@@ -7,6 +7,7 @@ import Sizes from '../utilities/sizes';
 import DataUtils from '../utilities/data';
 
 const {
+  ActivityIndicatorIOS,
   ScrollView,
   View,
   Text,
@@ -23,7 +24,7 @@ class InviteView extends React.Component {
       selectedContacts: [],
       query: '',
       searching: false,
-      searchedContacts: this.props.contacts,
+      searchedContacts: [],
     }
     this.allContacts = this.renderContacts(this.props.contacts)
   }
@@ -32,7 +33,7 @@ class InviteView extends React.Component {
     if(this.state.query !== ''){
       this.setState({
         searching: true,
-        searchedContacts: this.props.contacts,
+        searchedContacts: [],
       }, () => {
         const searchedContacts = _.filter(this.props.contacts, (contact) => {
           let fullName = ''
@@ -48,7 +49,8 @@ class InviteView extends React.Component {
       })
     } else {
       this.setState({
-        searchedContacts: this.props.contacts,
+        searching: false,
+        searchedContacts: [],
       })
     }
   }
@@ -79,11 +81,10 @@ class InviteView extends React.Component {
 
   renderContacts(contacts) {
     let displayContacts = []
-    
     contacts.forEach((contact) => {
       let firstName = contact.firstName ? _.capitalize(contact.firstName) : ''
       let lastName = contact.lastName ? _.capitalize(contact.lastName) : ''
-      contact.phoneNumbers.forEach((numberDetails) => {
+      contact.phoneNumbers.forEach((numberDetails, idx) => {
         const contactNumber = DataUtils.formatPhoneNumber(numberDetails.number)
         let selectedStyle = {}
         let contactDetailsColor = Colors.greyText
@@ -95,7 +96,7 @@ class InviteView extends React.Component {
         }
         displayContacts.push(
           <TouchableHighlight
-            key={idx}
+            key={`${contact.id}-${idx}`}
             underlayColor="#eee"
             onPress={() => {
               this.toggleSelectContact(contactNumber, firstName, lastName)
@@ -144,6 +145,15 @@ class InviteView extends React.Component {
             }}
             onSubmitEditing={::this.searchForContacts}
           />
+          { this.state.searching === true ? 
+            <ActivityIndicatorIOS
+              key={'loading'}
+              animating={true}
+              color={Colors.greyText}
+              style={styles.activity}
+              size={'small'}
+            />
+            : null }
           { this.state.query !== '' ?
             <TouchableHighlight
               onPress={() => {
@@ -227,6 +237,12 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     borderRadius: Sizes.inputBorderRadius,
     fontWeight: 'bold',
+  },
+  activity: {
+    backgroundColor: 'transparent',
+    paddingTop: 12,
+    left: 5,
+    position: 'absolute',
   },
   iconClose: {
     width: 30,
