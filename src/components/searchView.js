@@ -81,7 +81,7 @@ class SearchView extends React.Component {
             <TextInput
               style={styles.searchInput}
               value={this.state.search}
-              placeholder='product name'
+              placeholder='Find Product'
               onChangeText={(text) => {
                 this.setState({
                   search: text
