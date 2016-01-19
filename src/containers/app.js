@@ -1143,11 +1143,10 @@ class App extends React.Component {
               if(type === 'call') {
                 Communications.phonecall(value, true)
               } else if(type === 'email'){
-                const to = value
+                const to = [value]
                 const cc = null
                 const subject = null
                 const body = null
-                console.log(to)
                 Communications.email(to, cc, null, subject, body)
               }
             },
