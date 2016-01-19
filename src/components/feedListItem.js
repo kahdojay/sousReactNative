@@ -60,7 +60,13 @@ class FeedListItem extends React.Component {
     let user = null
     if(msg.userId && this.props.teamsUsers.hasOwnProperty(msg.userId) === true){
       user = this.props.teamsUsers[msg.userId]
+    } else if(msg.imageUrl) {
+      user = {
+        imageUrl: msg.imageUrl,
+        updatedAt: (new Date()).toISOString(),
+      }
     }
+
     let icon = AvatarUtils.getAvatar(user, 40)
     if (icon === null) {
       icon = <Icon name='material|account-circle' size={50} color='#aaa' style={styles.avatar}/>
@@ -139,7 +145,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    alignSelf: 'center',
+    alignSelf: 'flex-start',
     backgroundColor: '#eee',
   },
   avatarImage: {
