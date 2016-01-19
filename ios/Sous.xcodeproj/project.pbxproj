@@ -19,7 +19,6 @@
 		1171E5DD1C3AEDBD007AECED /* UIImagePickerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1171E5DC1C3AEDBD007AECED /* UIImagePickerManager.m */; };
 		119B21331C0F6F37000402CA /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 119B21321C0F6F37000402CA /* main.jsbundle */; };
 		119B21341C0F6F37000402CA /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 119B21321C0F6F37000402CA /* main.jsbundle */; };
-		11DFC36D1C2608EA00F8A2D5 /* libRCTDeviceUUID.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11DFC35F1C2608C300F8A2D5 /* libRCTDeviceUUID.a */; };
 		11DFC3791C2619D000F8A2D5 /* libRCTRemotePushManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11DFC3731C2619AB00F8A2D5 /* libRCTRemotePushManager.a */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
@@ -38,6 +37,7 @@
 		89EFDE5F1BCC097F001FBBEF /* OpenSans-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE561BCC097F001FBBEF /* OpenSans-LightItalic.ttf */; };
 		89EFDE601BCC097F001FBBEF /* OpenSans-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE571BCC097F001FBBEF /* OpenSans-Semibold.ttf */; };
 		89EFDE611BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE581BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf */; };
+		8A1FA6521C4DDC260013BC85 /* DeviceUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A1FA6511C4DDC260013BC85 /* DeviceUtil.m */; };
 		A531FDAA1BE3EC2F00E90569 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = A531FDA91BE3EC2F00E90569 /* main.jsbundle */; };
 		A5380FE61BE05DFA00FADB96 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A5380FE51BE05DFA00FADB96 /* AppDelegate.m */; };
 		A5380FEA1BE05E2E00FADB96 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A5380FE71BE05E2E00FADB96 /* Images.xcassets */; };
@@ -96,13 +96,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 2F5A3EB81ACDBF8000439386;
 			remoteInfo = ReactNativeIcons;
-		};
-		11DFC35E1C2608C300F8A2D5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 11DFC3571C2608C300F8A2D5 /* RCTDeviceUUID.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = F12AFB9B1ADAF8F800E0535D;
-			remoteInfo = RCTDeviceUUID;
 		};
 		11DFC3721C2619AB00F8A2D5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -192,7 +185,6 @@
 		117817961BCDD8EE009F23E6 /* Material-Design-Iconic-Font.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Material-Design-Iconic-Font.ttf"; sourceTree = "<group>"; };
 		117817971BCDD8EE009F23E6 /* FontAwesome.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome.otf; sourceTree = "<group>"; };
 		119B21321C0F6F37000402CA /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = SOURCE_ROOT; };
-		11DFC3571C2608C300F8A2D5 /* RCTDeviceUUID.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTDeviceUUID.xcodeproj; path = "../node_modules/react-native-device-uuid/RCTDeviceUUID.xcodeproj"; sourceTree = "<group>"; };
 		11DFC36E1C2619AB00F8A2D5 /* RCTRemotePushManager.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTRemotePushManager.xcodeproj; path = "../node_modules/react-native-remote-push/RCTRemotePushManager.xcodeproj"; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
@@ -212,6 +204,8 @@
 		89EFDE561BCC097F001FBBEF /* OpenSans-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-LightItalic.ttf"; sourceTree = "<group>"; };
 		89EFDE571BCC097F001FBBEF /* OpenSans-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Semibold.ttf"; sourceTree = "<group>"; };
 		89EFDE581BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-SemiboldItalic.ttf"; sourceTree = "<group>"; };
+		8A1FA6501C4DDC260013BC85 /* DeviceUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeviceUtil.h; path = "../node_modules/react-native-device/DeviceUtil.h"; sourceTree = "<group>"; };
+		8A1FA6511C4DDC260013BC85 /* DeviceUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DeviceUtil.m; path = "../node_modules/react-native-device/DeviceUtil.m"; sourceTree = "<group>"; };
 		A531FDA91BE3EC2F00E90569 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = SOURCE_ROOT; };
 		A5380FE41BE05DFA00FADB96 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A5380FE51BE05DFA00FADB96 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -236,7 +230,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				11DFC3791C2619D000F8A2D5 /* libRCTRemotePushManager.a in Frameworks */,
-				11DFC36D1C2608EA00F8A2D5 /* libRCTDeviceUUID.a in Frameworks */,
 				8918EB061BD8227C0068EBBA /* libRNOverlay.a in Frameworks */,
 				110F5ECF1BCF2D5700234ED6 /* libReactNativeIcons.a in Frameworks */,
 				C430DDA41BCEC67100962F41 /* libRCTAddressBook.a in Frameworks */,
@@ -322,14 +315,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		11DFC3581C2608C300F8A2D5 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				11DFC35F1C2608C300F8A2D5 /* libRCTDeviceUUID.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		11DFC36F1C2619AB00F8A2D5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -387,12 +372,13 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				8A1FA6501C4DDC260013BC85 /* DeviceUtil.h */,
+				8A1FA6511C4DDC260013BC85 /* DeviceUtil.m */,
 				1171E5DB1C3AEDBD007AECED /* UIImagePickerManager.h */,
 				1171E5DC1C3AEDBD007AECED /* UIImagePickerManager.m */,
 				110C20FF1C26372E0074F7D3 /* RemotePushDelegate.h */,
 				110C21001C26372E0074F7D3 /* RemotePushDelegate.m */,
 				11DFC36E1C2619AB00F8A2D5 /* RCTRemotePushManager.xcodeproj */,
-				11DFC3571C2608C300F8A2D5 /* RCTDeviceUUID.xcodeproj */,
 				8918EAF21BD822690068EBBA /* RNOverlay.xcodeproj */,
 				8918EA9F1BD801AE0068EBBA /* RNMultiPicker.xcodeproj */,
 				110F5EC91BCF2D4900234ED6 /* ReactNativeIcons.xcodeproj */,
@@ -562,10 +548,6 @@
 					ProjectRef = C430DD901BCEC63F00962F41 /* RCTAddressBook.xcodeproj */;
 				},
 				{
-					ProductGroup = 11DFC3581C2608C300F8A2D5 /* Products */;
-					ProjectRef = 11DFC3571C2608C300F8A2D5 /* RCTDeviceUUID.xcodeproj */;
-				},
-				{
 					ProductGroup = 00C302B61ABCB90400DB3ED1 /* Products */;
 					ProjectRef = 00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */;
 				},
@@ -667,13 +649,6 @@
 			fileType = archive.ar;
 			path = libReactNativeIcons.a;
 			remoteRef = 110F5ECD1BCF2D4900234ED6 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		11DFC35F1C2608C300F8A2D5 /* libRCTDeviceUUID.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRCTDeviceUUID.a;
-			remoteRef = 11DFC35E1C2608C300F8A2D5 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		11DFC3731C2619AB00F8A2D5 /* libRCTRemotePushManager.a */ = {
@@ -796,6 +771,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A5380FE61BE05DFA00FADB96 /* AppDelegate.m in Sources */,
+				8A1FA6521C4DDC260013BC85 /* DeviceUtil.m in Sources */,
 				A5380FEC1BE05E2E00FADB96 /* main.m in Sources */,
 				110C21011C26372E0074F7D3 /* RemotePushDelegate.m in Sources */,
 				1171E5DD1C3AEDBD007AECED /* UIImagePickerManager.m in Sources */,

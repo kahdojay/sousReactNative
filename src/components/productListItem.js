@@ -7,6 +7,7 @@ import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import Swipeout from 'react-native-swipeout';
 import PickerModal from './modal/pickerModal';
+import ConfirmationModal from './modal/confirmationModal';
 
 const {
   PropTypes,
@@ -30,6 +31,7 @@ class ProductListItem extends React.Component {
       note: '',
       editQuantity: false,
       cartItem: null,
+      showConfirmationModal: false,
     }
     this.timeoutId = null
     this.loadTimeoutId = null
@@ -40,6 +42,10 @@ class ProductListItem extends React.Component {
     //   return false;
     // }
     const debugUpdates = false
+    if(this.state.showConfirmationModal !== nextState.showConfirmationModal){
+      if(debugUpdates) console.log('Confirmation Modal: ', this.state.showConfirmationModal, nextState.showConfirmationModal)
+      return true;
+    }
     if(this.state.added === true && nextProps.cartItem === null){
       if(debugUpdates) console.log('Added: ', this.state.added, nextProps.cartItem)
       return true;
@@ -154,7 +160,7 @@ class ProductListItem extends React.Component {
   handleToggleProduct(purveyorId) {
     this.setState({
       added: !this.state.added,
-      selectedPurveyorId: purveyorId
+      selectedPurveyorId: purveyorId,
     }, this.cartUpdateFromLocalState.bind(this))
   }
 
@@ -288,7 +294,11 @@ class ProductListItem extends React.Component {
         component: (
           <Icon name='material|delete' size={30} color={Colors.lightBlue} style={styles.iconEdit}/>
         ),
-        onPress: this.props.onProductDelete
+        onPress: () => {
+          this.setState({
+            showConfirmationModal: true,
+          })
+        }
       }]
 
       const quantities = _.range(1, 501)
@@ -338,6 +348,35 @@ class ProductListItem extends React.Component {
       )
     }
 
+    const confirmationModal = (
+      <ConfirmationModal
+        modalVisible={this.state.showConfirmationModal}
+        confirmationMessage={'Are you sure you want to delete this product?'}
+        onHideModal={() => {
+          this.setState({
+            showConfirmationModal: false
+          })
+        }}
+        onConfirmNo={() => {
+          this.setState({
+            showConfirmationModal: false
+          })
+        }}
+        onConfirmYes={() => {
+          this.setState({
+            showConfirmationModal: false,
+          }, () => {
+            if(this.state.added === true){
+              this.setState({
+                added: false,
+              }, this.cartUpdateFromLocalState.bind(this))
+            }
+            this.props.onProductDelete()
+          })
+        }}
+      />
+    )
+
     return (
       <View style={styles.container}>
         <Swipeout
@@ -350,6 +389,7 @@ class ProductListItem extends React.Component {
           {productInfo}
         </Swipeout>
         {modal}
+        {confirmationModal}
       </View>
     )
   }

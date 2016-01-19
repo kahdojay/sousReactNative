@@ -18,6 +18,8 @@ import Dimensions from 'Dimensions';
 import PushManager from 'react-native-remote-push/RemotePushIOS';
 import Communications from 'react-native-communications';
 import DeviceUUID from 'react-native-device-uuid';
+import Device from 'react-native-device';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 const {
   Navigator,
@@ -211,13 +213,15 @@ class App extends React.Component {
             // if(userDoesNotAllow === true){
             //   dispatch(actions.registerInstallationDeclined())
             // }
-            if(data.hasOwnProperty('token') && data.token.indexOf('Error') === -1){
-              DeviceUUID.getUUID().then((uuid) => {
-                dispatch(actions.registerInstallation({
-                  token: data.token,
-                  uuid: uuid,
-                }))
-              });
+            // if(data.hasOwnProperty('token') && data.token.indexOf('Error') === -1){
+            if(data.hasOwnProperty('token')){
+              dispatch(actions.registerInstallation({
+                token: data.token,
+                model: Device.model,
+                deviceName: Device.deviceName,
+                systemName: Device.systemName,
+                systemVersion: Device.systemVersion,
+              }))
             } else {
               dispatch(actions.registerInstallationError())
             }
@@ -1050,6 +1054,7 @@ class App extends React.Component {
         }
       case 'InviteView':
         const userContacts = _.sortBy(this.state.contactList.map(function (contact, idx) {
+          contact.id = `contact-${idx}`
           contact.firstName = contact.firstName ? _.capitalize(contact.firstName) : ''
           return contact
         }), 'firstName')
@@ -1771,6 +1776,7 @@ class App extends React.Component {
           {genericModal}
           {connectionStatus}
           {scene}
+          <KeyboardSpacer />
         </View>
       </CustomSideView>
     );

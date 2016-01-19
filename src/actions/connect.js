@@ -104,16 +104,17 @@ export default function ConnectActions(ddpClient) {
     return (dispatch, getState) => {
       const {session} = getState()
       // TODO: use connect.channels in processSubscription to retrigger registrations on team changes
-      const installationAttributes = {
-        token: deviceAttributes.token,
-        uuid: deviceAttributes.uuid,
-      }
-      dispatch(ddpCall('registerInstallation', [session.userId, installationAttributes]))
+      // const installationAttributes = {
+      //   token: deviceAttributes.token,
+      //   uuid: deviceAttributes.uuid,
+      // }
+      dispatch(ddpCall('registerInstallation', [session.userId, deviceAttributes]))
       return dispatch({
         type: REGISTER_INSTALLATION,
         installationRegistered: true,
-        token: deviceAttributes.token,
-        uuid: deviceAttributes.uuid,
+        deviceAttributes: deviceAttributes,
+        // token: deviceAttributes.token,
+        // uuid: deviceAttributes.uuid,
       })
     }
   }

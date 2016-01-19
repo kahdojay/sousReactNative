@@ -55,6 +55,11 @@ function processCartItem(newCartItemTeamState, cartItem, cartItemIdRef){
     originalTeamCartItem = newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId]
   }
   newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId] = Object.assign(originalTeamCartItem, cartItem)
+
+  if(cartItem.status === 'DELETED'){
+    delete newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId]
+  }
+
   return newCartItemTeamState
 }
 

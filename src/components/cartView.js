@@ -4,6 +4,7 @@ import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import CartViewListItem from './cartViewListItem';
 import GenericModal from './modal/genericModal';
+import ConfirmationModal from './modal/confirmationModal';
 
 const {
   ScrollView,
@@ -170,40 +171,30 @@ class CartView extends React.Component {
       </GenericModal>
     )
     const confirmationModal = (
-      <GenericModal
+      <ConfirmationModal
         modalVisible={this.state.showConfirmationModal}
+        confirmationMessage={this.state.confirmationMessage}
         onHideModal={() => {
           this.setState({
             showConfirmationModal: false
           })
         }}
-        leftButton={{
-          text: 'No',
-          onPress: () => {
-            this.setState({
-              showConfirmationModal: false
-            })
-          }
+        onConfirmNo={() => {
+          this.setState({
+            showConfirmationModal: false
+          })
         }}
-        rightButton={{
-          text: 'Yes',
-          onPress: () => {
-            this.setState({
-              showConfirmationModal: false,
-            }, () => {
-              if(this.state.numberOfOrders > 0){
-                // console.log(this.state.purveyorIds);
-                this.props.onSubmitOrder(this.state.purveyorIds, this.state.navigateToFeed);
-              }
-            })
-          }
+        onConfirmYes={() => {
+          this.setState({
+            showConfirmationModal: false,
+          }, () => {
+            if(this.state.numberOfOrders > 0){
+              // console.log(this.state.purveyorIds);
+              this.props.onSubmitOrder(this.state.purveyorIds, this.state.navigateToFeed);
+            }
+          })
         }}
-      >
-        <View>
-          <Text style={[styles.centeredText, styles.boldText, {fontFamily: 'OpenSans'}]}>Confirm</Text>
-          <Text style={[styles.centeredText, {margin: 15, fontSize: 12,fontFamily: 'OpenSans'}]}>{this.state.confirmationMessage}</Text>
-        </View>
-      </GenericModal>
+      />
     )
 
     let cartViewDetails = (

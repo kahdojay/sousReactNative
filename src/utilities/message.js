@@ -83,12 +83,13 @@ function formatMessage(msg, messageLength = null) {
 const styles = StyleSheet.create({
   messageText: {
     fontSize: 12,
-    fontFamily: 'OpenSans',
     marginLeft: 5,
     marginBottom: 5
   },
-  welcomeText: {
-    marginVertical: 5,
+  welcomeTextContainer: {
+    fontSize: 12,
+    marginLeft: 5,
+    marginBottom: 5,
   },
 });
 
