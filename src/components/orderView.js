@@ -83,6 +83,14 @@ class OrderView extends React.Component {
       teamsUsers,
     } = this.state;
 
+    if(products.length === 0 || purveyor === null || order === null){
+      return (
+        <View style={styles.container}>
+          <Text style={[styles.text, styles.textCentered, {padding: 25}]}>Processing order, please wait.</Text>
+        </View>
+      )
+    }
+
     let productsList = null
     let modal = null
 
@@ -210,7 +218,7 @@ class OrderView extends React.Component {
               {productsList}
             </ScrollView>
           </View>
-        : <Text>Loading...</Text> }
+        : <Text style={[styles.text, styles.textCentered, {padding: 25}]}>Loading, please wait.</Text> }
       </View>
     )
   }
@@ -245,7 +253,7 @@ const styles = StyleSheet.create({
   confirmedText: {
     alignSelf: 'center',
     fontSize: 14,
-    color: '#333',
+    color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
   },
   orderMessage: {
@@ -271,7 +279,7 @@ const styles = StyleSheet.create({
   },
   orderText: {
     fontWeight: 'bold',
-    color: Colors.blue
+    color: Colors.blue,
   },
   inputWrapper: {
     borderBottomColor: Colors.inputUnderline,
@@ -285,6 +293,13 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     textAlign: 'center',
     height: 40,
+  },
+  text: {
+    fontFamily: 'OpenSans',
+    color: Colors.greyText,
+  },
+  textCentered: {
+    textAlign: 'center',
   },
 });
 

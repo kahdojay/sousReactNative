@@ -23,6 +23,13 @@ class OrderRightButton extends React.Component {
   render() {
     const { purveyor } = this.props;
 
+    if(purveyor === null){
+      return (
+        <View style={styles.iconContainer}>
+        </View>
+      )
+    }
+
     return (
       <View style={styles.iconContainer}>
         <TouchableHighlight
