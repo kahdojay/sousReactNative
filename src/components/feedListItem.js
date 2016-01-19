@@ -60,7 +60,13 @@ class FeedListItem extends React.Component {
     let user = null
     if(msg.userId && this.props.teamsUsers.hasOwnProperty(msg.userId) === true){
       user = this.props.teamsUsers[msg.userId]
+    } else if(msg.imageUrl) {
+      user = {
+        imageUrl: msg.imageUrl,
+        updatedAt: (new Date()).toISOString(),
+      }
     }
+
     if(msg.imageUrl && ['order', 'welcome'].indexOf(msg.type) !== -1) {
       user = {
         imageUrl: msg.imageUrl,
