@@ -21,7 +21,7 @@ class Slide extends React.Component {
   }
 
   render() {
-    const {text, uri} = this.props;
+    const {text, uri, id} = this.props;
     return (
       <View style={styles.slide}>
         {text ?
@@ -54,7 +54,7 @@ class Onboarding extends React.Component {
     }
     return slides.map((slide) => {
       return (
-        <Slide key={slide.key} text={slide.text} uri={slide.uri} />
+        <Slide key={slide.key} id={slide.key} text={slide.text} uri={slide.uri} />
       )
     })
   }
@@ -164,12 +164,14 @@ const styles = StyleSheet.create({
   },
   slideImageContainer: {
     flex: 1,
-    overflow: 'hidden',
     justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    overflow: 'hidden',
   },
   slideImage: {
     width: window.width,
-    height: (window.height + heightDivisions),
+    height: window.height,
+    resizeMode: 'cover',
   },
   bottomContainer: {
     flex: 1,
