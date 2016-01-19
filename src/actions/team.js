@@ -163,7 +163,7 @@ export default function TeamActions(allActions) {
       const taskIdx = _.findIndex(currentTeam.tasks, (item, idx) => {
         // console.log('getIdx item: ', item)
         if (item !== undefined) {
-          return item.recipeId == recipeId;
+          return item.recipeId === recipeId;
         } else {
           return false
         }

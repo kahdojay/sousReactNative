@@ -5,7 +5,7 @@ function getIdx(currentDataState, findId){
   return _.findIndex(currentDataState, (item, idx) => {
     // console.log('getIdx item: ', item)
     if (item !== undefined) {
-      return item.id == findId;
+      return item.id === findId;
     } else {
       return false
     }
