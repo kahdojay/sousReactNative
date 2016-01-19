@@ -1,7 +1,6 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
-import _ from 'lodash';
 
 const {
   View,
@@ -22,6 +21,13 @@ class OrderRightButton extends React.Component {
 
   render() {
     const { purveyor } = this.props;
+
+    if(purveyor === null){
+      return (
+        <View style={styles.iconContainer}>
+        </View>
+      )
+    }
 
     return (
       <View style={styles.iconContainer}>

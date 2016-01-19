@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   listViewRowTextSelected: {
-    color: 'black'
+    color: 'white'
   },
   picker: {
     width: 320,

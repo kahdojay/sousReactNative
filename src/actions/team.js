@@ -278,6 +278,7 @@ export default function TeamActions(allActions) {
     const newUserData = userData || {}
     return (dispatch, getState) => {
       const {session} = getState()
+      console.log(session)
       const teamUserData = {
         'id': session.userId,
         'firstName': session.firstName,
@@ -285,6 +286,7 @@ export default function TeamActions(allActions) {
         'email': session.email,
         'superUser': session.superUser,
         'imageUrl': session.imageUrl,
+        'updatedAt': session.updatedAt,
       }
       return dispatch(receiveTeamsUsers(Object.assign({}, teamUserData, newUserData)))
     }

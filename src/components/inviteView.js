@@ -26,7 +26,7 @@ class InviteView extends React.Component {
       searching: false,
       searchedContacts: [],
     }
-    this.allContacts = this.renderContacts(this.props.contacts)
+    // this.allContacts = this.renderContacts(this.props.contacts)
   }
 
   searchForContacts() {
@@ -56,7 +56,7 @@ class InviteView extends React.Component {
   }
 
   getSelectedIndex(contactNumber) {
-    let contactNumbers = this.state.selectedContacts.map(function(contactObj) { return contactObj.number })
+    let contactNumbers = _.pluck(this.state.selectedContacts, 'number')
     return contactNumbers.indexOf(contactNumber)
   }
 
@@ -127,7 +127,7 @@ class InviteView extends React.Component {
   }
 
   render() {
-    let displayContacts = this.state.searchedContacts.length > 0 ? this.renderContacts(this.state.searchedContacts) : this.allContacts
+    let displayContacts = this.state.searchedContacts.length > 0 ? this.renderContacts(this.state.searchedContacts) : this.renderContacts(this.props.contacts)
 
     let searchBar = (
       <View>
@@ -145,7 +145,7 @@ class InviteView extends React.Component {
             }}
             onSubmitEditing={::this.searchForContacts}
           />
-          { this.state.searching === true ? 
+          { this.state.searching === true ?
             <ActivityIndicatorIOS
               key={'loading'}
               animating={true}

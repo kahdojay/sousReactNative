@@ -1139,6 +1139,17 @@ class App extends React.Component {
             userId: session.userId,
             teamsUsers: teams.teamsUsers,
             currentTeamUsers: this.state.currentTeamInfo.team.users,
+            onHandlePress: (type, value) => {
+              if(type === 'call') {
+                Communications.phonecall(value, true)
+              } else if(type === 'email'){
+                const to = value
+                const cc = null
+                const subject = null
+                const body = null
+                Communications.email(to, cc, null, subject, body)
+              }
+            },
           },
         }
       default:
@@ -1394,6 +1405,10 @@ class App extends React.Component {
           })
           break;
         case 'OrderView':
+          let purveyorNameTitle = 'Processing'
+          if(this.state.purveyor !== null){
+            purveyorNameTitle = this.state.purveyor.name.substr(0,12) + (this.state.purveyor.name.length > 12 ? '...' : '')
+          }
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
@@ -1406,7 +1421,7 @@ class App extends React.Component {
             // title: this.state.purveyor.name.substr(0,16) + (this.state.purveyor.name.length > 16 ? '...' : ''),
             customTitle: (
               <TextComponents.NavBarTitle
-                content={this.state.purveyor.name.substr(0,12) + (this.state.purveyor.name.length > 12 ? '...' : '')}
+                content={purveyorNameTitle}
               />
             ),
             customNext: (

@@ -40,7 +40,7 @@ class Signup extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     let phoneNumber = this.state.phoneNumber
-    if(nextProps.session.phoneNumber !== ''){
+    if(nextProps.session.phoneNumber){
       phoneNumber = nextProps.session.phoneNumber
     }
 

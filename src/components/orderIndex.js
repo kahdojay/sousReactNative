@@ -57,8 +57,8 @@ class OrderIndex extends React.Component {
     }
 
     let fullOrders = _.map(orders, (order) => {
-      const orderItems = cartItems[order.id]
-      const purveyor = purveyors[order.purveyorId]
+      const orderItems = (cartItems.hasOwnProperty(order.id) === true) ? cartItems[order.id] : null
+      const purveyor = (purveyors.hasOwnProperty(order.purveyorId) === true) ? purveyors[order.purveyorId] : null
       const user = teamsUsers.hasOwnProperty(order.userId) === true ? teamsUsers[order.userId] : null
       return Object.assign({}, order, {
         orderItems: orderItems,
@@ -75,8 +75,20 @@ class OrderIndex extends React.Component {
         show = true
       }
       if(show === true) {
-        const itemCount = Object.keys(order.orderItems).length
         const orderedAtDate = moment(order.orderedAt)
+        if(order.orderItems === null || order.purveyor === null){
+          return (
+            <View style={styles.row}>
+              <View style={{flex:2}}>
+                <Text style={[styles.metaInfo, {paddingTop: 7,}]}>Processing order, please wait.</Text></View>
+              <View style={{flex:1}}>
+                <Text style={[styles.metaInfo, styles.bold, styles.rightAlign]}>{orderedAtDate.format('M/D/YY')}</Text>
+                <Text style={[styles.metaInfo, styles.rightAlign]}>{orderedAtDate.format('h:mm a')}</Text>
+              </View>
+            </View>
+          )
+        }
+        const itemCount = Object.keys(order.orderItems).length
         let confirmedOrderStyle = {}
         let confirmedOrderMetaInfoStyle = {}
         // console.log(order.confirm.order)
