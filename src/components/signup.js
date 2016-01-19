@@ -39,8 +39,13 @@ class Signup extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    let phoneNumber = this.state.phoneNumber
+    if(nextProps.session.phoneNumber !== ''){
+      phoneNumber = nextProps.session.phoneNumber
+    }
+
     let newState = {
-      phoneNumber: nextProps.session.phoneNumber,
+      phoneNumber: phoneNumber,
       smsSent: nextProps.session.smsSent,
     }
     if(this.state.submitting !== false){
