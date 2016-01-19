@@ -18,6 +18,7 @@ import Dimensions from 'Dimensions';
 import PushManager from 'react-native-remote-push/RemotePushIOS';
 import Communications from 'react-native-communications';
 import DeviceUUID from 'react-native-device-uuid';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 const {
   Navigator,
@@ -1772,6 +1773,7 @@ class App extends React.Component {
           {genericModal}
           {connectionStatus}
           {scene}
+          <KeyboardSpacer />
         </View>
       </CustomSideView>
     );
