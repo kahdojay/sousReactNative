@@ -4,6 +4,7 @@ import _ from 'lodash'
 import Dimensions from 'Dimensions';
 import pkgInfo from '../../package.json';
 import Colors from '../utilities/colors';
+import AvatarUtils from '../utilities/avatar';
 
 const {
   StyleSheet,
@@ -29,13 +30,9 @@ module.exports = class Menu extends React.Component {
       return <View />;
     }
 
-    let avatar = (
-      <Icon name='material|account-circle' size={60} color={Colors.lightGrey} style={styles.avatar} />
-    )
-    if (session.imageUrl) {
-      avatar = (
-        <Image style={styles.avatar} source={{ uri: `${session.imageUrl}?cb=${session.updatedAt}` }} />
-      )
+    let avatar = AvatarUtils.getAvatar(session, 50)
+    if (avatar === null) {
+      avatar = <Icon name='material|account-circle' size={60} color={Colors.lightGrey} style={styles.avatar} />
     }
     const totalTasks = _.filter(team.tasks, { deleted: false } ).length
     const completeTasksCount = _.filter(team.tasks, { deleted: false, completed: true }).length
@@ -54,7 +51,9 @@ module.exports = class Menu extends React.Component {
             onPress={this.props.onNavToProfile}
           >
             <View style={{alignItems: 'center'}}>
-              {avatar}
+              <View style={[styles.avatar, {width: 54, height: 54, borderRadius: 27, padding: 1}]}>
+                {avatar}
+              </View>
               <Text style={styles.name}>{session.firstName} {session.lastName}</Text>
             </View>
           </TouchableHighlight>

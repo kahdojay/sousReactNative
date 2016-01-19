@@ -1,7 +1,6 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
-import _ from 'lodash';
 
 const {
   View,

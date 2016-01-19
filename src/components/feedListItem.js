@@ -4,6 +4,7 @@ import moment from 'moment';
 import messageUtils from '../utilities/message';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
+import AvatarUtils from '../utilities/avatar';
 
 const {
   Image,
@@ -56,9 +57,13 @@ class FeedListItem extends React.Component {
       displayDate = msgDate.format("ddd, M/D - h:mm a")
     }
 
-    let icon = <Icon name='material|account-circle' size={50} color='#aaa' style={styles.avatar}/>
-    if (msg.imageUrl) {
-      icon = <Image source={{uri: msg.imageUrl}} style={styles.avatarImage} />
+    let user = null
+    if(msg.userId && this.props.teamsUsers.hasOwnProperty(msg.userId) === true){
+      user = this.props.teamsUsers[msg.userId]
+    }
+    let icon = AvatarUtils.getAvatar(user, 40)
+    if (icon === null) {
+      icon = <Icon name='material|account-circle' size={50} color='#aaa' style={styles.avatar}/>
     }
     let messageString = messageUtils.formatMessage(msg);
     let superUserIndicator = <View/>;
@@ -139,7 +144,6 @@ const styles = StyleSheet.create({
   },
   avatarImage: {
     width: 40,
-    marginTop: 5,
     height: 40,
     borderRadius: 20,
   },

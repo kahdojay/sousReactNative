@@ -176,6 +176,7 @@ class Feed extends React.Component {
       this.state.messages.forEach((msg, index) => {
         retMessages.push(
           <FeedListItem
+            teamsUsers={this.props.teamsUsers}
             key={msg.id}
             now={now}
             aDayAgo={aDayAgo}

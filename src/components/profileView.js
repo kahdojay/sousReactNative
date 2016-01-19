@@ -3,6 +3,7 @@ import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import DataUtils from '../utilities/data';
+import AvatarUtils from '../utilities/avatar';
 
 const {
   ActionSheetIOS,
@@ -91,17 +92,10 @@ class ProfileView extends React.Component {
 
   render() {
     const {firstName, lastName, imageUrl, email, phoneNumber, updatedAt} = this.state
-    let avatarUrl = `${imageUrl}`
-    if(avatarUrl.indexOf('data:image') === -1){
-      avatarUrl = `${imageUrl}?cb=${updatedAt}`
-    }
-    let avatar = (
-      <Image source={{uri: avatarUrl}} style={styles.userIcon} />
-    )
-    if (!imageUrl) {
-      avatar = (
-        <Icon name="material|account-circle" size={100} style={styles.userIcon} />
-      )
+
+    let avatar = AvatarUtils.getAvatar(this.state, 90)
+    if (avatar === null) {
+      avatar = <Icon name="material|account-circle" size={100} style={styles.userIcon} />
     }
     let phoneNumberComponent = (
       <View style={styles.phoneNumber}>
@@ -174,9 +168,8 @@ class ProfileView extends React.Component {
             <TouchableHighlight
               underlayColor={Colors.mainBackgroundColor}
               onPress={() => this.showActionSheet()}
-              style={styles.avatar}
             >
-              <View>
+              <View style={styles.avatar}>
                 {avatar}
                 <Text style={styles.changeAvatarText}>Change Avatar</Text>
               </View>
@@ -406,7 +399,6 @@ let styles = StyleSheet.create({
     width: 90,
     height: 90,
     borderRadius: 45,
-    margin: 4,
   },
   wrapper: {
     justifyContent: 'center',
@@ -426,9 +418,9 @@ let styles = StyleSheet.create({
     padding: 5,
   },
   avatar: {
+    padding: 10,
     backgroundColor: '#f2f2f2',
     flex: 1,
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },

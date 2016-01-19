@@ -4,6 +4,7 @@ import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import Urls from '../resources/urls';
 import DataUtils from '../utilities/data';
+import AvatarUtils from '../utilities/avatar';
 
 const {
   Image,
@@ -20,24 +21,35 @@ class TeamMemberListing extends React.Component {
     super(props)
   }
 
+  handlePress(type, value) {
+    this.props.onHandlePress(type, value)
+  }
+
   getTeamMembers() {
     const {currentTeamUsers, teamsUsers, userId, settingsConfig} = this.props
     const teamMembers = [];
 
     let memberContactDetails = []
-    if(settingsConfig && settingsConfig.hasOwnProperty('supportSettings') === true){  
+    let showContactButtons = false
+    let showPhoneIcon = false
+    let showEmailIcon = false
+    let supportPhoneNumber = null
+    if(settingsConfig && settingsConfig.hasOwnProperty('supportSettings') === true){
+      showContactButtons = true
       if(settingsConfig.supportSettings && settingsConfig.supportSettings.phoneNumber){
-        if(memberContactDetails.length > 0){
-          memberContactDetails.push(<Text key='supportPhoneNumberSeparator' style={styles.detailsSeparator}>{' • '}</Text>)
-        }
-        const supportPhoneNumber = DataUtils.formatPhoneNumber(settingsConfig.supportSettings.phoneNumber)
+        // if(memberContactDetails.length > 0){
+        //   memberContactDetails.push(<Text key='supportPhoneNumberSeparator' style={styles.detailsSeparator}>{' • '}</Text>)
+        // }
+        supportPhoneNumber = DataUtils.formatPhoneNumber(settingsConfig.supportSettings.phoneNumber)
         memberContactDetails.push(<Text key='supportPhoneNumber' style={styles.phoneNumber}>{supportPhoneNumber}</Text>)
+        showPhoneIcon = true
       }
       if(settingsConfig.supportSettings && settingsConfig.supportSettings.emailAddress){
-        if(memberContactDetails.length > 0){
-          memberContactDetails.push(<Text key='supportEmailAddressSeparator' style={styles.detailsSeparator}>{' • '}</Text>)
-        }
+        // if(memberContactDetails.length > 0){
+        //   memberContactDetails.push(<Text key='supportEmailAddressSeparator' style={styles.detailsSeparator}>{' • '}</Text>)
+        // }
         memberContactDetails.push(<Text key='supportEmailAddress' style={styles.emailAddress}>{settingsConfig.supportSettings.emailAddress}</Text>)
+        showEmailIcon = true
       }
     }
     teamMembers.push(
@@ -52,6 +64,58 @@ class TeamMemberListing extends React.Component {
               {memberContactDetails}
             </View>
           </View>
+          {showContactButtons === true ? (
+            <View style={styles.iconContainer}>
+              {showEmailIcon === true ? (
+                <TouchableHighlight
+                  underlayColor='white'
+                  onPress={() => {
+                    this.handlePress('email', settingsConfig.supportSettings.emailAddress)
+                  }}
+                >
+                  <Icon
+                    name='material|email'
+                    size={30}
+                    color={Colors.lightBlue}
+                    style={styles.icon}
+                  />
+                </TouchableHighlight>
+              ) : (
+                <View>
+                  <Icon
+                    name='material|email'
+                    size={30}
+                    color={Colors.disabled}
+                    style={styles.icon}
+                  />
+                </View>
+              ) }
+              {showPhoneIcon === true ? (
+                <TouchableHighlight
+                  underlayColor='white'
+                  onPress={() => {
+                    this.handlePress('call', supportPhoneNumber)
+                  }}
+                >
+                  <Icon
+                    name='material|phone'
+                    size={30}
+                    color={Colors.lightBlue}
+                    style={styles.icon}
+                  />
+                </TouchableHighlight>
+              ) : (
+                <View>
+                  <Icon
+                    name='material|phone'
+                    size={30}
+                    color={Colors.disabled}
+                    style={styles.icon}
+                  />
+                </View>
+              ) }
+            </View>
+          ) : null}
         </View>
       </View>
     );
@@ -61,23 +125,27 @@ class TeamMemberListing extends React.Component {
         const user = teamsUsers[userId]
         if(user.superUser === true && user.id !== userId)
           return
-        let icon = <Icon name='material|account-circle' size={50} color='#aaa' style={styles.avatar}/>
-        if (user.hasOwnProperty('imageUrl') && user.imageUrl !== '') {
-          icon = <Image source={{uri: user.imageUrl}} style={styles.avatarImage} />
+        let icon = AvatarUtils.getAvatar(user, 40)
+        if (icon === null) {
+          icon = <Icon name='material|account-circle' size={50} color='#aaa' style={styles.avatar}/>
         }
         let memberContactDetails = []
+        let showPhoneIcon = false
+        let showEmailIcon = false
         if(user.username){
-          if(memberContactDetails.length > 0){
-            memberContactDetails.push(<Text key='phoneNumberSeparator' style={styles.detailsSeparator}>{' • '}</Text>)
-          }
+          // if(memberContactDetails.length > 0){
+          //   memberContactDetails.push(<Text key='phoneNumberSeparator' style={styles.detailsSeparator}>{' • '}</Text>)
+          // }
           const userPhoneNumber = DataUtils.formatPhoneNumber(user.username)
           memberContactDetails.push(<Text key='phoneNumber' style={styles.phoneNumber}>{userPhoneNumber}</Text>)
+          showPhoneIcon = true
         }
         if(user.email){
-          if(memberContactDetails.length > 0){
-            memberContactDetails.push(<Text key='emailAddressSeparator' style={styles.detailsSeparator}>{' • '}</Text>)
-          }
+          // if(memberContactDetails.length > 0){
+          //   memberContactDetails.push(<Text key='emailAddressSeparator' style={styles.detailsSeparator}>{' • '}</Text>)
+          // }
           memberContactDetails.push(<Text key='emailAddress' style={styles.emailAddress}>{user.email}</Text>)
+          showEmailIcon = true
         }
         teamMembers.push(
           <View key={userId} style={styles.row}>
@@ -91,6 +159,56 @@ class TeamMemberListing extends React.Component {
                 <View style={styles.memberContactDetails}>
                   {memberContactDetails}
                 </View>
+              </View>
+              <View style={styles.iconContainer}>
+                {showEmailIcon === true ? (
+                  <TouchableHighlight
+                    underlayColor='white'
+                    onPress={() => {
+                      this.handlePress('email', user.email)
+                    }}
+                  >
+                    <Icon
+                      name='material|email'
+                      size={30}
+                      color={Colors.lightBlue}
+                      style={styles.icon}
+                    />
+                  </TouchableHighlight>
+                ) : (
+                  <View>
+                    <Icon
+                      name='material|email'
+                      size={30}
+                      color={Colors.disabled}
+                      style={styles.icon}
+                    />
+                  </View>
+                ) }
+                {showPhoneIcon === true ? (
+                  <TouchableHighlight
+                    underlayColor='white'
+                    onPress={() => {
+                      this.handlePress('call', user.username)
+                    }}
+                  >
+                    <Icon
+                      name='material|phone'
+                      size={30}
+                      color={Colors.lightBlue}
+                      style={styles.icon}
+                    />
+                  </TouchableHighlight>
+                ) : (
+                  <View>
+                    <Icon
+                      name='material|phone'
+                      size={30}
+                      color={Colors.disabled}
+                      style={styles.icon}
+                    />
+                  </View>
+                ) }
               </View>
             </View>
           </View>
@@ -137,18 +255,24 @@ const styles = StyleSheet.create({
     paddingRight: 5,
   },
   member: {
+    flex: 1,
     flexDirection: 'row',
     padding: 5,
+    alignItems: 'center',
   },
   memberInfoContainer: {
-    padding: 15,
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    flex: 2,
   },
   memberName: {
     flexDirection: 'row',
     marginBottom: 2,
   },
   memberContactDetails: {
-    flexDirection: 'row',
+    flexDirection: 'column',
   },
   phoneNumber: {
     fontSize: 10,
@@ -166,14 +290,21 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    alignSelf: 'center',
     backgroundColor: '#eee',
   },
   avatarImage: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    alignSelf: 'center',
+  },
+  iconContainer: {
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  icon: {
+    width: 50,
+    height: 50,
   },
 });
 

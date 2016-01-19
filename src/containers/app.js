@@ -1139,6 +1139,17 @@ class App extends React.Component {
             userId: session.userId,
             teamsUsers: teams.teamsUsers,
             currentTeamUsers: this.state.currentTeamInfo.team.users,
+            onHandlePress: (type, value) => {
+              if(type === 'call') {
+                Communications.phonecall(value, true)
+              } else if(type === 'email'){
+                const to = value
+                const cc = null
+                const subject = null
+                const body = null
+                Communications.email(to, cc, null, subject, body)
+              }
+            },
           },
         }
       default:
