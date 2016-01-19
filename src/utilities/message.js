@@ -28,6 +28,8 @@ function formatMessage(msg, messageLength = null) {
     messageString = (
       <Text style={styles.messageText}>Order sent to
         <Text style={{fontWeight: 'bold'}}> {msg.purveyor}</Text>
+        {'\n'}
+        <Text style={{color: 'blue'}}>View Order Details</Text>
       </Text>
     );
   } else if (msg.type === 'orderConfirmation') {
