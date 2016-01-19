@@ -168,7 +168,7 @@ class ProductForm extends React.Component {
               label: category.name,
             }
           })
-          selectedValue = this.state.selectedCategory
+          selectedValue = this.state.selectedCategory ? this.state.selectedCategory : items[0].value
           break;
 
         case 'Amount':
@@ -187,7 +187,7 @@ class ProductForm extends React.Component {
               label: n.toString(),
             }
           }))
-          selectedValue = parseFloat(this.state.selectedAmount)
+          selectedValue = this.state.selectedAmount ? parseFloat(this.state.selectedAmount) : 1
           break;
 
         case 'Units':
@@ -199,7 +199,7 @@ class ProductForm extends React.Component {
               label: unit,
             }
           })
-          selectedValue = this.state.selectedUnits
+          selectedValue = this.state.selectedUnits ? this.state.selectedUnits : 'ea'
           break;
 
         default:
