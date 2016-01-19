@@ -128,13 +128,15 @@ class SearchView extends React.Component {
             : <Text style={styles.noFoundText}>No results for '{ this.state.search }'</Text>)
           : <View /> }
         </View>
-        <TouchableHighlight
-          underlayColor='#eee'
-          onPress={this.props.onCreateProduct}
-          style={styles.createButton}
-        >
-          <Text style={styles.createButtonText}>Create New Product</Text>
-        </TouchableHighlight>
+        { this.state.hideHeader === false ? (
+          <TouchableHighlight
+            underlayColor='#eee'
+            onPress={this.props.onCreateProduct}
+            style={styles.createButton}
+          >
+            <Text style={styles.createButtonText}>Create New Product</Text>
+          </TouchableHighlight>
+        ) : null }
       </View>
     );
   }

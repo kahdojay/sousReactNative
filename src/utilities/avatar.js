@@ -6,13 +6,14 @@ const {
 
 function getAvatar(user, size = 40) {
   let avatar = null
-  if(user && user.hasOwnProperty('imageUrl') === true){
+  if(user && user.hasOwnProperty('imageUrl') === true && user.imageUrl){
     let avatarUrl = user.imageUrl;
     let updatedAt = user.hasOwnProperty(updatedAt) === true ? user.updatedAt : (new Date()).toISOString();
 
     if(avatarUrl.indexOf('data:image') === -1){
       avatarUrl = `${user.imageUrl}?cb=${updatedAt}`
     }
+
     avatar = (
       <Image
         source={{uri: avatarUrl}}
