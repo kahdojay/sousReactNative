@@ -26,6 +26,7 @@ var config = {
         path.resolve(__dirname, 'node_modules/react-native-addressbook'),
         path.resolve(__dirname, 'node_modules/react-native-checkbox'),
         path.resolve(__dirname, 'node_modules/react-native-communications'),
+        path.resolve(__dirname, 'node_modules/react-native-device'),
         path.resolve(__dirname, 'node_modules/react-native-device-uuid'),
         path.resolve(__dirname, 'node_modules/react-native-icons'),
         path.resolve(__dirname, 'node_modules/react-native-image-picker'),

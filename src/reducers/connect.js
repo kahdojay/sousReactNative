@@ -104,10 +104,7 @@ function connect(state = initialState.connect, action) {
   case REGISTER_INSTALLATION:
     return Object.assign({}, state, {
       installationRegistered: action.installationRegistered,
-      settings: Object.assign({}, state.settings, {
-        token: action.token,
-        uuid: action.uuid
-      })
+      settings: Object.assign({}, state.settings, action.deviceAttributes)
     });
 
   case CONNECTION_STATUS:
