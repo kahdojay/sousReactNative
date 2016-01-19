@@ -60,7 +60,8 @@ class FeedListItem extends React.Component {
     let user = null
     if(msg.userId && this.props.teamsUsers.hasOwnProperty(msg.userId) === true){
       user = this.props.teamsUsers[msg.userId]
-    } else if(msg.imageUrl) {
+    }
+    if(msg.imageUrl && ['order', 'welcome'].indexOf(msg.type) !== -1) {
       user = {
         imageUrl: msg.imageUrl,
         updatedAt: (new Date()).toISOString(),
@@ -130,13 +131,13 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
   },
   messageAuthor: {
-    fontSize: 14,
+    fontSize: 16,
     marginRight: 10,
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
   },
   messageTimestamp: {
-    fontSize: 10,
+    fontSize: 12,
     fontFamily: 'OpenSans',
     color: Colors.lightGrey,
     marginBottom: 1,

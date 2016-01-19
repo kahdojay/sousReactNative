@@ -1147,6 +1147,7 @@ class App extends React.Component {
                 const cc = null
                 const subject = null
                 const body = null
+                console.log(to)
                 Communications.email(to, cc, null, subject, body)
               }
             },
