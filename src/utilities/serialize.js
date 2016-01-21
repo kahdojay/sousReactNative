@@ -21,7 +21,7 @@ const serialize = function(obj) {
         returnVal = `${ obj }`;
         return returnVal;
       default:
-        if (typeof obj == 'object') {
+        if (typeof obj === 'object') {
           var vobj = [];
           for (var attr in obj) {
             if (typeof obj[attr] != 'function') {

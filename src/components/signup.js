@@ -102,7 +102,12 @@ class Signup extends React.Component {
 
   formatPhoneNumber(phoneNumber){
     if (phoneNumber) {
-      return phoneNumber.split('').map((num, index) => {
+      let prefix = ''
+      if(phoneNumber.length === 11 && phoneNumber[0] === '1'){
+        phoneNumber = phoneNumber.slice(1)
+        prefix = '1 '
+      }
+      let formattedPhoneNumber = phoneNumber.split('').map((num, index) => {
         switch(index){
           case 0:
             return `(${num}`;
@@ -117,6 +122,7 @@ class Signup extends React.Component {
           return num;
         }
       }).join('');
+      return `${prefix}${formattedPhoneNumber}`
     } else {
       return phoneNumber;
     }

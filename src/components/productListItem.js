@@ -308,7 +308,7 @@ class ProductListItem extends React.Component {
       }
       let productUnit = product.unit;
       if(this.state.quantity > 1){
-        if(product.unit == 'bunch'){
+        if(product.unit === 'bunch'){
           productUnit += 'es';
         } else if(product.unit !== 'ea' && product.unit !== 'dozen' && product.unit !== 'cs'){
           productUnit += 's';

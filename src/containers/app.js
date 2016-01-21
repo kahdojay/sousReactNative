@@ -45,6 +45,7 @@ class App extends React.Component {
       isAuthenticated: this.props.session.isAuthenticated,
       firstName: this.props.session.firstName,
       lastName: this.props.session.lastName,
+      email: this.props.session.email,
       product: null,
       category: null,
       // specificProducts: null,
@@ -170,6 +171,7 @@ class App extends React.Component {
       isAuthenticated: nextProps.session.isAuthenticated,
       firstName: nextProps.session.firstName,
       lastName: nextProps.session.lastName,
+      email: nextProps.session.email,
       currentTeamInfo: currentTeamInfo,
     }, () => {
       if(reconnectCountDown === true){
@@ -324,6 +326,41 @@ class App extends React.Component {
         name: 'ProductForm'
       })
     })
+  }
+
+  getRoute(route, nav) {
+    const { session, settingsConfig } = this.props;
+    // redirect to initial view
+    if (this.state.isAuthenticated === true){
+      if (route.name === 'Signup' || route.name === 'UserInfo' || route.name === 'UserTeam') {
+        if(session.teamId === null) {
+          route.name = 'UserTeam';
+        } else if(session.viewedOnboarding !== true && settingsConfig.hasOwnProperty('onboardingSettings') === true ) {
+          route.name = 'session/onboarding';
+        } else if(this.state.currentTeamInfo.team !== null){
+          route.name = 'Feed';
+        } else {
+          route.name = 'Loading';
+        }
+      } else if(session.viewedOnboarding !== true && settingsConfig.hasOwnProperty('onboardingSettings') === true) {
+        route.name = 'session/onboarding';
+      }
+      if(route.name === 'CategoryIndex' || route.name === 'PurveyorIndex') {
+        if(Object.keys(this.state.currentTeamInfo.purveyors).length === 0){
+          route.name = 'OrderGuide';
+        }
+      }
+      const userInfoPresent = (!this.state.firstName || !this.state.lastName || !this.state.email)
+      if (userInfoPresent) {
+        route.name = 'UserInfo';
+      }
+    }
+    // redirect to signup if requested view requires authentication
+    else if(route.name !== 'Signup') {
+      route.name = 'Signup'
+    }
+
+    return route
   }
 
   getScene(route, nav) {
@@ -964,6 +1001,11 @@ class App extends React.Component {
             onUpdateInfo: (data) => {
               _.debounce(() => {
                 // console.log("DATA", data);
+                // this.setState({
+                //   firstName: data.firstName,
+                //   lastName: data.lastName,
+                //   email: data.email,
+                // })
                 dispatch(actions.updateSession(data))
                 dispatch(actions.receiveSessionTeamsUser(data))
               }, 25)()
@@ -1016,6 +1058,7 @@ class App extends React.Component {
         return {
           component: Components.UserInfo,
           props: {
+            session: session,
             onUpdateInfo: (data) => {
               _.debounce(() => {
                 dispatch(actions.updateSession(data));
@@ -1602,39 +1645,6 @@ class App extends React.Component {
       }
     }
     return navBar;
-  }
-
-  getRoute(route, nav) {
-    const { session, settingsConfig } = this.props;
-    // redirect to initial view
-    if (this.state.isAuthenticated === true){
-      if (route.name === 'Signup' || route.name === 'UserInfo' || route.name === 'UserTeam') {
-        if (this.state.firstName === '' || this.state.lastName === '') {
-          route.name = 'UserInfo';
-        } else if(session.teamId === null) {
-          route.name = 'UserTeam';
-        } else if(session.viewedOnboarding !== true && settingsConfig.hasOwnProperty('onboardingSettings') === true ) {
-          route.name = 'session/onboarding';
-        } else if(this.state.currentTeamInfo.team !== null){
-          route.name = 'Feed';
-        } else {
-          route.name = 'Loading';
-        }
-      } else if(session.viewedOnboarding !== true && settingsConfig.hasOwnProperty('onboardingSettings') === true) {
-        route.name = 'session/onboarding';
-      }
-      if(route.name === 'CategoryIndex' || route.name === 'PurveyorIndex') {
-        if(Object.keys(this.state.currentTeamInfo.purveyors).length === 0){
-          route.name = 'OrderGuide';
-        }
-      }
-    }
-    // redirect to signup if requested view requires authentication
-    else if(route.name !== 'Signup') {
-      route.name = 'Signup'
-    }
-
-    return route
   }
 
   renderScene(route, nav) {

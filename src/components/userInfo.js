@@ -2,7 +2,7 @@ import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
-import { NavigationBarStyles } from '../utilities/styles';
+import DataUtils from '../utilities/data';
 
 let {
   AppRegistry,
@@ -19,8 +19,10 @@ class UserInfo extends React.Component{
   constructor(props) {
     super(props);
     this.state = {
-      firstName: '',
-      lastName: '',
+      firstName: this.props.session.firstName || '',
+      lastName: this.props.session.lastName || '',
+      email: this.props.session.email || '',
+      inputError: false,
     }
   }
   render(){
@@ -33,13 +35,13 @@ class UserInfo extends React.Component{
         <View style={styles.headerContainer}>
           <View style={styles.infoField}>
             <Text style={styles.title}>
-              Great! Looks like this is your first time here.
+              Great! We'll need some info to get started.
             </Text>
           </View>
         </View>
         <View style={styles.userProfile}>
           <View style={styles.headerContainer}>
-            <Text style={styles.question}>What is your <Text style={[styles.question, styles.bold]}>name?</Text></Text>
+            <Text style={styles.question}>What is your <Text style={[styles.question, styles.bold]}>name</Text> and <Text style={[styles.question, styles.bold]}>email?</Text></Text>
           </View>
         </View>
 
@@ -48,7 +50,12 @@ class UserInfo extends React.Component{
             <TextInput
               style={styles.input}
               value={this.state.firstName}
-              onChange={(e) => this.setState({firstName: e.nativeEvent.text})}
+              onChange={(e) => {
+                this.setState({
+                  firstName: e.nativeEvent.text,
+                  inputError: false,
+                })
+              }}
               placeholder={"First Name"}/>
           </View>
           <View style={styles.separator}></View>
@@ -56,22 +63,52 @@ class UserInfo extends React.Component{
             <TextInput
               style={styles.input}
               value={this.state.lastName}
-              onChange={(e) => this.setState({lastName: e.nativeEvent.text})}
+              onChange={(e) => {
+                this.setState({
+                  lastName: e.nativeEvent.text,
+                  inputError: false,
+                })
+              }}
               placeholder={"Last Name"} />
           </View>
           <View style={styles.separator}></View>
+          <View style={styles.infoField}>
+            <TextInput
+              style={styles.input}
+              value={this.state.email}
+              onChange={(e) => {
+                this.setState({
+                  email: e.nativeEvent.text,
+                  inputError: false,
+                })
+              }}
+              placeholder={"Email"} />
+          </View>
+          <View style={styles.separator}></View>
+        </View>
+        <View style={styles.inputErrorContainer}>
+        { this.state.inputError === true ? (
+          <Text style={styles.inputErrorText}>Missing/invalid input fields.</Text>
+        ) : <Text style={styles.inputErrorText}>{' '}</Text> }
         </View>
 
-        <View style={styles.deactivateContainer}>
+        <View style={styles.submitContainer}>
           <TouchableHighlight
             onPress={() => {
-              let {firstName, lastName} = this.state;
-              if (firstName != '' && lastName != '') {
-                this.props.onUpdateInfo({firstName: firstName, lastName: lastName});
+              let {firstName, lastName, email} = this.state;
+              const emailValid = DataUtils.validateEmailAddress(email)
+              if (firstName != '' && lastName != '' && email && emailValid === true) {
+                this.props.onUpdateInfo({firstName: firstName, lastName: lastName, email: email});
+              } else {
+                this.setState({
+                  inputError: true,
+                })
               }
             }}
-            style={styles.deactivateButton}>
-            <Text style={styles.deactivateText}>Login</Text>
+            underlayColor={Colors.gold}
+            style={styles.submitButton}
+          >
+            <Text style={styles.submitText}>Login</Text>
           </TouchableHighlight>
         </View>
       </ScrollView>
@@ -136,7 +173,7 @@ let styles = StyleSheet.create({
   },
   inputName: {
     flex: 1,
-    color: '#bbb',
+    color: Colors.lightGrey,
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
     fontSize: 14,
@@ -149,13 +186,13 @@ let styles = StyleSheet.create({
     paddingBottom: 5,
     marginBottom: 5,
   },
-  deactivateContainer: {
+  submitContainer: {
     marginTop: 5,
     backgroundColor: 'transparent',
     alignItems: 'center',
   },
-  deactivateButton: {
-    backgroundColor: '#ddd',
+  submitButton: {
+    backgroundColor: Colors.gold,
     padding: 10,
     width: 100,
     borderRadius: 7,
@@ -168,15 +205,16 @@ let styles = StyleSheet.create({
     marginBottom: 5,
     fontSize: 14,
     borderRadius: 8,
-    color: '#333',
+    color: Colors.inputTextColor,
     fontWeight: 'bold',
-    fontFamily: 'OpenSans'
+    fontFamily: 'OpenSans',
   },
-  deactivateText:{
+  submitText:{
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#777',
+    color: 'white',
     textAlign: 'center',
+    fontFamily: 'OpenSans',
   },
   container: {
     flex: 1,
@@ -253,6 +291,13 @@ let styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: Sizes.inputBorderRadius,
     padding: 10,
+  },
+  inputErrorContainer: {
+
+  },
+  inputErrorText: {
+    color: Colors.red,
+    alignSelf: 'center'
   },
 })
 

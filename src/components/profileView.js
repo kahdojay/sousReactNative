@@ -132,8 +132,11 @@ class ProfileView extends React.Component {
                 updatedAt: (new Date()).toISOString(),
               };
               let allowSave = true
-              if(this.state.email !== ''){
-                allowSave = DataUtils.validateEmailAddress(this.state.email)
+              if(!data.firstName || !data.lastName || !data.email){
+                allowSave = false
+              }
+              if(allowSave === true){
+                allowSave = DataUtils.validateEmailAddress(data.email)
               }
               if(allowSave === true){
                 this.setState({
@@ -184,7 +187,8 @@ class ProfileView extends React.Component {
                   style={styles.inputField}
                   onChange={(e) => {
                     this.setState({
-                      firstName: e.nativeEvent.text
+                      firstName: e.nativeEvent.text,
+                      inputError: false,
                     }, () => {
                       this.needsSave()
                     })
@@ -197,7 +201,8 @@ class ProfileView extends React.Component {
                 <TextInput
                   onChange={(e) => {
                     this.setState({
-                      lastName: e.nativeEvent.text
+                      lastName: e.nativeEvent.text,
+                      inputError: false,
                     }, () => {
                       this.needsSave()
                     })
@@ -224,7 +229,7 @@ class ProfileView extends React.Component {
             </View>
             { this.state.inputError === true ?
               <View style={styles.inputErrorContainer}>
-                <Text style={styles.inputErrorText}>Please enter a valid email address.</Text>
+                <Text style={styles.inputErrorText}>Missing/invalid input fields.</Text>
               </View>
             : <View style={styles.inputErrorContainer} /> }
             {saveChanges}

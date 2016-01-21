@@ -122,7 +122,7 @@ let styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 23,
     borderRadius: 8,
-    color: '#333',
+    color: Colors.inputTextColor,
     fontWeight: 'bold',
     fontFamily: 'OpenSans'
   },
@@ -155,7 +155,7 @@ let styles = StyleSheet.create({
     fontFamily: 'OpenSans'
   },
   errorText: {
-    color: '#d00',
+    color: Colors.red,
     textAlign: 'center',
     marginTop: 10,
     fontSize: 16,

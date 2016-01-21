@@ -30,7 +30,7 @@ class CartViewListItem extends React.Component {
     const productName = product.name || '';
     let productUnit = product.unit;
     if(cartItem.quantity > 1){
-      if(product.unit == 'bunch'){
+      if(product.unit === 'bunch'){
         productUnit += 'es';
       } else if(product.unit !== 'ea' && product.unit !== 'dozen' && product.unit !== 'cs'){
         productUnit += 's';
