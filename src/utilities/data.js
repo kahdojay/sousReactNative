@@ -9,9 +9,12 @@ function validateEmailAddress(email){
 
 function formatPhoneNumber(contactNumber) {
   let pat = /(\(|\)|\s|\-)/g
-  let newNumber = contactNumber.replace(pat, '')
-  if (newNumber.toString().length === 10)
+  let newNumber = contactNumber.replace(pat, '').toString()
+  if (newNumber.length === 10){
     newNumber = newNumber.slice(0,3) + '.' + newNumber.slice(3,6) + '.' + newNumber.slice(6,10)
+  } else if (newNumber.length === 11 && newNumber[0] === '1') {
+    newNumber = newNumber.slice(0,1) + '.' + newNumber.slice(1,4) + '.' + newNumber.slice(4,7) + '.' + newNumber.slice(7,11)
+  }
   return newNumber
 }
 

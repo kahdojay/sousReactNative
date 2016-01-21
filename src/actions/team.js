@@ -5,6 +5,7 @@ import { generateId } from '../utilities/utils'
 import MessageActions from './message'
 import { getIdx } from '../utilities/reducer'
 import Urls from '../resources/urls';
+import DataUtils from '../utilities/data';
 import {
   ADD_TEAM,
   CART,
@@ -78,6 +79,8 @@ export default function TeamActions(allActions) {
             orders: {}
           },
           orders: [],
+          orderContacts: `${session.firstName} • ${DataUtils.formatPhoneNumber(session.username)}`,
+          orderEmails: session.email,
           deleted: false
         }
 
@@ -278,7 +281,6 @@ export default function TeamActions(allActions) {
     const newUserData = userData || {}
     return (dispatch, getState) => {
       const {session} = getState()
-      console.log(session)
       const teamUserData = {
         'id': session.userId,
         'firstName': session.firstName,
