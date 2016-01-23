@@ -3,12 +3,11 @@ import _ from 'lodash';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import OrderListItem from './orderListItem';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
 import moment from 'moment';
 import messageUtils from '../utilities/message';
+import GenericModal from './modal/genericModal';
 
 const {
-  Modal,
   PropTypes,
   ScrollView,
   StyleSheet,
@@ -26,12 +25,19 @@ class OrderView extends React.Component {
       order: null,
       products: null,
       purveyor: null,
-      messages: null,
+      // messages: null,
       teamsUsers: null,
       loaded: false,
       showConfirm: false,
       confirmationMessage: '',
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      order: nextProps.order,
+      products: nextProps.products,
+    })
   }
 
   componentWillMount(){
@@ -40,11 +46,12 @@ class OrderView extends React.Component {
       order: this.props.order,
       products: this.props.products,
       purveyor: this.props.purveyor,
-      messages: this.props.messages,
+      // messages: this.props.messages,
       teamsUsers: this.props.teamsUsers,
       loaded: true,
     })
   }
+
 
   confirmOrder() {
     let orderConfirm = Object.assign({}, this.state.order.confirm)
@@ -67,109 +74,100 @@ class OrderView extends React.Component {
     })
   }
 
-  confirmOrderProduct(productId, confirm) {
-    let orderConfirm = Object.assign({}, this.state.order.confirm)
-    orderConfirm.userId = this.state.userId
-    orderConfirm.products[productId] = confirm
-    this.setState({
-      order: Object.assign({}, this.state.order, {
-        confirm: orderConfirm
-      })
-    }, () => {
-      this.props.onConfirmOrder(this.state.order)
-    })
-  }
-
   render() {
-    const {order, purveyor, products, messages, teamsUsers} = this.state;
+    const {
+      order,
+      purveyor,
+      products,
+      // messages,
+      teamsUsers,
+    } = this.state;
+
+    if(products.length === 0 || purveyor === null || order === null){
+      return (
+        <View style={styles.container}>
+          <Text style={[styles.text, styles.textCentered, {padding: 25}]}>Processing order, please wait.</Text>
+        </View>
+      )
+    }
 
     let productsList = null
     let modal = null
 
     if(this.state.loaded === true){
-      productsList = _.map(products, (product) => {
-        const productDetails = order.orderDetails.products[product.id]
-        const productConfirm = (order.confirm.products.hasOwnProperty(product.id) === true && order.confirm.products[product.id] === true)
+      productsList = _.map(products, (productPkg) => {
+        const product = productPkg.product
+        const cartItem = productPkg.cartItem
+        const productConfirm = (cartItem.status === 'RECEIVED')
         return (
           <OrderListItem
-            orderConfirm={order.confirm}
             key={product.id}
+            orderConfirm={order.confirm}
             product={product}
-            productDetails={productDetails}
+            cartItem={cartItem}
             productConfirm={productConfirm}
-            onHandleProductConfirm={::this.confirmOrderProduct}
+            onHandleProductConfirm={this.props.onConfirmOrderProduct}
           />
         )
       })
 
       if(order.confirm.order === false){
         modal = (
-          <Modal
-            animated={true}
-            transparent={true}
-            visible={this.state.showConfirm}
+          <GenericModal
+            ref='errorModal'
+            modalVisible={this.state.showConfirm}
+            modalHeaderText='Confirmation Message'
+            onHideModal={() => {
+              this.setState({
+                showConfirm: false,
+              })
+            }}
+            leftButton={{
+              text: 'Cancel',
+              onPress: () => {
+                if(order.confirm.order === false){
+                  this.setState({
+                    showConfirm: false,
+                  })
+                }
+              }
+            }}
+            rightButton={{
+              text: 'Confirm',
+              onPress: () => {
+                if(order.confirm.order === false){
+                  this.setState({
+                    showConfirm: false,
+                  }, () => {
+                    this.confirmOrder()
+                  })
+                }
+              }
+            }}
           >
-            <View style={styles.modalContainer}>
-              <View style={styles.modalInnerContainer}>
-                <Text style={styles.messageHeading}>Confirmation Message</Text>
-                <View style={styles.inputContainer}>
-                  <Text>
-                    <Text style={styles.orderText}>{purveyor.name}</Text> order checked in.
-                  </Text>
-                  <TextInput
-                    multiline={true}
-                    style={styles.input}
-                    placeholderTextColor={'#999'}
-                    value={this.state.confirmationMessage}
-                    placeholder='Add a note to the message.'
-                    onChangeText={(text) => {
-                      if(order.confirm.order === false){
-                        this.setState({
-                          confirmationMessage: text
-                        })
-                      }
-                    }}
-                    onEndEditing={() => {
-
-                    }}
-                  />
-                </View>
-                <View style={styles.separator} />
-                <View style={{flexDirection: 'row'}}>
-                  <TouchableHighlight
-                    onPress={() => {
-                      if(order.confirm.order === false){
-                        this.setState({
-                          showConfirm: false,
-                        })
-                      }
-                    }}
-                    underlayColor='transparent'
-                    style={{flex: 1}}
-                  >
-                    <Text style={styles.modalButtonText}>Cancel</Text>
-                  </TouchableHighlight>
-                  <View style={[styles.verticalSeparator,{marginTop: 5, height: 36}]} />
-                  <TouchableHighlight
-                    onPress={() => {
-                      if(order.confirm.order === false){
-                        this.setState({
-                          showConfirm: false,
-                        }, () => {
-                          this.confirmOrder()
-                        })
-                      }
-                    }}
-                    underlayColor='transparent'
-                    style={{flex: 1}}
-                  >
-                    <Text style={styles.modalButtonText}>Confirm</Text>
-                  </TouchableHighlight>
-                </View>
+            <View style={styles.inputContainer}>
+              <Text>
+                <Text style={styles.orderText}>{purveyor.name}</Text> order checked in.
+              </Text>
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  multiline={true}
+                  style={styles.input}
+                  placeholderTextColor={Colors.inputPlaceholderColor}
+                  value={this.state.confirmationMessage}
+                  placeholder='Add a note to the message.'
+                  onChangeText={(text) => {
+                    if(order.confirm.order === false){
+                      this.setState({
+                        confirmationMessage: text
+                      })
+                    }
+                  }}
+                  onEndEditing={() => {}}
+                />
               </View>
-              <KeyboardSpacer />
             </View>
-          </Modal>
+          </GenericModal>
         )
       }
     }
@@ -208,11 +206,6 @@ class OrderView extends React.Component {
               <View style={[styles.buttonContainerLink, styles.buttonContainer, buttonDisabledStyle]}>
                 <Text style={[styles.confirmedText]}>Delivery confirmed by: {`${confirmUser.firstName} ${confirmUser.lastName[0]}.`}</Text>
                 <Text style={[styles.confirmedText]}>{order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('M/D/YY h:mm a') : ''}</Text>
-                { messages.length > 0 ?
-                  <View style={styles.orderMessage}>
-                    {messageUtils.formatMessage(messages[(messages.length-1)])}
-                  </View>
-                : <View /> }
               </View>
             }
             {modal}
@@ -225,7 +218,7 @@ class OrderView extends React.Component {
               {productsList}
             </ScrollView>
           </View>
-        : <Text>Loading...</Text> }
+        : <Text style={[styles.text, styles.textCentered, {padding: 25}]}>Loading, please wait.</Text> }
       </View>
     )
   }
@@ -260,7 +253,7 @@ const styles = StyleSheet.create({
   confirmedText: {
     alignSelf: 'center',
     fontSize: 14,
-    color: '#333',
+    color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
   },
   orderMessage: {
@@ -271,58 +264,42 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 0,
-    borderBottomColor: '#bbb',
+    borderBottomColor: Colors.separatorColor,
     borderBottomWidth: 1,
-  },
-  verticalSeparator: {
-    width: 1,
-    backgroundColor: '#bbb',
   },
   scrollView: {
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
     paddingTop: 5,
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
-  },
-  modalInnerContainer: {
-    borderRadius: Sizes.modalInnerBorderRadius,
-    backgroundColor: '#fff',
-    padding: 20,
-  },
-  modalButtonText: {
-    textAlign: 'center',
-    color: Colors.lightBlue,
-    paddingTop: 15,
-  },
-  messageHeading: {
-    fontWeight: 'bold',
-    fontSize: 18,
-    fontFamily: 'OpenSans',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
   inputContainer: {
     flex: 1,
     padding: 10,
-    backgroundColor: '#f3f3f3',
     marginBottom: 20,
-    borderRadius: Sizes.inputBorderRadius,
   },
   orderText: {
     fontWeight: 'bold',
-    color: Colors.blue
+    color: Colors.blue,
+  },
+  inputWrapper: {
+    borderBottomColor: Colors.inputUnderline,
+    borderBottomWidth: 1,
   },
   input: {
     flex: 1,
-    height: 36,
-    color: '#777',
-    fontSize: 14,
+    padding: 4,
+    fontSize: Sizes.inputFieldFontSize,
+    color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
+    textAlign: 'center',
+    height: 40,
+  },
+  text: {
+    fontFamily: 'OpenSans',
+    color: Colors.greyText,
+  },
+  textCentered: {
+    textAlign: 'center',
   },
 });
 

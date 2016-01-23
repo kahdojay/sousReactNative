@@ -1,7 +1,8 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import _ from 'lodash';
-import { greyText, taskCompletedBackgroundColor } from '../utilities/colors';
+import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 
 const {
   View,
@@ -20,22 +21,22 @@ class PurveyorIndexRow extends React.Component {
     // const numCompletedProducts = _.filter(purveyorProducts, {completed: true}).length
     // const totalNumProducts = purveyorProducts.length
     // const progress = numCompletedProducts/totalNumProducts
-    const purveyorName = purveyor.name.substr(0,18) + (purveyor.name.length > 18 ? '...' : '')
+    const purveyorName = purveyor.name.substr(0,24) + (purveyor.name.length > 24 ? '...' : '')
 
     return (
       <TouchableOpacity
         onPress={this.props.onPress}
-        style={styles.row}
       >
-        <View style={styles.textProgressArrowContainer}>
+        <View style={styles.row}>
           <View style={styles.textProgressContainer} >
             <View style={styles.purveyorInfo} >
               <Text style={styles.rowText}>{purveyorName}</Text>
             </View>
           </View>
-          <Icon name='material|chevron-right' size={40} color='#aaa' style={styles.iconArrow}/>
+          <View style={styles.iconContainer}>
+            <Icon name='material|chevron-right' size={30} color={Colors.lightBlue} style={styles.iconArrow}/>
+          </View>
         </View>
-        <View style={styles.seperator} />
       </TouchableOpacity>
     );
   }
@@ -44,30 +45,24 @@ class PurveyorIndexRow extends React.Component {
 const styles = StyleSheet.create({
   row: {
     flex: 1,
-    flexDirection: 'column',
-    padding: 10,
-  },
-  progress: {
-    margin: 5,
-    height: 8,
-    borderRadius: 10,
-  },
-  rightArrow: {
-    fontSize: 20,
-    color: '#ccc',
-  },
-  textProgressArrowContainer: {
-    flex: 1,
+    borderRadius: Sizes.rowBorderRadius,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    backgroundColor: 'white',
+    padding: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
     alignItems: 'center',
+    marginTop: 3,
+    marginBottom: 3,
+    marginRight: 5,
+    marginLeft: 5,
   },
   textProgressContainer: {
-    flex: 1,
+    flex: 6,
   },
   seperator: {
     height: 5,
-    borderBottomColor: '#bbb',
+    borderBottomColor: Colors.lightGrey,
     borderBottomWidth: 1,
   },
   purveyorInfo: {
@@ -76,15 +71,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rowText: {
-    fontWeight: 'bold',
     paddingLeft: 5,
     paddingRight: 5,
-    fontSize: 20,
+    fontSize: 18,
     fontFamily: 'OpenSans'
   },
+  iconContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   iconArrow: {
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
   },
 })
 

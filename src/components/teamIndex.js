@@ -1,5 +1,5 @@
-import { Icon } from 'react-native-icons';
 import React from 'react-native';
+import { Icon } from 'react-native-icons';
 import ErrorModal from './errorModal';
 import AddForm from './addForm';
 import Colors from '../utilities/colors';
@@ -18,20 +18,46 @@ const {
 } = React;
 
 class TeamIndex extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      loaded: false,
+    }
+  }
+
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   if(this.props.connected !== nextProps.connected){
+  //     return true;
+  //   }
+  //   if(this.state.loaded !== nextState.loaded){
+  //     return true;
+  //   }
+  //   console.log(this.props.teams.data.length, nextProps.teams.data.length)
+  //   if(this.props.teams.data.length !== nextProps.teams.data.length){
+  //     return true;
+  //   }
+  //   return false;
+  // }
+
+  componentDidMount() {
+    this.setState({
+      loaded: true
+    })
+  }
 
   render() {
     const {teams, messagesByTeams} = this.props
-    // let fetching =  <ActivityIndicatorIOS
-    //                     animating={true}
-    //                     color={'#808080'}
-    //                     size={'small'} />
+    const teamsCount = teams.data.length
+
     return (
       <View style={styles.container}>
         <View style={styles.teamContainer}>
           <AddForm
-            placeholder="Add a Team..."
+            connected={this.props.connected}
+            placeholder="Add a Team"
             onSubmit={this.props.onAddTeam.bind(this)}
           />
+          <View style={styles.separator} />
           <ScrollView
             style={styles.scrollView}
             keyboardShouldPersistTaps={false}
@@ -50,12 +76,17 @@ class TeamIndex extends React.Component {
                 return (
                   <TeamIndexRow
                     key={index}
+                    connected={this.props.connected}
+                    selected={(this.props.currentTeam !== null && this.props.currentTeam.id === team.id)}
                     team={team}
+                    teamsCount={teamsCount}
                     teamsUsers={teams.teamsUsers}
                     messages={teamMessages}
                     onPress={() => {
                       this.props.onUpdateTeam(team.id);
                     }}
+                    onLeaveTeam={this.props.onLeaveTeam}
+                    onShowLeaveError={this.props.onShowLeaveError}
                   />
                 );
               }
@@ -79,7 +110,12 @@ const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: Colors.mainBackgroundColor,
     marginTop: 0,
-    paddingTop: 0
+    paddingTop: 5
+  },
+  separator: {
+    height: 0,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
   },
 });
 

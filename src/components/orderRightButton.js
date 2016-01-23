@@ -1,7 +1,6 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
-import _ from 'lodash';
 
 const {
   View,
@@ -23,6 +22,13 @@ class OrderRightButton extends React.Component {
   render() {
     const { purveyor } = this.props;
 
+    if(purveyor === null){
+      return (
+        <View style={styles.iconContainer}>
+        </View>
+      )
+    }
+
     return (
       <View style={styles.iconContainer}>
         <TouchableHighlight
@@ -32,7 +38,7 @@ class OrderRightButton extends React.Component {
           }}
         >
           <Icon
-            name='fontawesome|envelope'
+            name='material|email'
             size={30}
             color={Colors.lightBlue}
             style={styles.icon}
@@ -45,7 +51,7 @@ class OrderRightButton extends React.Component {
           }}
         >
           <Icon
-            name='fontawesome|phone'
+            name='material|phone'
             size={30}
             color={Colors.lightBlue}
             style={styles.icon}
@@ -59,12 +65,12 @@ class OrderRightButton extends React.Component {
 let styles = StyleSheet.create({
   iconContainer: {
     flexDirection: 'row',
-    marginTop: 11,
+    marginTop: 12,
     marginRight: 3,
   },
   icon: {
-    width: 40,
-    height: 40,
+    width: 50,
+    height: 50,
   },
 })
 

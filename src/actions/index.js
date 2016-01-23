@@ -1,5 +1,5 @@
 import ConnectActions from './connect';
-import UIActions from './ui';
+// import UIActions from './ui';
 import SessionActions from './session';
 import TeamActions from './team';
 import MessageActions from './message';
@@ -8,68 +8,74 @@ import ProductActions from './product';
 import CategoryActions from './category';
 import ErrorActions from './error';
 import OrderActions from './order';
+import CartItemActions from './cartItem';
 import ddpClient from '../utilities/ddpClient';
 
-const errorActions = ErrorActions(ddpClient)
+let allActions = {}
 const connectActions = ConnectActions(ddpClient)
-const uiActions = UIActions(ddpClient)
-const sessionActions = SessionActions(ddpClient, {
-  'connectActions': connectActions
-})
-const messageActions = MessageActions(ddpClient)
-const teamActions = TeamActions(ddpClient, {
-  'sessionActions': sessionActions,
-  'connectActions': connectActions,
-  'messageActions': messageActions
-})
-const categoryActions = CategoryActions(ddpClient)
-const productActions = ProductActions(ddpClient, {
-  'categoryActions': categoryActions
-})
-const purveyorActions = PurveyorActions(ddpClient)
-const orderActions = OrderActions(ddpClient)
+allActions['connectActions'] = connectActions
+
+const errorActions = ErrorActions(allActions)
+allActions['errorActions'] = errorActions
+
+// const uiActions = UIActions(ddpClient)
+const sessionActions = SessionActions(allActions)
+allActions['sessionActions'] = sessionActions
+
+const messageActions = MessageActions(allActions)
+allActions['messageActions'] = messageActions
+
+const categoryActions = CategoryActions(allActions)
+allActions['categoryActions'] = categoryActions
+
+const productActions = ProductActions(allActions)
+allActions['productActions'] = productActions
+
+const purveyorActions = PurveyorActions(allActions)
+allActions['purveyorActions'] = purveyorActions
+
+const orderActions = OrderActions(allActions)
+allActions['orderActions'] = orderActions
+
+const cartItemActions = CartItemActions(allActions)
+allActions['cartItemActions'] = cartItemActions
+
+const teamActions = TeamActions(allActions)
+allActions['teamActions'] = teamActions
 
 function connectApp(){
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const {connect} = getState()
     //--------------------------------------
     // Execute pre-connect actions
     //--------------------------------------
 
-    // dispatch(sessionActions.resetSession());
-    dispatch(sessionActions.resetSessionVersion());
-    dispatch(teamActions.resetTeams());
-    // dispatch(uiActions.resetUI()); //NOTE: why doesnt this work?
-    dispatch(messageActions.resetMessages());
-    // dispatch(purveyorActions.resetPurveyors());
+    if(connect.status === connectActions.CONNECT.CONNECTED){
+      // dispatch(sessionActions.resetSession());
+      dispatch(sessionActions.resetSessionVersion());
+      dispatch(messageActions.resetMessages());
+      // dispatch(cartItemActions.resetCartItems());
+      // dispatch(purveyorActions.resetPurveyors());
+    }
 
     //--------------------------------------
     // Bind app events
     //--------------------------------------
 
-    dispatch(uiActions.bindKeyboard());
+    // dispatch(uiActions.bindKeyboard());
 
     //--------------------------------------
     // Connect DDP
     //--------------------------------------
 
-    dispatch(connectActions.connectDDP({
-      'uiActions': uiActions,
-      'sessionActions': sessionActions,
-      'teamActions': teamActions,
-      'messageActions': messageActions,
-      'purveyorActions': purveyorActions,
-      'categoryActions': categoryActions,
-      'productActions': productActions,
-      'errorActions': errorActions,
-      'orderActions': orderActions
-    }));
+    dispatch(connectActions.connectDDP(allActions));
   }
 }
 
 export default Object.assign(
   {'connectApp': connectApp},
   connectActions,
-  uiActions,
+  // uiActions,
   sessionActions,
   teamActions,
   messageActions,
@@ -78,4 +84,5 @@ export default Object.assign(
   categoryActions,
   errorActions,
   orderActions,
+  cartItemActions,
 )

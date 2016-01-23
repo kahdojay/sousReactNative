@@ -3,18 +3,17 @@ import _ from 'lodash';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
-import KeyboardSpacer from 'react-native-keyboard-spacer';
+import GenericModal from './modal/genericModal';
 import AddressBook from 'react-native-addressbook';
 
 const {
-  Modal,
+  ActivityIndicatorIOS,
   StyleSheet,
   Text,
   TextInput,
   TouchableHighlight,
+  TouchableOpacity,
   View,
-  Dimensions,
-  ScrollView,
 } = React;
 
 class InviteModal extends React.Component {
@@ -25,6 +24,8 @@ class InviteModal extends React.Component {
       modalVisible: false,
       transparent: true,
       text: '',
+      inputError: false,
+      showLoading: false,
     };
   }
 
@@ -40,8 +41,10 @@ class InviteModal extends React.Component {
 
   handleSubmit() {
     if (this.state.text === null || this.state.text === '') {
-      this.setState({text: ''});
-      this.props.hideInviteModal()
+      this.setState({
+        text: '',
+        inputError: true,
+      });
     } else {
       this.props.onSMSInvite([this.state.text]);
       this.setState({text: ''});
@@ -73,115 +76,103 @@ class InviteModal extends React.Component {
 
   render() {
     return (
-      <Modal
-        animated={true}
-        transparent={true}
-        visible={this.state.modalVisible}
+      <GenericModal
+        ref='genericModal'
+        modalVisible={this.state.modalVisible}
+        onHideModal={::this.handleDismiss}
+        modalHeaderText={`Invite to ${this.props.currentTeam ? this.props.currentTeam.name : 'Team'}`}
+        modalSubHeaderText={`Add a friend or co-worker to your team`}
+        leftButton={{
+          text: 'Send SMS',
+          onPress: () => {
+            this.handleSubmit()
+          }
+        }}
+        rightButton={{
+          text: 'Contacts',
+          onPress: () => {
+            this.setState({
+              showLoading: true,
+            }, () => {
+              this.navigateToInviteView()
+            })
+          }
+        }}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalInnerContainer}>
-            <Text style={[styles.header]}>{`Invite to ${this.props.currentTeam ? this.props.currentTeam.name : 'Team'}`}</Text>
-            <Text style={styles.text}>{`Add someone to your team by sending them an SMS:`}</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType='numeric'
-              textAlign='center'
-              onChangeText={(text) => this.setState({text})}
-              value={this.state.text}
+        {this.state.showLoading === true ?
+        (
+          <ActivityIndicatorIOS
+            key={'loading'}
+            animating={true}
+            color={Colors.greyText}
+            style={styles.activity}
+            size={'large'}
+          />
+        )
+        : (
+          <View>
+            <View style={styles.inputWrapper}>
+              <TextInput
+                style={styles.input}
+                keyboardType='numeric'
+                placeholder={'Phone #'}
+                placeholderTextColor={Colors.inputPlaceholderColor}
+                textAlign='center'
+                onChangeText={(text) => {
+                  this.setState({
+                    text: text,
+                    inputError: false,
+                  })
+                }}
+                value={this.state.text}
               />
-            <View style={styles.row}>
-              <TouchableHighlight
-                onPress={() => this.handleDismiss()}
-                style={styles.option}
-                underlayColor='transparent'
-              >
-                <Text style={styles.buttonText}>Dismiss</Text>
-              </TouchableHighlight>
-              <TouchableHighlight
-                onPress={() => this.handleSubmit()}
-                style={styles.option}
-                underlayColor='transparent'
-              >
-                <Text style={styles.buttonText}>Send</Text>
-              </TouchableHighlight>
             </View>
-            <TouchableHighlight
-              onPress={() => this.navigateToInviteView()}
-              style={styles.option}
-              underlayColor='transparent'
-            >
-              <Text style={styles.buttonText}>Search Contacts</Text>
-            </TouchableHighlight>
+            { this.state.inputError === true ?
+              <View style={styles.inputErrorContainer}>
+                <Text style={styles.inputErrorText}>Please enter a valid email address.</Text>
+              </View>
+            : <View style={styles.inputErrorContainer}><Text>{' '}</Text></View> }
           </View>
-          <KeyboardSpacer />
-        </View>
-      </Modal>
+        )
+        }
+      </GenericModal>
     );
   }
 };
 
-var {
-  height: deviceHeight,
-  width: deviceWidth,
-} = Dimensions.get('window');
-
 var styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    alignItems: 'center'
-  },
-  modalInnerContainer: {
-    borderRadius: Sizes.modalInnerBorderRadius,
-    backgroundColor: '#fff',
-    padding: 20,
-    alignItems: 'center'
-  },
-  header: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  modalText: {
+    color: Colors.darkGrey,
     textAlign: 'center',
-    marginTop: 20,
-    paddingBottom: 10,
-    fontFamily: 'OpenSans',
-    color: Colors.blue,
-  },
-  text: {
-    textAlign: 'center',
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'OpenSans',
     marginLeft: 5,
     marginBottom: 10
   },
+  inputWrapper: {
+    borderBottomColor: Colors.inputUnderline,
+    borderBottomWidth: 1,
+    marginBottom: 15,
+  },
   input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginTop: 5,
-    marginBottom: 5,
-  },
-  row: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 10,
-    alignItems: 'center'
+    padding: 4,
+    fontSize: Sizes.inputFieldFontSize,
+    color: Colors.inputTextColor,
+    fontFamily: 'OpenSans',
+    textAlign: 'center',
+    height: Sizes.inputFieldHeight,
   },
-  option: {
-    marginLeft: 5,
-    marginRight: 5,
+  inputErrorContainer: {
     flex: 1,
   },
-  buttonText: {
-    flex: 1,
-    fontWeight: 'bold',
-    paddingLeft: 10,
-    paddingRight: 10,
-    height: 35,
-    justifyContent: 'center',
-    color: Colors.blue,
+  inputErrorText: {
+    color: Colors.red,
+    alignSelf: 'center',
+  },
+  activity: {
+    alignSelf: 'center',
+    margin: 36,
   },
 });
 

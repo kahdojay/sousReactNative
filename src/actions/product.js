@@ -11,14 +11,16 @@ import {
   ORDER_PRODUCT_PRODUCT
 } from './actionTypes'
 
-export default function ProductActions(ddpClient, allActions){
+export default function ProductActions(allActions){
 
   const {
+    connectActions,
     categoryActions,
   } = allActions
 
-  function resetProducts(){
+  function resetProducts(teamId = null){
     return {
+      teamId: teamId,
       type: RESET_PRODUCTS
     }
   }
@@ -39,10 +41,9 @@ export default function ProductActions(ddpClient, allActions){
         unit: productAttributes.unit,
         deleted: false,
       }
+
       const productId = newProductAttributes._id
-      dispatch(() => {
-        ddpClient.call('createProduct', [newProductAttributes]);
-      })
+
       dispatch({
         type: ADD_PRODUCT,
         teamId: currentTeam.id,
@@ -50,7 +51,9 @@ export default function ProductActions(ddpClient, allActions){
         product: newProductAttributes,
       });
 
-      return dispatch(categoryActions.addProductToCategory(productAttributes.categoryId,productId))
+      dispatch(connectActions.ddpCall('createProduct', [newProductAttributes]))
+
+      return dispatch(categoryActions.addProductCategory(productAttributes.categoryId,productId))
     }
   }
 
@@ -58,15 +61,17 @@ export default function ProductActions(ddpClient, allActions){
     return (dispatch, getState) => {
       const {session, teams } = getState();
       const { currentTeam } = teams;
-      dispatch(() => {
-        ddpClient.call('updateProduct', [productId, productAttributes, session.userId]);
-      })
-      return dispatch({
+
+      dispatch(categoryActions.updateProductCategory(productAttributes.previousCategoryId, productAttributes.categoryId,productId))
+
+      dispatch({
         type: UPDATE_PRODUCT,
         teamId: currentTeam.id,
         productId: productId,
         product: productAttributes
       })
+
+      return dispatch(connectActions.ddpCall('updateProduct', [productId, productAttributes, session.userId]))
     }
   }
 
@@ -75,9 +80,7 @@ export default function ProductActions(ddpClient, allActions){
       const {session, teams } = getState();
       const { currentTeam } = teams;
       const productAttributes = {deleted: true};
-      dispatch(() => {
-        ddpClient.call('updateProduct', [productId, productAttributes, session.userId])
-      })
+      dispatch(connectActions.ddpCall('updateProduct', [productId, productAttributes, session.userId]))
       return dispatch({
         type: DELETE_PRODUCT,
         teamId: currentTeam.id,

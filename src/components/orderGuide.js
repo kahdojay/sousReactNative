@@ -2,6 +2,9 @@ import { Icon, } from 'react-native-icons';
 import _ from 'lodash';
 import React from 'react-native';
 import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
+import DataUtils from '../utilities/data';
+import GenericModal from './modal/genericModal';
 
 const {
   Dimensions,
@@ -11,22 +14,23 @@ const {
   Image,
   TextInput,
   TouchableHighlight,
+  TouchableOpacity,
   ScrollView,
   ActivityIndicatorIOS,
 } = React;
 
-const runTimeDimensions = Dimensions.get('window')
-
-class AddOrderGuide extends React.Component {
+class OrderGuide extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       inputError: false,
-      emailAddress: this.props.emailAddress
+      emailAddress: this.props.emailAddress,
+      showAddEmailAddress: false,
     }
   }
 
   render() {
+
     return (
       <ScrollView
         automaticallyAdjustContentInsets={false}
@@ -39,8 +43,8 @@ class AddOrderGuide extends React.Component {
         <View style={styles.orderGuideContainer}>
           <Text style={styles.headerText}>Every Order, One Tap</Text>
           <View style={styles.instructions}>
-            <Text style={styles.centered}>Send orders to your suppliers from Sous</Text>
-            <Text style={styles.centered}>for free.</Text>
+            <Text style={styles.centered}>Send orders to your suppliers</Text>
+            <Text style={styles.centered}>from Sous for free.</Text>
           </View>
           <TouchableHighlight
             underlayColor='transparent'
@@ -51,8 +55,59 @@ class AddOrderGuide extends React.Component {
             <Text style={styles.buttonLink}>Learn More</Text>
           </TouchableHighlight>
 
+          <TouchableHighlight
+            underlayColor='white'
+            onPress={() => {
+              this.props.onNavToOrderGuideUpload()
+            }}
+            style={[styles.buttonActive, {backgroundColor: 'white'}]}
+          >
+            <Text style={[styles.buttonText, {color: Colors.button}]}>Send an Order Guide</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            underlayColor={Colors.darkBlue}
+            onPress={() => {
+              if(this.state.emailAddress !== '' && this.state.emailAddress !== null){
+                this.props.onSendEmail(this.state.emailAddress)
+              } else {
+                this.setState({
+                  showAddEmailAddress: true
+                })
+              }
+            }}
+            style={styles.buttonActive}
+          >
+            <Text style={styles.buttonText}>Contact Sous</Text>
+          </TouchableHighlight>
+        </View>
+        <GenericModal
+          ref='errorModal'
+          modalVisible={this.state.showAddEmailAddress}
+          onHideModal={() => {
+            this.setState({
+              showAddEmailAddress: false,
+            })
+          }}
+          leftButton={{
+            text: 'Send',
+            onPress: () => {
+              const emailValid = DataUtils.validateEmailAddress(this.state.emailAddress)
+              if(this.state.emailAddress && emailValid === true){
+                this.setState({
+                  showAddEmailAddress: false,
+                }, () => {
+                  this.props.onSendEmail(this.state.emailAddress)
+                })
+              } else {
+                this.setState({
+                  inputError: true
+                })
+              }
+            }
+          }}
+        >
           <View style={styles.sendEmail}>
-            <View style={styles.infoField}>
+            <View style={[styles.infoField, {borderBottomColor: (this.state.inputError === true) ? Colors.red : Colors.inputUnderline}]}>
               <TextInput
                 style={styles.input}
                 value={this.state.emailAddress}
@@ -62,32 +117,17 @@ class AddOrderGuide extends React.Component {
                     emailAddress: e.nativeEvent.text
                   })
                 }}
-                placeholder={"Email Address"}/>
+                placeholder={"Your Email Address"}
+                placeholderTextColor={Colors.inputPlaceholderColor}
+              />
             </View>
-            <View style={styles.separator}></View>
             { this.state.inputError === true ?
               <View style={styles.inputErrorContainer}>
                 <Text style={styles.inputErrorText}>Please enter a valid email address.</Text>
               </View>
-            : <View style={styles.inputErrorContainer} /> }
+            : <View style={styles.inputErrorContainer}><Text>{' '}</Text></View> }
           </View>
-
-          <TouchableHighlight
-            underlayColor={Colors.darkBlue}
-            onPress={() => {
-              if(this.state.emailAddress !== ''){
-                this.props.onSendEmail(this.state.emailAddress)
-              } else {
-                this.setState({
-                  inputError: true
-                })
-              }
-            }}
-            style={styles.buttonActive}
-          >
-            <Text style={styles.buttonText}>Contact Sous</Text>
-          </TouchableHighlight>
-        </View>
+        </GenericModal>
       </ScrollView>
     );
   }
@@ -95,10 +135,11 @@ class AddOrderGuide extends React.Component {
 
 let styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: Colors.mainBackgroundColor,
   },
   headerText: {
-    fontSize: 22,
+    fontSize: 18,
     alignSelf: 'center',
     textAlign: 'center',
     paddingLeft: 8,
@@ -117,11 +158,6 @@ let styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 10,
     marginTop: 5,
-  },
-  separator: {
-    height: 1,
-    borderColor: '#eee',
-    borderWidth: 1,
   },
   logoContainer: {
     marginTop: 10,
@@ -143,57 +179,48 @@ let styles = StyleSheet.create({
     flex: 1,
     paddingLeft: 5,
     paddingRight: 5,
+    paddingTop: 10,
     flexDirection: 'column',
     justifyContent: 'center',
   },
   instructions: {
-    marginTop: 10,
-    marginBottom: 5,
+    marginTop: 15,
+    marginBottom: 15,
   },
   sendEmail: {
     flex: 1,
-    backgroundColor: 'white',
-    margin: 10,
+    paddingTop: 10,
   },
   infoField: {
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: '#fff',
-    height: 45,
-    paddingLeft: 5,
-    paddingTop: 15,
-    flexDirection: 'row',
+    borderBottomColor: Colors.inputUnderline,
+    borderBottomWidth: 1,
   },
   inputErrorContainer: {
-    height: 10,
+    flex: 1,
   },
   inputErrorText: {
     color: Colors.red,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   input: {
     flex: 1,
     padding: 4,
-    marginRight: 5,
-    marginBottom: 5,
-    fontSize: 14,
-    borderRadius: 8,
-    color: '#333',
-    fontWeight: 'bold',
+    fontSize: Sizes.inputFieldFontSize,
+    color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
     textAlign: 'center',
+    height: Sizes.inputFieldHeight,
   },
   buttonContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   buttonActive: {
     height: 46,
     backgroundColor: Colors.button,
     alignSelf: 'center',
-    width: 250,
-    marginTop: 20,
-    marginBottom: 50,
+    width: 280,
+    marginTop: 10,
     justifyContent: 'center',
     borderRadius: 3,
   },
@@ -205,8 +232,9 @@ let styles = StyleSheet.create({
     borderRadius: 3,
   },
   buttonLinkWrap: {
-    backgroundColor: 'white',
-    width: 120
+    backgroundColor: Colors.mainBackgroundColor,
+    width: 120,
+    marginBottom: 20,
   },
   buttonText: {
     alignSelf: 'center',
@@ -229,18 +257,6 @@ let styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'OpenSans'
   },
-  activity: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center'
-  },
-  activityContainer: {
-    paddingTop: 50,
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
 })
 
-export default AddOrderGuide
+export default OrderGuide

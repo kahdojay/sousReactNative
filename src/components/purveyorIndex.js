@@ -39,26 +39,29 @@ class PurveyorIndex extends React.Component {
 
     return (
       <View style={styles.container}>
+        <View style={styles.segmentedControlContainer}>
+          <SegmentedControlIOS
+            tintColor={Colors.lightBlue}
+            style={styles.segmentedControl}
+            values={this.props.segmentationList}
+            selectedIndex={this.props.selectedSegmentationIndex}
+            onChange={this.props.onSegmentationChange}
+          />
+        </View>
+        <ScrollView
+          automaticallyAdjustContentInsets={false}
+          keyboardShouldPersistTaps={false}
+          style={styles.purveyorsContainer}
+        >
+          {purveyorsList}
+        </ScrollView>
         <TouchableHighlight
-          underlayColor='#eee'
+          underlayColor='white'
           onPress={this.props.onCreateProduct}
           style={styles.createButton}
         >
           <Text style={styles.createButtonText}>Create New Product</Text>
         </TouchableHighlight>
-        <SegmentedControlIOS
-          tintColor={Colors.lightBlue}
-          style={styles.segmentedControl}
-          values={this.props.segmentationList}
-          selectedIndex={this.props.selectedSegmentationIndex}
-          onChange={this.props.onSegmentationChange}
-        />
-        <ScrollView
-          automaticallyAdjustContentInsets={false}
-          keyboardShouldPersistTaps={false}
-        >
-          {purveyorsList}
-        </ScrollView>
       </View>
     );
   }
@@ -67,26 +70,28 @@ class PurveyorIndex extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
-  },
-  separator: {
-    height: 5,
-    borderBottomColor: '#bbb',
-    borderBottomWidth: 1,
-  },
-  scrollView: {
     backgroundColor: Colors.mainBackgroundColor,
-    height: 500,
-    paddingLeft: 20,
-    paddingRight: 0,
-    marginTop: 0,
-    paddingTop: 0
+  },
+  purveyorsContainer: {
+    paddingVertical: 5,
+  },
+  segmentedControlContainer: {
+    paddingTop: 3,
+    paddingBottom: 3,
+    paddingRight: 5,
+    paddingLeft: 5,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
   },
   segmentedControl: {
     fontWeight: 'bold',
-    height: 36
+    height: 36,
+    fontFamily: 'OpenSans',
   },
   createButton: {
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
+    backgroundColor: 'white',
   },
   createButtonText: {
     color: Colors.lightBlue,

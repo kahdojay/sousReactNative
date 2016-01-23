@@ -1,111 +1,93 @@
 import React from 'react-native';
-import Dimensions from 'Dimensions';
-import {Icon}  from 'react-native-icons';
 import Colors from '../utilities/colors';
-import Overlay from 'react-native-overlay';
+import Sizes from '../utilities/sizes';
 import _ from 'lodash';
+import PickerModal from './modal/pickerModal';
 
 const {
+  ScrollView,
   StyleSheet,
-  View,
   Text,
   TextInput,
-  PickerIOS,
   TouchableHighlight,
   TouchableOpacity,
-  ScrollView,
+  View,
 } = React;
+
+class PickerFieldRow extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    let selectFieldText = `Select ${this.props.field}`
+    if(this.props.selectFieldText){
+      selectFieldText = this.props.selectFieldText
+    }
+    if(this.props.selectedValue !== null){
+      selectFieldText = this.props.selectedValue.toString()
+      if(selectFieldText.length > 20){
+        selectFieldText = selectFieldText.substr(0,20) + '...'
+      }
+    }
+    return (
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputTitle}>{this.props.field}</Text>
+        <TouchableHighlight
+          underlayColor='transparent'
+          onPress={() => { this.props.onShowFieldPicker() }}
+          style={styles.inputFieldContainer}
+        >
+          <Text style={styles.inputField}>
+            {selectFieldText}
+          </Text>
+        </TouchableHighlight>
+      </View>
+    )
+  }
+}
 
 class ProductForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: '',
-      purveyorIdList: [null],
-      category: null,
-      amount: null,
-      unit: null,
-      purveyorSelected: false,
-      categorySelected: false,
-      amountSelected: false,
-      unitSelected: false,
-      ready: false,
-      picker: null,
-      // loaded: false,
-      purveyors: null,
-      categories: null,
+      newProduct: {},
+      fieldPicker: null,
+      fieldPickerIdx: null,
+      modalVisible: false,
+      selectedName: this.props.product ? this.props.product.name : '',
+      selectedCategory: this.props.productCategory ? this.props.productCategory.id : null,
+      selectedPurveyor: this.props.product ? this.props.product.purveyors : null,
+      selectedAmount: this.props.product ? this.props.product.amount : null,
+      selectedUnits: this.props.product ? this.props.product.unit : null,
     }
+    this.fields = ['Purveyor','Category','Amount','Units']
   }
 
-  componentWillMount(){
-    let productAttributes = {
-      name: '',
-      purveyorIdList: [null],
-      category: null,
-      amount: null,
-      unit: null,
-      purveyorSelected: false,
-      categorySelected: false,
-      amountSelected: false,
-      unitSelected: false,
-    }
-    const {product} = this.props
-    const sortedPurveyors = _.sortBy(this.props.purveyors, 'name');
-    if(product !== null){
-      productAttributes = product
-      productAttributes.purveyorIdList = _.map(product.purveyors, (purveyorId) => {
-        const purveyor = this.props.purveyors[purveyorId]
-        const purveyorIdx = _.findIndex(sortedPurveyors, {id: purveyor.id})
-        return {idx: purveyorIdx, id: purveyor.id, name: purveyor.name}
-      })
-      const category = _.filter(this.props.categories, (category) => {
-        return category.products.indexOf(product.id) !== -1
-      })
-      productAttributes.category = category[0]
-      productAttributes.purveyorSelected = true
-      productAttributes.categorySelected = true
-      productAttributes.amountSelected = true
-      productAttributes.unitSelected = true
-    }
+  showFieldPicker(field, idx) {
+    this.refs.name.blur()
     this.setState({
-      name: productAttributes.name,
-      purveyorIdList: productAttributes.purveyorIdList,
-      category: productAttributes.category,
-      amount: productAttributes.amount,
-      unit: productAttributes.unit,
-      purveyorSelected: productAttributes.purveyorSelected,
-      categorySelected: productAttributes.categorySelected,
-      amountSelected: productAttributes.amountSelected,
-      unitSelected: productAttributes.unitSelected,
-      purveyors: sortedPurveyors,
-      categories: _.sortBy(this.props.categories, 'name'),
+      modalVisible: true,
+      fieldPicker: field,
+      fieldPickerIdx: idx,
     })
   }
 
-  // componentDidMount(){
-  //   setTimeout(() => {
-  //     this.setState({
-  //       loaded: true
-  //     })
-  //   }, 500);
-  // }
-
-  submitReady(){
+  checkValidForm(){
     if (
-      this.state.purveyorSelected &&
-      this.state.categorySelected &&
-      this.state.amountSelected &&
-      this.state.unitSelected &&
-      this.state.name !== ''
+      this.state.selectedPurveyor !== null &&
+      this.state.selectedPurveyor.length > 0 &&
+      this.state.selectedCategory &&
+      this.state.selectedAmount &&
+      this.state.selectedUnits &&
+      this.state.selectedName !== ''
     ) {
       const productAttributes = {
-        name: this.state.name,
-        purveyors: _.pluck(_.filter(this.state.purveyorIdList, (purveyor) => {
-          return purveyor !== null
-        }), 'id'),
-        amount: this.state.amount,
-        unit: this.state.unit,
-        categoryId: this.state.category.id,
+        name: this.state.selectedName,
+        purveyors: this.state.selectedPurveyor,
+        amount: this.state.selectedAmount,
+        unit: this.state.selectedUnits,
+        categoryId: this.state.selectedCategory,
       }
       this.props.onProcessProduct(productAttributes);
     } else {
@@ -113,370 +95,221 @@ class ProductForm extends React.Component {
     }
   }
 
-  getPicker() {
-    let picker = <View />;
-    let selectedValue = null;
-    const pickerItems = []
-    switch (this.state.picker) {
-      case 'purveyor':
-        const {purveyors, purveyorIdList} = this.state;
-        if (
-          purveyorIdList[this.state.pickerIdx] !== null &&
-          purveyorIdList[this.state.pickerIdx].hasOwnProperty('idx')
-        ) {
-          selectedValue = purveyorIdList[this.state.pickerIdx].idx;
-        }
-        pickerItems.push(
-          <PickerIOS.Item
-            key={null}
-            value={null}
-            label={'Select Purveyor ...'}
-          />
-        )
-        // console.log(purveyors);
-        purveyors.forEach((purveyor, purveyorIdx) => {
-          const selectedIdx = _.findIndex(purveyorIdList, {'id': purveyor.id})
-          if(selectedIdx === -1 || this.state.pickerIdx === selectedIdx){
-            pickerItems.push(
-              <PickerIOS.Item
-                key={purveyorIdx}
-                value={purveyorIdx}
-                label={purveyor.name}
-              />
-            )
-          }
-        })
-        picker = (
-          <PickerIOS
-            selectedValue={selectedValue}
-            onValueChange={(purveyorIdx) => {
-              let purveyorSelected = false
-              let newPurveyorIdList = []
-              newPurveyorIdList = newPurveyorIdList.concat(purveyorIdList)
-              if(purveyorIdx === null){
-                newPurveyorIdList = [
-                  ...newPurveyorIdList.slice(0, this.state.pickerIdx),
-                  ...newPurveyorIdList.slice(this.state.pickerIdx + 1)
-                ]
-                if(newPurveyorIdList.length === 0){
-                  newPurveyorIdList.push(null)
-                }
-              } else {
-                const purveyor = purveyors[purveyorIdx]
-                newPurveyorIdList[this.state.pickerIdx] = {idx: purveyorIdx, id: purveyor.id, name: purveyor.name}
-                purveyorSelected = true
-              }
-              this.setState({
-                purveyorIdList: newPurveyorIdList,
-                purveyorSelected: purveyorSelected,
-                picker: null,
-                pickerIdx: null
-              }, () => {
-                this.submitReady();
-              })
-            }}
-          >
-            {pickerItems}
-          </PickerIOS>
-        );
-        break;
-      case 'category':
-        const {categories} = this.state;
-        if(this.state.category !== null && this.state.category.hasOwnProperty('id')){
-          selectedValue = this.state.category.id;
-        }
-        pickerItems.push(
-          <PickerIOS.Item
-            key={null}
-            value={null}
-            label={'Select Category ...'}
-          />
-        )
-        categories.forEach((category, categoryIdx) => {
-          pickerItems.push(
-            <PickerIOS.Item
-              key={category.id}
-              value={category.id}
-              label={category.name}
-            />
-          )
-        })
-        picker = (
-          <PickerIOS
-            selectedValue={selectedValue}
-            onValueChange={(categoryId) => {
-              let category = null
-              let categorySelected = false
-              if(categoryId !== null){
-                category = this.props.categories[categoryId]
-                categorySelected = true
-              }
-              this.setState({
-                category: category,
-                categorySelected: categorySelected,
-                picker: null,
-                pickerIdx: null
-              }, () => {
-                this.submitReady();
-              })
-            }}
-          >
-            {pickerItems}
-          </PickerIOS>
-        );
-        break;
-      case 'amount':
-        const amounts = _.range(1, 501)
-        picker = (
-          <PickerIOS
-            selectedValue={parseFloat(this.state.amount)}
-            onValueChange={(amount) => {
-              let amountSelected = false
-              if(amount !== null){
-                amountSelected = true
-              }
-              this.setState(
-                {
-                  amount: amount,
-                  amountSelected: amountSelected,
-                },
-                () => { this.submitReady(); }
-              )
-            }}
-          >
-            <PickerIOS.Item key={null} value={null} label={'Select Amount ...'} />
-            <PickerIOS.Item key={'1/8'} value={0.125} label={'1/8'} />
-            <PickerIOS.Item key={'1/4'} value={0.25} label={'1/4'} />
-            <PickerIOS.Item key={'1/2'} value={0.5} label={'1/2'} />
-            {
-              amounts.map((n, idx) => {
-                return <PickerIOS.Item key={idx} value={n} label={n.toString()} />
-              })
-            }
-          </PickerIOS>
-        );
-        break;
-      case 'units':
-        const units = ['bag', 'bunch', 'cs', 'dozen', 'ea', 'g', 'kg', 'lb', 'oz', 'pack', 'tub']
-        picker = (
-          <PickerIOS
-            selectedValue={this.state.unit}
-            onValueChange={(unit) => {
-              let unitSelected = false
-              if(unit !== null){
-                unitSelected = true
-              }
-              this.setState(
-                {
-                  unit: unit,
-                  unitSelected: unitSelected,
-                },
-                () => { this.submitReady(); }
-              )
-            }}
-          >
-            <PickerIOS.Item
-              key={null}
-              value={null}
-              label={'Select Units ...'}
-            />
-            {
-              units.map((unit, idx) => {
-                return <PickerIOS.Item key={idx} value={unit} label={unit} />
-              })
-            }
-          </PickerIOS>
-        );
-        break;
-      case null:
-      default:
-        picker = (
-          <View />
-        );
-        break;
-    }
-    return picker
-  }
-
-  getPurveyorInputs() {
-    const {purveyors} = this.props;
-    let purveyorInputs = [];
-    let purveyorIdList = this.state.purveyorIdList;
-    if(purveyorIdList[(purveyorIdList.length-1)] !== null){
-      purveyorIdList.push(null)
-    }
-    purveyorIdList.forEach((selectedPurveyor, idx) => {
-      purveyorInputs.push((
-        <View key={`purveyor-${idx}`} style={styles.inputContainer}>
-          <Text style={styles.inputTitle}>
-            {idx > 0 ? 'Additional Purveyor' : 'Purveyor'}
-          </Text>
-          <TouchableHighlight
-            underlayColor='transparent'
-            onPress={() => {
-              if(this.refs.name){
-                this.refs.name.blur()
-              }
-              this.setState({
-                picker: 'purveyor',
-                pickerIdx: idx
-              })
-            }}
-            style={styles.inputFieldContainer}
-          >
-            <Text style={styles.inputField}>
-            {
-              selectedPurveyor !== null ?
-                selectedPurveyor.name.substr(0,24) + (selectedPurveyor.name.length > 24 ? '...' : '')
-                : 'Select Purveyor'
-            }
-            </Text>
-          </TouchableHighlight>
-        </View>
-      ))
-    })
-    return purveyorInputs;
-  }
-
   render() {
-    const {purveyors} = this.props;
-    const currentTeamId = this.props.team.id;
-    const picker = this.getPicker()
-    const purveyorInputs = this.getPurveyorInputs()
-    let separator = (
-      <View />
-    )
-    if(this.state.picker !== null){
-      separator = (
-        <View style={styles.separator} />
+    let fields = []
+    let items = []
+    let headerText = `Select ${this.state.fieldPicker}`
+    let leftButtonText = 'Update'
+    let selectedValue = null
+    let pickerType = 'PickerIOS'
+
+    this.fields.forEach((field, idx) => {
+      let selectedValue = null
+      let selectFieldText = `Select ${field}`
+      const selectedValueId = `selected${field}`
+
+      if(field === 'Purveyor'){
+        selectFieldText = `Select ${field}(s)`
+      }
+
+      if(this.state.hasOwnProperty(selectedValueId) === true) {
+        selectedValue = this.state[selectedValueId]
+        if(field === 'Purveyor' && selectedValue !== null){
+          const purveyorIds = this.state[selectedValueId]
+          selectedValue = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Selected`
+          if(purveyorIds.length === 0){
+            selectedValue = null
+          }
+        }
+        if(field === 'Category'){
+          const categoryId = this.state[selectedValueId]
+          selectedValue = categoryId ? this.props.categories[categoryId].name : null
+        }
+      }
+
+      fields.push(
+        <PickerFieldRow
+          key={field}
+          field={field}
+          selectFieldText={selectFieldText}
+          selectedValue={selectedValue}
+          onShowFieldPicker={() => {
+            this.showFieldPicker(field, idx)
+          }}
+        />
       )
+    })
+
+    if(this.state.fieldPicker !== null){
+      items = []
+      // get the items by switching by fieldPicker
+      switch (this.state.fieldPicker) {
+
+        case 'Purveyor':
+          const purveyors = _.sortBy(this.props.purveyors, 'name')
+          items = _.map(purveyors, (purveyor, idx) => {
+            return {
+              key: purveyor.id,
+              value: purveyor.id,
+              label: purveyor.name,
+            }
+          })
+          headerText = `Select ${this.state.fieldPicker}(s)`
+          selectedValue = this.state.selectedPurveyor
+          pickerType = 'ListView'
+          break;
+
+        case 'Category':
+          const categories = _.sortBy(this.props.categories, 'name')
+          items = _.map(categories, (category, idx) => {
+            return {
+              key: category.id,
+              value: category.id,
+              label: category.name,
+            }
+          })
+          selectedValue = this.state.selectedCategory ? this.state.selectedCategory : items[0].value
+          break;
+
+        case 'Amount':
+          items = _.map(['1/8','1/4','1/2'], (frac, idx) => {
+            const dec = frac.split('/')
+            return {
+              key: `d-${idx}`,
+              value: parseFloat(dec[0]/dec[1]),
+              label: frac,
+            }
+          })
+          items = items.concat(_.map(_.range(1, 501), (n, idx) => {
+            return {
+              key: idx,
+              value: n,
+              label: n.toString(),
+            }
+          }))
+          selectedValue = this.state.selectedAmount ? parseFloat(this.state.selectedAmount) : 1
+          break;
+
+        case 'Units':
+          const units = ['bag', 'bunch', 'cs', 'dozen', 'ea', 'g', 'kg', 'lb', 'oz', 'pack', 'tub']
+          items = _.map(units, (unit, idx) => {
+            return {
+              key: idx,
+              value: unit,
+              label: unit,
+            }
+          })
+          selectedValue = this.state.selectedUnits ? this.state.selectedUnits : 'ea'
+          break;
+
+        default:
+          break;
+      }
     }
 
     return (
-      <ScrollView
-        automaticallyAdjustContentInsets={false}
-        style={styles.scrollView}
-      >
-        <View key={'name'} style={styles.inputContainer}>
-          <Text style={styles.inputTitle}>Name</Text>
-          <TextInput
-            ref='name'
-            style={[styles.inputField, {flex: 2}]}
-            value={this.state.name}
-            placeholder='Name'
-            onChange={(e) => {
-              this.setState({name: e.nativeEvent.text}, () => {
-                this.submitReady();
-              });
-            }}
-          />
-        </View>
-        {purveyorInputs}
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputTitle}>Category</Text>
-          <TouchableHighlight
-            underlayColor='transparent'
-            onPress={() => {
-              if(this.refs.name){
-                this.refs.name.blur()
+      <View style={{flex:1}}>
+        <ScrollView
+          automaticallyAdjustContentInsets={false}
+          style={styles.scrollView}
+        >
+          <View key={'name'} style={styles.inputContainer}>
+            <Text style={styles.inputTitle}>Name</Text>
+            <View style={[styles.inputFieldContainer, styles.inputFieldUnderline]}>
+              <TextInput
+                ref='name'
+                style={[styles.inputField,{}]}
+                value={this.state.selectedName}
+                placeholder='Name'
+                onChange={(e) => {
+                  this.setState({
+                    selectedName: e.nativeEvent.text,
+                  }, () => {
+                    this.checkValidForm();
+                  });
+                }}
+              />
+            </View>
+          </View>
+          {fields}
+        </ScrollView>
+        <PickerModal
+          modalVisible={this.state.modalVisible}
+          headerText={headerText}
+          leftButtonText={leftButtonText}
+          items={items}
+          pickerType={pickerType}
+          selectedValue={selectedValue}
+          onHideModal={() => {
+            this.setState({
+              modalVisible: false,
+            })
+          }}
+          onSubmitValue={(value) => {
+            const updateState = {
+              modalVisible: false,
+            }
+            const selectedValueId = `selected${this.state.fieldPicker}`
+            if(this.state.hasOwnProperty(selectedValueId) === true) {
+              let selectedValue = null
+              if(value !== null && value.hasOwnProperty('selectedValue') === true){
+                selectedValue = value.selectedValue
               }
-              this.setState({
-                picker: 'category'
-              })
-            }}
-            style={styles.inputFieldContainer}
-          >
-            <Text style={styles.inputField}>
-              {
-                this.state.category ?
-                  this.state.category.name :
-                  'Select Category'
-              }
-            </Text>
-          </TouchableHighlight>
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputTitle}>Amount</Text>
-          <TouchableHighlight
-            underlayColor='transparent'
-            onPress={() => {
-              if(this.refs.name){
-                this.refs.name.blur()
-              }
-              this.setState({
-                picker: 'amount'
-              })
-            }}
-            style={styles.inputFieldContainer}
-          >
-            <Text style={styles.inputField}>
-              { this.state.amountSelected ? this.state.amount : 'Select Amount' }
-            </Text>
-          </TouchableHighlight>
-        </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputTitle}>Units</Text>
-          <TouchableHighlight
-            underlayColor='transparent'
-            onPress={() => {
-              if(this.refs.name){
-                this.refs.name.blur()
-              }
-              this.setState({
-                picker: 'units'
-              })
-            }}
-            style={styles.inputFieldContainer}
-          >
-            <Text style={styles.inputField}>
-              { this.state.unitSelected ? this.state.unit : 'Select Units' }
-            </Text>
-          </TouchableHighlight>
-        </View>
-        {separator}
-        {picker}
-      </ScrollView>
+              updateState[selectedValueId] = selectedValue
+            }
+
+            this.setState(updateState, () => {
+              this.checkValidForm();
+            })
+          }}
+        />
+      </View>
     );
   }
 };
 
-const window = Dimensions.get('window');
-
 const styles = StyleSheet.create({
   scrollView: {
-    backgroundColor: Colors.mainBackgroundColor,
+    // backgroundColor: 'blue',
+    // backgroundColor: Colors.mainBackgroundColor,
     flex: 1,
   },
   inputContainer: {
     flex: 1,
+    // marginTop: 2,
+    // backgroundColor: 'red',
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
   },
   inputTitle: {
-    // v- this with looks good on iPhone 6 plus and 4s
-    width: window.width * .54,
+    flex: 1,
     fontFamily: 'OpenSans',
     fontWeight: 'bold',
     fontSize: 14,
-    padding: 8,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 8,
     color: Colors.greyText,
   },
   inputFieldContainer: {
-    flex: 1,
+    flex: 3,
+    marginRight: 4,
+  },
+  inputFieldUnderline: {
+    borderBottomColor: Colors.inputUnderline,
+    borderBottomWidth: 1,
   },
   inputField: {
-    padding: 8,
-    margin: 2,
-    fontFamily: 'OpenSans',
+    padding: 4,
+    paddingLeft: 8,
+    paddingRight: 8,
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: Sizes.inputFieldFontSize,
+    color: Colors.inputTextColor,
+    fontFamily: 'OpenSans',
     textAlign: 'right',
-  },
-  separator: {
-    height: 0,
-    borderBottomColor: '#bbb',
-    borderBottomWidth: 1,
+    height: Sizes.inputFieldHeight,
   },
 });
 

@@ -26,12 +26,7 @@ class FeedViewRightButton extends React.Component {
         underlayColor='white'
         onPress={this.handlePress.bind(this)}
       >
-        <Icon
-          name='fontawesome|comment-o'
-          size={30}
-          color={Colors.lightBlue}
-          style={styles.bubble}
-        />
+        <Icon name='material|transform' size={30} color={Colors.lightBlue} style={styles.bubble} />
       </TouchableHighlight>
     );
   }

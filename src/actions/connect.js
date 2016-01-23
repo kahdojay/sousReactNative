@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { DDP } from '../resources/apiConfig';
 import moment from 'moment';
 import {
@@ -9,28 +10,111 @@ import {
   SUBSCRIBE_CHANNEL,
   UNSUBSCRIBE_CHANNEL,
   ERROR_CONNECTION,
-  CONNECT
+  CONNECT,
+  OFFLINE_RESET_QUEUE,
+  OFFLINE_ADD_QUEUE,
+  OFFLINE_REMOVE_QUEUE,
+  OFFLINE_NOOP,
+  OFFLINE_PROCESSING,
+  RECEIVE_SETTINGS_CONFIG,
 } from './actionTypes'
 
 export default function ConnectActions(ddpClient) {
 
-  var connectedChannels = {}
+  const connectedChannels = {}, noop = ()=>{}
+
+  const APPROVED_OFFLINE_METHODS = {
+    'addCartItem': { allow: true },
+    'addProductCategory': { allow: true },
+    'addTeamTask': { allow: true },
+    'createMessage': { allow: true },
+    'createProduct': { allow: true },
+    'createTeam': { allow: true },
+    'deleteCartItem': { allow: true },
+    'streamS3Image': { allow: true },
+    'updateCartItem': { allow: true },
+    'updateOrder': { allow: true },
+    'updateProduct': { allow: true },
+    'updateTeam': { allow: true },
+    'updateTeamTask': { allow: true },
+    'updateUser': { allow: true },
+  }
+
+  function ddpCall(method, args, methodCb = noop, serverCb = noop){
+    return (dispatch, getState) => {
+      const {connect} = getState()
+      if(connect.status === CONNECT.CONNECTED){
+        // console.log(method)
+        dispatch(() => {
+          ddpClient.call(method, args, methodCb, serverCb);
+        })
+      } else {
+        if(APPROVED_OFFLINE_METHODS.hasOwnProperty(method) === true && APPROVED_OFFLINE_METHODS[method].allow === true){
+          dispatch({
+            type: OFFLINE_ADD_QUEUE,
+            item: {
+              method: method,
+              args: args,
+              methodCb: methodCb,
+              serverCb: serverCb,
+              calledAt: (new Date()).toISOString()
+            }
+          })
+        } else {
+          dispatch({
+            type: OFFLINE_NOOP,
+            method: method,
+          })
+        }
+      }
+    }
+  }
+
+  function sendOfflineQueue() {
+    return (dispatch, getState) => {
+      const {offline} = getState()
+      const queueKeys = Object.keys(offline.queue)
+      // console.log(offline.processing)
+      if(queueKeys.length > 0 && offline.processing === false){
+        dispatch({
+          type: OFFLINE_PROCESSING,
+          processing: true,
+        })
+        queueKeys.sort()
+        // console.log(queueKeys)
+        queueKeys.forEach((queueKey) => {
+          const item = offline.queue[queueKey]
+          _.debounce(() => {
+            dispatch(ddpCall(item.method, item.args, item.methodCb, item.serverCb))
+            dispatch({
+              type: OFFLINE_REMOVE_QUEUE,
+              calledAt: queueKey
+            })
+          }, 25)()
+        })
+        dispatch({
+          type: OFFLINE_PROCESSING,
+          processing: false,
+        })
+      }
+    }
+  }
 
   function registerInstallation(deviceAttributes) {
     return (dispatch, getState) => {
       const {session} = getState()
       // TODO: use connect.channels in processSubscription to retrigger registrations on team changes
-      dispatch(() => {
-        ddpClient.call('registerInstallation', [session.userId, {
-          token: deviceAttributes.token,
-          uuid: deviceAttributes.uuid,
-        }])
-      })
+      // const installationAttributes = {
+      //   token: deviceAttributes.token,
+      //   uuid: deviceAttributes.uuid,
+      // }
+      dispatch(ddpCall('registerInstallation', [session.userId, deviceAttributes]))
       return dispatch({
         type: REGISTER_INSTALLATION,
         installationRegistered: true,
-        token: deviceAttributes.token,
-        uuid: deviceAttributes.uuid,
+        deviceAttributes: deviceAttributes,
+        // token: deviceAttributes.token,
+        // uuid: deviceAttributes.uuid,
       })
     }
   }
@@ -38,9 +122,7 @@ export default function ConnectActions(ddpClient) {
   function updateInstallation(dataAttributes) {
     return (dispatch, getState) => {
       const {session} = getState()
-      dispatch(() => {
-        ddpClient.call('updateInstallation', [session.userId, dataAttributes])
-      })
+      dispatch(ddpCall('updateInstallation', [session.userId, dataAttributes]))
       return dispatch({
         type: UPDATE_INSTALLATION,
       })
@@ -106,6 +188,21 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
+  function processUnsubscribe() {
+    return (dispatch, getState) => {
+      const {connect} = getState()
+      // dispatch({
+      //   type: UNSUBSCRIBE_CHANNEL,
+      //   channel: '*',
+      // })
+      // console.log(connect.channels)
+      Object.keys(connect.channels).forEach((channel) => {
+        // console.log('channel unsubscribed: ', channel)
+        ddpClient.unsubscribe(channel)
+      })
+    }
+  }
+
   function subscribeDDP(session, teamIds){
     // console.log('subscribeDDP called for session: ', session)
     return (dispatch, getState) => {
@@ -137,6 +234,7 @@ export default function ConnectActions(ddpClient) {
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CATEGORIES.channel, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PRODUCTS.channel, [session.userId, teamIds]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CART_ITEMS.channel, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ORDERS.channel, [session.userId, teamIds]))
         }
         if(session.userId !== null){
@@ -146,13 +244,62 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
+  function resetAppState(allActions) {
+    return (dispatch, getState) => {
+      const {session} = getState()
+      const {phoneNumber, smsToken} = session
+
+
+      const newSession = {
+        phoneNumber: phoneNumber,
+        smsToken: smsToken,
+      }
+
+      const {
+        sessionActions,
+        teamActions,
+        messageActions,
+        purveyorActions,
+        productActions,
+        categoryActions,
+        errorActions,
+        orderActions,
+        cartItemActions,
+      } = allActions
+
+      dispatch(sessionActions.updateSession({ resetAppState: false, isAuthenticated: false }))
+
+      // dispatch(processUnsubscribe())
+      dispatch(cartItemActions.resetCartItems())
+      dispatch(orderActions.resetOrders())
+      dispatch(productActions.resetProducts())
+      dispatch(categoryActions.resetCategories())
+      dispatch(purveyorActions.resetPurveyors())
+      dispatch(messageActions.resetMessages())
+      dispatch(teamActions.resetTeams())
+      dispatch(sessionActions.resetSession())
+      dispatch(errorActions.resetErrors())
+      dispatch(() => {
+        ddpClient.close()
+        dispatch(connectDDP(allActions));
+        // setTimeout(() => {
+        // //   setTimeout(() => {
+        // //     // const {connect} = getState()
+        // //     dispatch(sessionActions.registerSession(newSession))
+        // //     // dispatch(subscribeDDP(newSession, undefined))
+        // //   }, 2000)
+        // }, 1000)
+      })
+    }
+  }
+
   /*
   * subscribes client to all backend messages,
   * introspects on messages and routes them to the appropriate reducer
   */
   function subscribeDDPMessage(allActions){
     const {
-      uiActions,
+      // uiActions,
       sessionActions,
       teamActions,
       messageActions,
@@ -161,32 +308,29 @@ export default function ConnectActions(ddpClient) {
       categoryActions,
       errorActions,
       orderActions,
+      cartItemActions,
     } = allActions
 
     return (dispatch, getState) => {
-      const {connect, session} = getState()
+      const {session} = getState()
       //--------------------------------------
       // Bind DDP client events
       //--------------------------------------
       ddpClient.on('message', (msg) => {
-        const {connect} = getState()
         var log = JSON.parse(msg);
         // console.log(`[${new Date()}] MAIN DDP MSG`, log);
-
+        const {connect, session} = getState()
+        console.log()
         if(connect.status !== CONNECT.CONNECTED){
           // Treat an message as a "ping"
           clearTimeout(connect.timeoutId)
-          dispatch({
-            type: CONNECTION_STATUS,
-            timeoutId: null,
-            status: CONNECT.CONNECTED,
-            error: null
-          })
+          dispatch(connectionStatusConnected(connect.attempt))
         }
 
         // process the subscribe events to collections and their fields
         if (log.hasOwnProperty('fields')){
           // console.log("MAIN DDP WITH FIELDS MSG", log);
+          // console.log("COLLECTION: ", log.collection);
           var data = log.fields;
           data.id = log.id;
           switch(log.collection){
@@ -209,6 +353,11 @@ export default function ConnectActions(ddpClient) {
             case 'users':
               // console.log("MAIN DDP WITH FIELDS MSG: ", log);
               // console.log("SESSION USERID: ", session.userId)
+
+              if(session.isAuthenticated === true && data.hasOwnProperty('resetAppState') === true && data.resetAppState === true){
+                dispatch(resetAppState(allActions))
+                return;
+              }
 
               let profileData = false
               if(data.hasOwnProperty('authToken') === true){
@@ -234,8 +383,10 @@ export default function ConnectActions(ddpClient) {
                   'firstName': data.firstName,
                   'lastName': data.lastName,
                   'username': data.username,
+                  'email': data.email,
                   'superUser': data.superUser,
                   'imageUrl': data.imageUrl,
+                  'updatedAt': data.updatedAt,
                 }
                 dispatch(teamActions.receiveTeamsUsers(teamUserData))
               }
@@ -245,6 +396,9 @@ export default function ConnectActions(ddpClient) {
               break;
             case 'orders':
               dispatch(orderActions.receiveOrders(data))
+              break;
+            case 'cart_items':
+              dispatch(cartItemActions.receiveCartItems(data))
               break;
             default:
               // console.log("TODO: wire up collection: ", log.collection);
@@ -262,13 +416,10 @@ export default function ConnectActions(ddpClient) {
       ddpClient.on('connected', () => {
         const {connect, session, teams} = getState()
         clearTimeout(connect.timeoutId)
-        dispatch({
-          type: CONNECTION_STATUS,
-          timeoutId: null,
-          status: CONNECT.CONNECTED,
-          error: null
-        })
+        dispatch(connectionStatusConnected(0))
+        dispatch(getSettingsConfig())
         // console.log('TEAMS', teams);
+        // console.log('SESSION: ', session);
         // console.log('TEAM IDS', teamIds);
         const teamIds = _.pluck(teams.data, 'id')
         dispatch(subscribeDDP(session, teamIds))
@@ -278,15 +429,16 @@ export default function ConnectActions(ddpClient) {
 
   function subscribeDDPSocketClose() {
     return (dispatch, getState) => {
-      const {connect} = getState()
       ddpClient.on('socket-close', (code, message) => {
+        const {connect} = getState()
         // console.log("Close: %s %s", code, message);
         clearTimeout(connect.timeoutId)
         dispatch({
           type: CONNECTION_STATUS,
           timeoutId: null,
           status: CONNECT.OFFLINE,
-          error: 'Socket connection was closed, attempting to reconnect.'
+          error: 'Socket connection was closed, attempting to reconnect.',
+          attempt: connect.attempt,
         })
         // autoReconnect();
       })
@@ -294,14 +446,15 @@ export default function ConnectActions(ddpClient) {
   }
   function subscribeDDPSocketError() {
     return (dispatch, getState) => {
-      const {connect} = getState()
       ddpClient.on('socket-error', (code, message) => {
+        const {connect} = getState()
         clearTimeout(connect.timeoutId)
         dispatch({
           type: CONNECTION_STATUS,
           timeoutId: null,
           status: CONNECT.OFFLINE,
           error: 'Socket connnection errored out, attempting to reconnect.',
+          attempt: connect.attempt,
         })
       })
     }
@@ -314,22 +467,27 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
-  function connectDDPTimeoutId(timeoutId){
+  function connectDDPTimeoutId(timeoutId, timeoutMilliseconds){
     return (dispatch, getState) => {
       const {connect} = getState()
       clearTimeout(connect.timeoutId)
+      let attempt = connect.attempt
+      if(isNaN(attempt) === true){
+        attempt = 0
+      }
       dispatch({
         type: CONNECTION_STATUS,
         timeoutId: timeoutId,
         status: CONNECT.OFFLINE,
-        error: null
+        error: null,
+        attempt: (attempt + 1),
+        timeoutMilliseconds: timeoutMilliseconds,
       })
     }
   }
 
   function connectDDP(allActions){
     return (dispatch, getState) => {
-      const {connect} = getState()
       dispatch({
         type: RESET_CHANNELS,
       })
@@ -344,31 +502,56 @@ export default function ConnectActions(ddpClient) {
       //--------------------------------------
       ddpClient.connect((error, reconnectAttempt) => {
         if (error) {
+          const {connect} = getState()
           clearTimeout(connect.timeoutId)
           dispatch({
             type: CONNECTION_STATUS,
             status: CONNECT.OFFLINE,
             timeoutId: null,
-            error: error
+            error: error,
+            attempt: connect.attempt,
           })
         }
       });
     }
   }
 
-  function sendEmail(requestAttributes){
-    return (dispatch) => {
-      dispatch(() => {
-        // console.log('Sending email: ', requestAttributes);
-        ddpClient.call('sendEmail', [requestAttributes])
+  function connectionStatusConnected(attempt) {
+    return (dispatch, getState) => {
+
+      dispatch(sendOfflineQueue())
+
+      return dispatch({
+        type: CONNECTION_STATUS,
+        timeoutId: null,
+        status: CONNECT.CONNECTED,
+        error: null,
+        attempt: attempt,
       })
-      return {
-        type: SEND_EMAIL
-      }
     }
   }
 
-  // TODO: how to handle disconnect?
+  function sendEmail(requestAttributes){
+    return (dispatch) => {
+      // console.log('Sending email: ', requestAttributes);
+      dispatch(ddpCall('sendEmail', [requestAttributes]))
+      return dispatch({
+        type: SEND_EMAIL
+      })
+    }
+  }
+
+  function getSettingsConfig() {
+    return (dispatch) => {
+      const settingsConfigCb = (err, settingsConfig) => {
+        dispatch({
+          type: RECEIVE_SETTINGS_CONFIG,
+          settingsConfig: settingsConfig,
+        })
+      }
+      dispatch(ddpCall('getSettingsConfig', [], settingsConfigCb))
+    }
+  }
 
   return {
     SEND_EMAIL,
@@ -380,8 +563,15 @@ export default function ConnectActions(ddpClient) {
     UNSUBSCRIBE_CHANNEL,
     ERROR_CONNECTION,
     CONNECT,
+    OFFLINE_RESET_QUEUE,
+    OFFLINE_ADD_QUEUE,
+    OFFLINE_REMOVE_QUEUE,
+    OFFLINE_NOOP,
+    OFFLINE_PROCESSING,
+    RECEIVE_SETTINGS_CONFIG,
     // 'connectSingleChannel': connectSingleChannel,
     // 'connectChannels': connectChannels,
+    'ddpCall': ddpCall,
     'registerInstallation': registerInstallation,
     'updateInstallation': updateInstallation,
     'registerInstallationDeclined': registerInstallationDeclined,
@@ -391,5 +581,6 @@ export default function ConnectActions(ddpClient) {
     'connectDDPTimeoutId': connectDDPTimeoutId,
     'subscribeDDP': subscribeDDP,
     'sendEmail': sendEmail,
+    'getSettingsConfig': getSettingsConfig,
   }
 }

@@ -1,14 +1,11 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
-import {
-  CART
-} from '../actions/actionTypes';
+import { CART } from '../actions/actionTypes';
 import Swipeout from 'react-native-swipeout';
+import PickerModal from './modal/pickerModal';
 
 const {
-  Modal,
-  PickerIOS,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -19,21 +16,21 @@ class CartViewListItem extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      quantity: this.props.cartProduct.quantity,
+      quantity: this.props.cartItem.quantity,
       editQuantity: false,
     }
   }
 
   render() {
-    const {purveyorId, product, cartProduct} = this.props;
+    const {purveyorId, product, cartItem} = this.props;
     let quantity = this.state.quantity * product.amount;
     if(quantity.toString().indexOf('.') !== -1){
       quantity = parseFloat(Math.floor(quantity * 1000)/1000)
     }
     const productName = product.name || '';
     let productUnit = product.unit;
-    if(cartProduct.quantity > 1){
-      if(product.unit == 'bunch'){
+    if(cartItem.quantity > 1){
+      if(product.unit === 'bunch'){
         productUnit += 'es';
       } else if(product.unit !== 'ea' && product.unit !== 'dozen' && product.unit !== 'cs'){
         productUnit += 's';
@@ -43,69 +40,26 @@ class CartViewListItem extends React.Component {
     const buttons = [{
       backgroundColor: 'transparent',
       component: (
-        <Icon name='material|delete' size={30} color={Colors.lightBlue} style={styles.iconRemove}/>
+        <Icon name='material|close' size={30} color={Colors.lightBlue} style={styles.iconRemove}/>
       ),
       onPress: () => {
-        this.props.onDeleteProduct(purveyorId, product.id)
+        this.props.onUpdateProductInCart(CART.DELETE, cartItem)
       }
     }]
 
-    const quantities = _.range(1, 501)
-    const modal = (
-      <Modal
-        animated={true}
-        transparent={true}
-        visible={this.state.editQuantity}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalInnerContainer}>
-            <PickerIOS
-              selectedValue={this.state.quantity}
-              onValueChange={(quantity) => {
-                this.setState({
-                  quantity: quantity,
-                })
-              }}
-              style={{width: 260, alignSelf: 'center'}}
-            >
-              {
-                quantities.map((n, idx) => {
-                  return <PickerIOS.Item key={idx} value={n} label={n.toString()} />
-                })
-              }
-            </PickerIOS>
-            <View style={styles.separator} />
-            <TouchableHighlight
-              onPress={() => {
-                this.setState({
-                  editQuantity: false,
-                }, () => {
-                  if (this.state.quantity > .1) {
-                    const cartAttributes = {
-                      purveyorId: purveyorId,
-                      productId: product.id,
-                      quantity: this.state.quantity,
-                    };
-                    this.props.onUpdateProductInCart(CART.ADD, cartAttributes)
-                  }
-                })
-              }}
-              underlayColor='transparent'
-            >
-              <Text style={styles.modalButtonText}>
-                {`Update to ${quantity} ${productUnit}`}
-              </Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      </Modal>
-    )
+    let quantityItems = []
+    quantityItems = quantityItems.concat(_.map(_.range(1, 501), (n, idx) => {
+      return {
+        key: idx,
+        value: n,
+        label: n.toString(),
+      }
+    }))
 
     return (
       <View>
         <Swipeout
           right={buttons}
-          close={true}
           backgroundColor={Colors.mainBackgroundColor}
         >
           <View key={product.id} style={styles.productContainer}>
@@ -117,12 +71,41 @@ class CartViewListItem extends React.Component {
                 })
               }}
               underlayColor='transparent'
+              style={styles.productQuantityContainer}
             >
               <Text style={styles.productQuantity}>{quantity} {productUnit}</Text>
             </TouchableHighlight>
           </View>
         </Swipeout>
-        {modal}
+        <PickerModal
+          modalVisible={this.state.editQuantity}
+          headerText='Select Amount'
+          leftButtonText='Update'
+          items={quantityItems}
+          pickerType='PickerIOS'
+          selectedValue={this.state.quantity}
+          onHideModal={() => {
+            this.setState({
+              editQuantity: false,
+            })
+          }}
+          onSubmitValue={(value) => {
+            if(value !== null && value.hasOwnProperty('selectedValue') === true){
+              const selectedValue = value.selectedValue
+              this.setState({
+                quantity: selectedValue,
+                editQuantity: false,
+              }, () => {
+                if (this.state.quantity > .1) {
+                  const cartAttributes = Object.assign({}, cartItem, {
+                    quantity: this.state.quantity,
+                  });
+                  this.props.onUpdateProductInCart(CART.UPDATE, cartAttributes)
+                }
+              })
+            }
+          }}
+        />
       </View>
     )
   }
@@ -136,7 +119,10 @@ const styles = StyleSheet.create({
     marginTop: 1,
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingLeft: 5,
     paddingRight: 5,
+    paddingTop: 5,
+    paddingBottom: 5,
   },
   icon: {
     width: 30,
@@ -146,44 +132,33 @@ const styles = StyleSheet.create({
     flex: 1,
     alignSelf: 'center',
     width: 54,
-    height: 30,
+    height: 40,
     marginLeft: 2,
     marginTop: 7,
     marginBottom: 7,
   },
+  picker: {
+    width: 260,
+    alignSelf: 'center',
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
+  },
   productTitle: {
-    flex: 1,
+    flex: 2,
     paddingTop: 10,
     paddingLeft: 5,
     paddingBottom: 10,
     fontFamily: 'OpenSans',
     fontSize: 14,
   },
-  productQuantity: {
-    width: 50,
-    margin: 5,
-    textAlign: 'right',
-  },
-  modalContainer: {
+  productQuantityContainer: {
     flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
   },
-  modalInnerContainer: {
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    padding: 20,
-  },
-  modalButtonText: {
-    textAlign: 'center',
-    color: Colors.lightBlue,
-    paddingTop: 15,
-  },
-  separator: {
-    height: 0,
-    borderBottomColor: '#bbb',
-    borderBottomWidth: 1,
+  productQuantity: {
+    padding: 5,
+    textAlign: 'right',
   },
 })
 

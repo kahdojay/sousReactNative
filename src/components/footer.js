@@ -31,9 +31,9 @@ class Footer extends React.Component {
       applyHighlight = 'Order'
     }
 
-    let prepFooterHighlight = (applyHighlight == 'Prep' ? styles.footerActiveHighlight : {});
-    let feedFooterHighlight = (applyHighlight == 'Feed' ? styles.footerActiveHighlight : {});
-    let orderFooterHighlight = (applyHighlight == 'Order' ? styles.footerActiveHighlight : {});
+    let prepFooterHighlight = (applyHighlight === 'Prep' ? styles.footerActiveHighlight : {});
+    let feedFooterHighlight = (applyHighlight === 'Feed' ? styles.footerActiveHighlight : {});
+    let orderFooterHighlight = (applyHighlight === 'Order' ? styles.footerActiveHighlight : {});
 
     return (
       <View style={footerContainerStyle}>

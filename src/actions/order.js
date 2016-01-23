@@ -5,20 +5,23 @@ import {
   UPDATE_ORDER,
 } from './actionTypes'
 
-export default function OrderActions(ddpClient) {
+export default function OrderActions(allActions){
 
-  function resetOrders(){
+  const {
+    connectActions,
+  } = allActions
+
+  function resetOrders(teamId = null){
     return {
-      type: RESET_ORDERS
+      teamId: teamId,
+      type: RESET_ORDERS,
     }
   }
 
   function updateOrder(orderId, orderAttributes) {
     return (dispatch, getState) => {
       const {session} = getState()
-      dispatch(() => {
-        ddpClient.call('updateOrder', [session.userId, orderId, orderAttributes])
-      })
+      dispatch(connectActions.ddpCall('updateOrder', [session.userId, orderId, orderAttributes]))
       return dispatch({
         type: UPDATE_ORDER,
         teamId: session.teamId,
@@ -29,9 +32,11 @@ export default function OrderActions(ddpClient) {
   }
 
   function receiveOrders(order) {
-    return {
-      type: RECEIVE_ORDERS,
-      order: order
+    return (dispatch) => {
+      return dispatch({
+        type: RECEIVE_ORDERS,
+        order: order
+      })
     }
   }
 

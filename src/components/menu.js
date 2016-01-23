@@ -1,8 +1,10 @@
-import _ from 'lodash'
-import { Icon } from 'react-native-icons';
 import React from 'react-native';
+import { Icon } from 'react-native-icons';
+import _ from 'lodash'
 import Dimensions from 'Dimensions';
 import pkgInfo from '../../package.json';
+import Colors from '../utilities/colors';
+import AvatarUtils from '../utilities/avatar';
 
 const {
   StyleSheet,
@@ -28,11 +30,9 @@ module.exports = class Menu extends React.Component {
       return <View />;
     }
 
-    let avatar = <Icon name='fontawesome|user' size={40} color='white' style={styles.avatar} />
-    if (session.imageUrl) {
-      avatar = (
-        <Image style={styles.avatar} source={{ uri: session.imageUrl }} />
-      );
+    let avatar = AvatarUtils.getAvatar(session, 50)
+    if (avatar === null) {
+      avatar = <Icon name='material|account-circle' size={60} color={Colors.lightGrey} style={styles.avatar} />
     }
     const totalTasks = _.filter(team.tasks, { deleted: false } ).length
     const completeTasksCount = _.filter(team.tasks, { deleted: false, completed: true }).length
@@ -47,11 +47,13 @@ module.exports = class Menu extends React.Component {
       <View style={styles.menu}>
         <View style={styles.avatarContainer}>
           <TouchableHighlight
-            underlayColor={'#5f697a'}
+            underlayColor='transparent'
             onPress={this.props.onNavToProfile}
           >
             <View style={{alignItems: 'center'}}>
-              {avatar}
+              <View style={[styles.avatar, {width: 54, height: 54, borderRadius: 27, padding: 1}]}>
+                {avatar}
+              </View>
               <Text style={styles.name}>{session.firstName} {session.lastName}</Text>
             </View>
           </TouchableHighlight>
@@ -66,12 +68,13 @@ module.exports = class Menu extends React.Component {
             >
               <View>
                 <View style={styles.menuTextContainer}>
-                  <Icon name='fontawesome|table' size={20} color='white' style={styles.menuIcon}/>
+                  <Icon name='material|format-list-numbered' size={20} color='white' style={styles.menuIcon}/>
                   <Text style={styles.menuItemText}>Prep List</Text>
                 </View>
                 <View style={styles.progressContainer}>
                   <View style={styles.progressRow}>
                     <ProgressViewIOS
+                      progressTintColor={Colors.lightBlue}
                       style={styles.progressBar}
                       progress={progress/100}
                       trackTintColor='white'
@@ -90,7 +93,7 @@ module.exports = class Menu extends React.Component {
                   underlayColor='#3e444f'
                 >
                   <View style={styles.menuTextContainer}>
-                    <Icon name='fontawesome|clipboard' size={20} color='white' style={styles.menuIcon}/>
+                    <Icon name='material|assignment' size={20} color='white' style={styles.menuIcon}/>
                     <Text style={styles.menuItemText}>Order Guide</Text>
                   </View>
                 </TouchableHighlight>,
@@ -101,7 +104,7 @@ module.exports = class Menu extends React.Component {
                   underlayColor='#3e444f'
                 >
                   <View style={styles.menuTextContainer}>
-                    <Icon name='fontawesome|list-alt' size={20} color='white' style={styles.menuIcon}/>
+                    <Icon name='material|assignment-check' size={20} color='white' style={styles.menuIcon}/>
                     <Text style={styles.menuItemText}>Receiving Guide</Text>
                   </View>
                 </TouchableHighlight>,
@@ -112,7 +115,7 @@ module.exports = class Menu extends React.Component {
                   underlayColor='#3e444f'
                 >
                   <View style={styles.menuTextContainer}>
-                    <Icon name='fontawesome|users' size={20} color='white' style={styles.menuIcon}/>
+                    <Icon name='material|accounts' size={20} color='white' style={styles.menuIcon}/>
                     <Text style={styles.menuItemText}>Team Members</Text>
                   </View>
                 </TouchableHighlight>
@@ -124,7 +127,7 @@ module.exports = class Menu extends React.Component {
               underlayColor='#3e444f'
             >
               <View style={styles.menuTextContainer}>
-                <Icon name='fontawesome|random' size={20} color='white' style={styles.menuIcon}/>
+                <Icon name='material|transform' size={20} color='white' style={styles.menuIcon}/>
                 <Text style={styles.menuItemText}>
                   Switch Teams
                 </Text>
@@ -161,6 +164,8 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
+    borderWidth: 1,
+    borderColor: Colors.lightGrey,
   },
   name: {
     flex: 1,

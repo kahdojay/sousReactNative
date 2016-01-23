@@ -1,13 +1,17 @@
-import React from 'react-native'
-import { Icon } from 'react-native-icons'
-import moment from 'moment'
-import messageUtils from '../utilities/message'
+import React from 'react-native';
+import { Icon } from 'react-native-icons';
+import moment from 'moment';
+import messageUtils from '../utilities/message';
+import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
+import AvatarUtils from '../utilities/avatar';
 
 const {
   Image,
   PropTypes,
-  Text,
   StyleSheet,
+  Text,
+  TouchableHighlight,
   View,
 } = React;
 
@@ -47,11 +51,32 @@ class FeedListItem extends React.Component {
     const msgDate = moment(msg.createdAt)
     let displayDate = `Today, ${msgDate.format("h:mm a")}`;
     if(moment(msg.createdAt).diff(this.props.now) < this.props.aDayAgo){
+      displayDate = msgDate.format("ddd h:mm a")
+    }
+    if(moment(msg.createdAt).diff(this.props.now) < this.props.aWeekAgo){
       displayDate = msgDate.format("ddd, M/D - h:mm a")
     }
-    let icon = <Icon name='fontawesome|user' size={40} color='#aaa' style={styles.avatar}/>
-    if (msg.imageUrl) {
-      icon = <Image source={{uri: msg.imageUrl}} style={styles.avatarImage} />
+
+    let user = null
+    if(msg.userId && this.props.teamsUsers.hasOwnProperty(msg.userId) === true){
+      user = this.props.teamsUsers[msg.userId]
+    } else if(msg.imageUrl) {
+      user = {
+        imageUrl: msg.imageUrl,
+        updatedAt: (new Date()).toISOString(),
+      }
+    }
+
+    if(msg.imageUrl && ['order', 'demo-welcome', 'welcome', 'error'].indexOf(msg.type) !== -1) {
+      user = {
+        imageUrl: msg.imageUrl,
+        updatedAt: (new Date()).toISOString(),
+      }
+    }
+
+    let icon = AvatarUtils.getAvatar(user, 40)
+    if (icon === null) {
+      icon = <Icon name='material|account-circle' size={50} color='#aaa' style={styles.avatar}/>
     }
     let messageString = messageUtils.formatMessage(msg);
     let superUserIndicator = <View/>;
@@ -66,11 +91,21 @@ class FeedListItem extends React.Component {
           <View style={styles.messageContentContainer}>
             <View style={styles.messageTextContainer}>
               <Text style={styles.messageAuthor}>{msg.author}</Text>
-              <Text style={styles.messageTimestamp}>
-                {displayDate}
-              </Text>
+              <Text style={styles.messageTimestamp}>{displayDate}</Text>
             </View>
-            {messageString}
+            { (msg.hasOwnProperty('orderId') === true && msg.orderId) ?
+              <TouchableHighlight
+                underlayColor='transparent'
+                onPress={() => {
+                  this.props.onNavToOrder(msg.orderId)
+                }}
+              >
+              {messageString}
+              </TouchableHighlight>
+              :
+              {messageString}
+            }
+
           </View>
         </View>
         <View style={styles.separator} />
@@ -85,41 +120,43 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   message: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingTop: 10,
   },
   messageContentContainer: {
     flex: 9,
-    marginLeft: 10,
+    paddingLeft: 10,
     paddingRight: 10,
   },
   messageTextContainer: {
     flex: 1,
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    paddingBottom: 5,
+    paddingLeft: 5,
   },
   messageAuthor: {
-    fontSize: 14,
-    margin: 5,
+    fontSize: 16,
+    marginRight: 10,
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
   },
   messageTimestamp: {
     fontSize: 12,
     fontFamily: 'OpenSans',
-    marginTop: 9,
-    marginLeft: 6,
-    fontWeight: 'bold',
-    color: "#ddd"
+    color: Colors.lightGrey,
+    marginBottom: 1,
   },
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    alignSelf: 'center',
-    backgroundColor: '#eee'
+    alignSelf: 'flex-start',
+    backgroundColor: '#eee',
   },
   avatarImage: {
     width: 40,
-    marginTop: 10,
     height: 40,
     borderRadius: 20,
   },

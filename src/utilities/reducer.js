@@ -5,7 +5,7 @@ function getIdx(currentDataState, findId){
   return _.findIndex(currentDataState, (item, idx) => {
     // console.log('getIdx item: ', item)
     if (item !== undefined) {
-      return item.id == findId;
+      return item.id === findId;
     } else {
       return false
     }
@@ -38,6 +38,7 @@ function updateDataState(currentDataState, attributes){
   attributes = cleanupAttributes(attributes)
   if(attributes.hasOwnProperty('id') === true) {
     var idx = getIdx(currentDataState, attributes.id);
+    // console.log(currentDataState, idx, attributes)
     currentDataState = updateByIdx(currentDataState, idx, attributes)
   }
   return currentDataState;

@@ -4,7 +4,6 @@ import CategoryIndexRow from './categoryIndexRow';
 import Colors from '../utilities/colors';
 
 const {
-  ActivityIndicatorIOS,
   Image,
   PropTypes,
   ScrollView,
@@ -41,26 +40,29 @@ class CategoryIndex extends React.Component {
 
     return (
       <View style={styles.container}>
+        <View style={styles.segmentedControlContainer}>
+          <SegmentedControlIOS
+            tintColor={Colors.lightBlue}
+            style={styles.segmentedControl}
+            values={this.props.segmentationList}
+            selectedIndex={this.props.selectedSegmentationIndex}
+            onChange={this.props.onSegmentationChange}
+          />
+        </View>
+        <ScrollView
+          automaticallyAdjustContentInsets={false}
+          keyboardShouldPersistTaps={false}
+          style={styles.categoriesContainer}
+        >
+          {categoriesList}
+        </ScrollView>
         <TouchableHighlight
-          underlayColor='#eee'
+          underlayColor='white'
           onPress={this.props.onCreateProduct}
           style={styles.createButton}
         >
           <Text style={styles.createButtonText}>Create New Product</Text>
         </TouchableHighlight>
-        <SegmentedControlIOS
-          tintColor={Colors.lightBlue}
-          style={styles.segmentedControl}
-          values={this.props.segmentationList}
-          selectedIndex={this.props.selectedSegmentationIndex}
-          onChange={this.props.onSegmentationChange}
-        />
-        <ScrollView
-          automaticallyAdjustContentInsets={false}
-          keyboardShouldPersistTaps={false}
-        >
-          {categoriesList}
-        </ScrollView>
       </View>
     );
   }
@@ -69,23 +71,34 @@ class CategoryIndex extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: Colors.mainBackgroundColor,
   },
-  separator: {
-    height: 0,
-    borderBottomColor: '#bbb',
+  categoriesContainer: {
+    paddingVertical: 5,
+  },
+  segmentedControlContainer: {
+    paddingTop: 3,
+    paddingBottom: 3,
+    paddingRight: 5,
+    paddingLeft: 5,
+    borderBottomColor: Colors.separatorColor,
     borderBottomWidth: 1,
   },
   segmentedControl: {
     fontWeight: 'bold',
-    height: 36
+    height: 36,
+    fontFamily: 'OpenSans',
   },
   createButton: {
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
+    backgroundColor: 'white',
   },
   createButtonText: {
     color: Colors.lightBlue,
     textAlign: 'center',
     padding: 10,
+    paddingBottom: 12,
     fontFamily: 'OpenSans',
     fontSize: 16,
     fontWeight: 'bold',

@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import connect from './connect';
-import ui from './ui';
+// import ui from './ui';
 import team from './team';
 import session from './session';
 import message from './message';
@@ -9,11 +9,12 @@ import product from './product';
 import category from './category';
 import error from './error';
 import order from './order';
+import cartItem from './cartItem';
 
 const reducers = combineReducers(Object.assign(
   {},
   connect,
-  ui,
+  // ui,
   team,
   session,
   message,
@@ -22,6 +23,7 @@ const reducers = combineReducers(Object.assign(
   category,
   error,
   order,
+  cartItem,
 ));
 
 export default reducers;

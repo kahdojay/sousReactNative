@@ -1,9 +1,11 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import _ from 'lodash';
-import { greyText, taskCompletedBackgroundColor } from '../utilities/colors';
+import Sizes from '../utilities/sizes';
+import Colors from '../utilities/colors';
 import messageUtils from '../utilities/message';
 import moment from 'moment';
+import Swipeout from 'react-native-swipeout';
 
 const {
   View,
@@ -15,6 +17,19 @@ const {
 } = React;
 
 class TeamIndexRow extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      enabled: (this.props.connected === true && this.props.selected === false)
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      enabled: (nextProps.connected === true && nextProps.selected === false)
+    })
+  }
+
   render() {
     const { team, messages } = this.props
     const memberCount = _.compact(_.filter(team.users, (userId) => {
@@ -37,36 +52,83 @@ class TeamIndexRow extends React.Component {
     let progressColor = progress < 0.9 ? "#4A90E2" : "#7ED321";
     // let percentage = Math.floor(( numCompletedTasks / totalNumTasks)*100) || 0
 
+    let selectedColor = Colors.green
+    let changeColor = Colors.lightBlue
+    if(this.props.connected === false){
+      selectedColor = Colors.disabled
+      changeColor = Colors.disabled
+    }
+
+    const buttons = [{
+      backgroundColor: 'transparent',
+      component: (
+        <Icon name='material|account' size={30} color={Colors.lightBlue} style={styles.iconRemove}>
+          <Icon name='material|close' size={16} color={Colors.lightBlue} style={{width: 15, height: 15, marginTop: 15, marginLeft: 7,}} />
+        </Icon>
+      ),
+      onPress: () => {
+        if(this.props.teamsCount > 1){
+          this.props.onLeaveTeam(team.id)
+        } else {
+          this.props.onShowLeaveError()
+        }
+        return
+      }
+    }]
+
     return (
-      <TouchableOpacity
-        onPress={this.props.onPress}
-        style={styles.row}>
-        <View style={styles.textProgressArrowContainer}>
-          <View
-            style={styles.textProgressContainer} >
-            <View
-              style={styles.teamInfo} >
-              <View style={styles.teamTextContainer}>
-                <Text style={styles.rowText}>{this.props.team.name}</Text>
-                <Text style={styles.memberCount}>{memberCount} members</Text>
+      <Swipeout
+        right={buttons}
+        close={true}
+        backgroundColor={Colors.mainBackgroundColor}
+      >
+        <TouchableOpacity
+          onPress={() => {
+            if(this.state.enabled){
+              this.props.onPress()
+            }
+          }}
+          style={styles.row}
+          activeOpacity={(this.state.enabled) ? .5 : 1}
+        >
+          <View style={styles.textProgressArrowContainer}>
+            <View style={styles.textProgressContainer}>
+              <View
+                style={styles.teamInfo} >
+                <View style={styles.teamTextContainer}>
+                  <Text style={styles.rowText}>{this.props.team.name}</Text>
+                  <Text style={styles.memberCount}>{memberCount} members</Text>
+                </View>
+                <Text style={styles.messagePreview}>
+                  {mostRecentMessage}
+                </Text>
               </View>
-              <Text style={styles.messagePreview}>
-                {mostRecentMessage}
-              </Text>
+            </View>
+            <View style={styles.iconContainer}>
+              { this.props.selected === false ?
+                <Icon name='material|chevron-right' size={30} color={changeColor} style={styles.iconArrow}/>
+              :
+                <Icon name='material|check' size={30} color={selectedColor} style={styles.iconArrow}/>
+              }
             </View>
           </View>
-          <Icon name='material|chevron-right' size={40} color='#aaa' style={styles.iconArrow}/>
-        </View>
-        <View style={styles.separator} />
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </Swipeout>
     );
   }
 }
 
 const styles = StyleSheet.create({
   row: {
-    flexDirection: 'column',
-    padding: 10
+    marginTop: 2,
+    marginBottom: 2,
+    marginRight: 5,
+    marginLeft: 5,
+    borderRadius: Sizes.rowBorderRadius,
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    alignItems: 'center',
+    padding: 5,
   },
   progress: {
     paddingTop: 5,
@@ -74,28 +136,23 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 10,
   },
-  rightArrow: {
-    fontSize: 20,
-    color: '#ccc',
-  },
   textProgressArrowContainer: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
   },
   textProgressContainer: {
-    flex: 1,
+    flex: 5,
   },
   teamTextContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
   memberCount: {
     fontFamily: 'OpenSans',
     fontSize: 11,
-    color: '#999',
+    color: Colors.greyText,
     textAlign: 'center',
     fontWeight: 'bold',
   },
@@ -105,14 +162,8 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginLeft: 5,
   },
-  separator: {
-    height: 5,
-    borderBottomColor: '#bbb',
-    borderBottomWidth: 1,
-  },
   teamInfo: {
     flexDirection: 'column',
-    justifyContent: 'space-between',
     alignItems: 'stretch',
   },
   rowText: {
@@ -122,11 +173,22 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'OpenSans'
   },
+  iconContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   iconArrow: {
-    width: 70,
-    height: 70,
-    marginTop: -20,
-    marginRight: -15
+    width: 50,
+    height: 50,
+  },
+  iconRemove: {
+    flex: 1,
+    alignSelf: 'center',
+    width: 54,
+    height: 30,
+    marginLeft: 2,
+    marginTop: 7,
+    marginBottom: 7,
   },
 })
 

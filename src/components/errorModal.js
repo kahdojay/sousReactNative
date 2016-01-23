@@ -1,15 +1,12 @@
 import React from 'react-native';
 import _ from 'lodash';
-import { Icon } from 'react-native-icons';
 import Sizes from '../utilities/sizes';
+import GenericModal from './modal/genericModal';
 
 const {
-  Modal,
   StyleSheet,
   Text,
-  TouchableHighlight,
   View,
-  Dimensions,
   ScrollView,
 } = React;
 
@@ -71,89 +68,31 @@ class ErrorModal extends React.Component {
           )
         })
     }
-    let dismissButton =  (
-      <TouchableHighlight
-        style={styles.button}
-        onPress={::this.handleDismiss}
-        underlayColor='transparent'
-      >
-        <Text style={styles.buttonText}>Dismiss</Text>
-      </TouchableHighlight>
-    )
-
     return (
-      <View>
-        <Modal
-          animated={true}
-          transparent={true}
-          visible={this.state.modalVisible}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalInnerContainer}>
-              <ScrollView style={styles.errorsContainer}>
-                {errorsArray}
-              </ScrollView>
-              {dismissButton}
-            </View>
-          </View>
-        </Modal>
-      </View>
+      <GenericModal
+        ref='errorModal'
+        modalVisible={this.state.modalVisible}
+        onHideModal={::this.handleDismiss}
+        leftButton={{
+          text: 'Dismiss',
+          onPress: this.handleDismiss.bind(this)
+        }}
+      >
+        <ScrollView style={styles.errorsContainer}>
+          {errorsArray}
+        </ScrollView>
+      </GenericModal>
     );
   }
 };
 
 var styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    alignItems: 'center'
-  },
-  modalInnerContainer: {
-    borderRadius: Sizes.modalInnerBorderRadius,
-    backgroundColor: '#fff',
-    padding: 20,
-  },
   errorsContainer: {
     paddingBottom: 40,
-  },
-  modalHeader: {
-    fontWeight: 'bold',
-  },
-  button: {
-    marginTop: 10,
-    paddingTop: 15,
-    paddingBottom: 15,
-    paddingRight: 45,
-    paddingLeft: 45,
-    flex: 1,
-    alignSelf: 'center',
-    // overflow: 'hidden',
-  },
-  buttonText: {
-    // alignSelf: 'center',
-    // alignSelf: 'center',
   },
   errorText: {
     marginTop: 10,
   },
-  icon: {
-    width: 40,
-    height: 40,
-  },
-  offlineHeader: {
-    fontSize: 18,
-    fontWeight: '800',
-    alignSelf: 'center',
-  },
-  offlineText: {
-    fontSize: 14,
-    fontWeight: '500',
-    alignSelf: 'center',
-  }
 });
-
-var { height: deviceHeight } = Dimensions.get('window');
 
 export default ErrorModal

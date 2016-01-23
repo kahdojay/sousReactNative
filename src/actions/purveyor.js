@@ -12,13 +12,17 @@ import {
   ORDER_PURVEYOR_PRODUCT
 } from './actionTypes'
 
-export default function PurveyorActions(ddpClient){
+export default function PurveyorActions(allActions){
 
-  const messageActions = MessageActions(ddpClient)
+  const {
+    connectActions,
+    messageActions,
+  } = allActions
 
-  function resetPurveyors(){
+  function resetPurveyors(teamId = null){
     return {
-      type: RESET_PURVEYORS
+      teamId: teamId,
+      type: RESET_PURVEYORS,
     }
   }
 
@@ -33,7 +37,7 @@ export default function PurveyorActions(ddpClient){
         // products:    [],
         deleted:  false
       }
-      ddpClient.call('createPurveyor', [newPurveyorAttributes]);
+      dispatch(connectActions.ddpCall('createPurveyor', [newPurveyorAttributes]))
       return dispatch({
         type: ADD_PURVEYOR,
         purveyor: newPurveyorAttributes
@@ -51,51 +55,57 @@ export default function PurveyorActions(ddpClient){
   }
 
   function addPurveyorProduct(purveyorId, productAttributes){
-    var newProductAttributes = {
-      productId: generateId(),
-      name: productAttributes.name,
-      description: "",
-      deleted: false,
-      ordered: false,
-      quantity: 1,
-      price: 0.0,
-      unit: productAttributes.unit || '0 oz'
-    }
-    ddpClient.call('addPurveyorProduct', [purveyorId, newProductAttributes]);
-    return {
-      type: UPDATE_PURVEYOR,
-      purveyorId: purveyorId,
-      product: newProductAttributes
+    return (dispatch) => {
+      var newProductAttributes = {
+        productId: generateId(),
+        name: productAttributes.name,
+        description: "",
+        deleted: false,
+        ordered: false,
+        quantity: 1,
+        price: 0.0,
+        unit: productAttributes.unit || '0 oz'
+      }
+      dispatch(connectActions.ddpCall('addPurveyorProduct', [purveyorId, newProductAttributes]))
+      return dispatch({
+        type: UPDATE_PURVEYOR,
+        purveyorId: purveyorId,
+        product: newProductAttributes
+      })
     }
   }
 
   function updatePurveyorProduct(purveyorId, productId, productAttributes){
-    ddpClient.call('updatePurveyorProduct', [purveyorId, productId, productAttributes]);
-    return {
-      type: UPDATE_PURVEYOR,
-      purveyorId: purveyorId,
-      productId: productId,
-      product: productAttributes
+    return (dispatch) => {
+      dispatch(connectActions.ddpCall('updatePurveyorProduct', [purveyorId, productId, productAttributes]))
+      return dispatch({
+        type: UPDATE_PURVEYOR,
+        purveyorId: purveyorId,
+        productId: productId,
+        product: productAttributes
+      })
     }
   }
 
   function updatePurveyor(purveyorId, purveyorAttributes){
-    ddpClient.call('updatePurveyor', [purveyorId, purveyorAttributes]);
-    return {
-      type: UPDATE_PURVEYOR,
-      purveyorId: purveyorId,
-      purveyor: purveyorAttributes
+    return (dispatch) => {
+      dispatch(connectActions.ddpCall('updatePurveyor', [purveyorId, purveyorAttributes]))
+      return dispatch({
+        type: UPDATE_PURVEYOR,
+        purveyorId: purveyorId,
+        purveyor: purveyorAttributes
+      })
     }
   }
 
   function deletePurveyor(purveyorId) {
     return (dispatch, getState) => {
       const {session} = getState()
-      ddpClient.call('deletePurveyor', [purveyorId, session.userId])
-      return {
+      dispatch(connectActions.ddpCall('deletePurveyor', [purveyorId, session.userId]))
+      return dispatch({
         type: DELETE_PURVEYOR,
         purveyorId: purveyorId
-      }
+      })
     }
   }
 

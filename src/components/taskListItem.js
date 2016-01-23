@@ -117,7 +117,7 @@ class TaskListItem extends React.Component {
                 onPress={::this.decrement}
                 style={{flex: 1}}
               >
-                <Icon name='fontawesome|minus-circle' size={30} color='#aaa' style={styles.icon}/>
+                <Icon name='material|minus-circle' size={30} color='#aaa' style={styles.icon}/>
               </TouchableHighlight>,
               <TouchableHighlight
                 key={'increment'}
@@ -125,7 +125,7 @@ class TaskListItem extends React.Component {
                 onPress={::this.increment}
                 style={{flex: 1}}
               >
-                <Icon name='fontawesome|plus-circle' size={30} color='#aaa' style={styles.icon}/>
+                <Icon name='material|plus-circle' size={30} color='#aaa' style={styles.icon}/>
               </TouchableHighlight>
             ] :
             [
@@ -166,7 +166,7 @@ let styles = StyleSheet.create({
     alignItems: 'center',
   },
   rowCompleted: {
-    backgroundColor: Colors.taskCompletedBackgroundColor,
+    backgroundColor: Colors.light,
   },
   checkboxContainer: {
     flex: 1,

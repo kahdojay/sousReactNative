@@ -2,17 +2,19 @@ import { Icon, } from 'react-native-icons';
 import _ from 'lodash';
 import React from 'react-native';
 import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 
 const {
+  ActivityIndicatorIOS,
   Dimensions,
-  StyleSheet,
-  View,
-  Text,
   Image,
+  ScrollView,
+  StyleSheet,
+  Text,
   TextInput,
   TouchableHighlight,
-  ScrollView,
-  ActivityIndicatorIOS,
+  TouchableOpacity,
+  View,
 } = React;
 
 const runTimeDimensions = Dimensions.get('window')
@@ -29,9 +31,21 @@ class Signup extends React.Component {
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if(nextProps.connected !== false){
+      return true;
+    }
+    return false;
+  }
+
   componentWillReceiveProps(nextProps) {
+    let phoneNumber = this.state.phoneNumber
+    if(nextProps.session.phoneNumber){
+      phoneNumber = nextProps.session.phoneNumber
+    }
+
     let newState = {
-      phoneNumber: nextProps.session.phoneNumber,
+      phoneNumber: phoneNumber,
       smsSent: nextProps.session.smsSent,
     }
     if(this.state.submitting !== false){
@@ -88,7 +102,12 @@ class Signup extends React.Component {
 
   formatPhoneNumber(phoneNumber){
     if (phoneNumber) {
-      return phoneNumber.split('').map((num, index) => {
+      let prefix = ''
+      if(phoneNumber.length === 11 && phoneNumber[0] === '1'){
+        phoneNumber = phoneNumber.slice(1)
+        prefix = '1 '
+      }
+      let formattedPhoneNumber = phoneNumber.split('').map((num, index) => {
         switch(index){
           case 0:
             return `(${num}`;
@@ -103,6 +122,7 @@ class Signup extends React.Component {
           return num;
         }
       }).join('');
+      return `${prefix}${formattedPhoneNumber}`
     } else {
       return phoneNumber;
     }
@@ -121,34 +141,50 @@ class Signup extends React.Component {
       </View>
     );
     const errorMessage = <Text style={styles.errorText}>Invalid entry, please try again.</Text>
+
+    let buttonStyle = styles.buttonActive
+    let buttonUnderlayColor = Colors.gold
+
+    if(this.props.connected === false){
+      buttonStyle = [styles.buttonActive, {backgroundColor: Colors.disabled}]
+      buttonUnderlayColor = Colors.disabled
+    }
+
     let signup = (
       <View style={styles.login}>
         <Text style={styles.headerText}>Use your phone number to log in to Sous.</Text>
         <Text style={styles.centered}>First, we will send you a <Text style={styles.boldText}>text message</Text> to verify your account.</Text>
         <View style={styles.inputContainer}>
-          <View style={{borderBottomWidth: 1, borderBottomColor: 'black'}}>
-            <Icon name='material|phone' size={30} color='#aaa' style={styles.iconPhone}/>
+          <View style={styles.inputWrapper}>
+            <Icon name='material|phone' size={30} color={Colors.inputPlaceholderColor} style={styles.iconPhone}/>
             <TextInput
               ref='phone'
               style={styles.input}
               value={this.state.phoneNumber}
               keyboardType='phone-pad'
               onSubmitEditing={() => {this.onSignup()}}
+              onFocus={() => {
+                this.refs.scrollView.scrollTo(140)
+              }}
               onChange={(e) => {
                 this.setState({phoneNumber: e.nativeEvent.text, invalid: false})
               }}
+              placeholder={'Phone Number'}
+              placeholderTextColor={Colors.inputPlaceholderColor}
             />
           </View>
         </View>
         { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
         <TouchableHighlight
-          underlayColor='#C6861D'
+          underlayColor={buttonUnderlayColor}
           onPress={() => {
-            this.setState({ smsSent: false }, () => {
-              this.onSignup()
-            })
+            if(this.props.connected === true){
+              this.setState({ smsSent: false }, () => {
+                this.onSignup()
+              })
+            }
           }}
-          style={styles.buttonActive}>
+          style={buttonStyle}>
           <Text style={styles.buttonText}>Send SMS</Text>
         </TouchableHighlight>
       </View>
@@ -171,25 +207,30 @@ class Signup extends React.Component {
           </TouchableHighlight>
           <Text style={styles.centered}>Enter the verification code below to sign in.</Text>
           <View style={styles.inputContainer}>
-            <View style={{borderBottomWidth: 1, borderBottomColor: 'black'}}>
+            <View style={styles.inputWrapper}>
               <TextInput
                 ref='code'
-                style={styles.input}
+                style={[styles.input, {width: (runTimeDimensions.width * .5)}]}
                 value={this.state.smsToken}
                 keyboardType='phone-pad'
                 textAlign='center'
                 onSubmitEditing={() => {this.onVerify()}}
+                onFocus={() => {
+                  this.refs.scrollView.scrollTo(140)
+                }}
                 onChange={(e) => {
                   this.setState({smsToken: e.nativeEvent.text, invalid: false})
                 }}
+                placeholder={'Code'}
+                placeholderTextColor={Colors.inputPlaceholderColor}
               />
             </View>
           </View>
           { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
           <TouchableHighlight
-            underlayColor='#C6861D'
+            underlayColor={buttonUnderlayColor}
             onPress={() => {this.onVerify()}}
-            style={styles.buttonActive}
+            style={buttonStyle}
           >
             <Text style={styles.buttonText}>Verify</Text>
           </TouchableHighlight>
@@ -197,46 +238,50 @@ class Signup extends React.Component {
       );
     }
 
-    // //TODO refactor entire view to use flexbox so we can depend on
-    // if (this.props.ui.keyboard.visible) {
-    //   // console.log(runTimeDimensions)
-    //   if (runTimeDimensions.height < 500) {
-    //     this.refs.scrollView.scrollTo(200)
-    //   } else if (runTimeDimensions.height < 600) {
-    //     this.refs.scrollView.scrollTo(100)
-    //   }
-    // } else if (this.refs.scrollView){
-    //   this.refs.scrollView.scrollTo(0)
-    // }
     return (
-      <ScrollView
-        automaticallyAdjustContentInsets={false}
-        ref="scrollView"
-        style={[
-          styles.container,
-          this.props.ui.keyboard.visible && {height: this.props.ui.keyboard.screenY}
-        ]}
-      >
+      <View style={{flex: 1}}>
         <View style={styles.navbar}>
           <Text style={styles.signup}>Signup/Login</Text>
         </View>
-        <View style={styles.logoContainer}>
-          <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-        </View>
-        {this.state.submitting !== false ? fetching : signup}
-      </ScrollView>
+        <TouchableOpacity
+          style={{paddingBottom: 20}}
+          activeOpacity={1}
+          onPress={() => {
+            if(this.refs.phone){
+              this.refs.phone.blur()
+            }
+            if(this.refs.code){
+              this.refs.code.blur()
+            }
+            this.refs.scrollView.scrollTo(0)
+          }}
+        >
+          <ScrollView
+            automaticallyAdjustContentInsets={false}
+            ref="scrollView"
+            style={styles.container}
+            onScroll={() => {
+
+            }}
+          >
+            <View style={styles.logoContainer}>
+              <Image source={require('image!Logo')} style={styles.logoImage}></Image>
+            </View>
+            {this.state.submitting !== false ? fetching : signup}
+          </ScrollView>
+        </TouchableOpacity>
+      </View>
     );
   }
 };
 
 let styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   navbar: {
     height: 40,
     backgroundColor: Colors.button,
-    flex: 1,
     justifyContent: 'center',
   },
   signup: {
@@ -294,11 +339,16 @@ let styles = StyleSheet.create({
     justifyContent: 'center',
   },
   inputContainer: {
+    marginTop: 10,
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'transparent',
+  },
+  inputWrapper: {
+    borderBottomColor: Colors.inputUnderline,
+    borderBottomWidth: 1,
   },
   errorPlaceholder: {
     height: 0
@@ -309,9 +359,9 @@ let styles = StyleSheet.create({
   },
   iconPhone: {
     position: 'absolute',
-    top: 10,
-    left: -40,
-    width: 70,
+    top: 0,
+    left: 0,
+    width: 30,
     height: 50,
   },
   iconLock: {
@@ -319,11 +369,10 @@ let styles = StyleSheet.create({
     height: 70,
   },
   input: {
-    height: 60,
-    width: runTimeDimensions.width * .5,
+    height: 50,
+    width: runTimeDimensions.width * .70,
     fontSize: 20,
-    color: '#333',
-    fontWeight: 'bold',
+    color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
     alignItems: 'center',
     alignSelf: 'center',
@@ -338,7 +387,6 @@ let styles = StyleSheet.create({
     backgroundColor: Colors.gold,
     alignSelf: 'center',
     width: 150,
-    marginTop: 20,
     marginBottom: 50,
     justifyContent: 'center',
     borderRadius: 3,
@@ -373,7 +421,7 @@ let styles = StyleSheet.create({
   buttonLink: {
     alignSelf: 'center',
     fontSize: 16,
-    color: Colors.button,
+    color: Colors.lightBlue,
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
   },

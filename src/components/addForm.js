@@ -1,5 +1,5 @@
-import { Icon, } from 'react-native-icons';
 import React from 'react-native';
+import { Icon, } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 
@@ -20,6 +20,17 @@ export default class AddForm extends React.Component {
     }
   }
 
+  handleChangeText(text) {
+    this.setState({text: text})
+  }
+
+  handleSubmit() {
+    if(this.props.connected === true && this.state.text !== '') {
+      this.props.onSubmit(this.state.text);
+      this.setState({text: ''})
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -31,28 +42,17 @@ export default class AddForm extends React.Component {
             onChangeText={this.handleChangeText.bind(this)}
             onSubmitEditing={this.handleSubmit.bind(this)}
           />
+          <TouchableHighlight
+            onPress={this.handleSubmit.bind(this)}
+            underlayColor='transparent'
+            style={styles.button}>
+            <View style={styles.addContainer}>
+              <Icon name='material|plus-circle' size={30} color={this.props.connected === true ? Colors.lightBlue : Colors.disabled} style={styles.addIcon}/>
+            </View>
+          </TouchableHighlight>
         </View>
-        <TouchableHighlight
-          onPress={this.handleSubmit.bind(this)}
-          underlayColor={"#eee"}
-          style={styles.button}>
-          <View style={styles.shareContainer}>
-            <Icon name='fontawesome|plus-circle' size={30} color='#0075FD' style={styles.share}/>
-          </View>
-        </TouchableHighlight>
       </View>
     );
-  }
-
-  handleChangeText(text) {
-    this.setState({text: text})
-  }
-
-  handleSubmit() {
-    if (this.state.text !== '') {
-      this.props.onSubmit(this.state.text);
-      this.setState({text: ''})
-    }
   }
 }
 
@@ -63,13 +63,13 @@ let styles = StyleSheet.create({
     backgroundColor: "#f2f2f2"
   },
   inputContainer: {
-    flex: 10,
-    flexDirection: 'column',
+    flex: 1,
+    flexDirection: 'row',
     backgroundColor: '#f2f2f2',
     padding: 8
   },
   input: {
-    flex: 1,
+    flex: 10,
     backgroundColor: '#d6d6d6',
     paddingLeft: 20,
     color: '#777',
@@ -77,23 +77,16 @@ let styles = StyleSheet.create({
     borderRadius: Sizes.inputBorderRadius,
     fontWeight: 'bold'
   },
-  shareContainer: {
+  addContainer: {
     height: 40,
     backgroundColor: "#f2f2f2"
   },
-  share: {
+  addIcon: {
     height: 50,
     width: 50,
     color: 'black',
-    marginTop: -10,
+    marginTop: -5,
     backgroundColor: 'transparent'
-  },
-  shareText: {
-    marginTop: -10,
-    fontFamily: 'OpenSans',
-    textAlign: 'center',
-    color: '#0075FD',
-    fontWeight: 'bold'
   },
   button: {
     flex: 2,
