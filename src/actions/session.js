@@ -25,6 +25,7 @@ export default function SessionActions(allActions){
     notifications: true,
     teamId: true,
     viewedOnboarding: true,
+    resetAppState: true,
   };
 
   function resetSessionVersion() {
@@ -100,7 +101,8 @@ export default function SessionActions(allActions){
   function requestSession(sessionParams) {
     return {
       type: REQUEST_SESSION,
-      phoneNumber: sessionParams.phoneNumber
+      phoneNumber: sessionParams.phoneNumber,
+      smsToken: sessionParams.smsToken || null,
     };
   }
 
@@ -127,6 +129,7 @@ export default function SessionActions(allActions){
       const newSession = Object.assign({}, session, response, {
         isAuthenticated: isAuthenticated
       })
+      // console.log(newSession)
       // resubscribe based on session data
       dispatch(connectActions.subscribeDDP(newSession, undefined));
       let action = newSession

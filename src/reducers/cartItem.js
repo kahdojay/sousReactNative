@@ -58,6 +58,9 @@ function processCartItem(newCartItemTeamState, cartItem, cartItemIdRef){
 
   if(cartItem.status === 'DELETED'){
     delete newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId]
+    if(Object.keys(newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator]).length === 0){
+      delete newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator]
+    }
   }
 
   return newCartItemTeamState

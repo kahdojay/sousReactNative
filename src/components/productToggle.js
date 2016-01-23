@@ -44,7 +44,6 @@ class ProductToggle extends React.Component {
 
   _handlePurveyorSelect(purveyorId) {
     this._setModalVisible(false)
-    console.log(purveyorId)
     this.props.onToggleCartProduct(purveyorId)
   }
 

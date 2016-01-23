@@ -133,6 +133,15 @@ function connect(state = initialState.connect, action) {
     newConnectState.channels[action.channel] = action.connectionId;
     return newConnectState
 
+  case UNSUBSCRIBE_CHANNEL:
+    const unsubscribeConnectState = Object.assign({}, state);
+    if(action.channel !== '*'){
+      delete unsubscribeConnectState.channels[action.channel]
+    } else {
+      unsubscribeConnectState.channels = {}
+    }
+    return unsubscribeConnectState
+
   default:
     return state;
   }

@@ -22,13 +22,18 @@ class CartRightButton extends React.Component {
 
   render() {
     const { cartItems } = this.props;
-    const badgeValue = (
-      Object.keys(cartItems).length > 0 ?
-        _.sum(cartItems, function (cartPurveyor) {
+    
+    let badgeValue = ''
+    if(Object.keys(cartItems).length > 0){
+      const actualCartPurveyors = _.filter(cartItems, function (cartPurveyor) {
+        return Object.keys(cartPurveyor).length > 0
+      })
+      if(actualCartPurveyors.length > 0){
+        badgeValue = _.sum(actualCartPurveyors, function (cartPurveyor) {
           return Object.keys(cartPurveyor).length
         })
-      : ''
-    )
+      }
+    }
     // ...
 
     return (

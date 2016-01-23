@@ -18,15 +18,9 @@ const {
 class CartView extends React.Component {
   constructor(props) {
     super(props)
-    const numberOfOrders = Object.keys(this.props.cartItems).length
-    const numberOfProducts = _.reduce(_.map(numberOfOrders, (orderId) => {
-      return Object.keys(this.props.cartItems[orderId]).length
-    }), (total, n) => {
-      return total + n
-    })
     this.state = {
-      numberOfProducts: numberOfProducts,
-      numberOfOrders: numberOfOrders,
+      numberOfProducts: 0,
+      numberOfOrders: 0,
       purveyorIds: [],
       showPurveyorInfo: false,
       purveyor: null,
@@ -51,6 +45,19 @@ class CartView extends React.Component {
       return true;
     }
     return false;
+  }
+
+  componentWillMount() {
+    const numberOfOrders = Object.keys(this.props.cartItems)
+    const numberOfProducts = _.reduce(_.map(numberOfOrders, (orderId) => {
+      return Object.keys(this.props.cartItems[orderId]).length
+    }), (total, n) => {
+      return total + n
+    })
+    this.setState({
+      numberOfOrders: numberOfOrders.length,
+      numberOfProducts: numberOfProducts,
+    })
   }
 
   componentWillReceiveProps(nextProps) {

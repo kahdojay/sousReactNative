@@ -191,8 +191,15 @@ export default function ConnectActions(ddpClient) {
   function processUnsubscribe() {
     return (dispatch, getState) => {
       const {connect} = getState()
-      console.log(connect)
-      // ddpClient.unsubscribe(channel)
+      // dispatch({
+      //   type: UNSUBSCRIBE_CHANNEL,
+      //   channel: '*',
+      // })
+      // console.log(connect.channels)
+      Object.keys(connect.channels).forEach((channel) => {
+        // console.log('channel unsubscribed: ', channel)
+        ddpClient.unsubscribe(channel)
+      })
     }
   }
 
@@ -242,27 +249,47 @@ export default function ConnectActions(ddpClient) {
       const {session} = getState()
       const {phoneNumber, smsToken} = session
 
+
       const newSession = {
         phoneNumber: phoneNumber,
         smsToken: smsToken,
       }
 
-      processUnsubscribe()
+      const {
+        sessionActions,
+        teamActions,
+        messageActions,
+        purveyorActions,
+        productActions,
+        categoryActions,
+        errorActions,
+        orderActions,
+        cartItemActions,
+      } = allActions
 
-      // const {
-      //   // uiActions,
-      //   sessionActions,
-      //   teamActions,
-      //   messageActions,
-      //   purveyorActions,
-      //   productActions,
-      //   categoryActions,
-      //   errorActions,
-      //   orderActions,
-      //   cartItemActions,
-      // } = allActions
-      //
-      // dispatch(sessionActions.registerSession(newSession));
+      dispatch(sessionActions.updateSession({ resetAppState: false, isAuthenticated: false }))
+
+      // dispatch(processUnsubscribe())
+      dispatch(cartItemActions.resetCartItems())
+      dispatch(orderActions.resetOrders())
+      dispatch(productActions.resetProducts())
+      dispatch(categoryActions.resetCategories())
+      dispatch(purveyorActions.resetPurveyors())
+      dispatch(messageActions.resetMessages())
+      dispatch(teamActions.resetTeams())
+      dispatch(sessionActions.resetSession())
+      dispatch(errorActions.resetErrors())
+      dispatch(() => {
+        ddpClient.close()
+        dispatch(connectDDP(allActions));
+        // setTimeout(() => {
+        // //   setTimeout(() => {
+        // //     // const {connect} = getState()
+        // //     dispatch(sessionActions.registerSession(newSession))
+        // //     // dispatch(subscribeDDP(newSession, undefined))
+        // //   }, 2000)
+        // }, 1000)
+      })
     }
   }
 
@@ -327,7 +354,8 @@ export default function ConnectActions(ddpClient) {
               // console.log("SESSION USERID: ", session.userId)
 
               if(data.hasOwnProperty('resetAppState') === true && data.resetAppState === true){
-                resetAppState(allActions)
+                dispatch(resetAppState(allActions))
+                return;
               }
 
               let profileData = false
@@ -390,6 +418,7 @@ export default function ConnectActions(ddpClient) {
         dispatch(connectionStatusConnected(0))
         dispatch(getSettingsConfig())
         // console.log('TEAMS', teams);
+        // console.log('SESSION: ', session);
         // console.log('TEAM IDS', teamIds);
         const teamIds = _.pluck(teams.data, 'id')
         dispatch(subscribeDDP(session, teamIds))
