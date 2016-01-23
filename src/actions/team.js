@@ -79,6 +79,11 @@ export default function TeamActions(allActions) {
             orders: {}
           },
           orders: [],
+          phone: DataUtils.formatPhoneNumber(session.username),
+          address: '',
+          city: '',
+          state: '',
+          zipCode: '',
           orderContacts: `${session.firstName} • ${DataUtils.formatPhoneNumber(session.username)}`,
           orderEmails: session.email,
           deleted: false

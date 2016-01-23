@@ -28,17 +28,27 @@ function formatMessage(msg, messageLength = null) {
     messageString = (
       <Text style={styles.messageText}>Order sent to
         <Text style={{fontWeight: 'bold'}}> {msg.purveyor}</Text>
-        {'\n'}
-        <Text style={{color: 'blue'}}>View Order Details</Text>
+        {msg.hasOwnProperty('orderId') === true && msg.orderId ? (
+          <Text>
+            {'\n'}
+            <Text style={{color: Colors.lightBlue}}>View Order Details</Text>
+          </Text>
+        ) : null}
       </Text>
     );
+    if (messageLength !== null)
+      messageString = (
+        <Text>Order sent to
+          <Text style={{fontWeight: 'bold'}}> {msg.purveyor}</Text>
+        </Text>
+      )
   } else if (msg.type === 'orderConfirmation') {
     messageString = (
         <Text style={styles.messageText}>
           <Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
           order received.
           {'\n'}
-          <Text style={{color: 'blue'}}>View Order Details</Text>
+          <Text style={{color: Colors.lightBlue}}>View Order Details</Text>
           { message !== '' ?
             <Text>
               {'\n'}
@@ -50,8 +60,12 @@ function formatMessage(msg, messageLength = null) {
         </Text>
     );
     if (messageLength !== null)
-      messageString = <Text><Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
-        order received.</Text>
+      messageString = (
+        <Text>
+          <Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
+          order received.
+        </Text>
+      )
   } else if (msg.type === 'welcome') {
     messageString = (
       <Text style={styles.welcomeTextContainer}>

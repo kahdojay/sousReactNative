@@ -366,6 +366,8 @@ class App extends React.Component {
   getScene(route, nav) {
     const { session, teams, messages, dispatch, purveyors, products, categories, errors, connect, settingsConfig } = this.props;
 
+    // console.log(this.props)
+
     switch (route.name) {
       case 'session/onboarding':
         return {

@@ -39,7 +39,7 @@ class ConfirmationModal extends React.Component {
 ConfirmationModal.propTypes = {
   confirmationHeader: PropTypes.string,
   confirmationMessage: PropTypes.string.isRequired,
-  showConfirmationModal: PropTypes.bool.isRequired,
+  modalVisible: PropTypes.bool.isRequired,
   onHideModal: PropTypes.func.isRequired,
   onConfirmNo: PropTypes.func.isRequired,
   onConfirmYes: PropTypes.func.isRequired,

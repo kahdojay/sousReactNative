@@ -67,7 +67,7 @@ class FeedListItem extends React.Component {
       }
     }
 
-    if(msg.imageUrl && ['order', 'welcome'].indexOf(msg.type) !== -1) {
+    if(msg.imageUrl && ['order', 'demo-welcome', 'welcome', 'error'].indexOf(msg.type) !== -1) {
       user = {
         imageUrl: msg.imageUrl,
         updatedAt: (new Date()).toISOString(),
@@ -93,7 +93,7 @@ class FeedListItem extends React.Component {
               <Text style={styles.messageAuthor}>{msg.author}</Text>
               <Text style={styles.messageTimestamp}>{displayDate}</Text>
             </View>
-            { (msg.orderId && msg.orderId !== undefined) ?
+            { (msg.hasOwnProperty('orderId') === true && msg.orderId) ?
               <TouchableHighlight
                 underlayColor='transparent'
                 onPress={() => {

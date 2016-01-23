@@ -23,11 +23,13 @@ const initialState = {
     phoneNumber: null,
     smsSent: false,
     smsVerified: false,
+    smsToken: null,
     teamId: null,
     username: null,
     userId: null,
     version: 0,
     viewedOnboarding: null,
+    resetAppState: null,
   }
 };
 
@@ -47,6 +49,7 @@ function session(state = initialState.session, action) {
   case REQUEST_SESSION:
     return Object.assign({}, state, {
       phoneNumber: action.phoneNumber,
+      smsToken: action.smsToken,
       errors: null
     })
   case RECEIVE_SESSION:
