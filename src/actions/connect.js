@@ -319,7 +319,8 @@ export default function ConnectActions(ddpClient) {
       ddpClient.on('message', (msg) => {
         var log = JSON.parse(msg);
         // console.log(`[${new Date()}] MAIN DDP MSG`, log);
-        const {connect} = getState()
+        const {connect, session} = getState()
+        console.log()
         if(connect.status !== CONNECT.CONNECTED){
           // Treat an message as a "ping"
           clearTimeout(connect.timeoutId)
@@ -353,7 +354,7 @@ export default function ConnectActions(ddpClient) {
               // console.log("MAIN DDP WITH FIELDS MSG: ", log);
               // console.log("SESSION USERID: ", session.userId)
 
-              if(data.hasOwnProperty('resetAppState') === true && data.resetAppState === true){
+              if(session.isAuthenticated === true && data.hasOwnProperty('resetAppState') === true && data.resetAppState === true){
                 dispatch(resetAppState(allActions))
                 return;
               }
