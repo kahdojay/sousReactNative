@@ -17,8 +17,6 @@
 		110F5ED01BCF2DDF00234ED6 /* Material-Design-Iconic-Font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 117817961BCDD8EE009F23E6 /* Material-Design-Iconic-Font.ttf */; };
 		110F5ED11BCF2DDF00234ED6 /* FontAwesome.otf in Resources */ = {isa = PBXBuildFile; fileRef = 117817971BCDD8EE009F23E6 /* FontAwesome.otf */; };
 		1171E5DD1C3AEDBD007AECED /* UIImagePickerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1171E5DC1C3AEDBD007AECED /* UIImagePickerManager.m */; };
-		119B21331C0F6F37000402CA /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 119B21321C0F6F37000402CA /* main.jsbundle */; };
-		119B21341C0F6F37000402CA /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 119B21321C0F6F37000402CA /* main.jsbundle */; };
 		11DFC3791C2619D000F8A2D5 /* libRCTRemotePushManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11DFC3731C2619AB00F8A2D5 /* libRCTRemotePushManager.a */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
@@ -37,6 +35,7 @@
 		89EFDE5F1BCC097F001FBBEF /* OpenSans-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE561BCC097F001FBBEF /* OpenSans-LightItalic.ttf */; };
 		89EFDE601BCC097F001FBBEF /* OpenSans-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE571BCC097F001FBBEF /* OpenSans-Semibold.ttf */; };
 		89EFDE611BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE581BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf */; };
+		8A08A3C91C54681900A655D9 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 8A08A3C81C54681800A655D9 /* main.jsbundle */; };
 		8A1FA6521C4DDC260013BC85 /* DeviceUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A1FA6511C4DDC260013BC85 /* DeviceUtil.m */; };
 		A531FDAA1BE3EC2F00E90569 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = A531FDA91BE3EC2F00E90569 /* main.jsbundle */; };
 		A5380FE61BE05DFA00FADB96 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A5380FE51BE05DFA00FADB96 /* AppDelegate.m */; };
@@ -184,7 +183,6 @@
 		1171E5DC1C3AEDBD007AECED /* UIImagePickerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIImagePickerManager.m; path = "../node_modules/react-native-image-picker/ios/UIImagePickerManager.m"; sourceTree = "<group>"; };
 		117817961BCDD8EE009F23E6 /* Material-Design-Iconic-Font.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Material-Design-Iconic-Font.ttf"; sourceTree = "<group>"; };
 		117817971BCDD8EE009F23E6 /* FontAwesome.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = FontAwesome.otf; sourceTree = "<group>"; };
-		119B21321C0F6F37000402CA /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = SOURCE_ROOT; };
 		11DFC36E1C2619AB00F8A2D5 /* RCTRemotePushManager.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTRemotePushManager.xcodeproj; path = "../node_modules/react-native-remote-push/RCTRemotePushManager.xcodeproj"; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
@@ -204,6 +202,7 @@
 		89EFDE561BCC097F001FBBEF /* OpenSans-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-LightItalic.ttf"; sourceTree = "<group>"; };
 		89EFDE571BCC097F001FBBEF /* OpenSans-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Semibold.ttf"; sourceTree = "<group>"; };
 		89EFDE581BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-SemiboldItalic.ttf"; sourceTree = "<group>"; };
+		8A08A3C81C54681800A655D9 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = SOURCE_ROOT; };
 		8A1FA6501C4DDC260013BC85 /* DeviceUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeviceUtil.h; path = "../node_modules/react-native-device/DeviceUtil.h"; sourceTree = "<group>"; };
 		8A1FA6511C4DDC260013BC85 /* DeviceUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DeviceUtil.m; path = "../node_modules/react-native-device/DeviceUtil.m"; sourceTree = "<group>"; };
 		A531FDA91BE3EC2F00E90569 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = SOURCE_ROOT; };
@@ -342,7 +341,7 @@
 		13B07FAE1A68108700A75B9A /* Sous */ = {
 			isa = PBXGroup;
 			children = (
-				119B21321C0F6F37000402CA /* main.jsbundle */,
+				8A08A3C81C54681800A655D9 /* main.jsbundle */,
 				A5380FE41BE05DFA00FADB96 /* AppDelegate.h */,
 				A5380FE51BE05DFA00FADB96 /* AppDelegate.m */,
 				A5380FED1BE05E4400FADB96 /* LaunchScreen.xib */,
@@ -728,7 +727,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				119B21341C0F6F37000402CA /* main.jsbundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -743,13 +741,13 @@
 				89EFDE5D1BCC097F001FBBEF /* OpenSans-Italic.ttf in Resources */,
 				89EFDE591BCC097F001FBBEF /* OpenSans-Bold.ttf in Resources */,
 				89EFDE5B1BCC097F001FBBEF /* OpenSans-ExtraBold.ttf in Resources */,
+				8A08A3C91C54681900A655D9 /* main.jsbundle in Resources */,
 				A531FDAA1BE3EC2F00E90569 /* main.jsbundle in Resources */,
 				89EFDE5E1BCC097F001FBBEF /* OpenSans-Light.ttf in Resources */,
 				89A667011BC2F38A00F45CFD /* OpenSans-Regular.ttf in Resources */,
 				A5380FEF1BE05E4400FADB96 /* LaunchScreen.xib in Resources */,
 				89EFDE5C1BCC097F001FBBEF /* OpenSans-ExtraBoldItalic.ttf in Resources */,
 				89EFDE5A1BCC097F001FBBEF /* OpenSans-BoldItalic.ttf in Resources */,
-				119B21331C0F6F37000402CA /* main.jsbundle in Resources */,
 				89EFDE5F1BCC097F001FBBEF /* OpenSans-LightItalic.ttf in Resources */,
 				89EFDE601BCC097F001FBBEF /* OpenSans-Semibold.ttf in Resources */,
 			);
