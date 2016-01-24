@@ -134,15 +134,6 @@ let styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
-  messageText: {
-    marginLeft: 5,
-    fontSize: 15,
-    fontFamily: 'OpenSans',
-    textAlign: 'center',
-    color: '#0075FD',
-    fontWeight: 'bold',
-    color: 'white'
-  },
   buttonText: {
     fontFamily: 'OpenSans',
     fontSize: 14,
