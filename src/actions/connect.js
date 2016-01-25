@@ -210,7 +210,7 @@ export default function ConnectActions(ddpClient) {
   function subscribeDDP(session, teamIds){
     // console.log('subscribeDDP called for session: ', session)
     return (dispatch, getState) => {
-      const {connect, messages} = getState()
+      const {connect, messages, teams} = getState()
       if(session.phoneNumber !== ""){
         dispatch(processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED, [session.phoneNumber]))
       }
@@ -234,7 +234,11 @@ export default function ConnectActions(ddpClient) {
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES, [session.userId, session.teamId, messageDate], [session.userId, session.teamId]))
         }
         if(teamIds !== undefined && teamIds.length > 0 && session.userId !== null){
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS_USERS, [session.userId, teamIds]))
+          let teamUserIds = []
+          _.each(teams.data, (team) => {
+            teamUserIds = teamUserIds.concat(team.users)
+          })
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS_USERS, [session.userId, teamUserIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PURVEYORS, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CATEGORIES, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PRODUCTS, [session.userId, teamIds]))
@@ -323,7 +327,7 @@ export default function ConnectActions(ddpClient) {
       //--------------------------------------
       ddpClient.on('message', (msg) => {
         var log = JSON.parse(msg);
-        console.log(`[${new Date()}] MAIN DDP MSG`, log);
+        // console.log(`[${new Date()}] MAIN DDP MSG`, log);
         const {connect, session} = getState()
         console.log()
         if(connect.status !== CONNECT.CONNECTED){
