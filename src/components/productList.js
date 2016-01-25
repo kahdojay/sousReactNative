@@ -119,8 +119,10 @@ class ProductList extends React.Component {
           loadDelay: loadDelay,
           key: product.id,
           product: product,
-          category: (showCategoryInfo === true) ? productCategory : null,
-          purveyors: (showPurveyorInfo === true) ? purveyors: null,
+          showCategoryInfo: showCategoryInfo,
+          category: productCategory,
+          showPurveyorInfo: showPurveyorInfo,
+          purveyors: purveyors,
           onProductEdit: () => {
             this.props.onProductEdit(product)
           },
