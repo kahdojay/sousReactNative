@@ -98,7 +98,7 @@ class ProductListItem extends React.Component {
           loaded: true,
           product: this.props.product,
           purveyors: this.props.purveyors,
-          selectedPurveyorId: this.props.product.purveyors[0],
+          selectedPurveyorId: this.props.purveyors[0].id,
         },
         () => {
           this.localStateUpdateFromCart(this.props.cartItem, this.props.cartPurveyorId)
