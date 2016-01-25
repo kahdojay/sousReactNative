@@ -88,7 +88,7 @@ module.exports = class Menu extends React.Component {
               [
                 <TouchableHighlight
                   key='order-guide'
-                  onPress={this.props.onNavToCategory}
+                  onPress={this.props.onNavToPurveyor}
                   style={styles.menuItemButton}
                   underlayColor='#3e444f'
                 >
