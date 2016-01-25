@@ -64,6 +64,13 @@ class ProductForm extends React.Component {
     this.fields = ['Purveyor','Category','Amount','Units']
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if(nextProps.connected === false && JSON.stringify(this.state) === JSON.stringify(nextState)){
+      return false
+    }
+    return true
+  }
+
   showFieldPicker(field, idx) {
     this.refs.name.blur()
     this.setState({
@@ -206,6 +213,8 @@ class ProductForm extends React.Component {
           break;
       }
     }
+
+    console.log(this.state.selectedPurveyor)
 
     return (
       <View style={{flex:1}}>
