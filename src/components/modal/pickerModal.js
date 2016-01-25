@@ -22,6 +22,8 @@ class PickerModal extends React.Component {
       selectedValue: this.props.selectedValue,
       items: this.props.items,
       pickerType: this.props.pickerType || 'PickerIOS',
+      submitReady: false,
+      leftButtonDisabled: true,
     }
   }
 
@@ -35,20 +37,25 @@ class PickerModal extends React.Component {
   }
 
   handleSubmitValue(returnSelectedValue) {
-    if(this.props.hasOwnProperty('onSubmitValue') === true){
-      let returnValue = {
-        selectedValue: this.state.selectedValue
-      };
-      if(returnSelectedValue === false){
-        returnValue = false
+    this.setState({
+      leftButtonDisabled: true,
+    }, () => {
+      if(this.props.hasOwnProperty('onSubmitValue') === true){
+        let returnValue = {
+          selectedValue: this.state.selectedValue
+        };
+        if(returnSelectedValue === false){
+          returnValue = false
+        }
+        this.props.onSubmitValue(returnValue);
       }
-      this.props.onSubmitValue(returnValue);
-    }
+    })
   }
 
   handleValueChange(selectedValue) {
     this.setState({
       selectedValue: selectedValue,
+      leftButtonDisabled: false,
     }, () => {
       if(this.props.hasOwnProperty('onValueChange') === true){
         this.props.onValueChange({
@@ -139,6 +146,7 @@ class PickerModal extends React.Component {
 
     return (
       <PickerIOS
+        itemStyle={{backgroundColor: 'green', fontSize: 25, color: 'red', textAlign: 'left', fontWeight: 'bold'}}
         selectedValue={selectedValue}
         onValueChange={::this.handleValueChange}
         style={styles.picker}
@@ -178,6 +186,7 @@ class PickerModal extends React.Component {
         onHideModal={this.props.onHideModal}
         modalHeaderText={this.props.headerText}
         leftButton={{
+          disabled: this.state.leftButtonDisabled,
           text: leftButtonText,
           onPress: () => {
             this.handleSubmitValue()
