@@ -166,7 +166,7 @@ class ProductListItem extends React.Component {
 
   render() {
     const {product} = this.state
-    const {purveyors, category} = this.props;
+    const {purveyors, category, showPurveyorInfo, showCategoryInfo} = this.props;
 
     let productInfo = (
       <View style={styles.row}>
@@ -204,7 +204,7 @@ class ProductListItem extends React.Component {
       }
       let availablePurveyors = product.purveyors
 
-      if(purveyors !== null){
+      if(showPurveyorInfo === true){
         if(purveyors.hasOwnProperty(this.state.selectedPurveyorId) === true){
           purveyorInfo = (
             <Text style={{fontSize: 9,  color: productDetailsColor}}>{purveyors[this.state.selectedPurveyorId].name || '-NOT SET-'}</Text>
@@ -221,12 +221,12 @@ class ProductListItem extends React.Component {
         availablePurveyors = [this.state.selectedPurveyorId]
       }
 
-      if(category !== null) {
+      if(showCategoryInfo === true) {
         categoryInfo = (
           <Text style={{fontSize: 9,  color: productDetailsColor}}>{category.name}</Text>
         )
       }
-      if(purveyors !== null && category !== null){
+      if(showPurveyorInfo === true && showCategoryInfo === true){
         productInfoSeparator = (
           <Icon name='material|chevron-right' size={16} color={productDetailsColor} style={{width: 16, height: 11}}/>
         )
