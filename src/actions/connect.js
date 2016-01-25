@@ -149,7 +149,9 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
-  function processSubscription(channel, argsList, keyOverride = null){
+  function processSubscription(subscribePkg, argsList, keyOverride = null){
+    const channel = subscribePkg.channel;
+    const collection = subscribePkg.collection;
     // console.log('PROCESSING: ', channel, argsList);
     return (dispatch, getState) => {
       const {connect} = getState()
@@ -177,7 +179,9 @@ export default function ConnectActions(ddpClient) {
         dispatch(() => {
           ddpClient.unsubscribe(channel)
           // console.log('CONNECTING: ', channel, argsList);
-          ddpClient.subscribe(channel, argsList);
+          ddpClient.subscribe(channel, argsList, () => {
+            // console.log(collection, ddpClient.collections[collection])
+          });
         })
         dispatch({
           type: SUBSCRIBE_CHANNEL,
@@ -208,12 +212,12 @@ export default function ConnectActions(ddpClient) {
     return (dispatch, getState) => {
       const {connect, messages} = getState()
       if(session.phoneNumber !== ""){
-        dispatch(processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [session.phoneNumber]))
+        dispatch(processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED, [session.phoneNumber]))
       }
 
       if(session.userId !== null){
-        dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ERRORS.channel, [session.userId]))
-        dispatch(processSubscription(DDP.SUBSCRIBE_LIST.SETTINGS.channel, [session.userId]))
+        dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ERRORS, [session.userId]))
+        dispatch(processSubscription(DDP.SUBSCRIBE_LIST.SETTINGS, [session.userId]))
       }
 
       if(session.isAuthenticated === true){
@@ -227,20 +231,21 @@ export default function ConnectActions(ddpClient) {
             })
             messageDate = teamMessages[messageKeys[0]].createdAt;
           }
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES.channel, [session.userId, session.teamId, messageDate], [session.userId, session.teamId]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES, [session.userId, session.teamId, messageDate], [session.userId, session.teamId]))
         }
         if(teamIds !== undefined && teamIds.length > 0 && session.userId !== null){
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS_USERS.channel, [session.userId, teamIds]))
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PURVEYORS.channel, [session.userId, teamIds]))
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CATEGORIES.channel, [session.userId, teamIds]))
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PRODUCTS.channel, [session.userId, teamIds]))
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CART_ITEMS.channel, [session.userId, teamIds]))
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ORDERS.channel, [session.userId, teamIds]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS_USERS, [session.userId, teamIds]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PURVEYORS, [session.userId, teamIds]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CATEGORIES, [session.userId, teamIds]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PRODUCTS, [session.userId, teamIds]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CART_ITEMS, [session.userId, teamIds]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ORDERS, [session.userId, teamIds]))
         }
         if(session.userId !== null){
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS.channel, [session.userId]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS, [session.userId]))
         }
       }
+      // console.log(ddpClient.collections)
     }
   }
 
@@ -318,7 +323,7 @@ export default function ConnectActions(ddpClient) {
       //--------------------------------------
       ddpClient.on('message', (msg) => {
         var log = JSON.parse(msg);
-        // console.log(`[${new Date()}] MAIN DDP MSG`, log);
+        console.log(`[${new Date()}] MAIN DDP MSG`, log);
         const {connect, session} = getState()
         console.log()
         if(connect.status !== CONNECT.CONNECTED){
