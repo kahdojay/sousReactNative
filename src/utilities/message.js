@@ -29,11 +29,11 @@ function formatMessage(msg, messageLength = null) {
       <Text style={styles.messageText}>Order sent to
         <Text style={{fontWeight: 'bold'}}> {msg.purveyor}</Text>
         {msg.hasOwnProperty('orderId') === true && msg.orderId ? (
-          <Text>
+          <Text style={{fontSize: 11}}>
             {'\n'}
             <Text style={{color: Colors.lightBlue}}>View Order Details</Text>
           </Text>
-        ) : null}
+        ) : <Text style={{fontSize: 11}}>{'\n'}</Text>}
       </Text>
     );
     if (messageLength !== null)
@@ -48,15 +48,15 @@ function formatMessage(msg, messageLength = null) {
           <Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
           order received.
           {'\n'}
-          <Text style={{color: Colors.lightBlue}}>View Order Details</Text>
           { message !== '' ?
-            <Text>
-              {'\n'}
-              <Text style={{fontStyle: 'italic'}}>Note:</Text>
+            <Text style={{fontSize: 13}}>
+              (<Text style={{fontStyle: 'italic', color: Colors.gold}}>Note:</Text>
               {' '}
-              {message}
+              {message})
+              {'\n'}
             </Text>
           : null }
+          <Text style={{color: Colors.lightBlue, fontSize: 11}}>View Order Details</Text>
         </Text>
     );
     if (messageLength !== null)
@@ -117,12 +117,14 @@ function formatMessage(msg, messageLength = null) {
 
 const styles = StyleSheet.create({
   messageText: {
-    fontSize: 16,
+    fontFamily: 'OpenSans',
+    fontSize: 15,
     marginLeft: 5,
     marginBottom: 5
   },
   welcomeTextContainer: {
-    fontSize: 16,
+    fontFamily: 'OpenSans',
+    fontSize: 15,
     marginLeft: 5,
     marginBottom: 5,
   },

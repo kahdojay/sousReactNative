@@ -53,9 +53,13 @@ class PickerModal extends React.Component {
   }
 
   handleValueChange(selectedValue) {
+    let leftButtonDisabled = false
+    if(selectedValue === this.props.selectedValue){
+      leftButtonDisabled = true
+    }
     this.setState({
       selectedValue: selectedValue,
-      leftButtonDisabled: false,
+      leftButtonDisabled: leftButtonDisabled,
     }, () => {
       if(this.props.hasOwnProperty('onValueChange') === true){
         this.props.onValueChange({
