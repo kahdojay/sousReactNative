@@ -93,12 +93,13 @@ class ProductListItem extends React.Component {
 
   componentDidMount() {
     this.loadTimeoutId = setTimeout(() => {
+      const selectedPurveyorId = Object.keys(this.props.purveyors)[0]
       this.setState(
         {
           loaded: true,
           product: this.props.product,
           purveyors: this.props.purveyors,
-          selectedPurveyorId: this.props.purveyors[0].id,
+          selectedPurveyorId: selectedPurveyorId,
         },
         () => {
           this.localStateUpdateFromCart(this.props.cartItem, this.props.cartPurveyorId)
@@ -214,7 +215,7 @@ class ProductListItem extends React.Component {
           // const purveyorIds = Object.keys(purveyors)
           // purveyorInfo = purveyors[purveyorIds[0]].name
           purveyorInfo = (
-            <Text style={{fontSize: 9,  color: productDetailsColor}}>Multiple purveyors</Text>
+            <Text style={{fontSize: 9,  color: productDetailsColor}}>No purveyors</Text>
           )
         }
       } else {
