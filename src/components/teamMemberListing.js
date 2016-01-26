@@ -123,7 +123,7 @@ class TeamMemberListing extends React.Component {
     currentTeamUsers.forEach((userId) => {
       if(teamsUsers.hasOwnProperty(userId)){
         const user = teamsUsers[userId]
-        console.log(user)
+
         if(user.superUser === true && user.id !== userId)
           return
         let icon = AvatarUtils.getAvatar(user, 40)
