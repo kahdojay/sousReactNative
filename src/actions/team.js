@@ -459,17 +459,19 @@ export default function TeamActions(allActions) {
 
       // console.log('leaving teamId: ', teamId)
 
-      let teamUsers = teams.currentTeam.users;
-      const userTeamIdx = teamUsers.indexOf(session.userId);
-      if(userTeamIdx !== -1){
-        delete teamUsers[userTeamIdx];
-      }
-      teamUsers = teamUsers.filter((v) => { return v !== undefined && v !== null; })
+      // let teamUsers = teams.data[teamId].users;
+      // const userTeamIdx = teamUsers.indexOf(session.userId);
+      // if(userTeamIdx !== -1){
+      //   delete teamUsers[userTeamIdx];
+      // }
+      // teamUsers = teamUsers.filter((v) => { return v !== undefined && v !== null; })
 
       // console.log('reset users: ', teamUsers)
 
       // update team to remove the current user
-      dispatch(updateTeam({id: teamId, users: teamUsers}))
+      // dispatch(updateTeam({id: teamId, users: teamUsers}))
+
+      dispatch(connectActions.ddpCall('removeUserFromTeam', [session.userId, teamId]))
 
 
       let allTeamIds = _.pluck(teams.data, 'id');
