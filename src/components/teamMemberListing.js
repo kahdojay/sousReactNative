@@ -123,6 +123,7 @@ class TeamMemberListing extends React.Component {
     currentTeamUsers.forEach((userId) => {
       if(teamsUsers.hasOwnProperty(userId)){
         const user = teamsUsers[userId]
+        console.log(user)
         if(user.superUser === true && user.id !== userId)
           return
         let icon = AvatarUtils.getAvatar(user, 40)
@@ -132,6 +133,16 @@ class TeamMemberListing extends React.Component {
         let memberContactDetails = []
         let showPhoneIcon = false
         let showEmailIcon = false
+        let userDisplayName = []
+        if(user.firstName){
+          userDisplayName.push(<Text style={[styles.text, styles.textBold]}>{user.firstName}</Text>)
+        }
+        if(user.lastName){
+          userDisplayName.push(<Text style={styles.text}> {user.lastName}</Text>)
+        }
+        if(userDisplayName.length === 0){
+          userDisplayName.push(<Text style={styles.pending}>Pending</Text>)
+        }
         if(user.username){
           // if(memberContactDetails.length > 0){
           //   memberContactDetails.push(<Text key='phoneNumberSeparator' style={styles.detailsSeparator}>{' • '}</Text>)
@@ -153,8 +164,7 @@ class TeamMemberListing extends React.Component {
               {icon}
               <View style={styles.memberInfoContainer}>
                 <View style={styles.memberName}>
-                  <Text style={[styles.text, styles.textBold]}>{user.firstName}</Text>
-                  <Text style={styles.text}> {user.lastName}</Text>
+                  {userDisplayName}
                 </View>
                 <View style={styles.memberContactDetails}>
                   {memberContactDetails}
@@ -241,6 +251,12 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     fontSize: 16,
   },
+  pending: {
+    fontFamily: 'OpenSans',
+    fontSize: 14,
+    color: Colors.lightGrey,
+    fontStyle: 'italic',
+  },
   row: {
     flex: 1,
     marginTop: 2,
@@ -275,14 +291,17 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   phoneNumber: {
+    fontFamily: 'OpenSans',
     fontSize: 10,
     color: Colors.lightGrey,
   },
   emailAddress: {
+    fontFamily: 'OpenSans',
     fontSize: 10,
     color: Colors.lightGrey,
   },
   detailsSeparator: {
+    fontFamily: 'OpenSans',
     fontSize: 10,
     color: Colors.separatorColor,
   },
