@@ -125,7 +125,7 @@ class OrderView extends React.Component {
         productsList.push(
           <View style={styles.row}>
             <View style={{flex: 1}}>
-              <Text style={styles.missing}>Product details unavailable for {missingProducts.length} items.</Text>
+              <Text style={styles.missing}>Product details unavailable</Text>
             </View>
           </View>
         )
