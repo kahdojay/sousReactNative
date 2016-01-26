@@ -33,15 +33,24 @@ class GenericModal extends React.Component {
   }
 
   getButton(buttonConfig) {
+    if(buttonConfig.hasOwnProperty('disabled') === false){
+      buttonConfig.disabled = false
+    }
+    let buttonTextColor = Colors.lightBlue
+    if(buttonConfig.disabled === true){
+      buttonTextColor = Colors.disabled
+    }
     return (
       <TouchableHighlight
         onPress={() => {
-          buttonConfig.onPress()
+          if(buttonConfig.disabled === false){
+            buttonConfig.onPress()
+          }
         }}
         style={styles.option}
         underlayColor='transparent'
       >
-        <Text style={styles.buttonText}>{buttonConfig.text}</Text>
+        <Text style={[styles.buttonText, { color: buttonTextColor }]}>{buttonConfig.text}</Text>
       </TouchableHighlight>
     )
   }

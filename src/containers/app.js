@@ -655,8 +655,8 @@ class App extends React.Component {
         return {
           component: Components.PurveyorIndex,
           props: {
-            selectedSegmentationIndex: 1,
-            segmentationList: ['Category', 'Purveyor', 'Search'],
+            selectedSegmentationIndex: 0,
+            segmentationList: ['Purveyor', 'Category', 'Search'],
             onSegmentationChange: (evt) => {
               const navValue = evt.nativeEvent.value
               switch(navValue){
@@ -767,8 +767,8 @@ class App extends React.Component {
         return {
           component: Components.CategoryIndex,
           props: {
-            selectedSegmentationIndex: 0,
-            segmentationList: ['Category', 'Purveyor', 'Search'],
+            selectedSegmentationIndex: 1,
+            segmentationList: ['Purveyor', 'Category', 'Search'],
             onSegmentationChange: (evt) => {
               const navValue = evt.nativeEvent.value
               switch(navValue){
@@ -853,7 +853,7 @@ class App extends React.Component {
           component: Components.SearchView,
           props: {
             selectedSegmentationIndex: 2,
-            segmentationList: ['Category', 'Purveyor', 'Search'],
+            segmentationList: ['Purveyor', 'Category', 'Search'],
             onSegmentationChange: (evt) => {
               const navValue = evt.nativeEvent.value
               switch(navValue){
@@ -1741,8 +1741,8 @@ class App extends React.Component {
           team={this.state.currentTeamInfo.team}
           session={session}
           open={this.state.open}
-          onNavToCategory={() => {
-            nav.push({ name: 'CategoryIndex', })
+          onNavToPurveyor={() => {
+            nav.push({ name: 'PurveyorIndex', })
           }}
           onNavToOrders={() => {
             nav.push({ name: 'OrderIndex', })

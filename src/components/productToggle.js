@@ -83,6 +83,11 @@ class ProductToggle extends React.Component {
           label: purveyor.name,
         }
       })
+      purveyorItems.unshift({
+        key: '--null--',
+        value: null,
+        label: '',
+      })
 
       modal = (
         <PickerModal
@@ -90,7 +95,7 @@ class ProductToggle extends React.Component {
           headerText='Select Purveyor'
           leftButtonText='Update'
           items={purveyorItems}
-          selectedValue={purveyorItems[0].value}
+          selectedValue={null}
           onHideModal={() => {
             this._setModalVisible(false)
           }}
