@@ -1,9 +1,9 @@
 
 export const DDP = {
-  ENDPOINT_WS: 'ws://localhost:3000/websocket',
+  // ENDPOINT_WS: 'ws://localhost:3000/websocket',
   // ENDPOINT_WS: 'ws://sousdev-56151.onmodulus.net/websocket',
   // ENDPOINT_WS: 'ws://staging.sousapp.com/websocket',
-  // ENDPOINT_WS: 'ws://prod.sousapp.com/websocket',
+  ENDPOINT_WS: 'ws://prod.sousapp.com/websocket',
   SUBSCRIBE_LIST: {
     RESTRICTED: {channel: 'restricted', collection: 'users'},
     SETTINGS: {channel: 'settings', collection: 'settings'},
