@@ -20,19 +20,30 @@ class CartRightButton extends React.Component {
     this.props.onNavToCart()
   }
 
+  getCounts(props) {
+    const numberOfOrders = Object.keys(props.cartItems)
+    const numberOfProducts = _.reduce(_.map(numberOfOrders, (orderId) => {
+      const filteredProducts = _.filter(Object.keys(props.cartItems[orderId]), (cartItemId) => {
+        const cartItem = props.cartItems[orderId][cartItemId]
+        return cartItem.status === 'NEW'
+      })
+      return filteredProducts.length
+    }), (total, n) => {
+      return total + n
+    })
+    return {
+      numberOfOrders,
+      numberOfProducts
+    }
+  }
+
   render() {
     const { cartItems } = this.props;
-    
+
     let badgeValue = ''
-    if(Object.keys(cartItems).length > 0){
-      const actualCartPurveyors = _.filter(cartItems, function (cartPurveyor) {
-        return Object.keys(cartPurveyor).length > 0
-      })
-      if(actualCartPurveyors.length > 0){
-        badgeValue = _.sum(actualCartPurveyors, function (cartPurveyor) {
-          return Object.keys(cartPurveyor).length
-        })
-      }
+    const {numberOfOrders, numberOfProducts} = this.getCounts(this.props)
+    if(numberOfOrders.length > 0){
+      badgeValue = numberOfProducts
     }
     // ...
 

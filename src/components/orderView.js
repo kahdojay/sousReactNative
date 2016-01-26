@@ -83,10 +83,10 @@ class OrderView extends React.Component {
       teamsUsers,
     } = this.state;
 
-    if(products.length === 0 || purveyor === null || order === null){
+    if(products === null || products.length === 0 || purveyor === null || order === null){
       return (
         <View style={styles.container}>
-          <Text style={[styles.text, styles.textCentered, {padding: 25}]}>Processing order, please wait.</Text>
+          <Text style={[styles.text, styles.textCentered, {padding: 25}]}>Order details unavailable.</Text>
         </View>
       )
     }
@@ -95,21 +95,41 @@ class OrderView extends React.Component {
     let modal = null
 
     if(this.state.loaded === true){
-      productsList = _.map(products, (productPkg) => {
+      productsList = []
+      let missingProducts = []
+      _.each(products, (productPkg, idx) => {
         const product = productPkg.product
         const cartItem = productPkg.cartItem
         const productConfirm = (cartItem.status === 'RECEIVED')
-        return (
-          <OrderListItem
-            key={product.id}
-            orderConfirm={order.confirm}
-            product={product}
-            cartItem={cartItem}
-            productConfirm={productConfirm}
-            onHandleProductConfirm={this.props.onConfirmOrderProduct}
-          />
-        )
+        let productKey = `missing-id-${idx}`
+        if(cartItem.hasOwnProperty('id') === true){
+          productKey = cartItem.id
+        }
+
+        if(!product || !cartItem){
+          missingProducts.push(productPkg)
+        } else {
+          productsList.push(
+            <OrderListItem
+              key={productKey}
+              orderConfirm={order.confirm}
+              product={product}
+              cartItem={cartItem}
+              productConfirm={productConfirm}
+              onHandleProductConfirm={this.props.onConfirmOrderProduct}
+            />
+          )
+        }
       })
+      if(missingProducts.length > 0){
+        productsList.push(
+          <View style={styles.row}>
+            <View style={{flex: 1}}>
+              <Text style={styles.missing}>Product details unavailable for {missingProducts.length} items.</Text>
+            </View>
+          </View>
+        )
+      }
 
       if(order.confirm.order === false){
         modal = (
@@ -305,6 +325,27 @@ const styles = StyleSheet.create({
   },
   textCentered: {
     textAlign: 'center',
+  },
+  row: {
+    flex: 1,
+    marginTop: 5,
+    marginBottom: 5,
+    marginRight: 10,
+    marginLeft: 10,
+    borderRadius: Sizes.rowBorderRadius,
+    padding: 5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    alignItems: 'center',
+  },
+  missing: {
+    textAlign: 'center',
+    fontFamily: 'OpenSans',
+    fontSize: 11,
+    color: Colors.disabled,
+    fontStyle: 'italic',
   },
 });
 
