@@ -710,6 +710,8 @@ class App extends React.Component {
         const specificProductsPurveyor = _.sortBy(_.filter(this.state.currentTeamInfo.products, (product) => {
           return _.includes(product.purveyors, this.state.purveyor.id)
         }), 'name')
+        let specificPurveyor = {}
+        specificPurveyor[this.state.purveyor.id] = this.state.purveyor
         return {
           component: Components.PurveyorView,
           props: {
@@ -717,7 +719,7 @@ class App extends React.Component {
             categories: this.state.currentTeamInfo.categories,
             purveyor: this.state.purveyor,
             // purveyors: this.state.currentTeamInfo.purveyors,
-            purveyors: [this.state.purveyor],
+            purveyors: specificPurveyor,
             products: specificProductsPurveyor,
             onProductDelete: (productId) => {
               _.debounce(() => {
