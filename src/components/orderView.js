@@ -182,6 +182,11 @@ class OrderView extends React.Component {
       confirmUser = teamsUsers[order.confirm.userId]
     }
 
+    let confirmUserName = ''
+    if(confirmUser){
+      confirmUserName = `${confirmUser.firstName} ${confirmUser.lastName[0]}.`
+    }
+
     return (
       <View style={styles.container}>
         { this.state.loaded === true ?
@@ -204,7 +209,7 @@ class OrderView extends React.Component {
               </TouchableHighlight>
             :
               <View style={[styles.buttonContainerLink, styles.buttonContainer, buttonDisabledStyle]}>
-                <Text style={[styles.confirmedText]}>Delivery confirmed by: {`${confirmUser.firstName} ${confirmUser.lastName[0]}.`}</Text>
+                <Text style={[styles.confirmedText]}>Delivery confirmed by: {confirmUserName}</Text>
                 <Text style={[styles.confirmedText]}>{order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('M/D/YY h:mm a') : ''}</Text>
               </View>
             }
