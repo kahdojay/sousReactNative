@@ -946,14 +946,26 @@ class App extends React.Component {
           },
         }
       case 'OrderView':
-        const cartItems = this.state.currentTeamInfo.cartItems['orders'][this.state.order.id]
-        const orderProducts = _.sortBy(_.map(Object.keys(cartItems), (cartItemId) => {
-          const cartItem = cartItems[cartItemId]
-          return {
-            product: this.state.currentTeamInfo.products[cartItem.productId],
-            cartItem: cartItem,
-          }
-        }), 'name')
+        const cartItems = this.state.currentTeamInfo.cartItems['orders'][this.state.order.id] || {}
+        const cartItemIds = Object.keys(cartItems)
+        let orderProducts = null
+
+        if(cartItemIds.length > 0){
+          orderProducts = []
+          let processedProducts = {}
+          _.each(cartItemIds, (cartItemId) => {
+            if(processedProducts.hasOwnProperty(cartItemId) === false){
+              processedProducts[cartItemId] = true
+              const cartItem = cartItems[cartItemId]
+              orderProducts.push({
+                product: this.state.currentTeamInfo.products[cartItem.productId],
+                cartItem: cartItem,
+              })
+            }
+          })
+          orderProducts = _.sortBy(orderProducts, 'product.name')
+        }
+
         // const orderMessages = _.sortBy(_.filter(this.state.currentTeamInfo.messages, (message) => {
         //   return message.hasOwnProperty('orderId') === true && message.orderId === this.state.order.id
         // }), 'createdAt')
@@ -972,7 +984,7 @@ class App extends React.Component {
                   id: cartItem.id,
                   teamId: cartItem.teamId,
                   purveyorId: cartItem.purveyorId,
-                  orderId: cartItem.orderId,
+                  orderId: this.state.order.id,
                   productId: cartItem.productId,
                   status: cartItem.status,
                 }))

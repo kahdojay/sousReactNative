@@ -30,13 +30,25 @@ class CartView extends React.Component {
     }
   }
 
-  shouldComponentUpdate(nextProps) {
-    const numberOfOrdersUpdated = Object.keys(nextProps.cartItems)
-    const numberOfProductsUpdated = _.reduce(_.map(numberOfOrdersUpdated, (orderId) => {
-      return Object.keys(nextProps.cartItems[orderId]).length
+  getCounts(props) {
+    const numberOfOrders = Object.keys(props.cartItems)
+    const numberOfProducts = _.reduce(_.map(numberOfOrders, (orderId) => {
+      const filteredProducts = _.filter(Object.keys(props.cartItems[orderId]), (cartItemId) => {
+        const cartItem = props.cartItems[orderId][cartItemId]
+        return cartItem.status === 'NEW'
+      })
+      return filteredProducts.length
     }), (total, n) => {
       return total + n
     })
+    return {
+      numberOfOrders,
+      numberOfProducts
+    }
+  }
+
+  shouldComponentUpdate(nextProps) {
+    const {numberOfOrdersUpdated, numberOfProductsUpdated} = this.getCounts(nextProps)
     if(nextProps.connected !== false){
       return true;
     } else if(numberOfOrdersUpdated.length !== this.state.numberOfOrders){
@@ -48,12 +60,7 @@ class CartView extends React.Component {
   }
 
   componentWillMount() {
-    const numberOfOrders = Object.keys(this.props.cartItems)
-    const numberOfProducts = _.reduce(_.map(numberOfOrders, (orderId) => {
-      return Object.keys(this.props.cartItems[orderId]).length
-    }), (total, n) => {
-      return total + n
-    })
+    const {numberOfOrders, numberOfProducts} = this.getCounts(this.props)
     this.setState({
       numberOfOrders: numberOfOrders.length,
       numberOfProducts: numberOfProducts,
@@ -61,12 +68,7 @@ class CartView extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const numberOfOrders = Object.keys(nextProps.cartItems)
-    const numberOfProducts = _.reduce(_.map(numberOfOrders, (orderId) => {
-      return Object.keys(nextProps.cartItems[orderId]).length
-    }), (total, n) => {
-      return total + n
-    })
+    const {numberOfOrders, numberOfProducts} = this.getCounts(nextProps)
     this.setState({
       numberOfOrders: numberOfOrders.length,
       numberOfProducts: numberOfProducts,
@@ -94,7 +96,10 @@ class CartView extends React.Component {
   }
 
   renderPurveyorProducts(purveyorId, cartItems, products) {
-    const purveyorCartItems = _.sortBy(_.map(Object.keys(cartItems[purveyorId]), (cartItemId) => {
+    const cartItemIds = _.filter(Object.keys(cartItems[purveyorId]), (cartItemId) => {
+      return cartItems[purveyorId][cartItemId].status === 'NEW'
+    })
+    const purveyorCartItems = _.sortBy(_.map(cartItemIds, (cartItemId) => {
       const product = products[cartItems[purveyorId][cartItemId].productId]
       return {
         cartItem: cartItems[purveyorId][cartItemId],

@@ -80,7 +80,7 @@ class OrderIndex extends React.Component {
           return (
             <View style={styles.row}>
               <View style={{flex:2}}>
-                <Text style={[styles.metaInfo, {paddingTop: 7,}]}>Processing order, please wait.</Text></View>
+                <Text style={[styles.metaInfo, {paddingTop: 7, fontStyle: 'italic'}]}>Order details unavailable.</Text></View>
               <View style={{flex:1}}>
                 <Text style={[styles.metaInfo, styles.bold, styles.rightAlign]}>{orderedAtDate.format('M/D/YY')}</Text>
                 <Text style={[styles.metaInfo, styles.rightAlign]}>{orderedAtDate.format('h:mm a')}</Text>

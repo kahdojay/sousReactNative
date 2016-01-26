@@ -39,15 +39,27 @@ class OrderListItem extends React.Component {
     let productRow = null
     if(this.state.loaded === false){
       productRow = (
-        <Text>Loading...</Text>
+        <View style={styles.row}>
+          <View style={{flex: 1}}>
+            <Text style={styles.loading}>Loading.</Text>
+          </View>
+        </View>
+      )
+    } else if(!product || !cartItem){
+      productRow = (
+        <View style={styles.row}>
+          <View style={{flex: 1}}>
+            <Text style={styles.missing}>Product details unavailable.</Text>
+          </View>
+        </View>
       )
     } else {
       productRow = (
         <View style={styles.row}>
           <Text style={styles.quantity}>{cartItem.quantity}</Text>
           <View style={styles.productInfo}>
-            <Text>{product.name}</Text>
-            <Text>{product.amount} {product.unit}</Text>
+            <Text style={styles.text}>{product.name}</Text>
+            <Text style={styles.text}>{product.amount} {product.unit}</Text>
           </View>
           <View style={styles.confirmCheckbox}>
             <CheckBox
@@ -106,6 +118,23 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     fontSize: 18,
     width: 36,
+  },
+  text: {
+    fontFamily: 'OpenSans',
+  },
+  loading: {
+    textAlign: 'center',
+    fontFamily: 'OpenSans',
+    fontSize: 12,
+    color: Colors.darkGrey,
+    fontStyle: 'italic',
+  },
+  missing: {
+    textAlign: 'center',
+    fontFamily: 'OpenSans',
+    fontSize: 11,
+    color: Colors.disabled,
+    fontStyle: 'italic',
   },
   productInfo: {
     flex: 6
