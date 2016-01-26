@@ -96,8 +96,12 @@ class ProductList extends React.Component {
 
         let cartItem = null
         let cartPurveyorId = ''
+        let specificPurveyors = {}
         product.purveyors.map((purveyorId) => {
-          if (cartItems.hasOwnProperty(purveyorId) === true && cartItems[purveyorId].hasOwnProperty(product.id)) {
+          if(purveyors.hasOwnProperty(purveyorId) === true){
+            specificPurveyors[purveyorId] = purveyors[purveyorId]
+          }
+          if (cartItems.hasOwnProperty(purveyorId) === true && cartItems[purveyorId].hasOwnProperty(product.id) === true) {
             cartPurveyorId = purveyorId
             cartItem = cartItems[purveyorId][product.id]
           }
@@ -122,7 +126,7 @@ class ProductList extends React.Component {
           showCategoryInfo: showCategoryInfo,
           category: productCategory,
           showPurveyorInfo: showPurveyorInfo,
-          purveyors: purveyors,
+          purveyors: specificPurveyors,
           onProductEdit: () => {
             this.props.onProductEdit(product)
           },
