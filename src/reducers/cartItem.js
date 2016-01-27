@@ -44,10 +44,10 @@ function processCartItem(newCartItemTeamState, cartItem, cartItemIdRef){
   if(
     cartItem.orderId !== null &&
     newCartItemTeamState[cartItem.teamId]['cart'].hasOwnProperty(cartItem.purveyorId) === true &&
-    newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId].hasOwnProperty(cartItem.productId) === true
+    newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId].hasOwnProperty(cartItemId) === true
   ){
-    originalTeamCartItem = Object.assign({}, newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId])
-    delete newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId]
+    originalTeamCartItem = Object.assign({}, newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItemId])
+    delete newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItemId]
     if(Object.keys(newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId]).length === 0){
       delete newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId]
     }
