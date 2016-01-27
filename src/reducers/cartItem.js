@@ -22,11 +22,11 @@ function processCartItem(newCartItemTeamState, cartItem, cartItemIdRef){
   cartItem = cleanupAttributes(cartItem)
   let cartItemLocator = cartItem.purveyorId
   let cartItemGroup = 'cart'
-  let cartItemId = cartItem.id
+  let cartItemId = cartItem.productId
   if(cartItem.orderId !== null){
     cartItemLocator = cartItem.orderId
     cartItemGroup = 'orders'
-    // cartItemId = cartItem.id
+    cartItemId = cartItem.id
   }
   if(newCartItemTeamState.hasOwnProperty(cartItem.teamId) === false){
     newCartItemTeamState[cartItem.teamId] = {
@@ -44,10 +44,11 @@ function processCartItem(newCartItemTeamState, cartItem, cartItemIdRef){
   if(
     cartItem.orderId !== null &&
     newCartItemTeamState[cartItem.teamId]['cart'].hasOwnProperty(cartItem.purveyorId) === true &&
-    newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId].hasOwnProperty(cartItemId) === true
+    newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId].hasOwnProperty(cartItem.productId) === true &&
+    newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId].id === cartItem.id
   ){
-    originalTeamCartItem = Object.assign({}, newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItemId])
-    delete newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItemId]
+    originalTeamCartItem = Object.assign({}, newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId])
+    delete newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId]
     if(Object.keys(newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId]).length === 0){
       delete newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId]
     }
