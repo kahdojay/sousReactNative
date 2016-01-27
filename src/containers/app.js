@@ -147,7 +147,7 @@ class App extends React.Component {
       if(nextProps.cartItems.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.cartItems = nextProps.cartItems.teams[currentTeamInfo.team.id]
       } else {
-        currentTeamInfo.cartItems = {'cart': {},'orders': {}}
+        currentTeamInfo.cartItems = {'cart': {},'orders': {}, 'cartItems': {}}
       }
       currentTeamInfo.lastUpdated.cartItems = nextProps.cartItems.lastUpdated;
       if(nextProps.orders.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
@@ -365,8 +365,6 @@ class App extends React.Component {
 
   getScene(route, nav) {
     const { session, teams, messages, dispatch, purveyors, products, categories, errors, connect, settingsConfig } = this.props;
-
-    // console.log(this.props)
 
     switch (route.name) {
       case 'session/onboarding':
@@ -920,7 +918,8 @@ class App extends React.Component {
           props: {
             showConfirmedOrders: this.state.sceneState.OrderIndex.showConfirmedOrders,
             orders: this.state.currentTeamInfo.orders,
-            cartItems: this.state.currentTeamInfo.cartItems['orders'],
+            cartItemsOrders: this.state.currentTeamInfo.cartItems['orders'],
+            cartItems: this.state.currentTeamInfo.cartItems['cartItems'],
             purveyors: this.state.currentTeamInfo.purveyors,
             teamsUsers: teams.teamsUsers,
             currentTeamUsers: this.state.currentTeamInfo.team.users,
