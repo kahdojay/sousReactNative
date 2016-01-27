@@ -68,6 +68,7 @@ class OrderView extends React.Component {
         type: 'orderConfirmation',
         purveyor: this.state.purveyor.name,
         text: this.state.confirmationMessage,
+        message: `${this.state.purveyor.name} order received.`,
         orderId: this.state.order.id,
       });
       this.props.onNavToOrders()
