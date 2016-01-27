@@ -22,11 +22,11 @@ function processCartItem(newCartItemTeamState, cartItem, cartItemIdRef){
   cartItem = cleanupAttributes(cartItem)
   let cartItemLocator = cartItem.purveyorId
   let cartItemGroup = 'cart'
-  let cartItemId = cartItem.productId
+  let cartItemId = cartItem.id
   if(cartItem.orderId !== null){
     cartItemLocator = cartItem.orderId
     cartItemGroup = 'orders'
-    cartItemId = cartItem.id
+    // cartItemId = cartItem.id
   }
   if(newCartItemTeamState.hasOwnProperty(cartItem.teamId) === false){
     newCartItemTeamState[cartItem.teamId] = {
@@ -58,15 +58,13 @@ function processCartItem(newCartItemTeamState, cartItem, cartItemIdRef){
 
   if(cartItem.status === 'DELETED'){
     delete newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId]
-    if(Object.keys(newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator]).length === 0){
-      delete newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator]
-    }
   }
 
   return newCartItemTeamState
 }
 
 function cartItems(state = initialState.cartItems, action) {
+  // console.log(action, state.teams)
   switch (action.type) {
   case ORDER_SENT:
     let orderSentCartItemTeamState = Object.assign({}, state.teams);
