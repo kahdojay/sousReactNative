@@ -106,6 +106,14 @@ function cartItems(state = initialState.cartItems, action) {
 
   case RECEIVE_CART_ITEM:
     const newReceivedTeamsCartItemsState = processCartItem(Object.assign({}, state.teams), action.cartItem, action.cartItem.id);
+
+    const cartPurveyorIds = Object.keys(newReceivedTeamsCartItemsState[action.cartItem.teamId]['cart'])
+    cartPurveyorIds.forEach((purveyorId) => {
+      if(Object.keys(newReceivedTeamsCartItemsState[action.cartItem.teamId]['cart'][purveyorId]).length === 0){
+        delete newReceivedTeamsCartItemsState[action.cartItem.teamId]['cart'][purveyorId]
+      }
+    })
+
     return Object.assign({}, state, {
       teams: newReceivedTeamsCartItemsState,
       isFetching: false,
