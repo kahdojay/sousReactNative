@@ -20,6 +20,7 @@ class OrderIndex extends React.Component {
     super(props)
     this.state = {
       orders: null,
+      cartItemsOrders: null,
       cartItems: null,
       purveyors: null,
       teamsUsers: null,
@@ -31,6 +32,7 @@ class OrderIndex extends React.Component {
   componentWillMount(){
     this.setState({
       orders: this.props.orders,
+      cartItemsOrders: this.props.cartItemsOrders,
       cartItems: this.props.cartItems,
       purveyors: this.props.purveyors,
       teamsUsers: this.props.teamsUsers,
@@ -48,7 +50,7 @@ class OrderIndex extends React.Component {
   }
 
   render() {
-    const { orders, cartItems, purveyors, teamsUsers } = this.state
+    const { orders, cartItems, cartItemsOrders, purveyors, teamsUsers } = this.state
 
     if(this.state.loaded === false){
       return (
@@ -57,7 +59,14 @@ class OrderIndex extends React.Component {
     }
 
     let fullOrders = _.map(orders, (order) => {
-      const orderItems = (cartItems.hasOwnProperty(order.id) === true) ? cartItems[order.id] : null
+      let orderItems = null
+      if(cartItemsOrders.hasOwnProperty(order.id) === true){
+        orderItems = {}
+        Object.keys(cartItemsOrders[order.id]).forEach((cartItemId) => {
+          orderItems[cartItemId] = cartItems[cartItemId]
+        })
+      }
+      // const orderItems = (cartItems.hasOwnProperty(order.id) === true) ? cartItems[order.id] : null
       const purveyor = (purveyors.hasOwnProperty(order.purveyorId) === true) ? purveyors[order.purveyorId] : null
       const user = teamsUsers.hasOwnProperty(order.userId) === true ? teamsUsers[order.userId] : null
       return Object.assign({}, order, {

@@ -32,8 +32,11 @@ function processCartItem(newCartItemTeamState, cartItem, cartItemIdRef){
     newCartItemTeamState[cartItem.teamId] = {
       cart: {},
       orders: {},
+      cartItems: {},
     };
   }
+
+  // organize the cart by purveyorId, and orders by orderId
   let originalTeamOrder = {}
   if(newCartItemTeamState[cartItem.teamId][cartItemGroup].hasOwnProperty(cartItemLocator) === true){
     originalTeamOrder = newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator]
@@ -41,24 +44,18 @@ function processCartItem(newCartItemTeamState, cartItem, cartItemIdRef){
   newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator] = originalTeamOrder
 
   let originalTeamCartItem = {}
-  if(
-    cartItem.orderId !== null &&
-    newCartItemTeamState[cartItem.teamId]['cart'].hasOwnProperty(cartItem.purveyorId) === true &&
-    newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId].hasOwnProperty(cartItem.productId) === true &&
-    newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId].id === cartItem.id
-  ){
-    originalTeamCartItem = Object.assign({}, newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId])
-    delete newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId]
-    if(Object.keys(newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId]).length === 0){
-      delete newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId]
-    }
-  } else if(newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator].hasOwnProperty(cartItemId) === true){
-    originalTeamCartItem = newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId]
+  if(newCartItemTeamState[cartItem.teamId].cartItems.hasOwnProperty(cartItem.id) === true){
+    originalTeamCartItem = Object.assign({}, newCartItemTeamState[cartItem.teamId].cartItems[cartItem.id])
   }
-  newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId] = Object.assign(originalTeamCartItem, cartItem)
+  newCartItemTeamState[cartItem.teamId].cartItems[cartItem.id] = Object.assign(originalTeamCartItem, cartItem)
+
 
   if(cartItem.status === 'DELETED'){
-    delete newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId]
+    if(newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator].hasOwnProperty(cartItemId) === true){
+      delete newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId]
+    }
+  } else {
+    newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId] = true
   }
 
   return newCartItemTeamState
