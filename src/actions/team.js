@@ -389,8 +389,8 @@ export default function TeamActions(allActions) {
               'superUser': user.superUser,
               'imageUrl': user.imageUrl,
               'updatedAt': user.updatedAt,
+              'imagedChangedAt': user.imagedChangedAt,
             }
-            console.log(teamUserData)
             dispatch(receiveTeamsUsers(teamUserData))
           })
         }
