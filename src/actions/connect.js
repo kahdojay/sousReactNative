@@ -238,7 +238,7 @@ export default function ConnectActions(ddpClient) {
           _.each(teams.data, (team) => {
             teamUserIds = teamUserIds.concat(team.users)
           })
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS_USERS, [session.userId, teamIds, teamUserIds]))
+          // dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS_USERS, [session.userId, teamIds, teamUserIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PURVEYORS, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CATEGORIES, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PRODUCTS, [session.userId, teamIds]))
@@ -386,19 +386,19 @@ export default function ConnectActions(ddpClient) {
                 dispatch(sessionActions.receiveSession(data))
               }
 
-              if(data.hasOwnProperty('firstName') === true && data.hasOwnProperty('lastName') === true && data.hasOwnProperty('username') === true){
-                const teamUserData = {
-                  'id': data.id,
-                  'firstName': data.firstName,
-                  'lastName': data.lastName,
-                  'username': data.username,
-                  'email': data.email,
-                  'superUser': data.superUser,
-                  'imageUrl': data.imageUrl,
-                  'updatedAt': data.updatedAt,
-                }
-                dispatch(teamActions.receiveTeamsUsers(teamUserData))
-              }
+              // if(data.hasOwnProperty('firstName') === true && data.hasOwnProperty('lastName') === true && data.hasOwnProperty('username') === true){
+              //   const teamUserData = {
+              //     'id': data.id,
+              //     'firstName': data.firstName,
+              //     'lastName': data.lastName,
+              //     'username': data.username,
+              //     'email': data.email,
+              //     'superUser': data.superUser,
+              //     'imageUrl': data.imageUrl,
+              //     'updatedAt': data.updatedAt,
+              //   }
+              //   dispatch(teamActions.receiveTeamsUsers(teamUserData))
+              // }
               break;
             case 'errors':
               dispatch(errorActions.receiveErrors(data))

@@ -274,6 +274,7 @@ export default function TeamActions(allActions) {
         dispatch(messageActions.getTeamMessages(team.id))
       }
       dispatch(cartItemActions.getTeamCartItems(team.id))
+      dispatch(getTeamUsers(team.id))
 
       return dispatch({
         type: RECEIVE_TEAMS,
@@ -306,138 +307,6 @@ export default function TeamActions(allActions) {
     }
   }
 
-  // function updateProductInCart(cartAction, cartAttributes) {
-  //   return (dispatch, getState) => {
-  //     const {session, teams} = getState();
-  //
-  //     // if(cartAttributes.hasOwnProperty('purveyorId') === false || !cartAttributes.purveyorId){
-  //     //   return dispatch(errorTeams([{
-  //     //     machineId: 'missing-attributes',
-  //     //     message: 'Missing purveyor reference.'
-  //     //   }]))
-  //     // }
-  //
-  //     let currentTeamIdx = getIdx(teams.data, session.teamId);
-  //     let updateTeamAttributes = Object.assign({}, teams.data[currentTeamIdx])
-  //     let updatedCart = updateTeamAttributes.cart;
-  //     let cartProductPurveyor = null;
-  //     let currentTeam = _.filter(teams.data, { id: session.teamId });
-  //     // console.log('cartAttributes', cartAttributes)
-  //
-  //     switch (cartAction) {
-  //     case CART.ADD:
-  //
-  //       // console.log('cart.ADD:')
-  //
-  //       // add the date
-  //       if (updatedCart.date === null) {
-  //         updatedCart.date = (new Date()).toISOString()
-  //       }
-  //
-  //       // add the product purveyor
-  //       if (updatedCart.orders.hasOwnProperty(cartAttributes.purveyorId) === false) {
-  //         const orderId = generateId()
-  //         updatedCart.orders[cartAttributes.purveyorId] = {
-  //           id: orderId,
-  //           total: 0.0,
-  //           deliveryInstruction: '',
-  //           products: {}
-  //         };
-  //       }
-  //
-  //       // get the product purveyor
-  //       cartProductPurveyor = updatedCart.orders[cartAttributes.purveyorId];
-  //
-  //       // add the product
-  //       if(cartProductPurveyor.products.hasOwnProperty(cartAttributes.productId) === false) {
-  //         cartProductPurveyor.products[cartAttributes.productId] = {}
-  //       }
-  //
-  //       // update the cart item
-  //       cartProductPurveyor.products[cartAttributes.productId] = {
-  //         quantity: cartAttributes.quantity,
-  //         note: cartAttributes.note
-  //       }
-  //       // update the product purveyor
-  //       updatedCart.orders[cartAttributes.purveyorId] = cartProductPurveyor;
-  //       break;
-  //
-  //     case CART.REMOVE:
-  //       // TODO: decrement cart total on delete
-  //       // console.log('cart.REMOVE:', currentTeam)
-  //       // delete updatedCart
-  //       //         .orders[cartAttributes.purveyorId]
-  //       //         .products[cartAttributes.productId];
-  //
-  //       // get the product purveyor
-  //       if (updatedCart.orders.hasOwnProperty(cartAttributes.purveyorId) === true) {
-  //         cartProductPurveyor = updatedCart.orders[cartAttributes.purveyorId];
-  //         // console.log("Product Purveyor: ", cartProductPurveyor)
-  //
-  //         // delete the product
-  //         if (cartProductPurveyor.products.hasOwnProperty(cartAttributes.productId) === true) {
-  //           // console.log("Deleting Product: ", cartProductPurveyor.products[cartAttributes.productId])
-  //           delete cartProductPurveyor.products[cartAttributes.productId];
-  //         }
-  //
-  //         // clean up product purveyors
-  //         if (Object.keys(cartProductPurveyor.products).length === 0){
-  //           delete updatedCart.orders[cartAttributes.purveyorId];
-  //         } else {
-  //           updatedCart.orders[cartAttributes.purveyorId] = cartProductPurveyor;
-  //         }
-  //       }
-  //
-  //       // clean up the cart
-  //       if (Object.keys(updatedCart.orders).length === 0) {
-  //         updatedCart = {
-  //           date: null,
-  //           total: 0.0,
-  //           orders: {}
-  //         };
-  //       }
-  //
-  //       break;
-  //
-  //     case CART.RESET:
-  //       // console.log('cart.RESET:', currentTeam.data)
-  //       updatedCart = {
-  //         date: null,
-  //         total: 0.0,
-  //         orders: {}
-  //       };
-  //       break;
-  //
-  //     default:
-  //       break;
-  //
-  //     }
-  //
-  //     // console.log('Dispatching receiveTeams');
-  //     updateTeamAttributes.cart = updatedCart;
-  //
-  //     // console.log('Updated Cart: ', updatedCart);
-  //     dispatch({
-  //       type: SET_CURRENT_TEAM,
-  //       team: updateTeamAttributes
-  //     })
-  //
-  //     clearTimeout(teams.cartTimeoutId);
-  //     const cartTimeoutId = setTimeout(() => {
-  //       // console.log('Dispatching updateTeam');
-  //       dispatch(connectActions.ddpCall('updateTeam', [session.teamId, {
-  //         cart: updatedCart
-  //       }]))
-  //     }, 1500);
-  //
-  //     return dispatch({
-  //       type: SET_CART_TIMEOUT_ID,
-  //       cartTimeoutId: cartTimeoutId
-  //     })
-  //
-  //   }
-  // }
-
   function setCurrentTeam(teamId){
     return (dispatch, getState) => {
       const {teams} = getState()
@@ -446,6 +315,7 @@ export default function TeamActions(allActions) {
       dispatch(messageActions.resetMessages(teamId));
       dispatch(messageActions.getTeamMessages(teamId));
       dispatch(sessionActions.updateSession({ teamId: teamId }));
+      dispatch(getTeamUsers(teamId))
       return dispatch({
         type: SET_CURRENT_TEAM,
         team: team
@@ -498,6 +368,35 @@ export default function TeamActions(allActions) {
         type: LEAVE_TEAM,
         teamId: teamId,
       })
+    }
+  }
+
+  function getTeamUsers(teamId){
+    return (dispatch, getState) => {
+      const {session} = getState()
+
+      // console.log(messageDate)
+      const getTeamUsersCb = (err, result) => {
+        // console.log('called function, result: ', result);
+        if(result.length > 0){
+          result.forEach((user) => {
+            const teamUserData = {
+              'id': user.id,
+              'firstName': user.firstName,
+              'lastName': user.lastName,
+              'username': user.username,
+              'email': user.email,
+              'superUser': user.superUser,
+              'imageUrl': user.imageUrl,
+              'updatedAt': user.updatedAt,
+              'imagedChangedAt': user.imagedChangedAt,
+            }
+            dispatch(receiveTeamsUsers(teamUserData))
+          })
+        }
+      }
+
+      dispatch(connectActions.ddpCall('getTeamUsers', [session.userId, teamId], getTeamUsersCb))
     }
   }
 
