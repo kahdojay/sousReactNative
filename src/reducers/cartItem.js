@@ -34,6 +34,10 @@ function processCartItem(newCartItemTeamState, cartItem, cartItemIdRef){
       orders: {},
       cartItems: {},
     };
+  } else {
+    if(newCartItemTeamState[cartItem.teamId].hasOwnProperty('cartItems') === false){
+      newCartItemTeamState[cartItem.teamId].cartItems = {}
+    }
   }
 
   // organize the cart by purveyorId, and orders by orderId
@@ -49,9 +53,12 @@ function processCartItem(newCartItemTeamState, cartItem, cartItemIdRef){
   }
   newCartItemTeamState[cartItem.teamId].cartItems[cartItem.id] = Object.assign(originalTeamCartItem, cartItem)
 
-
   if(cartItem.status === 'DELETED'){
-    if(newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator].hasOwnProperty(cartItemId) === true){
+    if(
+      newCartItemTeamState[cartItem.teamId].hasOwnProperty(cartItemGroup) === true &&
+      newCartItemTeamState[cartItem.teamId][cartItemGroup].hasOwnProperty(cartItemLocator) === true &&
+      newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator].hasOwnProperty(cartItemId) === true
+    ){
       delete newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId]
     }
   } else {

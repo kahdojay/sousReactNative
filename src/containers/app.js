@@ -945,29 +945,21 @@ class App extends React.Component {
           },
         }
       case 'OrderView':
-        const cartItems = this.state.currentTeamInfo.cartItems['orders'][this.state.order.id] || {}
-        const cartItemIds = Object.keys(cartItems)
         let orderProducts = null
-
-        if(cartItemIds.length > 0){
+        if(this.state.currentTeamInfo.cartItems['orders'].hasOwnProperty(this.state.order.id) === true){
+          const orderItemsIds = Object.keys(this.state.currentTeamInfo.cartItems['orders'][this.state.order.id])
           orderProducts = []
-          let processedProducts = {}
-          _.each(cartItemIds, (cartItemId) => {
-            if(processedProducts.hasOwnProperty(cartItemId) === false){
-              processedProducts[cartItemId] = true
-              const cartItem = cartItems[cartItemId]
-              orderProducts.push({
-                product: this.state.currentTeamInfo.products[cartItem.productId],
-                cartItem: cartItem,
-              })
-            }
+          _.each(orderItemsIds, (cartItemId) => {
+            const cartItem = this.state.currentTeamInfo.cartItems['cartItems'][cartItemId]
+            const product = this.state.currentTeamInfo.products[cartItem.productId]
+            orderProducts.push({
+              product: product,
+              cartItem: cartItem,
+            })
           })
           orderProducts = _.sortBy(orderProducts, 'product.name')
         }
 
-        // const orderMessages = _.sortBy(_.filter(this.state.currentTeamInfo.messages, (message) => {
-        //   return message.hasOwnProperty('orderId') === true && message.orderId === this.state.order.id
-        // }), 'createdAt')
         return {
           component: Components.OrderView,
           props: {
