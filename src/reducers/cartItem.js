@@ -14,12 +14,26 @@ const initialState = {
     errors: null,
     isFetching: false,
     teams: {},
+    items: {},
     lastUpdated: null
   }
 };
 
-function processCartItem(newCartItemTeamState, cartItem, cartItemIdRef){
+function processCartItem(newCartItemState, cartItem, cartItemIdRef){
   cartItem = cleanupAttributes(cartItem)
+  let originalTeamCartItem = {}
+  if(newCartItemState.hasOwnProperty(cartItem.id) === true){
+    originalTeamCartItem = newCartItemState[cartItem.id]
+    // console.log('originalTeamCartItem: ', originalTeamCartItem)
+  }
+  newCartItemState[cartItem.id] = Object.assign({}, originalTeamCartItem, cartItem)
+
+  return newCartItemState
+}
+
+function processCartAndOrders(newCartItemState, newCartItemTeamState, cartItemIdRef){
+  const cartItem = newCartItemState[cartItemIdRef]
+  // console.log('cartItem: ', cartItem.teamId, cartItem.productId);
   let cartItemLocator = cartItem.purveyorId
   let cartItemGroup = 'cart'
   let cartItemId = cartItem.productId
@@ -34,31 +48,36 @@ function processCartItem(newCartItemTeamState, cartItem, cartItemIdRef){
       orders: {},
     };
   }
-  let originalTeamOrder = {}
-  if(newCartItemTeamState[cartItem.teamId][cartItemGroup].hasOwnProperty(cartItemLocator) === true){
-    originalTeamOrder = newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator]
-  }
-  newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator] = originalTeamOrder
 
-  let originalTeamCartItem = {}
-  if(
-    cartItem.orderId !== null &&
-    newCartItemTeamState[cartItem.teamId]['cart'].hasOwnProperty(cartItem.purveyorId) === true &&
-    newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId].hasOwnProperty(cartItem.productId) === true &&
-    newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId].id === cartItem.id
-  ){
-    originalTeamCartItem = Object.assign({}, newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId])
-    delete newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId]
-    if(Object.keys(newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId]).length === 0){
-      delete newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId]
-    }
-  } else if(newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator].hasOwnProperty(cartItemId) === true){
-    originalTeamCartItem = newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId]
+  // organize the cart by purveyorId, and orders by orderId
+  if(newCartItemTeamState[cartItem.teamId][cartItemGroup].hasOwnProperty(cartItemLocator) === false){
+    newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator] = {}
   }
-  newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId] = Object.assign(originalTeamCartItem, cartItem)
 
   if(cartItem.status === 'DELETED'){
-    delete newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId]
+    if(newCartItemTeamState[cartItem.teamId]['cart'].hasOwnProperty(cartItem.purveyorId) === true){
+      // console.log('DELETING: ', cartItem, newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId])
+      if(
+        newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId].hasOwnProperty(cartItem.productId) === true
+        && newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId] === cartItem.id
+      ){
+        // console.log('Deleting from cart...')
+        delete newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId]
+      }
+    }
+    if(
+      cartItem.orderId !== null
+      && newCartItemTeamState[cartItem.teamId]['orders'].hasOwnProperty(cartItem.orderId) === true
+    ){
+      if(newCartItemTeamState[cartItem.teamId]['orders'][cartItem.orderId].hasOwnProperty(cartItem.id) === true){
+        // console.log('Deleting from order...')
+        delete newCartItemTeamState[cartItem.teamId]['orders'][cartItem.orderId][cartItem.id]
+      }
+    }
+  } else {
+    // console.log(cartItem.id, cartItemGroup, cartItemLocator, cartItemId)
+    newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId] = cartItem.id
+    // console.log('updated...')
   }
 
   return newCartItemTeamState
@@ -80,6 +99,7 @@ function cartItems(state = initialState.cartItems, action) {
       })
     }
     return Object.assign({}, state, {
+      items: state.items,
       teams: orderSentCartItemTeamState,
       isFetching: false,
       errors: null,
@@ -105,16 +125,19 @@ function cartItems(state = initialState.cartItems, action) {
     });
 
   case RECEIVE_CART_ITEM:
-    const newReceivedTeamsCartItemsState = processCartItem(Object.assign({}, state.teams), action.cartItem, action.cartItem.id);
+    const newReceivedCartItemsState = processCartItem(Object.assign({}, state.items), action.cartItem, action.cartItem.id)
+    const newReceivedTeamsCartItemsState = processCartAndOrders(newReceivedCartItemsState, Object.assign({}, state.teams), action.cartItem.id)
 
-    const cartPurveyorIds = Object.keys(newReceivedTeamsCartItemsState[action.cartItem.teamId]['cart'])
+    const cartItem = newReceivedCartItemsState[action.cartItem.id]
+    const cartPurveyorIds = Object.keys(newReceivedTeamsCartItemsState[cartItem.teamId]['cart'])
     cartPurveyorIds.forEach((purveyorId) => {
-      if(Object.keys(newReceivedTeamsCartItemsState[action.cartItem.teamId]['cart'][purveyorId]).length === 0){
-        delete newReceivedTeamsCartItemsState[action.cartItem.teamId]['cart'][purveyorId]
+      if(Object.keys(newReceivedTeamsCartItemsState[cartItem.teamId]['cart'][purveyorId]).length === 0){
+        delete newReceivedTeamsCartItemsState[cartItem.teamId]['cart'][purveyorId]
       }
     })
 
     return Object.assign({}, state, {
+      items: newReceivedCartItemsState,
       teams: newReceivedTeamsCartItemsState,
       isFetching: false,
       errors: null,
@@ -122,8 +145,10 @@ function cartItems(state = initialState.cartItems, action) {
     });
 
   case ADD_CART_ITEM:
-    const newCreatedTeamsCartItemsState = processCartItem(Object.assign({}, state.teams), action.cartItem, action.cartItemId);
+    const newCreatedCartItemsState = processCartItem(Object.assign({}, state.items), action.cartItem, action.cartItemId)
+    const newCreatedTeamsCartItemsState = processCartAndOrders(newCreatedCartItemsState, Object.assign({}, state.teams), action.cartItemId);
     return Object.assign({}, state, {
+      items: newCreatedCartItemsState,
       teams: newCreatedTeamsCartItemsState,
       isFetching: false,
       errors: null,
@@ -143,6 +168,7 @@ function cartItems(state = initialState.cartItems, action) {
       }
     }
     return Object.assign({}, state, {
+      items: state.items,
       teams: newDeletedTeamsCartItemsState,
       isFetching: false,
       errors: null,
