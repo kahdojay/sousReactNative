@@ -211,6 +211,15 @@ class OrderView extends React.Component {
       <View style={styles.container}>
         { this.state.loaded === true ?
           <View style={styles.container}>
+            <ScrollView
+              automaticallyAdjustContentInsets={false}
+              keyboardShouldPersistTaps={false}
+              style={styles.scrollView}
+            >
+              {productsList}
+            </ScrollView>
+            <View style={styles.separator} />
+            {modal}
             { order.confirm.order === false ?
               <TouchableHighlight
                 onPress={() => {
@@ -224,7 +233,7 @@ class OrderView extends React.Component {
                 style={styles.buttonContainerLink}
               >
                 <View style={[styles.buttonContainer, buttonDisabledStyle]}>
-                  <Text style={[styles.buttonText, buttonTextDisabledStyle]}>Confirm Delivery</Text>
+                  <Text style={[styles.buttonText, buttonTextDisabledStyle]}>Confirm & File Invoice</Text>
                 </View>
               </TouchableHighlight>
             :
@@ -233,15 +242,6 @@ class OrderView extends React.Component {
                 <Text style={[styles.confirmedText]}>{order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('M/D/YY h:mm a') : ''}</Text>
               </View>
             }
-            {modal}
-            <View style={styles.separator} />
-            <ScrollView
-              automaticallyAdjustContentInsets={false}
-              keyboardShouldPersistTaps={false}
-              style={styles.scrollView}
-            >
-              {productsList}
-            </ScrollView>
           </View>
         : <Text style={[styles.text, styles.textCentered, {padding: 25}]}>Loading, please wait.</Text> }
       </View>
