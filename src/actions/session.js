@@ -84,7 +84,7 @@ export default function SessionActions(allActions){
       if(sessionParams.hasOwnProperty('imageData') === true){
         const ddpCallArguments = [
           sessionParams.imageData,
-          'avatar_' + session.userId + '.jpg',
+          'avatars/avatar_' + session.userId + '.jpg',
           session.userId
         ]
         dispatch(connectActions.ddpCall('streamS3Image', ddpCallArguments))
