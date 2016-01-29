@@ -56,12 +56,12 @@ function processCartAndOrders(newCartItemState, newCartItemTeamState, cartItemId
 
   if(cartItem.status === 'DELETED'){
     if(newCartItemTeamState[cartItem.teamId]['cart'].hasOwnProperty(cartItem.purveyorId) === true){
-      console.log('DELETING: ', cartItem, newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId])
+      // console.log('DELETING: ', cartItem, newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId])
       if(
         newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId].hasOwnProperty(cartItem.productId) === true
         && newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId] === cartItem.id
       ){
-        console.log('Deleting from cart...')
+        // console.log('Deleting from cart...')
         delete newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId]
       }
     }
@@ -70,14 +70,14 @@ function processCartAndOrders(newCartItemState, newCartItemTeamState, cartItemId
       && newCartItemTeamState[cartItem.teamId]['orders'].hasOwnProperty(cartItem.orderId) === true
     ){
       if(newCartItemTeamState[cartItem.teamId]['orders'][cartItem.orderId].hasOwnProperty(cartItem.id) === true){
-        console.log('Deleting from order...')
+        // console.log('Deleting from order...')
         delete newCartItemTeamState[cartItem.teamId]['orders'][cartItem.orderId][cartItem.id]
       }
     }
   } else {
-    console.log(cartItem.id, cartItemGroup, cartItemLocator, cartItemId)
+    // console.log(cartItem.id, cartItemGroup, cartItemLocator, cartItemId)
     newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId] = cartItem.id
-    console.log('updated...')
+    // console.log('updated...')
   }
 
   return newCartItemTeamState
