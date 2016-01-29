@@ -73,6 +73,7 @@ class App extends React.Component {
         categories: {},
         products: {},
         orders: {},
+        cart: {},
         cartItems: {'cart':{}, 'orders':{}},
         messages: {},
         lastUpdated: {
@@ -146,8 +147,21 @@ class App extends React.Component {
       currentTeamInfo.lastUpdated.messages = nextProps.messages.lastUpdated;
       if(nextProps.cartItems.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.cartItems = nextProps.cartItems.teams[currentTeamInfo.team.id]
+        currentTeamInfo.cart = {}
+        // console.log(currentTeamInfo.cartItems.cart)
+        _.each(Object.keys(currentTeamInfo.cartItems.cart), (purveyorId) => {
+          if(currentTeamInfo.cart.hasOwnProperty(purveyorId) === false){
+            currentTeamInfo.cart[purveyorId] = {}
+          }
+          _.each(Object.keys(currentTeamInfo.cartItems.cart[purveyorId]), (productId) => {
+            const cartItemId = currentTeamInfo.cartItems.cart[purveyorId][productId]
+            const cartItem = nextProps.cartItems.items[cartItemId]
+            currentTeamInfo.cart[purveyorId][productId] = cartItem
+          })
+        })
       } else {
-        currentTeamInfo.cartItems = {'cart': {},'orders': {}, 'cartItems': {}}
+        currentTeamInfo.cart = {}
+        currentTeamInfo.cartItems = {'cart': {},'orders': {}}
       }
       currentTeamInfo.lastUpdated.cartItems = nextProps.cartItems.lastUpdated;
       if(nextProps.orders.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
@@ -174,6 +188,7 @@ class App extends React.Component {
       email: nextProps.session.email,
       currentTeamInfo: currentTeamInfo,
     }, () => {
+      // console.log(this.props.cartItems)
       if(reconnectCountDown === true){
         this.countDownReconnect()
         // console.log('here')
@@ -364,7 +379,7 @@ class App extends React.Component {
   }
 
   getScene(route, nav) {
-    const { session, teams, messages, dispatch, purveyors, products, categories, errors, connect, settingsConfig } = this.props;
+    const { session, teams, messages, dispatch, purveyors, products, categories, cartItems, errors, connect, settingsConfig } = this.props;
 
     switch (route.name) {
       case 'session/onboarding':
@@ -713,7 +728,7 @@ class App extends React.Component {
         return {
           component: Components.PurveyorView,
           props: {
-            cartItems: this.state.currentTeamInfo.cartItems['cart'],
+            cartItems: this.state.currentTeamInfo.cart,
             categories: this.state.currentTeamInfo.categories,
             purveyor: this.state.purveyor,
             // purveyors: this.state.currentTeamInfo.purveyors,
@@ -819,7 +834,7 @@ class App extends React.Component {
           component: Components.CategoryView,
           props: {
             category: this.state.category,
-            cartItems: this.state.currentTeamInfo.cartItems['cart'],
+            cartItems: this.state.currentTeamInfo.cart,
             products: specificProductsCategory,
             purveyors: this.state.currentTeamInfo.purveyors,
             onProductDelete: (productId) => {
@@ -876,7 +891,7 @@ class App extends React.Component {
               }
             },
             products: this.state.currentTeamInfo.products,
-            cartItems: this.state.currentTeamInfo.cartItems['cart'],
+            cartItems: this.state.currentTeamInfo.cart,
             purveyors: this.state.currentTeamInfo.purveyors,
             categories: this.state.currentTeamInfo.categories,
             onCreateProduct: this.onCreateProduct.bind(this, route, nav),
@@ -919,7 +934,7 @@ class App extends React.Component {
             showConfirmedOrders: this.state.sceneState.OrderIndex.showConfirmedOrders,
             orders: this.state.currentTeamInfo.orders,
             cartItemsOrders: this.state.currentTeamInfo.cartItems['orders'],
-            cartItems: this.state.currentTeamInfo.cartItems['cartItems'],
+            cartItems: cartItems.items,
             purveyors: this.state.currentTeamInfo.purveyors,
             teamsUsers: teams.teamsUsers,
             currentTeamUsers: this.state.currentTeamInfo.team.users,
@@ -950,7 +965,7 @@ class App extends React.Component {
           const orderItemsIds = Object.keys(this.state.currentTeamInfo.cartItems['orders'][this.state.order.id])
           orderProducts = []
           _.each(orderItemsIds, (cartItemId) => {
-            const cartItem = this.state.currentTeamInfo.cartItems['cartItems'][cartItemId]
+            const cartItem = cartItems['cartItems'][cartItemId]
             const product = this.state.currentTeamInfo.products[cartItem.productId]
             orderProducts.push({
               product: product,
@@ -1149,7 +1164,7 @@ class App extends React.Component {
           component: Components.CartView,
           props: {
             // team: this.state.currentTeamInfo.team,
-            cartItems: this.state.currentTeamInfo.cartItems['cart'],
+            cartItems: this.state.currentTeamInfo.cart,
             cartPurveyors: cartPurveyors,
             products: this.state.currentTeamInfo.products,
             onUpdateProductInCart: (cartAction, cartAttributes) => {
@@ -1308,7 +1323,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cartItems={this.state.currentTeamInfo.cartItems['cart']}
+                cartItems={this.state.currentTeamInfo.cart}
               />
             )
           })
@@ -1350,7 +1365,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cartItems={this.state.currentTeamInfo.cartItems['cart']}
+                cartItems={this.state.currentTeamInfo.cart}
               />
             )
           })
@@ -1375,7 +1390,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cartItems={this.state.currentTeamInfo.cartItems['cart']}
+                cartItems={this.state.currentTeamInfo.cart}
               />
             )
           })
@@ -1401,7 +1416,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                cartItems={this.state.currentTeamInfo.cartItems['cart']}
+                cartItems={this.state.currentTeamInfo.cart}
               />
             )
           })
@@ -1427,7 +1442,7 @@ class App extends React.Component {
                   onNavToCart={() => {
                     nav.push({ name: 'CartView', });
                   }}
-                  cartItems={this.state.currentTeamInfo.cartItems['cart']}
+                  cartItems={this.state.currentTeamInfo.cart}
                 />
               )
             })
