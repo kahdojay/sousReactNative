@@ -1,4 +1,5 @@
 import React from 'react-native';
+import { Icon, } from 'react-native-icons';
 import _ from 'lodash';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
@@ -211,6 +212,25 @@ class OrderView extends React.Component {
       <View style={styles.container}>
         { this.state.loaded === true ?
           <View style={styles.container}>
+            { order.confirm.order === true ?
+              <View>
+                <View style={[styles.confirmedContainer, styles.buttonContainerLink, styles.buttonContainer, {backgroundColor: Colors.sky, alignItems: 'center'}]}>
+                  <View style={{width: 30, height: 30}}>
+                    <Icon name='material|circle' size={20} color={Colors.green} style={{width: 30, height: 30}}>
+                      <Icon name='material|check' size={25} color='white' style={{width: 25, height: 25, backgroundColor: 'transparent', marginLeft: 6,}} />
+                    </Icon>
+                  </View>
+                  <View style={{flex: 9 }}>
+                    <Text style={[styles.confirmedText]}>Delivery confirmed by: {confirmUserName}</Text>
+                    <Text style={[styles.confirmedText]}>{order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('M/D/YY h:mm a') : ''}</Text>
+                  </View>
+                </View>
+                <View style={{alignItems: 'center', marginBottom: 10, marginLeft: 10, marginRight: 10, padding: 4, backgroundColor: 'white'}}>
+                  <Text style={{color: Colors.lightBlue}}>View Invoice(s)</Text>
+                </View>
+                <View style={styles.separator} />
+              </View>
+            : null }
             <ScrollView
               automaticallyAdjustContentInsets={false}
               keyboardShouldPersistTaps={false}
@@ -218,30 +238,27 @@ class OrderView extends React.Component {
             >
               {productsList}
             </ScrollView>
-            <View style={styles.separator} />
             {modal}
             { order.confirm.order === false ?
-              <TouchableHighlight
-                onPress={() => {
-                  if(order.confirm.order === false){
-                    this.setState({
-                      showConfirm: true
-                    })
-                  }
-                }}
-                underlayColor='transparent'
-                style={styles.buttonContainerLink}
-              >
-                <View style={[styles.buttonContainer, buttonDisabledStyle]}>
-                  <Text style={[styles.buttonText, buttonTextDisabledStyle]}>Confirm & File Invoice</Text>
-                </View>
-              </TouchableHighlight>
-            :
-              <View style={[styles.buttonContainerLink, styles.buttonContainer, buttonDisabledStyle]}>
-                <Text style={[styles.confirmedText]}>Delivery confirmed by: {confirmUserName}</Text>
-                <Text style={[styles.confirmedText]}>{order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('M/D/YY h:mm a') : ''}</Text>
+              <View>
+                <View style={styles.separator} />
+                <TouchableHighlight
+                  onPress={() => {
+                    if(order.confirm.order === false){
+                      this.setState({
+                        showConfirm: true
+                      })
+                    }
+                  }}
+                  underlayColor='transparent'
+                  style={styles.buttonContainerLink}
+                >
+                  <View style={[styles.buttonContainer, buttonDisabledStyle]}>
+                    <Text style={[styles.buttonText, buttonTextDisabledStyle]}>Confirm & Upload Invoice</Text>
+                  </View>
+                </TouchableHighlight>
               </View>
-            }
+            : null }
           </View>
         : <Text style={[styles.text, styles.textCentered, {padding: 25}]}>Loading, please wait.</Text> }
       </View>
@@ -254,6 +271,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
   },
+  confirmedContainer: {
+    flexDirection: 'row',
+  },
+
   buttonContainerLink: {
     margin: 10,
   },
