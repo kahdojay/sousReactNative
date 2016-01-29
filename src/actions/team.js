@@ -381,7 +381,7 @@ export default function TeamActions(allActions) {
         if(result.length > 0){
           result.forEach((user) => {
             const teamUserData = {
-              'id': user.id,
+              'id': user._id,
               'firstName': user.firstName,
               'lastName': user.lastName,
               'username': user.username,

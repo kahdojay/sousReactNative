@@ -53,7 +53,7 @@ class TeamMemberListing extends React.Component {
       }
     }
     teamMembers.push(
-      <View style={styles.row}>
+      <View key={'suport-user'} style={styles.row}>
         <View style={styles.member}>
           <Image source={{uri: Urls.msgLogo}} style={styles.avatarImage} />
           <View style={styles.memberInfoContainer}>
@@ -135,27 +135,27 @@ class TeamMemberListing extends React.Component {
         let showEmailIcon = false
         let userDisplayName = []
         if(user.firstName){
-          userDisplayName.push(<Text style={[styles.text, styles.textBold]}>{user.firstName}</Text>)
+          userDisplayName.push(<Text key={`${userId}-first-name`} style={[styles.text, styles.textBold]}>{user.firstName}</Text>)
         }
         if(user.lastName){
-          userDisplayName.push(<Text style={styles.text}> {user.lastName}</Text>)
+          userDisplayName.push(<Text key={`${userId}-last-name`} style={styles.text}> {user.lastName}</Text>)
         }
         if(userDisplayName.length === 0){
-          userDisplayName.push(<Text style={styles.pending}>Pending</Text>)
+          userDisplayName.push(<Text key={`${userId}-name`} style={styles.pending}>Pending</Text>)
         }
         if(user.username){
           // if(memberContactDetails.length > 0){
           //   memberContactDetails.push(<Text key='phoneNumberSeparator' style={styles.detailsSeparator}>{' • '}</Text>)
           // }
           const userPhoneNumber = DataUtils.formatPhoneNumber(user.username)
-          memberContactDetails.push(<Text key='phoneNumber' style={styles.phoneNumber}>{userPhoneNumber}</Text>)
+          memberContactDetails.push(<Text key={`${userId}-phoneNumber`} style={styles.phoneNumber}>{userPhoneNumber}</Text>)
           showPhoneIcon = true
         }
         if(user.email){
           // if(memberContactDetails.length > 0){
           //   memberContactDetails.push(<Text key='emailAddressSeparator' style={styles.detailsSeparator}>{' • '}</Text>)
           // }
-          memberContactDetails.push(<Text key='emailAddress' style={styles.emailAddress}>{user.email}</Text>)
+          memberContactDetails.push(<Text key={`${userId}-emailAddress`} style={styles.emailAddress}>{user.email}</Text>)
           showEmailIcon = true
         }
         teamMembers.push(
