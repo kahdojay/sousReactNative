@@ -965,7 +965,7 @@ class App extends React.Component {
           const orderItemsIds = Object.keys(this.state.currentTeamInfo.cartItems['orders'][this.state.order.id])
           orderProducts = []
           _.each(orderItemsIds, (cartItemId) => {
-            const cartItem = cartItems['cartItems'][cartItemId]
+            const cartItem = cartItems.items[cartItemId]
             const product = this.state.currentTeamInfo.products[cartItem.productId]
             orderProducts.push({
               product: product,
