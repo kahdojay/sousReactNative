@@ -231,19 +231,21 @@ class OrderView extends React.Component {
         { this.state.loaded === true ?
           <View style={styles.container}>
             { order.confirm.order === true ?
-              <View style={[styles.confirmedContainer, styles.buttonContainerLink, styles.buttonContainer, {backgroundColor: confirmedContainerBackgroundColor}]}>
-                <View style={styles.confirmedIconContainer}>
-                  <Icon name='material|circle' size={20} color={invoiceIconBackgroundColor} style={styles.confirmedIconContainer}>
-                    <Icon name='material|check' size={25} color={invoiceIconCheckmarkColor} style={styles.confirmedIconCheckmark} />
-                  </Icon>
+              <View>
+                <View style={[styles.confirmedContainer, styles.buttonContainerLink, styles.buttonContainer, {backgroundColor: confirmedContainerBackgroundColor}]}>
+                  <View style={styles.confirmedIconContainer}>
+                    <Icon name='material|circle' size={20} color={invoiceIconBackgroundColor} style={styles.confirmedIconContainer}>
+                      <Icon name='material|check' size={25} color={invoiceIconCheckmarkColor} style={styles.confirmedIconCheckmark} />
+                    </Icon>
+                  </View>
+                  <View style={{flex: 9 }}>
+                    <Text style={[styles.confirmedText]}>Delivery confirmed by: {confirmUserName}</Text>
+                    <Text style={[styles.confirmedText]}>{order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('M/D/YY h:mm a') : ''}</Text>
+                  </View>
                 </View>
-                <View style={{flex: 9 }}>
-                  <Text style={[styles.confirmedText]}>Delivery confirmed by: {confirmUserName}</Text>
-                  <Text style={[styles.confirmedText]}>{order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('M/D/YY h:mm a') : ''}</Text>
-                </View>
+                <View style={styles.separator} />
               </View>
             : null }
-            <View style={styles.separator} />
             <View style={[styles.invoiceButtonContainer, {backgroundColor: invoiceButtonContainerBackgroundColor}]}>
               <Text style={[styles.invoiceButtonText, {color: invoiceButtonTextColor}]}>{invoiceButtonText}</Text>
             </View>
