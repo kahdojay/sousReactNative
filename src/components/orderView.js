@@ -208,29 +208,46 @@ class OrderView extends React.Component {
       confirmUserName = `${confirmUser.firstName} ${confirmUser.lastName[0]}.`
     }
 
+    let invoiceIconBackgroundColor = 'white'
+    let invoiceIconCheckmarkColor = 'transparent'
+    let invoiceButtonText = 'Upload Invoice(s)'
+    let confirmedContainerBackgroundColor = Colors.disabled
+    let invoiceButtonContainerBackgroundColor = Colors.gold
+    let invoiceButtonTextColor = 'white'
+    // if(true){
+    if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
+      invoiceIconBackgroundColor = Colors.green
+      invoiceIconCheckmarkColor = 'white'
+      invoiceButtonText = 'View Invoice(s)'
+      invoiceButtonContainerBackgroundColor = 'white'
+      invoiceButtonTextColor = Colors.lightBlue
+    }
+    if(order.confirm.order === true){
+      confirmedContainerBackgroundColor = Colors.sky
+    }
+
     return (
       <View style={styles.container}>
         { this.state.loaded === true ?
           <View style={styles.container}>
             { order.confirm.order === true ?
-              <View>
-                <View style={[styles.confirmedContainer, styles.buttonContainerLink, styles.buttonContainer, {backgroundColor: Colors.sky, alignItems: 'center'}]}>
-                  <View style={{width: 30, height: 30}}>
-                    <Icon name='material|circle' size={20} color={Colors.green} style={{width: 30, height: 30}}>
-                      <Icon name='material|check' size={25} color='white' style={{width: 25, height: 25, backgroundColor: 'transparent', marginLeft: 6,}} />
-                    </Icon>
-                  </View>
-                  <View style={{flex: 9 }}>
-                    <Text style={[styles.confirmedText]}>Delivery confirmed by: {confirmUserName}</Text>
-                    <Text style={[styles.confirmedText]}>{order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('M/D/YY h:mm a') : ''}</Text>
-                  </View>
+              <View style={[styles.confirmedContainer, styles.buttonContainerLink, styles.buttonContainer, {backgroundColor: confirmedContainerBackgroundColor}]}>
+                <View style={styles.confirmedIconContainer}>
+                  <Icon name='material|circle' size={20} color={invoiceIconBackgroundColor} style={styles.confirmedIconContainer}>
+                    <Icon name='material|check' size={25} color={invoiceIconCheckmarkColor} style={styles.confirmedIconCheckmark} />
+                  </Icon>
                 </View>
-                <View style={{alignItems: 'center', marginBottom: 10, marginLeft: 10, marginRight: 10, padding: 4, backgroundColor: 'white'}}>
-                  <Text style={{color: Colors.lightBlue}}>View Invoice(s)</Text>
+                <View style={{flex: 9 }}>
+                  <Text style={[styles.confirmedText]}>Delivery confirmed by: {confirmUserName}</Text>
+                  <Text style={[styles.confirmedText]}>{order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('M/D/YY h:mm a') : ''}</Text>
                 </View>
-                <View style={styles.separator} />
               </View>
             : null }
+            <View style={styles.separator} />
+            <View style={[styles.invoiceButtonContainer, {backgroundColor: invoiceButtonContainerBackgroundColor}]}>
+              <Text style={[styles.invoiceButtonText, {color: invoiceButtonTextColor}]}>{invoiceButtonText}</Text>
+            </View>
+            <View style={styles.separator} />
             <ScrollView
               automaticallyAdjustContentInsets={false}
               keyboardShouldPersistTaps={false}
@@ -273,15 +290,38 @@ const styles = StyleSheet.create({
   },
   confirmedContainer: {
     flexDirection: 'row',
+    backgroundColor: Colors.sky,
+    alignItems: 'center',
   },
-
+  confirmedIconContainer: {
+    width: 30,
+    height: 30,
+  },
+  confirmedIconCheckmark: {
+    width: 25,
+    height: 25,
+    backgroundColor: 'transparent',
+    marginLeft: 6,
+  },
+  invoiceButtonContainer: {
+    alignItems: 'center',
+    backgroundColor: Colors.gold,
+    justifyContent: 'center',
+    padding: 8,
+  },
+  invoiceButtonText: {
+    color: 'white',
+    fontSize: Sizes.inputFieldFontSize,
+    fontFamily: 'OpenSans',
+    fontWeight: 'bold',
+  },
   buttonContainerLink: {
     margin: 10,
   },
   buttonContainer: {
     backgroundColor: 'white',
     borderRadius: 3,
-    padding: 10,
+    padding: 8,
   },
   buttonDisabled: {
     backgroundColor: Colors.disabled,
