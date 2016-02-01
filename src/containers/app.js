@@ -118,9 +118,11 @@ class App extends React.Component {
   }}
 
   componentWillReceiveProps(nextProps) {
+    let processRedirect = false
     let currentTeamInfo = Object.assign({}, this.state.currentTeamInfo)
     currentTeamInfo.team = nextProps.teams.currentTeam
     if(currentTeamInfo.team !== null){
+      processRedirect = true
       if(nextProps.purveyors.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.purveyors = nextProps.purveyors.teams[currentTeamInfo.team.id]
       } else {
@@ -193,6 +195,9 @@ class App extends React.Component {
         this.countDownReconnect()
         // console.log('here')
       }
+      if(processRedirect === true){
+        this.redirectBasedOnData()
+      }
     })
   }
 
@@ -246,7 +251,10 @@ class App extends React.Component {
         });
       }
     }
+    this.redirectBasedOnData()
+  }
 
+  redirectBasedOnData() {
     if(this.refs.appNavigator){
       const routeName = this.refs.appNavigator.getCurrentRoutes()[0].name
 

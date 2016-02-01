@@ -279,18 +279,18 @@ export default function ConnectActions(ddpClient) {
       dispatch(sessionActions.updateSession({ resetAppState: false, isAuthenticated: false }))
 
       // dispatch(processUnsubscribe())
+      dispatch(teamActions.resetTeams())
       dispatch(cartItemActions.resetCartItems())
       dispatch(orderActions.resetOrders())
       dispatch(productActions.resetProducts())
       dispatch(categoryActions.resetCategories())
       dispatch(purveyorActions.resetPurveyors())
       dispatch(messageActions.resetMessages())
-      dispatch(teamActions.resetTeams())
       dispatch(sessionActions.resetSession())
       dispatch(errorActions.resetErrors())
       dispatch(() => {
         ddpClient.close()
-        dispatch(connectDDP(allActions));
+        dispatch(connectDDP(allActions))
         // setTimeout(() => {
         // //   setTimeout(() => {
         // //     // const {connect} = getState()
