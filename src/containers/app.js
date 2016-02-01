@@ -48,6 +48,7 @@ class App extends React.Component {
       product: null,
       category: null,
       // specificProducts: null,
+      orderProducts: null,
       purveyor: null,
       contactList: [],
       showGenericModal: false,
@@ -348,6 +349,26 @@ class App extends React.Component {
         name: 'ProductForm'
       })
     })
+  }
+
+  getOrderItems() {
+    if(this.state.currentTeamInfo.cartItems['orders'].hasOwnProperty(this.state.order.id) === true){
+      const orderItemsIds = Object.keys(this.state.currentTeamInfo.cartItems['orders'][this.state.order.id])
+      let orderProducts = []
+      _.each(orderItemsIds, (cartItemId) => {
+        const cartItem = this.props.cartItems.items[cartItemId]
+        const product = this.state.currentTeamInfo.products[cartItem.productId]
+        cartItem.amount = product.amount
+        cartItem.unit = product.unit
+        orderProducts.push({
+          product: product,
+          cartItem: cartItem,
+        })
+      })
+      return _.sortBy(orderProducts, 'product.name')
+    } else {
+      return null
+    }
   }
 
   getRoute(route, nav) {
@@ -967,20 +988,8 @@ class App extends React.Component {
           },
         }
       case 'OrderView':
-        let orderProducts = null
-        if(this.state.currentTeamInfo.cartItems['orders'].hasOwnProperty(this.state.order.id) === true){
-          const orderItemsIds = Object.keys(this.state.currentTeamInfo.cartItems['orders'][this.state.order.id])
-          orderProducts = []
-          _.each(orderItemsIds, (cartItemId) => {
-            const cartItem = cartItems.items[cartItemId]
-            const product = this.state.currentTeamInfo.products[cartItem.productId]
-            orderProducts.push({
-              product: product,
-              cartItem: cartItem,
-            })
-          })
-          orderProducts = _.sortBy(orderProducts, 'product.name')
-        }
+        // let orderProducts = null
+        let orderProducts = this.getOrderItems()
 
         return {
           component: Components.OrderView,
@@ -1514,7 +1523,12 @@ class App extends React.Component {
                     const to = purveyor.orderEmails.split(',')
                     const cc = ['orders@sousapp.com']
                     const subject = `re: ${purveyor.name} • Order Received from ${team.name} on ${orderDate.format('dddd, MMMM D')}`
-                    Communications.email(to, cc, null, subject, null)
+                    let orderProducts = this.getOrderItems()
+                    let body = 'Order: '
+                    orderProducts.forEach(function(o) {
+                      body += `\n ${o.cartItem.productName} x ${o.cartItem.amount * o.cartItem.quantity} ${o.cartItem.unit}`
+                    })
+                    Communications.email(to, cc, null, subject, body)
                   }
                 }}
               />
