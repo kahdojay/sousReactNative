@@ -12,7 +12,7 @@ const {
 } = React;
 
 const window = Dimensions.get('window');
-const invoiceHeight = window.height-20
+const invoiceHeight = window.height-86
 
 class Invoice extends React.Component {
   constructor(props) {
@@ -66,12 +66,18 @@ class OrderInvoices extends React.Component {
           height={invoiceHeight}
           showsPagination={true}
           paginationStyle={styles.swiperPagination}
+          dot={(
+            <View style={styles.dot} />
+          )}
+          activeDot={(
+            <View style={styles.dotActive} />
+          )}
         >
           {swiperInvoices}
         </Swiper>
         <View style={styles.bottomContainer}>
           <TouchableHighlight
-            underlayColor='transparent'
+            underlayColor='white'
             onPress={() => {
               this.props.onNavtoUploadInvoices(order.id)
             }}
@@ -95,7 +101,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   swiperPagination: {
-    bottom: -30,
+    bottom: 60,
   },
   invoice: {
     flex: 1,
@@ -122,12 +128,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   invoiceButton: {
-    height: 36,
     justifyContent: 'center',
-    backgroundColor: Colors.gold,
+    backgroundColor: 'white',
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
   },
   invoiceButtonText: {
-    color: 'white',
+    padding: 10,
+    paddingBottom: 11,
+    color: Colors.lightBlue,
     textAlign: 'center',
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
@@ -142,6 +151,30 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 15,
     color: Colors.red,
+  },
+  dot: {
+    backgroundColor: Colors.lightGrey,
+    borderWidth: 1,
+    borderColor: Colors.darkGrey,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginLeft: 3,
+    marginRight: 3,
+    marginTop: 3,
+    marginBottom: 3,
+  },
+  dotActive: {
+    backgroundColor: Colors.gold,
+    borderWidth: 1,
+    borderColor: 'white',
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    marginLeft: 3,
+    marginRight: 3,
+    marginTop: 3,
+    marginBottom: 3,
   },
 })
 

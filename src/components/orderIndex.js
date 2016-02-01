@@ -249,11 +249,12 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     backgroundColor: 'white',
-    padding: 10,
   },
   buttonText: {
     alignSelf: 'center',
     fontSize: 16,
+    padding: 10,
+    paddingBottom: 11,
     color: Colors.lightBlue,
     fontWeight: 'bold',
     fontFamily: 'OpenSans'

@@ -316,7 +316,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: Colors.gold,
     justifyContent: 'center',
-    padding: 8,
+    padding: 10,
+    paddingBottom: 11,
   },
   invoiceButtonText: {
     color: 'white',
