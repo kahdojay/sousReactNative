@@ -951,7 +951,7 @@ class App extends React.Component {
               this.setState({
                 order: order,
                 purveyor: purveyor,
-              },() => {
+              }, () => {
                 nav.push({
                   name: 'OrderView'
                 })
@@ -1013,7 +1013,59 @@ class App extends React.Component {
                 name: 'OrderIndex',
               })
             },
+            onNavToInvoices: (orderId) => {
+              const order = this.state.currentTeamInfo.orders[orderId]
+              const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
+              this.setState({
+                order: order,
+                purveyor: purveyor,
+              }, () => {
+                if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
+                  nav.push({
+                    name: 'OrderInvoices'
+                  })
+                } else {
+                  nav.push({
+                    name: 'OrderInvoiceUpload'
+                  })
+                }
+              })
+            },
           },
+        }
+      case 'OrderInvoices':
+        return {
+          component: Components.OrderInvoices,
+          props: {
+            order: this.state.order,
+            onNavtoUploadInvoices: (orderId) => {
+              const order = this.state.currentTeamInfo.orders[orderId]
+              const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
+              this.setState({
+                order: order,
+                purveyor: purveyor,
+              }, () => {
+                nav.replace({
+                  name: 'OrderInvoiceUpload'
+                })
+              })
+            }
+          }
+        }
+      case 'OrderInvoiceUpload':
+        return {
+          component: Components.OrderInvoiceUpload,
+          props: {
+            order: this.state.order,
+            onUploadInvoices: (invoiceImages) => {
+              dispatch(actions.updateOrderInvoices(this.state.order.id, {
+                invoiceImages: invoiceImages
+              }))
+              nav.replace({
+                name: 'OrderInvoices'
+              })
+            }
+          }
         }
       case 'Profile':
         return {
@@ -1510,6 +1562,48 @@ class App extends React.Component {
                     Communications.email(to, cc, null, subject, null)
                   }
                 }}
+              />
+            ),
+          })
+          break;
+        case 'OrderInvoices':
+          let titleOrderInvoices = 'Processing'
+          if(this.state.purveyor !== null){
+            titleOrderInvoices = this.state.purveyor.name.substr(0,12) + (this.state.purveyor.name.length > 12 ? '...' : '')
+          }
+          navBar = React.cloneElement(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                pop={true}
+                iconFont={'material|chevron-left'}
+              />
+            ),
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={titleOrderInvoices}
+              />
+            ),
+          })
+          break;
+        case 'OrderInvoiceUpload':
+          let titleOrderInvoiceUpload = 'Processing'
+          if(this.state.purveyor !== null){
+            titleOrderInvoiceUpload = this.state.purveyor.name.substr(0,12) + (this.state.purveyor.name.length > 12 ? '...' : '')
+          }
+          navBar = React.cloneElement(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                pop={true}
+                iconFont={'material|chevron-left'}
+              />
+            ),
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={titleOrderInvoiceUpload}
               />
             ),
           })

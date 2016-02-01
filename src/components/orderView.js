@@ -246,9 +246,16 @@ class OrderView extends React.Component {
                 <View style={styles.separator} />
               </View>
             : null }
-            <View style={[styles.invoiceButtonContainer, {backgroundColor: invoiceButtonContainerBackgroundColor}]}>
-              <Text style={[styles.invoiceButtonText, {color: invoiceButtonTextColor}]}>{invoiceButtonText}</Text>
-            </View>
+            <TouchableHighlight
+              underlayColor='transparent'
+              onPress={() => {
+                this.props.onNavToInvoices(order.id)
+              }}
+            >
+              <View style={[styles.invoiceButtonContainer, {backgroundColor: invoiceButtonContainerBackgroundColor}]}>
+                <Text style={[styles.invoiceButtonText, {color: invoiceButtonTextColor}]}>{invoiceButtonText}</Text>
+              </View>
+            </TouchableHighlight>
             <View style={styles.separator} />
             <ScrollView
               automaticallyAdjustContentInsets={false}

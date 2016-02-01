@@ -18,6 +18,51 @@ export default function OrderActions(allActions){
     }
   }
 
+  function updateOrderInvoices(orderId, orderAttributes) {
+    return (dispatch, getState) => {
+      const {session} = getState()
+      if(orderAttributes.hasOwnProperty('invoiceImages') === true){
+        let invoiceImages = []
+        let invoices = []
+        _.each(orderAttributes.invoiceImages, (source, idx) => {
+          const invoiceId = generateId()
+          const invoiceUri = source.uri
+          invoiceImages.push({
+            id: invoiceId,
+            orderId: orderId,
+            userId: session.userId,
+            type: "image/jpeg",
+            name: `invoices/${session.teamId}/OrderId-${orderId}-InvoiceId-${invoiceId}.jpeg`,
+            data: source.data,
+            createdAt: (new Date()).toISOString(),
+          })
+          invoices.push({
+            id: invoiceId,
+            userId: session.userId,
+            imageUrl: invoiceUri,
+            location: 'local',
+            updatedAt: (new Date()).toISOString(),
+          })
+        })
+
+        const ddpCallArguments = [
+          orderId,
+          invoiceImages,
+          session.userId
+        ]
+        dispatch(connectActions.ddpCall('streamS3InvoiceImages', ddpCallArguments))
+        delete orderAttributes.invoiceImages
+        orderAttributes.invoices = invoices
+      }
+      return dispatch({
+        type: UPDATE_ORDER,
+        teamId: session.teamId,
+        orderId: orderId,
+        order: orderAttributes
+      })
+    }
+  }
+
   function updateOrder(orderId, orderAttributes) {
     return (dispatch, getState) => {
       const {session} = getState()
@@ -47,5 +92,6 @@ export default function OrderActions(allActions){
     resetOrders,
     receiveOrders,
     updateOrder,
+    updateOrderInvoices,
   }
 }
