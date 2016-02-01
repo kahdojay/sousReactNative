@@ -17,7 +17,6 @@ import * as ModalComponents from '../components/modal';
 import Dimensions from 'Dimensions';
 import PushManager from 'react-native-remote-push/RemotePushIOS';
 import Communications from 'react-native-communications';
-import DeviceUUID from 'react-native-device-uuid';
 import Device from 'react-native-device';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 
