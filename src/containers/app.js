@@ -1611,16 +1611,17 @@ class App extends React.Component {
                       dispatch(actions.updateProduct(productId, productAttributes))
                     }
                   }, 5)()
-                  if(this.state.product === null){
+                  // nav.replacePreviousAndPop()
+                  // if(this.state.product === null){
                     nav.replacePreviousAndPop({
-                      name: 'CategoryIndex',
+                      name: 'PurveyorIndex',
                     });
-                  } else {
-                    nav.replace({
-                      name: 'CategoryView',
-                      categoryId: this.state.category.id
-                    })
-                  }
+                  // } else {
+                  //   nav.replace({
+                  //     name: 'PurveyorView',
+                  //     categoryId: this.state.purveyor.id
+                  //   })
+                  // }
                 }}
               />
             ),
