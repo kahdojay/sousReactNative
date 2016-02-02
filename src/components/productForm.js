@@ -208,7 +208,7 @@ class ProductForm extends React.Component {
           break;
 
         case 'Units':
-          const units = ['bag', 'bunch', 'cs', 'dozen', 'ea', 'g', 'kg', 'lb', 'oz', 'pack', 'tub']
+          const units = ['bag', 'btl', 'bunch', 'can', 'cs', 'ct', 'dozen', 'ea', 'g', 'jug', 'kg', 'lb', 'oz', 'pack', 'pc', 'tub']
           items = _.map(units, (unit, idx) => {
             return {
               key: idx,
