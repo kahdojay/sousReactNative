@@ -306,6 +306,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: Colors.sky,
     alignItems: 'center',
+    margin: 10,
+    borderRadius: 3,
+    padding: 8,
   },
   confirmedIconContainer: {
     width: 30,
@@ -331,12 +334,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   buttonContainerLink: {
-    margin: 10,
   },
   buttonContainer: {
     backgroundColor: 'white',
-    borderRadius: 3,
-    padding: 8,
   },
   buttonDisabled: {
     backgroundColor: Colors.disabled,
@@ -344,6 +344,8 @@ const styles = StyleSheet.create({
   buttonText: {
     alignSelf: 'center',
     fontSize: 16,
+    padding: 10,
+    paddingBottom: 11,
     color: Colors.lightBlue,
     fontWeight: 'bold',
     fontFamily: 'OpenSans',

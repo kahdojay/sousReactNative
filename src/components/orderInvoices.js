@@ -39,7 +39,14 @@ class OrderInvoices extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      order: this.props.order,
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      order: nextProps.order,
+    })
   }
 
   getInvoices(invoices) {
@@ -47,14 +54,25 @@ class OrderInvoices extends React.Component {
       return null
     }
     return invoices.map((invoice) => {
+      let imageUrl = invoice.imageUrl
+      if(imageUrl.indexOf('file://') !== -1){
+        imageUrl = imageUrl.replace('file://', '')
+      }
       return (
-        <Invoice key={invoice.id} id={invoice.id} uri={invoice.imageUrl} config={invoice} />
+        <Invoice key={invoice.id} id={invoice.id} uri={imageUrl} config={invoice} />
       )
     })
   }
 
   render() {
-    const {order} = this.props
+    const {order} = this.state
+    if(order.hasOwnProperty('invoices') === false){
+      return (
+        <View style={styles.unavailableTextContainer}>
+          <Text style={styles.unavailableText}>Order invoices unavailable.</Text>
+        </View>
+      )
+    }
     const swiperInvoices = this.getInvoices(order.invoices)
 
     return (
@@ -142,15 +160,15 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     fontSize: 16,
   },
-  errorTextContainer: {
+  unavailableTextContainer: {
     flex: 1,
     justifyContent: 'center',
   },
-  errorText: {
+  unavailableText: {
     fontSize: 12,
     textAlign: 'center',
     padding: 15,
-    color: Colors.red,
+    color: Colors.disabled,
   },
   dot: {
     backgroundColor: Colors.lightGrey,

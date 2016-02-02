@@ -68,7 +68,7 @@ class OrderInvoiceUpload extends React.Component {
 
     const selectedPhotos = _.map(this.state.selectedPhotos, (source, idx) => {
       let image = (
-        <View style={[styles.itemContainer, {borderWidth: 1, borderColor: Colors.disabled,}]}>
+        <View key={`loading-${idx}`} style={[styles.itemContainer, {borderWidth: 1, borderColor: Colors.disabled,}]}>
           <ActivityIndicatorIOS
             animating={true}
             color={Colors.disabled}
@@ -79,7 +79,7 @@ class OrderInvoiceUpload extends React.Component {
       )
       if(source.hasOwnProperty('uri') === true){
         image = (
-          <View style={styles.itemContainer}>
+          <View key={`image-${idx}`} style={styles.itemContainer}>
             <Image source={{uri: source.uri.replace('file://', ''), isStatic: source.isStatic}} style={{height: 150, width: 125,}} />
             <TouchableHighlight
               underlayColor='transparent'

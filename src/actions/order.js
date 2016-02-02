@@ -20,10 +20,17 @@ export default function OrderActions(allActions){
 
   function updateOrderInvoices(orderId, orderAttributes) {
     return (dispatch, getState) => {
-      const {session} = getState()
+      const {session, orders} = getState()
       if(orderAttributes.hasOwnProperty('invoiceImages') === true){
         let invoiceImages = []
         let invoices = []
+        if(
+          orders.teams.hasOwnProperty(session.teamId) === true
+          && orders.teams[session.teamId].hasOwnProperty(orderId) === true
+          && orders.teams[session.teamId][orderId].hasOwnProperty('invoices') === true
+        ){
+          invoices = orders.teams[session.teamId][orderId].invoices
+        }
         _.each(orderAttributes.invoiceImages, (source, idx) => {
           const invoiceId = generateId()
           const invoiceUri = source.uri
@@ -53,6 +60,7 @@ export default function OrderActions(allActions){
         dispatch(connectActions.ddpCall('streamS3InvoiceImages', ddpCallArguments))
         delete orderAttributes.invoiceImages
         orderAttributes.invoices = invoices
+        orderAttributes.updatedAt = (new Date()).toISOString()
       }
       return dispatch({
         type: UPDATE_ORDER,

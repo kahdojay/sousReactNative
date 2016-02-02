@@ -34,39 +34,12 @@ class App extends React.Component {
   constructor(props, ctx) {
     super(props, ctx);
     this.state = {
+      category: null,
       connectionStats: {
         attempt: 0,
         reconnect: 0,
       },
-      installationRegistered: this.props.connect.installationRegistered,
-      touchToClose: false,
-      open: false,
-      isAuthenticated: this.props.session.isAuthenticated,
-      firstName: this.props.session.firstName,
-      lastName: this.props.session.lastName,
-      email: this.props.session.email,
-      product: null,
-      category: null,
-      // specificProducts: null,
-      orderProducts: null,
-      purveyor: null,
       contactList: [],
-      showGenericModal: false,
-      genericModalMessage: '',
-      genericModalCallback: () => {},
-      sceneState: {
-        ProductForm: {
-          submitReady: false,
-          productId: null,
-          productAttributes: {},
-        },
-        OrderIndex: {
-          showConfirmedOrders: false,
-        },
-        SearchView: {
-          hideHeader: false,
-        }
-      },
       currentTeamInfo: {
         team: this.props.teams.currentTeam,
         purveyors: {},
@@ -83,7 +56,34 @@ class App extends React.Component {
           orders: null,
           messages: null,
         }
-      }
+      },
+      email: this.props.session.email,
+      firstName: this.props.session.firstName,
+      genericModalCallback: () => {},
+      genericModalMessage: '',
+      installationRegistered: this.props.connect.installationRegistered,
+      isAuthenticated: this.props.session.isAuthenticated,
+      lastName: this.props.session.lastName,
+      open: false,
+      order: null,
+      orderProducts: null,
+      product: null,
+      purveyor: null,
+      showGenericModal: false,
+      sceneState: {
+        ProductForm: {
+          submitReady: false,
+          productId: null,
+          productAttributes: {},
+        },
+        OrderIndex: {
+          showConfirmedOrders: false,
+        },
+        SearchView: {
+          hideHeader: false,
+        }
+      },
+      touchToClose: false,
     }
     this.reconnectTimeout = null
     this.initialRoute = 'Signup'
@@ -181,7 +181,7 @@ class App extends React.Component {
       connectionStats.reconnect = nextProps.connect.timeoutMilliseconds
       reconnectCountDown = true
     }
-    this.setState({
+    let componentWillReceivePropsStateUpdate = {
       connectionStats: connectionStats,
       installationRegistered: nextProps.connect.installationRegistered,
       isAuthenticated: nextProps.session.isAuthenticated,
@@ -189,7 +189,15 @@ class App extends React.Component {
       lastName: nextProps.session.lastName,
       email: nextProps.session.email,
       currentTeamInfo: currentTeamInfo,
-    }, () => {
+    }
+    if(
+      this.state.order !== null
+      && this.state.order.hasOwnProperty('id') === true
+      && currentTeamInfo.orders.hasOwnProperty(this.state.order.id) === true
+    ){
+      componentWillReceivePropsStateUpdate.order = currentTeamInfo.orders[this.state.order.id]
+    }
+    this.setState(componentWillReceivePropsStateUpdate, () => {
       // console.log(this.props.cartItems)
       if(reconnectCountDown === true){
         this.countDownReconnect()
