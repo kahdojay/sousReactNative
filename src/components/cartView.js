@@ -348,6 +348,7 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     padding: 10,
+    paddingBottom: 11,
     fontFamily: 'OpenSans',
     fontSize: 16,
     fontWeight: 'bold',

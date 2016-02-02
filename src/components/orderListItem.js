@@ -1,4 +1,5 @@
 import React from 'react-native';
+import { Icon, } from 'react-native-icons';
 import _ from 'lodash';
 import CheckBox from './checkbox';
 import Colors from '../utilities/colors';
@@ -54,34 +55,45 @@ class OrderListItem extends React.Component {
         </View>
       )
     } else {
+      let iconName = 'material|square-o'
+      if(productConfirm){
+        iconName = 'material|check-square'
+      }
+      let TouchableWrapper = TouchableHighlight
+      let iconColor = 'black'
+      if(orderConfirm.order === true){
+        TouchableWrapper = View
+        iconColor = Colors.disabled
+      }
       productRow = (
-        <View style={styles.row}>
-          <Text style={styles.quantity}>{cartItem.quantity}</Text>
-          <View style={styles.productInfo}>
-            <Text style={styles.text}>{product.name}</Text>
-            <Text style={styles.text}>{product.amount} {product.unit}</Text>
+        <TouchableWrapper
+          underlayColor='transparent'
+          onPress={() => {
+            if(orderConfirm.order === false){
+              this.setState({
+                productConfirm: !productConfirm
+              },() => {
+                const updateCartItem = Object.assign({}, cartItem, {
+                  status: this.state.productConfirm === true ? 'RECEIVED' : 'ORDERED'
+                })
+                this.props.onHandleProductConfirm(updateCartItem)
+              })
+            }
+          }}
+        >
+          <View style={styles.row}>
+            <Text style={styles.quantity}>{cartItem.quantity}</Text>
+            <View style={styles.productInfo}>
+              <Text style={styles.text}>{product.name}</Text>
+              <Text style={styles.text}>{product.amount} {product.unit}</Text>
+            </View>
+            <View style={styles.confirmCheckbox}>
+              <View style={[styles.iconContainer]}>
+                <Icon name={iconName} size={20} color={iconColor} style={[styles.icon]}/>
+              </View>
+            </View>
           </View>
-          <View style={styles.confirmCheckbox}>
-            <CheckBox
-              checked={productConfirm}
-              label=''
-              disabled={orderConfirm.order === true ? true : orderConfirm.order}
-              iconColor={orderConfirm.order === false ? 'black' : Colors.disabled}
-              onChange={(checked) => {
-                if(orderConfirm.order === false){
-                  this.setState({
-                    productConfirm: !productConfirm
-                  },() => {
-                    const updateCartItem = Object.assign({}, cartItem, {
-                      status: this.state.productConfirm === true ? 'RECEIVED' : 'ORDERED'
-                    })
-                    this.props.onHandleProductConfirm(updateCartItem)
-                  })
-                }
-              }}
-            />
-          </View>
-        </View>
+        </TouchableWrapper>
       )
     }
     return (
@@ -141,7 +153,15 @@ const styles = StyleSheet.create({
   },
   confirmCheckbox: {
     flex: 1
-  }
+  },
+  iconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  icon: {
+    width: 40,
+    height: 40,
+  },
 });
 
 OrderListItem.propTypes = {

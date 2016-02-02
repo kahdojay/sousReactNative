@@ -167,6 +167,7 @@ const styles = StyleSheet.create({
     color: Colors.lightBlue,
     textAlign: 'center',
     padding: 10,
+    paddingBottom: 11,
     fontFamily: 'OpenSans',
     fontSize: 16,
     fontWeight: 'bold',

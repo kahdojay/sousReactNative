@@ -1,4 +1,5 @@
 import React from 'react-native';
+import { Icon, } from 'react-native-icons';
 import _ from 'lodash';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
@@ -110,6 +111,20 @@ class OrderIndex extends React.Component {
         if(order.user !== null){
           orderUserName = `${order.user.firstName} ${order.user.lastName}`
         }
+        let invoiceIconBackgroundColor = Colors.disabled
+        let invoiceIconCheckmarkColor = 'transparent'
+        let invoiceButtonTextColor = 'white'
+
+        if(order.confirm.order === true){
+          invoiceIconBackgroundColor = 'white'
+        }
+
+        // if(true){
+        if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
+          invoiceIconBackgroundColor = Colors.green
+          invoiceIconCheckmarkColor = 'white'
+          invoiceButtonTextColor = Colors.lightBlue
+        }
         return (
           <TouchableHighlight
             key={order.id}
@@ -119,6 +134,11 @@ class OrderIndex extends React.Component {
             }}
           >
             <View style={[styles.row, confirmedOrderStyle]}>
+              <View style={styles.confirmedIconContainer}>
+                <Icon name='material|circle' size={20} color={invoiceIconBackgroundColor} style={styles.confirmedIconContainer}>
+                  <Icon name='material|check' size={25} color={invoiceIconCheckmarkColor} style={styles.confirmedIconCheckmark} />
+                </Icon>
+              </View>
               <View style={{flex:2}}>
                 <Text style={[styles.purveyorName, styles.bold]}>
                   {order.purveyor ? order.purveyor.name : ''}
@@ -173,6 +193,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
   },
+  confirmedIconContainer: {
+    width: 30,
+    height: 30,
+  },
+  confirmedIconCheckmark: {
+    width: 25,
+    height: 25,
+    backgroundColor: 'transparent',
+    marginLeft: 6,
+  },
   scrollView: {
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
@@ -195,9 +225,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   confirmedOrder: {
-    backgroundColor: '#ddd',
-    borderWidth: 1,
-    borderColor: '#ccc',
+    backgroundColor: Colors.sky,
   },
   purveyorName: {
     color: 'black',
@@ -218,16 +246,15 @@ const styles = StyleSheet.create({
     textAlign: 'right'
   },
   buttonContainerLink: {
-    margin: 10,
   },
   buttonContainer: {
     backgroundColor: 'white',
-    borderRadius: 3,
-    padding: 10,
   },
   buttonText: {
     alignSelf: 'center',
     fontSize: 16,
+    padding: 10,
+    paddingBottom: 11,
     color: Colors.lightBlue,
     fontWeight: 'bold',
     fontFamily: 'OpenSans'
