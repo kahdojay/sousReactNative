@@ -71,7 +71,8 @@ class OrderView extends React.Component {
         text: this.state.confirmationMessage,
         orderId: this.state.order.id,
       });
-      this.props.onNavToOrders()
+      // this.props.onNavToOrders()
+      this.props.onNavToInvoices(this.state.order.id)
     })
   }
 
@@ -246,17 +247,21 @@ class OrderView extends React.Component {
                 <View style={styles.separator} />
               </View>
             : null }
-            <TouchableHighlight
-              underlayColor='transparent'
-              onPress={() => {
-                this.props.onNavToInvoices(order.id)
-              }}
-            >
-              <View style={[styles.invoiceButtonContainer, {backgroundColor: invoiceButtonContainerBackgroundColor}]}>
-                <Text style={[styles.invoiceButtonText, {color: invoiceButtonTextColor}]}>{invoiceButtonText}</Text>
+            { order.confirm.order === true ?
+              <View>
+                <TouchableHighlight
+                  underlayColor='transparent'
+                  onPress={() => {
+                    this.props.onNavToInvoices(order.id)
+                  }}
+                >
+                  <View style={[styles.invoiceButtonContainer, {backgroundColor: invoiceButtonContainerBackgroundColor}]}>
+                    <Text style={[styles.invoiceButtonText, {color: invoiceButtonTextColor}]}>{invoiceButtonText}</Text>
+                  </View>
+                </TouchableHighlight>
+                <View style={styles.separator} />
               </View>
-            </TouchableHighlight>
-            <View style={styles.separator} />
+            : null }
             <ScrollView
               automaticallyAdjustContentInsets={false}
               keyboardShouldPersistTaps={false}
