@@ -76,8 +76,9 @@ class CartView extends React.Component {
   }
 
   handleSubmitPress(cartPurveyors, singlePurveyor) {
+    console.log(cartPurveyors)
     if (this.props.connected === true && this.state.numberOfOrders > 0) {
-      let confirmationMessage = 'Send orders to all purveyors?'
+      let confirmationMessage = cartPurveyors.length > 1 ? `Send orders to ${cartPurveyors.length} purveyors?` : `Send order to ${cartPurveyors[0].name}?`
       let navigateToFeed = true
       if(singlePurveyor === true){
         confirmationMessage = `Send order to ${cartPurveyors[0].name}?`
