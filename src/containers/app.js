@@ -1525,7 +1525,8 @@ class App extends React.Component {
           }
           break;
         case 'OrderIndex':
-          const openOrders = _.filter(this.state.currentTeamInfo.orders, (order) => {
+          let allOrders = this.state.currentTeamInfo.orders
+          const openOrders = _.filter(allOrders, (order) => {
             return order.confirm.order === false
           })
           navBar = React.cloneElement(this.navBar, {
@@ -1539,7 +1540,7 @@ class App extends React.Component {
             // title: `${openOrders.length} Open Orders`,
             customTitle: (
               <TextComponents.NavBarTitle
-                content={`${openOrders.length} Open Orders`}
+                content={`${Object.keys(allOrders).length} Orders (${openOrders.length} Open)`}
               />
             ),
             hideNext: true,
