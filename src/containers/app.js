@@ -41,14 +41,15 @@ class App extends React.Component {
       },
       contactList: [],
       currentTeamInfo: {
-        team: this.props.teams.currentTeam,
-        purveyors: {},
-        categories: {},
-        products: {},
-        orders: {},
         cart: {},
         cartItems: {'cart':{}, 'orders':{}},
+        categories: {},
         messages: {},
+        orders: {},
+        products: {},
+        purveyors: {},
+        resources: {},
+        team: this.props.teams.currentTeam,
         lastUpdated: {
           purveyors: null,
           categories: null,
@@ -65,6 +66,7 @@ class App extends React.Component {
       isAuthenticated: this.props.session.isAuthenticated,
       lastName: this.props.session.lastName,
       open: false,
+      orderId: null,
       order: null,
       orderProducts: null,
       product: null,
@@ -123,30 +125,45 @@ class App extends React.Component {
     currentTeamInfo.team = nextProps.teams.currentTeam
     if(currentTeamInfo.team !== null){
       processRedirect = true
+      // ---------------------------------------------------
+      // purveyors
+      // ---------------------------------------------------
       if(nextProps.purveyors.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.purveyors = nextProps.purveyors.teams[currentTeamInfo.team.id]
       } else {
         currentTeamInfo.purveyors = {}
       }
       currentTeamInfo.lastUpdated.purveyors = nextProps.purveyors.lastUpdated;
+      // ---------------------------------------------------
+      // categories
+      // ---------------------------------------------------
       if(nextProps.categories.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.categories = nextProps.categories.teams[currentTeamInfo.team.id]
       } else {
         currentTeamInfo.categories = {}
       }
       currentTeamInfo.lastUpdated.categories = nextProps.categories.lastUpdated;
+      // ---------------------------------------------------
+      // products
+      // ---------------------------------------------------
       if(nextProps.products.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.products = nextProps.products.teams[currentTeamInfo.team.id]
       } else {
         currentTeamInfo.products = {}
       }
       currentTeamInfo.lastUpdated.products = nextProps.products.lastUpdated;
+      // ---------------------------------------------------
+      // messages
+      // ---------------------------------------------------
       if(nextProps.messages.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.messages = nextProps.messages.teams[currentTeamInfo.team.id]
       } else {
         currentTeamInfo.messages = {}
       }
       currentTeamInfo.lastUpdated.messages = nextProps.messages.lastUpdated;
+      // ---------------------------------------------------
+      // cartItems
+      // ---------------------------------------------------
       if(nextProps.cartItems.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.cartItems = nextProps.cartItems.teams[currentTeamInfo.team.id]
         currentTeamInfo.cart = {}
@@ -166,6 +183,9 @@ class App extends React.Component {
         currentTeamInfo.cartItems = {'cart': {},'orders': {}}
       }
       currentTeamInfo.lastUpdated.cartItems = nextProps.cartItems.lastUpdated;
+      // ---------------------------------------------------
+      // orders
+      // ---------------------------------------------------
       if(nextProps.orders.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.orders = nextProps.orders.teams[currentTeamInfo.team.id]
         // console.log('cWRP: ', nextProps.orders.teams[currentTeamInfo.team.id]["Tp3cqFkgne8Amznft"].confirm)
@@ -173,6 +193,15 @@ class App extends React.Component {
         currentTeamInfo.orders = {}
       }
       currentTeamInfo.lastUpdated.orders = nextProps.orders.lastUpdated;
+      // ---------------------------------------------------
+      // categories
+      // ---------------------------------------------------
+      if(nextProps.teams.teamResources.hasOwnProperty(currentTeamInfo.team.id) === true){
+        currentTeamInfo.resources = nextProps.teams.teamResources[currentTeamInfo.team.id]
+        // console.log('cWRP: ', nextProps.orders.teams[currentTeamInfo.team.id]["Tp3cqFkgne8Amznft"].confirm)
+      } else {
+        currentTeamInfo.resources = {}
+      }
     }
     let connectionStats = Object.assign({}, this.state.connectionStats)
     let reconnectCountDown = false
@@ -190,14 +219,37 @@ class App extends React.Component {
       email: nextProps.session.email,
       currentTeamInfo: currentTeamInfo,
     }
+    let updatedOrder = null
     if(
       this.state.order !== null
       && this.state.order.hasOwnProperty('id') === true
       && currentTeamInfo.orders.hasOwnProperty(this.state.order.id) === true
     ){
-      componentWillReceivePropsStateUpdate.order = currentTeamInfo.orders[this.state.order.id]
+      updatedOrder = currentTeamInfo.orders[this.state.order.id]
+      componentWillReceivePropsStateUpdate.order = updatedOrder
+      if(
+        updatedOrder.hasOwnProperty('purveyorId') === true
+        && currentTeamInfo.purveyors.hasOwnProperty(updatedOrder.purveyorId) === true
+      ){
+        componentWillReceivePropsStateUpdate.purveyor = currentTeamInfo.purveyors[updatedOrder.purveyorId]
+      }
+    }
+    if(
+      this.state.orderId !== null
+      && this.state.order === null
+      && currentTeamInfo.orders.hasOwnProperty(this.state.orderId) === true
+    ){
+      updatedOrder = currentTeamInfo.orders[this.state.orderId]
+      componentWillReceivePropsStateUpdate.order = updatedOrder
+      if(
+        updatedOrder.hasOwnProperty('purveyorId') === true
+        && currentTeamInfo.purveyors.hasOwnProperty(updatedOrder.purveyorId) === true
+      ){
+        componentWillReceivePropsStateUpdate.purveyor = currentTeamInfo.purveyors[updatedOrder.purveyorId]
+      }
     }
     this.setState(componentWillReceivePropsStateUpdate, () => {
+      const cwrpRouteName = this.refs.appNavigator.getCurrentRoutes()[0].name
       // console.log(this.props.cartItems)
       if(reconnectCountDown === true){
         this.countDownReconnect()
@@ -209,9 +261,11 @@ class App extends React.Component {
     })
   }
 
-  componentWillUpdate(nextProps) {
+  componentWillUpdate(nextProps, nextState) {
     if(this.refs.appNavigator){
-      if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'TeamIndex'){
+      const cwuRouteName = this.refs.appNavigator.getCurrentRoutes()[0].name
+
+      if(cwuRouteName === 'TeamIndex'){
         if(this.state.currentTeamInfo.team !== null){
           setTimeout(() => {
             this.refs.appNavigator.replacePrevious({
@@ -219,7 +273,7 @@ class App extends React.Component {
             });
           }, 10)
         }
-      } else if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'session/onboarding'){
+      } else if(cwuRouteName === 'session/onboarding'){
         if(nextProps.session.viewedOnboarding === true){
           setTimeout(() => {
             this.refs.appNavigator.replacePrevious({
@@ -264,11 +318,25 @@ class App extends React.Component {
 
   redirectBasedOnData() {
     if(this.refs.appNavigator){
-      const routeName = this.refs.appNavigator.getCurrentRoutes()[0].name
+      const rbodRouteName = this.refs.appNavigator.getCurrentRoutes()[0].name
+
+      // console.log(this.state.currentTeamInfo.lastUpdated.products)
+      if( this.state.currentTeamInfo.resources.hasOwnProperty('counts') === true && rbodRouteName === 'Loading'){
+        let productCounts = this.state.currentTeamInfo.resources.counts.products
+        let actualProducts = Object.keys(this.state.currentTeamInfo.products).length
+        // console.log(productCounts, actualProducts)
+        if(productCounts === actualProducts){
+          setTimeout(() => {
+            this.refs.appNavigator.replacePrevious({
+              name: 'Feed'
+            });
+          }, 10)
+        }
+      }
 
       // execute this condition to check certain routes when teams are present
       const checkRoutesForTeamsPresent = ['Loading','UserTeam']
-      if(checkRoutesForTeamsPresent.indexOf(routeName) !== -1){
+      if(checkRoutesForTeamsPresent.indexOf(rbodRouteName) !== -1){
         if(this.state.currentTeamInfo.team !== null){
           setTimeout(() => {
             this.refs.appNavigator.replacePrevious({
@@ -359,9 +427,9 @@ class App extends React.Component {
     })
   }
 
-  getOrderItems() {
-    if(this.state.currentTeamInfo.cartItems['orders'].hasOwnProperty(this.state.order.id) === true){
-      const orderItemsIds = Object.keys(this.state.currentTeamInfo.cartItems['orders'][this.state.order.id])
+  getOrderItems(orderId) {
+    if(this.state.currentTeamInfo.cartItems['orders'].hasOwnProperty(orderId) === true){
+      const orderItemsIds = Object.keys(this.state.currentTeamInfo.cartItems['orders'][orderId])
       let orderProducts = []
       _.each(orderItemsIds, (cartItemId) => {
         const cartItem = this.props.cartItems.items[cartItemId]
@@ -396,6 +464,15 @@ class App extends React.Component {
       } else if(session.viewedOnboarding !== true && settingsConfig.hasOwnProperty('onboardingSettings') === true) {
         route.name = 'session/onboarding';
       }
+
+      if( this.state.currentTeamInfo.resources.hasOwnProperty('counts') === true){
+        let productCounts = this.state.currentTeamInfo.resources.counts.products
+        let actualProducts = Object.keys(this.state.currentTeamInfo.products).length
+        if(productCounts !== actualProducts){
+          route.name = 'Loading';
+        }
+      }
+
       if(route.name === 'CategoryIndex' || route.name === 'PurveyorIndex') {
         if(Object.keys(this.state.currentTeamInfo.purveyors).length === 0){
           route.name = 'OrderGuide';
@@ -415,7 +492,20 @@ class App extends React.Component {
   }
 
   getScene(route, nav) {
-    const { session, teams, messages, dispatch, purveyors, products, categories, cartItems, errors, connect, settingsConfig } = this.props;
+    const {
+      cartItems,
+      categories,
+      connect,
+      dispatch,
+      errors,
+      messages,
+      orders,
+      products,
+      purveyors,
+      session,
+      settingsConfig,
+      teams,
+    } = this.props;
 
     switch (route.name) {
       case 'session/onboarding':
@@ -687,14 +777,25 @@ class App extends React.Component {
               }, 25)()
             },
             onNavToOrder: (orderId) => {
-              const order = this.state.currentTeamInfo.orders[orderId]
-              const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
+              let order = null
+              let purveyor = null
+              if(this.state.currentTeamInfo.orders.hasOwnProperty(orderId) === true){
+                order = this.state.currentTeamInfo.orders[orderId]
+                if(
+                  order
+                  && order.hasOwnProperty('purveyorId') === true
+                  && this.state.currentTeamInfo.purveyors.hasOwnProperty(order.purveyorId) === true
+                ){
+                  purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
+                }
+              }
               this.setState({
+                orderId: orderId,
                 order: order,
                 purveyor: purveyor,
-              },() => {
+              }, () => {
                 nav.push({
-                  name: 'OrderView'
+                  name: 'OrderView',
                 })
               })
             },
@@ -985,6 +1086,7 @@ class App extends React.Component {
               const order = this.state.currentTeamInfo.orders[orderId]
               const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
               this.setState({
+                orderId: orderId,
                 order: order,
                 purveyor: purveyor,
               }, () => {
@@ -997,14 +1099,25 @@ class App extends React.Component {
         }
       case 'OrderView':
         // let orderProducts = null
-        let orderProducts = this.getOrderItems()
+        let orderId = this.state.orderId
+        let orderProducts = this.getOrderItems(orderId)
+        let order = this.state.order
+        if(order === null && this.state.orderId){
+          order = this.state.currentTeamInfo.orders[orderId]
+        }
+        let purveyor = null
+        if(order && order.hasOwnProperty('purveyorId') === true){
+          purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
+        }
 
         return {
           component: Components.OrderView,
           props: {
             userId: session.userId,
-            order: this.state.order,
-            purveyor: this.state.purveyor,
+            orderId: orderId,
+            orderFetching: orders.isFetching,
+            order: order,
+            purveyor: purveyor,
             products: orderProducts,
             teamsUsers: teams.teamsUsers,
             // messages: orderMessages,
@@ -1041,6 +1154,7 @@ class App extends React.Component {
               const order = this.state.currentTeamInfo.orders[orderId]
               const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
               this.setState({
+                orderId: orderId,
                 order: order,
                 purveyor: purveyor,
               }, () => {
@@ -1055,6 +1169,9 @@ class App extends React.Component {
                 }
               })
             },
+            onGetOrderDetails: (orderId) => {
+              dispatch(actions.getOrders([orderId]))
+            }
           },
         }
       case 'OrderInvoices':
@@ -1066,6 +1183,7 @@ class App extends React.Component {
               const order = this.state.currentTeamInfo.orders[orderId]
               const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
               this.setState({
+                orderId: orderId,
                 order: order,
                 purveyor: purveyor,
               }, () => {
@@ -1583,7 +1701,7 @@ class App extends React.Component {
                     const to = purveyor.orderEmails.split(',')
                     const cc = ['orders@sousapp.com']
                     const subject = `re: ${purveyor.name} • Order Received from ${team.name} on ${orderDate.format('dddd, MMMM D')}`
-                    let orderProducts = this.getOrderItems()
+                    let orderProducts = this.getOrderItems(this.state.orderId)
                     let body = 'Order: '
                     orderProducts.forEach(function(o) {
                       body += `\n ${o.cartItem.productName} x ${o.cartItem.amount * o.cartItem.quantity} ${o.cartItem.unit}`

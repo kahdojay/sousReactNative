@@ -72,7 +72,7 @@ function products(state = initialState.products, action) {
     return Object.assign({}, state, {
       errors: null,
       teams: deleteProductTeamState,
-      lastUpdated: (new Date()).toISOString()
+      lastUpdated: (new Date()).toISOString(),
     });
 
   // add product

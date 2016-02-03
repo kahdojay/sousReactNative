@@ -1,6 +1,7 @@
 import { generateId } from '../utilities/utils'
 import {
   RESET_ORDERS,
+  GET_ORDERS,
   RECEIVE_ORDERS,
   UPDATE_ORDER,
 } from './actionTypes'
@@ -88,15 +89,42 @@ export default function OrderActions(allActions){
     return (dispatch) => {
       return dispatch({
         type: RECEIVE_ORDERS,
-        order: order
+        order: order,
+      })
+    }
+  }
+
+  function getOrders(orderIds) {
+    return (dispatch, getState) => {
+      const {session} = getState()
+      const getOrdersCb = (err, result) => {
+        dispatch({
+          type: GET_ORDERS,
+          isFetching: false,
+        })
+        // console.log('called function, result: ', result);
+        if(result.length > 0){
+          result.forEach((order) => {
+            order.id = order._id
+            delete order._id
+            dispatch(receiveOrders(order));
+          })
+        }
+      }
+      dispatch(connectActions.ddpCall('getOrders', [session.teamId, orderIds], getOrdersCb))
+      return dispatch({
+        type: GET_ORDERS,
+        isFetching: true,
       })
     }
   }
 
   return {
     RESET_ORDERS,
+    GET_ORDERS,
     RECEIVE_ORDERS,
     UPDATE_ORDER,
+    getOrders,
     resetOrders,
     receiveOrders,
     updateOrder,

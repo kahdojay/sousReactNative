@@ -173,8 +173,10 @@ export default function ConnectActions(ddpClient) {
           proceed = true
         }
       }
-      // console.log('ALL CHANNELS ', connect.channels);
-      // console.log('PROCEED to connect? '+proceed+' ', channel, argsList);
+      // if(channel === 'products'){
+        // console.log('ALL CHANNELS ', connect.channels);
+        // console.log('PROCEED to connect? '+proceed+' ', channel, argsList);
+      // }
       if(proceed === true){
         dispatch(() => {
           ddpClient.unsubscribe(channel)

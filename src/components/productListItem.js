@@ -224,7 +224,11 @@ class ProductListItem extends React.Component {
 
       if(showCategoryInfo === true) {
         categoryInfo = (
-          <Text style={{fontSize: 9,  color: productDetailsColor}}>{category.name}</Text>
+          <Text style={{fontSize: 9,  color: productDetailsColor}}>
+            { category && category.hasOwnProperty('name') === true ?
+              category.name
+            : <Text style={{fontStyle: 'italic', color: Colors.red}}>Category missing</Text> }
+          </Text>
         )
       }
       if(showPurveyorInfo === true && showCategoryInfo === true){
@@ -246,7 +250,9 @@ class ProductListItem extends React.Component {
             >
               <View>
                 <Text style={[styles.productText, {color: productColor}]}>
-                  {product.name}
+                  { product.hasOwnProperty('name') === true ?
+                    product.name
+                  : <Text style={{fontStyle: 'italic', color: Colors.red}}>Name missing</Text> }
                 </Text>
                 <Text style={{fontSize: 9,  color: productDetailsColor}} >
                   {`${product.amount} ${product.unit}`}
