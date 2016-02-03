@@ -757,8 +757,10 @@ class App extends React.Component {
         //   return _.includes(product.purveyors, purveyor.id)
         // })
         const specificProductsPurveyor = _.sortBy(_.filter(this.state.currentTeamInfo.products, (product) => {
+          product.nameToLower = product.name.toLowerCase()
           return _.includes(product.purveyors, this.state.purveyor.id)
-        }), 'name')
+        }), 'nameToLower')
+
         let specificPurveyor = {}
         specificPurveyor[this.state.purveyor.id] = this.state.purveyor
         return {
@@ -863,9 +865,10 @@ class App extends React.Component {
         }
       case 'CategoryView':
         const specificProductsCategory = _.sortBy(_.map(this.state.category.products, (productId) => {
-          const product = this.state.currentTeamInfo.products[productId]
+          let product = this.state.currentTeamInfo.products[productId]
+          product.nameToLower = product.name.toLowerCase()
           return product
-        }), 'name')
+        }), 'nameToLower')
         return {
           component: Components.CategoryView,
           props: {
