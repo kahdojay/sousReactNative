@@ -169,18 +169,12 @@ class Feed extends React.Component {
 
   getMessages() {
     let retMessages = []
-    const now = new Date()
-    const aDayAgo = -(1000 * 60 * 60 * 24)
-    const aWeekAgo = aDayAgo * 7
     if(this.state.messages !== null && this.state.messages.length > 0){
       this.state.messages.forEach((msg, index) => {
         retMessages.push(
           <FeedListItem
             teamsUsers={this.props.teamsUsers}
             key={msg.id}
-            now={now}
-            aDayAgo={aDayAgo}
-            aWeekAgo={aWeekAgo}
             msg={msg}
             onNavToOrder={this.props.onNavToOrder}
           />
