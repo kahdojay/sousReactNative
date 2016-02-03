@@ -185,7 +185,7 @@ class OrderIndex extends React.Component {
         >
           <View style={styles.buttonContainer}>
             <Text style={styles.buttonText}>
-              { this.state.showConfirmedOrders === false ? 'See Complete History' : 'Hide Confirmed Orders' }
+              { this.state.showConfirmedOrders === false ? 'Show Confirmed Orders' : 'Hide Confirmed Orders' }
             </Text>
           </View>
         </TouchableHighlight>
