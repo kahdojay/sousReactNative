@@ -47,14 +47,22 @@ class FeedListItem extends React.Component {
     if(msg === null){
       return (<View />);
     }
-
+    const now = new Date()
     const msgDate = moment(msg.createdAt)
-    let displayDate = `Today, ${msgDate.format("h:mm a")}`;
-    if(moment(msg.createdAt).diff(this.props.now) < this.props.aDayAgo){
-      displayDate = msgDate.format("ddd h:mm a")
-    }
-    if(moment(msg.createdAt).diff(this.props.now) < this.props.aWeekAgo){
-      displayDate = msgDate.format("ddd, M/D - h:mm a")
+    const withinSameDay = moment(now).clone().subtract(1, 'd').startOf('day').isSame(msgDate.clone().startOf('day'))
+    const withinSameWeek = moment(now).diff(msgDate, 'days') < 7
+    let displayDate = ''
+
+    if (msgDate.isSame(now, 'day')) {
+      displayDate = `Today, ${msgDate.format("h:mma")}`
+    } else {
+      if (withinSameDay) {
+        displayDate = `Yesterday, ${msgDate.format("h:mma")}`
+      } else if (withinSameWeek) {
+        displayDate = msgDate.format("ddd h:mma")
+      } else {
+        displayDate = msgDate.format("M/D ddd h:mma")
+      }
     }
 
     let user = null

@@ -82,7 +82,9 @@ class OrderListItem extends React.Component {
           }}
         >
           <View style={styles.row}>
-            <Text style={styles.quantity}>{cartItem.quantity}</Text>
+            <View style={styles.quantityContainer}>
+              <Text style={styles.quantity}>{cartItem.quantity}x</Text>
+            </View>
             <View style={styles.productInfo}>
               <Text style={styles.text}>{product.name}</Text>
               <Text style={styles.text}>{product.amount} {product.unit}</Text>
@@ -123,13 +125,19 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     alignItems: 'center',
   },
+  quantityContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 4,
+  },
   quantity: {
     textAlign: 'center',
-    padding: 2,
-    marginRight: 4,
     fontFamily: 'OpenSans',
     fontSize: 18,
     width: 36,
+    borderColor: Colors.lightGrey,
+    borderWidth: .5,
+    borderRadius: 15,
   },
   text: {
     fontFamily: 'OpenSans',
