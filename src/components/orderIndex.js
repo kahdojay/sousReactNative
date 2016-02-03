@@ -163,7 +163,13 @@ class OrderIndex extends React.Component {
           keyboardShouldPersistTaps={false}
           style={styles.scrollView}
         >
-          {ordersList}
+          {
+            ordersList.length > 0 ? 
+            ordersList : 
+            <View style={styles.emptyOrdersContainer}>
+              <Text style={styles.emptyOrdersGuidance}>You don't have an order history yet, let us know if we can help with setting up your order guide️ 📋✉️</Text>
+            </View>
+          }
         </ScrollView>
         <View style={styles.separator} />
         <TouchableHighlight
@@ -192,6 +198,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
+  },
+  emptyOrdersContainer: {
+    padding: 30,
+  },
+  emptyOrdersGuidance: {
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
   confirmedIconContainer: {
     width: 30,
