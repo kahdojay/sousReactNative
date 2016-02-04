@@ -79,9 +79,6 @@ class App extends React.Component {
         OrderIndex: {
           showConfirmedOrders: false,
         },
-        SearchView: {
-          hideHeader: false,
-        }
       },
       touchToClose: false,
     }
@@ -705,15 +702,10 @@ class App extends React.Component {
           component: Components.PurveyorIndex,
           props: {
             selectedSegmentationIndex: 0,
-            segmentationList: ['Purveyor', 'Category', 'Search'],
+            segmentationList: ['Purveyor', 'Category'],
             onSegmentationChange: (evt) => {
               const navValue = evt.nativeEvent.value
               switch(navValue){
-                case 'Search':
-                  nav.replace({
-                    name: 'SearchView'
-                  })
-                  break
                 case 'Purveyor':
                   // nav.replace({
                   //   name: 'PurveyorIndex',
@@ -819,15 +811,10 @@ class App extends React.Component {
           component: Components.CategoryIndex,
           props: {
             selectedSegmentationIndex: 1,
-            segmentationList: ['Purveyor', 'Category', 'Search'],
+            segmentationList: ['Purveyor', 'Category'],
             onSegmentationChange: (evt) => {
               const navValue = evt.nativeEvent.value
               switch(navValue){
-                case 'Search':
-                  nav.replace({
-                    name: 'SearchView'
-                  })
-                  break
                 case 'Purveyor':
                   nav.replace({
                     name: 'PurveyorIndex',
@@ -897,71 +884,6 @@ class App extends React.Component {
                     break;
                 }
               }, 25)()
-            },
-          },
-        }
-      case 'SearchView':
-        return {
-          component: Components.SearchView,
-          props: {
-            selectedSegmentationIndex: 2,
-            segmentationList: ['Purveyor', 'Category', 'Search'],
-            onSegmentationChange: (evt) => {
-              const navValue = evt.nativeEvent.value
-              switch(navValue){
-                case 'Search':
-                  // nav.replace({
-                  //   name: 'SearchView'
-                  // })
-                  break
-                case 'Purveyor':
-                  nav.replace({
-                    name: 'PurveyorIndex',
-                  });
-                  break;
-                case 'Category':
-                  nav.replace({
-                    name: 'CategoryIndex',
-                  });
-                  break;
-                default:
-                  // do nothing
-                  break;
-              }
-            },
-            products: this.state.currentTeamInfo.products,
-            cartItems: this.state.currentTeamInfo.cart,
-            purveyors: this.state.currentTeamInfo.purveyors,
-            categories: this.state.currentTeamInfo.categories,
-            onCreateProduct: this.onCreateProduct.bind(this, route, nav),
-            onProductDelete: (productId) => {
-              _.debounce(() => {
-                dispatch(actions.deleteProduct(productId));
-              }, 25)()
-            },
-            onProductEdit: this.onProductEdit.bind(this, route, nav),
-            onUpdateProductInCart: (cartAction, cartAttributes) => {
-              _.debounce(() => {
-                switch(cartAction){
-                  case actions.CART.DELETE:
-                    dispatch(actions.deleteCartItem(cartAttributes))
-                    break;
-                  case actions.CART.UPDATE:
-                    dispatch(actions.updateCartItem(cartAttributes))
-                    break;
-                  case actions.CART.ADD:
-                  default:
-                    dispatch(actions.addCartItem(cartAttributes))
-                    break;
-                }
-              }, 25)()
-            },
-            onHideHeader: (hideHeader) => {
-              const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.SearchView.hideHeader = hideHeader;
-              this.setState({
-                sceneState: sceneState,
-              })
             },
           },
         }
@@ -1499,33 +1421,6 @@ class App extends React.Component {
               />
             )
           })
-          break;
-        case 'SearchView':
-          if(this.state.sceneState.SearchView.hideHeader === true){
-            navBar = null
-          } else {
-            navBar = React.cloneElement(this.navBar, {
-              navigator: nav,
-              route: route,
-              customPrev: (
-                <Components.NavBackButton iconFont={'material|close'} />
-              ),
-              // title: 'Order Guide',
-              customTitle: (
-                <TextComponents.NavBarTitle
-                  content={'Order Guide'}
-                />
-              ),
-              customNext: (
-                <Components.CartRightButton
-                  onNavToCart={() => {
-                    nav.push({ name: 'CartView', });
-                  }}
-                  cartItems={this.state.currentTeamInfo.cart}
-                />
-              )
-            })
-          }
           break;
         case 'OrderIndex':
           let allOrders = this.state.currentTeamInfo.orders
