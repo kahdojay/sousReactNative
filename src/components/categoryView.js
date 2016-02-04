@@ -1,12 +1,16 @@
 import React from 'react-native';
 import _ from 'lodash';
+import { Icon } from 'react-native-icons';
 import ProductList from '../components/productList';
 import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 
 const {
+  ActivityIndicatorIOS,
   PropTypes,
   StyleSheet,
   Text,
+  TextInput,
   TouchableHighlight,
   TouchableOpacity,
   View,
@@ -15,21 +19,108 @@ const {
 class CategoryView extends React.Component {
   constructor(props) {
     super(props)
+    this.state = {
+      hideHeader: false,
+      searching: false,
+      search: '',
+      products: [],
+    }
+  }
+
+  searchForProducts() {
+    if(this.state.search !== ''){
+      this.setState({
+        hideHeader: true,
+        searching: true,
+        products: [],
+      }, () => {
+        const products = _.sortBy(_.filter(this.props.products, (product) => {
+          return product.name.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1
+        }), 'name')
+        this.setState({
+          searching: false,
+          products: products.slice(0,10)
+        })
+      })
+    } else {
+      this.setState({
+        hideHeader: false,
+        searching: false,
+        products: []
+      })
+    }
   }
 
   render() {
     const {cartItems, category, products, purveyors} = this.props;
+    const fetching = (
+      <ActivityIndicatorIOS
+        animating={true}
+        color={'#808080'}
+        style={styles.activity}
+        size={'large'}
+      />
+    )
     return (
       <View style={styles.container}>
-        <ProductList
-          cartItems={cartItems}
-          products={products}
-          purveyors={purveyors}
-          showPurveyorInfo={true}
-          onProductEdit={this.props.onProductEdit}
-          onProductDelete={this.props.onProductDelete}
-          onUpdateProductInCart={this.props.onUpdateProductInCart}
-        />
+        <View>
+          <View style={styles.searchInputContainer}>
+            <TextInput
+              style={styles.searchInput}
+              value={this.state.search}
+              placeholder='Find Product'
+              onChangeText={(text) => {
+                this.setState({
+                  search: text
+                }, () => {
+                  this.searchForProducts()
+                })
+              }}
+              onSubmitEditing={::this.searchForProducts}
+            />
+            { this.state.search !== '' ?
+              <TouchableHighlight
+                onPress={() => {
+                  this.setState({
+                    hideHeader: false,
+                    searching: false,
+                    search: '',
+                    products: []
+                  })
+                }}
+                underlayColor='transparent'
+              >
+                <Icon name='material|close' size={25} color='#999' style={styles.iconClose} />
+              </TouchableHighlight>
+            : <View /> }
+          </View>
+        </View>
+        <View style={styles.searchResultsContainer}>
+          { this.state.searching === true ? fetching : <View /> }
+          { this.state.search !== '' ?
+            ((this.state.products.length > 0) ?
+              <ProductList
+                cartItems={cartItems}
+                showCategoryInfo={false}
+                showPurveyorInfo={true}
+                products={this.state.products}
+                purveyors={purveyors}
+                onProductEdit={this.props.onProductEdit}
+                onProductDelete={this.props.onProductDelete}
+                onUpdateProductInCart={this.props.onUpdateProductInCart}
+              />
+            : <Text style={styles.noFoundText}>No results for '{ this.state.search }'</Text>)
+          :  <ProductList
+                cartItems={cartItems}
+                products={products}
+                purveyors={purveyors}
+                showPurveyorInfo={true}
+                onProductEdit={this.props.onProductEdit}
+                onProductDelete={this.props.onProductDelete}
+                onUpdateProductInCart={this.props.onUpdateProductInCart}
+              />
+        }
+        </View>
       </View>
     )
   }
@@ -40,6 +131,52 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
   },
+  searchInputContainer: {
+    backgroundColor: 'white',
+    paddingTop: 5,
+    paddingBottom: 7,
+    paddingRight: 5,
+    paddingLeft: 5,
+    flexDirection: 'row',
+    position: 'relative',
+  },
+  searchInput: {
+    textAlign: 'center',
+    flex: 1,
+    height: Sizes.inputFieldHeight,
+    backgroundColor: Colors.mainBackgroundColor,
+    color: Colors.inputTextColor,
+    fontFamily: 'OpenSans',
+    borderRadius: Sizes.inputBorderRadius,
+    fontWeight: 'bold',
+  },
+  iconClose: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    position: 'absolute',
+    right: 5,
+    top: 1,
+  },
+  searchResultsContainer: {
+    flex: 1,
+    borderTopColor: Colors.separatorColor,
+    borderTopWidth: 1,
+    paddingVertical: 5,
+    backgroundColor: Colors.mainBackgroundColor,
+  },
+  activity: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginTop: 15,
+  },
+  noFoundText: {
+    fontStyle: 'italic',
+    textAlign: 'center',
+    paddingTop: 15,
+    paddingBottom: 15,
+  }
 });
 
 CategoryView.propTypes = {

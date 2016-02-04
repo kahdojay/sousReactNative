@@ -249,7 +249,7 @@ class ProductListItem extends React.Component {
               <Text style={[styles.productDetailsSubText, {color: productDetailsColor}]} >
                 {`${product.amount} ${product.unit} ${product.price ? '• $' + product.price : ''}`}
               </Text>
-              <View style={[styles.productDetailsSubText, {flexDirection: 'row'}]}>
+              <View style={{flexDirection: 'row'}}>
                 {purveyorInfo}{productInfoSeparator}{categoryInfo}
               </View>
             </View>
