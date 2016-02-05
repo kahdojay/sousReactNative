@@ -56,13 +56,6 @@ class CategoryIndex extends React.Component {
         >
           {categoriesList}
         </ScrollView>
-        <TouchableHighlight
-          underlayColor='white'
-          onPress={this.props.onCreateProduct}
-          style={styles.createButton}
-        >
-          <Text style={styles.createButtonText}>Create New Product</Text>
-        </TouchableHighlight>
       </View>
     );
   }
@@ -89,20 +82,6 @@ const styles = StyleSheet.create({
     height: 36,
     fontFamily: 'OpenSans',
   },
-  createButton: {
-    borderTopColor: Colors.separatorColor,
-    borderTopWidth: 1,
-    backgroundColor: 'white',
-  },
-  createButtonText: {
-    color: Colors.lightBlue,
-    textAlign: 'center',
-    padding: 10,
-    paddingBottom: 11,
-    fontFamily: 'OpenSans',
-    fontSize: 16,
-    fontWeight: 'bold',
-  }
 });
 
 CategoryIndex.propTypes = {

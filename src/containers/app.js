@@ -1324,6 +1324,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -1366,6 +1367,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -1391,6 +1393,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -1417,6 +1420,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
