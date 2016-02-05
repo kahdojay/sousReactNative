@@ -1119,15 +1119,10 @@ class App extends React.Component {
           },
         }
       case 'InviteView':
-        const userContacts = _.sortBy(this.state.contactList.map(function (contact, idx) {
-          contact.id = `contact-${idx}`
-          contact.firstName = contact.firstName ? _.capitalize(contact.firstName) : ''
-          return contact
-        }), 'firstName')
         return {
           component: Components.InviteView,
           props: {
-            contacts: userContacts,
+            contacts: this.state.contactList,
             denied: this.state.contactsPermissionDenied,
             onSMSInvite: (contacts) => {
               if (contacts.length === 0)
@@ -1665,10 +1660,15 @@ class App extends React.Component {
             customNext: (
               <Components.TeamMemberRightInvite
                 connected={(connect.status === actions.CONNECT.CONNECTED)}
-                toggleInviteModal={(value) => {
-                  _.debounce(() => {
-                    dispatch(actions.updateSession({ inviteModalVisible: value }))
-                  }, 25)()
+                navigateToInviteView={(contactList, denied) => {
+                  this.setState({
+                    contactList: contactList,
+                    contactsPermissionDenied: denied,
+                  }, () => {
+                    nav.push({
+                      name: 'InviteView',
+                    })
+                  });
                 }}
               />
             ),
@@ -1715,34 +1715,6 @@ class App extends React.Component {
           }, 25)()
         }}
         errors={errors.data}
-      />
-    )
-
-    const inviteModal = (
-      <Components.InviteModal
-        ref='inviteModal'
-        currentTeam={this.state.currentTeamInfo.team}
-        modalVisible={session.inviteModalVisible}
-        hideInviteModal={() => {
-          // nav.refs.inviteModal.setState({ modalVisible: true });
-          dispatch(actions.updateSession({ inviteModalVisible: false }))
-        }}
-        navigateToInviteView={(contactList, denied) => {
-          this.setState({
-            contactList: contactList,
-            contactsPermissionDenied: denied,
-          }, () => {
-            // console.log('going to InviteView')
-            nav.push({
-              name: 'InviteView',
-            })
-          });
-        }}
-        onSMSInvite={(contactList) => {
-          _.debounce(() => {
-            dispatch(actions.inviteContacts(contactList))
-          }, 25)()
-        }}
       />
     )
 
@@ -1846,7 +1818,6 @@ class App extends React.Component {
         <View style={styles.container} >
           {navBar}
           {errorModal}
-          {inviteModal}
           {genericModal}
           {connectionStatus}
           {scene}
