@@ -68,7 +68,6 @@ export default {
   ProfileView,
   PurveyorIndex,
   PurveyorView,
-  SearchView,
   Signup,
   TaskView,
   TeamIndex,
