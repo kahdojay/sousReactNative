@@ -79,9 +79,6 @@ class App extends React.Component {
         OrderIndex: {
           showConfirmedOrders: false,
         },
-        SearchView: {
-          hideHeader: false,
-        }
       },
       touchToClose: false,
     }
@@ -705,15 +702,10 @@ class App extends React.Component {
           component: Components.PurveyorIndex,
           props: {
             selectedSegmentationIndex: 0,
-            segmentationList: ['Purveyor', 'Category', 'Search'],
+            segmentationList: ['Purveyor', 'Category'],
             onSegmentationChange: (evt) => {
               const navValue = evt.nativeEvent.value
               switch(navValue){
-                case 'Search':
-                  nav.replace({
-                    name: 'SearchView'
-                  })
-                  break
                 case 'Purveyor':
                   // nav.replace({
                   //   name: 'PurveyorIndex',
@@ -819,15 +811,10 @@ class App extends React.Component {
           component: Components.CategoryIndex,
           props: {
             selectedSegmentationIndex: 1,
-            segmentationList: ['Purveyor', 'Category', 'Search'],
+            segmentationList: ['Purveyor', 'Category'],
             onSegmentationChange: (evt) => {
               const navValue = evt.nativeEvent.value
               switch(navValue){
-                case 'Search':
-                  nav.replace({
-                    name: 'SearchView'
-                  })
-                  break
                 case 'Purveyor':
                   nav.replace({
                     name: 'PurveyorIndex',
@@ -897,71 +884,6 @@ class App extends React.Component {
                     break;
                 }
               }, 25)()
-            },
-          },
-        }
-      case 'SearchView':
-        return {
-          component: Components.SearchView,
-          props: {
-            selectedSegmentationIndex: 2,
-            segmentationList: ['Purveyor', 'Category', 'Search'],
-            onSegmentationChange: (evt) => {
-              const navValue = evt.nativeEvent.value
-              switch(navValue){
-                case 'Search':
-                  // nav.replace({
-                  //   name: 'SearchView'
-                  // })
-                  break
-                case 'Purveyor':
-                  nav.replace({
-                    name: 'PurveyorIndex',
-                  });
-                  break;
-                case 'Category':
-                  nav.replace({
-                    name: 'CategoryIndex',
-                  });
-                  break;
-                default:
-                  // do nothing
-                  break;
-              }
-            },
-            products: this.state.currentTeamInfo.products,
-            cartItems: this.state.currentTeamInfo.cart,
-            purveyors: this.state.currentTeamInfo.purveyors,
-            categories: this.state.currentTeamInfo.categories,
-            onCreateProduct: this.onCreateProduct.bind(this, route, nav),
-            onProductDelete: (productId) => {
-              _.debounce(() => {
-                dispatch(actions.deleteProduct(productId));
-              }, 25)()
-            },
-            onProductEdit: this.onProductEdit.bind(this, route, nav),
-            onUpdateProductInCart: (cartAction, cartAttributes) => {
-              _.debounce(() => {
-                switch(cartAction){
-                  case actions.CART.DELETE:
-                    dispatch(actions.deleteCartItem(cartAttributes))
-                    break;
-                  case actions.CART.UPDATE:
-                    dispatch(actions.updateCartItem(cartAttributes))
-                    break;
-                  case actions.CART.ADD:
-                  default:
-                    dispatch(actions.addCartItem(cartAttributes))
-                    break;
-                }
-              }, 25)()
-            },
-            onHideHeader: (hideHeader) => {
-              const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.SearchView.hideHeader = hideHeader;
-              this.setState({
-                sceneState: sceneState,
-              })
             },
           },
         }
@@ -1197,15 +1119,10 @@ class App extends React.Component {
           },
         }
       case 'InviteView':
-        const userContacts = _.sortBy(this.state.contactList.map(function (contact, idx) {
-          contact.id = `contact-${idx}`
-          contact.firstName = contact.firstName ? _.capitalize(contact.firstName) : ''
-          return contact
-        }), 'firstName')
         return {
           component: Components.InviteView,
           props: {
-            contacts: userContacts,
+            contacts: this.state.contactList,
             denied: this.state.contactsPermissionDenied,
             onSMSInvite: (contacts) => {
               if (contacts.length === 0)
@@ -1402,6 +1319,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -1444,6 +1362,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -1469,6 +1388,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -1495,37 +1415,11 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
           })
-          break;
-        case 'SearchView':
-          if(this.state.sceneState.SearchView.hideHeader === true){
-            navBar = null
-          } else {
-            navBar = React.cloneElement(this.navBar, {
-              navigator: nav,
-              route: route,
-              customPrev: (
-                <Components.NavBackButton iconFont={'material|close'} />
-              ),
-              // title: 'Order Guide',
-              customTitle: (
-                <TextComponents.NavBarTitle
-                  content={'Order Guide'}
-                />
-              ),
-              customNext: (
-                <Components.CartRightButton
-                  onNavToCart={() => {
-                    nav.push({ name: 'CartView', });
-                  }}
-                  cartItems={this.state.currentTeamInfo.cart}
-                />
-              )
-            })
-          }
           break;
         case 'OrderIndex':
           let allOrders = this.state.currentTeamInfo.orders
@@ -1766,10 +1660,15 @@ class App extends React.Component {
             customNext: (
               <Components.TeamMemberRightInvite
                 connected={(connect.status === actions.CONNECT.CONNECTED)}
-                toggleInviteModal={(value) => {
-                  _.debounce(() => {
-                    dispatch(actions.updateSession({ inviteModalVisible: value }))
-                  }, 25)()
+                navigateToInviteView={(contactList, denied) => {
+                  this.setState({
+                    contactList: contactList,
+                    contactsPermissionDenied: denied,
+                  }, () => {
+                    nav.push({
+                      name: 'InviteView',
+                    })
+                  });
                 }}
               />
             ),
@@ -1816,34 +1715,6 @@ class App extends React.Component {
           }, 25)()
         }}
         errors={errors.data}
-      />
-    )
-
-    const inviteModal = (
-      <Components.InviteModal
-        ref='inviteModal'
-        currentTeam={this.state.currentTeamInfo.team}
-        modalVisible={session.inviteModalVisible}
-        hideInviteModal={() => {
-          // nav.refs.inviteModal.setState({ modalVisible: true });
-          dispatch(actions.updateSession({ inviteModalVisible: false }))
-        }}
-        navigateToInviteView={(contactList, denied) => {
-          this.setState({
-            contactList: contactList,
-            contactsPermissionDenied: denied,
-          }, () => {
-            // console.log('going to InviteView')
-            nav.push({
-              name: 'InviteView',
-            })
-          });
-        }}
-        onSMSInvite={(contactList) => {
-          _.debounce(() => {
-            dispatch(actions.inviteContacts(contactList))
-          }, 25)()
-        }}
       />
     )
 
@@ -1947,7 +1818,6 @@ class App extends React.Component {
         <View style={styles.container} >
           {navBar}
           {errorModal}
-          {inviteModal}
           {genericModal}
           {connectionStatus}
           {scene}

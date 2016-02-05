@@ -266,7 +266,7 @@ class CartView extends React.Component {
           ]}
           activeOpacity={.75}
         >
-          <Text style={styles.buttonText}>Submit Orders</Text>
+          <Text style={styles.buttonText}>Submit All Orders</Text>
         </TouchableOpacity>
         {modal}
         {confirmationModal}
@@ -340,9 +340,11 @@ const styles = StyleSheet.create({
     height: 50,
   },
   button: {
+    height: 60,
     borderTopColor: Colors.separatorColor,
     borderTopWidth: 1,
     backgroundColor: Colors.gold,
+    justifyContent: 'center',
   },
   buttonText: {
     color: 'white',

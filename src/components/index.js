@@ -7,7 +7,6 @@ import Feed from './feed';
 import FeedListItem from './feedListItem';
 import FeedViewLeftButton from './feedViewLeftButton';
 import FeedViewRightButton from './feedViewRightButton';
-import InviteModal from '../components/inviteModal';
 import InviteView from './inviteView';
 import Loading from './loading';
 import Login from './login';
@@ -28,7 +27,6 @@ import ProductView from './productView';
 import ProfileView from './profileView';
 import PurveyorIndex from './purveyorIndex';
 import PurveyorView from './purveyorView';
-import SearchView from './searchView';
 import Signup from './signup';
 import TaskView from './taskView';
 import TeamIndex from './teamIndex';
@@ -48,7 +46,6 @@ export default {
   FeedListItem,
   FeedViewLeftButton,
   FeedViewRightButton,
-  InviteModal,
   InviteView,
   Loading,
   Login,
@@ -69,7 +66,6 @@ export default {
   ProfileView,
   PurveyorIndex,
   PurveyorView,
-  SearchView,
   Signup,
   TaskView,
   TeamIndex,
