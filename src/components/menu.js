@@ -1,12 +1,12 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
-import _ from 'lodash'
-import Dimensions from 'Dimensions';
+import _ from 'lodash';
 import pkgInfo from '../../package.json';
 import Colors from '../utilities/colors';
 import AvatarUtils from '../utilities/avatar';
 
 const {
+  Dimensions,
   StyleSheet,
   ScrollView,
   View,

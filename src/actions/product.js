@@ -77,7 +77,7 @@ export default function ProductActions(allActions){
 
   function deleteProduct(productId) {
     return (dispatch, getState) => {
-      const {session, teams } = getState();
+      const {session, teams} = getState();
       const { currentTeam } = teams;
       const productAttributes = {deleted: true};
       dispatch(connectActions.ddpCall('updateProduct', [productId, productAttributes, session.userId]))
@@ -106,7 +106,37 @@ export default function ProductActions(allActions){
   function receiveProducts(product) {
     return {
       type: RECEIVE_PRODUCTS,
-      product: product
+      product: product,
+    }
+  }
+
+  function getProducts(productsTeamId) {
+    return (dispatch, getState) => {
+      const {session} = getState();
+      let teamId = session.teamId
+      if(productsTeamId) {
+        teamId = productsTeamId
+      }
+
+      const getProductsCb = (err, result) => {
+        dispatch({
+          type: GET_PRODUCTS,
+          isFetching: false,
+        })
+        // console.log('called function, result: ', result);
+        if(result.length > 0){
+          result.forEach((product) => {
+            product.id = product._id
+            delete product._id
+            dispatch(receiveProducts(product));
+          })
+        }
+      }
+      dispatch(connectActions.ddpCall('getProducts', [teamId], getProductsCb))
+      return dispatch({
+        type: GET_PRODUCTS,
+        isFetching: true,
+      })
     }
   }
 
@@ -119,9 +149,10 @@ export default function ProductActions(allActions){
     UPDATE_PRODUCT,
     DELETE_PRODUCT,
     addProduct,
-    updateProduct,
+    getProducts,
     deleteProduct,
     receiveProducts,
     resetProducts,
+    updateProduct,
   }
 }

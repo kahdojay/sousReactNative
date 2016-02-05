@@ -16,6 +16,7 @@ import NavBackButton from './navBackButton';
 import NavbarTitle from './NavbarTitle';
 import NavOrderGuide from './navOrderGuide';
 import OrderGuide from './orderGuide';
+import OrderGuideLoading from './orderGuideLoading';
 import OrderGuideUpload from './orderGuideUpload';
 import OrderIndex from './orderIndex';
 import OrderInvoices from './orderInvoices';
@@ -57,6 +58,7 @@ export default {
   NavbarTitle,
   NavOrderGuide,
   OrderGuide,
+  OrderGuideLoading,
   OrderGuideUpload,
   OrderIndex,
   OrderInvoices,

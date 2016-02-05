@@ -320,19 +320,19 @@ class App extends React.Component {
     if(this.refs.appNavigator){
       const rbodRouteName = this.refs.appNavigator.getCurrentRoutes()[0].name
 
-      // console.log(this.state.currentTeamInfo.lastUpdated.products)
-      if( this.state.currentTeamInfo.resources.hasOwnProperty('counts') === true && rbodRouteName === 'Loading'){
-        let productCounts = this.state.currentTeamInfo.resources.counts.products
-        let actualProducts = Object.keys(this.state.currentTeamInfo.products).length
-        // console.log(productCounts, actualProducts)
-        if(productCounts === actualProducts){
-          setTimeout(() => {
-            this.refs.appNavigator.replacePrevious({
-              name: 'Feed'
-            });
-          }, 10)
-        }
-      }
+      // // console.log(this.state.currentTeamInfo.lastUpdated.products)
+      // if( this.state.currentTeamInfo.resources.hasOwnProperty('counts') === true && rbodRouteName === 'Loading'){
+      //   let productCounts = this.state.currentTeamInfo.resources.counts.products
+      //   let actualProducts = Object.keys(this.state.currentTeamInfo.products).length
+      //   // console.log(productCounts, actualProducts)
+      //   if(productCounts === actualProducts){
+      //     setTimeout(() => {
+      //       this.refs.appNavigator.replacePrevious({
+      //         name: 'Feed'
+      //       });
+      //     }, 10)
+      //   }
+      // }
 
       // execute this condition to check certain routes when teams are present
       const checkRoutesForTeamsPresent = ['Loading','UserTeam']
@@ -465,17 +465,17 @@ class App extends React.Component {
         route.name = 'session/onboarding';
       }
 
-      if( this.state.currentTeamInfo.resources.hasOwnProperty('counts') === true){
-        let productCounts = this.state.currentTeamInfo.resources.counts.products
-        let actualProducts = Object.keys(this.state.currentTeamInfo.products).length
-        if(productCounts !== actualProducts){
-          route.name = 'Loading';
-        }
-      }
-
       if(route.name === 'CategoryIndex' || route.name === 'PurveyorIndex') {
         if(Object.keys(this.state.currentTeamInfo.purveyors).length === 0){
           route.name = 'OrderGuide';
+        } else {
+          if( this.state.currentTeamInfo.resources.hasOwnProperty('counts') === true){
+            let productCounts = this.state.currentTeamInfo.resources.counts.products
+            let actualProducts = Object.keys(this.state.currentTeamInfo.products).length
+            if(productCounts !== actualProducts){
+              route.name = 'OrderGuideLoading';
+            }
+          }
         }
       }
       const userInfoPresent = (!this.state.firstName || !this.state.lastName || !this.state.email)
@@ -606,6 +606,21 @@ class App extends React.Component {
                 }
               })
             },
+          },
+        }
+      case 'OrderGuideLoading':
+        let totalProducts = 1
+        if(
+          this.state.currentTeamInfo.resources.hasOwnProperty('counts') === true
+          && this.state.currentTeamInfo.resources.counts.hasOwnProperty('products') === true
+        ){
+          totalProducts = this.state.currentTeamInfo.resources.counts.products
+        }
+        return {
+          component: Components.OrderGuideLoading,
+          props: {
+            actualProducts: Object.keys(this.state.currentTeamInfo.products).length,
+            totalProducts: totalProducts,
           },
         }
       case 'OrderGuideUpload':
@@ -1440,6 +1455,23 @@ class App extends React.Component {
     } else {
       switch(route.name) {
         case 'OrderGuide':
+          navBar = React.cloneElement(this.navBar, {
+            navigator: nav,
+            route: route,
+            buttonsColor: Colors.greyText,
+            customPrev: (
+              <Components.NavBackButton iconFont={'material|close'} />
+            ),
+            // title: 'Order Guide',
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'Order Guide'}
+              />
+            ),
+            hideNext: true,
+          })
+          break;
+        case 'OrderGuideLoading':
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,

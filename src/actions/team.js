@@ -276,6 +276,7 @@ export default function TeamActions(allActions) {
       if(messageCount < 20){
         dispatch(messageActions.getTeamMessages(team.id))
       }
+      dispatch(productActions.getProducts(team.id))
       dispatch(cartItemActions.getTeamCartItems(team.id))
       dispatch(orderActions.getTeamOrders(team.id))
       dispatch(getTeamUsers(team.id))

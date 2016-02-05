@@ -13,6 +13,7 @@ const initialState = {
   products: {
     errors: null,
     teams: {},
+    isFetching: false,
     lastUpdated: null
   }
 };
@@ -40,6 +41,12 @@ function products(state = initialState.products, action) {
       }
     }
     return resetProductState;
+
+  case GET_PRODUCTS:
+    return Object.assign({}, state, {
+      isFetching: action.isFetching,
+      lastUpdated: (new Date()).toISOString(),
+    });
 
   // request the products
   case REQUEST_PRODUCTS:
@@ -103,7 +110,6 @@ function products(state = initialState.products, action) {
     });
 
   // everything else
-  case GET_PRODUCTS:
   default:
     return state;
   }
