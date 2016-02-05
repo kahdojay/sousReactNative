@@ -7,6 +7,7 @@ import OrderListItem from './orderListItem';
 import moment from 'moment';
 import messageUtils from '../utilities/message';
 import GenericModal from './modal/genericModal';
+import Loading from './loading';
 
 const {
   PropTypes,
@@ -22,6 +23,8 @@ class OrderView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      orderId: null,
+      orderFetching: false,
       userId: null,
       order: null,
       products: null,
@@ -36,13 +39,18 @@ class OrderView extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
+      orderId: nextProps.orderId,
+      orderFetching: nextProps.orderFetching,
       order: nextProps.order,
+      purveyor: nextProps.purveyor,
       products: nextProps.products,
     })
   }
 
   componentWillMount(){
     this.setState({
+      orderId: this.props.orderId,
+      orderFetching: this.props.orderFetching,
       userId: this.props.userId,
       order: this.props.order,
       products: this.props.products,
@@ -50,9 +58,22 @@ class OrderView extends React.Component {
       // messages: this.props.messages,
       teamsUsers: this.props.teamsUsers,
       loaded: true,
+    }, () => {
+      if(this.checkMissingData() === true){
+        this.props.onGetOrderDetails(this.state.orderId)
+      }
     })
   }
 
+  checkMissingData() {
+    const {
+      order,
+      purveyor,
+      products,
+    } = this.state;
+
+    return (products === null || products.length === 0 || purveyor === null || order === null)
+  }
 
   confirmOrder() {
     let orderConfirm = Object.assign({}, this.state.order.confirm)
@@ -85,10 +106,24 @@ class OrderView extends React.Component {
       teamsUsers,
     } = this.state;
 
-    if(products === null || products.length === 0 || purveyor === null || order === null){
+    if(this.checkMissingData() === true){
       return (
         <View style={styles.container}>
           <Text style={[styles.text, styles.textCentered, {padding: 25}]}>Order details unavailable.</Text>
+          { this.state.orderFetching === true ?
+            <Loading />
+          :
+            <TouchableHighlight
+              underlayColor='transparent'
+              onPress={() => {
+                this.props.onGetOrderDetails(this.state.orderId)
+              }}
+            >
+              <View style={styles.updateOrderContainer}>
+                <Text style={styles.updateOrder}>Update</Text>
+              </View>
+            </TouchableHighlight>
+          }
         </View>
       )
     }
@@ -424,6 +459,19 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: Colors.disabled,
     fontStyle: 'italic',
+  },
+  updateOrderContainer: {
+    alignSelf: 'center',
+    backgroundColor: 'white',
+    width: 100,
+    padding: 10,
+    borderRadius: Sizes.inputBorderRadius,
+  },
+  updateOrder: {
+    textAlign: 'center',
+    fontFamily: 'OpenSans',
+    color: Colors.lightBlue,
+    fontSize: 12,
   },
 });
 

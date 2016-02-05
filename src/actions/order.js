@@ -1,6 +1,8 @@
-import { generateId } from '../utilities/utils'
+import { generateId } from '../utilities/utils';
+import moment from 'moment';
 import {
   RESET_ORDERS,
+  GET_ORDERS,
   RECEIVE_ORDERS,
   UPDATE_ORDER,
 } from './actionTypes'
@@ -9,6 +11,7 @@ export default function OrderActions(allActions){
 
   const {
     connectActions,
+    cartItemActions,
   } = allActions
 
   function resetOrders(teamId = null){
@@ -88,15 +91,95 @@ export default function OrderActions(allActions){
     return (dispatch) => {
       return dispatch({
         type: RECEIVE_ORDERS,
-        order: order
+        order: order,
       })
+    }
+  }
+
+  function getOrders(orderIds) {
+    return (dispatch, getState) => {
+      const {session} = getState()
+      const getOrdersCb = (err, result) => {
+        dispatch({
+          type: GET_ORDERS,
+          isFetching: false,
+        })
+        // console.log('called function, result: ', result);
+        if(result.length > 0){
+          result.forEach((order) => {
+            order.id = order._id
+            delete order._id
+            dispatch(receiveOrders(order));
+          })
+        }
+      }
+      dispatch(cartItemActions.getTeamOrderItems(session.teamId, orderIds))
+      dispatch(connectActions.ddpCall('getOrders', [session.teamId, orderIds], getOrdersCb))
+      return dispatch({
+        type: GET_ORDERS,
+        isFetching: true,
+      })
+    }
+  }
+
+  function getTeamOrders(teamId, beforeOrderedAtDate) {
+    return (dispatch, getState) => {
+      const {session} = getState()
+      const getOrdersCb = (err, result) => {
+        dispatch({
+          type: GET_ORDERS,
+          isFetching: false,
+        })
+        // console.log('called function, result: ', result);
+        if(result.length > 0){
+          let orderIds = []
+          result.forEach((order) => {
+            order.id = order._id
+            delete order._id
+            orderIds.push(order.id)
+            dispatch(receiveOrders(order))
+          })
+          dispatch(cartItemActions.getTeamOrderItems(teamId, orderIds))
+        }
+      }
+      dispatch(connectActions.ddpCall('getTeamOrders', [teamId, beforeOrderedAtDate], getOrdersCb))
+      return dispatch({
+        type: GET_ORDERS,
+        isFetching: true,
+      })
+    }
+  }
+
+  function getMoreTeamOrders(orderTeamId) {
+    return (dispatch, getState) => {
+      const {session, orders} = getState()
+      let teamId = session.teamId
+      let beforeOrderedAtDate = (new Date()).toISOString()
+      if(orderTeamId){
+        teamId = orderTeamId
+      }
+
+      const teamOrders = orders.teams[teamId] || {}
+      let orderKeys = Object.keys(teamOrders)
+      if(orderKeys.length > 0){
+        orderKeys.sort((a, b) => {
+          return moment(teamOrders[a].orderedAt).isBefore(teamOrders[b].orderedAt) ? 1 : -1;
+        })
+        beforeOrderedAtDate = teamOrders[orderKeys[orderKeys.length - 1]].orderedAt;
+      }
+
+      return dispatch(getTeamOrders(teamId, beforeOrderedAtDate))
     }
   }
 
   return {
     RESET_ORDERS,
+    GET_ORDERS,
     RECEIVE_ORDERS,
     UPDATE_ORDER,
+    getOrders,
+    getMoreTeamOrders,
+    getTeamOrders,
     resetOrders,
     receiveOrders,
     updateOrder,

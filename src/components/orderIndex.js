@@ -4,6 +4,7 @@ import _ from 'lodash';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import moment from 'moment';
+import Loading from './loading';
 
 const {
   PropTypes,
@@ -11,6 +12,7 @@ const {
   StyleSheet,
   Text,
   TextInput,
+  TouchableOpacity,
   TouchableHighlight,
   SegmentedControlIOS,
   View,
@@ -20,6 +22,8 @@ class OrderIndex extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      totalOrders: null,
+      orderFetching: false,
       orders: null,
       cartItemsOrders: null,
       cartItems: null,
@@ -32,6 +36,8 @@ class OrderIndex extends React.Component {
 
   componentWillMount(){
     this.setState({
+      totalOrders: this.props.totalOrders,
+      orderFetching: this.props.orderFetching,
       orders: this.props.orders,
       cartItemsOrders: this.props.cartItemsOrders,
       cartItems: this.props.cartItems,
@@ -44,6 +50,8 @@ class OrderIndex extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
+      totalOrders: nextProps.totalOrders,
+      orderFetching: nextProps.orderFetching,
       orders: nextProps.orders,
       purveyors: nextProps.purveyors,
       teamsUsers: nextProps.teamsUsers,
@@ -51,7 +59,7 @@ class OrderIndex extends React.Component {
   }
 
   render() {
-    const { orders, cartItems, cartItemsOrders, purveyors, teamsUsers } = this.state
+    const { totalOrders, orders, cartItems, cartItemsOrders, purveyors, teamsUsers } = this.state
 
     if(this.state.loaded === false){
       return (
@@ -119,7 +127,6 @@ class OrderIndex extends React.Component {
           invoiceIconBackgroundColor = 'white'
         }
 
-        // if(true){
         if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
           invoiceIconBackgroundColor = Colors.green
           invoiceIconCheckmarkColor = 'white'
@@ -156,6 +163,18 @@ class OrderIndex extends React.Component {
       }
     })
 
+    if(fullOrders.length < totalOrders){
+      ordersList.push((
+        <View key={'get-more'}>
+          <TouchableOpacity
+            onPress={this.props.onGetMoreOrders}
+          >
+            <Text style={styles.loadMore}>Load more</Text>
+          </TouchableOpacity>
+        </View>
+      ))
+    }
+
     return (
       <View style={styles.container}>
         <ScrollView
@@ -171,6 +190,11 @@ class OrderIndex extends React.Component {
             </View>
           }
         </ScrollView>
+        { this.state.orderFetching === true ?
+          <View style={{padding: 50}}>
+            <Loading />
+          </View>
+        : null }
         <View style={styles.separator} />
         <TouchableHighlight
           onPress={() => {
@@ -271,6 +295,18 @@ const styles = StyleSheet.create({
     color: Colors.lightBlue,
     fontWeight: 'bold',
     fontFamily: 'OpenSans'
+  },
+  loadMore: {
+    marginTop: 2,
+    marginBottom: 10,
+    padding: 10,
+    paddingLeft: 30,
+    paddingRight: 30,
+    fontFamily: 'OpenSans',
+    fontWeight: 'bold',
+    color: '#555',
+    alignSelf: 'center',
+    backgroundColor: '#f2f2f2',
   },
 });
 
