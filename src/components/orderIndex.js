@@ -182,7 +182,13 @@ class OrderIndex extends React.Component {
           keyboardShouldPersistTaps={false}
           style={styles.scrollView}
         >
-          {ordersList}
+          {
+            ordersList.length > 0 ? 
+            ordersList : 
+            <View style={styles.emptyOrdersContainer}>
+              <Text style={styles.emptyOrdersGuidance}>You don't have an order history yet, let us know if we can help with setting up your order guide️ 📋✉️</Text>
+            </View>
+          }
         </ScrollView>
         { this.state.orderFetching === true ?
           <View style={{padding: 50}}>
@@ -203,7 +209,7 @@ class OrderIndex extends React.Component {
         >
           <View style={styles.buttonContainer}>
             <Text style={styles.buttonText}>
-              { this.state.showConfirmedOrders === false ? 'See Complete History' : 'Hide Confirmed Orders' }
+              { this.state.showConfirmedOrders === false ? 'Show Confirmed Orders' : 'Hide Confirmed Orders' }
             </Text>
           </View>
         </TouchableHighlight>
@@ -216,6 +222,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
+  },
+  emptyOrdersContainer: {
+    padding: 30,
+  },
+  emptyOrdersGuidance: {
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
   confirmedIconContainer: {
     width: 30,

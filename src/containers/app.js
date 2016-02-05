@@ -874,8 +874,10 @@ class App extends React.Component {
         //   return _.includes(product.purveyors, purveyor.id)
         // })
         const specificProductsPurveyor = _.sortBy(_.filter(this.state.currentTeamInfo.products, (product) => {
+          product.nameToLower = product.name.toLowerCase()
           return _.includes(product.purveyors, this.state.purveyor.id)
-        }), 'name')
+        }), 'nameToLower')
+
         let specificPurveyor = {}
         specificPurveyor[this.state.purveyor.id] = this.state.purveyor
         return {
@@ -980,9 +982,10 @@ class App extends React.Component {
         }
       case 'CategoryView':
         const specificProductsCategory = _.sortBy(_.map(this.state.category.products, (productId) => {
-          const product = this.state.currentTeamInfo.products[productId]
+          let product = this.state.currentTeamInfo.products[productId]
+          product.nameToLower = product.name.toLowerCase()
           return product
-        }), 'name')
+        }), 'nameToLower')
         return {
           component: Components.CategoryView,
           props: {
@@ -1688,7 +1691,8 @@ class App extends React.Component {
           }
           break;
         case 'OrderIndex':
-          const openOrders = _.filter(this.state.currentTeamInfo.orders, (order) => {
+          let allOrders = this.state.currentTeamInfo.orders
+          const openOrders = _.filter(allOrders, (order) => {
             return order.confirm.order === false
           })
           navBar = React.cloneElement(this.navBar, {
@@ -1702,7 +1706,7 @@ class App extends React.Component {
             // title: `${openOrders.length} Open Orders`,
             customTitle: (
               <TextComponents.NavBarTitle
-                content={`${openOrders.length} Open Orders`}
+                content={`${Object.keys(allOrders).length} Orders (${openOrders.length} Open)`}
               />
             ),
             hideNext: true,

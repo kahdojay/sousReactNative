@@ -200,7 +200,6 @@ class ProductListItem extends React.Component {
           borderColor: 'white',
           borderWidth: .5,
           borderRadius: 15,
-          padding: 4,
         }
       }
       let availablePurveyors = product.purveyors
@@ -208,14 +207,14 @@ class ProductListItem extends React.Component {
       if(showPurveyorInfo === true){
         if(purveyors.hasOwnProperty(this.state.selectedPurveyorId) === true){
           purveyorInfo = (
-            <Text style={{fontSize: 9,  color: productDetailsColor}}>{purveyors[this.state.selectedPurveyorId].name || '-NOT SET-'}</Text>
+            <Text style={[styles.productDetailsSubText, {color: productDetailsColor}]}>{purveyors[this.state.selectedPurveyorId].name || '-NOT SET-'}</Text>
           )
         } else {
           // Single purveyor, grab name off props.purveyors
           // const purveyorIds = Object.keys(purveyors)
           // purveyorInfo = purveyors[purveyorIds[0]].name
           purveyorInfo = (
-            <Text style={{fontSize: 9,  color: productDetailsColor}}>No purveyors</Text>
+            <Text style={[styles.productDetailsSubText, {color: productDetailsColor}]}>No purveyors</Text>
           )
         }
       } else {
@@ -237,58 +236,56 @@ class ProductListItem extends React.Component {
         )
       }
       productInfo = (
-        <View style={[styles.row, selectedStyle]}>
-          <View style={styles.main}>
-            <ProductToggle
-              added={this.state.added}
-              availablePurveyors={availablePurveyors}
-              allPurveyors={purveyors}
-              currentlySelectedPurveyorId={this.state.selectedPurveyorId}
-              onToggleCartProduct={(purveyorId) => {
-                this.handleToggleProduct(purveyorId)
-              }}
-            >
-              <View>
-                <Text style={[styles.productText, {color: productColor}]}>
-                  { product.hasOwnProperty('name') === true ?
-                    product.name
-                  : <Text style={{fontStyle: 'italic', color: Colors.red}}>Name missing</Text> }
-                </Text>
-                <Text style={{fontSize: 9,  color: productDetailsColor}} >
-                  {`${product.amount} ${product.unit}`}
-                </Text>
-                <View style={{flexDirection: 'row'}}>
-                  {purveyorInfo}{productInfoSeparator}{categoryInfo}
-                </View>
-              </View>
-            </ProductToggle>
-          </View>
-          <View style={styles.outerQuantityContainer}>
-            <View style={styles.innerQuantityContainer}>
-            { this.state.added === true ?
-              (
-                <TouchableHighlight
-                  onPress={() => {
-                    this.setState({
-                      editQuantity: true
-                    })
-                  }}
-                  underlayColor='transparent'
-                >
-                  <Text style={[styles.quantity, productQuantityBorderStyle, {color: productColor}]}>{`${this.state.quantity}x`}</Text>
-                </TouchableHighlight>
-              )
-              : (
-                <Text style={styles.quantity}>{''}</Text>
-              )
-            }
-            { product.par && product.par !== '' && product.par !== '0' ?
-              <Text style={[styles.par, {color: productDetailsColor}]}>Par: {product.par}</Text>
-              : <Text style={[styles.par, {color: productDetailsColor}]}>{''}</Text>
-            }
+        <ProductToggle
+          added={this.state.added}
+          availablePurveyors={availablePurveyors}
+          allPurveyors={purveyors}
+          currentlySelectedPurveyorId={this.state.selectedPurveyorId}
+          onToggleCartProduct={(purveyorId) => {
+            this.handleToggleProduct(purveyorId)
+          }}
+        >
+          <View style={[styles.productRow, selectedStyle]}>
+            <View style={styles.productDetailsContainer}>
+              <Text style={[styles.productText, {color: productColor}]}>
+                { product.hasOwnProperty('name') === true ?
+                  product.name
+                : <Text style={{fontStyle: 'italic', color: Colors.red}}>Name missing</Text> }
+              </Text>
+              <Text style={[styles.productDetailsSubText, {color: productDetailsColor}]} >
+                {`${product.amount} ${product.unit} ${product.price ? '• $' + product.price : ''}`}
+              </Text>
+              <Text style={[styles.productDetailsSubText, {flexDirection: 'row'}]}>
+                {purveyorInfo}{productInfoSeparator}{categoryInfo}
+              </Text>
+            </View>
+            <View style={styles.quantityContainer}>
+              { this.state.added === true ?
+                (
+                  <View style={styles.quantityButton}>
+                    <TouchableHighlight
+                      onPress={() => {
+                        this.setState({
+                          editQuantity: true
+                        })
+                      }}
+                      underlayColor='transparent'
+                    >
+                      <Text style={[styles.quantityText, productQuantityBorderStyle, {color: productColor}]}>{`${this.state.quantity}x`}</Text>
+                    </TouchableHighlight>
+                  </View>
+                )
+                : (
+                  <Text style={styles.quantityText}>{' '}</Text>
+                )
+              }
+              { product.par && product.par !== '' && product.par !== '0' ?
+                <Text style={[styles.parText, {color: productDetailsColor}]}>Par: {product.par}</Text>
+                : <View/>
+              }
             </View>
           </View>
-        </View>
+        </ProductToggle>
       )
       buttons = [{
         backgroundColor: 'transparent',
@@ -409,6 +406,44 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     paddingLeft: 5,
   },
+  productRow: {
+    borderRadius: Sizes.rowBorderRadius,
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    padding: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
+    alignItems: 'center'
+  },
+  productDetailsContainer: {
+    flex: 4,
+  },
+  productText: {
+    color: 'black',
+    fontSize: 18,
+  },
+  productDetailsSubText: {
+    fontSize: 14,
+  },
+  quantityContainer: {
+    flex: 1,
+  },
+  quantityButton: {
+    flex: 1,
+  },
+  quantityText: {
+    alignSelf: 'center',
+    fontSize: 20,
+    flex: 1,
+    padding: 6,
+  },
+  parText: {
+    fontSize: 10,
+    textAlign: 'center',
+  },
+  selectedRow: {
+    backgroundColor: Colors.lightBlue
+  },
   icon: {
     width: 40,
     height: 40,
@@ -421,41 +456,6 @@ const styles = StyleSheet.create({
     marginLeft: 2,
     marginTop: 7,
     marginBottom: 7,
-  },
-  main: {
-    flex: 5,
-  },
-  outerQuantityContainer: {
-    flex: 1,
-  },
-  innerQuantityContainer: {
-    alignItems: 'center',
-  },
-  quantity: {
-    fontSize: 20,
-    textAlign: 'right',
-    paddingRight: 5,
-    padding: 5,
-  },
-  par: {
-    fontSize: 10,
-    textAlign: 'center',
-  },
-  row: {
-    borderRadius: Sizes.rowBorderRadius,
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    padding: 5,
-    paddingLeft: 15,
-    paddingRight: 15,
-    alignItems: 'center'
-  },
-  selectedRow: {
-    backgroundColor: Colors.lightBlue
-  },
-  productText: {
-    color: 'black',
-    fontSize: 15,
   },
   modalContainer: {
     flex: 1,

@@ -28,7 +28,7 @@ export default function MessageActions(allActions){
     // console.log('imageUrl', imageUrl)
     return (dispatch, getState) => {
       const {session} = getState()
-      author = author ? author : `${session.firstName} ${session.lastName.substring(0,1)}`;
+      author = author ? author : `${session.firstName}`;
       imageUrl = imageUrl ? imageUrl : session.imageUrl;
 
       message.text = message.text.replace(/\{\{author\}\}/g, author);
