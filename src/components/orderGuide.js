@@ -62,10 +62,13 @@ class OrderGuide extends React.Component {
             }}
             style={[styles.buttonActive, {backgroundColor: 'white'}]}
           >
-            <Text style={[styles.buttonText, {color: Colors.button}]}>Send an Order Guide</Text>
+            <View style={styles.buttonRow}>
+              <Icon name='material|camera' size={25} color={Colors.button} style={styles.icon}></Icon>
+              <Text style={[styles.buttonText, {color: Colors.button}]}>Upload Products</Text>
+            </View>
           </TouchableHighlight>
           <TouchableHighlight
-            underlayColor={Colors.darkBlue}
+            underlayColor={Colors.gold}
             onPress={() => {
               if(this.state.emailAddress !== '' && this.state.emailAddress !== null){
                 this.props.onSendEmail(this.state.emailAddress)
@@ -77,7 +80,9 @@ class OrderGuide extends React.Component {
             }}
             style={styles.buttonActive}
           >
-            <Text style={styles.buttonText}>Contact Sous</Text>
+            <View>
+              <Text style={styles.buttonText}>Contact Sous</Text>
+            </View>
           </TouchableHighlight>
         </View>
         <GenericModal
@@ -236,11 +241,19 @@ let styles = StyleSheet.create({
     width: 120,
     marginBottom: 20,
   },
-  buttonText: {
+  buttonRow: {
     alignSelf: 'center',
-    fontSize: 22,
+    flexDirection: 'row',
+  },
+  icon: {
+    width: 30,
+    height: 30,
+  },
+  buttonText: {
+    flex: 1,
+    alignSelf: 'center',
+    fontSize: 16,
     color: 'white',
-    fontWeight: 'bold',
     fontFamily: 'OpenSans'
   },
   buttonLink: {
