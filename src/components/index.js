@@ -28,7 +28,6 @@ import ProductView from './productView';
 import ProfileView from './profileView';
 import PurveyorIndex from './purveyorIndex';
 import PurveyorView from './purveyorView';
-import SearchView from './searchView';
 import Signup from './signup';
 import TaskView from './taskView';
 import TeamIndex from './teamIndex';
