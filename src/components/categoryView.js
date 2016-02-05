@@ -23,7 +23,7 @@ class CategoryView extends React.Component {
       hideHeader: false,
       searching: false,
       search: '',
-      products: [],
+      searchedProducts: [],
     }
   }
 
@@ -32,21 +32,21 @@ class CategoryView extends React.Component {
       this.setState({
         hideHeader: true,
         searching: true,
-        products: [],
+        searchedProducts: [],
       }, () => {
         const products = _.sortBy(_.filter(this.props.products, (product) => {
           return product.name.toLowerCase().indexOf(this.state.search.toLowerCase()) !== -1
         }), 'name')
         this.setState({
           searching: false,
-          products: products.slice(0,10)
+          searchedProducts: products.slice(0,10)
         })
       })
     } else {
       this.setState({
         hideHeader: false,
         searching: false,
-        products: []
+        searchedProducts: []
       })
     }
   }
@@ -85,7 +85,7 @@ class CategoryView extends React.Component {
                     hideHeader: false,
                     searching: false,
                     search: '',
-                    products: []
+                    searchedProducts: []
                   })
                 }}
                 underlayColor='transparent'
@@ -98,12 +98,12 @@ class CategoryView extends React.Component {
         <View style={styles.searchResultsContainer}>
           { this.state.searching === true ? fetching : <View /> }
           { this.state.search !== '' ?
-            ((this.state.products.length > 0) ?
+            ((this.state.searchedProducts.length > 0) ?
               <ProductList
                 cartItems={cartItems}
                 showCategoryInfo={false}
                 showPurveyorInfo={true}
-                products={this.state.products}
+                products={this.state.searchedProducts}
                 purveyors={purveyors}
                 onProductEdit={this.props.onProductEdit}
                 onProductDelete={this.props.onProductDelete}
