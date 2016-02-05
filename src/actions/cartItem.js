@@ -80,22 +80,44 @@ export default function CartItemActions(allActions) {
     }
   }
 
-  function getTeamCartItems() {
+  function getTeamOrderItems(teamId, orderIds) {
     return (dispatch, getState) => {
       const {session} = getState()
-      const getTeamCartItemsCallback = (err, result) => {
+      const getTeamOrderItemsCb = (err, result) => {
         // console.log('called function, result: ', result);
         if(result.length > 0){
           result.forEach((cartItem) => {
             cartItem.id = cartItem._id
             delete cartItem._id
-            dispatch(receiveCartItems(cartItem));
+            dispatch(receiveCartItems(cartItem))
           })
         } else {
           dispatch(noCartItemsReceived())
         }
       }
-      dispatch(connectActions.ddpCall('getTeamCartItems', [session.teamId], getTeamCartItemsCallback))
+      dispatch(connectActions.ddpCall('getTeamOrderItems', [teamId, orderIds], getTeamOrderItemsCb))
+      return dispatch({
+        type: REQUEST_CART_ITEMS,
+      })
+    }
+  }
+
+  function getTeamCartItems(teamId) {
+    return (dispatch, getState) => {
+      const {session} = getState()
+      const getTeamCartItemsCb = (err, result) => {
+        // console.log('called function, result: ', result);
+        if(result.length > 0){
+          result.forEach((cartItem) => {
+            cartItem.id = cartItem._id
+            delete cartItem._id
+            dispatch(receiveCartItems(cartItem))
+          })
+        } else {
+          dispatch(noCartItemsReceived())
+        }
+      }
+      dispatch(connectActions.ddpCall('getTeamCartItems', [teamId], getTeamCartItemsCb))
       return dispatch({
         type: REQUEST_CART_ITEMS,
       })
@@ -131,6 +153,7 @@ export default function CartItemActions(allActions) {
     addCartItem,
     deleteCartItem,
     getTeamCartItems,
+    getTeamOrderItems,
     receiveCartItems,
     resetCartItems,
     sendCart,

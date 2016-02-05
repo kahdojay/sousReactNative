@@ -17,7 +17,6 @@ import * as ModalComponents from '../components/modal';
 import Dimensions from 'Dimensions';
 import PushManager from 'react-native-remote-push/RemotePushIOS';
 import Communications from 'react-native-communications';
-import DeviceUUID from 'react-native-device-uuid';
 import Device from 'react-native-device';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 
@@ -35,25 +34,44 @@ class App extends React.Component {
   constructor(props, ctx) {
     super(props, ctx);
     this.state = {
+      category: null,
       connectionStats: {
         attempt: 0,
         reconnect: 0,
       },
-      installationRegistered: this.props.connect.installationRegistered,
-      touchToClose: false,
-      open: false,
-      isAuthenticated: this.props.session.isAuthenticated,
-      firstName: this.props.session.firstName,
-      lastName: this.props.session.lastName,
-      email: this.props.session.email,
-      product: null,
-      category: null,
-      // specificProducts: null,
-      purveyor: null,
       contactList: [],
-      showGenericModal: false,
-      genericModalMessage: '',
+      currentTeamInfo: {
+        cart: {},
+        cartItems: {'cart':{}, 'orders':{}},
+        categories: {},
+        messages: {},
+        orders: {},
+        products: {},
+        purveyors: {},
+        resources: {},
+        team: this.props.teams.currentTeam,
+        lastUpdated: {
+          purveyors: null,
+          categories: null,
+          products: null,
+          orders: null,
+          messages: null,
+        }
+      },
+      email: this.props.session.email,
+      firstName: this.props.session.firstName,
       genericModalCallback: () => {},
+      genericModalMessage: '',
+      installationRegistered: this.props.connect.installationRegistered,
+      isAuthenticated: this.props.session.isAuthenticated,
+      lastName: this.props.session.lastName,
+      open: false,
+      orderId: null,
+      order: null,
+      orderProducts: null,
+      product: null,
+      purveyor: null,
+      showGenericModal: false,
       sceneState: {
         ProductForm: {
           submitReady: false,
@@ -63,27 +81,8 @@ class App extends React.Component {
         OrderIndex: {
           showConfirmedOrders: false,
         },
-        SearchView: {
-          hideHeader: false,
-        }
       },
-      currentTeamInfo: {
-        team: this.props.teams.currentTeam,
-        purveyors: {},
-        categories: {},
-        products: {},
-        orders: {},
-        cart: {},
-        cartItems: {'cart':{}, 'orders':{}},
-        messages: {},
-        lastUpdated: {
-          purveyors: null,
-          categories: null,
-          products: null,
-          orders: null,
-          messages: null,
-        }
-      }
+      touchToClose: false,
     }
     this.reconnectTimeout = null
     this.initialRoute = 'Signup'
@@ -118,33 +117,50 @@ class App extends React.Component {
   }}
 
   componentWillReceiveProps(nextProps) {
+    let processRedirect = false
     let currentTeamInfo = Object.assign({}, this.state.currentTeamInfo)
     currentTeamInfo.team = nextProps.teams.currentTeam
     if(currentTeamInfo.team !== null){
+      processRedirect = true
+      // ---------------------------------------------------
+      // purveyors
+      // ---------------------------------------------------
       if(nextProps.purveyors.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.purveyors = nextProps.purveyors.teams[currentTeamInfo.team.id]
       } else {
         currentTeamInfo.purveyors = {}
       }
       currentTeamInfo.lastUpdated.purveyors = nextProps.purveyors.lastUpdated;
+      // ---------------------------------------------------
+      // categories
+      // ---------------------------------------------------
       if(nextProps.categories.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.categories = nextProps.categories.teams[currentTeamInfo.team.id]
       } else {
         currentTeamInfo.categories = {}
       }
       currentTeamInfo.lastUpdated.categories = nextProps.categories.lastUpdated;
+      // ---------------------------------------------------
+      // products
+      // ---------------------------------------------------
       if(nextProps.products.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.products = nextProps.products.teams[currentTeamInfo.team.id]
       } else {
         currentTeamInfo.products = {}
       }
       currentTeamInfo.lastUpdated.products = nextProps.products.lastUpdated;
+      // ---------------------------------------------------
+      // messages
+      // ---------------------------------------------------
       if(nextProps.messages.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.messages = nextProps.messages.teams[currentTeamInfo.team.id]
       } else {
         currentTeamInfo.messages = {}
       }
       currentTeamInfo.lastUpdated.messages = nextProps.messages.lastUpdated;
+      // ---------------------------------------------------
+      // cartItems
+      // ---------------------------------------------------
       if(nextProps.cartItems.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.cartItems = nextProps.cartItems.teams[currentTeamInfo.team.id]
         currentTeamInfo.cart = {}
@@ -164,6 +180,9 @@ class App extends React.Component {
         currentTeamInfo.cartItems = {'cart': {},'orders': {}}
       }
       currentTeamInfo.lastUpdated.cartItems = nextProps.cartItems.lastUpdated;
+      // ---------------------------------------------------
+      // orders
+      // ---------------------------------------------------
       if(nextProps.orders.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.orders = nextProps.orders.teams[currentTeamInfo.team.id]
         // console.log('cWRP: ', nextProps.orders.teams[currentTeamInfo.team.id]["Tp3cqFkgne8Amznft"].confirm)
@@ -171,6 +190,15 @@ class App extends React.Component {
         currentTeamInfo.orders = {}
       }
       currentTeamInfo.lastUpdated.orders = nextProps.orders.lastUpdated;
+      // ---------------------------------------------------
+      // categories
+      // ---------------------------------------------------
+      if(nextProps.teams.teamResources.hasOwnProperty(currentTeamInfo.team.id) === true){
+        currentTeamInfo.resources = nextProps.teams.teamResources[currentTeamInfo.team.id]
+        // console.log('cWRP: ', nextProps.orders.teams[currentTeamInfo.team.id]["Tp3cqFkgne8Amznft"].confirm)
+      } else {
+        currentTeamInfo.resources = {}
+      }
     }
     let connectionStats = Object.assign({}, this.state.connectionStats)
     let reconnectCountDown = false
@@ -179,7 +207,7 @@ class App extends React.Component {
       connectionStats.reconnect = nextProps.connect.timeoutMilliseconds
       reconnectCountDown = true
     }
-    this.setState({
+    let componentWillReceivePropsStateUpdate = {
       connectionStats: connectionStats,
       installationRegistered: nextProps.connect.installationRegistered,
       isAuthenticated: nextProps.session.isAuthenticated,
@@ -187,18 +215,54 @@ class App extends React.Component {
       lastName: nextProps.session.lastName,
       email: nextProps.session.email,
       currentTeamInfo: currentTeamInfo,
-    }, () => {
+    }
+    let updatedOrder = null
+    if(
+      this.state.order !== null
+      && this.state.order.hasOwnProperty('id') === true
+      && currentTeamInfo.orders.hasOwnProperty(this.state.order.id) === true
+    ){
+      updatedOrder = currentTeamInfo.orders[this.state.order.id]
+      componentWillReceivePropsStateUpdate.order = updatedOrder
+      if(
+        updatedOrder.hasOwnProperty('purveyorId') === true
+        && currentTeamInfo.purveyors.hasOwnProperty(updatedOrder.purveyorId) === true
+      ){
+        componentWillReceivePropsStateUpdate.purveyor = currentTeamInfo.purveyors[updatedOrder.purveyorId]
+      }
+    }
+    if(
+      this.state.orderId !== null
+      && this.state.order === null
+      && currentTeamInfo.orders.hasOwnProperty(this.state.orderId) === true
+    ){
+      updatedOrder = currentTeamInfo.orders[this.state.orderId]
+      componentWillReceivePropsStateUpdate.order = updatedOrder
+      if(
+        updatedOrder.hasOwnProperty('purveyorId') === true
+        && currentTeamInfo.purveyors.hasOwnProperty(updatedOrder.purveyorId) === true
+      ){
+        componentWillReceivePropsStateUpdate.purveyor = currentTeamInfo.purveyors[updatedOrder.purveyorId]
+      }
+    }
+    this.setState(componentWillReceivePropsStateUpdate, () => {
+      const cwrpRouteName = this.refs.appNavigator.getCurrentRoutes()[0].name
       // console.log(this.props.cartItems)
       if(reconnectCountDown === true){
         this.countDownReconnect()
         // console.log('here')
       }
+      if(processRedirect === true){
+        this.redirectBasedOnData()
+      }
     })
   }
 
-  componentWillUpdate(nextProps) {
+  componentWillUpdate(nextProps, nextState) {
     if(this.refs.appNavigator){
-      if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'TeamIndex'){
+      const cwuRouteName = this.refs.appNavigator.getCurrentRoutes()[0].name
+
+      if(cwuRouteName === 'TeamIndex'){
         if(this.state.currentTeamInfo.team !== null){
           setTimeout(() => {
             this.refs.appNavigator.replacePrevious({
@@ -206,7 +270,7 @@ class App extends React.Component {
             });
           }, 10)
         }
-      } else if(this.refs.appNavigator.getCurrentRoutes()[0].name === 'session/onboarding'){
+      } else if(cwuRouteName === 'session/onboarding'){
         if(nextProps.session.viewedOnboarding === true){
           setTimeout(() => {
             this.refs.appNavigator.replacePrevious({
@@ -246,13 +310,30 @@ class App extends React.Component {
         });
       }
     }
+    this.redirectBasedOnData()
+  }
 
+  redirectBasedOnData() {
     if(this.refs.appNavigator){
-      const routeName = this.refs.appNavigator.getCurrentRoutes()[0].name
+      const rbodRouteName = this.refs.appNavigator.getCurrentRoutes()[0].name
+
+      // console.log(this.state.currentTeamInfo.lastUpdated.products)
+      if( this.state.currentTeamInfo.resources.hasOwnProperty('counts') === true && rbodRouteName === 'OrderGuideLoading'){
+        let productCounts = this.state.currentTeamInfo.resources.counts.products
+        let actualProducts = Object.keys(this.state.currentTeamInfo.products).length
+        // console.log(productCounts, actualProducts)
+        if(productCounts === actualProducts){
+          setTimeout(() => {
+            this.refs.appNavigator.replacePrevious({
+              name: 'PurveyorIndex'
+            });
+          }, 10)
+        }
+      }
 
       // execute this condition to check certain routes when teams are present
       const checkRoutesForTeamsPresent = ['Loading','UserTeam']
-      if(checkRoutesForTeamsPresent.indexOf(routeName) !== -1){
+      if(checkRoutesForTeamsPresent.indexOf(rbodRouteName) !== -1){
         if(this.state.currentTeamInfo.team !== null){
           setTimeout(() => {
             this.refs.appNavigator.replacePrevious({
@@ -343,6 +424,26 @@ class App extends React.Component {
     })
   }
 
+  getOrderItems(orderId) {
+    if(this.state.currentTeamInfo.cartItems['orders'].hasOwnProperty(orderId) === true){
+      const orderItemsIds = Object.keys(this.state.currentTeamInfo.cartItems['orders'][orderId])
+      let orderProducts = []
+      _.each(orderItemsIds, (cartItemId) => {
+        const cartItem = this.props.cartItems.items[cartItemId]
+        const product = this.state.currentTeamInfo.products[cartItem.productId]
+        cartItem.amount = product.amount
+        cartItem.unit = product.unit
+        orderProducts.push({
+          product: product,
+          cartItem: cartItem,
+        })
+      })
+      return _.sortBy(orderProducts, 'product.name')
+    } else {
+      return null
+    }
+  }
+
   getRoute(route, nav) {
     const { session, settingsConfig } = this.props;
     // redirect to initial view
@@ -360,11 +461,21 @@ class App extends React.Component {
       } else if(session.viewedOnboarding !== true && settingsConfig.hasOwnProperty('onboardingSettings') === true) {
         route.name = 'session/onboarding';
       }
+
       if(route.name === 'CategoryIndex' || route.name === 'PurveyorIndex') {
         if(Object.keys(this.state.currentTeamInfo.purveyors).length === 0){
           route.name = 'OrderGuide';
+        } else {
+          if( this.state.currentTeamInfo.resources.hasOwnProperty('counts') === true){
+            let productCounts = this.state.currentTeamInfo.resources.counts.products
+            let actualProducts = Object.keys(this.state.currentTeamInfo.products).length
+            if(productCounts !== actualProducts){
+              route.name = 'OrderGuideLoading';
+            }
+          }
         }
       }
+
       const userInfoPresent = (!this.state.firstName || !this.state.lastName || !this.state.email)
       if (userInfoPresent) {
         route.name = 'UserInfo';
@@ -379,7 +490,20 @@ class App extends React.Component {
   }
 
   getScene(route, nav) {
-    const { session, teams, messages, dispatch, purveyors, products, categories, cartItems, errors, connect, settingsConfig } = this.props;
+    const {
+      cartItems,
+      categories,
+      connect,
+      dispatch,
+      errors,
+      messages,
+      orders,
+      products,
+      purveyors,
+      session,
+      settingsConfig,
+      teams,
+    } = this.props;
 
     switch (route.name) {
       case 'session/onboarding':
@@ -480,6 +604,21 @@ class App extends React.Component {
                 }
               })
             },
+          },
+        }
+      case 'OrderGuideLoading':
+        let totalProducts = 1
+        if(
+          this.state.currentTeamInfo.resources.hasOwnProperty('counts') === true
+          && this.state.currentTeamInfo.resources.counts.hasOwnProperty('products') === true
+        ){
+          totalProducts = this.state.currentTeamInfo.resources.counts.products
+        }
+        return {
+          component: Components.OrderGuideLoading,
+          props: {
+            actualProducts: Object.keys(this.state.currentTeamInfo.products).length,
+            totalProducts: totalProducts,
           },
         }
       case 'OrderGuideUpload':
@@ -651,14 +790,25 @@ class App extends React.Component {
               }, 25)()
             },
             onNavToOrder: (orderId) => {
-              const order = this.state.currentTeamInfo.orders[orderId]
-              const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
+              let order = null
+              let purveyor = null
+              if(this.state.currentTeamInfo.orders.hasOwnProperty(orderId) === true){
+                order = this.state.currentTeamInfo.orders[orderId]
+                if(
+                  order
+                  && order.hasOwnProperty('purveyorId') === true
+                  && this.state.currentTeamInfo.purveyors.hasOwnProperty(order.purveyorId) === true
+                ){
+                  purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
+                }
+              }
               this.setState({
+                orderId: orderId,
                 order: order,
                 purveyor: purveyor,
-              },() => {
+              }, () => {
                 nav.push({
-                  name: 'OrderView'
+                  name: 'OrderView',
                 })
               })
             },
@@ -669,15 +819,10 @@ class App extends React.Component {
           component: Components.PurveyorIndex,
           props: {
             selectedSegmentationIndex: 0,
-            segmentationList: ['Purveyor', 'Category', 'Search'],
+            segmentationList: ['Purveyor', 'Category'],
             onSegmentationChange: (evt) => {
               const navValue = evt.nativeEvent.value
               switch(navValue){
-                case 'Search':
-                  nav.replace({
-                    name: 'SearchView'
-                  })
-                  break
                 case 'Purveyor':
                   // nav.replace({
                   //   name: 'PurveyorIndex',
@@ -721,8 +866,10 @@ class App extends React.Component {
         //   return _.includes(product.purveyors, purveyor.id)
         // })
         const specificProductsPurveyor = _.sortBy(_.filter(this.state.currentTeamInfo.products, (product) => {
+          product.nameToLower = product.name.toLowerCase()
           return _.includes(product.purveyors, this.state.purveyor.id)
-        }), 'name')
+        }), 'nameToLower')
+
         let specificPurveyor = {}
         specificPurveyor[this.state.purveyor.id] = this.state.purveyor
         return {
@@ -781,15 +928,10 @@ class App extends React.Component {
           component: Components.CategoryIndex,
           props: {
             selectedSegmentationIndex: 1,
-            segmentationList: ['Purveyor', 'Category', 'Search'],
+            segmentationList: ['Purveyor', 'Category'],
             onSegmentationChange: (evt) => {
               const navValue = evt.nativeEvent.value
               switch(navValue){
-                case 'Search':
-                  nav.replace({
-                    name: 'SearchView'
-                  })
-                  break
                 case 'Purveyor':
                   nav.replace({
                     name: 'PurveyorIndex',
@@ -827,9 +969,10 @@ class App extends React.Component {
         }
       case 'CategoryView':
         const specificProductsCategory = _.sortBy(_.map(this.state.category.products, (productId) => {
-          const product = this.state.currentTeamInfo.products[productId]
+          let product = this.state.currentTeamInfo.products[productId]
+          product.nameToLower = product.name.toLowerCase()
           return product
-        }), 'name')
+        }), 'nameToLower')
         return {
           component: Components.CategoryView,
           props: {
@@ -861,77 +1004,21 @@ class App extends React.Component {
             },
           },
         }
-      case 'SearchView':
-        return {
-          component: Components.SearchView,
-          props: {
-            selectedSegmentationIndex: 2,
-            segmentationList: ['Purveyor', 'Category', 'Search'],
-            onSegmentationChange: (evt) => {
-              const navValue = evt.nativeEvent.value
-              switch(navValue){
-                case 'Search':
-                  // nav.replace({
-                  //   name: 'SearchView'
-                  // })
-                  break
-                case 'Purveyor':
-                  nav.replace({
-                    name: 'PurveyorIndex',
-                  });
-                  break;
-                case 'Category':
-                  nav.replace({
-                    name: 'CategoryIndex',
-                  });
-                  break;
-                default:
-                  // do nothing
-                  break;
-              }
-            },
-            products: this.state.currentTeamInfo.products,
-            cartItems: this.state.currentTeamInfo.cart,
-            purveyors: this.state.currentTeamInfo.purveyors,
-            categories: this.state.currentTeamInfo.categories,
-            onCreateProduct: this.onCreateProduct.bind(this, route, nav),
-            onProductDelete: (productId) => {
-              _.debounce(() => {
-                dispatch(actions.deleteProduct(productId));
-              }, 25)()
-            },
-            onProductEdit: this.onProductEdit.bind(this, route, nav),
-            onUpdateProductInCart: (cartAction, cartAttributes) => {
-              _.debounce(() => {
-                switch(cartAction){
-                  case actions.CART.DELETE:
-                    dispatch(actions.deleteCartItem(cartAttributes))
-                    break;
-                  case actions.CART.UPDATE:
-                    dispatch(actions.updateCartItem(cartAttributes))
-                    break;
-                  case actions.CART.ADD:
-                  default:
-                    dispatch(actions.addCartItem(cartAttributes))
-                    break;
-                }
-              }, 25)()
-            },
-            onHideHeader: (hideHeader) => {
-              const sceneState = Object.assign({}, this.state.sceneState);
-              sceneState.SearchView.hideHeader = hideHeader;
-              this.setState({
-                sceneState: sceneState,
-              })
-            },
-          },
-        }
       case 'OrderIndex':
         // console.log(this.state.currentTeamInfo.orders["Tp3cqFkgne8Amznft"].confirm)
+        let totalOrders = null
+        if(
+          this.state.currentTeamInfo.resources.hasOwnProperty('counts') === true
+          && this.state.currentTeamInfo.resources.counts.hasOwnProperty('orders') === true
+        ){
+          totalOrders = this.state.currentTeamInfo.resources.counts.orders
+        }
         return {
           component: Components.OrderIndex,
           props: {
             showConfirmedOrders: this.state.sceneState.OrderIndex.showConfirmedOrders,
+            totalOrders: totalOrders,
+            orderFetching: orders.isFetching,
             orders: this.state.currentTeamInfo.orders,
             cartItemsOrders: this.state.currentTeamInfo.cartItems['orders'],
             cartItems: cartItems.items,
@@ -949,38 +1036,41 @@ class App extends React.Component {
               const order = this.state.currentTeamInfo.orders[orderId]
               const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
               this.setState({
+                orderId: orderId,
                 order: order,
                 purveyor: purveyor,
-              },() => {
+              }, () => {
                 nav.push({
                   name: 'OrderView'
                 })
               })
             },
+            onGetMoreOrders: () => {
+              dispatch(actions.getMoreTeamOrders());
+            },
           },
         }
       case 'OrderView':
-        let orderProducts = null
-        if(this.state.currentTeamInfo.cartItems['orders'].hasOwnProperty(this.state.order.id) === true){
-          const orderItemsIds = Object.keys(this.state.currentTeamInfo.cartItems['orders'][this.state.order.id])
-          orderProducts = []
-          _.each(orderItemsIds, (cartItemId) => {
-            const cartItem = cartItems.items[cartItemId]
-            const product = this.state.currentTeamInfo.products[cartItem.productId]
-            orderProducts.push({
-              product: product,
-              cartItem: cartItem,
-            })
-          })
-          orderProducts = _.sortBy(orderProducts, 'product.name')
+        // let orderProducts = null
+        let orderId = this.state.orderId
+        let orderProducts = this.getOrderItems(orderId)
+        let order = this.state.order
+        if(order === null && this.state.orderId){
+          order = this.state.currentTeamInfo.orders[orderId]
+        }
+        let purveyor = null
+        if(order && order.hasOwnProperty('purveyorId') === true){
+          purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
         }
 
         return {
           component: Components.OrderView,
           props: {
             userId: session.userId,
-            order: this.state.order,
-            purveyor: this.state.purveyor,
+            orderId: orderId,
+            orderFetching: orders.isFetching,
+            order: order,
+            purveyor: purveyor,
             products: orderProducts,
             teamsUsers: teams.teamsUsers,
             // messages: orderMessages,
@@ -1013,7 +1103,64 @@ class App extends React.Component {
                 name: 'OrderIndex',
               })
             },
+            onNavToInvoices: (orderId) => {
+              const order = this.state.currentTeamInfo.orders[orderId]
+              const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
+              this.setState({
+                orderId: orderId,
+                order: order,
+                purveyor: purveyor,
+              }, () => {
+                if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
+                  nav.push({
+                    name: 'OrderInvoices'
+                  })
+                } else {
+                  nav.push({
+                    name: 'OrderInvoiceUpload'
+                  })
+                }
+              })
+            },
+            onGetOrderDetails: (orderId) => {
+              dispatch(actions.getOrders([orderId]))
+            }
           },
+        }
+      case 'OrderInvoices':
+        return {
+          component: Components.OrderInvoices,
+          props: {
+            order: this.state.order,
+            onNavtoUploadInvoices: (orderId) => {
+              const order = this.state.currentTeamInfo.orders[orderId]
+              const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
+              this.setState({
+                orderId: orderId,
+                order: order,
+                purveyor: purveyor,
+              }, () => {
+                nav.replace({
+                  name: 'OrderInvoiceUpload'
+                })
+              })
+            }
+          }
+        }
+      case 'OrderInvoiceUpload':
+        return {
+          component: Components.OrderInvoiceUpload,
+          props: {
+            order: this.state.order,
+            onUploadInvoices: (invoiceImages) => {
+              dispatch(actions.updateOrderInvoices(this.state.order.id, {
+                invoiceImages: invoiceImages
+              }))
+              nav.replace({
+                name: 'OrderInvoices'
+              })
+            }
+          }
         }
       case 'Profile':
         return {
@@ -1118,15 +1265,10 @@ class App extends React.Component {
           },
         }
       case 'InviteView':
-        const userContacts = _.sortBy(this.state.contactList.map(function (contact, idx) {
-          contact.id = `contact-${idx}`
-          contact.firstName = contact.firstName ? _.capitalize(contact.firstName) : ''
-          return contact
-        }), 'firstName')
         return {
           component: Components.InviteView,
           props: {
-            contacts: userContacts,
+            contacts: this.state.contactList,
             denied: this.state.contactsPermissionDenied,
             onSMSInvite: (contacts) => {
               if (contacts.length === 0)
@@ -1250,6 +1392,23 @@ class App extends React.Component {
             hideNext: true,
           })
           break;
+        case 'OrderGuideLoading':
+          navBar = React.cloneElement(this.navBar, {
+            navigator: nav,
+            route: route,
+            buttonsColor: Colors.greyText,
+            customPrev: (
+              <Components.NavBackButton iconFont={'material|close'} />
+            ),
+            // title: 'Order Guide',
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'Order Guide'}
+              />
+            ),
+            hideNext: true,
+          })
+          break;
         case 'OrderGuideUpload':
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
@@ -1323,6 +1482,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -1365,6 +1525,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -1390,6 +1551,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -1416,40 +1578,15 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
           })
           break;
-        case 'SearchView':
-          if(this.state.sceneState.SearchView.hideHeader === true){
-            navBar = null
-          } else {
-            navBar = React.cloneElement(this.navBar, {
-              navigator: nav,
-              route: route,
-              customPrev: (
-                <Components.NavBackButton iconFont={'material|close'} />
-              ),
-              // title: 'Order Guide',
-              customTitle: (
-                <TextComponents.NavBarTitle
-                  content={'Order Guide'}
-                />
-              ),
-              customNext: (
-                <Components.CartRightButton
-                  onNavToCart={() => {
-                    nav.push({ name: 'CartView', });
-                  }}
-                  cartItems={this.state.currentTeamInfo.cart}
-                />
-              )
-            })
-          }
-          break;
         case 'OrderIndex':
-          const openOrders = _.filter(this.state.currentTeamInfo.orders, (order) => {
+          let allOrders = this.state.currentTeamInfo.orders
+          const openOrders = _.filter(allOrders, (order) => {
             return order.confirm.order === false
           })
           navBar = React.cloneElement(this.navBar, {
@@ -1463,7 +1600,7 @@ class App extends React.Component {
             // title: `${openOrders.length} Open Orders`,
             customTitle: (
               <TextComponents.NavBarTitle
-                content={`${openOrders.length} Open Orders`}
+                content={`${Object.keys(allOrders).length} Orders (${openOrders.length} Open)`}
               />
             ),
             hideNext: true,
@@ -1507,9 +1644,56 @@ class App extends React.Component {
                     const to = purveyor.orderEmails.split(',')
                     const cc = ['orders@sousapp.com']
                     const subject = `re: ${purveyor.name} • Order Received from ${team.name} on ${orderDate.format('dddd, MMMM D')}`
-                    Communications.email(to, cc, null, subject, null)
+                    let orderProducts = this.getOrderItems(this.state.orderId)
+                    let body = 'Order: '
+                    orderProducts.forEach(function(o) {
+                      body += `\n ${o.cartItem.productName} x ${o.cartItem.amount * o.cartItem.quantity} ${o.cartItem.unit}`
+                    })
+                    Communications.email(to, cc, null, subject, body)
                   }
                 }}
+              />
+            ),
+          })
+          break;
+        case 'OrderInvoices':
+          let titleOrderInvoices = 'Processing'
+          if(this.state.purveyor !== null){
+            titleOrderInvoices = this.state.purveyor.name.substr(0,12) + (this.state.purveyor.name.length > 12 ? '...' : '')
+          }
+          navBar = React.cloneElement(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                pop={true}
+                iconFont={'material|chevron-left'}
+              />
+            ),
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={titleOrderInvoices}
+              />
+            ),
+          })
+          break;
+        case 'OrderInvoiceUpload':
+          let titleOrderInvoiceUpload = 'Processing'
+          if(this.state.purveyor !== null){
+            titleOrderInvoiceUpload = this.state.purveyor.name.substr(0,12) + (this.state.purveyor.name.length > 12 ? '...' : '')
+          }
+          navBar = React.cloneElement(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                pop={true}
+                iconFont={'material|chevron-left'}
+              />
+            ),
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={titleOrderInvoiceUpload}
               />
             ),
           })
@@ -1604,16 +1788,17 @@ class App extends React.Component {
                       dispatch(actions.updateProduct(productId, productAttributes))
                     }
                   }, 5)()
-                  if(this.state.product === null){
+                  // nav.replacePreviousAndPop()
+                  // if(this.state.product === null){
                     nav.replacePreviousAndPop({
-                      name: 'CategoryIndex',
+                      name: 'PurveyorIndex',
                     });
-                  } else {
-                    nav.replace({
-                      name: 'CategoryView',
-                      categoryId: this.state.category.id
-                    })
-                  }
+                  // } else {
+                  //   nav.replace({
+                  //     name: 'PurveyorView',
+                  //     categoryId: this.state.purveyor.id
+                  //   })
+                  // }
                 }}
               />
             ),
@@ -1638,10 +1823,15 @@ class App extends React.Component {
             customNext: (
               <Components.TeamMemberRightInvite
                 connected={(connect.status === actions.CONNECT.CONNECTED)}
-                toggleInviteModal={(value) => {
-                  _.debounce(() => {
-                    dispatch(actions.updateSession({ inviteModalVisible: value }))
-                  }, 25)()
+                navigateToInviteView={(contactList, denied) => {
+                  this.setState({
+                    contactList: contactList,
+                    contactsPermissionDenied: denied,
+                  }, () => {
+                    nav.push({
+                      name: 'InviteView',
+                    })
+                  });
                 }}
               />
             ),
@@ -1688,34 +1878,6 @@ class App extends React.Component {
           }, 25)()
         }}
         errors={errors.data}
-      />
-    )
-
-    const inviteModal = (
-      <Components.InviteModal
-        ref='inviteModal'
-        currentTeam={this.state.currentTeamInfo.team}
-        modalVisible={session.inviteModalVisible}
-        hideInviteModal={() => {
-          // nav.refs.inviteModal.setState({ modalVisible: true });
-          dispatch(actions.updateSession({ inviteModalVisible: false }))
-        }}
-        navigateToInviteView={(contactList, denied) => {
-          this.setState({
-            contactList: contactList,
-            contactsPermissionDenied: denied,
-          }, () => {
-            // console.log('going to InviteView')
-            nav.push({
-              name: 'InviteView',
-            })
-          });
-        }}
-        onSMSInvite={(contactList) => {
-          _.debounce(() => {
-            dispatch(actions.inviteContacts(contactList))
-          }, 25)()
-        }}
       />
     )
 
@@ -1819,7 +1981,6 @@ class App extends React.Component {
         <View style={styles.container} >
           {navBar}
           {errorModal}
-          {inviteModal}
           {genericModal}
           {connectionStatus}
           {scene}

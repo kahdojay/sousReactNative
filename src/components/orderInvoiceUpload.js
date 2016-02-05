@@ -3,8 +3,6 @@ import _ from 'lodash';
 import { Icon, } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
-import DataUtils from '../utilities/data';
-import GenericModal from './modal/genericModal';
 
 const {
   Dimensions,
@@ -22,7 +20,7 @@ const {
 
 const { UIImagePickerManager } = NativeModules;
 
-class OrderGuideUpload extends React.Component {
+class OrderInvoiceUpload extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -35,7 +33,7 @@ class OrderGuideUpload extends React.Component {
 
   showActionSheet(){
     var options = {
-      title: 'Select Order Guide Images',
+      title: 'Select Invoice Images',
       maxWidth: 1024,
       maxHeight: 1024,
       quality: .75,
@@ -70,7 +68,7 @@ class OrderGuideUpload extends React.Component {
 
     const selectedPhotos = _.map(this.state.selectedPhotos, (source, idx) => {
       let image = (
-        <View style={[styles.itemContainer, {borderWidth: 1, borderColor: Colors.disabled,}]}>
+        <View key={`loading-${idx}`} style={[styles.itemContainer, {borderWidth: 1, borderColor: Colors.disabled,}]}>
           <ActivityIndicatorIOS
             animating={true}
             color={Colors.disabled}
@@ -81,7 +79,7 @@ class OrderGuideUpload extends React.Component {
       )
       if(source.hasOwnProperty('uri') === true){
         image = (
-          <View style={styles.itemContainer}>
+          <View key={`image-${idx}`} style={styles.itemContainer}>
             <Image source={{uri: source.uri.replace('file://', ''), isStatic: source.isStatic}} style={{height: 150, width: 125,}} />
             <TouchableHighlight
               underlayColor='transparent'
@@ -145,67 +143,13 @@ class OrderGuideUpload extends React.Component {
           underlayColor={uploadButtonUnderlayColor}
           onPress={() => {
             if(this.state.selectedPhotos.length > 0){
-              if(this.state.emailAddress !== '' && this.state.emailAddress !== null){
-                this.props.onUploadOrderGuide(this.state.emailAddress, this.state.selectedPhotos)
-              } else {
-                this.setState({
-                  showAddEmailAddress: true
-                })
-              }
+              this.props.onUploadInvoices(this.state.selectedPhotos)
             }
           }}
           style={[styles.uploadButton, uploadButtonStyle]}
         >
-          <Text style={[styles.uploadButtonText, uploadButtonTextStyle]}>Upload Order Guide</Text>
+          <Text style={[styles.uploadButtonText, uploadButtonTextStyle]}>Upload Invoice(s)</Text>
         </TouchableHighlight>
-        <GenericModal
-          ref='errorModal'
-          modalVisible={this.state.showAddEmailAddress}
-          onHideModal={() => {
-            this.setState({
-              showAddEmailAddress: false,
-            })
-          }}
-          leftButton={{
-            text: 'Send',
-            onPress: () => {
-              const emailValid = DataUtils.validateEmailAddress(this.state.emailAddress)
-              if(this.state.emailAddress && emailValid === true){
-                this.setState({
-                  showAddEmailAddress: false,
-                }, () => {
-                  this.props.onSendEmail(this.state.emailAddress)
-                })
-              } else {
-                this.setState({
-                  inputError: true
-                })
-              }
-            }
-          }}
-        >
-          <View style={styles.sendEmail}>
-            <View style={[styles.infoField, {borderBottomColor: (this.state.inputError === true) ? Colors.red : Colors.inputUnderline}]}>
-              <TextInput
-                style={styles.input}
-                value={this.state.emailAddress}
-                onChange={(e) => {
-                  this.setState({
-                    inputError: false,
-                    emailAddress: e.nativeEvent.text
-                  })
-                }}
-                placeholder={"Your Email Address"}
-                placeholderTextColor={Colors.inputPlaceholderColor}
-              />
-            </View>
-            { this.state.inputError === true ?
-              <View style={styles.inputErrorContainer}>
-                <Text style={styles.inputErrorText}>Please enter a valid email address.</Text>
-              </View>
-            : <View style={styles.inputErrorContainer}><Text>{' '}</Text></View> }
-          </View>
-        </GenericModal>
       </View>
     );
   }
@@ -307,4 +251,4 @@ let styles = StyleSheet.create({
   },
 })
 
-export default OrderGuideUpload
+export default OrderInvoiceUpload

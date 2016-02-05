@@ -28,7 +28,7 @@ export default function MessageActions(allActions){
     // console.log('imageUrl', imageUrl)
     return (dispatch, getState) => {
       const {session} = getState()
-      author = author ? author : `${session.firstName} ${session.lastName.substring(0,1)}`;
+      author = author ? author : `${session.firstName}`;
       imageUrl = imageUrl ? imageUrl : session.imageUrl;
 
       message.text = message.text.replace(/\{\{author\}\}/g, author);
@@ -116,7 +116,7 @@ export default function MessageActions(allActions){
         }
       }
       // console.log(messageDate)
-      const getTeamMessagesCallback = (err, result) => {
+      const getTeamMessagesCb = (err, result) => {
         // console.log('called function, result: ', result);
         if(result.length > 0){
           result.forEach((message) => {
@@ -128,7 +128,7 @@ export default function MessageActions(allActions){
           dispatch(noMessagesReceived())
         }
       }
-      dispatch(connectActions.ddpCall('getTeamMessages',[teamId, messageDate, false], getTeamMessagesCallback))
+      dispatch(connectActions.ddpCall('getTeamMessages',[teamId, messageDate, false], getTeamMessagesCb))
       return dispatch(requestMessages());
     }
   }

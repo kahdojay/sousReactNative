@@ -48,23 +48,35 @@ class CartRightButton extends React.Component {
     // ...
 
     return (
-      <TouchableHighlight
-        underlayColor='transparent'
-        onPress={::this.handlePress} >
-        <Icon name='material|shopping-cart' size={30} color={Colors.lightBlue} style={styles.cart}>
-          {badgeValue !== '' ? <Icon name='material|circle' size={24} color={Colors.red} style={styles.badge}><Text style={styles.badgeText}>{badgeValue}</Text></Icon> : <View/> }
-        </Icon>
-      </TouchableHighlight>
+      <View style={styles.iconContainer}>
+        <TouchableHighlight
+          underlayColor='transparent'
+          onPress={this.props.onCreateProduct} >
+          <Icon name='material|plus' size={30} color={Colors.lightBlue} style={[styles.add, styles.navIcon]}/>
+        </TouchableHighlight>
+        <TouchableHighlight
+          underlayColor='transparent'
+          onPress={::this.handlePress} >
+          <Icon name='material|shopping-cart' size={30} color={Colors.lightBlue} style={styles.navIcon}>
+            {badgeValue !== '' ? <Icon name='material|circle' size={24} color={Colors.red} style={styles.badge}><Text style={styles.badgeText}>{badgeValue}</Text></Icon> : <View/> }
+          </Icon>
+        </TouchableHighlight>
+      </View>
     );
   }
 }
 
 let styles = StyleSheet.create({
+  iconContainer: {
+    flexDirection: 'row',
+  },
   cart: {
+    fontWeight: 'bold',
+  },
+  navIcon: {
     width: 50,
     height: 50,
     marginTop: 12,
-    marginRight: 3,
   },
   badge: {
     width: 24,

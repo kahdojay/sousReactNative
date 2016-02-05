@@ -43,6 +43,7 @@ export const LEAVE_TEAM = 'LEAVE_TEAM';
 export const REQUEST_TEAMS = 'REQUEST_TEAMS';
 export const RECEIVE_TEAMS = 'RECEIVE_TEAMS';
 export const RECEIVE_TEAMS_USERS = 'RECEIVE_TEAMS_USERS';
+export const RECEIVE_TEAM_RESOURCE_INFO = 'RECEIVE_TEAM_RESOURCE_INFO';
 export const ERROR_TEAMS = 'ERROR_TEAMS';
 export const COMPLETE_TEAM_TASK = 'COMPLETE_TEAM_TASK';
 export const CART = {
@@ -68,6 +69,7 @@ export const RECEIVE_ERRORS = 'RECEIVE_ERRORS';
 export const DELETE_ERRORS = 'DELETE_ERRORS';
 
 export const RESET_ORDERS = 'RESET_ORDERS';
+export const GET_ORDERS = 'GET_ORDERS';
 export const RECEIVE_ORDERS = 'RECEIVE_ORDERS';
 export const UPDATE_ORDER = 'UPDATE_ORDER';
 

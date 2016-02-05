@@ -34,11 +34,11 @@ allActions['productActions'] = productActions
 const purveyorActions = PurveyorActions(allActions)
 allActions['purveyorActions'] = purveyorActions
 
-const orderActions = OrderActions(allActions)
-allActions['orderActions'] = orderActions
-
 const cartItemActions = CartItemActions(allActions)
 allActions['cartItemActions'] = cartItemActions
+
+const orderActions = OrderActions(allActions)
+allActions['orderActions'] = orderActions
 
 const teamActions = TeamActions(allActions)
 allActions['teamActions'] = teamActions
