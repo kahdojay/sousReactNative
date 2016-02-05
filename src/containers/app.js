@@ -320,19 +320,19 @@ class App extends React.Component {
     if(this.refs.appNavigator){
       const rbodRouteName = this.refs.appNavigator.getCurrentRoutes()[0].name
 
-      // // console.log(this.state.currentTeamInfo.lastUpdated.products)
-      // if( this.state.currentTeamInfo.resources.hasOwnProperty('counts') === true && rbodRouteName === 'Loading'){
-      //   let productCounts = this.state.currentTeamInfo.resources.counts.products
-      //   let actualProducts = Object.keys(this.state.currentTeamInfo.products).length
-      //   // console.log(productCounts, actualProducts)
-      //   if(productCounts === actualProducts){
-      //     setTimeout(() => {
-      //       this.refs.appNavigator.replacePrevious({
-      //         name: 'Feed'
-      //       });
-      //     }, 10)
-      //   }
-      // }
+      // console.log(this.state.currentTeamInfo.lastUpdated.products)
+      if( this.state.currentTeamInfo.resources.hasOwnProperty('counts') === true && rbodRouteName === 'OrderGuideLoading'){
+        let productCounts = this.state.currentTeamInfo.resources.counts.products
+        let actualProducts = Object.keys(this.state.currentTeamInfo.products).length
+        // console.log(productCounts, actualProducts)
+        if(productCounts === actualProducts){
+          setTimeout(() => {
+            this.refs.appNavigator.replacePrevious({
+              name: 'PurveyorIndex'
+            });
+          }, 10)
+        }
+      }
 
       // execute this condition to check certain routes when teams are present
       const checkRoutesForTeamsPresent = ['Loading','UserTeam']
@@ -478,6 +478,7 @@ class App extends React.Component {
           }
         }
       }
+
       const userInfoPresent = (!this.state.firstName || !this.state.lastName || !this.state.email)
       if (userInfoPresent) {
         route.name = 'UserInfo';
