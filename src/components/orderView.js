@@ -1,4 +1,5 @@
 import React from 'react-native';
+import { Icon, } from 'react-native-icons';
 import _ from 'lodash';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
@@ -6,6 +7,7 @@ import OrderListItem from './orderListItem';
 import moment from 'moment';
 import messageUtils from '../utilities/message';
 import GenericModal from './modal/genericModal';
+import Loading from './loading';
 
 const {
   PropTypes,
@@ -21,6 +23,8 @@ class OrderView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      orderId: null,
+      orderFetching: false,
       userId: null,
       order: null,
       products: null,
@@ -35,13 +39,18 @@ class OrderView extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
+      orderId: nextProps.orderId,
+      orderFetching: nextProps.orderFetching,
       order: nextProps.order,
+      purveyor: nextProps.purveyor,
       products: nextProps.products,
     })
   }
 
   componentWillMount(){
     this.setState({
+      orderId: this.props.orderId,
+      orderFetching: this.props.orderFetching,
       userId: this.props.userId,
       order: this.props.order,
       products: this.props.products,
@@ -49,9 +58,22 @@ class OrderView extends React.Component {
       // messages: this.props.messages,
       teamsUsers: this.props.teamsUsers,
       loaded: true,
+    }, () => {
+      if(this.checkMissingData() === true){
+        this.props.onGetOrderDetails(this.state.orderId)
+      }
     })
   }
 
+  checkMissingData() {
+    const {
+      order,
+      purveyor,
+      products,
+    } = this.state;
+
+    return (products === null || products.length === 0 || purveyor === null || order === null)
+  }
 
   confirmOrder() {
     let orderConfirm = Object.assign({}, this.state.order.confirm)
@@ -70,7 +92,8 @@ class OrderView extends React.Component {
         text: this.state.confirmationMessage,
         orderId: this.state.order.id,
       });
-      this.props.onNavToOrders()
+      // this.props.onNavToOrders()
+      this.props.onNavToInvoices(this.state.order.id)
     })
   }
 
@@ -83,10 +106,24 @@ class OrderView extends React.Component {
       teamsUsers,
     } = this.state;
 
-    if(products === null || products.length === 0 || purveyor === null || order === null){
+    if(this.checkMissingData() === true){
       return (
         <View style={styles.container}>
           <Text style={[styles.text, styles.textCentered, {padding: 25}]}>Order details unavailable.</Text>
+          { this.state.orderFetching === true ?
+            <Loading />
+          :
+            <TouchableHighlight
+              underlayColor='transparent'
+              onPress={() => {
+                this.props.onGetOrderDetails(this.state.orderId)
+              }}
+            >
+              <View style={styles.updateOrderContainer}>
+                <Text style={styles.updateOrder}>Update</Text>
+              </View>
+            </TouchableHighlight>
+          }
         </View>
       )
     }
@@ -207,34 +244,59 @@ class OrderView extends React.Component {
       confirmUserName = `${confirmUser.firstName} ${confirmUser.lastName[0]}.`
     }
 
+    let invoiceIconBackgroundColor = 'white'
+    let invoiceIconCheckmarkColor = 'transparent'
+    let invoiceButtonText = 'Upload Invoice(s)'
+    let confirmedContainerBackgroundColor = Colors.disabled
+    let invoiceButtonContainerBackgroundColor = Colors.gold
+    let invoiceButtonTextColor = 'white'
+    // if(true){
+    if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
+      invoiceIconBackgroundColor = Colors.green
+      invoiceIconCheckmarkColor = 'white'
+      invoiceButtonText = 'View Invoice(s)'
+      invoiceButtonContainerBackgroundColor = 'white'
+      invoiceButtonTextColor = Colors.lightBlue
+    }
+    if(order.confirm.order === true){
+      confirmedContainerBackgroundColor = Colors.sky
+    }
+
     return (
       <View style={styles.container}>
         { this.state.loaded === true ?
           <View style={styles.container}>
-            { order.confirm.order === false ?
-              <TouchableHighlight
-                onPress={() => {
-                  if(order.confirm.order === false){
-                    this.setState({
-                      showConfirm: true
-                    })
-                  }
-                }}
-                underlayColor='transparent'
-                style={styles.buttonContainerLink}
-              >
-                <View style={[styles.buttonContainer, buttonDisabledStyle]}>
-                  <Text style={[styles.buttonText, buttonTextDisabledStyle]}>Confirm Delivery</Text>
+            { order.confirm.order === true ?
+              <View>
+                <View style={[styles.confirmedContainer, styles.buttonContainerLink, styles.buttonContainer, {backgroundColor: confirmedContainerBackgroundColor}]}>
+                  <View style={styles.confirmedIconContainer}>
+                    <Icon name='material|circle' size={20} color={invoiceIconBackgroundColor} style={styles.confirmedIconContainer}>
+                      <Icon name='material|check' size={25} color={invoiceIconCheckmarkColor} style={styles.confirmedIconCheckmark} />
+                    </Icon>
+                  </View>
+                  <View style={{flex: 9 }}>
+                    <Text style={[styles.confirmedText]}>Delivery confirmed by: {confirmUserName}</Text>
+                    <Text style={[styles.confirmedText]}>{order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('M/D/YY h:mm a') : ''}</Text>
+                  </View>
                 </View>
-              </TouchableHighlight>
-            :
-              <View style={[styles.buttonContainerLink, styles.buttonContainer, buttonDisabledStyle]}>
-                <Text style={[styles.confirmedText]}>Delivery confirmed by: {confirmUserName}</Text>
-                <Text style={[styles.confirmedText]}>{order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('M/D/YY h:mm a') : ''}</Text>
+                <View style={styles.separator} />
               </View>
-            }
-            {modal}
-            <View style={styles.separator} />
+            : null }
+            { order.confirm.order === true ?
+              <View>
+                <TouchableHighlight
+                  underlayColor='transparent'
+                  onPress={() => {
+                    this.props.onNavToInvoices(order.id)
+                  }}
+                >
+                  <View style={[styles.invoiceButtonContainer, {backgroundColor: invoiceButtonContainerBackgroundColor}]}>
+                    <Text style={[styles.invoiceButtonText, {color: invoiceButtonTextColor}]}>{invoiceButtonText}</Text>
+                  </View>
+                </TouchableHighlight>
+                <View style={styles.separator} />
+              </View>
+            : null }
             <ScrollView
               automaticallyAdjustContentInsets={false}
               keyboardShouldPersistTaps={false}
@@ -242,6 +304,27 @@ class OrderView extends React.Component {
             >
               {productsList}
             </ScrollView>
+            {modal}
+            { order.confirm.order === false ?
+              <View>
+                <View style={styles.separator} />
+                <TouchableHighlight
+                  onPress={() => {
+                    if(order.confirm.order === false){
+                      this.setState({
+                        showConfirm: true
+                      })
+                    }
+                  }}
+                  underlayColor='transparent'
+                  style={styles.buttonContainerLink}
+                >
+                  <View style={[styles.buttonContainer, buttonDisabledStyle]}>
+                    <Text style={[styles.buttonText, buttonTextDisabledStyle]}>Confirm & Upload Invoice</Text>
+                  </View>
+                </TouchableHighlight>
+              </View>
+            : null }
           </View>
         : <Text style={[styles.text, styles.textCentered, {padding: 25}]}>Loading, please wait.</Text> }
       </View>
@@ -254,13 +337,41 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
   },
-  buttonContainerLink: {
+  confirmedContainer: {
+    flexDirection: 'row',
+    backgroundColor: Colors.sky,
+    alignItems: 'center',
     margin: 10,
+    borderRadius: 3,
+    padding: 8,
+  },
+  confirmedIconContainer: {
+    width: 30,
+    height: 30,
+  },
+  confirmedIconCheckmark: {
+    width: 25,
+    height: 25,
+    backgroundColor: 'transparent',
+    marginLeft: 6,
+  },
+  invoiceButtonContainer: {
+    alignItems: 'center',
+    backgroundColor: Colors.gold,
+    justifyContent: 'center',
+    padding: 10,
+    paddingBottom: 11,
+  },
+  invoiceButtonText: {
+    color: 'white',
+    fontSize: Sizes.inputFieldFontSize,
+    fontFamily: 'OpenSans',
+    fontWeight: 'bold',
+  },
+  buttonContainerLink: {
   },
   buttonContainer: {
     backgroundColor: 'white',
-    borderRadius: 3,
-    padding: 10,
   },
   buttonDisabled: {
     backgroundColor: Colors.disabled,
@@ -268,6 +379,8 @@ const styles = StyleSheet.create({
   buttonText: {
     alignSelf: 'center',
     fontSize: 16,
+    padding: 10,
+    paddingBottom: 11,
     color: Colors.lightBlue,
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
@@ -346,6 +459,19 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: Colors.disabled,
     fontStyle: 'italic',
+  },
+  updateOrderContainer: {
+    alignSelf: 'center',
+    backgroundColor: 'white',
+    width: 100,
+    padding: 10,
+    borderRadius: Sizes.inputBorderRadius,
+  },
+  updateOrder: {
+    textAlign: 'center',
+    fontFamily: 'OpenSans',
+    color: Colors.lightBlue,
+    fontSize: 12,
   },
 });
 

@@ -26,33 +26,6 @@ class InviteView extends React.Component {
       searching: false,
       searchedContacts: [],
     }
-    // this.allContacts = this.renderContacts(this.props.contacts)
-  }
-
-  searchForContacts() {
-    if(this.state.query !== ''){
-      this.setState({
-        searching: true,
-        searchedContacts: [],
-      }, () => {
-        const searchedContacts = _.filter(this.props.contacts, (contact) => {
-          let fullName = ''
-          fullName += contact.firstName ? contact.firstName.toLowerCase() : ''
-          fullName += ' '
-          fullName += contact.lastName ? contact.lastName.toLowerCase() : ''
-          return fullName.indexOf(this.state.query.toLowerCase()) !== -1
-        })
-        this.setState({
-          searching: false,
-          searchedContacts: searchedContacts.slice(0,10)
-        })
-      })
-    } else {
-      this.setState({
-        searching: false,
-        searchedContacts: [],
-      })
-    }
   }
 
   getSelectedIndex(contactNumber) {
@@ -81,53 +54,72 @@ class InviteView extends React.Component {
 
   renderContacts(contacts) {
     let displayContacts = []
-    contacts.forEach((contact) => {
-      let firstName = contact.firstName ? _.capitalize(contact.firstName) : ''
-      let lastName = contact.lastName ? _.capitalize(contact.lastName) : ''
-      contact.phoneNumbers.forEach((numberDetails, idx) => {
-        const contactNumber = DataUtils.formatPhoneNumber(numberDetails.number)
-        let selectedStyle = {}
-        let contactDetailsColor = Colors.greyText
-        let contactColor = 'black'
-        if(this.getSelectedIndex(contactNumber) !== -1){
-          contactDetailsColor = 'white'
-          contactColor = 'white'
-          selectedStyle = styles.selectedRow
-        }
-        displayContacts.push(
-          <TouchableHighlight
-            key={`${contact.id}-${idx}`}
-            underlayColor="#eee"
-            onPress={() => {
-              this.toggleSelectContact(contactNumber, firstName, lastName)
-            }}
-          >
-            <View style={[styles.row, selectedStyle]}>
-              {/* * /}<CheckBox
-                checked={this.getSelectedIndex(contactNumber) !== -1}
-                label=''
-                onChange={() => {
-                  this.toggleSelectContact(contactNumber, firstName, lastName)
-                }}
-              />{/* */}
-              <View style={styles.contactDetails}>
-                <View style={styles.nameContainer} >
-                  <Text style={[styles.text, styles.textBold, {color: contactColor}]}>{contact.firstName} </Text>
-                  <Text style={[styles.text, {color: contactColor}]}>{contact.lastName}</Text>
-                </View>
-                <Text style={[styles.phoneNumber, {color: contactDetailsColor}]}>{contactNumber}</Text>
+    contacts.forEach((contact, idx) => {
+      let selectedStyle = {}
+      let contactDetailsColor = Colors.greyText
+      let contactColor = 'black'
+      if(this.getSelectedIndex(contact.contactNumber) !== -1){
+        contactDetailsColor = 'white'
+        contactColor = 'white'
+        selectedStyle = styles.selectedRow
+      }
+
+      displayContacts.push(
+        <TouchableHighlight
+          key={`${contact.lastName}-${idx}`}
+          underlayColor="#eee"
+          onPress={() => {
+            this.toggleSelectContact(contact.contactNumber, contact.firstName, contact.lastName)
+          }}
+        >
+          <View style={[styles.row, selectedStyle]}>
+            <View style={styles.contactDetails}>
+              <View style={styles.nameContainer} >
+                <Text style={[styles.text, styles.textBold, {color: contactColor}]}>{contact.firstName} </Text>
+                <Text style={[styles.text, {color: contactColor}]}>{contact.lastName}</Text>
               </View>
+              <Text style={[styles.phoneNumber, {color: contactDetailsColor}]}>{contact.contactNumber}</Text>
             </View>
-          </TouchableHighlight>
-        )
-      })
+          </View>
+        </TouchableHighlight>
+      )
     })
 
-    return displayContacts
+    return (
+      displayContacts.length > 0 ? 
+      displayContacts :
+      <Text style={styles.noFoundText}>No results for '{ this.state.query }'</Text>
+    )
   }
 
   render() {
-    let displayContacts = this.state.searchedContacts.length > 0 ? this.renderContacts(this.state.searchedContacts) : this.renderContacts(this.props.contacts)
+    let allContacts = []
+    this.props.contacts.map(function(contact){
+      console.log(contact.phoneNumbers)
+      let contactNumbers = contact.phoneNumbers.map(function(o) { return o.number })
+      _.uniq(contactNumbers).forEach(function(number) {
+        let formattedContact = {
+          contactNumber: DataUtils.formatPhoneNumber(number),
+          firstName: contact.firstName ? _.capitalize(contact.firstName) : '',
+          lastName: contact.lastName ? _.capitalize(contact.lastName) : '',
+          selected: false
+        }
+        allContacts.push(formattedContact)
+      })
+    })
+    allContacts = _.sortBy(allContacts, 'firstName')
+
+    let showContacts = allContacts
+
+    if (this.state.query !== '') {
+      showContacts = _.filter(allContacts, (contact) => {
+        let fullName = ''
+        fullName += contact.firstName ? contact.firstName.toLowerCase() : ''
+        fullName += ' '
+        fullName += contact.lastName ? contact.lastName.toLowerCase() : ''
+        return fullName.indexOf(this.state.query.toLowerCase()) !== -1
+      })
+    }
 
     let searchBar = (
       <View>
@@ -135,15 +127,12 @@ class InviteView extends React.Component {
           <TextInput
             style={styles.searchInput}
             value={this.state.query}
-            placeholder='Search'
+            placeholder='Search Name'
             onChangeText={(text) => {
               this.setState({
                 query: text
-              }, () => {
-                this.searchForContacts()
               })
             }}
-            onSubmitEditing={::this.searchForContacts}
           />
           { this.state.searching === true ?
             <ActivityIndicatorIOS
@@ -200,7 +189,7 @@ class InviteView extends React.Component {
             automaticallyAdjustContentInsets={false}
             style={styles.contactsContainer}
           >
-            {displayContacts}
+            {this.renderContacts(showContacts)}
           </ScrollView>
           {sendSMSButton}
         </View>
@@ -298,6 +287,12 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  noFoundText: {
+    fontStyle: 'italic',
+    textAlign: 'center',
+    paddingTop: 15,
+    paddingBottom: 15,
   },
   modalContainer: {
     flex: 1,

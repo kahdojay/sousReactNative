@@ -173,8 +173,10 @@ export default function ConnectActions(ddpClient) {
           proceed = true
         }
       }
-      // console.log('ALL CHANNELS ', connect.channels);
-      // console.log('PROCEED to connect? '+proceed+' ', channel, argsList);
+      // if(channel === 'products'){
+        // console.log('ALL CHANNELS ', connect.channels);
+        // console.log('PROCEED to connect? '+proceed+' ', channel, argsList);
+      // }
       if(proceed === true){
         dispatch(() => {
           ddpClient.unsubscribe(channel)
@@ -279,18 +281,18 @@ export default function ConnectActions(ddpClient) {
       dispatch(sessionActions.updateSession({ resetAppState: false, isAuthenticated: false }))
 
       // dispatch(processUnsubscribe())
+      dispatch(teamActions.resetTeams())
       dispatch(cartItemActions.resetCartItems())
       dispatch(orderActions.resetOrders())
       dispatch(productActions.resetProducts())
       dispatch(categoryActions.resetCategories())
       dispatch(purveyorActions.resetPurveyors())
       dispatch(messageActions.resetMessages())
-      dispatch(teamActions.resetTeams())
       dispatch(sessionActions.resetSession())
       dispatch(errorActions.resetErrors())
       dispatch(() => {
         ddpClient.close()
-        dispatch(connectDDP(allActions));
+        dispatch(connectDDP(allActions))
         // setTimeout(() => {
         // //   setTimeout(() => {
         // //     // const {connect} = getState()

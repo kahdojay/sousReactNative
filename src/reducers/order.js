@@ -1,5 +1,6 @@
 import {
   RESET_ORDERS,
+  GET_ORDERS,
   RECEIVE_ORDERS,
   UPDATE_ORDER,
 } from '../actions';
@@ -8,6 +9,7 @@ const initialState = {
   orders: {
     errors: null,
     teams: {},
+    isFetching: false,
     lastUpdated: null
   }
 };
@@ -36,6 +38,12 @@ function orders(state = initialState.orders, action) {
     }
     return resetOrderState;
 
+  case GET_ORDERS:
+    return Object.assign({}, state, {
+      isFetching: action.isFetching,
+      lastUpdated: (new Date()).toISOString(),
+    });
+
   // receive the orders
   case RECEIVE_ORDERS:
     var newOrderTeamState = Object.assign({}, state.teams);
@@ -49,7 +57,7 @@ function orders(state = initialState.orders, action) {
     return Object.assign({}, state, {
       errors: null,
       teams: newOrderTeamState,
-      lastUpdated: (new Date()).toISOString()
+      lastUpdated: (new Date()).toISOString(),
     });
 
   // update order
@@ -63,7 +71,7 @@ function orders(state = initialState.orders, action) {
     return Object.assign({}, state, {
       errors: null,
       teams: updateOrderTeamState,
-      lastUpdated: (new Date()).toISOString()
+      lastUpdated: (new Date()).toISOString(),
     });
 
   // everything else

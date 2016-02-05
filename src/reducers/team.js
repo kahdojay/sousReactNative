@@ -8,6 +8,7 @@ import {
   REQUEST_TEAMS,
   RECEIVE_TEAMS,
   RECEIVE_TEAMS_USERS,
+  RECEIVE_TEAM_RESOURCE_INFO,
   ERROR_TEAMS,
   ADD_TEAM,
   UPDATE_TEAM,
@@ -22,6 +23,7 @@ const initialState = {
     errors: null,
     data: [],
     teamsUsers: {},
+    teamResources: {},
     currentTeam: null,
     cartTimeoutId: null,
     taskTimeoutId: null,
@@ -62,6 +64,13 @@ function teams(state = initialState.teams, action) {
     teamsUsersState.teamsUsers[action.user.id] = action.user;
     return Object.assign({}, state, {
       teamsUsers: teamsUsersState.teamsUsers,
+    });
+
+  case RECEIVE_TEAM_RESOURCE_INFO:
+    const teamResourcesState = Object.assign({}, state);
+    teamResourcesState.teamResources[action.teamId] = action.resources;
+    return Object.assign({}, state, {
+      teamResources: teamResourcesState.teamResources,
     });
 
   case LEAVE_TEAM:

@@ -15,6 +15,7 @@ import {
   GET_TEAMS,
   LEAVE_TEAM,
   RECEIVE_TEAMS_USERS,
+  RECEIVE_TEAM_RESOURCE_INFO,
   RECEIVE_TEAMS,
   REQUEST_TEAMS,
   RESET_TEAMS,
@@ -266,6 +267,8 @@ export default function TeamActions(allActions) {
         })
       }
 
+      dispatch(getTeamResourceInfo(team.id))
+
       let messageCount = 0
       if(messages.teams.hasOwnProperty(team.id) && Object.keys(messages.teams[team.id]).length > 0){
         messageCount = Object.keys(messages.teams[team.id]).length;
@@ -273,7 +276,9 @@ export default function TeamActions(allActions) {
       if(messageCount < 20){
         dispatch(messageActions.getTeamMessages(team.id))
       }
+      dispatch(productActions.getProducts(team.id))
       dispatch(cartItemActions.getTeamCartItems(team.id))
+      dispatch(orderActions.getTeamOrders(team.id))
       dispatch(getTeamUsers(team.id))
 
       return dispatch({
@@ -312,9 +317,10 @@ export default function TeamActions(allActions) {
       const {teams} = getState()
       var team = _.filter(teams.data, { id: teamId })[0]
       // console.log(team)
-      dispatch(messageActions.resetMessages(teamId));
-      dispatch(messageActions.getTeamMessages(teamId));
-      dispatch(sessionActions.updateSession({ teamId: teamId }));
+      dispatch(messageActions.resetMessages(teamId))
+      dispatch(messageActions.getTeamMessages(teamId))
+      dispatch(sessionActions.updateSession({ teamId: teamId }))
+      dispatch(getTeamResourceInfo(teamId))
       dispatch(getTeamUsers(teamId))
       return dispatch({
         type: SET_CURRENT_TEAM,
@@ -348,12 +354,15 @@ export default function TeamActions(allActions) {
       const currentTeamIdx = allTeamIds.indexOf(teamId);
       delete allTeamIds[currentTeamIdx];
       allTeamIds = allTeamIds.filter((v) => { return v !== undefined && v !== null; })
-      const newTeamId = allTeamIds[0];
+      if(allTeamIds.indexOf(session.teamId) === -1){
+        const newTeamId = allTeamIds[0];
+        // set a new team id
+        dispatch(setCurrentTeam(newTeamId));
+      }
+
+      dispatch(connectActions.subscribeDDP(session, allTeamIds))
 
       // console.log('setting new teamId: ', newTeamId)
-
-      // set a new team id
-      dispatch(setCurrentTeam(newTeamId));
 
       // reset the objects for other resources
       dispatch(purveyorActions.resetPurveyors(teamId));
@@ -400,6 +409,22 @@ export default function TeamActions(allActions) {
     }
   }
 
+  function getTeamResourceInfo(teamId){
+    return (dispatch, getState) => {
+      const {session} = getState()
+      var getTeamResourceInfoCb = (err, results) => {
+        if(!err){
+          dispatch({
+            type: RECEIVE_TEAM_RESOURCE_INFO,
+            teamId: teamId,
+            resources: results,
+          })
+        }
+      }
+      dispatch(connectActions.ddpCall('getTeamResourceInfo', [session.userId, teamId], getTeamResourceInfoCb))
+    }
+  }
+
   return {
     ADD_TEAM,
     DELETE_TEAM,
@@ -407,6 +432,7 @@ export default function TeamActions(allActions) {
     GET_TEAMS,
     LEAVE_TEAM,
     RECEIVE_TEAMS_USERS,
+    RECEIVE_TEAM_RESOURCE_INFO,
     RECEIVE_TEAMS,
     REQUEST_TEAMS,
     RESET_TEAMS,
@@ -420,6 +446,7 @@ export default function TeamActions(allActions) {
     addTeamTask,
     completeTeamTask,
     deleteTeam,
+    getTeamResourceInfo,
     leaveCurrentTeam,
     receiveTeams,
     receiveTeamsUsers,
