@@ -1065,10 +1065,19 @@ class App extends React.Component {
         }
       case 'OrderIndex':
         // console.log(this.state.currentTeamInfo.orders["Tp3cqFkgne8Amznft"].confirm)
+        let totalOrders = null
+        if(
+          this.state.currentTeamInfo.resources.hasOwnProperty('counts') === true
+          && this.state.currentTeamInfo.resources.counts.hasOwnProperty('orders') === true
+        ){
+          totalOrders = this.state.currentTeamInfo.resources.counts.orders
+        }
         return {
           component: Components.OrderIndex,
           props: {
             showConfirmedOrders: this.state.sceneState.OrderIndex.showConfirmedOrders,
+            totalOrders: totalOrders,
+            orderFetching: orders.isFetching,
             orders: this.state.currentTeamInfo.orders,
             cartItemsOrders: this.state.currentTeamInfo.cartItems['orders'],
             cartItems: cartItems.items,
@@ -1094,6 +1103,9 @@ class App extends React.Component {
                   name: 'OrderView'
                 })
               })
+            },
+            onGetMoreOrders: () => {
+              dispatch(actions.getMoreTeamOrders());
             },
           },
         }

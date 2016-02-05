@@ -267,6 +267,8 @@ export default function TeamActions(allActions) {
         })
       }
 
+      dispatch(getTeamResourceInfo(team.id))
+
       let messageCount = 0
       if(messages.teams.hasOwnProperty(team.id) && Object.keys(messages.teams[team.id]).length > 0){
         messageCount = Object.keys(messages.teams[team.id]).length;
@@ -275,6 +277,7 @@ export default function TeamActions(allActions) {
         dispatch(messageActions.getTeamMessages(team.id))
       }
       dispatch(cartItemActions.getTeamCartItems(team.id))
+      dispatch(orderActions.getTeamOrders(team.id))
       dispatch(getTeamUsers(team.id))
 
       return dispatch({
@@ -442,6 +445,7 @@ export default function TeamActions(allActions) {
     addTeamTask,
     completeTeamTask,
     deleteTeam,
+    getTeamResourceInfo,
     leaveCurrentTeam,
     receiveTeams,
     receiveTeamsUsers,
