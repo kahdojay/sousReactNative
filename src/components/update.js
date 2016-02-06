@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
     width: 258,
     fontFamily: 'OpenSans',
     fontSize: 16,
+    fontWeight: 'bold',
     backgroundColor: Colors.gold,
     color: 'white',
     padding: 12,
