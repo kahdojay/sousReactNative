@@ -34,6 +34,7 @@ import TeamIndex from './teamIndex';
 import TeamMemberListing from './teamMemberListing';
 import TeamMemberRightInvite from './TeamMemberRightInvite';
 import TeamView from './teamView';
+import Update from './update';
 import UserInfo from './userInfo';
 import UserTeam from './userTeam';
 
@@ -74,6 +75,7 @@ export default {
   TeamMemberListing,
   TeamMemberRightInvite,
   TeamView,
+  Update,
   UserInfo,
   UserTeam,
 }
