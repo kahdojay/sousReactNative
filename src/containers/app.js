@@ -17,8 +17,9 @@ import * as ModalComponents from '../components/modal';
 import Dimensions from 'Dimensions';
 import PushManager from 'react-native-remote-push/RemotePushIOS';
 import Communications from 'react-native-communications';
-import Device from 'react-native-device';
+import DeviceInfo from 'react-native-device-info';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
+import semver from 'semver';
 
 const {
   Navigator,
@@ -298,10 +299,12 @@ class App extends React.Component {
             if(data.hasOwnProperty('token')){
               dispatch(actions.registerInstallation({
                 token: data.token,
-                model: Device.model,
-                deviceName: Device.deviceName,
-                systemName: Device.systemName,
-                systemVersion: Device.systemVersion,
+                model: DeviceInfo.getModel(),
+                appVersion: DeviceInfo.getVersion(),
+                appBuildNumber: DeviceInfo.getBuildNumber(),
+                deviceName: DeviceInfo.getDeviceName(),
+                systemName: DeviceInfo.getSystemName(),
+                systemVersion: DeviceInfo.getSystemVersion(),
               }))
             } else {
               dispatch(actions.registerInstallationError())
@@ -445,7 +448,18 @@ class App extends React.Component {
   }
 
   getRoute(route, nav) {
-    const { session, settingsConfig } = this.props;
+    const { session, settingsConfig, connect } = this.props;
+
+    // redirect to loading screen and show a modal
+    // console.log(semver.lt(connect.settings.appVersion, connect.appStoreVersion))
+    if(
+      connect.settings.appVersion
+      && connect.appStoreVersion
+      && semver.lt(connect.settings.appVersion, connect.appStoreVersion) === true
+    ){
+      route.name = 'Update';
+    }
+
     // redirect to initial view
     if (this.state.isAuthenticated === true){
       if (route.name === 'Signup' || route.name === 'UserInfo' || route.name === 'UserTeam') {
@@ -506,6 +520,14 @@ class App extends React.Component {
     } = this.props;
 
     switch (route.name) {
+      case 'Update':
+        return {
+          component: Components.Update,
+          props: {
+            settingsConfig: settingsConfig,
+          },
+        }
+
       case 'session/onboarding':
         return {
           component: SessionComponents.Onboarding,
@@ -1841,6 +1863,7 @@ class App extends React.Component {
         case 'UserInfo':
         case 'UserTeam':
         case 'Loading':
+        case 'Update':
           navBar = null;
           break;
         default:

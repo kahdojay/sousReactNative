@@ -12,6 +12,7 @@ import {
   OFFLINE_NOOP,
   OFFLINE_PROCESSING,
   RECEIVE_SETTINGS_CONFIG,
+  RECEIVE_APPSTORE_VERSION,
 } from '../actions'
 
 const initialState = {
@@ -21,6 +22,7 @@ const initialState = {
     processing: false,
   },
   connect: {
+    appStoreVersion: null,
     channels: {},
     timeoutId: null,
     timeoutMilliseconds: 0,
@@ -30,7 +32,12 @@ const initialState = {
     error: null,
     settings: {
       token: null,
-      uuid: null
+      model: null,
+      appVersion: null,
+      appBuildNumber: null,
+      deviceName: null,
+      systemName: null,
+      systemVersion: null,
     }
   },
   settingsConfig: {},
@@ -95,10 +102,15 @@ function settingsConfig(state = initialState.settingsConfig, action) {
 function connect(state = initialState.connect, action) {
   switch (action.type) {
   case RESET_CHANNELS:
-    return Object.assign({}, {
+    return Object.assign({}, state, {
       channels: initialState.connect.channels,
       // status: CONNECT.OFFLINE, // if you do this you get offline flash modal when app starts
       // if you delete it you get flash of error modal
+    });
+
+  case RECEIVE_APPSTORE_VERSION:
+    return Object.assign({}, state, {
+      appStoreVersion: action.appStoreVersion,
     });
 
   case REGISTER_INSTALLATION:

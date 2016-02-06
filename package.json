@@ -1,6 +1,6 @@
 {
   "name": "sousmobile",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "build": "1",
   "private": true,
   "scripts": {
@@ -30,7 +30,7 @@
     "react-native": "^0.11.0",
     "react-native-addressbook": "^1.2.0",
     "react-native-communications": "0.0.6",
-    "react-native-device": "^1.0.1",
+    "react-native-device-info": "^0.8.2",
     "react-native-icons": "^0.4.0",
     "react-native-image-picker": "^0.11.1",
     "react-native-invertible-scroll-view": "^0.1.2",
@@ -45,6 +45,7 @@
     "react-redux": "^2.1.2",
     "redux-persist": "^1.0.0",
     "redux-thunk": "^1.0.0",
+    "semver": "^5.1.0",
     "shortid": "^2.2.2",
     "slug": "^0.9.1"
   },

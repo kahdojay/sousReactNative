@@ -17,6 +17,7 @@ import {
   OFFLINE_NOOP,
   OFFLINE_PROCESSING,
   RECEIVE_SETTINGS_CONFIG,
+  RECEIVE_APPSTORE_VERSION,
 } from './actionTypes'
 
 export default function ConnectActions(ddpClient) {
@@ -241,11 +242,13 @@ export default function ConnectActions(ddpClient) {
             teamUserIds = teamUserIds.concat(team.users)
           })
           // dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS_USERS, [session.userId, teamIds, teamUserIds]))
+          const deprecate = true
+          const onlyNew = true
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PURVEYORS, [session.userId, teamIds]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CATEGORIES, [session.userId, teamIds]))
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PRODUCTS, [session.userId, teamIds]))
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CART_ITEMS, [session.userId, teamIds]))
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ORDERS, [session.userId, teamIds]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PRODUCTS, [session.userId, teamIds, onlyNew]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CART_ITEMS, [session.userId, teamIds, deprecate, onlyNew]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ORDERS, [session.userId, teamIds, onlyNew]))
         }
         if(session.userId !== null){
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS, [session.userId]))
@@ -428,6 +431,7 @@ export default function ConnectActions(ddpClient) {
         const {connect, session, teams} = getState()
         clearTimeout(connect.timeoutId)
         dispatch(connectionStatusConnected(0))
+        dispatch(getAppStoreVersion())
         dispatch(getSettingsConfig())
         // console.log('TEAMS', teams);
         // console.log('SESSION: ', session);
@@ -552,6 +556,18 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
+  function getAppStoreVersion() {
+    return (dispatch) => {
+      const appStoreVersionCb = (err, appStoreVersion) => {
+        dispatch({
+          type: RECEIVE_APPSTORE_VERSION,
+          appStoreVersion: appStoreVersion,
+        })
+      }
+      dispatch(ddpCall('getAppStoreVersion', [], appStoreVersionCb))
+    }
+  }
+
   function getSettingsConfig() {
     return (dispatch) => {
       const settingsConfigCb = (err, settingsConfig) => {
@@ -580,6 +596,7 @@ export default function ConnectActions(ddpClient) {
     OFFLINE_NOOP,
     OFFLINE_PROCESSING,
     RECEIVE_SETTINGS_CONFIG,
+    RECEIVE_APPSTORE_VERSION,
     // 'connectSingleChannel': connectSingleChannel,
     // 'connectChannels': connectChannels,
     'ddpCall': ddpCall,
