@@ -36,7 +36,7 @@
 		89EFDE601BCC097F001FBBEF /* OpenSans-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE571BCC097F001FBBEF /* OpenSans-Semibold.ttf */; };
 		89EFDE611BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE581BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf */; };
 		8A08A3C91C54681900A655D9 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 8A08A3C81C54681800A655D9 /* main.jsbundle */; };
-		8A1FA6521C4DDC260013BC85 /* DeviceUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 8A1FA6511C4DDC260013BC85 /* DeviceUtil.m */; };
+		8A9C19B11C65A4E00034C19A /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A9C19B01C65A4D60034C19A /* libRNDeviceInfo.a */; };
 		A531FDAA1BE3EC2F00E90569 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = A531FDA91BE3EC2F00E90569 /* main.jsbundle */; };
 		A5380FE61BE05DFA00FADB96 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A5380FE51BE05DFA00FADB96 /* AppDelegate.m */; };
 		A5380FEA1BE05E2E00FADB96 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A5380FE71BE05E2E00FADB96 /* Images.xcassets */; };
@@ -152,6 +152,13 @@
 			remoteGlobalIDString = 134814201AA4EA6300B7C361;
 			remoteInfo = RNOverlay;
 		};
+		8A9C19AF1C65A4D60034C19A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8A9C19AB1C65A4D50034C19A /* RNDeviceInfo.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DA5891D81BA9A9FC002B4DB2;
+			remoteInfo = RNDeviceInfo;
+		};
 		C430DD961BCEC63F00962F41 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C430DD901BCEC63F00962F41 /* RCTAddressBook.xcodeproj */;
@@ -203,8 +210,7 @@
 		89EFDE571BCC097F001FBBEF /* OpenSans-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Semibold.ttf"; sourceTree = "<group>"; };
 		89EFDE581BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-SemiboldItalic.ttf"; sourceTree = "<group>"; };
 		8A08A3C81C54681800A655D9 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = SOURCE_ROOT; };
-		8A1FA6501C4DDC260013BC85 /* DeviceUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeviceUtil.h; path = "../node_modules/react-native-device/DeviceUtil.h"; sourceTree = "<group>"; };
-		8A1FA6511C4DDC260013BC85 /* DeviceUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DeviceUtil.m; path = "../node_modules/react-native-device/DeviceUtil.m"; sourceTree = "<group>"; };
+		8A9C19AB1C65A4D50034C19A /* RNDeviceInfo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNDeviceInfo.xcodeproj; path = "../node_modules/react-native-device-info/RNDeviceInfo.xcodeproj"; sourceTree = "<group>"; };
 		A531FDA91BE3EC2F00E90569 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = SOURCE_ROOT; };
 		A5380FE41BE05DFA00FADB96 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		A5380FE51BE05DFA00FADB96 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -228,6 +234,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A9C19B11C65A4E00034C19A /* libRNDeviceInfo.a in Frameworks */,
 				11DFC3791C2619D000F8A2D5 /* libRCTRemotePushManager.a in Frameworks */,
 				8918EB061BD8227C0068EBBA /* libRNOverlay.a in Frameworks */,
 				110F5ECF1BCF2D5700234ED6 /* libReactNativeIcons.a in Frameworks */,
@@ -371,8 +378,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				8A1FA6501C4DDC260013BC85 /* DeviceUtil.h */,
-				8A1FA6511C4DDC260013BC85 /* DeviceUtil.m */,
+				8A9C19AB1C65A4D50034C19A /* RNDeviceInfo.xcodeproj */,
 				1171E5DB1C3AEDBD007AECED /* UIImagePickerManager.h */,
 				1171E5DC1C3AEDBD007AECED /* UIImagePickerManager.m */,
 				110C20FF1C26372E0074F7D3 /* RemotePushDelegate.h */,
@@ -459,6 +465,14 @@
 				89A667001BC2F38A00F45CFD /* OpenSans-Regular.ttf */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		8A9C19AC1C65A4D50034C19A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8A9C19B01C65A4D60034C19A /* libRNDeviceInfo.a */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		C430DD911BCEC63F00962F41 /* Products */ = {
@@ -591,6 +605,10 @@
 					ProjectRef = 110F5EC91BCF2D4900234ED6 /* ReactNativeIcons.xcodeproj */;
 				},
 				{
+					ProductGroup = 8A9C19AC1C65A4D50034C19A /* Products */;
+					ProjectRef = 8A9C19AB1C65A4D50034C19A /* RNDeviceInfo.xcodeproj */;
+				},
+				{
 					ProductGroup = 8918EAA01BD801AE0068EBBA /* Products */;
 					ProjectRef = 8918EA9F1BD801AE0068EBBA /* RNMultiPicker.xcodeproj */;
 				},
@@ -706,6 +724,13 @@
 			remoteRef = 8918EB041BD822690068EBBA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		8A9C19B01C65A4D60034C19A /* libRNDeviceInfo.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNDeviceInfo.a;
+			remoteRef = 8A9C19AF1C65A4D60034C19A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		C430DD971BCEC63F00962F41 /* libRCTAddressBook.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -769,7 +794,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A5380FE61BE05DFA00FADB96 /* AppDelegate.m in Sources */,
-				8A1FA6521C4DDC260013BC85 /* DeviceUtil.m in Sources */,
 				A5380FEC1BE05E2E00FADB96 /* main.m in Sources */,
 				110C21011C26372E0074F7D3 /* RemotePushDelegate.m in Sources */,
 				1171E5DD1C3AEDBD007AECED /* UIImagePickerManager.m in Sources */,
