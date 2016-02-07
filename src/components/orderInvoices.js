@@ -147,10 +147,10 @@ const styles = StyleSheet.create({
   },
   invoiceButton: {
     height: 60,
-    justifyContent: 'center',
     backgroundColor: 'white',
     borderTopColor: Colors.separatorColor,
     borderTopWidth: 1,
+    justifyContent: 'center',
   },
   invoiceButtonText: {
     paddingBottom: 1,

@@ -216,6 +216,7 @@ let styles = StyleSheet.create({
     borderTopColor: Colors.separatorColor,
     borderTopWidth: 1,
     backgroundColor: 'white',
+    justifyContent: 'center',
   },
   uploadButtonText: {
     color: Colors.lightBlue,
