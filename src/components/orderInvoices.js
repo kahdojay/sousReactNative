@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   swiperPagination: {
-    bottom: 60,
+    bottom: 70,
   },
   invoice: {
     flex: 1,
@@ -146,14 +146,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   invoiceButton: {
+    height: 60,
     justifyContent: 'center',
     backgroundColor: 'white',
     borderTopColor: Colors.separatorColor,
     borderTopWidth: 1,
   },
   invoiceButtonText: {
-    padding: 10,
-    paddingBottom: 11,
+    paddingBottom: 1,
     color: Colors.lightBlue,
     textAlign: 'center',
     fontWeight: 'bold',

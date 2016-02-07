@@ -1,4 +1,5 @@
 import {
+  UPDATE_INSTALLATION,
   REGISTER_INSTALLATION,
   CONNECTION_STATUS,
   RESET_CHANNELS,
@@ -116,6 +117,11 @@ function connect(state = initialState.connect, action) {
   case REGISTER_INSTALLATION:
     return Object.assign({}, state, {
       installationRegistered: action.installationRegistered,
+      settings: Object.assign({}, state.settings, action.deviceAttributes)
+    });
+
+  case UPDATE_INSTALLATION:
+    return Object.assign({}, state, {
       settings: Object.assign({}, state.settings, action.deviceAttributes)
     });
 
