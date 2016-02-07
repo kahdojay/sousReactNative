@@ -16,7 +16,6 @@ const {
 const window = Dimensions.get('window');
 const buttonHeight = 60;
 const slideHeight = window.height - buttonHeight - 20;
-console.log(window.width, slideHeight)
 
 class Slide extends React.Component {
   constructor(props) {
