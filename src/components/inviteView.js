@@ -44,7 +44,7 @@ class InviteView extends React.Component {
   componentWillReceiveProps(nextProps) {
     this.setState({
       isFetching: nextProps.isFetching,
-      contacts: nextProps.contacts.slice(0,10),
+      contacts: [], //nextProps.contacts.slice(0,10),
     })
   }
 
@@ -96,6 +96,7 @@ class InviteView extends React.Component {
   }
 
   renderContacts(contacts) {
+
     if(this.state.isFetching === true){
       return (
         <ActivityIndicatorIOS
@@ -107,6 +108,7 @@ class InviteView extends React.Component {
         />
       )
     }
+
     let displayContacts = []
     contacts.forEach((contact, idx) => {
       let selectedStyle = {}
@@ -247,7 +249,9 @@ class InviteView extends React.Component {
             automaticallyAdjustContentInsets={false}
             style={styles.contactsContainer}
           >
-            {this.renderContacts(allContacts)}
+            { this.state.query !== '' ?
+              this.renderContacts(allContacts)
+            : <Text style={[styles.noFoundText, {color: Colors.darkGrey}]}>Please search for a contact using their name.</Text> }
           </ScrollView>
           {sendSMSButton}
         </View>

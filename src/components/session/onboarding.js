@@ -16,6 +16,7 @@ const {
 const window = Dimensions.get('window');
 const buttonHeight = 60;
 const slideHeight = window.height - buttonHeight - 20;
+console.log(window.width, slideHeight)
 
 class Slide extends React.Component {
   constructor(props) {
@@ -23,12 +24,15 @@ class Slide extends React.Component {
   }
 
   render() {
-    const {uri, id, config} = this.props;
+    const {id, config} = this.props;
+    let uri = this.props.uri;
     let slideBackgroundColor = 'transparent'
 
     if(config.hasOwnProperty('backgroundColor') === true && config.backgroundColor){
       slideBackgroundColor = config.backgroundColor
     }
+
+    uri = uri.replace('{resizeMode}', 'cover/')
 
     return (
       <View style={styles.slide}>
@@ -172,7 +176,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   slideImage: {
-    resizeMode: 'contain',
+    resizeMode: 'cover',
     backgroundColor: 'transparent',
   },
   bottomContainer: {
