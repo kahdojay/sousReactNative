@@ -1,7 +1,6 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
-import AddressBook from 'react-native-addressbook';
 import _ from 'lodash';
 
 const {
@@ -18,22 +17,12 @@ class TeamMemberRightInvite extends React.Component {
     this.state = {}
   }
 
-  navigateToInviteView() {
-    AddressBook.getContacts( (err, contacts) => {
-      if (err && err.type === 'permissionDenied') {
-        this.props.navigateToInviteView([], true)
-      } else {
-        this.props.navigateToInviteView(contacts, false)
-      }
-    })
-  }
-
   render() {
     return (
       <TouchableHighlight
         onPress={() => {
           if(this.props.connected === true){
-            this.navigateToInviteView()
+            this.props.navigateToInviteView()
           }
         }}
         style={{justifyContent: 'center',}}

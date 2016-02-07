@@ -40,7 +40,6 @@ class App extends React.Component {
         attempt: 0,
         reconnect: 0,
       },
-      contactList: [],
       currentTeamInfo: {
         cart: {},
         cartItems: {'cart':{}, 'orders':{}},
@@ -508,6 +507,7 @@ class App extends React.Component {
       cartItems,
       categories,
       connect,
+      contacts,
       dispatch,
       errors,
       messages,
@@ -800,7 +800,9 @@ class App extends React.Component {
             messages: this.state.currentTeamInfo.messages,
             onClearBadge: () => {
               dispatch(actions.updateInstallation({
-                "badge": 0
+                badge: 0,
+                appVersion: DeviceInfo.getVersion(),
+                appBuildNumber: DeviceInfo.getBuildNumber(),
               }))
             },
             onGetMoreMessages: () => {
@@ -1290,8 +1292,12 @@ class App extends React.Component {
         return {
           component: Components.InviteView,
           props: {
-            contacts: this.state.contactList,
-            denied: this.state.contactsPermissionDenied,
+            contacts: contacts.data,
+            isFetching: contacts.isFetching,
+            denied: contacts.contactsPermissionDenied,
+            getContacts: () => {
+              dispatch(actions.getContacts())
+            },
             onSMSInvite: (contacts) => {
               if (contacts.length === 0)
                 return
@@ -1845,15 +1851,10 @@ class App extends React.Component {
             customNext: (
               <Components.TeamMemberRightInvite
                 connected={(connect.status === actions.CONNECT.CONNECTED)}
-                navigateToInviteView={(contactList, denied) => {
-                  this.setState({
-                    contactList: contactList,
-                    contactsPermissionDenied: denied,
-                  }, () => {
-                    nav.push({
-                      name: 'InviteView',
-                    })
-                  });
+                navigateToInviteView={() => {
+                  nav.push({
+                    name: 'InviteView',
+                  })
                 }}
               />
             ),
@@ -2084,17 +2085,18 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
   return {
-    session: state.session,
-    teams: state.teams,
-    messages: state.messages,
-    purveyors: state.purveyors,
-    products: state.products,
-    categories: state.categories,
     cartItems: state.cartItems,
-    orders: state.orders,
-    errors: state.errors,
+    categories: state.categories,
     connect: state.connect,
+    contacts: state.contacts,
+    errors: state.errors,
+    messages: state.messages,
+    orders: state.orders,
+    products: state.products,
+    purveyors: state.purveyors,
+    session: state.session,
     settingsConfig: state.settingsConfig,
+    teams: state.teams,
   }
 }
 

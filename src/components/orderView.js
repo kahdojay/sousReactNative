@@ -356,21 +356,22 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   invoiceButtonContainer: {
+    height: 60,
     alignItems: 'center',
     backgroundColor: Colors.gold,
     justifyContent: 'center',
-    padding: 10,
-    paddingBottom: 11,
   },
   invoiceButtonText: {
     color: 'white',
     fontSize: Sizes.inputFieldFontSize,
     fontFamily: 'OpenSans',
     fontWeight: 'bold',
+    paddingBottom: 1,
   },
   buttonContainerLink: {
   },
   buttonContainer: {
+    height: 60,
     backgroundColor: 'white',
   },
   buttonDisabled: {
@@ -379,8 +380,7 @@ const styles = StyleSheet.create({
   buttonText: {
     alignSelf: 'center',
     fontSize: 16,
-    padding: 10,
-    paddingBottom: 11,
+    paddingBottom: 1,
     color: Colors.lightBlue,
     fontWeight: 'bold',
     fontFamily: 'OpenSans',

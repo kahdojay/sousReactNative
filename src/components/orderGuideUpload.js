@@ -268,6 +268,7 @@ let styles = StyleSheet.create({
     borderRadius: 11,
   },
   uploadButton: {
+    height: 60,
     borderTopColor: Colors.separatorColor,
     borderTopWidth: 1,
     backgroundColor: 'white',
@@ -275,8 +276,7 @@ let styles = StyleSheet.create({
   uploadButtonText: {
     color: Colors.lightBlue,
     textAlign: 'center',
-    padding: 10,
-    paddingBottom: 11,
+    paddingBottom: 1,
     fontFamily: 'OpenSans',
     fontSize: 16,
     fontWeight: 'bold',
