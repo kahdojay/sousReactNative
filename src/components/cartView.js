@@ -349,8 +349,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     textAlign: 'center',
-    padding: 10,
-    paddingBottom: 11,
+    paddingBottom: 1,
     fontFamily: 'OpenSans',
     fontSize: 16,
     fontWeight: 'bold',

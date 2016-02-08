@@ -1,24 +1,26 @@
+import CartItemActions from './cartItem';
+import CategoryActions from './category';
 import ConnectActions from './connect';
-// import UIActions from './ui';
+import ContactActions from './contact';
+import ErrorActions from './error';
+import MessageActions from './message';
+import OrderActions from './order';
+import ProductActions from './product';
+import PurveyorActions from './purveyor';
 import SessionActions from './session';
 import TeamActions from './team';
-import MessageActions from './message';
-import PurveyorActions from './purveyor';
-import ProductActions from './product';
-import CategoryActions from './category';
-import ErrorActions from './error';
-import OrderActions from './order';
-import CartItemActions from './cartItem';
 import ddpClient from '../utilities/ddpClient';
 
 let allActions = {}
 const connectActions = ConnectActions(ddpClient)
 allActions['connectActions'] = connectActions
 
+const contactActions = ContactActions(allActions)
+allActions['contactActions'] = contactActions
+
 const errorActions = ErrorActions(allActions)
 allActions['errorActions'] = errorActions
 
-// const uiActions = UIActions(ddpClient)
 const sessionActions = SessionActions(allActions)
 allActions['sessionActions'] = sessionActions
 
@@ -74,15 +76,15 @@ function connectApp(){
 
 export default Object.assign(
   {'connectApp': connectApp},
+  cartItemActions,
+  categoryActions,
   connectActions,
-  // uiActions,
+  contactActions,
+  errorActions,
+  messageActions,
+  orderActions,
+  productActions,
+  purveyorActions,
   sessionActions,
   teamActions,
-  messageActions,
-  purveyorActions,
-  productActions,
-  categoryActions,
-  errorActions,
-  orderActions,
-  cartItemActions,
 )

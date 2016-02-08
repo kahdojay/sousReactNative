@@ -25,7 +25,27 @@ class InviteView extends React.Component {
       query: '',
       searching: false,
       searchedContacts: [],
+      isFetching: this.props.isFetching,
+      contacts: [],
+      timeout: null,
     }
+  }
+
+  componentWillMount() {
+    if(this.props.contacts.length === 0){
+      this.props.getContacts()
+    } else {
+      this.setState({
+        contacts: this.props.contacts.slice(0,10)
+      })
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      isFetching: nextProps.isFetching,
+      contacts: [], //nextProps.contacts.slice(0,10),
+    })
   }
 
   getSelectedIndex(contactNumber) {
@@ -52,7 +72,43 @@ class InviteView extends React.Component {
     })
   }
 
+  searchContacts() {
+    if(this.state.query !== ''){
+      const searchedContacts = _.filter(this.props.contacts, (contact) => {
+        let fullName = ''
+        fullName += contact.firstName ? contact.firstName.toLowerCase() : ''
+        fullName += ' '
+        fullName += contact.lastName ? contact.lastName.toLowerCase() : ''
+        return fullName.indexOf(this.state.query.toLowerCase()) !== -1
+      })
+      this.setState({
+        contacts: searchedContacts.slice(0,10),
+        searching: false,
+        timeout: null,
+      })
+    } else {
+      this.setState({
+        contacts: this.props.contacts.slice(0,10),
+        searching: false,
+        timeout: null,
+      })
+    }
+  }
+
   renderContacts(contacts) {
+
+    if(this.state.isFetching === true){
+      return (
+        <ActivityIndicatorIOS
+          key={'loading'}
+          animating={true}
+          color={Colors.greyText}
+          style={styles.activity}
+          size={'large'}
+        />
+      )
+    }
+
     let displayContacts = []
     contacts.forEach((contact, idx) => {
       let selectedStyle = {}
@@ -86,7 +142,7 @@ class InviteView extends React.Component {
     })
 
     return (
-      displayContacts.length > 0 ? 
+      displayContacts.length > 0 ?
       displayContacts :
       <Text style={styles.noFoundText}>No results for '{ this.state.query }'</Text>
     )
@@ -94,30 +150,18 @@ class InviteView extends React.Component {
 
   render() {
     let allContacts = []
-    this.props.contacts.map(function(contact){
-      console.log(contact.phoneNumbers)
-      let contactNumbers = contact.phoneNumbers.map(function(o) { return o.number })
-      _.uniq(contactNumbers).forEach(function(number) {
-        let formattedContact = {
-          contactNumber: DataUtils.formatPhoneNumber(number),
-          firstName: contact.firstName ? _.capitalize(contact.firstName) : '',
-          lastName: contact.lastName ? _.capitalize(contact.lastName) : '',
-          selected: false
-        }
-        allContacts.push(formattedContact)
-      })
-    })
-    allContacts = _.sortBy(allContacts, 'firstName')
-
-    let showContacts = allContacts
-
-    if (this.state.query !== '') {
-      showContacts = _.filter(allContacts, (contact) => {
-        let fullName = ''
-        fullName += contact.firstName ? contact.firstName.toLowerCase() : ''
-        fullName += ' '
-        fullName += contact.lastName ? contact.lastName.toLowerCase() : ''
-        return fullName.indexOf(this.state.query.toLowerCase()) !== -1
+    if(this.state.contacts !== null){
+      this.state.contacts.map(function(contact){
+        let contactNumbers = contact.phoneNumbers.map(function(o) { return o.number })
+        _.uniq(contactNumbers).forEach(function(number) {
+          let formattedContact = {
+            contactNumber: DataUtils.formatPhoneNumber(number),
+            firstName: contact.firstName ? _.capitalize(contact.firstName) : '',
+            lastName: contact.lastName ? _.capitalize(contact.lastName) : '',
+            selected: false
+          }
+          allContacts.push(formattedContact)
+        })
       })
     }
 
@@ -129,12 +173,17 @@ class InviteView extends React.Component {
             value={this.state.query}
             placeholder='Search Name'
             onChangeText={(text) => {
+              if(this.state.timeout !== null){
+                clearTimeout(this.state.timeout)
+              }
               this.setState({
-                query: text
+                query: text,
+                searching: true,
+                timeout: setTimeout(::this.searchContacts, 500)
               })
             }}
           />
-          { this.state.searching === true ?
+        { this.state.searching === true ?
             <ActivityIndicatorIOS
               key={'loading'}
               animating={true}
@@ -142,14 +191,17 @@ class InviteView extends React.Component {
               style={styles.activity}
               size={'small'}
             />
-            : null }
+          : null }
           { this.state.query !== '' ?
             <TouchableHighlight
               onPress={() => {
+                if(this.state.timeout !== null){
+                  clearTimeout(this.state.timeout)
+                }
                 this.setState({
-                  searching: false,
                   query: '',
-                  searchedContacts: this.props.contacts,
+                  searching: true,
+                  timeout: setTimeout(::this.searchContacts, 500)
                 })
               }}
               underlayColor='transparent'
@@ -161,14 +213,22 @@ class InviteView extends React.Component {
       </View>
     )
 
+    let submitButtonBackgroundColor = Colors.disabled
+    let submitButtonTextColor = 'white'
+    if(this.state.selectedContacts.length > 0){
+      submitButtonBackgroundColor = 'white'
+      submitButtonTextColor = Colors.lightBlue
+    }
     let sendSMSButton = (
       <TouchableHighlight
-        style={styles.submitContainer}
-        underlayColor='white'
+        style={[styles.submitContainer, {backgroundColor: submitButtonBackgroundColor}]}
+        underlayColor='transparent'
         onPress={() => {
-          this.props.onSMSInvite(this.state.selectedContacts)
+          if(this.state.selectedContacts.length > 0){
+            this.props.onSMSInvite(this.state.selectedContacts)
+          }
         }}>
-        <Text style={styles.submitText}>Send SMS</Text>
+        <Text style={[styles.submitText, {color: submitButtonTextColor}]}>Send SMS</Text>
       </TouchableHighlight>
     )
 
@@ -189,7 +249,9 @@ class InviteView extends React.Component {
             automaticallyAdjustContentInsets={false}
             style={styles.contactsContainer}
           >
-            {this.renderContacts(showContacts)}
+            { this.state.query !== '' ?
+              this.renderContacts(allContacts)
+            : <Text style={[styles.noFoundText, {color: Colors.darkGrey}]}>Please search for a contact using their name.</Text> }
           </ScrollView>
           {sendSMSButton}
         </View>
@@ -230,7 +292,7 @@ const styles = StyleSheet.create({
   activity: {
     backgroundColor: 'transparent',
     paddingTop: 12,
-    left: 5,
+    left: 10,
     position: 'absolute',
   },
   iconClose: {
@@ -276,14 +338,16 @@ const styles = StyleSheet.create({
     color: Colors.lightGrey,
   },
   submitContainer: {
+    height: 60,
     borderTopColor: Colors.separatorColor,
     borderTopWidth: 1,
     backgroundColor: 'white',
+    justifyContent: 'center',
   },
   submitText: {
     color: Colors.lightBlue,
     textAlign: 'center',
-    padding: 10,
+    paddingBottom: 1,
     fontFamily: 'OpenSans',
     fontSize: 16,
     fontWeight: 'bold',
