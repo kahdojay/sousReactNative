@@ -75,6 +75,16 @@ function processCartAndOrders(newCartItemState, newCartItemTeamState, cartItemId
       }
     }
   } else {
+    if(cartItem.status !== 'NEW' && newCartItemTeamState[cartItem.teamId]['cart'].hasOwnProperty(cartItem.purveyorId) === true){
+      // console.log('DELETING: ', cartItem, newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId])
+      if(
+        newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId].hasOwnProperty(cartItem.productId) === true
+        && newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId] === cartItem.id
+      ){
+        // console.log('Deleting from cart...')
+        delete newCartItemTeamState[cartItem.teamId]['cart'][cartItem.purveyorId][cartItem.productId]
+      }
+    }
     // console.log(cartItem.id, cartItemGroup, cartItemLocator, cartItemId)
     newCartItemTeamState[cartItem.teamId][cartItemGroup][cartItemLocator][cartItemId] = cartItem.id
     // console.log('updated...')

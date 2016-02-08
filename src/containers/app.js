@@ -200,6 +200,7 @@ class App extends React.Component {
         currentTeamInfo.resources = {}
       }
     }
+    // console.log(processRedirect, currentTeamInfo.resources)
     let connectionStats = Object.assign({}, this.state.connectionStats)
     let reconnectCountDown = false
     if(nextProps.connect.attempt !== connectionStats.attempt){
@@ -246,7 +247,7 @@ class App extends React.Component {
       }
     }
     this.setState(componentWillReceivePropsStateUpdate, () => {
-      const cwrpRouteName = this.refs.appNavigator.getCurrentRoutes()[0].name
+      // const cwrpRouteName = this.refs.appNavigator.getCurrentRoutes()[0].name
       // console.log(this.props.cartItems)
       if(reconnectCountDown === true){
         this.countDownReconnect()
@@ -317,19 +318,19 @@ class App extends React.Component {
 
   redirectBasedOnData() {
     if(this.refs.appNavigator){
-      const rbodRouteName = this.refs.appNavigator.getCurrentRoutes()[0].name
+      const rbodRoutes = this.refs.appNavigator.getCurrentRoutes()
+      const rbodRouteName = rbodRoutes[(rbodRoutes.length-1)].name
 
-      // console.log(this.state.currentTeamInfo.lastUpdated.products)
       if( this.state.currentTeamInfo.resources.hasOwnProperty('counts') === true && rbodRouteName === 'OrderGuideLoading'){
-        let productCounts = this.state.currentTeamInfo.resources.counts.products
+        let totalProductCounts = this.state.currentTeamInfo.resources.counts.products
         let actualProducts = Object.keys(this.state.currentTeamInfo.products).length
-        // console.log(productCounts, actualProducts)
-        if(productCounts === actualProducts){
-          setTimeout(() => {
-            this.refs.appNavigator.replacePrevious({
-              name: 'PurveyorIndex'
-            });
-          }, 10)
+        // console.log(rbodRouteName, totalProductCounts, actualProducts)
+        if(totalProductCounts === actualProducts){
+          this.refs.appNavigator.pop();
+        } else {
+          this.refs.appNavigator.push({
+            name: 'OrderGuideLoading'
+          })
         }
       }
 
@@ -337,17 +338,13 @@ class App extends React.Component {
       const checkRoutesForTeamsPresent = ['Loading','UserTeam']
       if(checkRoutesForTeamsPresent.indexOf(rbodRouteName) !== -1){
         if(this.state.currentTeamInfo.team !== null){
-          setTimeout(() => {
-            this.refs.appNavigator.replacePrevious({
-              name: 'Feed'
-            });
-          }, 10)
+          this.refs.appNavigator.replacePrevious({
+            name: 'Feed'
+          });
         } else if(this.props.teams.data.length > 0){
-          setTimeout(() => {
-            this.refs.appNavigator.replacePrevious({
-              name: 'TeamIndex'
-            });
-          }, 10)
+          this.refs.appNavigator.replacePrevious({
+            name: 'TeamIndex'
+          });
         }
       }
 
@@ -489,17 +486,19 @@ class App extends React.Component {
         route.name = 'session/onboarding';
       }
 
-      if(route.name === 'CategoryIndex' || route.name === 'PurveyorIndex') {
+      if(route.name === 'CategoryIndex' || route.name === 'CategoryView' || route.name === 'PurveyorIndex' || route.name === 'PurveyorView') {
         if(Object.keys(this.state.currentTeamInfo.purveyors).length === 0){
           route.name = 'OrderGuide';
-        } else {
-          if( this.state.currentTeamInfo.resources.hasOwnProperty('counts') === true){
-            let productCounts = this.state.currentTeamInfo.resources.counts.products
-            let actualProducts = Object.keys(this.state.currentTeamInfo.products).length
-            if(productCounts !== actualProducts){
-              route.name = 'OrderGuideLoading';
-            }
-          }
+        // } else {
+        //   if( this.state.currentTeamInfo.resources.hasOwnProperty('counts') === true){
+        //     let totalProductCounts = this.state.currentTeamInfo.resources.counts.products
+        //     let actualProducts = Object.keys(this.state.currentTeamInfo.products).length
+        //     // console.log('Before: ', route.name, totalProductCounts, actualProducts, (totalProductCounts !== actualProducts))
+        //     if(totalProductCounts !== actualProducts){
+        //       route.name = 'OrderGuideLoading';
+        //       // console.log('After: ', route.name)
+        //     }
+        //   }
         }
       }
 
@@ -1826,21 +1825,12 @@ class App extends React.Component {
                     const {productId, productAttributes} = this.state.sceneState.ProductForm
                     if(productId === null){
                       dispatch(actions.addProduct(productAttributes))
+                      dispatch(actions.getTeamResourceInfo(this.state.currentTeamInfo.team.id))
                     } else {
                       dispatch(actions.updateProduct(productId, productAttributes))
                     }
+                    nav.pop();
                   }, 5)()
-                  // nav.replacePreviousAndPop()
-                  // if(this.state.product === null){
-                    nav.replacePreviousAndPop({
-                      name: 'PurveyorIndex',
-                    });
-                  // } else {
-                  //   nav.replace({
-                  //     name: 'PurveyorView',
-                  //     categoryId: this.state.purveyor.id
-                  //   })
-                  // }
                 }}
               />
             ),
