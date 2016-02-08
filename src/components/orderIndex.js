@@ -287,6 +287,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     height: 60,
     backgroundColor: 'white',
+    justifyContent: 'center',
   },
   buttonText: {
     alignSelf: 'center',
