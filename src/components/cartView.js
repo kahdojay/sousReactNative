@@ -51,7 +51,7 @@ class CartView extends React.Component {
     const {numberOfOrdersUpdated, numberOfProductsUpdated} = this.getCounts(nextProps)
     if(nextProps.connected !== false){
       return true;
-    } else if(numberOfOrdersUpdated.length !== this.state.numberOfOrders){
+    } else if(numberOfOrdersUpdated && numberOfOrdersUpdated.length !== this.state.numberOfOrders){
       return true;
     } else if(numberOfProductsUpdated !== this.state.numberOfProducts){
       return true;
@@ -142,7 +142,15 @@ class CartView extends React.Component {
   }
 
   render() {
-    const {cartItems, cartPurveyors, products} = this.props
+    const {cartItems, cartPurveyors, products, connected} = this.props
+
+    if(connected === false){
+      return (
+        <View style={styles.container}>
+          <Text style={styles.inaccessible}>Cart inaccessible in offline mode</Text>
+        </View>
+      )
+    }
 
     const purveyorInfoDismiss = () => {
       this.setState({
@@ -387,6 +395,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'OpenSans',
     color: Colors.lightGrey,
+  },
+  inaccessible: {
+    color: Colors.disabled,
+    textAlign: 'center',
+    fontSize: 16,
+    fontFamily: 'OpenSans',
+    paddingTop: 25,
   },
 })
 
