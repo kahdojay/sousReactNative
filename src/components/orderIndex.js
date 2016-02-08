@@ -183,8 +183,8 @@ class OrderIndex extends React.Component {
           style={styles.scrollView}
         >
           {
-            ordersList.length > 0 ? 
-            ordersList : 
+            ordersList.length > 0 ?
+            ordersList :
             <View style={styles.emptyOrdersContainer}>
               <Text style={styles.emptyOrdersGuidance}>You don't have an order history yet, let us know if we can help with setting up your order guide️ 📋✉️</Text>
             </View>
@@ -285,13 +285,14 @@ const styles = StyleSheet.create({
   buttonContainerLink: {
   },
   buttonContainer: {
+    height: 60,
     backgroundColor: 'white',
+    justifyContent: 'center',
   },
   buttonText: {
     alignSelf: 'center',
     fontSize: 16,
-    padding: 10,
-    paddingBottom: 11,
+    paddingBottom: 1,
     color: Colors.lightBlue,
     fontWeight: 'bold',
     fontFamily: 'OpenSans'

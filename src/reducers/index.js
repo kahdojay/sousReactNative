@@ -1,20 +1,20 @@
 import { combineReducers } from 'redux';
-import connect from './connect';
-// import ui from './ui';
-import team from './team';
-import session from './session';
-import message from './message';
-import purveyor from './purveyor';
-import product from './product';
-import category from './category';
-import error from './error';
-import order from './order';
 import cartItem from './cartItem';
+import category from './category';
+import connect from './connect';
+import contact from './contact';
+import error from './error';
+import message from './message';
+import order from './order';
+import product from './product';
+import purveyor from './purveyor';
+import session from './session';
+import team from './team';
 
 const reducers = combineReducers(Object.assign(
   {},
   connect,
-  // ui,
+  contact,
   team,
   session,
   message,
