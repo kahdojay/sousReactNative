@@ -404,16 +404,30 @@ class App extends React.Component {
         productCategory = category
       }
     })
+    let submitReady = false
+    if (
+      productCategory !== null
+      && product
+      && (
+        product.purveyors.length > 0 &&
+        product.amount &&
+        product.unit &&
+        product.name !== ''
+      )
+    ){
+      submitReady = true
+    }
+
     const sceneState = Object.assign({}, this.state.sceneState);
-    sceneState.ProductForm.submitReady = true;
+    sceneState.ProductForm.submitReady = submitReady;
     sceneState.ProductForm.productId = product.id
     sceneState.ProductForm.productAttributes = {
-      name: product.name,
+      name: product ? product.name : '',
       purveyors: product.purveyors,
       amount: product.amount,
       unit: product.unit,
-      previousCategoryId: productCategory.id,
-      categoryId: productCategory.id,
+      previousCategoryId: productCategory ? productCategory.id : null,
+      categoryId: productCategory ? productCategory.id : null,
     }
     this.setState({
       sceneState: sceneState,
