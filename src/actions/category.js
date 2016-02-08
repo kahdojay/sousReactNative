@@ -42,7 +42,7 @@ export default function CategoryActions(allActions){
   //     dispatch(connectActions.ddpCall('createCategory', [newCategoryAttributes]);)
   //     return dispatch({
   //       type: ADD_CATEGORY,
-  //       category: newCategoryAttributes
+  //       category: Object.assign({}, newCategoryAttributes)
   //     });
   //   }
   // }

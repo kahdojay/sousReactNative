@@ -48,12 +48,12 @@ export default function ProductActions(allActions){
         type: ADD_PRODUCT,
         teamId: currentTeam.id,
         productId: productId,
-        product: newProductAttributes,
+        product: Object.assign({}, newProductAttributes),
       });
 
       dispatch(connectActions.ddpCall('createProduct', [newProductAttributes]))
 
-      return dispatch(categoryActions.addProductCategory(productAttributes.categoryId,productId))
+      return dispatch(categoryActions.addProductCategory(productAttributes.categoryId, productId))
     }
   }
 

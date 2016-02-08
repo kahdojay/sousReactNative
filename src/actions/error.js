@@ -31,7 +31,7 @@ export default function ErrorActions(allActions){
   //     dispatch(connectActions.ddpCall('createError', [newError]))
   //     return dispatch({
   //       type: CREATE_ERROR,
-  //       error: newError
+  //       error: Object.assign({}, newError)
   //     });
   //   }
   // }
