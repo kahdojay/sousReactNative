@@ -229,8 +229,6 @@ class ProductForm extends React.Component {
       }
     }
 
-    console.log(this.state.selectedPurveyor)
-
     return (
       <View style={{flex:1}}>
         <ScrollView

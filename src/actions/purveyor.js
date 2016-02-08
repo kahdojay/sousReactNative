@@ -37,11 +37,11 @@ export default function PurveyorActions(allActions){
         // products:    [],
         deleted:  false
       }
-      dispatch(connectActions.ddpCall('createPurveyor', [newPurveyorAttributes]))
-      return dispatch({
+      dispatch({
         type: ADD_PURVEYOR,
-        purveyor: newPurveyorAttributes
-      });
+        purveyor: Object.assign({}, newPurveyorAttributes)
+      })
+      dispatch(connectActions.ddpCall('createPurveyor', [newPurveyorAttributes]))
     }
   }
 

@@ -42,12 +42,13 @@ export default function CartItemActions(allActions) {
       cartItemAttributes.createdAt = (new Date()).toISOString()
       cartItemAttributes.updatedAt = (new Date()).toISOString()
 
-      dispatch(connectActions.ddpCall('addCartItem', [session.userId, session.teamId, cartItemAttributes]))
-      return dispatch({
+      dispatch({
         type: ADD_CART_ITEM,
         cartItemId: cartItemId,
-        cartItem: cartItemAttributes,
+        cartItem: Object.assign({}, cartItemAttributes),
       })
+
+      dispatch(connectActions.ddpCall('addCartItem', [session.userId, session.teamId, cartItemAttributes]))
     }
   }
 

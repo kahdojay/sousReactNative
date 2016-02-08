@@ -51,12 +51,13 @@ export default function MessageActions(allActions){
       }
       const messageId = newMessage._id
       // console.log('newMessage', newMessage);
-      dispatch(connectActions.ddpCall('createMessage', [newMessage]))
-      return dispatch({
+      dispatch({
         type: CREATE_MESSAGE,
         messageId: messageId,
-        message: newMessage
-      });
+        message: Object.assign({}, newMessage)
+      })
+
+      dispatch(connectActions.ddpCall('createMessage', [newMessage]))
     }
   }
 
