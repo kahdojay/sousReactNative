@@ -94,9 +94,14 @@ export default function TeamActions(allActions) {
           newTeamAttributes.demoTeam = true;
         }
 
+        const teamId = newTeamAttributes._id;
+
         dispatch({
           type: ADD_TEAM,
-          team: Object.assign({}, newTeamAttributes),
+          teamId: teamId,
+          team: Object.assign({}, newTeamAttributes, {
+            id: teamId,
+          }),
           sessionTeamId: session.teamId
         })
 

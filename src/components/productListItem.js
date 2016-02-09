@@ -91,7 +91,7 @@ class ProductListItem extends React.Component {
       this.setState(
         {
           loaded: true,
-          product: this.props.product,
+          // product: this.props.product,
           purveyors: this.props.purveyors,
           selectedPurveyorId: selectedPurveyorId,
         },
@@ -115,7 +115,7 @@ class ProductListItem extends React.Component {
         purveyorId: cartPurveyorId,
         note: cartItem.note,
         cartItem: cartItem,
-        product: product,
+        // product: product,
       };
       if(this.state.editQuantity === false){
         newState.quantity = cartItem.quantity;
@@ -135,7 +135,7 @@ class ProductListItem extends React.Component {
   cartUpdateFromLocalState() {
     const cartAttributes = Object.assign({}, this.state.cartItem, {
       purveyorId: this.state.selectedPurveyorId,
-      productId: this.state.product.id,
+      productId: this.props.product.id,
       quantity: this.state.quantity,
       note: this.state.note
     })
@@ -161,7 +161,7 @@ class ProductListItem extends React.Component {
   }
 
   render() {
-    const {product} = this.state
+    const {product} = this.props
     const {purveyors, category, showPurveyorInfo, showCategoryInfo} = this.props;
 
     let productInfo = (
@@ -175,7 +175,7 @@ class ProductListItem extends React.Component {
       <View />
     );
     let buttons = []
-    if(product !== null){
+    if(product){
 
       if(product.deleted === true){
         return <View />;
