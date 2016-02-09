@@ -61,7 +61,7 @@ class ProductForm extends React.Component {
       selectedAmount: this.props.product ? this.props.product.amount : null,
       selectedUnits: this.props.product ? this.props.product.unit : null,
     }
-    this.fields = ['Purveyor','Category','Amount','Units']
+    this.fields = ['Purveyor','Category','Amount']//,'Units']
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -207,22 +207,22 @@ class ProductForm extends React.Component {
           selectedValue = this.state.selectedAmount ? parseFloat(this.state.selectedAmount) : null
           break;
 
-        case 'Units':
-          const units = ['bag', 'btl', 'bunch', 'can', 'cs', 'ct', 'dozen', 'ea', 'g', 'jug', 'kg', 'lb', 'oz', 'pack', 'pc', 'tub']
-          items = _.map(units, (unit, idx) => {
-            return {
-              key: idx,
-              value: unit,
-              label: unit,
-            }
-          })
-          items.unshift({
-            key: '--null',
-            value: null,
-            label: '',
-          })
-          selectedValue = this.state.selectedUnits ? this.state.selectedUnits : null
-          break;
+        // case 'Units':
+        //   const units = ['bag', 'btl', 'bunch', 'can', 'cs', 'ct', 'dozen', 'ea', 'g', 'jug', 'kg', 'lb', 'oz', 'pack', 'pc', 'tub']
+        //   items = _.map(units, (unit, idx) => {
+        //     return {
+        //       key: idx,
+        //       value: unit,
+        //       label: unit,
+        //     }
+        //   })
+        //   items.unshift({
+        //     key: '--null',
+        //     value: null,
+        //     label: '',
+        //   })
+        //   selectedValue = this.state.selectedUnits ? this.state.selectedUnits : null
+        //   break;
 
         default:
           break;
@@ -254,6 +254,24 @@ class ProductForm extends React.Component {
             </View>
           </View>
           {fields}
+          <View key={'unit'} style={styles.inputContainer}>
+            <Text style={styles.inputTitle}>Unit</Text>
+            <View style={[styles.inputFieldContainer, styles.inputFieldUnderline]}>
+              <TextInput
+                ref='unit'
+                style={[styles.inputField,{}]}
+                value={this.state.selectedUnits}
+                placeholder='Unit'
+                onChange={(e) => {
+                  this.setState({
+                    selectedUnits: e.nativeEvent.text,
+                  }, () => {
+                    this.checkValidForm();
+                  });
+                }}
+              />
+            </View>
+          </View>
         </ScrollView>
         <PickerModal
           modalVisible={this.state.modalVisible}

@@ -73,6 +73,12 @@ class ProductListItem extends React.Component {
       if(debugUpdates) console.log('Deleted: ', nextProps.product.deleted, this.state.product.deleted)
       return true;
     }
+    // console.log('shouldComponentUpdate ', nextProps.product.unit, this.props.product.unit, nextState.product.unit, this.state.product.unit)
+    // debugger;
+    if(nextProps.product.unit !== this.props.product.unit){
+      if(debugUpdates) console.log('Deleted: ', nextProps.product.unit, this.state.product.deleted)
+      return true;
+    }
     // if(this.state.product !== null){
     //   // if(debugUpdates) console.log(nextProps.product);
     //   if(JSON.stringify(nextProps.product) !== JSON.stringify(this.state.product)){
@@ -87,7 +93,12 @@ class ProductListItem extends React.Component {
     // delay update from receiving props
     clearTimeout(this.timeoutId);
     this.timeoutId = setTimeout(() => {
-      this.localStateUpdateFromCart(nextProps.cartItem, nextProps.cartPurveyorId)
+      // this.setState({
+      //   product: nextProps.product,
+      // }, () => {
+        // console.log('componentWillReceiveProps ', nextProps.product.unit)
+        this.localStateUpdateFromCart(nextProps.cartItem, nextProps.cartPurveyorId, nextProps.product)
+      // })
     }, 10);
   }
 
@@ -113,7 +124,7 @@ class ProductListItem extends React.Component {
     clearTimeout(this.loadTimeoutId)
   }
 
-  localStateUpdateFromCart(cartItem, cartPurveyorId) {
+  localStateUpdateFromCart(cartItem, cartPurveyorId, product) {
     let newState = {}
     if (cartItem !== null) {
       newState = {
@@ -121,6 +132,7 @@ class ProductListItem extends React.Component {
         purveyorId: cartPurveyorId,
         note: cartItem.note,
         cartItem: cartItem,
+        product: product,
       };
       if(this.state.editQuantity === false){
         newState.quantity = cartItem.quantity;
