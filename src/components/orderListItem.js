@@ -25,6 +25,15 @@ class OrderListItem extends React.Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      orderConfirm: nextProps.orderConfirm,
+      product: nextProps.product,
+      cartItem: nextProps.cartItem,
+      productConfirm: nextProps.productConfirm,
+    })
+  }
+
   componentWillMount(){
     this.setState({
       orderConfirm: this.props.orderConfirm,

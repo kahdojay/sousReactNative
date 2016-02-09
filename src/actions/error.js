@@ -28,10 +28,14 @@ export default function ErrorActions(allActions){
   //       createdAt: (new Date()).getTime(),
   //     };
   //     console.log('newError', newError);
+  //     const errorId = newError._id
   //     dispatch(connectActions.ddpCall('createError', [newError]))
   //     return dispatch({
   //       type: CREATE_ERROR,
-  //       error: Object.assign({}, newError)
+  //       errorId: errorId,
+  //       error: Object.assign({}, newError, {
+  //         id: errorId,
+  //       })
   //     });
   //   }
   // }

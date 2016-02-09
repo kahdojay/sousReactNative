@@ -909,6 +909,8 @@ class App extends React.Component {
           return _.includes(product.purveyors, this.state.purveyor.id)
         }), 'nameToLower')
 
+        // console.log(specificProductsPurveyor)
+
         let specificPurveyor = {}
         specificPurveyor[this.state.purveyor.id] = this.state.purveyor
         return {
