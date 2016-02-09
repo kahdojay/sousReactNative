@@ -69,23 +69,6 @@ class ProductListItem extends React.Component {
       if(debugUpdates) console.log('Quantity: ', nextState.quantity, this.state.quantity)
       return true;
     }
-    if(nextProps.product.deleted !== this.props.product.deleted){
-      if(debugUpdates) console.log('Deleted: ', nextProps.product.deleted, this.state.product.deleted)
-      return true;
-    }
-    // console.log('shouldComponentUpdate ', nextProps.product.unit, this.props.product.unit, nextState.product.unit, this.state.product.unit)
-    // debugger;
-    if(nextProps.product.unit !== this.props.product.unit){
-      if(debugUpdates) console.log('Deleted: ', nextProps.product.unit, this.state.product.deleted)
-      return true;
-    }
-    // if(this.state.product !== null){
-    //   // if(debugUpdates) console.log(nextProps.product);
-    //   if(JSON.stringify(nextProps.product) !== JSON.stringify(this.state.product)){
-    //     return true;
-    //   }
-    // }
-    // if(debugUpdates) console.log(shouldUpdate);
     return false;
   }
 

@@ -433,7 +433,8 @@ class App extends React.Component {
       product: product,
     }, () => {
       nav.push({
-        name: 'ProductForm'
+        name: 'ProductForm',
+        newRoute: route.name,
       })
     })
   }
@@ -1830,7 +1831,6 @@ class App extends React.Component {
                     } else {
                       dispatch(actions.updateProduct(productId, productAttributes))
                     }
-                    console.log(route, route.newRoute)
                     nav.replacePreviousAndPop({
                       name: route.newRoute,
                     });
