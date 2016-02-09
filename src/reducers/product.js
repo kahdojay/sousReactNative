@@ -61,7 +61,7 @@ function products(state = initialState.products, action) {
       newProductTeamState[action.product.teamId] = {};
     }
     const originalTeamProduct = getTeamProduct(newProductTeamState, action.product.teamId, action.product.id)
-    newProductTeamState[action.product.teamId][action.product.id] = Object.assign(originalTeamProduct, action.product)
+    newProductTeamState[action.product.teamId][action.product.id] = Object.assign({}, originalTeamProduct, action.product)
     return Object.assign({}, state, {
       errors: null,
       teams: newProductTeamState,
