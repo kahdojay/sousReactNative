@@ -37,9 +37,13 @@ export default function PurveyorActions(allActions){
         // products:    [],
         deleted:  false
       }
+      const purveyorId = newPurveyorAttributes._id
       dispatch({
         type: ADD_PURVEYOR,
-        purveyor: Object.assign({}, newPurveyorAttributes)
+        purveyorId: purveyorId,
+        purveyor: Object.assign({}, newPurveyorAttributes, {
+          id: purveyorId,
+        })
       })
       dispatch(connectActions.ddpCall('createPurveyor', [newPurveyorAttributes]))
     }

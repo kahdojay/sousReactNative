@@ -45,7 +45,9 @@ export default function CartItemActions(allActions) {
       dispatch({
         type: ADD_CART_ITEM,
         cartItemId: cartItemId,
-        cartItem: Object.assign({}, cartItemAttributes),
+        cartItem: Object.assign({}, cartItemAttributes, {
+          id: cartItemId,
+        }),
       })
 
       dispatch(connectActions.ddpCall('addCartItem', [session.userId, session.teamId, cartItemAttributes]))

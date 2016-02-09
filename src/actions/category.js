@@ -39,10 +39,14 @@ export default function CategoryActions(allActions){
   //       unit: categoryRow.unit,
   //       deleted: false,
   //     }
+  //     const categoryId = newCategoryAttributes._id
   //     dispatch(connectActions.ddpCall('createCategory', [newCategoryAttributes]);)
   //     return dispatch({
   //       type: ADD_CATEGORY,
-  //       category: Object.assign({}, newCategoryAttributes)
+  //       categoryId: categoryId,
+  //       category: Object.assign({}, newCategoryAttributes, {
+  //         id: categoryId
+  //       })
   //     });
   //   }
   // }

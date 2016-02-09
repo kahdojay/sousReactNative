@@ -54,7 +54,9 @@ export default function MessageActions(allActions){
       dispatch({
         type: CREATE_MESSAGE,
         messageId: messageId,
-        message: Object.assign({}, newMessage)
+        message: Object.assign({}, newMessage, {
+          id: messageId,
+        })
       })
 
       dispatch(connectActions.ddpCall('createMessage', [newMessage]))
