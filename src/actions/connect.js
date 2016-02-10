@@ -23,6 +23,7 @@ import {
 export default function ConnectActions(ddpClient) {
 
   const connectedChannels = {}, noop = ()=>{}
+  let connectAllActions = null
 
   const APPROVED_OFFLINE_METHODS = {
     'addCartItem': { allow: true },
@@ -250,7 +251,7 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
-  function resetAppState(allActions) {
+  function resetAppState() {
     return (dispatch, getState) => {
       const {session} = getState()
       const {phoneNumber, smsToken} = session
@@ -271,7 +272,7 @@ export default function ConnectActions(ddpClient) {
         errorActions,
         orderActions,
         cartItemActions,
-      } = allActions
+      } = connectAllActions
 
       dispatch(sessionActions.updateSession({ resetAppState: false, isAuthenticated: false }))
 
@@ -287,7 +288,7 @@ export default function ConnectActions(ddpClient) {
       dispatch(errorActions.resetErrors())
       dispatch(() => {
         ddpClient.close()
-        dispatch(connectDDP(allActions))
+        dispatch(connectDDP(connectAllActions))
         // setTimeout(() => {
         // //   setTimeout(() => {
         // //     // const {connect} = getState()
@@ -316,6 +317,7 @@ export default function ConnectActions(ddpClient) {
       orderActions,
       cartItemActions,
     } = allActions
+    connectAllActions = allActions
 
     return (dispatch, getState) => {
       const {session} = getState()
@@ -361,7 +363,7 @@ export default function ConnectActions(ddpClient) {
               // console.log("SESSION USERID: ", session.userId)
 
               if(session.isAuthenticated === true && data.hasOwnProperty('resetAppState') === true && data.resetAppState === true){
-                dispatch(resetAppState(allActions))
+                dispatch(resetAppState())
                 return;
               }
 
@@ -572,6 +574,12 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
+  function logout() {
+    return (dispatch) => {
+      dispatch(resetAppState())
+    }
+  }
+
   return {
     SEND_EMAIL,
     UPDATE_INSTALLATION,
@@ -602,5 +610,6 @@ export default function ConnectActions(ddpClient) {
     'subscribeDDP': subscribeDDP,
     'sendEmail': sendEmail,
     'getSettingsConfig': getSettingsConfig,
+    logout: logout,
   }
 }

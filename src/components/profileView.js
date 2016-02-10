@@ -154,7 +154,7 @@ class ProfileView extends React.Component {
             underlayColor={Colors.gold}
             style={styles.saveButton}
           >
-            <Text style={styles.saveText}>Save Changes</Text>
+            <Text style={styles.buttonText}>Save Changes</Text>
           </TouchableHighlight>
         </View>
       )
@@ -233,6 +233,18 @@ class ProfileView extends React.Component {
               </View>
             : <View style={styles.inputErrorContainer} /> }
             {saveChanges}
+          </View>
+          <View style={styles.saveContainer}>
+            <TouchableHighlight
+              underlayColor={Colors.red}
+              onPress={() => {
+                console.log('logout')
+                this.props.onLogout()
+              }}
+              style={styles.logoutButton}
+            >
+              <Text style={styles.buttonText}>Logout</Text>
+            </TouchableHighlight>
           </View>
         </View>
       </ScrollView>
@@ -344,13 +356,18 @@ let styles = StyleSheet.create({
     justifyContent: 'center',
   },
   saveButton: {
-    marginTop: 10,
     backgroundColor: Colors.gold,
     padding: 10,
     width: 150,
     borderRadius: 7,
   },
-  saveText:{
+  logoutButton: {
+    backgroundColor: Colors.red,
+    padding: 10,
+    width: 150,
+    borderRadius: 7,
+  },
+  buttonText:{
     fontSize: 16,
     fontWeight: 'bold',
     color: 'white',
