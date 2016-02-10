@@ -48,7 +48,7 @@ class TeamIndex extends React.Component {
   render() {
     const {teams, messagesByTeams} = this.props
     const teamsCount = teams.data.length
-
+    let teamData = _.sortBy(teams.data, 'updatedAt').reverse()
     return (
       <View style={styles.container}>
         <View style={styles.teamContainer}>
@@ -64,7 +64,8 @@ class TeamIndex extends React.Component {
             contentInset={{bottom:49}}
             automaticallyAdjustContentInsets={false}
           >
-            { teams.data.map((team, index) => {
+            { teamData.map((team, index) => {
+              console.log(team.updatedAt)
               // let lastMessage = _.filter(this.props.messages.data.sort((a, b) => {return a.createdAt > b.createdAt}), (msg) => {return msg.teamId === team.id})[0] || "";
               // console.log(lastMessage);
               let teamMessages = {}
