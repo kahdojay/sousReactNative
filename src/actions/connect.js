@@ -291,7 +291,7 @@ export default function ConnectActions(ddpClient) {
 
         // dispatch(processUnsubscribe())
         dispatch(connectDDP(connectAllActions))
-        
+
         // setTimeout(() => {
         // //   setTimeout(() => {
         // //     // const {connect} = getState()

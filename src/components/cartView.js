@@ -266,7 +266,7 @@ class CartView extends React.Component {
             <View style={[styles.purveyorInfo, {backgroundColor: Colors.disabled}]}>
               <View style={styles.purveyorInfoLeft}>
                 <View style={styles.purveyorTitleContainer}>
-                  <Text style={styles.purveyorTitle}>Cart items with errors</Text>
+                  <Text style={styles.purveyorTitle}>Missing data</Text>
                 </View>
               </View>
             </View>
