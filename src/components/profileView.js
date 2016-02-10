@@ -99,7 +99,7 @@ class ProfileView extends React.Component {
     }
     let phoneNumberComponent = (
       <View style={styles.phoneNumber}>
-        <Text style={styles.phoneText}>{phoneNumber}</Text>
+        <Text style={styles.phoneText}>{DataUtils.formatPhoneNumber(phoneNumber)}</Text>
       </View>
     )
     if (this.state.editPhoneNumber) {

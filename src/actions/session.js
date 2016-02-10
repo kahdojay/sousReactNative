@@ -55,20 +55,20 @@ export default function SessionActions(allActions){
       // process ddp call
       // console.log('SESSION PARAMS', sessionParams);
 
-      const newSession = Object.assign({}, session, sessionParams)
-      // console.log('NEW SESSION PARAMS', newSession);
+      const sessionCb = (err, result) => {
+        const newSession = Object.assign({}, session, sessionParams, result)
+        // console.log('NEW SESSION PARAMS', newSession);
+
+        // resubscribe based on session data
+        dispatch(connectActions.subscribeDDP(newSession, undefined));
+        dispatch(requestSession(sessionParams))
+      }
 
       if(sessionParams.hasOwnProperty('smsToken') === false){
-        // dispatch(receiveSession({
-        //   teamId: null
-        // }))
-        dispatch(connectActions.ddpCall('sendSMSCode', [sessionParams.phoneNumber, session.authToken]))
+        dispatch(connectActions.ddpCall('sendSMSCode', [sessionParams.phoneNumber, session.authToken], sessionCb))
       } else {
-        dispatch(connectActions.ddpCall('loginWithSMS', [sessionParams.phoneNumber, sessionParams.smsToken]))
+        dispatch(connectActions.ddpCall('loginWithSMS', [session.userId, sessionParams.smsToken], sessionCb))
       }
-      // resubscribe based on session data
-      dispatch(connectActions.subscribeDDP(newSession, undefined));
-      return dispatch(requestSession(sessionParams))
     }
   }
 

@@ -58,7 +58,18 @@
   return YES;
 }
 
-- (void) applicationWillEnterForeground:(UIApplication *)application {
+- (void) applicationWillEnterForeground:(UIApplication *)application
+{
+  [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application
+{
+  [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+}
+
+- (void)applicationDidFinishLaunching:(UIApplication *)application
+{
   [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
 }
 
