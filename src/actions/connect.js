@@ -23,6 +23,7 @@ import {
 export default function ConnectActions(ddpClient) {
 
   const connectedChannels = {}, noop = ()=>{}
+  let connectAllActions = null
 
   const APPROVED_OFFLINE_METHODS = {
     'addCartItem': { allow: true },
@@ -213,9 +214,12 @@ export default function ConnectActions(ddpClient) {
         dispatch(processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED, [session.userId]))
         dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ERRORS, [session.userId]))
         dispatch(processSubscription(DDP.SUBSCRIBE_LIST.SETTINGS, [session.userId]))
+        dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS, [session.userId]))
       }
 
       if(session.isAuthenticated === true){
+        // if(session.userId !== null){
+        // }
         if(session.teamId !== null){
           const teamMessages = messages.teams[session.teamId] || {}
           let messageKeys = Object.keys(teamMessages)
@@ -242,15 +246,12 @@ export default function ConnectActions(ddpClient) {
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CART_ITEMS, [session.userId, teamIds, deprecate, onlyNew]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ORDERS, [session.userId, teamIds, onlyNew]))
         }
-        if(session.userId !== null){
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS, [session.userId]))
-        }
       }
       // console.log(ddpClient.collections)
     }
   }
 
-  function resetAppState(allActions) {
+  function resetAppState() {
     return (dispatch, getState) => {
       const {session} = getState()
       const {phoneNumber, smsToken} = session
@@ -271,23 +272,26 @@ export default function ConnectActions(ddpClient) {
         errorActions,
         orderActions,
         cartItemActions,
-      } = allActions
+      } = connectAllActions
 
       dispatch(sessionActions.updateSession({ resetAppState: false, isAuthenticated: false }))
+      ddpClient.close()
 
-      // dispatch(processUnsubscribe())
-      dispatch(teamActions.resetTeams())
-      dispatch(cartItemActions.resetCartItems())
-      dispatch(orderActions.resetOrders())
-      dispatch(productActions.resetProducts())
-      dispatch(categoryActions.resetCategories())
-      dispatch(purveyorActions.resetPurveyors())
-      dispatch(messageActions.resetMessages())
-      dispatch(sessionActions.resetSession())
-      dispatch(errorActions.resetErrors())
       dispatch(() => {
-        ddpClient.close()
-        dispatch(connectDDP(allActions))
+
+        dispatch(teamActions.resetTeams())
+        dispatch(cartItemActions.resetCartItems())
+        dispatch(orderActions.resetOrders())
+        dispatch(productActions.resetProducts())
+        dispatch(categoryActions.resetCategories())
+        dispatch(purveyorActions.resetPurveyors())
+        dispatch(messageActions.resetMessages())
+        dispatch(sessionActions.resetSession())
+        dispatch(errorActions.resetErrors())
+
+        // dispatch(processUnsubscribe())
+        dispatch(connectDDP(connectAllActions))
+
         // setTimeout(() => {
         // //   setTimeout(() => {
         // //     // const {connect} = getState()
@@ -316,6 +320,7 @@ export default function ConnectActions(ddpClient) {
       orderActions,
       cartItemActions,
     } = allActions
+    connectAllActions = allActions
 
     return (dispatch, getState) => {
       const {session} = getState()
@@ -361,7 +366,7 @@ export default function ConnectActions(ddpClient) {
               // console.log("SESSION USERID: ", session.userId)
 
               if(session.isAuthenticated === true && data.hasOwnProperty('resetAppState') === true && data.resetAppState === true){
-                dispatch(resetAppState(allActions))
+                dispatch(resetAppState())
                 return;
               }
 
@@ -572,6 +577,12 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
+  function logout() {
+    return (dispatch) => {
+      dispatch(resetAppState())
+    }
+  }
+
   return {
     SEND_EMAIL,
     UPDATE_INSTALLATION,
@@ -602,5 +613,6 @@ export default function ConnectActions(ddpClient) {
     'subscribeDDP': subscribeDDP,
     'sendEmail': sendEmail,
     'getSettingsConfig': getSettingsConfig,
+    logout: logout,
   }
 }

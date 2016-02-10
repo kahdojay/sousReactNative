@@ -19,26 +19,30 @@ export default function ErrorActions(allActions){
     }
   }
 
-  // function createError(errorText) {
-  //   console.log('errorText', errorText)
-  //   return (dispatch, getState) => {
-  //     var newError = {
-  //       _id: generateId(),
-  //       error: errorText,
-  //       createdAt: (new Date()).getTime(),
-  //     };
-  //     console.log('newError', newError);
-  //     const errorId = newError._id
-  //     dispatch(connectActions.ddpCall('createError', [newError]))
-  //     return dispatch({
-  //       type: CREATE_ERROR,
-  //       errorId: errorId,
-  //       error: Object.assign({}, newError, {
-  //         id: errorId,
-  //       })
-  //     });
-  //   }
-  // }
+  function createError(machineKey, msg, data) {
+    return (dispatch, getState) => {
+      const {session} = getState()
+      var newError = {
+        _id: generateId(),
+        userId: session.userId,
+        machineKey: machineKey,
+        message: msg,
+        author: 'Sous',
+        imageUrl: 'https://sous-assets-production.s3.amazonaws.com/uploads/89b217dc-4ec5-43e8-9569-8fc85e6fdd52/New+Sous+Logo+Circle+Small.png',
+        createdAt: (new Date()).toISOString(),
+      }
+
+      const errorId = newError._id
+      dispatch({
+        type: CREATE_ERROR,
+        errorId: errorId,
+        error: Object.assign({}, newError, {
+          id: errorId,
+        })
+      })
+      dispatch(connectActions.ddpCall('triggerError', [machineKey, msg, session.userId, errorId, data]))
+    }
+  }
 
   function receiveErrors(error) {
     return {
@@ -62,7 +66,7 @@ export default function ErrorActions(allActions){
     RECEIVE_ERRORS,
     CREATE_ERROR,
     DELETE_ERRORS,
-    // createError,
+    createError,
     deleteErrors,
     resetErrors,
     receiveErrors

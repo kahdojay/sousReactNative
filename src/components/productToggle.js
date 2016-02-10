@@ -1,6 +1,7 @@
 import React from 'react-native';
 import _ from 'lodash';
 import Colors from '../utilities/colors';
+import Sizes from '../utilities/sizes';
 import PickerModal from './modal/pickerModal';
 
 const {
@@ -13,14 +14,15 @@ const {
 
 class TouchableWrapper extends React.Component {
   render() {
-    const underlayColor = this.props.hasOwnProperty('underlayColor') === true ? this.props.underlayColor : '#eee'
+    const underlayColor = this.props.hasOwnProperty('underlayColor') === true ? this.props.underlayColor : 'transparent'
     return (
       <TouchableHighlight
         onPress={this.props.onPress}
-        style={[styles.button, this.props.style]}
         underlayColor={underlayColor}
       >
-        <View>
+        <View
+          style={[styles.button, this.props.style]}
+        >
           {this.props.children}
         </View>
       </TouchableHighlight>
@@ -121,6 +123,11 @@ class ProductToggle extends React.Component {
 };
 
 var styles = StyleSheet.create({
+  button: {
+    flex: 1,
+    backgroundColor: Colors.button,
+    borderRadius: Sizes.rowBorderRadius,
+  },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -136,9 +143,6 @@ var styles = StyleSheet.create({
   modalHeader: {
     fontWeight: 'bold',
     marginBottom: 10,
-  },
-  button: {
-    flex: 1,
   },
   modalButton: {
     paddingTop: 14,

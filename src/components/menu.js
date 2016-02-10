@@ -48,7 +48,11 @@ module.exports = class Menu extends React.Component {
         <View style={styles.avatarContainer}>
           <TouchableHighlight
             underlayColor='transparent'
-            onPress={this.props.onNavToProfile}
+            onPress={() => {
+              if(this.props.connected === true){
+                this.props.onNavToProfile()
+              }
+            }}
           >
             <View style={{alignItems: 'center'}}>
               <View style={[styles.avatar, {width: 54, height: 54, borderRadius: 27, padding: 1}]}>

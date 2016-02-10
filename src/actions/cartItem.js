@@ -13,6 +13,7 @@ import {
 export default function CartItemActions(allActions) {
   const {
     connectActions,
+    errorActions,
   } = allActions
 
   function noCartItemsReceived() {
@@ -34,6 +35,7 @@ export default function CartItemActions(allActions) {
     return (dispatch, getState) => {
       const {session} = getState()
       const cartItemId = generateId()
+
       cartItemAttributes._id = cartItemId
       cartItemAttributes.userId = session.userId
       cartItemAttributes.teamId = session.teamId
@@ -42,15 +44,21 @@ export default function CartItemActions(allActions) {
       cartItemAttributes.createdAt = (new Date()).toISOString()
       cartItemAttributes.updatedAt = (new Date()).toISOString()
 
-      dispatch({
-        type: ADD_CART_ITEM,
-        cartItemId: cartItemId,
-        cartItem: Object.assign({}, cartItemAttributes, {
-          id: cartItemId,
-        }),
-      })
-
-      dispatch(connectActions.ddpCall('addCartItem', [session.userId, session.teamId, cartItemAttributes]))
+      if(
+        cartItemAttributes.purveyorId
+        && cartItemAttributes.productId
+      ){
+        dispatch({
+          type: ADD_CART_ITEM,
+          cartItemId: cartItemId,
+          cartItem: Object.assign({}, cartItemAttributes, {
+            id: cartItemId,
+          }),
+        })
+        dispatch(connectActions.ddpCall('addCartItem', [session.userId, session.teamId, cartItemAttributes]))
+      } else {
+        dispatch(errorActions.createError('add-cart-item', 'Please check product details and try again', cartItemAttributes))
+      }
     }
   }
 

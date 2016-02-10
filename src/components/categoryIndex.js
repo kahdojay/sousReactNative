@@ -17,7 +17,15 @@ const {
 
 class CategoryIndex extends React.Component {
   render() {
-    const { categories, products } = this.props
+    const { categories, products, connected } = this.props
+
+    if(connected === false){
+      return (
+        <View style={styles.container}>
+          <Text style={styles.inaccessible}>Order Guide inaccessible in offline mode</Text>
+        </View>
+      )
+    }
 
     let categoriesList = _.map(_.sortBy(categories, 'name'), (category) => {
       if (category.deleted === false) {
@@ -81,6 +89,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     height: 36,
     fontFamily: 'OpenSans',
+  },
+  inaccessible: {
+    color: Colors.disabled,
+    textAlign: 'center',
+    fontSize: 16,
+    fontFamily: 'OpenSans',
+    paddingTop: 25,
   },
 });
 
