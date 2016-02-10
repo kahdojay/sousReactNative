@@ -14,7 +14,7 @@ const {
 
 class TouchableWrapper extends React.Component {
   render() {
-    const underlayColor = this.props.hasOwnProperty('underlayColor') === true ? this.props.underlayColor : '#eee'
+    const underlayColor = this.props.hasOwnProperty('underlayColor') === true ? this.props.underlayColor : 'transparent'
     return (
       <TouchableHighlight
         onPress={this.props.onPress}

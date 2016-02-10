@@ -259,6 +259,28 @@ class CartView extends React.Component {
           </View>
         );
       })
+
+      if(cartItems.hasOwnProperty(null) === true){
+        cartViewDetails.push((
+          <View key={'no-purveyor'} style={styles.purveyorContainer}>
+            <View style={[styles.purveyorInfo, {backgroundColor: Colors.disabled}]}>
+              <View style={styles.purveyorInfoLeft}>
+                <View style={styles.purveyorTitleContainer}>
+                  <Text style={styles.purveyorTitle}>Cart items with errors</Text>
+                </View>
+              </View>
+            </View>
+            {this.renderPurveyorProducts(null, cartItems, products)}
+          </View>
+        ))
+      }
+    }
+
+    let buttonDisabled = {}
+    let buttonDisabledFlag = false
+    if(this.props.connected === false || this.state.numberOfOrders === 0 || cartPurveyors.length === 0){
+      buttonDisabled = styles.buttonDisabled
+      buttonDisabledFlag = true
     }
 
     return (
@@ -267,10 +289,14 @@ class CartView extends React.Component {
           {cartViewDetails}
         </ScrollView>
         <TouchableOpacity
-          onPress={this.handleSubmitPress.bind(this, cartPurveyors)}
+          onPress={() => {
+            if(buttonDisabledFlag === false){
+              this.handleSubmitPress(cartPurveyors)
+            }
+          }}
           style={[
             styles.button,
-            (this.props.connected === false || this.state.numberOfOrders === 0) && styles.buttonDisabled
+            buttonDisabled
           ]}
           activeOpacity={.75}
         >
