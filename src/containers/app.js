@@ -263,6 +263,7 @@ class App extends React.Component {
     if(this.refs.appNavigator){
       const cwuRouteName = this.refs.appNavigator.getCurrentRoutes()[0].name
 
+      // console.log('componentWillUpdate ', cwuRouteName)
       if(cwuRouteName === 'TeamIndex'){
         if(this.state.currentTeamInfo.team !== null){
           setTimeout(() => {
@@ -513,6 +514,8 @@ class App extends React.Component {
     else if(route.name !== 'Signup') {
       route.name = 'Signup'
     }
+
+    // console.log('getRoute ', route.name)
 
     return route
   }
@@ -868,9 +871,16 @@ class App extends React.Component {
                   // });
                   break;
                 case 'Category':
-                  nav.replace({
-                    name: 'CategoryIndex',
-                  });
+                  this.setState({
+                    order: null,
+                    orderId: null,
+                    category: null,
+                    purveyor: null,
+                  }, () => {
+                    nav.replace({
+                      name: 'CategoryIndex',
+                    });
+                  })
                   break;
                 default:
                   // do nothing
@@ -882,14 +892,16 @@ class App extends React.Component {
             onNavToPurveyor: (purveyorId) => {
               const purveyor = this.state.currentTeamInfo.purveyors[purveyorId];
               this.setState({
+                order: null,
+                orderId: null,
                 purveyor: purveyor,
+                category: null,
                 // specificProducts: _.sortBy(_.filter(this.state.currentTeamInfo.products, (product) => {
                 //   return _.includes(product.purveyors, purveyor.id)
                 // }), 'name')
               }, () => {
                 nav.push({
-                  name: 'PurveyorView',
-                  purveyorId: purveyor.id
+                  name: 'PurveyorView'
                 })
               })
             },
@@ -900,10 +912,6 @@ class App extends React.Component {
           },
         }
       case 'PurveyorView':
-        // let purveyor = this.state.currentTeamInfo.purveyors[route.purveyorId]
-        // let products = _.filter(this.state.currentTeamInfo.products, (product) => {
-        //   return _.includes(product.purveyors, purveyor.id)
-        // })
         const specificProductsPurveyor = _.sortBy(_.filter(this.state.currentTeamInfo.products, (product) => {
           product.nameToLower = product.name.toLowerCase()
           return _.includes(product.purveyors, this.state.purveyor.id)
@@ -974,9 +982,16 @@ class App extends React.Component {
               const navValue = evt.nativeEvent.value
               switch(navValue){
                 case 'Purveyor':
-                  nav.replace({
-                    name: 'PurveyorIndex',
-                  });
+                  this.setState({
+                    order: null,
+                    orderId: null,
+                    category: null,
+                    purveyor: null,
+                  }, () => {
+                    nav.replace({
+                      name: 'PurveyorIndex',
+                    });
+                  })
                   break;
                 case 'Category':
                   // nav.replace({
@@ -993,6 +1008,9 @@ class App extends React.Component {
             onNavigateToCategory: (categoryId) => {
               const category = this.state.currentTeamInfo.categories[categoryId]
               this.setState({
+                purveyor: null,
+                order: null,
+                orderId: null,
                 category: category,
                 // specificProducts: _.sortBy(_.map(category.products, (productId) => {
                 //   const product = this.state.currentTeamInfo.products[productId]
@@ -1235,6 +1253,9 @@ class App extends React.Component {
                 photos: data,
               });
             },
+            onLogout: () => {
+              dispatch(actions.logout())
+            }
           },
         }
       case 'ProductForm':
@@ -1344,9 +1365,12 @@ class App extends React.Component {
         }
       case 'CartView':
         const cartPurveyorIds = Object.keys(this.state.currentTeamInfo.cartItems['cart'])
-        const cartPurveyors = _.sortBy(_.map(cartPurveyorIds, (purveyorId) => {
+        let cartPurveyors = _.sortBy(_.map(cartPurveyorIds, (purveyorId) => {
           return this.state.currentTeamInfo.purveyors[purveyorId]
         }), 'name')
+        cartPurveyors = _.filter(cartPurveyors,(purveyor) => {
+          return (purveyor) ? true : false
+        })
         return {
           component: Components.CartView,
           props: {
@@ -1956,7 +1980,12 @@ class App extends React.Component {
           session={session}
           open={this.state.open}
           onNavToPurveyor={() => {
-            nav.push({ name: 'PurveyorIndex', })
+            this.setState({
+              order: null,
+              orderId: null,
+            }, () => {
+              nav.push({ name: 'PurveyorIndex', })
+            })
           }}
           onNavToOrders={() => {
             nav.push({ name: 'OrderIndex', })

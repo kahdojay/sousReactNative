@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 5,
     paddingLeft: 15,
-    paddingRight: 15,
+    marginRight: 2,
     alignItems: 'center'
   },
   productDetailsContainer: {

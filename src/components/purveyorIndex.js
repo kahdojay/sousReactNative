@@ -19,7 +19,15 @@ const {
 
 class PurveyorIndex extends React.Component {
   render() {
-    const { purveyors, products, session } = this.props
+    const { purveyors, products, session, connected } = this.props
+
+    if(connected === false){
+      return (
+        <View style={styles.container}>
+          <Text style={styles.inaccessible}>Order Guide inaccessible in offline mode</Text>
+        </View>
+      )
+    }
 
     let purveyorsList = _.map(_.sortBy(purveyors, 'name'), (purveyor) => {
         if (purveyor.deleted === false) {
@@ -80,6 +88,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     height: 36,
     fontFamily: 'OpenSans',
+  },
+  inaccessible: {
+    color: Colors.disabled,
+    textAlign: 'center',
+    fontSize: 16,
+    fontFamily: 'OpenSans',
+    paddingTop: 25,
   },
 });
 
