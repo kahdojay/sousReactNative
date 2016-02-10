@@ -1235,6 +1235,9 @@ class App extends React.Component {
                 photos: data,
               });
             },
+            onLogout: () => {
+              dispatch(actions.logout())
+            }
           },
         }
       case 'ProductForm':

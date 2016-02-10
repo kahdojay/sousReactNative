@@ -239,6 +239,7 @@ class ProfileView extends React.Component {
               underlayColor={Colors.red}
               onPress={() => {
                 console.log('logout')
+                this.props.onLogout()
               }}
               style={styles.logoutButton}
             >
