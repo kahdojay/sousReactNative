@@ -120,7 +120,7 @@ class ProfileView extends React.Component {
     let saveChanges = null
 
     if(this.state.saveChanges === true){
-      console.log('about to update based on state change/check')
+      // console.log('about to update based on state change/check')
       saveChanges = (
         <View style={styles.saveContainer}>
           <TouchableHighlight
@@ -238,7 +238,7 @@ class ProfileView extends React.Component {
             <TouchableHighlight
               underlayColor={Colors.red}
               onPress={() => {
-                console.log('logout')
+                // console.log('logout')
                 this.props.onLogout()
               }}
               style={styles.logoutButton}

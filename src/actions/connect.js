@@ -214,9 +214,12 @@ export default function ConnectActions(ddpClient) {
         dispatch(processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED, [session.userId]))
         dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ERRORS, [session.userId]))
         dispatch(processSubscription(DDP.SUBSCRIBE_LIST.SETTINGS, [session.userId]))
+        dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS, [session.userId]))
       }
 
       if(session.isAuthenticated === true){
+        // if(session.userId !== null){
+        // }
         if(session.teamId !== null){
           const teamMessages = messages.teams[session.teamId] || {}
           let messageKeys = Object.keys(teamMessages)
@@ -242,9 +245,6 @@ export default function ConnectActions(ddpClient) {
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PRODUCTS, [session.userId, teamIds, onlyNew]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CART_ITEMS, [session.userId, teamIds, deprecate, onlyNew]))
           dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ORDERS, [session.userId, teamIds, onlyNew]))
-        }
-        if(session.userId !== null){
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.TEAMS, [session.userId]))
         }
       }
       // console.log(ddpClient.collections)
@@ -275,20 +275,23 @@ export default function ConnectActions(ddpClient) {
       } = connectAllActions
 
       dispatch(sessionActions.updateSession({ resetAppState: false, isAuthenticated: false }))
+      ddpClient.close()
 
-      // dispatch(processUnsubscribe())
-      dispatch(teamActions.resetTeams())
-      dispatch(cartItemActions.resetCartItems())
-      dispatch(orderActions.resetOrders())
-      dispatch(productActions.resetProducts())
-      dispatch(categoryActions.resetCategories())
-      dispatch(purveyorActions.resetPurveyors())
-      dispatch(messageActions.resetMessages())
-      dispatch(sessionActions.resetSession())
-      dispatch(errorActions.resetErrors())
       dispatch(() => {
-        ddpClient.close()
+
+        dispatch(teamActions.resetTeams())
+        dispatch(cartItemActions.resetCartItems())
+        dispatch(orderActions.resetOrders())
+        dispatch(productActions.resetProducts())
+        dispatch(categoryActions.resetCategories())
+        dispatch(purveyorActions.resetPurveyors())
+        dispatch(messageActions.resetMessages())
+        dispatch(sessionActions.resetSession())
+        dispatch(errorActions.resetErrors())
+
+        // dispatch(processUnsubscribe())
         dispatch(connectDDP(connectAllActions))
+        
         // setTimeout(() => {
         // //   setTimeout(() => {
         // //     // const {connect} = getState()

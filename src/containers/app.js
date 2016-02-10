@@ -263,6 +263,7 @@ class App extends React.Component {
     if(this.refs.appNavigator){
       const cwuRouteName = this.refs.appNavigator.getCurrentRoutes()[0].name
 
+      // console.log('componentWillUpdate ', cwuRouteName)
       if(cwuRouteName === 'TeamIndex'){
         if(this.state.currentTeamInfo.team !== null){
           setTimeout(() => {
@@ -513,6 +514,8 @@ class App extends React.Component {
     else if(route.name !== 'Signup') {
       route.name = 'Signup'
     }
+
+    // console.log('getRoute ', route.name)
 
     return route
   }

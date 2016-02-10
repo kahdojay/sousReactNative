@@ -65,7 +65,7 @@ class TeamIndex extends React.Component {
             automaticallyAdjustContentInsets={false}
           >
             { teamData.map((team, index) => {
-              console.log(team.updatedAt)
+              // console.log(team.updatedAt)
               // let lastMessage = _.filter(this.props.messages.data.sort((a, b) => {return a.createdAt > b.createdAt}), (msg) => {return msg.teamId === team.id})[0] || "";
               // console.log(lastMessage);
               let teamMessages = {}
