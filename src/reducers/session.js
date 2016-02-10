@@ -35,6 +35,7 @@ const initialState = {
 
 function session(state = initialState.session, action) {
   switch (action.type) {
+
   case RESET_SESSION_VERSION:
     var newState = state;
     if(SESSION_VERSION !== newState.version){
@@ -44,29 +45,36 @@ function session(state = initialState.session, action) {
       // console.log('UPDATING APP SESSION TO: ', newState);
     }
     return newState;
+
   case RESET_SESSION:
     return Object.assign({}, initialState.session)
+
   case REQUEST_SESSION:
     return Object.assign({}, state, {
       phoneNumber: action.phoneNumber,
       smsToken: action.smsToken,
       errors: null
     })
+
   case RECEIVE_SESSION:
     var newSessionState = Object.assign({}, state, action, {
+      phoneNumber: action.username,
       errors: null,
       lastUpdated: (new Date).toISOString()
     })
     // console.log(newSessionState);
     return newSessionState;
+
   case UPDATE_SESSION:
     //TODO: prevent certain session vars from being updated (eg. userId, phoneNumber)
     return Object.assign({}, state, action.session)
+
   case ERROR_SESSION:
     return Object.assign({}, state, {
       phoneNumber: action.phoneNumber,
       errors: action.errors
     })
+
   default:
     return state;
   }

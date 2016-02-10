@@ -3,6 +3,7 @@ import _ from 'lodash';
 import React from 'react-native';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
+import DataUtils from '../utilities/data';
 
 const {
   ActivityIndicatorIOS,
@@ -100,33 +101,7 @@ class Signup extends React.Component {
     }
   }
 
-  formatPhoneNumber(phoneNumber){
-    if (phoneNumber) {
-      let prefix = ''
-      if(phoneNumber.length === 11 && phoneNumber[0] === '1'){
-        phoneNumber = phoneNumber.slice(1)
-        prefix = '1 '
-      }
-      let formattedPhoneNumber = phoneNumber.split('').map((num, index) => {
-        switch(index){
-          case 0:
-            return `(${num}`;
-          break;
-          case 2:
-            return `${num}) `
-          break;
-          case 5:
-            return `${num}-`
-          break;
-          default:
-          return num;
-        }
-      }).join('');
-      return `${prefix}${formattedPhoneNumber}`
-    } else {
-      return phoneNumber;
-    }
-  }
+
 
   render() {
     const {session} = this.props;
@@ -190,7 +165,7 @@ class Signup extends React.Component {
       </View>
     );
     if(this.state.smsSent === true){
-      const formattedPhoneNumber = this.formatPhoneNumber(session.phoneNumber);
+      const formattedPhoneNumber = DataUtils.formatPhoneNumber(session.phoneNumber);
       signup = (
         <View style={styles.login}>
           <Text style={styles.headerText}>We just sent a text to</Text>

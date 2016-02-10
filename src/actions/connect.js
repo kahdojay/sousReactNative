@@ -208,11 +208,9 @@ export default function ConnectActions(ddpClient) {
     // console.log('subscribeDDP called for session: ', session)
     return (dispatch, getState) => {
       const {connect, messages, teams} = getState()
-      if(session.phoneNumber !== ""){
-        dispatch(processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED, [session.phoneNumber]))
-      }
-
+      
       if(session.userId !== null){
+        dispatch(processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED, [undefined, session.userId]))
         dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ERRORS, [session.userId]))
         dispatch(processSubscription(DDP.SUBSCRIBE_LIST.SETTINGS, [session.userId]))
       }
