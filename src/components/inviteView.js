@@ -72,23 +72,44 @@ class InviteView extends React.Component {
     })
   }
 
+  phoneNumberCheck() {
+    let phoneNumberCheck = this.state.query.toString().replace(/\D/g, '')
+    if(this.state.query === phoneNumberCheck && this.state.query.length >= 10){
+      return true
+    }
+    phoneNumberCheck = this.state.query.toString().replace(/\D\+/g, '')
+    if(this.state.query === phoneNumberCheck && this.state.query.length >= 12){
+      return true
+    }
+    return false
+  }
+
   searchContacts() {
     if(this.state.query !== ''){
-      const searchedContacts = _.filter(this.props.contacts, (contact) => {
-        let fullName = ''
-        fullName += contact.firstName ? contact.firstName.toLowerCase() : ''
-        fullName += ' '
-        fullName += contact.lastName ? contact.lastName.toLowerCase() : ''
-        return fullName.indexOf(this.state.query.toLowerCase()) !== -1
-      })
-      this.setState({
-        contacts: searchedContacts.slice(0,10),
-        searching: false,
-        timeout: null,
-      })
+
+      if(this.phoneNumberCheck() === false){
+        const searchedContacts = _.filter(this.props.contacts, (contact) => {
+          let fullName = ''
+          fullName += contact.firstName ? contact.firstName.toLowerCase() : ''
+          fullName += ' '
+          fullName += contact.lastName ? contact.lastName.toLowerCase() : ''
+          return fullName.indexOf(this.state.query.toLowerCase()) !== -1
+        })
+        this.setState({
+          contacts: searchedContacts.slice(0,10),
+          searching: false,
+          timeout: null,
+        })
+      } else {
+        this.setState({
+          contacts: [],
+          searching: false,
+          timeout: null,
+        })
+      }
     } else {
       this.setState({
-        contacts: this.props.contacts.slice(0,10),
+        contacts: [],
         searching: false,
         timeout: null,
       })
@@ -141,11 +162,17 @@ class InviteView extends React.Component {
       )
     })
 
-    return (
-      displayContacts.length > 0 ?
-      displayContacts :
-      <Text style={styles.noFoundText}>No results for '{ this.state.query }'</Text>
-    )
+    if(this.phoneNumberCheck() === true){
+      return (
+        <Text style={styles.noFoundText}>Send sms invite to '{ this.state.query }'</Text>
+      )
+    } else {
+      return (
+        displayContacts.length > 0 ?
+        displayContacts :
+        <Text style={styles.noFoundText}>No results for '{ this.state.query }'</Text>
+      )
+    }
   }
 
   render() {
@@ -215,7 +242,7 @@ class InviteView extends React.Component {
 
     let submitButtonBackgroundColor = Colors.disabled
     let submitButtonTextColor = 'white'
-    if(this.state.selectedContacts.length > 0){
+    if(this.state.selectedContacts.length > 0 || this.phoneNumberCheck() === true){
       submitButtonBackgroundColor = 'white'
       submitButtonTextColor = Colors.lightBlue
     }
@@ -226,6 +253,8 @@ class InviteView extends React.Component {
         onPress={() => {
           if(this.state.selectedContacts.length > 0){
             this.props.onSMSInvite(this.state.selectedContacts)
+          } else if(this.phoneNumberCheck() === true){
+            this.props.onSMSInvite([{firstName: this.state.query, number: this.state.query}])
           }
         }}>
         <Text style={[styles.submitText, {color: submitButtonTextColor}]}>Send SMS</Text>
