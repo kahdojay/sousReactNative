@@ -77,7 +77,7 @@ function formatMessage(msg, messageLength = null) {
         </Text>
         <Text style={styles.welcomeText}>
           Finally, you can contact us at Sous Support <Text style={{fontWeight: 'bold'}}>24/7</Text> with any issues you may have.
-          Feel free to message us in the app, and feel free to e-mail us at
+          Feel free to message us in the app, or e-mail us at
           <Text style={{fontWeight: 'bold'}}> sous@sousapp.com </Text>
           with any advice on how we can improve.
         </Text>
