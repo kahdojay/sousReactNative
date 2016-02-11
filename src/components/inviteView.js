@@ -73,12 +73,8 @@ class InviteView extends React.Component {
   }
 
   phoneNumberCheck() {
-    let phoneNumberCheck = this.state.query.toString().replace(/\D/g, '')
-    if(this.state.query === phoneNumberCheck && this.state.query.length >= 10){
-      return true
-    }
-    phoneNumberCheck = this.state.query.toString().replace(/\D\+/g, '')
-    if(this.state.query === phoneNumberCheck && this.state.query.length >= 12){
+    let phoneNumberCheck = this.state.query.replace(/\D/g, '')
+    if(this.state.query === phoneNumberCheck){
       return true
     }
     return false
@@ -162,17 +158,7 @@ class InviteView extends React.Component {
       )
     })
 
-    if(this.phoneNumberCheck() === true){
-      return (
-        <Text style={styles.noFoundText}>Send sms invite to '{ this.state.query }'</Text>
-      )
-    } else {
-      return (
-        displayContacts.length > 0 ?
-        displayContacts :
-        <Text style={styles.noFoundText}>No results for '{ this.state.query }'</Text>
-      )
-    }
+    return displayContacts
   }
 
   render() {
@@ -193,58 +179,56 @@ class InviteView extends React.Component {
     }
 
     let searchBar = (
-      <View>
-        <View style={styles.searchInputContainer}>
-          <TextInput
-            style={styles.searchInput}
-            value={this.state.query}
-            placeholder='Search Name'
-            onChangeText={(text) => {
+      <View style={styles.searchInputContainer}>
+        <TextInput
+          style={styles.searchInput}
+          value={this.state.query}
+          placeholder='Search Name'
+          onChangeText={(text) => {
+            if(this.state.timeout !== null){
+              clearTimeout(this.state.timeout)
+            }
+            this.setState({
+              query: text,
+              searching: true,
+              timeout: setTimeout(::this.searchContacts, 500)
+            })
+          }}
+        />
+        { this.state.searching === true ?
+          <ActivityIndicatorIOS
+            key={'loading'}
+            animating={true}
+            color={Colors.greyText}
+            style={styles.activity}
+            size={'small'}
+          />
+        : null }
+        { this.state.query !== '' ?
+          <TouchableHighlight
+            onPress={() => {
               if(this.state.timeout !== null){
                 clearTimeout(this.state.timeout)
               }
               this.setState({
-                query: text,
+                query: '',
                 searching: true,
                 timeout: setTimeout(::this.searchContacts, 500)
               })
             }}
-          />
-        { this.state.searching === true ?
-            <ActivityIndicatorIOS
-              key={'loading'}
-              animating={true}
-              color={Colors.greyText}
-              style={styles.activity}
-              size={'small'}
-            />
-          : null }
-          { this.state.query !== '' ?
-            <TouchableHighlight
-              onPress={() => {
-                if(this.state.timeout !== null){
-                  clearTimeout(this.state.timeout)
-                }
-                this.setState({
-                  query: '',
-                  searching: true,
-                  timeout: setTimeout(::this.searchContacts, 500)
-                })
-              }}
-              underlayColor='transparent'
-            >
-              <Icon name='material|close' size={20} color='#999' style={styles.iconClose} />
-            </TouchableHighlight>
-          : <View /> }
-        </View>
+            underlayColor='transparent'
+          >
+            <Icon name='material|close' size={20} color='#999' style={styles.iconClose} />
+          </TouchableHighlight>
+        : <View /> }
       </View>
     )
 
     let submitButtonBackgroundColor = Colors.disabled
     let submitButtonTextColor = 'white'
-    if(this.state.selectedContacts.length > 0 || this.phoneNumberCheck() === true){
-      submitButtonBackgroundColor = 'white'
-      submitButtonTextColor = Colors.lightBlue
+    if(this.state.selectedContacts.length > 0 || (this.phoneNumberCheck() === true && this.state.query.length >= 10)){
+      submitButtonBackgroundColor = Colors.gold
+      submitButtonTextColor = 'white'
     }
     let sendSMSButton = (
       <TouchableHighlight
@@ -253,7 +237,7 @@ class InviteView extends React.Component {
         onPress={() => {
           if(this.state.selectedContacts.length > 0){
             this.props.onSMSInvite(this.state.selectedContacts)
-          } else if(this.phoneNumberCheck() === true){
+          } else if(this.phoneNumberCheck() === true && this.state.query.length >= 10){
             this.props.onSMSInvite([{firstName: this.state.query, number: this.state.query}])
           }
         }}>
@@ -271,17 +255,45 @@ class InviteView extends React.Component {
         </View>
       );
     } else {
+
+      let viewContent = (
+        <View style={styles.noFoundTextContainer}>
+          <Text style={[styles.noFoundText, {color: Colors.darkGrey}]}>Please search for a contact using their name,</Text>
+          <Text style={[styles.noFoundText, {color: Colors.darkGrey}]}>or enter in a valid phone number to invite the contact.</Text>
+        </View>
+      )
+      if(this.state.query !== '' ){
+        if(this.state.contacts.length > 0){
+          viewContent = (
+            <ScrollView
+              automaticallyAdjustContentInsets={false}
+              style={styles.contactsContainer}
+            >
+              {this.renderContacts(allContacts)}
+            </ScrollView>
+          )
+        } else {
+          if(this.phoneNumberCheck() === true){
+            viewContent = (
+              <View style={styles.noFoundTextContainer}>
+                <Text style={styles.noFoundText}>Send sms invite to '{ this.state.query }'</Text>
+              </View>
+            )
+          } else {
+            viewContent = (
+              <View style={styles.noFoundTextContainer}>
+                <Text style={styles.noFoundText}>No results for '{ this.state.query }'</Text>
+              </View>
+            )
+          }
+        }
+      }
+
+
       return (
         <View style={styles.container}>
           {searchBar}
-          <ScrollView
-            automaticallyAdjustContentInsets={false}
-            style={styles.contactsContainer}
-          >
-            { this.state.query !== '' ?
-              this.renderContacts(allContacts)
-            : <Text style={[styles.noFoundText, {color: Colors.darkGrey}]}>Please search for a contact using their name.</Text> }
-          </ScrollView>
+          {viewContent}
           {sendSMSButton}
         </View>
       );
@@ -307,6 +319,8 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     flexDirection: 'row',
     position: 'relative',
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
   },
   searchInput: {
     textAlign: 'center',
@@ -333,8 +347,6 @@ const styles = StyleSheet.create({
   },
   contactsContainer: {
     flex: 1,
-    borderTopColor: Colors.separatorColor,
-    borderTopWidth: 1,
     paddingVertical: 5,
     backgroundColor: Colors.mainBackgroundColor,
   },
@@ -370,22 +382,27 @@ const styles = StyleSheet.create({
     height: 60,
     borderTopColor: Colors.separatorColor,
     borderTopWidth: 1,
-    backgroundColor: 'white',
+    backgroundColor: Colors.gold,
     justifyContent: 'center',
   },
   submitText: {
-    color: Colors.lightBlue,
+    color: 'white',
     textAlign: 'center',
     paddingBottom: 1,
     fontFamily: 'OpenSans',
     fontSize: 16,
     fontWeight: 'bold',
   },
+  noFoundTextContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 15,
+    paddingVertical: 5,
+    backgroundColor: Colors.mainBackgroundColor,
+  },
   noFoundText: {
     fontStyle: 'italic',
     textAlign: 'center',
-    paddingTop: 15,
-    paddingBottom: 15,
   },
   modalContainer: {
     flex: 1,
