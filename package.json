@@ -1,7 +1,7 @@
 {
   "name": "sousmobile",
   "version": "1.6.3",
-  "build": "4",
+  "build": "5",
   "private": true,
   "scripts": {
     "start": "HOT=1 ./node_modules/.bin/react-native-webpack-server start --hot",
