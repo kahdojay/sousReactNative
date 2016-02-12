@@ -255,7 +255,6 @@ export default function TeamActions(allActions) {
   }
 
   function receiveTeams(team) {
-    // console.log(RECEIVE_TEAMS, team);
     return (dispatch, getState) => {
       const {session, teams, messages} = getState();
       let teamIds = _.pluck(teams.data, 'id');
