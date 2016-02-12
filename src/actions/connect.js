@@ -206,7 +206,7 @@ export default function ConnectActions(ddpClient) {
   }
 
   function subscribeDDP(session, teamIds){
-    // console.log('subscribeDDP called for session: ', session)
+    // console.log('subscribeDDP called for session: ', session, teamIds)
     return (dispatch, getState) => {
       const {connect, messages, teams} = getState()
 
