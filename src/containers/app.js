@@ -1975,6 +1975,7 @@ class App extends React.Component {
       CustomSideView = SideMenu
       menu = (
         <Components.Menu
+          connected={(connect.status === actions.CONNECT.CONNECTED)}
           ref='menu'
           team={this.state.currentTeamInfo.team}
           session={session}
