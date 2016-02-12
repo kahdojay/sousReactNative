@@ -51,7 +51,7 @@ export default function SessionActions(allActions){
 
   function registerSession(sessionParams) {
     return (dispatch, getState) => {
-      const {session} = getState()
+      const {session, teams} = getState()
       // process ddp call
       // console.log('SESSION PARAMS', sessionParams);
 
@@ -60,7 +60,8 @@ export default function SessionActions(allActions){
         // console.log('NEW SESSION PARAMS', newSession);
 
         // resubscribe based on session data
-        dispatch(connectActions.subscribeDDP(newSession, undefined));
+        const teamIds = _.pluck(teams.data, 'id')
+        dispatch(connectActions.subscribeDDP(newSession, teamIds));
         dispatch(requestSession(sessionParams))
       }
 
@@ -117,7 +118,7 @@ export default function SessionActions(allActions){
       delete response.imageData
     }
     return (dispatch, getState) => {
-      const {session} = getState();
+      const {session, teams} = getState();
       var isAuthenticated = session.isAuthenticated;
       // console.log("AUTHENTICATE", isAuthenticated);
       // console.log(response, session);
@@ -131,7 +132,8 @@ export default function SessionActions(allActions){
       })
       // console.log(newSession)
       // resubscribe based on session data
-      dispatch(connectActions.subscribeDDP(newSession, undefined));
+      const teamIds = _.pluck(teams.data, 'id')
+      dispatch(connectActions.subscribeDDP(newSession, teamIds));
       let action = newSession
       action.type = RECEIVE_SESSION
       // console.log('isAuthenticated: ', action.type, action.isAuthenticated);
