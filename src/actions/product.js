@@ -61,7 +61,7 @@ export default function ProductActions(allActions){
 
   function updateProduct(productId, productAttributes){
     return (dispatch, getState) => {
-      const {session, teams } = getState();
+      const { session, teams } = getState();
       const { currentTeam } = teams;
 
       dispatch(categoryActions.updateProductCategory(productAttributes.previousCategoryId, productAttributes.categoryId,productId))

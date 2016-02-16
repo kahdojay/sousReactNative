@@ -56,6 +56,13 @@ class CartViewListItem extends React.Component {
       }
     }))
 
+    let rowDisabled = false
+    // let rowDisabledReason = ''
+    // if(product.purveyors.indexOf(purveyorId) === -1){
+    //   rowDisabled = true
+    //   rowDisabledReason = 'Product purveyor changed'
+    // }
+
     return (
       <View>
         <Swipeout
@@ -75,6 +82,11 @@ class CartViewListItem extends React.Component {
             >
               <Text style={styles.productQuantity}>{quantity} {productUnit}</Text>
             </TouchableHighlight>
+            {rowDisabled === true ?
+              <View style={styles.productContainerDisabled}>
+                <Text style={styles.productDisabledText}>{rowDisabledReason}</Text>
+              </View>
+            : null}
           </View>
         </Swipeout>
         <PickerModal
@@ -123,6 +135,24 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     paddingTop: 5,
     paddingBottom: 5,
+    overflow: 'hidden',
+  },
+  productContainerDisabled: {
+    height: 50,
+    backgroundColor: 'rgba(50, 50, 50, 0.65)',
+    position: 'absolute',
+    left: 0,
+    right: -10,
+    top: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  productDisabledText: {
+    flex: 1,
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 14,
+    textAlign: 'center',
   },
   icon: {
     width: 30,

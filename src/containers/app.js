@@ -74,6 +74,7 @@ class App extends React.Component {
       showGenericModal: false,
       sceneState: {
         ProductForm: {
+          cartItem: null,
           submitReady: false,
           productId: null,
           productAttributes: {},
@@ -381,8 +382,9 @@ class App extends React.Component {
   onCreateProduct(route, nav) {
     const sceneState = Object.assign({}, this.state.sceneState);
     sceneState.ProductForm.submitReady = false;
-    sceneState.ProductForm.productId = null
-    sceneState.ProductForm.productAttributes = {}
+    sceneState.ProductForm.cartItem = null;
+    sceneState.ProductForm.productId = null;
+    sceneState.ProductForm.productAttributes = {};
     this.setState({
       sceneState: sceneState,
       category: null,
@@ -417,9 +419,23 @@ class App extends React.Component {
       submitReady = true
     }
 
+    const cartPurveyorIds = Object.keys(this.state.currentTeamInfo.cartItems.cart)
+    let productFormCartItem = null
+    if(cartPurveyorIds.length > 0){
+      cartPurveyorIds.forEach((purveyorId) => {
+        if(
+          product.purveyors.indexOf(purveyorId) !== -1
+          && this.state.currentTeamInfo.cart[purveyorId].hasOwnProperty(product.id) === true
+        ) {
+          productFormCartItem = this.state.currentTeamInfo.cart[purveyorId][product.id];
+        }
+      })
+    }
+
     const sceneState = Object.assign({}, this.state.sceneState);
     sceneState.ProductForm.submitReady = submitReady;
-    sceneState.ProductForm.productId = product.id
+    sceneState.ProductForm.cartItem = productFormCartItem;
+    sceneState.ProductForm.productId = product.id;
     sceneState.ProductForm.productAttributes = {
       name: product ? product.name : '',
       purveyors: product.purveyors,
@@ -1268,8 +1284,21 @@ class App extends React.Component {
             categories: this.state.currentTeamInfo.categories,
             purveyors: this.state.currentTeamInfo.purveyors,
             onProcessProduct: (productAttributes) => {
+              const cartPurveyorIds = Object.keys(this.state.currentTeamInfo.cartItems.cart)
+              let productFormCartItem = null
+              if(cartPurveyorIds.length > 0){
+                cartPurveyorIds.forEach((purveyorId) => {
+                  if(
+                    this.state.product.purveyors.indexOf(purveyorId) !== -1
+                    && this.state.currentTeamInfo.cart[purveyorId].hasOwnProperty(this.state.product.id) === true
+                  ) {
+                    productFormCartItem = this.state.currentTeamInfo.cart[purveyorId][this.state.product.id];
+                  }
+                })
+              }
               const sceneState = Object.assign({}, this.state.sceneState);
               const existingProductAttributes = Object.assign({}, sceneState.ProductForm.productAttributes);
+              sceneState.ProductForm.cartItem = productFormCartItem;
               sceneState.ProductForm.submitReady = true;
               sceneState.ProductForm.productAttributes = Object.assign({}, existingProductAttributes, productAttributes);
               this.setState({
@@ -1856,6 +1885,12 @@ class App extends React.Component {
                       dispatch(actions.getTeamResourceInfo(this.state.currentTeamInfo.team.id))
                     } else {
                       dispatch(actions.updateProduct(productId, productAttributes))
+                    }
+                    if(this.state.sceneState.ProductForm.cartItem){
+                      const cartItemPurveyorId = this.state.sceneState.ProductForm.cartItem.purveyorId
+                      if(productAttributes.purveyors.indexOf(cartItemPurveyorId) === -1){
+                        dispatch(actions.deleteCartItem(this.state.sceneState.ProductForm.cartItem))
+                      }
                     }
                     nav.replacePreviousAndPop({
                       name: route.newRoute,

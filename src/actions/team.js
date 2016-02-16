@@ -149,7 +149,7 @@ export default function TeamActions(allActions) {
           deleted: false,
           completed: false,
           quantity: 1,
-          unit: 0 // for future use
+          unit: 0, // for future use
         }
         dispatch(connectActions.ddpCall('addTeamTask', [session.userId, session.teamId, newTaskAttributes]))
         return dispatch({
