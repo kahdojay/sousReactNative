@@ -46,10 +46,10 @@ class ProductListItem extends React.Component {
       if(debugUpdates) console.log('Confirmation Modal: ', this.state.showConfirmationModal, nextState.showConfirmationModal)
       return true;
     }
-    if(this.state.added === true && nextProps.cartItem === null){
+    if(this.state.added === true && nextProps.cartItem !== null){
       if(debugUpdates) console.log('Added: ', this.state.added, nextProps.cartItem)
       return true;
-    } else if(this.state.added === false && nextProps.cartItem !== null){
+    } else if(this.state.added === false && nextProps.cartItem === null){
       if(debugUpdates) console.log('Removed: ', this.state.added, nextProps.cartItem)
       return true;
     }
@@ -188,13 +188,23 @@ class ProductListItem extends React.Component {
       let productColor = 'black'
       let productQuantityBorderStyle = {}
       if(this.state.added === true){
-        selectedStyle = styles.selectedRow
-        productDetailsColor = 'white'
-        productColor = 'white'
-        productQuantityBorderStyle = {
-          borderColor: 'white',
-          borderWidth: .5,
-          borderRadius: 15,
+        if(this.state.selectedPurveyorId !== this.props.cartPurveyorId){
+          selectedStyle = styles.selectedRowDisabled
+          productDetailsColor = Colors.darkGrey
+          productQuantityBorderStyle = {
+            borderColor: 'black',
+            borderWidth: .5,
+            borderRadius: 15,
+          }
+        } else {
+          selectedStyle = styles.selectedRow
+          productDetailsColor = 'white'
+          productColor = 'white'
+          productQuantityBorderStyle = {
+            borderColor: 'white',
+            borderWidth: .5,
+            borderRadius: 15,
+          }
         }
       }
       let availablePurveyors = product.purveyors
@@ -438,6 +448,9 @@ const styles = StyleSheet.create({
   },
   selectedRow: {
     backgroundColor: Colors.lightBlue
+  },
+  selectedRowDisabled: {
+    backgroundColor: Colors.disabled
   },
   icon: {
     width: 40,
