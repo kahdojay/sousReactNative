@@ -81,21 +81,18 @@ class ProductListItem extends React.Component {
   }
 
   componentDidMount() {
-    this.loadTimeoutId = setTimeout(() => {
+    // this.loadTimeoutId = setTimeout(() => {
       const selectedPurveyorId = Object.keys(this.props.purveyors)[0]
-      this.setState(
-        {
-          loaded: true,
-          product: this.props.product,
-          purveyors: this.props.purveyors,
-          selectedPurveyorId: selectedPurveyorId,
-          purveyorId: this.props.cartPurveyorId,
-        },
-        () => {
-          this.localStateUpdateFromCart(this.props.cartItem)
-        }
-      )
-    }, this.props.loadDelay)
+      this.setState({
+        loaded: true,
+        product: this.props.product,
+        purveyors: this.props.purveyors,
+        selectedPurveyorId: selectedPurveyorId,
+        purveyorId: this.props.cartPurveyorId,
+      }, () => {
+        this.localStateUpdateFromCart(this.props.cartItem)
+      })
+    // }, this.props.loadDelay)
   }
 
   componentWillUnmount() {

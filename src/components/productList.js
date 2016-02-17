@@ -43,28 +43,48 @@ class ProductList extends React.Component {
     })
   }
 
+  loadMoreProducts() {
+    if(this.props.products.length > 10){
+      setTimeout(() => {
+        this.setState({
+          products: this.props.products.slice(0,30)
+        })
+      }, 300)
+    }
+    if(this.props.products.length > 30){
+      setTimeout(() => {
+        this.setState({
+          products: this.props.products.slice(0,60)
+        })
+      }, 400)
+    }
+    if(this.props.products.length > 60){
+      setTimeout(() => {
+        this.setState({
+          products: this.props.products.slice(0,120)
+        })
+      }, 500)
+    }
+    if(this.props.products.length > 120){
+      setTimeout(() => {
+        this.setState({
+          products: this.props.products.slice(0,240)
+        })
+      }, 600)
+    }
+    if(this.props.products.length > 240){
+      setTimeout(() => {
+        this.setState({
+          products: this.props.products
+        })
+      }, 700)
+    }
+  }
+
   componentDidMount() {
-    // if(this.props.products.length > 10){
-    //   setTimeout(() => {
-    //     this.setState({
-    //       products: this.props.products.slice(0,30)
-    //     })
-    //   }, 300)
-    // }
-    // if(this.props.products.length > 30){
-    //   setTimeout(() => {
-    //     this.setState({
-    //       products: this.props.products.slice(0,60)
-    //     })
-    //   }, 500)
-    // }
-    // if(this.props.products.length > 60){
-    //   setTimeout(() => {
-    //     this.setState({
-    //       products: this.props.products
-    //     })
-    //   }, 700)
-    // }
+    setTimeout(() => {
+      this.loadMoreProducts()
+    }, 100)
   }
 
   render() {
