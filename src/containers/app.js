@@ -928,10 +928,20 @@ class App extends React.Component {
           },
         }
       case 'PurveyorView':
-        const specificProductsPurveyor = _.sortBy(_.filter(this.state.currentTeamInfo.products, (product) => {
-          product.nameToLower = product.name.toLowerCase()
-          return _.includes(product.purveyors, this.state.purveyor.id)
-        }), 'nameToLower')
+
+        let specificProductsPurveyor = null
+        if(products.purveyors.hasOwnProperty(this.state.purveyor.id) === true){
+          specificProductsPurveyor = _.sortBy(_.map(Object.keys(products.purveyors[this.state.purveyor.id]), (productId) => {
+            const product = this.state.currentTeamInfo.products[productId]
+            product.nameToLower = product.name.toLowerCase()
+            return product
+          }), 'nameToLower')
+        } else {
+          specificProductsPurveyor = _.sortBy(_.filter(this.state.currentTeamInfo.products, (product) => {
+            product.nameToLower = product.name.toLowerCase()
+            return _.includes(product.purveyors, this.state.purveyor.id)
+          }), 'nameToLower')
+        }
 
         // console.log(specificProductsPurveyor)
 

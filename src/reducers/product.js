@@ -13,6 +13,7 @@ const initialState = {
   products: {
     errors: null,
     teams: {},
+    purveyors: {},
     isFetching: false,
     lastUpdated: null
   }
@@ -56,15 +57,28 @@ function products(state = initialState.products, action) {
 
   // receive the products
   case RECEIVE_PRODUCTS:
-    var newProductTeamState = Object.assign({}, state.teams);
+    let newProductTeamState = Object.assign({}, state.teams);
     if(newProductTeamState.hasOwnProperty(action.product.teamId) === false){
       newProductTeamState[action.product.teamId] = {};
     }
     const originalTeamProduct = getTeamProduct(newProductTeamState, action.product.teamId, action.product.id)
     newProductTeamState[action.product.teamId][action.product.id] = Object.assign({}, originalTeamProduct, action.product)
+
+    const reducedProduct = newProductTeamState[action.product.teamId][action.product.id]
+    let newProductPurveyorsState = Object.assign({}, state.purveyors);
+    reducedProduct.purveyors.forEach((purveyorId) => {
+      if(newProductPurveyorsState.hasOwnProperty(purveyorId) === false){
+        newProductPurveyorsState[purveyorId] = {}
+      }
+      if(newProductPurveyorsState[purveyorId].hasOwnProperty(reducedProduct.id) === false){
+        newProductPurveyorsState[purveyorId][reducedProduct.id] = true
+      }
+    })
+
     return Object.assign({}, state, {
       errors: null,
       teams: newProductTeamState,
+      purveyors: newProductPurveyorsState,
       lastUpdated: (new Date()).toISOString()
     });
 
