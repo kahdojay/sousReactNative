@@ -28,61 +28,51 @@ class ProductListItem extends React.Component {
       quantity: 1,
       purveyorId: '',
       selectedPurveyorId: null,
+      cartPurveyorId: null,
       note: '',
       editQuantity: false,
       cartItem: null,
       showConfirmationModal: false,
+      updateComponent: false,
     }
-    this.timeoutId = null
     this.loadTimeoutId = null
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    // if(nextProps.cartItem === null && this.props.cartItem === null){
-    //   return false;
-    // }
     const debugUpdates = false
     if(this.state.showConfirmationModal !== nextState.showConfirmationModal){
       if(debugUpdates) console.log('Confirmation Modal: ', this.state.showConfirmationModal, nextState.showConfirmationModal)
       return true;
     }
-    if(this.state.added === true && nextProps.cartItem !== null){
-      if(debugUpdates) console.log('Added: ', this.state.added, nextProps.cartItem)
+    // console.log(this.state.added, nextState.added, nextProps.cartItem)
+    if(this.state.added !== nextState.added){
+      if(debugUpdates) console.log('Cart Item Added/Removed Local: ', this.state.added, nextState.added)
       return true;
-    } else if(this.state.added === false && nextProps.cartItem === null){
-      if(debugUpdates) console.log('Removed: ', this.state.added, nextProps.cartItem)
+    } else if(this.state.added === false && nextProps.cartItem !== null){
+      if(debugUpdates) console.log('Added Remote: ', this.state.added, nextProps.cartItem)
+      return true;
+    } else if(this.state.added === true && nextProps.cartItem === null){
+      if(debugUpdates) console.log('Removed Remote: ', this.state.added, nextProps.cartItem)
       return true;
     }
     if(this.state.loaded === false){
       if(debugUpdates) console.log('Loaded: ', this.state.loaded)
       return true;
     }
-    if(nextState.added !== this.state.added){
-      if(debugUpdates) console.log('Add/Remove Local: ', nextState.added, this.state.added)
-      return true;
-    }
-    if(nextState.editQuantity !== this.state.editQuantity){
-      if(debugUpdates) console.log('Edit Quantity: ', nextState.editQuantity, this.state.editQuantity)
-      return true;
-    }
-    if(nextState.quantity !== this.state.quantity){
-      if(debugUpdates) console.log('Quantity: ', nextState.quantity, this.state.quantity)
+    if(this.state.updateComponent === true){
+      if(debugUpdates) console.log('State[updateComponent]: ', this.state.updateComponent)
       return true;
     }
     return false;
   }
 
   componentWillReceiveProps(nextProps) {
-    // delay update from receiving props
-    clearTimeout(this.timeoutId);
-    this.timeoutId = setTimeout(() => {
-      // this.setState({
-      //   product: nextProps.product,
-      // }, () => {
-        // console.log('componentWillReceiveProps ', nextProps.product.unit)
-        this.localStateUpdateFromCart(nextProps.cartItem, nextProps.cartPurveyorId, nextProps.product)
-      // })
-    }, 10);
+    this.setState({
+      purveyorId: nextProps.cartPurveyorId,
+    }, () => {
+      // console.log('componentWillReceiveProps ', nextProps.product.unit)
+      this.localStateUpdateFromCart(nextProps.cartItem, nextProps.product)
+    })
   }
 
   componentDidMount() {
@@ -94,40 +84,42 @@ class ProductListItem extends React.Component {
           // product: this.props.product,
           purveyors: this.props.purveyors,
           selectedPurveyorId: selectedPurveyorId,
+          purveyorId: this.props.cartPurveyorId,
         },
         () => {
-          this.localStateUpdateFromCart(this.props.cartItem, this.props.cartPurveyorId)
+          this.localStateUpdateFromCart(this.props.cartItem)
         }
       )
     }, this.props.loadDelay)
   }
 
   componentWillUnmount() {
-    clearTimeout(this.timeoutId)
     clearTimeout(this.loadTimeoutId)
   }
 
-  localStateUpdateFromCart(cartItem, cartPurveyorId, product) {
+  localStateUpdateFromCart(cartItem, product) {
     let newState = {}
     if (cartItem !== null) {
       newState = {
-        added: true,
-        purveyorId: cartPurveyorId,
         note: cartItem.note,
         cartItem: cartItem,
         // product: product,
       };
+      if(this.state.added !== true){
+        newState.added = true;
+      }
       if(this.state.editQuantity === false){
         newState.quantity = cartItem.quantity;
       }
     } else {
       newState = {
-        added: false,
         quantity: 1,
-        purveyorId: cartPurveyorId,
         note: '',
         cartItem: null,
       };
+      if(this.state.added !== false){
+        newState.added = false;
+      }
     }
     this.setState(newState);
   }
@@ -157,6 +149,7 @@ class ProductListItem extends React.Component {
     this.setState({
       added: !this.state.added,
       selectedPurveyorId: purveyorId,
+      purveyorId: purveyorId,
     }, this.cartUpdateFromLocalState.bind(this))
   }
 
@@ -188,7 +181,7 @@ class ProductListItem extends React.Component {
       let productColor = 'black'
       let productQuantityBorderStyle = {}
       if(this.state.added === true){
-        if(this.state.selectedPurveyorId !== this.props.cartPurveyorId){
+        if(this.state.selectedPurveyorId !== this.state.purveyorId){
           selectedStyle = styles.selectedRowDisabled
           productDetailsColor = Colors.darkGrey
           productQuantityBorderStyle = {
@@ -363,12 +356,12 @@ class ProductListItem extends React.Component {
         confirmationMessage={'Are you sure you want to delete this product?'}
         onHideModal={() => {
           this.setState({
-            showConfirmationModal: false
+            showConfirmationModal: false,
           })
         }}
         onConfirmNo={() => {
           this.setState({
-            showConfirmationModal: false
+            showConfirmationModal: false,
           })
         }}
         onConfirmYes={() => {
