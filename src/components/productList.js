@@ -27,12 +27,13 @@ class ProductList extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    // this.setState({
+    //   products: []
+    // }, () => {
+    //
+    // })
     this.setState({
-      products: []
-    }, () => {
-      this.setState({
-        products: nextProps.products
-      })
+      products: nextProps.products
     })
   }
 
@@ -77,7 +78,7 @@ class ProductList extends React.Component {
         if(product === null){
           return;
         }
-        let loadDelay = 250
+        let loadDelay = 0
         // for everything off screen
         // - index greater than 15
         if(idx > 130){

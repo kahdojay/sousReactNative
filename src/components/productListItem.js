@@ -40,10 +40,17 @@ class ProductListItem extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     const debugUpdates = false
+
+    if(this.state.loaded === false){
+      if(debugUpdates) console.log('Loaded: ', this.state.loaded)
+      return true;
+    }
+
     if(this.state.showConfirmationModal !== nextState.showConfirmationModal){
       if(debugUpdates) console.log('Confirmation Modal: ', this.state.showConfirmationModal, nextState.showConfirmationModal)
       return true;
     }
+
     // console.log(this.state.added, nextState.added, nextProps.cartItem)
     if(this.state.added !== nextState.added){
       if(debugUpdates) console.log('Cart Item Added/Removed Local: ', this.state.added, nextState.added)
@@ -55,14 +62,12 @@ class ProductListItem extends React.Component {
       if(debugUpdates) console.log('Removed Remote: ', this.state.added, nextProps.cartItem)
       return true;
     }
-    if(this.state.loaded === false){
-      if(debugUpdates) console.log('Loaded: ', this.state.loaded)
-      return true;
-    }
+
     if(this.state.updateComponent === true){
       if(debugUpdates) console.log('State[updateComponent]: ', this.state.updateComponent)
       return true;
     }
+
     return false;
   }
 
@@ -81,7 +86,7 @@ class ProductListItem extends React.Component {
       this.setState(
         {
           loaded: true,
-          // product: this.props.product,
+          product: this.props.product,
           purveyors: this.props.purveyors,
           selectedPurveyorId: selectedPurveyorId,
           purveyorId: this.props.cartPurveyorId,
@@ -154,7 +159,7 @@ class ProductListItem extends React.Component {
   }
 
   render() {
-    const {product} = this.props
+    const {product} = this.state
     const {purveyors, category, showPurveyorInfo, showCategoryInfo} = this.props;
 
     let productInfo = (
@@ -169,7 +174,6 @@ class ProductListItem extends React.Component {
     );
     let buttons = []
     if(product){
-
       if(product.deleted === true){
         return <View />;
       }
