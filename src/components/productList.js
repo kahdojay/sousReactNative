@@ -114,6 +114,7 @@ class ProductList extends React.Component {
 
     return (
       <ListView
+        contentInset={{bottom:10}}
         automaticallyAdjustContentInsets={false}
         dataSource={this.state.products}
         renderRow={::this.renderRow}
