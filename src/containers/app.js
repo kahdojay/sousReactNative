@@ -2130,7 +2130,7 @@ const styles = StyleSheet.create({
   container: {
     height: window.height,
     width: window.width,
-    marginTop: 20,
+    paddingTop: 20,
     flex: 1,
     backgroundColor: 'white',
   },
