@@ -75,14 +75,23 @@ class Signup extends React.Component {
     if(this.refs.phone){
       this.refs.phone.blur();
     }
-    if(this.state.phoneNumber === null || this.state.phoneNumber ===  ''){
-      this.setState({ invalid: true });
-    } else {
+    let phoneNumber = this.state.phoneNumber.replace(/\D/g,'')
+    if(this.state.phoneNumber.substr(0,1) === '+'){
+      phoneNumber = `+${phoneNumber}`
+    }
+    if(
+      this.state.phoneNumber !== null
+      && phoneNumber !==  ''
+      && phoneNumber !== undefined
+      && phoneNumber !== 'undefined'
+    ){
       this.setState({ smsToken: '' })
       this.setFetching('signup')
       this.props.onRegisterSession(Object.assign({}, {
-        phoneNumber: this.state.phoneNumber
+        phoneNumber: phoneNumber
       }));
+    } else {
+      this.setState({ invalid: true });
     }
   }
 
@@ -107,13 +116,15 @@ class Signup extends React.Component {
       <View style={styles.activityContainer}>
         <ActivityIndicatorIOS
           animating={true}
-          color={'#808080'}
+          color={'#ffffff'}
           style={styles.activity}
           size={'small'}
         />
       </View>
     );
-    const errorMessage = <Text style={styles.errorText}>Invalid entry, please try again.</Text>
+    const errorMessage = (
+      <Text style={styles.errorText}>Invalid entry, please try again.</Text>
+    )
 
     let buttonStyle = styles.buttonActive
     let buttonUnderlayColor = Colors.gold
@@ -123,7 +134,7 @@ class Signup extends React.Component {
       buttonUnderlayColor = Colors.disabled
     }
     // TODO: use RN Linking library after updating RN
-    let tosLink = 
+    let tosLink =
         // <TouchableHighlight
         //   onPress={() => {
         //     Linking.openURL('http://www.sousapp.com')
@@ -149,7 +160,11 @@ class Signup extends React.Component {
                 keyboardType='phone-pad'
                 onSubmitEditing={() => {this.onSignup()}}
                 onChange={(e) => {
-                  this.setState({phoneNumber: e.nativeEvent.text, invalid: false})
+                  let phoneNumber = e.nativeEvent.text
+                  this.setState({
+                    phoneNumber: phoneNumber,
+                    invalid: false,
+                  })
                 }}
                 placeholder={'+ Phone Number'}
                 placeholderTextColor={'white'}
@@ -224,7 +239,7 @@ class Signup extends React.Component {
     }
 
     return (
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.outerContainer}
         keyboardShouldPersistTaps={false}
         automaticallyAdjustContentInsets={false}
@@ -319,10 +334,11 @@ let styles = StyleSheet.create({
     fontFamily: 'OpenSans'
   },
   errorText: {
-    color: '#d00',
-    textAlign: 'center',
+    color: '#900',
     fontSize: 16,
-    fontFamily: 'OpenSans'
+    fontFamily: 'OpenSans',
+    backgroundColor: 'transparent',
+    textAlign: 'center',
   },
   activity: {
     justifyContent: 'center',
