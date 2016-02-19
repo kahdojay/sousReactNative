@@ -140,7 +140,7 @@ class Signup extends React.Component {
             <Image source={require('image!Logo')} style={styles.logoImage}></Image>
           </View>
           <Text style={styles.headerText}>Welcome to Sous!</Text>
-          <Text style={styles.guidanceText}>Enter your phone number to sign in.</Text>
+          <Text style={styles.guidanceText}>Use your phone number to sign in.</Text>
           <View style={styles.inputContainer}>
             <View style={styles.inputWrapper}>
               <TextInput
@@ -181,9 +181,9 @@ class Signup extends React.Component {
             <View style={styles.logoContainer}>
               <Image source={require('image!Logo')} style={styles.logoImage}></Image>
             </View>
-            <Text style={styles.headerText}>Enter Login Code</Text>
-            <Text style={styles.guidanceText}>We just sent a text to {formattedPhoneNumber}.</Text>
-            <Text style={styles.guidanceText}>Please enter the login code below.</Text>
+            <Text style={styles.headerText}>Login Code</Text>
+            <Text style={styles.guidanceText}>We sent a text to {formattedPhoneNumber}.</Text>
+            <Text style={styles.guidanceText}>Please enter the login code.</Text>
             <View style={styles.inputContainer}>
               <View style={styles.inputWrapper}>
                 <TextInput
@@ -257,7 +257,7 @@ let styles = StyleSheet.create({
   },
   guidanceText: {
     color: 'white',
-    marginLeft: 4,
+    marginLeft: 8,
   },
   logoContainer: {
     flexDirection: 'row',
@@ -267,6 +267,15 @@ let styles = StyleSheet.create({
     borderRadius: 15,
     width: 50,
     height: 50
+  },
+  smallButton: {
+    alignSelf: 'flex-end',
+    marginTop: 5,
+  },
+  smallButtonText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -293,15 +302,6 @@ let styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.gold,
     justifyContent: 'center',
-  },
-  smallButton: {
-    alignSelf: 'flex-end',
-    marginTop: 5,
-  },
-  smallButtonText: {
-    alignSelf: 'center',
-    color: 'white',
-    fontFamily: 'OpenSans',
   },
   buttonWithErrors: {
     height: 56,
