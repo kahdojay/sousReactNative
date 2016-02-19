@@ -113,6 +113,7 @@ export default function ProductActions(allActions){
   }
 
   function getProducts(productsTeamId) {
+    // console.log('Getting products for: ', productsTeamId)
     return (dispatch, getState) => {
       const {session} = getState();
       let teamId = session.teamId
