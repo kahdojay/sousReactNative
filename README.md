@@ -38,3 +38,7 @@ dispatch(processSubscription(DDP.SUBSCRIBE_LIST.PRODUCTS, [session.userId, teamI
 dispatch(processSubscription(DDP.SUBSCRIBE_LIST.CART_ITEMS, [session.userId, teamIds, deprecate, onlyNew]))
 dispatch(processSubscription(DDP.SUBSCRIBE_LIST.ORDERS, [session.userId, teamIds, onlyNew]))
 ```
+
+# DDP Subscriptions
+
+If your subscription parameters (ie. userId) doesnt change upon resubscribe, don't expect data that was previously sent to be sent again. Example, if user is part of two teams, and `purveyors` subscribe call only takes `userId` (which doesn't change) then when the user leaves one of the teams, and for some reason is added back, the data originally sent for both teams will not be sent again.
