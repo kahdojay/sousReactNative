@@ -45,7 +45,7 @@
     "react-redux": "^2.1.2",
     "redux-persist": "^1.0.0",
     "redux-thunk": "^1.0.0",
-    "rn-redux-mixpanel": "^1.1.6",
+    "rn-redux-mixpanel": "https://github.com/sousapp/rn-redux-mixpanel",
     "semver": "^5.1.0",
     "shortid": "^2.2.2",
     "slug": "^0.9.1",
