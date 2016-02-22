@@ -290,7 +290,6 @@ class App extends React.Component {
     // console.log(this.state.currentTeamInfo.team)
     if(this.state.isAuthenticated === true && this.state.currentTeamInfo.team !== null){
       const {dispatch, connect, session} = this.props
-      console.log(this.state.installationRegistered, this.state.installationRegisterInProgress)
       if (
         this.state.installationRegistered === false
         && this.state.installationRegisterInProgress === false
