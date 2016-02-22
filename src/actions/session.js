@@ -53,7 +53,7 @@ export default function SessionActions(allActions){
     return (dispatch, getState) => {
       const {session, teams} = getState()
       // process ddp call
-      console.log('SESSION PARAMS', sessionParams);
+      // console.log('SESSION PARAMS', sessionParams);
 
       const sessionCb = (err, result) => {
         const newSession = Object.assign({}, session, sessionParams, result)
