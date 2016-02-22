@@ -21,6 +21,7 @@ const initialState = {
 };
 
 function categories(state = initialState.categories, action) {
+  // console.log(action.type)
   switch (action.type) {
   // reset the categories
   case RESET_CATEGORIES:

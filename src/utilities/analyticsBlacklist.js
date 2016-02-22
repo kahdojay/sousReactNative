@@ -37,4 +37,7 @@ _.each(Object.keys(ActionTypes), function(type){
   }
 })
 
+blacklist.push('persist/REHYDRATE')
+blacklist.push('persist/COMPLETE')
+
 export default blacklist
