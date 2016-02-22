@@ -69,6 +69,7 @@ export default function SessionActions(allActions){
         dispatch(connectActions.ddpCall('sendSMSCode', [sessionParams.phoneNumber, session.authToken], sessionCb))
       } else {
         dispatch(connectActions.ddpCall('loginWithSMS', [session.userId, sessionParams.smsToken], sessionCb))
+        dispatch(registerSession(sessionParams))
       }
     }
   }
@@ -97,6 +98,12 @@ export default function SessionActions(allActions){
       // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
       return dispatch(receiveSession(sessionParams))
     }
+  }
+
+  function registerSession(sessionParams) {
+    return {
+      type: REGISTER_SESSION,
+    };
   }
 
   function requestSession(sessionParams) {

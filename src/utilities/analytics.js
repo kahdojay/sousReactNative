@@ -4,14 +4,7 @@ import Tokens from '../secrets';
 import mixpanel from 'rn-redux-mixpanel'
 import * as ActionTypes from '../actions/actionTypes'
 import humanize from 'underscore.string'
-
-// define a blacklist to be used in the ignoreAction filter
-const blacklist = [
-  ActionTypes.INIT_PERSISTENCE,
-  ActionTypes.HYDRATE,
-  ActionTypes.SESSION_ACTIVITY,
-  ActionTypes.RECEIVE_PRODUCTS,
-];
+import blacklist from './analyticsBlacklist'
 
 // Export configured mixpanel redux middleware
 export default mixpanel({
