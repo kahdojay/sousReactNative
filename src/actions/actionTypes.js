@@ -2,6 +2,11 @@
  * action types
  */
 
+export const INIT_PERSISTENCE = 'INIT_PERSISTENCE';
+export const HYDRATE = 'HYDRATE';
+export const SESSION_ACTIVITY = 'SESSION_ACTIVITY';
+export const SIGN_IN = 'SIGN_IN';
+
 export const RESET_CONTACTS = 'RESET_CONTACTS';
 export const GET_CONTACTS = 'GET_CONTACTS';
 export const RECEIVE_CONTACTS = 'RECEIVE_CONTACTS';

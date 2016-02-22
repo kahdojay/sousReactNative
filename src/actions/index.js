@@ -12,6 +12,10 @@ import TeamActions from './team';
 import ddpClient from '../utilities/ddpClient';
 
 let allActions = {}
+
+const cartItemActions = CartItemActions(allActions)
+allActions['cartItemActions'] = cartItemActions
+
 const connectActions = ConnectActions(ddpClient)
 allActions['connectActions'] = connectActions
 
@@ -35,9 +39,6 @@ allActions['productActions'] = productActions
 
 const purveyorActions = PurveyorActions(allActions)
 allActions['purveyorActions'] = purveyorActions
-
-const cartItemActions = CartItemActions(allActions)
-allActions['cartItemActions'] = cartItemActions
 
 const orderActions = OrderActions(allActions)
 allActions['orderActions'] = orderActions

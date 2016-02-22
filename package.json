@@ -48,7 +48,8 @@
     "rn-redux-mixpanel": "^1.1.6",
     "semver": "^5.1.0",
     "shortid": "^2.2.2",
-    "slug": "^0.9.1"
+    "slug": "^0.9.1",
+    "underscore.string": "^3.2.3"
   },
   "devDependencies": {
     "babel": "^5.8.25",

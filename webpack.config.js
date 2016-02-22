@@ -37,6 +37,7 @@ var config = {
         path.resolve(__dirname, 'node_modules/react-native-remote-push'),
         path.resolve(__dirname, 'node_modules/react-native-side-menu'),
         path.resolve(__dirname, 'node_modules/react-native-swipeout'),
+        path.resolve(__dirname, 'node_modules/rn-redux-mixpanel'),
         // Note: add any other js or node modules that need babel processing
       ],
       loader: ['babel-loader'],
