@@ -62,7 +62,8 @@ class App extends React.Component {
       firstName: this.props.session.firstName,
       genericModalCallback: () => {},
       genericModalMessage: '',
-      installationRegistered: this.props.connect.installationRegistered,
+      installationRegistered: false,
+      installationRegisterInProgress: false,
       isAuthenticated: this.props.session.isAuthenticated,
       lastName: this.props.session.lastName,
       open: false,
@@ -211,7 +212,7 @@ class App extends React.Component {
     }
     let componentWillReceivePropsStateUpdate = {
       connectionStats: connectionStats,
-      installationRegistered: nextProps.connect.installationRegistered,
+      // installationRegistered: nextProps.connect.installationRegistered,
       isAuthenticated: nextProps.session.isAuthenticated,
       firstName: nextProps.session.firstName,
       lastName: nextProps.session.lastName,
@@ -289,30 +290,42 @@ class App extends React.Component {
     // console.log(this.state.currentTeamInfo.team)
     if(this.state.isAuthenticated === true && this.state.currentTeamInfo.team !== null){
       const {dispatch, connect, session} = this.props
-      if (this.state.installationRegistered !== true && connect.status === actions.CONNECT.CONNECTED) {
-        PushManager.requestPermissions((err, data) => {
-          if (err) {
-            dispatch(actions.registerInstallationError())
-          } else {
-            // if(userDoesNotAllow === true){
-            //   dispatch(actions.registerInstallationDeclined())
-            // }
-            // if(data.hasOwnProperty('token') && data.token.indexOf('Error') === -1){
-            if(data.hasOwnProperty('token')){
-              dispatch(actions.registerInstallation({
-                token: data.token,
-                model: DeviceInfo.getModel(),
-                appVersion: DeviceInfo.getVersion(),
-                appBuildNumber: DeviceInfo.getBuildNumber(),
-                deviceName: DeviceInfo.getDeviceName(),
-                systemName: DeviceInfo.getSystemName(),
-                systemVersion: DeviceInfo.getSystemVersion(),
-              }))
-            } else {
+      console.log(this.state.installationRegistered, this.state.installationRegisterInProgress)
+      if (
+        this.state.installationRegistered === false
+        && this.state.installationRegisterInProgress === false
+        && connect.status === actions.CONNECT.CONNECTED
+      ) {
+        this.setState({
+          installationRegistered: true,
+          installationRegisterInProgress: true,
+        }, () => {
+          PushManager.requestPermissions((err, data) => {
+            if (err) {
               dispatch(actions.registerInstallationError())
+            } else {
+              // if(userDoesNotAllow === true){
+              //   dispatch(actions.registerInstallationDeclined())
+              // }
+              if(data.hasOwnProperty('token')){
+                dispatch(actions.registerInstallation({
+                  token: data.token,
+                  model: DeviceInfo.getModel(),
+                  appVersion: DeviceInfo.getVersion(),
+                  appBuildNumber: DeviceInfo.getBuildNumber(),
+                  deviceName: DeviceInfo.getDeviceName(),
+                  systemName: DeviceInfo.getSystemName(),
+                  systemVersion: DeviceInfo.getSystemVersion(),
+                }))
+              } else {
+                dispatch(actions.registerInstallationError())
+              }
             }
-          }
-        });
+            this.setState({
+              installationRegisterInProgress: false,
+            })
+          });
+        })
       }
     }
     this.redirectBasedOnData()

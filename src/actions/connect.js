@@ -4,6 +4,8 @@ import moment from 'moment';
 import {
   SEND_EMAIL,
   REGISTER_INSTALLATION,
+  REGISTER_INSTALLATION_DECLINED,
+  REGISTER_INSTALLATION_ERROR,
   UPDATE_INSTALLATION,
   CONNECTION_STATUS,
   RESET_CHANNELS,
@@ -129,7 +131,7 @@ export default function ConnectActions(ddpClient) {
     return (dispatch, getState) => {
       const {session} = getState()
       return dispatch({
-        type: REGISTER_INSTALLATION,
+        type: REGISTER_INSTALLATION_DECLINED,
         installationRegistered: true,
       })
     }
@@ -139,7 +141,7 @@ export default function ConnectActions(ddpClient) {
     return (dispatch, getState) => {
       const {session} = getState()
       return dispatch({
-        type: REGISTER_INSTALLATION,
+        type: REGISTER_INSTALLATION_ERROR,
         installationRegistered: true,
       })
     }
@@ -593,6 +595,8 @@ export default function ConnectActions(ddpClient) {
     SEND_EMAIL,
     UPDATE_INSTALLATION,
     REGISTER_INSTALLATION,
+    REGISTER_INSTALLATION_DECLINED,
+    REGISTER_INSTALLATION_ERROR,
     CONNECTION_STATUS,
     RESET_CHANNELS,
     SUBSCRIBE_CHANNEL,

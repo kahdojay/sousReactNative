@@ -3,7 +3,6 @@ import _ from 'lodash'
 
 
 const whitelist = [
-  ActionTypes.SIGN_IN,
   ActionTypes.REGISTER_INSTALLATION,
   ActionTypes.REGISTER_SESSION,
   ActionTypes.ADD_TEAM,

@@ -53,7 +53,7 @@ export default function SessionActions(allActions){
     return (dispatch, getState) => {
       const {session, teams} = getState()
       // process ddp call
-      // console.log('SESSION PARAMS', sessionParams);
+      console.log('SESSION PARAMS', sessionParams);
 
       const sessionCb = (err, result) => {
         const newSession = Object.assign({}, session, sessionParams, result)
@@ -62,6 +62,12 @@ export default function SessionActions(allActions){
         // resubscribe based on session data
         const teamIds = _.pluck(teams.data, 'id')
         dispatch(connectActions.subscribeDDP(newSession, teamIds));
+        if(sessionParams.hasOwnProperty('smsToken') === true){
+          dispatch({
+            type: REGISTER_SESSION,
+            session: newSession,
+          })
+        }
         dispatch(requestSession(sessionParams))
       }
 
@@ -69,7 +75,6 @@ export default function SessionActions(allActions){
         dispatch(connectActions.ddpCall('sendSMSCode', [sessionParams.phoneNumber, session.authToken], sessionCb))
       } else {
         dispatch(connectActions.ddpCall('loginWithSMS', [session.userId, sessionParams.smsToken], sessionCb))
-        dispatch(registerSession(sessionParams))
       }
     }
   }
@@ -98,12 +103,6 @@ export default function SessionActions(allActions){
       // console.log('UPDATE SESSION: ', session, ' to: ', sessionParams)
       return dispatch(receiveSession(sessionParams))
     }
-  }
-
-  function registerSession(sessionParams) {
-    return {
-      type: REGISTER_SESSION,
-    };
   }
 
   function requestSession(sessionParams) {
