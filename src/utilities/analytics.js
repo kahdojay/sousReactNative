@@ -31,7 +31,7 @@ export default mixpanel({
   selectDistinctId: (action, state) => {
     if (state.session && state.session.userId) {
       return state.session.userId
-    } else if (SIGN_IN === action.type && action.user) {
+    } else if (ActionTypes.SIGN_IN === action.type && action.user) {
       return action.user._id
     }
   },
@@ -41,7 +41,7 @@ export default mixpanel({
     const user = action.user
 
     // Only update user profile data on SIGN_IN action type
-    if (SIGN_IN === action.type && user) {
+    if (ActionTypes.SIGN_IN === action.type && user) {
       // User data to `$set` via Mixpanel Engage request
       const userProfileData = {
         '$first_name': user['first_name'],

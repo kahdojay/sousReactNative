@@ -13,11 +13,11 @@ import ddpClient from '../utilities/ddpClient';
 
 let allActions = {}
 
-const cartItemActions = CartItemActions(allActions)
-allActions['cartItemActions'] = cartItemActions
-
 const connectActions = ConnectActions(ddpClient)
 allActions['connectActions'] = connectActions
+
+const cartItemActions = CartItemActions(allActions)
+allActions['cartItemActions'] = cartItemActions
 
 const contactActions = ContactActions(allActions)
 allActions['contactActions'] = contactActions
