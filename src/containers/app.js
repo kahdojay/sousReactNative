@@ -253,7 +253,6 @@ class App extends React.Component {
       // console.log(this.props.cartItems)
       if(reconnectCountDown === true){
         this.countDownReconnect()
-        // console.log('here')
       }
       if(processRedirect === true){
         this.redirectBasedOnData()
@@ -1679,7 +1678,6 @@ class App extends React.Component {
           })
           break;
         case 'CategoryView':
-          console.log('here')
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
@@ -1882,7 +1880,6 @@ class App extends React.Component {
           })
           break;
         case 'ProductForm':
-          console.log('here in getNav')
           navBar = React.cloneElement(this.navBar, {
             ref: 'navBar',
             navigator: nav,
