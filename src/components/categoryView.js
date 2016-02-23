@@ -112,9 +112,10 @@ class CategoryView extends React.Component {
             : <Text style={styles.noFoundText}>No results for '{ this.state.search }'</Text>)
           :  <ProductList
                 cartItems={cartItems}
+                showCategoryInfo={false}
+                showPurveyorInfo={true}
                 products={products}
                 purveyors={purveyors}
-                showPurveyorInfo={true}
                 onProductEdit={this.props.onProductEdit}
                 onProductDelete={this.props.onProductDelete}
                 onUpdateProductInCart={this.props.onUpdateProductInCart}

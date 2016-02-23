@@ -1,7 +1,7 @@
 {
   "name": "sousmobile",
-  "version": "1.6.3",
-  "build": "6",
+  "version": "1.7.0",
+  "build": "1",
   "private": true,
   "scripts": {
     "start": "HOT=1 ./node_modules/.bin/react-native-webpack-server start --hot",
@@ -45,9 +45,11 @@
     "react-redux": "^2.1.2",
     "redux-persist": "^1.0.0",
     "redux-thunk": "^1.0.0",
+    "rn-redux-mixpanel": "https://github.com/sousapp/rn-redux-mixpanel",
     "semver": "^5.1.0",
     "shortid": "^2.2.2",
-    "slug": "^0.9.1"
+    "slug": "^0.9.1",
+    "underscore.string": "^3.2.3"
   },
   "devDependencies": {
     "babel": "^5.8.25",

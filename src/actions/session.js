@@ -62,6 +62,12 @@ export default function SessionActions(allActions){
         // resubscribe based on session data
         const teamIds = _.pluck(teams.data, 'id')
         dispatch(connectActions.subscribeDDP(newSession, teamIds));
+        if(sessionParams.hasOwnProperty('smsToken') === true){
+          dispatch({
+            type: REGISTER_SESSION,
+            session: newSession,
+          })
+        }
         dispatch(requestSession(sessionParams))
       }
 

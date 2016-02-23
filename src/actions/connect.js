@@ -4,6 +4,8 @@ import moment from 'moment';
 import {
   SEND_EMAIL,
   REGISTER_INSTALLATION,
+  REGISTER_INSTALLATION_DECLINED,
+  REGISTER_INSTALLATION_ERROR,
   UPDATE_INSTALLATION,
   CONNECTION_STATUS,
   RESET_CHANNELS,
@@ -129,7 +131,7 @@ export default function ConnectActions(ddpClient) {
     return (dispatch, getState) => {
       const {session} = getState()
       return dispatch({
-        type: REGISTER_INSTALLATION,
+        type: REGISTER_INSTALLATION_DECLINED,
         installationRegistered: true,
       })
     }
@@ -139,7 +141,7 @@ export default function ConnectActions(ddpClient) {
     return (dispatch, getState) => {
       const {session} = getState()
       return dispatch({
-        type: REGISTER_INSTALLATION,
+        type: REGISTER_INSTALLATION_ERROR,
         installationRegistered: true,
       })
     }
@@ -169,7 +171,7 @@ export default function ConnectActions(ddpClient) {
           proceed = true
         }
       }
-      // if(channel === 'products'){
+      // if(channel === 'teams'){
         // console.log('ALL CHANNELS ', connect.channels);
         // console.log('PROCEED to connect? '+proceed+' ', channel, argsList);
       // }
@@ -331,7 +333,6 @@ export default function ConnectActions(ddpClient) {
         var log = JSON.parse(msg);
         // console.log(`[${new Date()}] MAIN DDP MSG`, log);
         const {connect, session} = getState()
-        console.log()
         if(connect.status !== CONNECT.CONNECTED){
           // Treat an message as a "ping"
           clearTimeout(connect.timeoutId)
@@ -479,6 +480,13 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
+  function disconnectDDPClient() {
+    return (dispatch, getState) => {
+      // const {connect} = getState()
+      ddpClient.close();
+    }
+  }
+
   function connectDDPTimeoutId(timeoutId, timeoutMilliseconds){
     return (dispatch, getState) => {
       const {connect} = getState()
@@ -587,6 +595,8 @@ export default function ConnectActions(ddpClient) {
     SEND_EMAIL,
     UPDATE_INSTALLATION,
     REGISTER_INSTALLATION,
+    REGISTER_INSTALLATION_DECLINED,
+    REGISTER_INSTALLATION_ERROR,
     CONNECTION_STATUS,
     RESET_CHANNELS,
     SUBSCRIBE_CHANNEL,
@@ -609,6 +619,7 @@ export default function ConnectActions(ddpClient) {
     'registerInstallationError': registerInstallationError,
     'connectDDP': connectDDP,
     'connectDDPClient': connectDDPClient,
+    'disconnectDDPClient': disconnectDDPClient,
     'connectDDPTimeoutId': connectDDPTimeoutId,
     'subscribeDDP': subscribeDDP,
     'sendEmail': sendEmail,

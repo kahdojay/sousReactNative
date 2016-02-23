@@ -149,7 +149,7 @@ export default function TeamActions(allActions) {
           deleted: false,
           completed: false,
           quantity: 1,
-          unit: 0 // for future use
+          unit: 0, // for future use
         }
         dispatch(connectActions.ddpCall('addTeamTask', [session.userId, session.teamId, newTaskAttributes]))
         return dispatch({
@@ -364,13 +364,18 @@ export default function TeamActions(allActions) {
         dispatch(setCurrentTeam(newTeamId));
       }
 
+      // dispatch(connectActions.disconnectDDPClient())
       dispatch(connectActions.subscribeDDP(session, allTeamIds))
 
       // console.log('setting new teamId: ', newTeamId)
 
       // reset the objects for other resources
-      dispatch(purveyorActions.resetPurveyors(teamId));
-      dispatch(categoryActions.resetCategories(teamId));
+
+      // Don't reset the pureveyors and categories since if the user is added
+      // back to this team, they wont get them back...
+      // dispatch(purveyorActions.resetPurveyors(teamId));
+      // dispatch(categoryActions.resetCategories(teamId));
+
       dispatch(productActions.resetProducts(teamId));
       dispatch(orderActions.resetOrders(teamId));
       dispatch(cartItemActions.resetCartItems(teamId));

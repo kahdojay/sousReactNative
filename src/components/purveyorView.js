@@ -107,7 +107,7 @@ class PurveyorView extends React.Component {
             ((this.state.searchedProducts.length > 0) ?
               <ProductList
                 cartItems={cartItems}
-                showCategoryInfo={false}
+                showCategoryInfo={true}
                 showPurveyorInfo={false}
                 products={this.state.searchedProducts}
                 categories={categories}
