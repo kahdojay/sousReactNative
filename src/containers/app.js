@@ -399,7 +399,7 @@ class App extends React.Component {
     const routeName = route.name;
     this.setState({
       sceneState: sceneState,
-      category: category,
+      category: null, //category,
       product: null,
     }, () => {
       nav.push({
