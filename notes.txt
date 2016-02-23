@@ -1,2 +1,0 @@
-// modal stops triggering on disconnect
-// in main, on disconnect, render the loading view, on reconnect, render the App

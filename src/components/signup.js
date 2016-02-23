@@ -1,4 +1,3 @@
-import { Icon, } from 'react-native-icons';
 import _ from 'lodash';
 import React from 'react-native';
 import Colors from '../utilities/colors';
@@ -9,6 +8,7 @@ const {
   ActivityIndicatorIOS,
   Dimensions,
   Image,
+  // Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -75,14 +75,23 @@ class Signup extends React.Component {
     if(this.refs.phone){
       this.refs.phone.blur();
     }
-    if(this.state.phoneNumber === null || this.state.phoneNumber ===  ''){
-      this.setState({ invalid: true });
-    } else {
+    let phoneNumber = this.state.phoneNumber.replace(/\D/g,'')
+    if(this.state.phoneNumber.substr(0,1) === '+'){
+      phoneNumber = `+${phoneNumber}`
+    }
+    if(
+      this.state.phoneNumber !== null
+      && phoneNumber !==  ''
+      && phoneNumber !== undefined
+      && phoneNumber !== 'undefined'
+    ){
       this.setState({ smsToken: '' })
       this.setFetching('signup')
       this.props.onRegisterSession(Object.assign({}, {
-        phoneNumber: this.state.phoneNumber
+        phoneNumber: phoneNumber
       }));
+    } else {
+      this.setState({ invalid: true });
     }
   }
 
@@ -101,21 +110,21 @@ class Signup extends React.Component {
     }
   }
 
-
-
   render() {
     const {session} = this.props;
     const fetching =  (
       <View style={styles.activityContainer}>
         <ActivityIndicatorIOS
           animating={true}
-          color={'#808080'}
+          color={'#ffffff'}
           style={styles.activity}
           size={'small'}
         />
       </View>
     );
-    const errorMessage = <Text style={styles.errorText}>Invalid entry, please try again.</Text>
+    const errorMessage = (
+      <Text style={styles.errorText}>Invalid entry, please try again.</Text>
+    )
 
     let buttonStyle = styles.buttonActive
     let buttonUnderlayColor = Colors.gold
@@ -124,32 +133,47 @@ class Signup extends React.Component {
       buttonStyle = [styles.buttonActive, {backgroundColor: Colors.disabled}]
       buttonUnderlayColor = Colors.disabled
     }
+    // TODO: use RN Linking library after updating RN
+    let tosLink =
+        // <TouchableHighlight
+        //   onPress={() => {
+        //     Linking.openURL('http://www.sousapp.com')
+        //   }}
+        // >
+          <Text style={styles.tosLink}>View Terms of Service
+          </Text>
+        // </TouchableHighlight>
 
     let signup = (
-      <View style={styles.login}>
-        <Text style={styles.headerText}>Use your phone number to log in to Sous.</Text>
-        <Text style={styles.centered}>First, we will send you a <Text style={styles.boldText}>text message</Text> to verify your account.</Text>
-        <View style={styles.inputContainer}>
-          <View style={styles.inputWrapper}>
-            <Icon name='material|phone' size={30} color={Colors.inputPlaceholderColor} style={styles.iconPhone}/>
-            <TextInput
-              ref='phone'
-              style={styles.input}
-              value={this.state.phoneNumber}
-              keyboardType='phone-pad'
-              onSubmitEditing={() => {this.onSignup()}}
-              onFocus={() => {
-                this.refs.scrollView.scrollTo(140)
-              }}
-              onChange={(e) => {
-                this.setState({phoneNumber: e.nativeEvent.text, invalid: false})
-              }}
-              placeholder={'Phone Number'}
-              placeholderTextColor={Colors.inputPlaceholderColor}
-            />
+      <View style={styles.innerContainer}>
+        <View style={styles.body}>
+          <View style={styles.logoContainer}>
+            <Image source={require('image!Logo')} style={styles.logoImage}></Image>
           </View>
+          <Text style={styles.headerText}>Welcome to Sous!</Text>
+          <Text style={styles.guidanceText}>Use your phone number to sign in.</Text>
+          <View style={styles.inputContainer}>
+            <View style={styles.inputWrapper}>
+              <TextInput
+                style={styles.input}
+                value={this.state.phoneNumber}
+                keyboardType='phone-pad'
+                onSubmitEditing={() => {this.onSignup()}}
+                onChange={(e) => {
+                  let phoneNumber = e.nativeEvent.text
+                  this.setState({
+                    phoneNumber: phoneNumber,
+                    invalid: false,
+                  })
+                }}
+                placeholder={'+ Phone Number'}
+                placeholderTextColor={'white'}
+              />
+            </View>
+          </View>
+          { session.errors || this.state.invalid ? errorMessage : <View/> }
+          {tosLink}
         </View>
-        { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
         <TouchableHighlight
           underlayColor={buttonUnderlayColor}
           onPress={() => {
@@ -160,48 +184,49 @@ class Signup extends React.Component {
             }
           }}
           style={buttonStyle}>
-          <Text style={styles.buttonText}>Send SMS</Text>
+          <Text style={styles.buttonText}>Next</Text>
         </TouchableHighlight>
       </View>
     );
     if(this.state.smsSent === true){
       const formattedPhoneNumber = DataUtils.formatPhoneNumber(session.phoneNumber);
       signup = (
-        <View style={styles.login}>
-          <Text style={styles.headerText}>We just sent a text to</Text>
-          <Text style={[styles.boldText, styles.centered, styles.largeText]}>{formattedPhoneNumber}</Text>
-          <TouchableHighlight
-            underlayColor='transparent'
-            onPress={() => {
-              this.setState({ smsSent: true, smsToken: null }, () => {
-                this.onSignup()
-              })
-            }}
-            style={[styles.smallButton, styles.buttonLinkWrap]}>
-            <Text style={styles.buttonLink}>Send again</Text>
-          </TouchableHighlight>
-          <Text style={styles.centered}>Enter the verification code below to sign in.</Text>
-          <View style={styles.inputContainer}>
-            <View style={styles.inputWrapper}>
-              <TextInput
-                ref='code'
-                style={[styles.input, {width: (runTimeDimensions.width * .5)}]}
-                value={this.state.smsToken}
-                keyboardType='phone-pad'
-                textAlign='center'
-                onSubmitEditing={() => {this.onVerify()}}
-                onFocus={() => {
-                  this.refs.scrollView.scrollTo(140)
-                }}
-                onChange={(e) => {
-                  this.setState({smsToken: e.nativeEvent.text, invalid: false})
-                }}
-                placeholder={'Code'}
-                placeholderTextColor={Colors.inputPlaceholderColor}
-              />
+        <View style={styles.innerContainer}>
+          <View style={styles.body}>
+            <View style={styles.logoContainer}>
+              <Image source={require('image!Logo')} style={styles.logoImage}></Image>
             </View>
+            <Text style={styles.headerText}>Login Code</Text>
+            <Text style={styles.guidanceText}>We sent a text to {formattedPhoneNumber}.</Text>
+            <Text style={styles.guidanceText}>Please enter the login code.</Text>
+            <View style={styles.inputContainer}>
+              <View style={styles.inputWrapper}>
+                <TextInput
+                  style={styles.input}
+                  value={this.state.smsToken}
+                  keyboardType='phone-pad'
+                  onSubmitEditing={() => {this.onVerify()}}
+                  onChange={(e) => {
+                    this.setState({smsToken: e.nativeEvent.text, invalid: false})
+                  }}
+                  placeholder={'+ Enter Login Code'}
+                  placeholderTextColor={'white'}
+                />
+              </View>
+            </View>
+            <TouchableHighlight
+              underlayColor='transparent'
+              onPress={() => {
+                this.setState({ smsSent: true, smsToken: null }, () => {
+                  this.onSignup()
+                })
+              }}
+              style={styles.smallButton}>
+              <Text style={styles.smallButtonText}>Send code again</Text>
+            </TouchableHighlight>
+            { session.errors || this.state.invalid ? errorMessage : <View/> }
+            {tosLink}
           </View>
-          { session.errors || this.state.invalid ? errorMessage : <Text>{' '}</Text> }
           <TouchableHighlight
             underlayColor={buttonUnderlayColor}
             onPress={() => {this.onVerify()}}
@@ -214,198 +239,106 @@ class Signup extends React.Component {
     }
 
     return (
-      <View style={{flex: 1}}>
-        <View style={styles.navbar}>
-          <Text style={styles.signup}>Signup/Login</Text>
-        </View>
-        <TouchableOpacity
-          style={{paddingBottom: 20}}
-          activeOpacity={1}
-          onPress={() => {
-            if(this.refs.phone){
-              this.refs.phone.blur()
-            }
-            if(this.refs.code){
-              this.refs.code.blur()
-            }
-            this.refs.scrollView.scrollTo(0)
-          }}
-        >
-          <ScrollView
-            automaticallyAdjustContentInsets={false}
-            ref="scrollView"
-            style={styles.container}
-            onScroll={() => {
-
-            }}
-          >
-            <View style={styles.logoContainer}>
-              <Image source={require('image!Logo')} style={styles.logoImage}></Image>
-            </View>
-            {this.state.submitting !== false ? fetching : signup}
-          </ScrollView>
-        </TouchableOpacity>
-      </View>
+      <ScrollView
+        contentContainerStyle={styles.outerContainer}
+        keyboardShouldPersistTaps={false}
+        automaticallyAdjustContentInsets={false}
+      >
+        {this.state.submitting !== false ? fetching : signup}
+      </ScrollView>
     );
   }
 };
 
 let styles = StyleSheet.create({
-  container: {
+  outerContainer: {
+    flex: 1,
+    backgroundColor: Colors.lightBlue,
+  },
+  innerContainer: {
+    backgroundColor: Colors.lightBlue,
     flex: 1,
   },
-  navbar: {
-    height: 40,
-    backgroundColor: Colors.button,
-    justifyContent: 'center',
-  },
-  signup: {
-    textAlign: 'center',
-    color: 'white',
-    fontFamily: 'OpenSans',
-    fontWeight: 'bold',
-    fontSize: 15,
+  body: {
+    flex: 6,
+    paddingLeft: 15,
+    paddingRight: 15,
   },
   headerText: {
-    fontSize: 22,
-    alignSelf: 'center',
-    textAlign: 'center',
-    paddingLeft: 8,
-    paddingRight: 8,
+    fontSize: 24,
+    fontFamily: 'OpenSans',
+    color: 'white',
     fontWeight: 'bold',
   },
-  centered: {
-    alignSelf: 'center',
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  boldText: {
-    fontWeight: 'bold'
-  },
-  largeText: {
-    fontSize: 20,
-    marginBottom: 10,
-    marginTop: 5,
-  },
-  summaryText: {
-    alignSelf: 'center'
+  guidanceText: {
+    color: 'white',
+    marginLeft: 8,
   },
   logoContainer: {
-    marginTop: 25,
-    marginBottom: 25,
-    borderRadius: 100/2,
-    backgroundColor: Colors.button,
-    paddingLeft: 10,
-    paddingTop: 15,
-    width: 100,
-    height: 100,
-    alignSelf: 'center'
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
   logoImage: {
     borderRadius: 15,
-    width: 80,
-    height: 70
+    width: 50,
+    height: 50
   },
-  login: {
-    flex: 1,
-    paddingLeft: 5,
-    paddingRight: 5,
-    flexDirection: 'column',
-    justifyContent: 'center',
+  smallButton: {
+    alignSelf: 'flex-end',
+    marginTop: 5,
+  },
+  smallButtonText: {
+    alignSelf: 'center',
+    color: 'white',
+    fontFamily: 'OpenSans',
   },
   inputContainer: {
-    marginTop: 10,
-    flex: 1,
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
   },
   inputWrapper: {
     borderBottomColor: Colors.inputUnderline,
     borderBottomWidth: 1,
-  },
-  errorPlaceholder: {
-    height: 0
-  },
-  iconFace: {
-    width: 70,
-    height: 50,
-  },
-  iconPhone: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: 30,
-    height: 50,
-  },
-  iconLock: {
-    width: 70,
-    height: 70,
+    marginLeft: 20,
   },
   input: {
+    marginTop: 10,
     height: 50,
-    width: runTimeDimensions.width * .70,
-    fontSize: 20,
-    color: Colors.inputTextColor,
+    width: runTimeDimensions.width * .80,
+    fontSize: 15,
+    color: 'white',
     fontFamily: 'OpenSans',
-    alignItems: 'center',
-    alignSelf: 'center',
-    textAlign: 'center',
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    alignItems: 'center'
+  tosLink: {
+    color: 'white',
+    textAlign: 'center',
+    marginTop: 80,
   },
   buttonActive: {
-    height: 56,
+    flex: 1,
     backgroundColor: Colors.gold,
-    alignSelf: 'center',
-    width: 150,
-    marginBottom: 50,
     justifyContent: 'center',
-    borderRadius: 3,
-  },
-  smallButton: {
-    height: 20,
-    alignSelf: 'center',
-    width: 150,
-    justifyContent: 'center',
-    borderRadius: 3,
-  },
-  buttonLinkWrap: {
-    backgroundColor: 'white',
-    width: 120
   },
   buttonWithErrors: {
     height: 56,
     backgroundColor: Colors.gold,
     alignSelf: 'center',
     width: 150,
-    marginTop: 10,
     justifyContent: 'center',
     borderRadius: 3,
   },
   buttonText: {
     alignSelf: 'center',
-    fontSize: 22,
+    fontSize: 20,
     color: 'white',
     fontWeight: 'bold',
     fontFamily: 'OpenSans'
   },
-  buttonLink: {
-    alignSelf: 'center',
-    fontSize: 16,
-    color: Colors.lightBlue,
-    fontWeight: 'bold',
-    fontFamily: 'OpenSans',
-  },
   errorText: {
-    color: '#d00',
-    textAlign: 'center',
-    marginTop: 10,
+    color: '#900',
     fontSize: 16,
-    fontFamily: 'OpenSans'
+    fontFamily: 'OpenSans',
+    backgroundColor: 'transparent',
+    textAlign: 'center',
   },
   activity: {
     justifyContent: 'center',
@@ -413,11 +346,8 @@ let styles = StyleSheet.create({
     alignSelf: 'center'
   },
   activityContainer: {
-    paddingTop: 50,
     flex: 1,
-    flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center'
   },
 })
 

@@ -62,7 +62,8 @@ class App extends React.Component {
       firstName: this.props.session.firstName,
       genericModalCallback: () => {},
       genericModalMessage: '',
-      installationRegistered: this.props.connect.installationRegistered,
+      installationRegistered: false,
+      installationRegisterInProgress: false,
       isAuthenticated: this.props.session.isAuthenticated,
       lastName: this.props.session.lastName,
       open: false,
@@ -74,6 +75,7 @@ class App extends React.Component {
       showGenericModal: false,
       sceneState: {
         ProductForm: {
+          cartItem: null,
           submitReady: false,
           productId: null,
           productAttributes: {},
@@ -210,7 +212,7 @@ class App extends React.Component {
     }
     let componentWillReceivePropsStateUpdate = {
       connectionStats: connectionStats,
-      installationRegistered: nextProps.connect.installationRegistered,
+      // installationRegistered: nextProps.connect.installationRegistered,
       isAuthenticated: nextProps.session.isAuthenticated,
       firstName: nextProps.session.firstName,
       lastName: nextProps.session.lastName,
@@ -251,7 +253,6 @@ class App extends React.Component {
       // console.log(this.props.cartItems)
       if(reconnectCountDown === true){
         this.countDownReconnect()
-        // console.log('here')
       }
       if(processRedirect === true){
         this.redirectBasedOnData()
@@ -288,30 +289,41 @@ class App extends React.Component {
     // console.log(this.state.currentTeamInfo.team)
     if(this.state.isAuthenticated === true && this.state.currentTeamInfo.team !== null){
       const {dispatch, connect, session} = this.props
-      if (this.state.installationRegistered !== true && connect.status === actions.CONNECT.CONNECTED) {
-        PushManager.requestPermissions((err, data) => {
-          if (err) {
-            dispatch(actions.registerInstallationError())
-          } else {
-            // if(userDoesNotAllow === true){
-            //   dispatch(actions.registerInstallationDeclined())
-            // }
-            // if(data.hasOwnProperty('token') && data.token.indexOf('Error') === -1){
-            if(data.hasOwnProperty('token')){
-              dispatch(actions.registerInstallation({
-                token: data.token,
-                model: DeviceInfo.getModel(),
-                appVersion: DeviceInfo.getVersion(),
-                appBuildNumber: DeviceInfo.getBuildNumber(),
-                deviceName: DeviceInfo.getDeviceName(),
-                systemName: DeviceInfo.getSystemName(),
-                systemVersion: DeviceInfo.getSystemVersion(),
-              }))
-            } else {
+      if (
+        this.state.installationRegistered === false
+        && this.state.installationRegisterInProgress === false
+        && connect.status === actions.CONNECT.CONNECTED
+      ) {
+        this.setState({
+          installationRegistered: true,
+          installationRegisterInProgress: true,
+        }, () => {
+          PushManager.requestPermissions((err, data) => {
+            if (err) {
               dispatch(actions.registerInstallationError())
+            } else {
+              // if(userDoesNotAllow === true){
+              //   dispatch(actions.registerInstallationDeclined())
+              // }
+              if(data.hasOwnProperty('token')){
+                dispatch(actions.registerInstallation({
+                  token: data.token,
+                  model: DeviceInfo.getModel(),
+                  appVersion: DeviceInfo.getVersion(),
+                  appBuildNumber: DeviceInfo.getBuildNumber(),
+                  deviceName: DeviceInfo.getDeviceName(),
+                  systemName: DeviceInfo.getSystemName(),
+                  systemVersion: DeviceInfo.getSystemVersion(),
+                }))
+              } else {
+                dispatch(actions.registerInstallationError())
+              }
             }
-          }
-        });
+            this.setState({
+              installationRegisterInProgress: false,
+            })
+          });
+        })
       }
     }
     this.redirectBasedOnData()
@@ -378,19 +390,21 @@ class App extends React.Component {
     return isAuthenticated;
   }
 
-  onCreateProduct(route, nav) {
+  onCreateProduct(route, nav, category) {
     const sceneState = Object.assign({}, this.state.sceneState);
     sceneState.ProductForm.submitReady = false;
-    sceneState.ProductForm.productId = null
-    sceneState.ProductForm.productAttributes = {}
+    sceneState.ProductForm.cartItem = null;
+    sceneState.ProductForm.productId = null;
+    sceneState.ProductForm.productAttributes = {};
+    const routeName = route.name;
     this.setState({
       sceneState: sceneState,
-      category: null,
+      category: null, //category,
       product: null,
     }, () => {
       nav.push({
         name: 'ProductForm',
-        newRoute: route.name,
+        newRoute: routeName,
       })
     })
   }
@@ -417,9 +431,23 @@ class App extends React.Component {
       submitReady = true
     }
 
+    const cartPurveyorIds = Object.keys(this.state.currentTeamInfo.cartItems.cart)
+    let productFormCartItem = null
+    if(cartPurveyorIds.length > 0){
+      cartPurveyorIds.forEach((purveyorId) => {
+        if(
+          product.purveyors.indexOf(purveyorId) !== -1
+          && this.state.currentTeamInfo.cart[purveyorId].hasOwnProperty(product.id) === true
+        ) {
+          productFormCartItem = this.state.currentTeamInfo.cart[purveyorId][product.id];
+        }
+      })
+    }
+
     const sceneState = Object.assign({}, this.state.sceneState);
     sceneState.ProductForm.submitReady = submitReady;
-    sceneState.ProductForm.productId = product.id
+    sceneState.ProductForm.cartItem = productFormCartItem;
+    sceneState.ProductForm.productId = product.id;
     sceneState.ProductForm.productAttributes = {
       name: product ? product.name : '',
       purveyors: product.purveyors,
@@ -908,14 +936,24 @@ class App extends React.Component {
             onAddPurveyor: (name) => {
               dispatch(actions.addPurveyor(name))
             },
-            onCreateProduct: this.onCreateProduct.bind(this, route, nav),
+            onCreateProduct: this.onCreateProduct.bind(this, route, nav, null),
           },
         }
       case 'PurveyorView':
-        const specificProductsPurveyor = _.sortBy(_.filter(this.state.currentTeamInfo.products, (product) => {
-          product.nameToLower = product.name.toLowerCase()
-          return _.includes(product.purveyors, this.state.purveyor.id)
-        }), 'nameToLower')
+
+        let specificProductsPurveyor = null
+        if(products.purveyors.hasOwnProperty(this.state.purveyor.id) === true){
+          specificProductsPurveyor = _.sortBy(_.map(Object.keys(products.purveyors[this.state.purveyor.id]), (productId) => {
+            const product = this.state.currentTeamInfo.products[productId]
+            product.nameToLower = product.name.toLowerCase()
+            return product
+          }), 'nameToLower')
+        } else {
+          specificProductsPurveyor = _.sortBy(_.filter(this.state.currentTeamInfo.products, (product) => {
+            product.nameToLower = product.name.toLowerCase()
+            return _.includes(product.purveyors, this.state.purveyor.id)
+          }), 'nameToLower')
+        }
 
         // console.log(specificProductsPurveyor)
 
@@ -1023,7 +1061,7 @@ class App extends React.Component {
                 })
               })
             },
-            onCreateProduct: this.onCreateProduct.bind(this, route, nav),
+            onCreateProduct: this.onCreateProduct.bind(this, route, nav, null),
           },
         }
       case 'CategoryView':
@@ -1268,8 +1306,21 @@ class App extends React.Component {
             categories: this.state.currentTeamInfo.categories,
             purveyors: this.state.currentTeamInfo.purveyors,
             onProcessProduct: (productAttributes) => {
+              const cartPurveyorIds = Object.keys(this.state.currentTeamInfo.cartItems.cart)
+              let productFormCartItem = null
+              if(cartPurveyorIds.length > 0){
+                cartPurveyorIds.forEach((purveyorId) => {
+                  if(
+                    this.state.product.purveyors.indexOf(purveyorId) !== -1
+                    && this.state.currentTeamInfo.cart[purveyorId].hasOwnProperty(this.state.product.id) === true
+                  ) {
+                    productFormCartItem = this.state.currentTeamInfo.cart[purveyorId][this.state.product.id];
+                  }
+                })
+              }
               const sceneState = Object.assign({}, this.state.sceneState);
               const existingProductAttributes = Object.assign({}, sceneState.ProductForm.productAttributes);
+              sceneState.ProductForm.cartItem = productFormCartItem;
               sceneState.ProductForm.submitReady = true;
               sceneState.ProductForm.productAttributes = Object.assign({}, existingProductAttributes, productAttributes);
               this.setState({
@@ -1551,7 +1602,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -1594,7 +1645,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -1620,7 +1671,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -1639,7 +1690,7 @@ class App extends React.Component {
             // title: this.state.category.name,
             customTitle: (
               <TextComponents.NavBarTitle
-                content={this.state.category.name}
+                content={this.state.category.name || ''}
               />
             ),
             customNext: (
@@ -1647,7 +1698,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav, this.state.category)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -1856,6 +1907,12 @@ class App extends React.Component {
                       dispatch(actions.getTeamResourceInfo(this.state.currentTeamInfo.team.id))
                     } else {
                       dispatch(actions.updateProduct(productId, productAttributes))
+                    }
+                    if(this.state.sceneState.ProductForm.cartItem){
+                      const cartItemPurveyorId = this.state.sceneState.ProductForm.cartItem.purveyorId
+                      if(productAttributes.purveyors.indexOf(cartItemPurveyorId) === -1){
+                        dispatch(actions.deleteCartItem(this.state.sceneState.ProductForm.cartItem))
+                      }
                     }
                     nav.replacePreviousAndPop({
                       name: route.newRoute,
@@ -2085,7 +2142,7 @@ const styles = StyleSheet.create({
   container: {
     height: window.height,
     width: window.width,
-    marginTop: 20,
+    paddingTop: 20,
     flex: 1,
     backgroundColor: 'white',
   },

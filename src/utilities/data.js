@@ -8,15 +8,18 @@ function validateEmailAddress(email){
 }
 
 function formatPhoneNumber(contactNumber) {
-  let pat = /(\(|\)|\s|\-)/g
-  let newNumber = contactNumber.replace(pat, '').toString()
-  if (newNumber.length > 10){
-    const originalPhoneNumber = newNumber
-    newNumber = newNumber.slice(-10)
-    const prefix = `${originalPhoneNumber.replace(newNumber, '')}`
-    newNumber = `${prefix} ${splitPhoneNumber(newNumber)}`
-  } else {
-    newNumber = splitPhoneNumber(newNumber)
+  let newNumber = contactNumber
+  if(newNumber){
+    let pat = /(\(|\)|\s|\-)/g
+    newNumber = contactNumber.replace(pat, '').toString()
+    if (newNumber.length > 10){
+      const originalPhoneNumber = newNumber
+      newNumber = newNumber.slice(-10)
+      const prefix = `${originalPhoneNumber.replace(newNumber, '')}`
+      newNumber = `${prefix} ${splitPhoneNumber(newNumber)}`
+    } else {
+      newNumber = splitPhoneNumber(newNumber)
+    }
   }
   return newNumber
 }
