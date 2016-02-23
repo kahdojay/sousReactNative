@@ -1,6 +1,8 @@
 import {
   UPDATE_INSTALLATION,
   REGISTER_INSTALLATION,
+  REGISTER_INSTALLATION_DECLINED,
+  REGISTER_INSTALLATION_ERROR,
   CONNECTION_STATUS,
   RESET_CHANNELS,
   SUBSCRIBE_CHANNEL,
@@ -115,6 +117,8 @@ function connect(state = initialState.connect, action) {
     });
 
   case REGISTER_INSTALLATION:
+  case REGISTER_INSTALLATION_DECLINED:
+  case REGISTER_INSTALLATION_ERROR:
     return Object.assign({}, state, {
       installationRegistered: action.installationRegistered,
       settings: Object.assign({}, state.settings, action.deviceAttributes)

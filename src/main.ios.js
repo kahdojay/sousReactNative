@@ -9,6 +9,7 @@ import * as actions from './actions';
 import reducers from './reducers';
 import Colors from './utilities/colors';
 import Loading from './components/loading';
+import Analytics from './utilities/analytics';
 
 const {
   AppRegistry,
@@ -20,7 +21,7 @@ const {
 } = React
 
 let store = compose(
-  applyMiddleware(thunkMiddleware),
+  applyMiddleware(thunkMiddleware, Analytics),
   autoRehydrate()
 )(createStore)(reducers);
 
