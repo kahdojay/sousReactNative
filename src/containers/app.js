@@ -391,20 +391,21 @@ class App extends React.Component {
     return isAuthenticated;
   }
 
-  onCreateProduct(route, nav) {
+  onCreateProduct(route, nav, category) {
     const sceneState = Object.assign({}, this.state.sceneState);
     sceneState.ProductForm.submitReady = false;
     sceneState.ProductForm.cartItem = null;
     sceneState.ProductForm.productId = null;
     sceneState.ProductForm.productAttributes = {};
+    const routeName = route.name;
     this.setState({
       sceneState: sceneState,
-      category: null,
+      category: category,
       product: null,
     }, () => {
       nav.push({
         name: 'ProductForm',
-        newRoute: route.name,
+        newRoute: routeName,
       })
     })
   }
@@ -936,7 +937,7 @@ class App extends React.Component {
             onAddPurveyor: (name) => {
               dispatch(actions.addPurveyor(name))
             },
-            onCreateProduct: this.onCreateProduct.bind(this, route, nav),
+            onCreateProduct: this.onCreateProduct.bind(this, route, nav, null),
           },
         }
       case 'PurveyorView':
@@ -1061,7 +1062,7 @@ class App extends React.Component {
                 })
               })
             },
-            onCreateProduct: this.onCreateProduct.bind(this, route, nav),
+            onCreateProduct: this.onCreateProduct.bind(this, route, nav, null),
           },
         }
       case 'CategoryView':
@@ -1602,7 +1603,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -1645,7 +1646,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -1671,13 +1672,14 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
           })
           break;
         case 'CategoryView':
+          console.log('here')
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
@@ -1690,7 +1692,7 @@ class App extends React.Component {
             // title: this.state.category.name,
             customTitle: (
               <TextComponents.NavBarTitle
-                content={this.state.category.name}
+                content={this.state.category.name || ''}
               />
             ),
             customNext: (
@@ -1698,7 +1700,7 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav)}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav, this.state.category)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -1880,6 +1882,7 @@ class App extends React.Component {
           })
           break;
         case 'ProductForm':
+          console.log('here in getNav')
           navBar = React.cloneElement(this.navBar, {
             ref: 'navBar',
             navigator: nav,
