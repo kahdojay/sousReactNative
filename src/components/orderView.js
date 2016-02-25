@@ -232,7 +232,11 @@ class OrderView extends React.Component {
     let buttonDisabledStyle = []
     let buttonTextDisabledStyle = []
     let confirmUser = null
+    let senderName = null
 
+    if(order.hasOwnProperty('sender')){
+      senderName = order.sender
+    }
     if(order.confirm.order === true){
       buttonDisabledStyle = styles.buttonDisabled
       buttonTextDisabledStyle = styles.buttonTextDisabled
@@ -275,6 +279,7 @@ class OrderView extends React.Component {
                     </Icon>
                   </View>
                   <View style={{flex: 9 }}>
+                    {senderName ? <Text style={[styles.confirmedText]}>Order sent by: {senderName}</Text> : <View/>}
                     <Text style={[styles.confirmedText]}>Delivery confirmed by: {confirmUserName}</Text>
                     <Text style={[styles.confirmedText]}>{order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('M/D/YY h:mm a') : ''}</Text>
                   </View>
