@@ -38,11 +38,6 @@ module.exports = class Menu extends React.Component {
     const completeTasksCount = _.filter(team.tasks, { deleted: false, completed: true }).length
     const progress = Math.round((completeTasksCount / totalTasks)*100) || 0;
 
-    let nonNotepadTeam = true;
-    if(!team || (team && team.name === 'Notepad')){
-      nonNotepadTeam = false;
-    }
-
     return (
       <View style={styles.menu}>
         <View style={styles.avatarContainer}>
@@ -66,6 +61,28 @@ module.exports = class Menu extends React.Component {
         <View style={styles.menuBody}>
           <ScrollView>
             <TouchableHighlight
+              key='order-guide'
+              onPress={this.props.onNavToPurveyor}
+              style={styles.menuItemButton}
+              underlayColor='#3e444f'
+            >
+              <View style={styles.menuTextContainer}>
+                <Icon name='material|assignment' size={20} color='white' style={styles.menuIcon}/>
+                <Text style={styles.menuItemText}>Order Guide</Text>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight
+              key='receiving-guide'
+              onPress={this.props.onNavToOrders}
+              style={styles.menuItemButton}
+              underlayColor='#3e444f'
+            >
+              <View style={styles.menuTextContainer}>
+                <Icon name='material|assignment-check' size={20} color='white' style={styles.menuIcon}/>
+                <Text style={styles.menuItemText}>Receiving Guide</Text>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight
               style={styles.menuItemButton}
               underlayColor='#3e444f'
               onPress={this.props.onNavToTeam}
@@ -75,7 +92,7 @@ module.exports = class Menu extends React.Component {
                   <Icon name='material|format-list-numbered' size={20} color='white' style={styles.menuIcon}/>
                   <Text style={styles.menuItemText}>Prep List</Text>
                 </View>
-                <View style={styles.progressContainer}>
+                {/*<View style={styles.progressContainer}>
                   <View style={styles.progressRow}>
                     <ProgressViewIOS
                       progressTintColor={Colors.lightBlue}
@@ -85,46 +102,20 @@ module.exports = class Menu extends React.Component {
                     />
                     <Text style={styles.progressText}> {progress}%</Text>
                   </View>
-                </View>
+                </View>*/}
               </View>
             </TouchableHighlight>
-            { nonNotepadTeam === false ? <View/> : (
-              [
-                <TouchableHighlight
-                  key='order-guide'
-                  onPress={this.props.onNavToPurveyor}
-                  style={styles.menuItemButton}
-                  underlayColor='#3e444f'
-                >
-                  <View style={styles.menuTextContainer}>
-                    <Icon name='material|assignment' size={20} color='white' style={styles.menuIcon}/>
-                    <Text style={styles.menuItemText}>Order Guide</Text>
-                  </View>
-                </TouchableHighlight>,
-                <TouchableHighlight
-                  key='receiving-guide'
-                  onPress={this.props.onNavToOrders}
-                  style={styles.menuItemButton}
-                  underlayColor='#3e444f'
-                >
-                  <View style={styles.menuTextContainer}>
-                    <Icon name='material|assignment-check' size={20} color='white' style={styles.menuIcon}/>
-                    <Text style={styles.menuItemText}>Receiving Guide</Text>
-                  </View>
-                </TouchableHighlight>,
-                <TouchableHighlight
-                  key='team-members'
-                  onPress={this.props.onNavToTeamMemberListing}
-                  style={styles.menuItemButton}
-                  underlayColor='#3e444f'
-                >
-                  <View style={styles.menuTextContainer}>
-                    <Icon name='material|accounts' size={20} color='white' style={styles.menuIcon}/>
-                    <Text style={styles.menuItemText}>Team Members</Text>
-                  </View>
-                </TouchableHighlight>
-              ]
-            )}
+            <TouchableHighlight
+              key='team-members'
+              onPress={this.props.onNavToTeamMemberListing}
+              style={styles.menuItemButton}
+              underlayColor='#3e444f'
+            >
+              <View style={styles.menuTextContainer}>
+                <Icon name='material|accounts' size={20} color='white' style={styles.menuIcon}/>
+                <Text style={styles.menuItemText}>Team Members</Text>
+              </View>
+            </TouchableHighlight>
             <TouchableHighlight
               onPress={this.props.onNavToTeamIndex}
               style={styles.menuItemButton}
