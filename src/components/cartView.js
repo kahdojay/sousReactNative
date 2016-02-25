@@ -31,14 +31,14 @@ class CartView extends React.Component {
       cartItems: null,
     }
     this.ds = new ListView.DataSource({
-      getSectionData: (cartItems, purveyorId) => {
-        console.log('getSectionData: ', cartItems)
-        return cartItems[purveyorId]
-      },
-      getRowData: (cartItems, purveyorId, productId) => {
-        console.log('getRowData: ', cartItems)
-        return cartItems[purveyorId][productId]
-      },
+      // getSectionHeaderData: (cartItems, purveyorId) => {
+      //   console.log('getSectionData: ', cartItems)
+      //   return cartItems[purveyorId]
+      // },
+      // getRowData: (cartItems, purveyorId, productId) => {
+      //   console.log('getRowData: ', cartItems)
+      //   return cartItems[purveyorId][productId]
+      // },
       rowHasChanged: (r1, r2) => {
         return r1 !== r2
       },
@@ -82,8 +82,8 @@ class CartView extends React.Component {
     this.setState({
       numberOfOrders: numberOfOrders.length,
       numberOfProducts: numberOfProducts,
-      // cartItems: this.ds.cloneWithRowsAndSections(this.props.renderCartItems, this.props.sectionIds, this.props.rowIds),
-      cartItems: this.ds.cloneWithRowsAndSections(this.props.cartItems),
+      cartItems: this.ds.cloneWithRowsAndSections(this.props.renderCartItems, this.props.sectionIds, this.props.rowIds),
+      // cartItems: this.ds.cloneWithRowsAndSections(this.props.cartItems, Object.keys(this.props.cartItems)),
     })
   }
 
@@ -93,7 +93,7 @@ class CartView extends React.Component {
       numberOfOrders: numberOfOrders.length,
       numberOfProducts: numberOfProducts,
       // cartItems: this.ds.cloneWithRowsAndSections(nextProps.renderCartItems, nextProps.sectionIds, nextProps.rowIds),
-      cartItems: this.ds.cloneWithRowsAndSections(nextProps.cartItems),
+      // cartItems: this.ds.cloneWithRowsAndSections(nextProps.cartItems, Object.keys(nextProps.cartItems)),
     })
   }
 
@@ -234,7 +234,7 @@ class CartView extends React.Component {
   }
 
   renderHeader(cartItem, sectionId) {
-    const {cartItems, cartPurveyors, products, connected} = this.props
+    // const {cartItems, cartPurveyors, products, connected} = this.props
     // const purveyor = cartPurveyors[cartItem.purveyorId]
     console.log(arguments)
 

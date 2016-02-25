@@ -1424,28 +1424,29 @@ class App extends React.Component {
         })
 
 
-        // let renderCartItems = {}
-        // let sectionIds = []
-        // let rowIds = []
-        // cartPurveyors.forEach((purveyor) => {
-        //   renderCartItems[purveyor.id] = purveyor
-        //   sectionIds.push(purveyor.id)
-        //   const cartItemIds = _.filter(Object.keys(this.state.currentTeamInfo.cart[purveyor.id]), (cartItemId) => {
-        //     return this.state.currentTeamInfo.cart[purveyor.id][cartItemId].status === 'NEW'
-        //   })
-        //   const purveyorCartItems = _.sortBy(_.map(cartItemIds, (cartItemId) => {
-        //     const product = this.state.currentTeamInfo.products[this.state.currentTeamInfo.cart[purveyor.id][cartItemId].productId]
-        //     return {
-        //       cartItem: this.state.currentTeamInfo.cart[purveyor.id][cartItemId],
-        //       product: product
-        //     }
-        //   }), 'product.name')
-        //   purveyorCartItems.forEach((cartItemPkg) => {
-        //     rowIds.push(cartItemPkg.cartItem.id)
-        //     renderCartItems[cartItemPkg.cartItem.id] = cartItemPkg
-        //   })
-        // })
-
+        let renderCartItems = {}
+        let sectionIds = []
+        let rowIds = []
+        cartPurveyors.forEach((purveyor) => {
+          renderCartItems[`s-${purveyor.id}`] = purveyor
+          sectionIds.push(`s-${purveyor.id}`)
+          const cartItemIds = _.filter(Object.keys(this.state.currentTeamInfo.cart[purveyor.id]), (cartItemId) => {
+            return this.state.currentTeamInfo.cart[purveyor.id][cartItemId].status === 'NEW'
+          })
+          const purveyorCartItems = _.sortBy(_.map(cartItemIds, (productId) => {
+            const product = this.state.currentTeamInfo.products[this.state.currentTeamInfo.cart[purveyor.id][productId].productId]
+            const cartItem = this.state.currentTeamInfo.cart[purveyor.id][productId]
+            return {
+              id: cartItem.id,
+              cartItem: cartItem,
+              product: product,
+            }
+          }), 'product.name')
+          purveyorCartItems.forEach((cartItemPkg) => {
+            renderCartItems[`r-${cartItemPkg.id}`] = cartItemPkg
+            rowIds.push(`r-${cartItemPkg.id}`)
+          })
+        })
 
         return {
           component: Components.CartView,
@@ -1454,9 +1455,9 @@ class App extends React.Component {
             cartItems: this.state.currentTeamInfo.cart,
             cartPurveyors: cartPurveyors,
             products: this.state.currentTeamInfo.products,
-            // renderCartItems: renderCartItems,
-            // sectionIds: sectionIds,
-            // rowIds: rowIds,
+            renderCartItems: renderCartItems,
+            sectionIds: sectionIds,
+            rowIds: rowIds,
             onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
                 switch(cartAction){
