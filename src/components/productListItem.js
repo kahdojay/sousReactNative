@@ -51,6 +51,11 @@ class ProductListItem extends React.Component {
       return true;
     }
 
+    if(this.state.editQuantity !== nextState.editQuantity){
+      if(debugUpdates) console.log('Edit Quantity Modal: ', this.state.editQuantity, nextState.editQuantity)
+      return true;
+    }
+
     // console.log(this.state.added, nextState.added, nextProps.cartItem)
     if(this.state.added !== nextState.added){
       if(debugUpdates) console.log('Cart Item Added/Removed Local: ', this.state.added, nextState.added)
@@ -63,10 +68,10 @@ class ProductListItem extends React.Component {
       return true;
     }
 
-    if(this.state.updateComponent === true){
-      if(debugUpdates) console.log('State[updateComponent]: ', this.state.updateComponent)
-      return true;
-    }
+    // if(nextState.updateComponent === true){
+    //   if(debugUpdates) console.log('State[updateComponent]: ', nextState.updateComponent)
+    //   return true;
+    // }
 
     return false;
   }
@@ -94,6 +99,12 @@ class ProductListItem extends React.Component {
       })
     // }, this.props.loadDelay)
   }
+
+  // componentDidUpdate() {
+  //   this.setState({
+  //     updateComponent: false,
+  //   })
+  // }
 
   componentWillUnmount() {
     clearTimeout(this.loadTimeoutId)
@@ -299,7 +310,7 @@ class ProductListItem extends React.Component {
         ),
         onPress: () => {
           this.setState({
-            showConfirmationModal: true,
+            showConfirmationModal: !this.state.showConfirmationModal,
           })
         }
       }]
@@ -343,7 +354,7 @@ class ProductListItem extends React.Component {
               const selectedValue = value.selectedValue
               this.setState({
                 quantity: selectedValue,
-                editQuantity: false,
+                // editQuantity: false,
               }, this.cartUpdateFromLocalState.bind(this))
             }
           }}
@@ -357,17 +368,17 @@ class ProductListItem extends React.Component {
         confirmationMessage={'Are you sure you want to delete this product?'}
         onHideModal={() => {
           this.setState({
-            showConfirmationModal: false,
+            showConfirmationModal: !this.state.showConfirmationModal,
           })
         }}
         onConfirmNo={() => {
           this.setState({
-            showConfirmationModal: false,
+            showConfirmationModal: !this.state.showConfirmationModal,
           })
         }}
         onConfirmYes={() => {
           this.setState({
-            showConfirmationModal: false,
+            showConfirmationModal: !this.state.showConfirmationModal,
           }, () => {
             if(this.state.added === true){
               this.setState({
