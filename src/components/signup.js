@@ -8,7 +8,7 @@ const {
   ActivityIndicatorIOS,
   Dimensions,
   Image,
-  // Linking,
+  LinkingIOS,
   ScrollView,
   StyleSheet,
   Text,
@@ -133,16 +133,16 @@ class Signup extends React.Component {
       buttonStyle = [styles.buttonActive, {backgroundColor: Colors.disabled}]
       buttonUnderlayColor = Colors.disabled
     }
-    // TODO: use RN Linking library after updating RN
     let tosLink =
-        // <TouchableHighlight
-        //   onPress={() => {
-        //     Linking.openURL('http://www.sousapp.com')
-        //   }}
-        // >
+        <TouchableHighlight
+          underlayColor='transparent'
+          onPress={() => {
+            LinkingIOS.openURL('http://eula.sousapp.com/')
+          }}
+        >
           <Text style={styles.tosLink}>View Terms of Service
           </Text>
-        // </TouchableHighlight>
+        </TouchableHighlight>
 
     let signup = (
       <View style={styles.innerContainer}>
