@@ -56,6 +56,16 @@ class ProductListItem extends React.Component {
       return true;
     }
 
+    // if(this.state.product.categoryId !== nextProps.product.categoryId) {
+    //   if(debugUpdates) console.log('Edit Category: ', this.state.product.categoryId, nextProps.product.categoryId)
+    //   return true;
+    // }
+    //
+    // if(this.state.product.purveyors !== nextProps.product.purveyors) {
+    //   if(debugUpdates) console.log('Edit Purveyors: ', this.state.product.purveyors, nextProps.product.purveyors)
+    //   return true;
+    // }
+
     // console.log(this.state.added, nextState.added, nextProps.cartItem)
     if(this.state.added !== nextState.added){
       if(debugUpdates) console.log('Cart Item Added/Removed Local: ', this.state.added, nextState.added)
