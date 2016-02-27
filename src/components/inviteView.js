@@ -183,7 +183,7 @@ class InviteView extends React.Component {
         <TextInput
           style={styles.searchInput}
           value={this.state.query}
-          placeholder='Search Name'
+          placeholder='Enter Name or Number'
           onChangeText={(text) => {
             if(this.state.timeout !== null){
               clearTimeout(this.state.timeout)
