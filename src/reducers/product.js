@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {
   RESET_PRODUCTS,
   GET_PRODUCTS,
@@ -21,10 +22,10 @@ const initialState = {
 
 function getTeamProduct(productTeamState, teamId, productId) {
   let originalTeamProduct = null
-  if(productTeamState.hasOwnProperty(teamId) !== false){
+  if(productTeamState.hasOwnProperty(teamId) === true){
     originalTeamProduct = {}
-    if(productTeamState[teamId].hasOwnProperty(productId)){
-      originalTeamProduct = productTeamState[teamId][productId]
+    if(productTeamState[teamId].hasOwnProperty(productId) === true){
+      originalTeamProduct = Object.assign({}, productTeamState[teamId][productId])
     }
   }
   return originalTeamProduct
@@ -61,19 +62,38 @@ function products(state = initialState.products, action) {
     if(newProductTeamState.hasOwnProperty(action.product.teamId) === false){
       newProductTeamState[action.product.teamId] = {};
     }
+
     const originalTeamProduct = getTeamProduct(newProductTeamState, action.product.teamId, action.product.id)
+
+    let originalNewTeamProductPurveyors = []
+    if(originalTeamProduct.hasOwnProperty('purveyors') === true){
+      originalNewTeamProductPurveyors = Object.assign([], originalTeamProduct.purveyors)
+    }
+
     newProductTeamState[action.product.teamId][action.product.id] = Object.assign({}, originalTeamProduct, action.product)
 
     const reducedProduct = newProductTeamState[action.product.teamId][action.product.id]
     let newProductPurveyorsState = Object.assign({}, state.purveyors);
-    reducedProduct.purveyors.forEach((purveyorId) => {
-      if(newProductPurveyorsState.hasOwnProperty(purveyorId) === false){
-        newProductPurveyorsState[purveyorId] = {}
+    if(reducedProduct.hasOwnProperty('purveyors') === true){
+      reducedProduct.purveyors.forEach((purveyorId) => {
+        if(newProductPurveyorsState.hasOwnProperty(purveyorId) === false){
+          newProductPurveyorsState[purveyorId] = {}
+        }
+        if(newProductPurveyorsState[purveyorId].hasOwnProperty(reducedProduct.id) === false){
+          newProductPurveyorsState[purveyorId][reducedProduct.id] = true
+        }
+      });
+      const newPurveyorChanges = _.difference(originalNewTeamProductPurveyors, newProductTeamState[action.product.teamId][action.product.id].purveyors);
+      if(newPurveyorChanges.length > 0){
+        newPurveyorChanges.forEach((purveyorId) => {
+          if(newProductPurveyorsState.hasOwnProperty(purveyorId) === true){
+            if(newProductPurveyorsState[purveyorId].hasOwnProperty(reducedProduct.id) === true){
+              delete newProductPurveyorsState[purveyorId][reducedProduct.id]
+            }
+          }
+        });
       }
-      if(newProductPurveyorsState[purveyorId].hasOwnProperty(reducedProduct.id) === false){
-        newProductPurveyorsState[purveyorId][reducedProduct.id] = true
-      }
-    })
+    }
 
     return Object.assign({}, state, {
       errors: null,
@@ -114,12 +134,43 @@ function products(state = initialState.products, action) {
   case UPDATE_PRODUCT:
     var updateProductTeamState = Object.assign({}, state.teams);
     const updateOriginalTeamProduct = getTeamProduct(updateProductTeamState, action.teamId, action.productId)
+
+    let originalUpdateTeamProductPurveyors = []
+    if(updateOriginalTeamProduct.hasOwnProperty('purveyors') === true){
+      originalUpdateTeamProductPurveyors = Object.assign([], updateOriginalTeamProduct.purveyors)
+    }
+
     updateProductTeamState[action.teamId][action.productId] = Object.assign(updateOriginalTeamProduct, action.product, {
       updatedAt: (new Date()).toISOString()
     })
+
+    const updateReducedProduct = updateProductTeamState[action.teamId][action.productId]
+    let updateProductPurveyorsState = Object.assign({}, state.purveyors);
+    if(updateReducedProduct.hasOwnProperty('purveyors') === true){
+      updateReducedProduct.purveyors.forEach((purveyorId) => {
+        if(updateProductPurveyorsState.hasOwnProperty(purveyorId) === false){
+          updateProductPurveyorsState[purveyorId] = {}
+        }
+        if(updateProductPurveyorsState[purveyorId].hasOwnProperty(updateReducedProduct.id) === false){
+          updateProductPurveyorsState[purveyorId][updateReducedProduct.id] = true
+        }
+      });
+      const updatePurveyorChanges = _.difference(originalUpdateTeamProductPurveyors, updateProductTeamState[action.teamId][action.productId].purveyors);
+      if(updatePurveyorChanges.length > 0){
+        updatePurveyorChanges.forEach((purveyorId) => {
+          if(updateProductPurveyorsState.hasOwnProperty(purveyorId) === true){
+            if(updateProductPurveyorsState[purveyorId].hasOwnProperty(updateReducedProduct.id) === true){
+              delete updateProductPurveyorsState[purveyorId][updateReducedProduct.id]
+            }
+          }
+        });
+      }
+    }
+
     return Object.assign({}, state, {
       errors: null,
       teams: updateProductTeamState,
+      purveyors: updateProductPurveyorsState,
       lastUpdated: (new Date()).toISOString()
     });
 

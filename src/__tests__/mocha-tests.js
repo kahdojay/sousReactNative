@@ -6,9 +6,9 @@ import WebSocket from 'ws'
 import { DDP } from '../resources/apiConfig'
 import DDPClient from 'ddp-client'
 import Twilio from 'twilio'
-import meteorSettings from '../../../sousMeteor/settings-development.json'
+// import meteorSettings from '../../../sousMeteor/settings-development.json'
 // import meteorSettings from '../../../sousMeteor/settings-staging.json'
-// import meteorSettings from '../../../sousMeteor/settings-production.json'
+import meteorSettings from '../../../sousMeteor/settings-production.json'
 
 const twilioClient = Twilio(meteorSettings.TWILIO.SID, meteorSettings.TWILIO.TOKEN)
 const phoneNumber = '5005550006'
@@ -99,12 +99,19 @@ describe('Registration', () => {
               session = data;
               assert.notDeepStrictEqual(session, {})
             } else if(log.msg === 'changed'){
-              if(data.hasOwnProperty('smsSent') === true){
-                // console.log(data.smsSent, data)
-                if(data.smsSent === true){
-                  twilioClient.messages(data.smsSID).get((err, message) => {
-                    const smsCode = message.body.substring(0, 4)
-                    ddpClient.call('loginWithSMS', [phoneNumber, smsCode]);
+              if(session.hasOwnProperty('smsSent') === true){
+                // console.log(session.smsSent, session)
+                if(session.smsSent === true){
+                  // console.log(session.smsSID)
+                  twilioClient.messages(session.smsSID).get((err, message) => {
+                    if(err){
+                      assert.fail(err, null, `SMS Error: ${err}`)
+                      done();
+                    } else {
+                      let smsCode = _.trim(message.body)
+                      smsCode = smsCode.substr(-4)
+                      ddpClient.call('loginWithSMS', [session.id, smsCode]);
+                    }
                   })
                 } else {
                   assert.fail(data.smsSent, true, 'SMS code was not sent successfully.')
@@ -125,8 +132,15 @@ describe('Registration', () => {
       }
     });
 
-    ddpClient.subscribe(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [phoneNumber]);
-    ddpClient.call('sendSMSCode', [phoneNumber]);
+    const sessionCb = (err, result) => {
+      const newSession = Object.assign({}, {
+        phoneNumber: phoneNumber
+      }, result)
+      // console.log('NEW SESSION PARAMS', newSession);
+
+      ddpClient.subscribe(DDP.SUBSCRIBE_LIST.RESTRICTED.channel, [newSession.userId]);
+    }
+    ddpClient.call('sendSMSCode', [phoneNumber], sessionCb);
   });
 })
 
