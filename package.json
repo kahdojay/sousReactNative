@@ -23,6 +23,7 @@
     ]
   },
   "dependencies": {
+    "babel": "^6.5.2",
     "ddp-client": "https://github.com/sousapp/node-ddp-client",
     "lodash": "^3.10.1",
     "moment": "^2.10.6",
