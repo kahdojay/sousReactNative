@@ -16,14 +16,14 @@ let allActions = {}
 const connectActions = ConnectActions(ddpClient)
 allActions['connectActions'] = connectActions
 
+const errorActions = ErrorActions(allActions)
+allActions['errorActions'] = errorActions
+
 const cartItemActions = CartItemActions(allActions)
 allActions['cartItemActions'] = cartItemActions
 
 const contactActions = ContactActions(allActions)
 allActions['contactActions'] = contactActions
-
-const errorActions = ErrorActions(allActions)
-allActions['errorActions'] = errorActions
 
 const sessionActions = SessionActions(allActions)
 allActions['sessionActions'] = sessionActions

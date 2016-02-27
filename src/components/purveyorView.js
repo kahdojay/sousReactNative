@@ -57,7 +57,16 @@ class PurveyorView extends React.Component {
   }
 
   render() {
-    const {categories, purveyors, products, cartItems} = this.props;
+    const {categories, purveyors, products, cartItems, connected} = this.props;
+
+    if(connected === false){
+      return (
+        <View style={styles.container}>
+          <Text style={styles.inaccessible}>Order Guide inaccessible in offline mode</Text>
+        </View>
+      )
+    }
+
     const fetching = (
       <ActivityIndicatorIOS
         animating={true}
@@ -185,7 +194,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingTop: 15,
     paddingBottom: 15,
-  }
+  },
+  inaccessible: {
+    color: Colors.disabled,
+    textAlign: 'center',
+    fontSize: 16,
+    fontFamily: 'OpenSans',
+    paddingTop: 25,
+  },
 });
 
 PurveyorView.propTypes = {

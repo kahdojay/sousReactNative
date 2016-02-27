@@ -29,7 +29,8 @@ class PurveyorIndex extends React.Component {
       )
     }
 
-    let purveyorsList = _.map(_.sortBy(purveyors, 'name'), (purveyor) => {
+    let purveyorsList = _.map(
+      _.sortBy(purveyors, 'name'), (purveyor) => {
         if (purveyor.deleted === false) {
           return (
             <PurveyorIndexRow
