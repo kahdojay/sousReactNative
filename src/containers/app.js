@@ -1311,7 +1311,8 @@ class App extends React.Component {
               if(cartPurveyorIds.length > 0){
                 cartPurveyorIds.forEach((purveyorId) => {
                   if(
-                    this.state.product.purveyors.indexOf(purveyorId) !== -1
+                    this.state.product !== null
+                    && this.state.product.purveyors.indexOf(purveyorId) !== -1
                     && this.state.currentTeamInfo.cart[purveyorId].hasOwnProperty(this.state.product.id) === true
                   ) {
                     productFormCartItem = this.state.currentTeamInfo.cart[purveyorId][this.state.product.id];
