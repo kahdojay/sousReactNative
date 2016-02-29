@@ -86,11 +86,13 @@ class ProductList extends React.Component {
         this.props.onProductEdit(product)
       },
       onProductDelete: () => {
-        let products = _.filter(this.state.products, (tmpProd) => {
+        let products = _.filter(this.props.products, (tmpProd) => {
           return tmpProd.deleted !== true && tmpProd.id !== product.id
         })
+        // TODO: Optimize this for larger lists, perhaps just delete from hashmap
+        // and then process?
         this.setState({
-          products: products,
+          products: this.ds.cloneWithRows(products),
         }, () => {
           this.props.onProductDelete(product.id)
         })
