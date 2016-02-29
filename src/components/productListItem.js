@@ -60,7 +60,7 @@ class ProductListItem extends React.Component {
     //   if(debugUpdates) console.log('Edit Category: ', this.state.product.categoryId, nextProps.product.categoryId)
     //   return true;
     // }
-    //
+
     // if(this.state.product.purveyors !== nextProps.product.purveyors) {
     //   if(debugUpdates) console.log('Edit Purveyors: ', this.state.product.purveyors, nextProps.product.purveyors)
     //   return true;
@@ -364,7 +364,7 @@ class ProductListItem extends React.Component {
               const selectedValue = value.selectedValue
               this.setState({
                 quantity: selectedValue,
-                // editQuantity: false,
+                editQuantity: false,
               }, this.cartUpdateFromLocalState.bind(this))
             }
           }}
