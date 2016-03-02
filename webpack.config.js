@@ -63,9 +63,11 @@ var config = {
 if (process.env.HOT) {
   config.devtool = 'eval'; // Speed up incremental builds
   config.entry['index.ios'].unshift('react-native-webpack-server/hot/entry');
-  config.entry['index.ios'].unshift('webpack/hot/only-dev-server');
+  // config.entry['index.ios'].unshift('webpack/hot/only-dev-server');
   config.entry['index.ios'].unshift('webpack-dev-server/client?http://localhost:8082');
+  // config.entry['index.ios'].unshift('webpack-hot-middleware/client?path=http://localhost:8082/__webpack_hmr&overlay=false');
   config.output.publicPath = 'http://localhost:8082/';
+  config.plugins.unshift(new webpack.optimize.OccurenceOrderPlugin());
   config.plugins.unshift(new webpack.HotModuleReplacementPlugin());
   config.module.loaders[0].query.plugins.push('react-transform');
   config.module.loaders[0].query.extra = {
@@ -78,6 +80,31 @@ if (process.env.HOT) {
     }
   };
 }
+// // Hot loader
+// if (process.env.HOT) {
+//   config.devtool = 'eval'; // Speed up incremental builds
+//   config.entry['index.ios'].unshift(
+//     'react-native-webpack-server/hot/entry',
+//     'webpack-hot-middleware/client?path=http://localhost:8082/__webpack_hmr&overlay=false'
+//   );
+//   config.output.publicPath = 'http://localhost:8082/';
+//   config.plugins.unshift(
+//     new webpack.optimize.OccurenceOrderPlugin(),
+//     new webpack.HotModuleReplacementPlugin(),
+//     new webpack.NoErrorsPlugin()
+//   );
+//   config.output.publicPath = 'http://localhost:8082/';
+//   config.module.loaders[0].query.plugins.push('react-transform');
+//   config.module.loaders[0].query.extra = {
+//     'react-transform': {
+//       transforms: [{
+//         transform: 'react-transform-hmr',
+//         imports: ['react-native'],
+//         locals: ['module']
+//       }]
+//     }
+//   };
+// }
 
 // Production config
 if (process.env.NODE_ENV === 'production') {

@@ -18,7 +18,7 @@
   NSURL *jsCodeLocation;
   
   //Add the following lines
-//  RCTSetLogThreshold(RCTLogLevelInfo - 1);
+  RCTSetLogThreshold(RCTLogLevelInfo - 1);
   RCTSetLogFunction(SousReactLogFunction);
 
   /**
@@ -84,16 +84,16 @@
   return self;
 }
 
+
 RCTLogFunction SousReactLogFunction = ^(
-  RCTLogLevel level,
-  NSString *fileName,
-  NSNumber *lineNumber,
-  NSString *message
+ RCTLogLevel level,
+ __unused RCTLogSource source,
+ NSString *fileName,
+ NSNumber *lineNumber,
+ NSString *message
 )
 {
-  NSString *log = RCTFormatLog(
-    [NSDate date], level, fileName, lineNumber, message
-  );
+  NSString *log = RCTFormatLog([NSDate date], level, fileName, lineNumber, message);
     
   #ifdef DEBUG
     fprintf(stderr, "%s\n", log.UTF8String);
@@ -113,8 +113,11 @@ RCTLogFunction SousReactLogFunction = ^(
     NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:NULL];
   #endif
   
-  int aslLevel = ASL_LEVEL_ERR;
+  int aslLevel;
   switch(level) {
+    case RCTLogLevelTrace:
+      aslLevel = ASL_LEVEL_DEBUG;
+      break;
     case RCTLogLevelInfo:
       aslLevel = ASL_LEVEL_NOTICE;
       break;
@@ -124,11 +127,9 @@ RCTLogFunction SousReactLogFunction = ^(
     case RCTLogLevelError:
       aslLevel = ASL_LEVEL_ERR;
       break;
-    case RCTLogLevelMustFix:
-      aslLevel = ASL_LEVEL_EMERG;
+    case RCTLogLevelFatal:
+      aslLevel = ASL_LEVEL_CRIT;
       break;
-    default:
-      aslLevel = ASL_LEVEL_DEBUG;
   }
   asl_log(NULL, NULL, aslLevel, "%s", message.UTF8String);
 };

@@ -35,7 +35,6 @@
 		89EFDE5F1BCC097F001FBBEF /* OpenSans-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE561BCC097F001FBBEF /* OpenSans-LightItalic.ttf */; };
 		89EFDE601BCC097F001FBBEF /* OpenSans-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE571BCC097F001FBBEF /* OpenSans-Semibold.ttf */; };
 		89EFDE611BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89EFDE581BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf */; };
-		8A08A3C91C54681900A655D9 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 8A08A3C81C54681800A655D9 /* main.jsbundle */; };
 		8A9C19B11C65A4E00034C19A /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A9C19B01C65A4D60034C19A /* libRNDeviceInfo.a */; };
 		A531FDAA1BE3EC2F00E90569 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = A531FDA91BE3EC2F00E90569 /* main.jsbundle */; };
 		A5380FE61BE05DFA00FADB96 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A5380FE51BE05DFA00FADB96 /* AppDelegate.m */; };
@@ -209,7 +208,6 @@
 		89EFDE561BCC097F001FBBEF /* OpenSans-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-LightItalic.ttf"; sourceTree = "<group>"; };
 		89EFDE571BCC097F001FBBEF /* OpenSans-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Semibold.ttf"; sourceTree = "<group>"; };
 		89EFDE581BCC097F001FBBEF /* OpenSans-SemiboldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-SemiboldItalic.ttf"; sourceTree = "<group>"; };
-		8A08A3C81C54681800A655D9 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = SOURCE_ROOT; };
 		8A9C19AB1C65A4D50034C19A /* RNDeviceInfo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNDeviceInfo.xcodeproj; path = "../node_modules/react-native-device-info/RNDeviceInfo.xcodeproj"; sourceTree = "<group>"; };
 		A531FDA91BE3EC2F00E90569 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = SOURCE_ROOT; };
 		A5380FE41BE05DFA00FADB96 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -348,7 +346,6 @@
 		13B07FAE1A68108700A75B9A /* Sous */ = {
 			isa = PBXGroup;
 			children = (
-				8A08A3C81C54681800A655D9 /* main.jsbundle */,
 				A5380FE41BE05DFA00FADB96 /* AppDelegate.h */,
 				A5380FE51BE05DFA00FADB96 /* AppDelegate.m */,
 				A5380FED1BE05E4400FADB96 /* LaunchScreen.xib */,
@@ -512,6 +509,7 @@
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
+				8A5855901C8777B9001F65B8 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -766,7 +764,6 @@
 				89EFDE5D1BCC097F001FBBEF /* OpenSans-Italic.ttf in Resources */,
 				89EFDE591BCC097F001FBBEF /* OpenSans-Bold.ttf in Resources */,
 				89EFDE5B1BCC097F001FBBEF /* OpenSans-ExtraBold.ttf in Resources */,
-				8A08A3C91C54681900A655D9 /* main.jsbundle in Resources */,
 				A531FDAA1BE3EC2F00E90569 /* main.jsbundle in Resources */,
 				89EFDE5E1BCC097F001FBBEF /* OpenSans-Light.ttf in Resources */,
 				89A667011BC2F38A00F45CFD /* OpenSans-Regular.ttf in Resources */,
@@ -779,6 +776,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8A5855901C8777B9001F65B8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "../node_modules/react-native/packager/react-native-xcode.sh --resetCache";
+			shellScript = "";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		00E356EA1AD99517003FC87E /* Sources */ = {
