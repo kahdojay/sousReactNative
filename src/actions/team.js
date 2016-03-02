@@ -114,14 +114,14 @@ export default function TeamActions(allActions) {
         dispatch(receiveSessionTeamsUser())
 
         // add the teamId to the session
-        session = Object.assign({}, session, {
+        const newSession = Object.assign({}, session, {
           teamId: newTeamAttributes.id
         })
 
         // subscribe to newly-added team
         let teamIds = _.pluck(teams.data, 'id');
         teamIds.push(newTeamAttributes.id)
-        dispatch(connectActions.subscribeDDP(session, teamIds))
+        dispatch(connectActions.subscribeDDP(newSession, teamIds))
       }
     }
   }
