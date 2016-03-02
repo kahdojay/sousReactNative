@@ -43,8 +43,9 @@ export default function SessionActions(allActions){
   function inviteContacts(contactList) {
     return (dispatch, getState) => {
       const { session } = getState();
+      const sessionTeamId = session.teamId
       contactList.forEach((phoneNumber) => {
-        dispatch(connectActions.ddpCall('sendSMSInvite', [phoneNumber, session.teamId, session.userId]))
+        dispatch(connectActions.ddpCall('sendSMSInvite', [phoneNumber, sessionTeamId, session.userId]))
       })
     }
   }

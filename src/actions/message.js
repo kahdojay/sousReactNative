@@ -28,6 +28,7 @@ export default function MessageActions(allActions){
     // console.log('imageUrl', imageUrl)
     return (dispatch, getState) => {
       const {session} = getState()
+      const sessionTeamId = session.teamId
       author = author ? author : `${session.firstName}`;
       imageUrl = imageUrl ? imageUrl : session.imageUrl;
 
@@ -39,7 +40,7 @@ export default function MessageActions(allActions){
         delete: false,
         imageUrl: imageUrl,
         message: message.text,
-        teamId: session.teamId,
+        teamId: sessionTeamId,
         type: message.type,
         userId: session.userId,
       };

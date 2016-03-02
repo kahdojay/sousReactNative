@@ -28,10 +28,11 @@ export default function ProductActions(allActions){
   function addProduct(productAttributes) {
     return (dispatch, getState) => {
       const { session, teams } = getState();
+      const sessionTeamId = session.teamId
       const { currentTeam } = teams;
       var newProductAttributes = {
         _id: generateId(),
-        teamId: session.teamId,
+        teamId: sessionTeamId,
         teamCode: currentTeam.teamCode,
         name: productAttributes.name,
         description: productAttributes.description || '',

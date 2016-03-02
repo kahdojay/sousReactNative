@@ -211,6 +211,7 @@ export default function ConnectActions(ddpClient) {
     // console.log('subscribeDDP called for session: ', session, teamIds)
     return (dispatch, getState) => {
       const {connect, messages, teams} = getState()
+      const sessionTeamId = session.teamId
 
       if(session.userId !== null){
         dispatch(processSubscription(DDP.SUBSCRIBE_LIST.RESTRICTED, [session.userId]))
@@ -222,8 +223,8 @@ export default function ConnectActions(ddpClient) {
       if(session.isAuthenticated === true){
         // if(session.userId !== null){
         // }
-        if(session.teamId !== null){
-          const teamMessages = messages.teams[session.teamId] || {}
+        if(sessionTeamId !== null){
+          const teamMessages = messages.teams[sessionTeamId] || {}
           let messageKeys = Object.keys(teamMessages)
           let messageDate = (new Date()).toISOString()
           if(messageKeys.length > 0){
@@ -232,7 +233,7 @@ export default function ConnectActions(ddpClient) {
             })
             messageDate = teamMessages[messageKeys[0]].createdAt;
           }
-          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES, [session.userId, session.teamId, messageDate], [session.userId, session.teamId]))
+          dispatch(processSubscription(DDP.SUBSCRIBE_LIST.MESSAGES, [session.userId, sessionTeamId, messageDate], [session.userId, sessionTeamId]))
         }
         if(teamIds !== undefined && teamIds.length > 0 && session.userId !== null){
           let teamUserIds = []
