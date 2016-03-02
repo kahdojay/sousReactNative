@@ -33,7 +33,7 @@ export default function ConnectActions(ddpClient) {
     'addTeamTask': { allow: true },
     'createMessage': { allow: true },
     'createProduct': { allow: true },
-    'createTeam': { allow: true },
+    // 'createTeam': { allow: true },
     'deleteCartItem': { allow: true },
     'streamS3Image': { allow: true },
     'updateCartItem': { allow: true },
