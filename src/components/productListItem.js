@@ -2,6 +2,7 @@ import React from 'react-native';
 import ProductToggle from './productToggle';
 import { Icon } from 'react-native-icons';
 import _ from 'lodash';
+import s from 'underscore.string';
 import { CART } from '../actions/actionTypes';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
@@ -280,7 +281,7 @@ class ProductListItem extends React.Component {
                 : <Text style={{fontStyle: 'italic', color: Colors.red}}>Name missing</Text> }
               </Text>
               <Text style={[styles.productDetailsSubText, {color: productDetailsColor}]} >
-                {`${product.amount} ${product.unit} ${product.price ? '• $' + product.price : ''}`}
+                {`${product.amount} ${product.unit} ${product.price ? '• $' + s.numberFormat(parseFloat(product.price), 2) : ''}`}
               </Text>
               <View style={{flexDirection: 'row'}}>
                 {purveyorInfo}{productInfoSeparator}{categoryInfo}

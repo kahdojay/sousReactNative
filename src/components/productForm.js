@@ -2,6 +2,7 @@ import React from 'react-native';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import _ from 'lodash';
+import s from 'underscore.string';
 import PickerModal from './modal/pickerModal';
 
 const {
@@ -13,6 +14,37 @@ const {
   TouchableOpacity,
   View,
 } = React;
+
+class FieldRow extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  isFocused() {
+    return this.refs.field.isFocused()
+  }
+  blur(cb) {
+    let callback = cb || function(){}
+    this.refs.field.blur()
+    setTimeout(callback, 50)
+  }
+  render() {
+    return (
+      <View key={this.props.key} style={styles.inputContainer}>
+        <Text style={styles.inputTitle}>{this.props.label}</Text>
+        <View style={[styles.inputFieldContainer, styles.inputFieldUnderline]}>
+          <TextInput
+            ref='field'
+            style={[styles.inputField,{}]}
+            value={this.props.value}
+            keyboardType={this.props.keyboardType || 'default'}
+            placeholder={this.props.label}
+            onChange={this.props.onChange}
+          />
+        </View>
+      </View>
+    )
+  }
+}
 
 class PickerFieldRow extends React.Component {
   constructor(props) {
@@ -59,7 +91,10 @@ class ProductForm extends React.Component {
       selectedCategory: this.props.productCategory ? this.props.productCategory.id : null,
       selectedPurveyor: this.props.product ? this.props.product.purveyors : null,
       selectedAmount: this.props.product ? this.props.product.amount : null,
-      selectedUnits: this.props.product ? this.props.product.unit : null,
+      selectedUnits: this.props.product ? this.props.product.unit : '',
+      selectedSku: this.props.product ? this.props.product.sku : '',
+      selectedPrice: this.props.product ? this.props.product.price : '',
+      selectedPar: this.props.product ? this.props.product.par : '',
     }
     this.fields = ['Purveyor','Category','Amount']//,'Units']
   }
@@ -72,29 +107,41 @@ class ProductForm extends React.Component {
   }
 
   showFieldPicker(field, idx) {
-    this.refs.name.blur()
-    this.setState({
-      modalVisible: true,
-      fieldPicker: field,
-      fieldPickerIdx: idx,
-    })
+    const cb = () => {
+      this.setState({
+        modalVisible: true,
+        fieldPicker: field,
+        fieldPickerIdx: idx,
+      })
+    }
+    if(this.refs.name && this.refs.name.isFocused() === true){
+      this.refs.name.blur(cb)
+    } else if(this.refs.unit && this.refs.unit.isFocused() === true){
+      this.refs.unit.blur(cb)
+    } else {
+      cb()
+    }
   }
 
   checkValidForm(){
+    let selectedName = _.trim(this.state.selectedName.replace('\u00A0',' '))
     if (
       this.state.selectedPurveyor !== null &&
       this.state.selectedPurveyor.length > 0 &&
       this.state.selectedCategory &&
       this.state.selectedAmount &&
       this.state.selectedUnits &&
-      this.state.selectedName !== ''
+      selectedName !== ''
     ) {
       const productAttributes = {
-        name: this.state.selectedName,
+        name: selectedName,
         purveyors: this.state.selectedPurveyor,
         amount: this.state.selectedAmount,
         unit: this.state.selectedUnits,
         categoryId: this.state.selectedCategory,
+        sku: this.state.selectedSku,
+        price: this.state.selectedPrice,
+        par: this.state.selectedPar,
       }
       this.props.onProcessProduct(productAttributes);
     } else {
@@ -176,7 +223,7 @@ class ProductForm extends React.Component {
             }
           })
           items.unshift({
-            key: '--null',
+            key: '--null--',
             value: null,
             label: '',
           })
@@ -200,7 +247,7 @@ class ProductForm extends React.Component {
             }
           }))
           items.unshift({
-            key: '--null',
+            key: '--null--',
             value: null,
             label: '',
           })
@@ -217,7 +264,7 @@ class ProductForm extends React.Component {
         //     }
         //   })
         //   items.unshift({
-        //     key: '--null',
+        //     key: '--null--',
         //     value: null,
         //     label: '',
         //   })
@@ -235,43 +282,73 @@ class ProductForm extends React.Component {
           automaticallyAdjustContentInsets={false}
           style={styles.scrollView}
         >
-          <View key={'name'} style={styles.inputContainer}>
-            <Text style={styles.inputTitle}>Name</Text>
-            <View style={[styles.inputFieldContainer, styles.inputFieldUnderline]}>
-              <TextInput
-                ref='name'
-                style={[styles.inputField,{}]}
-                value={this.state.selectedName}
-                placeholder='Name'
-                onChange={(e) => {
-                  this.setState({
-                    selectedName: e.nativeEvent.text,
-                  }, () => {
-                    this.checkValidForm();
-                  });
-                }}
-              />
-            </View>
-          </View>
+          <FieldRow
+            key='name'
+            ref='name'
+            label='Name'
+            value={this.state.selectedName}
+            onChange={(e) => {
+              this.setState({
+                selectedName: e.nativeEvent.text.replace(' ','\u00A0'),
+              }, () => {
+                this.checkValidForm();
+              });
+            }}
+          />
           {fields}
-          <View key={'unit'} style={styles.inputContainer}>
-            <Text style={styles.inputTitle}>Unit</Text>
-            <View style={[styles.inputFieldContainer, styles.inputFieldUnderline]}>
-              <TextInput
-                ref='unit'
-                style={[styles.inputField,{}]}
-                value={this.state.selectedUnits}
-                placeholder='Unit'
-                onChange={(e) => {
-                  this.setState({
-                    selectedUnits: e.nativeEvent.text,
-                  }, () => {
-                    this.checkValidForm();
-                  });
-                }}
-              />
-            </View>
-          </View>
+          <FieldRow
+            key='unit'
+            ref='unit'
+            label='Unit'
+            value={this.state.selectedUnits}
+            onChange={(e) => {
+              this.setState({
+                selectedUnits: e.nativeEvent.text,
+              }, () => {
+                this.checkValidForm();
+              });
+            }}
+          />
+          <FieldRow
+            key='sku'
+            ref='sku'
+            label='SKU'
+            value={this.state.selectedSku}
+            onChange={(e) => {
+              this.setState({
+                selectedSku: e.nativeEvent.text,
+              }, () => {
+                this.checkValidForm();
+              });
+            }}
+          />
+          <FieldRow
+            key='price'
+            ref='price'
+            label='Price'
+            keyboardType='numeric'
+            value={s.numberFormat(parseFloat(this.state.selectedPrice), 2)}
+            onChange={(e) => {
+              this.setState({
+                selectedPrice: e.nativeEvent.text,
+              }, () => {
+                this.checkValidForm();
+              });
+            }}
+          />
+          <FieldRow
+            key='par'
+            ref='par'
+            label='Par'
+            value={this.state.selectedPar}
+            onChange={(e) => {
+              this.setState({
+                selectedPar: e.nativeEvent.text,
+              }, () => {
+                this.checkValidForm();
+              });
+            }}
+          />
         </ScrollView>
         <PickerModal
           modalVisible={this.state.modalVisible}
