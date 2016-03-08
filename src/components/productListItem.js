@@ -203,7 +203,7 @@ class ProductListItem extends React.Component {
       let productColor = 'black'
       let productQuantityBorderStyle = {}
       if(this.state.added === true){
-        if(this.state.selectedPurveyorId !== this.state.purveyorId){
+        if(showPurveyorInfo === false && this.state.selectedPurveyorId !== this.state.purveyorId){
           selectedStyle = styles.selectedRowDisabled
           productDetailsColor = Colors.darkGrey
           productQuantityBorderStyle = {
@@ -225,9 +225,16 @@ class ProductListItem extends React.Component {
       let availablePurveyors = product.purveyors
 
       if(showPurveyorInfo === true){
+        let purveyor = null
         if(purveyors.hasOwnProperty(this.state.selectedPurveyorId) === true){
+          purveyor = purveyors[this.state.selectedPurveyorId]
+        }
+        if(purveyors.hasOwnProperty(this.state.purveyorId) === true){
+          purveyor = purveyors[this.state.purveyorId]
+        }
+        if(purveyor){
           purveyorInfo = (
-            <Text style={[styles.productDetailsSubText, {color: productDetailsColor}]}>{purveyors[this.state.selectedPurveyorId].name || '-NOT SET-'}</Text>
+            <Text style={[styles.productDetailsSubText, {color: productDetailsColor}]}>{purveyor.name || '-NOT SET-'}</Text>
           )
         } else {
           // Single purveyor, grab name off props.purveyors
