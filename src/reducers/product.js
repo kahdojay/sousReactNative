@@ -15,6 +15,7 @@ const initialState = {
     errors: null,
     teams: {},
     purveyors: {},
+    productTeamMapping: {},
     isFetching: false,
     lastUpdated: null
   }
@@ -63,6 +64,13 @@ function products(state = initialState.products, action) {
       newProductTeamState[action.product.teamId] = {};
     }
 
+    let productTeamMappingState = Object.assign({}, state.productTeamMapping);
+    if(action.product.hasOwnProperty('teamId') === true){
+      productTeamMappingState[action.product.id] = action.product.teamId;
+    } else if(productTeamMappingState.hasOwnProperty(action.product.id) === true){
+      action.product.teamId = productTeamMappingState[action.product.id];
+    }
+
     const originalTeamProduct = getTeamProduct(newProductTeamState, action.product.teamId, action.product.id)
 
     let originalNewTeamProductPurveyors = []
@@ -99,6 +107,7 @@ function products(state = initialState.products, action) {
       errors: null,
       teams: newProductTeamState,
       purveyors: newProductPurveyorsState,
+      productTeamMapping: productTeamMappingState,
       lastUpdated: (new Date()).toISOString()
     });
 

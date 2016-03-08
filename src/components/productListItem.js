@@ -89,6 +89,7 @@ class ProductListItem extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
+      product: nextProps.product,
       purveyorId: nextProps.cartPurveyorId,
     }, () => {
       // console.log('componentWillReceiveProps ', nextProps.product.unit)
@@ -148,7 +149,7 @@ class ProductListItem extends React.Component {
     this.setState(newState);
   }
 
-  cartUpdateFromLocalState() {
+  cartUpdateFromLocalState(deleteProduct) {
     const cartAttributes = Object.assign({}, this.state.cartItem, {
       purveyorId: this.state.selectedPurveyorId,
       productId: this.props.product.id,
@@ -166,15 +167,17 @@ class ProductListItem extends React.Component {
     } else {
       cartAction = CART.DELETE
     }
-    this.props.onUpdateProductInCart(cartAction, cartAttributes);
+    this.props.onUpdateProductInCart(cartAction, cartAttributes, deleteProduct);
   }
 
-  handleToggleProduct(purveyorId) {
+  handleToggleProduct(purveyorId, deleteProduct) {
     this.setState({
       added: !this.state.added,
       selectedPurveyorId: purveyorId,
       purveyorId: purveyorId,
-    }, this.cartUpdateFromLocalState.bind(this))
+    }, () => {
+      this.cartUpdateFromLocalState(deleteProduct)
+    })
   }
 
   render() {
@@ -399,11 +402,11 @@ class ProductListItem extends React.Component {
             showConfirmationModal: !this.state.showConfirmationModal,
           }, () => {
             if(this.state.added === true){
-              this.setState({
-                added: false,
-              }, this.cartUpdateFromLocalState.bind(this))
+              const deleteProduct = true
+              this.handleToggleProduct(this.state.selectedPurveyorId, deleteProduct)
+            } else {
+              this.props.onProductDelete()
             }
-            this.props.onProductDelete()
           })
         }}
       />

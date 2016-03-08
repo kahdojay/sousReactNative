@@ -276,6 +276,11 @@ class ProductForm extends React.Component {
       }
     }
 
+    let selectedPrice = this.state.selectedPrice
+    // if(selectedPrice && selectedPrice.length > 0){
+    //   selectedPrice = s.numberFormat(parseFloat(selectedPrice), 2)
+    // }
+
     return (
       <View style={{flex:1}}>
         <ScrollView
@@ -327,10 +332,11 @@ class ProductForm extends React.Component {
             ref='price'
             label='Price'
             keyboardType='numeric'
-            value={s.numberFormat(parseFloat(this.state.selectedPrice), 2)}
+            value={selectedPrice}
             onChange={(e) => {
+              let price = e.nativeEvent.text.replace(',','')
               this.setState({
-                selectedPrice: e.nativeEvent.text,
+                selectedPrice: price,
               }, () => {
                 this.checkValidForm();
               });
