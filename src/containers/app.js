@@ -361,6 +361,24 @@ class App extends React.Component {
         }
       }
 
+      // redirect to Feed if app is on Update view and it shouldnt be there.
+      if(rbodRouteName === 'Update'){
+        if(
+          this.props.connect.settings.appVersion
+          && this.props.connect.appStoreVersion
+        ){
+          if(semver.lt(this.props.connect.settings.appVersion, this.props.connect.appStoreVersion) === false){
+            this.refs.appNavigator.replacePrevious({
+              name: 'Feed'
+            });
+          }
+        } else {
+          this.refs.appNavigator.replacePrevious({
+            name: 'Feed'
+          });
+        }
+      }
+
       // ...
     }
   }
