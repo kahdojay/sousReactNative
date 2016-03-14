@@ -82,7 +82,7 @@ module.exports = class Menu extends React.Component {
                 <Text style={styles.menuItemText}>Receiving Guide</Text>
               </View>
             </TouchableHighlight>
-            <TouchableHighlight
+            {/*<TouchableHighlight
               style={styles.menuItemButton}
               underlayColor='#3e444f'
               onPress={this.props.onNavToTeam}
@@ -92,7 +92,7 @@ module.exports = class Menu extends React.Component {
                   <Icon name='material|format-list-numbered' size={20} color='white' style={styles.menuIcon}/>
                   <Text style={styles.menuItemText}>Prep List</Text>
                 </View>
-                {/*<View style={styles.progressContainer}>
+                <View style={styles.progressContainer}>
                   <View style={styles.progressRow}>
                     <ProgressViewIOS
                       progressTintColor={Colors.lightBlue}
@@ -102,9 +102,9 @@ module.exports = class Menu extends React.Component {
                     />
                     <Text style={styles.progressText}> {progress}%</Text>
                   </View>
-                </View>*/}
+                </View>
               </View>
-            </TouchableHighlight>
+            </TouchableHighlight>*/}
             <TouchableHighlight
               key='team-members'
               onPress={this.props.onNavToTeamMemberListing}
