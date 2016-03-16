@@ -1209,6 +1209,7 @@ class App extends React.Component {
                   orderId: this.state.order.id,
                   productId: cartItem.productId,
                   status: cartItem.status,
+                  quantityReceived: cartItem.quantityReceived || cartItem.quantity,
                 }))
               }, 25)()
             },
