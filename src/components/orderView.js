@@ -149,6 +149,7 @@ class OrderView extends React.Component {
           productsList.push(
             <OrderListItem
               key={productKey}
+              teamBetaAccess={this.props.teamBetaAccess}
               orderConfirm={order.confirm}
               product={product}
               cartItem={cartItem}

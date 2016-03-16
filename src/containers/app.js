@@ -1192,6 +1192,7 @@ class App extends React.Component {
         return {
           component: Components.OrderView,
           props: {
+            teamBetaAccess: this.state.currentTeamInfo.betaAccess,
             userId: session.userId,
             orderId: orderId,
             orderFetching: orders.isFetching,

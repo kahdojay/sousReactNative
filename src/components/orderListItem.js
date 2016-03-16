@@ -1,6 +1,7 @@
 import React from 'react-native';
 import { Icon, } from 'react-native-icons';
 import _ from 'lodash';
+import s from 'underscore.string';
 import CheckBox from './checkbox';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
@@ -51,6 +52,8 @@ class OrderListItem extends React.Component {
 
   render() {
     const {orderConfirm, product, cartItem, productConfirm} = this.state
+    const {teamBetaAccess} = this.props
+
     let productRow = null
     if(this.state.loaded === false){
       productRow = (
@@ -117,6 +120,14 @@ class OrderListItem extends React.Component {
         />
       )
 
+      let showProductPrices = false
+      if(
+        teamBetaAccess.hasOwnProperty('showProductPrices') === true
+        && teamBetaAccess.showProductPrices === true
+      ){
+        showProductPrices = true        
+      }
+
       productRow = (
         <View style={styles.row}>
           <TouchableWrapper
@@ -151,7 +162,7 @@ class OrderListItem extends React.Component {
             <View style={{flexDirection: 'row', alignItems: 'center',}}>
               <View style={styles.productInfo}>
                 <Text style={[styles.text, styles.boldText]}>{product.name}</Text>
-                <Text style={styles.text}>Ordered: {cartItem.quantity} x {product.amount} {product.unit}</Text>
+                <Text style={styles.text}>Ordered: {cartItem.quantity} x {product.amount} {product.unit} {cartItem.productPrice && showProductPrices === true ? '• $' + s.numberFormat(parseFloat(cartItem.productPrice), 2) : ''}</Text>
               </View>
               <View style={styles.confirmCheckbox}>
                 <View style={[styles.iconContainer]}>
