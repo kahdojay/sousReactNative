@@ -1,10 +1,12 @@
 import React from 'react-native';
 import _ from 'lodash';
+import moment from 'moment';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import CartViewListItem from './cartViewListItem';
 import GenericModal from './modal/genericModal';
 import ConfirmationModal from './modal/confirmationModal';
+import MiniCalendar from 'react-native-minicalendar';
 
 const {
   ScrollView,
@@ -22,9 +24,11 @@ class CartView extends React.Component {
       numberOfProducts: 0,
       numberOfOrders: 0,
       purveyorIds: [],
-      showPurveyorInfo: false,
+      purveyorDeliveryDates: {},
       purveyor: null,
+      showPurveyorInfo: false,
       showConfirmationModal: false,
+      showDeliveryDateCalendar: false,
       confirmationMessage: 'Send order?',
       navigateToFeed: true,
     }
@@ -95,6 +99,14 @@ class CartView extends React.Component {
     }
   }
 
+  onDateSelect(date) {
+    let purveyorDeliveryDates = Object.assign({}, this.state.purveyorDeliveryDates)
+    purveyorDeliveryDates[this.state.purveyor.id] = date
+    this.setState({
+      purveyorDeliveryDates: purveyorDeliveryDates
+    })
+  }
+
   renderPurveyorProducts(purveyorId, cartItems, products) {
     const cartItemIds = _.filter(Object.keys(cartItems[purveyorId]), (cartItemId) => {
       return cartItems[purveyorId][cartItemId].status === 'NEW'
@@ -142,7 +154,7 @@ class CartView extends React.Component {
   }
 
   render() {
-    const {cartItems, cartPurveyors, products, connected} = this.props
+    const {cartItems, cartPurveyors, products, connected, teamBetaAccess} = this.props
 
     if(connected === false){
       return (
@@ -210,11 +222,54 @@ class CartView extends React.Component {
           }, () => {
             if(this.state.numberOfOrders > 0){
               // console.log(this.state.purveyorIds);
-              this.props.onSubmitOrder(this.state.purveyorIds, this.state.navigateToFeed);
+              this.props.onSendCart({
+                purveyorIds: this.state.purveyorIds,
+                purveyorDeliveryDates: this.state.purveyorDeliveryDates,
+              }, this.state.navigateToFeed);
             }
           })
         }}
       />
+    )
+    const purveyorCalendarDismiss = (setDate) => {
+      let purveyorDeliveryDates = Object.assign({}, this.state.purveyorDeliveryDates)
+      if(setDate === false){
+        delete purveyorDeliveryDates[this.state.purveyor.id]
+      }
+      this.setState({
+        purveyorDeliveryDates: purveyorDeliveryDates,
+        showDeliveryDateCalendar: false,
+        purveyor: null,
+      })
+    }
+    const calendarModal = (
+      <GenericModal
+        modalVisible={this.state.showDeliveryDateCalendar}
+        onHideModal={purveyorCalendarDismiss.bind(this, false)}
+        modalHeaderText={'Request Delivery Date'}
+        modalSubHeaderText={this.state.purveyor ? `for ${this.state.purveyor.name} order` : ''}
+        leftButton={{
+          text: 'Clear',
+          onPress: purveyorCalendarDismiss.bind(this, false)
+        }}
+        rightButton={{
+          text: 'Set',
+          onPress: purveyorCalendarDismiss.bind(this, true)
+        }}
+      >
+        <MiniCalendar
+          dayHeadings={['Su','Mo','Tu','We','Th','Fr','Sa']}
+          onDateSelect={::this.onDateSelect}
+          startDate={moment().format('YYYY-MM-DD')}
+          selectedDate={(this.state.purveyor && this.state.purveyorDeliveryDates.hasOwnProperty(this.state.purveyor.id) === true) ? moment(this.state.purveyorDeliveryDates[this.state.purveyor.id]).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD')}
+          numberOfDaysToShow={14}
+          enabledDaysOfTheWeek={this.state.purveyor ? this.state.purveyor.deliveryDays.split(',') : []}
+          headingStyle={{backgroundColor: Colors.blue}}
+          activeDayStyle={{backgroundColor: Colors.lightBlue, color: 'white'}}
+          disabledDayStyle={{backgroundColor: Colors.disabled, color: Colors.darkGrey}}
+          selectedDayStyle={{backgroundColor: Colors.gold}}
+        />
+      </GenericModal>
     )
 
     let cartViewDetails = (
@@ -238,12 +293,25 @@ class CartView extends React.Component {
                   underlayColor='transparent'
                 >
                   <View style={styles.purveyorTitleContainer}>
-                    <Icon name='material|info' size={20} color='white' style={styles.detailsIcon} />
+                    <Icon name='material|info' size={30} color='white' style={styles.detailsIcon} />
                     <Text style={styles.purveyorTitle}>{purveyor.name}</Text>
                   </View>
                 </TouchableHighlight>
               </View>
               <View style={styles.purveyorInfoRight}>
+                { teamBetaAccess.hasOwnProperty('showDeliveryDate') === true && teamBetaAccess.showDeliveryDate === true ?
+                  <TouchableHighlight
+                    underlayColor='transparent'
+                    onPress={() => {
+                      this.setState({
+                        showDeliveryDateCalendar: true,
+                        purveyor: purveyor,
+                      })
+                    }}
+                  >
+                    <Icon name='material|calendar' size={30} color={ this.state.purveyorDeliveryDates.hasOwnProperty(purveyor.id) === true ? Colors.gold : 'white'} style={styles.calendarIcon} />
+                  </TouchableHighlight>
+                : null }
                 <TouchableHighlight
                   underlayColor='transparent'
                   onPress={() => {
@@ -304,6 +372,7 @@ class CartView extends React.Component {
         </TouchableOpacity>
         {modal}
         {confirmationModal}
+        {calendarModal}
       </View>
     );
   }
@@ -329,16 +398,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   purveyorInfoLeft: {
+    flexDirection: 'row',
     flex: 3,
+    justifyContent: 'flex-start',
   },
   purveyorInfoRight: {
     flex: 1,
-    flexDirection: 'column',
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
   purveyorTitleContainer: {
     flexDirection: 'row',
-    padding: 10,
+    paddingLeft: 5,
   },
   purveyorTitle: {
     flex: 7,
@@ -347,10 +418,15 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     fontSize: 18,
     lineHeight: 26,
+    paddingTop: 10,
   },
   detailsIcon: {
-    flex: 1,
-    height: 26,
+    width: 36,
+    height: 50,
+  },
+  calendarIcon: {
+    width: 50,
+    height: 50,
   },
   purveyorInfoRow: {
     paddingTop: 5,

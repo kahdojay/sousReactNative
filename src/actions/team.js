@@ -16,6 +16,7 @@ import {
   LEAVE_TEAM,
   RECEIVE_TEAMS_USERS,
   RECEIVE_TEAM_RESOURCE_INFO,
+  RECEIVE_TEAM_BETA_ACCESS,
   RECEIVE_TEAMS,
   REQUEST_TEAMS,
   RESET_TEAMS,
@@ -277,6 +278,7 @@ export default function TeamActions(allActions) {
       }
 
       dispatch(getTeamResourceInfo(team.id))
+      dispatch(getTeamBetaAccess(team.id))
 
       let messageCount = 0
       if(messages.teams.hasOwnProperty(team.id) && Object.keys(messages.teams[team.id]).length > 0){
@@ -330,6 +332,7 @@ export default function TeamActions(allActions) {
       dispatch(messageActions.getTeamMessages(teamId))
       dispatch(sessionActions.updateSession({ teamId: teamId }))
       dispatch(getTeamResourceInfo(teamId))
+      dispatch(getTeamBetaAccess(teamId))
       dispatch(getTeamUsers(teamId))
       return dispatch({
         type: SET_CURRENT_TEAM,
@@ -440,6 +443,22 @@ export default function TeamActions(allActions) {
     }
   }
 
+  function getTeamBetaAccess(teamId){
+    return (dispatch, getState) => {
+      const {session} = getState()
+      var getTeamBetaAccessCb = (err, results) => {
+        if(!err){
+          dispatch({
+            type: RECEIVE_TEAM_BETA_ACCESS,
+            teamId: teamId,
+            betaAccess: results.betaAccess,
+          })
+        }
+      }
+      dispatch(connectActions.ddpCall('getTeamBetaAccess', [session.userId, teamId], getTeamBetaAccessCb))
+    }
+  }
+
   return {
     ADD_TEAM,
     DELETE_TEAM,
@@ -448,6 +467,7 @@ export default function TeamActions(allActions) {
     LEAVE_TEAM,
     RECEIVE_TEAMS_USERS,
     RECEIVE_TEAM_RESOURCE_INFO,
+    RECEIVE_TEAM_BETA_ACCESS,
     RECEIVE_TEAMS,
     REQUEST_TEAMS,
     RESET_TEAMS,
@@ -462,6 +482,7 @@ export default function TeamActions(allActions) {
     completeTeamTask,
     deleteTeam,
     getTeamResourceInfo,
+    getTeamBetaAccess,
     leaveCurrentTeam,
     receiveTeams,
     receiveTeamsUsers,
