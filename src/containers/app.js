@@ -49,6 +49,7 @@ class App extends React.Component {
         products: {},
         purveyors: {},
         resources: {},
+        betaAccess: {},
         team: this.props.teams.currentTeam,
         lastUpdated: {
           purveyors: null,
@@ -56,6 +57,7 @@ class App extends React.Component {
           products: null,
           orders: null,
           messages: null,
+          betaAccess: null,
         }
       },
       email: this.props.session.email,
@@ -193,13 +195,22 @@ class App extends React.Component {
       }
       currentTeamInfo.lastUpdated.orders = nextProps.orders.lastUpdated;
       // ---------------------------------------------------
-      // categories
+      // resources
       // ---------------------------------------------------
       if(nextProps.teams.teamResources.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.resources = nextProps.teams.teamResources[currentTeamInfo.team.id]
         // console.log('cWRP: ', nextProps.orders.teams[currentTeamInfo.team.id]["Tp3cqFkgne8Amznft"].confirm)
       } else {
         currentTeamInfo.resources = {}
+      }
+      // ---------------------------------------------------
+      // betaAccess
+      // ---------------------------------------------------
+      if(nextProps.teams.teamBetaAccess.hasOwnProperty(currentTeamInfo.team.id) === true){
+        currentTeamInfo.betaAccess = nextProps.teams.teamBetaAccess[currentTeamInfo.team.id]
+        // console.log('cWRP: ', nextProps.orders.teams[currentTeamInfo.team.id]["Tp3cqFkgne8Amznft"].confirm)
+      } else {
+        currentTeamInfo.betaAccess = {}
       }
     }
     // console.log(processRedirect, currentTeamInfo.resources)
@@ -1445,6 +1456,7 @@ class App extends React.Component {
           component: Components.CartView,
           props: {
             // team: this.state.currentTeamInfo.team,
+            teamBetaAccess: this.state.currentTeamInfo.betaAccess,
             cartItems: this.state.currentTeamInfo.cart,
             cartPurveyors: cartPurveyors,
             products: this.state.currentTeamInfo.products,
@@ -1461,9 +1473,9 @@ class App extends React.Component {
                 }
               }, 25)()
             },
-            onSubmitOrder: (purveyorIds, navigateToFeed) => {
+            onSendCart: (cartInfo, navigateToFeed) => {
               _.debounce(() => {
-                dispatch(actions.sendCart(purveyorIds));
+                dispatch(actions.sendCart(cartInfo));
               }, 25)()
               if(navigateToFeed === true){
                 nav.replacePreviousAndPop({

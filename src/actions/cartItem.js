@@ -138,13 +138,20 @@ export default function CartItemActions(allActions) {
     }
   }
 
-  function sendCart(purveyorIds) {
+  function sendCart(cartInfo) {
     return (dispatch, getState) => {
       const {session} = getState()
       const sessionTeamId = session.teamId
       let orderPkg = {}
-      purveyorIds.forEach((purveyorId) => {
-        orderPkg[purveyorId] = generateId()
+      cartInfo.purveyorIds.forEach((purveyorId) => {
+        let deliveryDate = null
+        if(cartInfo.purveyorDeliveryDates.hasOwnProperty(purveyorId) === true){
+          deliveryDate = cartInfo.purveyorDeliveryDates[purveyorId]
+        }
+        orderPkg[purveyorId] = {
+          orderId: generateId(),
+          deliveryDate: deliveryDate,
+        }
       })
       dispatch(connectActions.ddpCall('sendCartItems', [session.userId, sessionTeamId, orderPkg]))
       return dispatch({
