@@ -36,9 +36,10 @@ export default function CartItemActions(allActions) {
       const {session} = getState()
       const cartItemId = generateId()
 
+      const sessionTeamId = session.teamId
       cartItemAttributes._id = cartItemId
       cartItemAttributes.userId = session.userId
-      cartItemAttributes.teamId = session.teamId
+      cartItemAttributes.teamId = sessionTeamId
       cartItemAttributes.status = 'NEW'
       cartItemAttributes.orderId = null
       cartItemAttributes.createdAt = (new Date()).toISOString()
@@ -55,7 +56,7 @@ export default function CartItemActions(allActions) {
             id: cartItemId,
           }),
         })
-        dispatch(connectActions.ddpCall('addCartItem', [session.userId, session.teamId, cartItemAttributes]))
+        dispatch(connectActions.ddpCall('addCartItem', [session.userId, sessionTeamId, cartItemAttributes]))
       } else {
         dispatch(errorActions.createError('add-cart-item', 'Please check product details and try again', cartItemAttributes))
       }
@@ -65,7 +66,8 @@ export default function CartItemActions(allActions) {
   function updateCartItem(cartItem) {
     return (dispatch, getState) => {
       const {session} = getState()
-      dispatch(connectActions.ddpCall('updateCartItem', [session.userId, session.teamId, cartItem.id, cartItem]))
+      const sessionTeamId = session.teamId
+      dispatch(connectActions.ddpCall('updateCartItem', [session.userId, sessionTeamId, cartItem.id, cartItem]))
       return dispatch(receiveCartItems(cartItem))
     }
   }
@@ -73,10 +75,11 @@ export default function CartItemActions(allActions) {
   function deleteCartItem(cartItem) {
     return (dispatch, getState) => {
       const {session} = getState()
-      dispatch(connectActions.ddpCall('deleteCartItem', [session.userId, session.teamId, cartItem.id]))
+      const sessionTeamId = session.teamId
+      dispatch(connectActions.ddpCall('deleteCartItem', [session.userId, sessionTeamId, cartItem.id]))
       return dispatch({
         type: DELETE_CART_ITEM,
-        teamId: session.teamId,
+        teamId: sessionTeamId,
         cartItem: cartItem,
       })
     }
@@ -135,17 +138,25 @@ export default function CartItemActions(allActions) {
     }
   }
 
-  function sendCart(purveyorIds) {
+  function sendCart(cartInfo) {
     return (dispatch, getState) => {
       const {session} = getState()
+      const sessionTeamId = session.teamId
       let orderPkg = {}
-      purveyorIds.forEach((purveyorId) => {
-        orderPkg[purveyorId] = generateId()
+      cartInfo.purveyorIds.forEach((purveyorId) => {
+        let deliveryDate = null
+        if(cartInfo.purveyorDeliveryDates.hasOwnProperty(purveyorId) === true){
+          deliveryDate = cartInfo.purveyorDeliveryDates[purveyorId]
+        }
+        orderPkg[purveyorId] = {
+          orderId: generateId(),
+          deliveryDate: deliveryDate,
+        }
       })
-      dispatch(connectActions.ddpCall('sendCartItems', [session.userId, session.teamId, orderPkg]))
+      dispatch(connectActions.ddpCall('sendCartItems', [session.userId, sessionTeamId, orderPkg]))
       return dispatch({
         type: ORDER_SENT,
-        teamId: session.teamId,
+        teamId: sessionTeamId,
         orderPkg: orderPkg,
       })
     }

@@ -28,9 +28,10 @@ export default function CategoryActions(allActions){
   // function addCategory(name) {
   //   return (dispatch, getState) => {
   //     const { session } = getState();
+  //     const sessionTeamId = session.teamId
   //     var newCategoryAttributes = {
   //       _id: generateId(),
-  //       teamId: session.teamId,
+  //       teamId: sessionTeamId,
   //       name: categoryRow.name,
   //       description: categoryRow.description,
   //       price: categoryRow.price,

@@ -28,10 +28,11 @@ export default function ProductActions(allActions){
   function addProduct(productAttributes) {
     return (dispatch, getState) => {
       const { session, teams } = getState();
+      const sessionTeamId = session.teamId
       const { currentTeam } = teams;
       var newProductAttributes = {
         _id: generateId(),
-        teamId: session.teamId,
+        teamId: sessionTeamId,
         teamCode: currentTeam.teamCode,
         name: productAttributes.name,
         description: productAttributes.description || '',
@@ -64,7 +65,13 @@ export default function ProductActions(allActions){
       const { session, teams } = getState();
       const { currentTeam } = teams;
 
-      dispatch(categoryActions.updateProductCategory(productAttributes.previousCategoryId, productAttributes.categoryId,productId))
+      if(productAttributes.previousCategoryId !== productAttributes.categoryId){
+        dispatch(categoryActions.updateProductCategory(
+          productAttributes.previousCategoryId,
+          productAttributes.categoryId,
+          productId
+        ))
+      }
 
       dispatch({
         type: UPDATE_PRODUCT,

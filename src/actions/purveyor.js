@@ -29,9 +29,10 @@ export default function PurveyorActions(allActions){
   function addPurveyor(name) {
     return (dispatch, getState) => {
       const { session } = getState();
+      const sessionTeamId = session.teamId
       var newPurveyorAttributes = {
         _id: generateId(),
-        teamId: session.teamId,
+        teamId: sessionTeamId,
         name: name,
         description: '',
         // products:    [],

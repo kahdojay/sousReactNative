@@ -45,7 +45,10 @@ class SousAppBase extends React.Component {
     // persist the store
     persistStore(
       store,
-      {storage: AsyncStorage},
+      {
+        storage: AsyncStorage,
+        debounce: 250, // debounce interval applied to storage calls.
+      },
       () => {
         // dispatch(actions.connectApp())
         this.setState({ rehydrated: true })
