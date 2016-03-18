@@ -30,8 +30,9 @@ export default function ProductActions(allActions){
       const { session, teams } = getState();
       const sessionTeamId = session.teamId
       const { currentTeam } = teams;
+      const productId = generateId()
       var newProductAttributes = {
-        _id: generateId(),
+        _id: productId,
         teamId: sessionTeamId,
         teamCode: currentTeam.teamCode,
         name: productAttributes.name,
@@ -43,8 +44,6 @@ export default function ProductActions(allActions){
         deleted: false,
       }
 
-      const productId = newProductAttributes._id
-
       dispatch({
         type: ADD_PRODUCT,
         teamId: currentTeam.id,
@@ -54,7 +53,7 @@ export default function ProductActions(allActions){
         }),
       });
 
-      dispatch(connectActions.ddpCall('createProduct', [newProductAttributes]))
+      dispatch(connectActions.ddpCall('createProduct', [Object.assign({}, newProductAttributes), session.userId]))
 
       return dispatch(categoryActions.addProductCategory(productAttributes.categoryId, productId))
     }

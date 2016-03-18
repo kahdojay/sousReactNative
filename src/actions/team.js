@@ -69,9 +69,10 @@ export default function TeamActions(allActions) {
         teamCode = teamCode.toUpperCase()
         // TODO: add any other filters besides TEAM?
         teamCode = teamCode.replace('TEAM', '')
+        const teamId = generateId();
         // TODO: check for unique teamCode?
         var newTeamAttributes = {
-          _id: generateId(),
+          _id: teamId,
           teamCode: teamCode,
           name: name,
           tasks: [],
@@ -96,7 +97,6 @@ export default function TeamActions(allActions) {
           newTeamAttributes.demoTeam = true;
         }
 
-        const teamId = newTeamAttributes._id;
 
         dispatch({
           type: ADD_TEAM,
@@ -109,7 +109,7 @@ export default function TeamActions(allActions) {
 
         dispatch(sessionActions.updateSession({teamId: newTeamAttributes._id}))
 
-        dispatch(connectActions.ddpCall('createTeam', [newTeamAttributes, session.userId]))
+        dispatch(connectActions.ddpCall('createTeam', [Object.assign({}, newTeamAttributes), session.userId]))
 
 
         dispatch(receiveSessionTeamsUser())
@@ -145,8 +145,9 @@ export default function TeamActions(allActions) {
           return task.name;
       });
       if (tasks.indexOf(taskAttributes.name) === -1) {
+        const recipeId = generateId()
         var newTaskAttributes = {
-          recipeId: generateId(),
+          recipeId: recipeId,
           name: taskAttributes.name,
           description: "",
           deleted: false,
@@ -154,11 +155,11 @@ export default function TeamActions(allActions) {
           quantity: 1,
           unit: 0, // for future use
         }
-        dispatch(connectActions.ddpCall('addTeamTask', [session.userId, sessionTeamId, newTaskAttributes]))
+        dispatch(connectActions.ddpCall('addTeamTask', [session.userId, sessionTeamId, Object.assign({}, newTaskAttributes)]))
         return dispatch({
           type: UPDATE_TEAM,
           teamId: sessionTeamId,
-          recipeId: newTaskAttributes.recipeId,
+          recipeId: recipeId,
           task: newTaskAttributes,
           sessionTeamId: sessionTeamId
         })

@@ -592,6 +592,7 @@ class App extends React.Component {
       session,
       settingsConfig,
       teams,
+      offline,
     } = this.props;
 
     switch (route.name) {
@@ -1458,6 +1459,7 @@ class App extends React.Component {
           component: Components.CartView,
           props: {
             // team: this.state.currentTeamInfo.team,
+            offlineQueueCount: Object.keys(offline.queue).length,
             teamBetaAccess: this.state.currentTeamInfo.betaAccess,
             cartItems: this.state.currentTeamInfo.cart,
             cartPurveyors: cartPurveyors,
@@ -2227,6 +2229,7 @@ function mapStateToProps(state) {
     session: state.session,
     settingsConfig: state.settingsConfig,
     teams: state.teams,
+    offline: state.offline,
   }
 }
 

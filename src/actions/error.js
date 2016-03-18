@@ -22,8 +22,9 @@ export default function ErrorActions(allActions){
   function createError(machineKey, msg, data) {
     return (dispatch, getState) => {
       const {session} = getState()
+      const errorId = generateId()
       var newError = {
-        _id: generateId(),
+        _id: errorId,
         userId: session.userId,
         machineKey: machineKey,
         message: msg,
@@ -32,7 +33,6 @@ export default function ErrorActions(allActions){
         createdAt: (new Date()).toISOString(),
       }
 
-      const errorId = newError._id
       dispatch({
         type: CREATE_ERROR,
         errorId: errorId,

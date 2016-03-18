@@ -29,8 +29,9 @@ export default function CategoryActions(allActions){
   //   return (dispatch, getState) => {
   //     const { session } = getState();
   //     const sessionTeamId = session.teamId
+  //     const categoryId = generateId()
   //     var newCategoryAttributes = {
-  //       _id: generateId(),
+  //       _id: categoryId,
   //       teamId: sessionTeamId,
   //       name: categoryRow.name,
   //       description: categoryRow.description,
@@ -40,15 +41,14 @@ export default function CategoryActions(allActions){
   //       unit: categoryRow.unit,
   //       deleted: false,
   //     }
-  //     const categoryId = newCategoryAttributes._id
-  //     dispatch(connectActions.ddpCall('createCategory', [newCategoryAttributes]);)
-  //     return dispatch({
+  //     dispatch({
   //       type: ADD_CATEGORY,
   //       categoryId: categoryId,
   //       category: Object.assign({}, newCategoryAttributes, {
   //         id: categoryId
   //       })
-  //     });
+  //     })
+  //     dispatch(connectActions.ddpCall('createCategory', [Object.assign({}, newCategoryAttributes), session.userId]))
   //   }
   // }
   //

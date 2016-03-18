@@ -26,80 +26,93 @@ export default function ConnectActions(ddpClient) {
 
   const connectedChannels = {}, noop = ()=>{}
   let connectAllActions = null
+  let executedDDPQueue = []
 
-  const APPROVED_OFFLINE_METHODS = {
-    'addCartItem': { allow: true },
-    'addProductCategory': { allow: true },
-    'addTeamTask': { allow: true },
-    'createMessage': { allow: true },
-    'createProduct': { allow: true },
-    // 'createTeam': { allow: true },
-    'deleteCartItem': { allow: true },
-    'streamS3Image': { allow: true },
-    'updateCartItem': { allow: true },
-    'updateOrder': { allow: true },
-    'updateProduct': { allow: true },
-    'updateTeam': { allow: true },
-    'updateTeamTask': { allow: true },
-    'updateUser': { allow: true },
-  }
+  // const APPROVED_OFFLINE_METHODS = {
+  //   'addCartItem': { allow: true },
+  //   'addProductCategory': { allow: true },
+  //   'addTeamTask': { allow: true },
+  //   'createMessage': { allow: true },
+  //   'createProduct': { allow: true },
+  //   // 'createTeam': { allow: true },
+  //   'deleteCartItem': { allow: true },
+  //   'streamS3Image': { allow: true },
+  //   'updateCartItem': { allow: true },
+  //   'updateOrder': { allow: true },
+  //   'updateProduct': { allow: true },
+  //   'updateTeam': { allow: true },
+  //   'updateTeamTask': { allow: true },
+  //   'updateUser': { allow: true },
+  // }
 
   function ddpCall(method, args, methodCb = noop, serverCb = noop){
     return (dispatch, getState) => {
-      const {connect} = getState()
-      if(connect.status === CONNECT.CONNECTED){
-        // console.log(method)
-        dispatch(() => {
-          ddpClient.call(method, args, methodCb, serverCb);
-        })
-      } else {
-        if(APPROVED_OFFLINE_METHODS.hasOwnProperty(method) === true && APPROVED_OFFLINE_METHODS[method].allow === true){
-          dispatch({
-            type: OFFLINE_ADD_QUEUE,
-            item: {
-              method: method,
-              args: args,
-              methodCb: methodCb,
-              serverCb: serverCb,
-              calledAt: (new Date()).toISOString()
-            }
-          })
-        } else {
-          dispatch({
-            type: OFFLINE_NOOP,
-            method: method,
-          })
+      const {connect, offline} = getState()
+      dispatch({
+        type: OFFLINE_ADD_QUEUE,
+        item: {
+          method: method,
+          args: args,
+          methodCb: methodCb,
+          serverCb: serverCb,
+          calledAt: (new Date()).toISOString()
         }
+      })
+      if(connect.status === CONNECT.CONNECTED){
+        dispatch(sendOfflineQueue())
       }
     }
   }
 
+  function getNewQueueKey(queueKeys) {
+    queueKeys.sort()
+    let foundNextKey = false
+    let queueKey = null
+
+    while(foundNextKey === false){
+      queueKey = queueKeys.pop()
+      if(executedDDPQueue.indexOf(queueKey) === -1){
+        foundNextKey = true
+      }
+    }
+    if(queueKey !== null){
+      if(executedDDPQueue.length > 50){
+        executedDDPQueue = executedDDPQueue.slice(-50)
+      }
+      console.log(JSON.stringify(executedDDPQueue[executedDDPQueue.length-1]))
+      executedDDPQueue.push(queueKey)
+    }
+    return queueKey
+  }
+
   function sendOfflineQueue() {
     return (dispatch, getState) => {
-      const {offline} = getState()
-      const queueKeys = Object.keys(offline.queue)
+      const {connect, offline} = getState()
+        const queueKeys = Object.keys(offline.queue)
+
+      // console.log(JSON.stringify(queueKeys))
       // console.log(offline.processing)
-      if(queueKeys.length > 0 && offline.processing === false){
-        dispatch({
-          type: OFFLINE_PROCESSING,
-          processing: true,
-        })
-        queueKeys.sort()
-        // console.log(queueKeys)
-        queueKeys.forEach((queueKey) => {
+      if(connect.status === CONNECT.CONNECTED && queueKeys.length > 0){
+        // const queueKey = getNewQueueKey(queueKeys)
+        const queueKey = queueKeys.pop()
+        if(queueKey !== null){
           const item = offline.queue[queueKey]
-          _.debounce(() => {
-            dispatch(ddpCall(item.method, item.args, item.methodCb, item.serverCb))
-            dispatch({
-              type: OFFLINE_REMOVE_QUEUE,
-              calledAt: queueKey
-            })
-          }, 25)()
-        })
-        dispatch({
-          type: OFFLINE_PROCESSING,
-          processing: false,
-        })
+          dispatch({
+            type: OFFLINE_REMOVE_QUEUE,
+            calledAt: queueKey
+          })
+          // console.log('processing: ', queueKey, ' item method: ', item.method)
+          dispatch(() => {
+            ddpClient.call(item.method, item.args, (err, results) => {
+              if(item.methodCb){
+                item.methodCb(err, results)
+              }
+              window.setTimeout(() => {
+                dispatch(sendOfflineQueue())
+              }, 150)
+            }, item.serverCb)
+          })
+        }
       }
     }
   }
@@ -540,7 +553,7 @@ export default function ConnectActions(ddpClient) {
   function connectionStatusConnected(attempt) {
     return (dispatch, getState) => {
 
-      dispatch(sendOfflineQueue())
+
 
       return dispatch({
         type: CONNECTION_STATUS,

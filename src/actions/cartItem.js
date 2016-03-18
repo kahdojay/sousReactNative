@@ -56,9 +56,9 @@ export default function CartItemActions(allActions) {
             id: cartItemId,
           }),
         })
-        dispatch(connectActions.ddpCall('addCartItem', [session.userId, sessionTeamId, cartItemAttributes]))
+        dispatch(connectActions.ddpCall('addCartItem', [session.userId, sessionTeamId, Object.assign({}, cartItemAttributes)]))
       } else {
-        dispatch(errorActions.createError('add-cart-item', 'Please check product details and try again', cartItemAttributes))
+        dispatch(errorActions.createError('add-cart-item', 'Please check product details and try again', Object.assign({}, cartItemAttributes)))
       }
     }
   }
