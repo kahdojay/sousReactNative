@@ -33,8 +33,9 @@ export default function MessageActions(allActions){
       imageUrl = imageUrl ? imageUrl : session.imageUrl;
 
       message.text = message.text.replace(/\{\{author\}\}/g, author);
+      const messageId = generateId()
       var newMessage = {
-        _id: generateId(),
+        _id: messageId,
         author: author || "Default",
         createdAt: (new Date()).toISOString(),
         delete: false,
@@ -50,7 +51,7 @@ export default function MessageActions(allActions){
       if(message.hasOwnProperty('orderId') === true){
         newMessage.orderId = message.orderId
       }
-      const messageId = newMessage._id
+
       // console.log('newMessage', newMessage);
       dispatch({
         type: CREATE_MESSAGE,
@@ -60,7 +61,7 @@ export default function MessageActions(allActions){
         })
       })
 
-      dispatch(connectActions.ddpCall('createMessage', [newMessage]))
+      dispatch(connectActions.ddpCall('createMessage', [Object.assign({}, newMessage), session.userId]))
     }
   }
 

@@ -80,7 +80,7 @@ class CartView extends React.Component {
   }
 
   handleSubmitPress(cartPurveyors, singlePurveyor) {
-    if (this.props.connected === true && this.state.numberOfOrders > 0) {
+    if (this.props.connected === true && this.props.offlineQueueCount === 0 && this.state.numberOfOrders > 0) {
       let confirmationMessage = cartPurveyors.length > 1 ? `Send orders to ${cartPurveyors.length} purveyors?` : `Send order to ${cartPurveyors[0].name}?`
       let navigateToFeed = true
       if(singlePurveyor === true){
@@ -154,15 +154,15 @@ class CartView extends React.Component {
   }
 
   render() {
-    const {cartItems, cartPurveyors, products, connected, teamBetaAccess} = this.props
+    const {cartItems, cartPurveyors, products, connected, teamBetaAccess, offlineQueueCount} = this.props
 
-    if(connected === false){
-      return (
-        <View style={styles.container}>
-          <Text style={styles.inaccessible}>Cart inaccessible in offline mode</Text>
-        </View>
-      )
-    }
+    // if(connected === false){
+    //   return (
+    //     <View style={styles.container}>
+    //       <Text style={styles.inaccessible}>Cart inaccessible in offline mode</Text>
+    //     </View>
+    //   )
+    // }
 
     const purveyorInfoDismiss = () => {
       this.setState({
@@ -278,6 +278,10 @@ class CartView extends React.Component {
       </View>
     )
     if(this.state.numberOfOrders > 0){
+      let submitOrderIconColor = 'white'
+      if(connected === false || offlineQueueCount !== 0){
+        submitOrderIconColor =  Colors.darkGrey
+      }
       cartViewDetails = _.map(cartPurveyors, (purveyor) => {
         return (
           <View key={purveyor.id} style={styles.purveyorContainer}>
@@ -319,7 +323,7 @@ class CartView extends React.Component {
                     this.handleSubmitPress([purveyor], singlePurveyor)
                   }}
                 >
-                  <Icon name='material|check-circle' size={30} color='white' style={styles.submitOrderIcon} />
+                  <Icon name='material|check-circle' size={30} color={submitOrderIconColor} style={styles.submitOrderIcon} />
                 </TouchableHighlight>
               </View>
             </View>
@@ -346,7 +350,7 @@ class CartView extends React.Component {
 
     let buttonDisabled = {}
     let buttonDisabledFlag = false
-    if(this.props.connected === false || this.state.numberOfOrders === 0 || cartPurveyors.length === 0){
+    if(connected === false || offlineQueueCount !== 0 || this.state.numberOfOrders === 0 || cartPurveyors.length === 0){
       buttonDisabled = styles.buttonDisabled
       buttonDisabledFlag = true
     }
