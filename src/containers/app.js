@@ -17,7 +17,6 @@ import * as ModalComponents from '../components/modal';
 import Dimensions from 'Dimensions';
 import PushManager from 'react-native-remote-push/RemotePushIOS';
 import Communications from 'react-native-communications';
-import DeviceInfo from 'react-native-device-info';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import semver from 'semver';
 
@@ -300,41 +299,36 @@ class App extends React.Component {
     // console.log(this.state.currentTeamInfo.team)
     if(this.state.isAuthenticated === true && this.state.currentTeamInfo.team !== null){
       const {dispatch, connect, session} = this.props
-      if (
-        this.state.installationRegistered === false
-        && this.state.installationRegisterInProgress === false
-        && connect.status === actions.CONNECT.CONNECTED
-      ) {
-        this.setState({
-          installationRegistered: true,
-          installationRegisterInProgress: true,
-        }, () => {
-          PushManager.requestPermissions((err, data) => {
-            if (err) {
-              dispatch(actions.registerInstallationError())
-            } else {
-              // if(userDoesNotAllow === true){
-              //   dispatch(actions.registerInstallationDeclined())
-              // }
-              if(data.hasOwnProperty('token')){
-                dispatch(actions.registerInstallation({
-                  token: data.token,
-                  model: DeviceInfo.getModel(),
-                  appVersion: DeviceInfo.getVersion(),
-                  appBuildNumber: DeviceInfo.getBuildNumber(),
-                  deviceName: DeviceInfo.getDeviceName(),
-                  systemName: DeviceInfo.getSystemName(),
-                  systemVersion: DeviceInfo.getSystemVersion(),
-                }))
-              } else {
+      if(connect.status === actions.CONNECT.CONNECTED){
+        if (
+          this.state.installationRegistered === false
+          && this.state.installationRegisterInProgress === false
+        ) {
+          this.setState({
+            installationRegistered: true,
+            installationRegisterInProgress: true,
+          }, () => {
+            PushManager.requestPermissions((err, data) => {
+              if (err) {
                 dispatch(actions.registerInstallationError())
+              } else {
+                // if(userDoesNotAllow === true){
+                //   dispatch(actions.registerInstallationDeclined())
+                // }
+                if(data.hasOwnProperty('token')){
+                  dispatch(actions.registerInstallation({
+                    token: data.token,
+                  }))
+                } else {
+                  dispatch(actions.registerInstallationError())
+                }
               }
-            }
-            this.setState({
-              installationRegisterInProgress: false,
-            })
-          });
-        })
+              this.setState({
+                installationRegisterInProgress: false,
+              })
+            });
+          })
+        }
       }
     }
     this.redirectBasedOnData()
@@ -877,8 +871,6 @@ class App extends React.Component {
             onClearBadge: () => {
               dispatch(actions.updateInstallation({
                 badge: 0,
-                appVersion: DeviceInfo.getVersion(),
-                appBuildNumber: DeviceInfo.getBuildNumber(),
               }))
             },
             onGetMoreMessages: () => {

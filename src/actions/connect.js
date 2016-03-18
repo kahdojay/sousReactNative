@@ -21,6 +21,7 @@ import {
   RECEIVE_SETTINGS_CONFIG,
   RECEIVE_APPSTORE_VERSION,
 } from './actionTypes'
+import DeviceInfo from 'react-native-device-info';
 
 export default function ConnectActions(ddpClient) {
 
@@ -97,6 +98,14 @@ export default function ConnectActions(ddpClient) {
   function registerInstallation(deviceAttributes) {
     return (dispatch, getState) => {
       const {session} = getState()
+
+      deviceAttributes.model = DeviceInfo.getModel()
+      deviceAttributes.appVersion = DeviceInfo.getVersion()
+      deviceAttributes.appBuildNumber = DeviceInfo.getBuildNumber()
+      deviceAttributes.deviceName = DeviceInfo.getDeviceName()
+      deviceAttributes.systemName = DeviceInfo.getSystemName()
+      deviceAttributes.systemVersion = DeviceInfo.getSystemVersion()
+
       dispatch(ddpCall('registerInstallation', [session.userId, deviceAttributes]))
       return dispatch({
         type: REGISTER_INSTALLATION,
@@ -109,6 +118,14 @@ export default function ConnectActions(ddpClient) {
   function updateInstallation(deviceAttributes) {
     return (dispatch, getState) => {
       const {session} = getState()
+
+      deviceAttributes.model = DeviceInfo.getModel()
+      deviceAttributes.appVersion = DeviceInfo.getVersion()
+      deviceAttributes.appBuildNumber = DeviceInfo.getBuildNumber()
+      deviceAttributes.deviceName = DeviceInfo.getDeviceName()
+      deviceAttributes.systemName = DeviceInfo.getSystemName()
+      deviceAttributes.systemVersion = DeviceInfo.getSystemVersion()
+
       dispatch(ddpCall('updateInstallation', [session.userId, deviceAttributes]))
       return dispatch({
         type: UPDATE_INSTALLATION,
@@ -422,6 +439,7 @@ export default function ConnectActions(ddpClient) {
         dispatch(connectionStatusConnected(0))
         dispatch(getAppStoreVersion())
         dispatch(getSettingsConfig())
+        dispatch(updateInstallation({}))
         // console.log('TEAMS', teams);
         // console.log('SESSION: ', session);
         // console.log('TEAM IDS', teamIds);
