@@ -26,7 +26,6 @@ export default function ConnectActions(ddpClient) {
 
   const connectedChannels = {}, noop = ()=>{}
   let connectAllActions = null
-  let executedDDPQueue = []
 
   // const APPROVED_OFFLINE_METHODS = {
   //   'addCartItem': { allow: true },
@@ -64,27 +63,6 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
-  function getNewQueueKey(queueKeys) {
-    queueKeys.sort()
-    let foundNextKey = false
-    let queueKey = null
-
-    while(foundNextKey === false){
-      queueKey = queueKeys.pop()
-      if(executedDDPQueue.indexOf(queueKey) === -1){
-        foundNextKey = true
-      }
-    }
-    if(queueKey !== null){
-      if(executedDDPQueue.length > 50){
-        executedDDPQueue = executedDDPQueue.slice(-50)
-      }
-      console.log(JSON.stringify(executedDDPQueue[executedDDPQueue.length-1]))
-      executedDDPQueue.push(queueKey)
-    }
-    return queueKey
-  }
-
   function sendOfflineQueue() {
     return (dispatch, getState) => {
       const {connect, offline} = getState()
@@ -93,7 +71,6 @@ export default function ConnectActions(ddpClient) {
       // console.log(JSON.stringify(queueKeys))
       // console.log(offline.processing)
       if(connect.status === CONNECT.CONNECTED && queueKeys.length > 0){
-        // const queueKey = getNewQueueKey(queueKeys)
         const queueKey = queueKeys.pop()
         if(queueKey !== null){
           const item = offline.queue[queueKey]
