@@ -1676,9 +1676,9 @@ class App extends React.Component {
                 disabled={(this.state.currentTeamInfo.team === null)}
               />
             ),
-            customNext: (
-              <Components.FeedViewRightButton />
-            ),
+            // customNext: (
+            //   <Components.FeedViewRightButton />
+            // ),
           })
           break;
         case 'PurveyorIndex':
