@@ -246,7 +246,7 @@ class CartView extends React.Component {
       <GenericModal
         modalVisible={this.state.showDeliveryDateCalendar}
         onHideModal={purveyorCalendarDismiss.bind(this, false)}
-        modalHeaderText={`Request Delivery Date ${this.state.purveyor ? '(' + this.state.purveyor.name + ')' : ''}`}
+        modalHeaderText={`Request Delivery Date (optional)`}
         modalSubHeaderText={`Today's Date: ${moment().format('ddd M/DD')}`}
         leftButton={{
           text: 'Clear',
