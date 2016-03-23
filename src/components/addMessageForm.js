@@ -44,6 +44,7 @@ export default class AddForm extends React.Component {
 
     let input = (
       <TextInput
+        ref='messageInput'
         style={styles.input}
         value={this.state.message.text}
         placeholderTextColor={'#aaa'}

@@ -2,6 +2,7 @@ import React from 'react-native';
 import { Icon, } from 'react-native-icons';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
+import dismissKeyboard from 'dismissKeyboard'
 
 const {
   View,
@@ -28,6 +29,7 @@ export default class AddForm extends React.Component {
     if(this.props.connected === true && this.state.text !== '') {
       this.props.onSubmit(this.state.text);
       this.setState({text: ''})
+      dismissKeyboard()
     }
   }
 
