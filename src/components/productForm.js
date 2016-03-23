@@ -31,13 +31,14 @@ class FieldRow extends React.Component {
     return (
       <View key={this.props.key} style={styles.inputContainer}>
         <Text style={styles.inputTitle}>{this.props.label}</Text>
-        <View style={[styles.inputFieldContainer, styles.inputFieldUnderline]}>
+        <View style={styles.inputFieldContainer}>
           <TextInput
             ref='field'
-            style={[styles.inputField,{}]}
+            style={styles.inputField}
             value={this.props.value}
             keyboardType={this.props.keyboardType || 'default'}
-            placeholder={this.props.label}
+            placeholder={this.props.placeholder}
+            inputPlaceholderColor={Colors.inputPlaceholderColor}
             onChange={this.props.onChange}
           />
         </View>
@@ -64,13 +65,13 @@ class PickerFieldRow extends React.Component {
     }
     return (
       <View style={styles.inputContainer}>
-        <Text style={styles.inputTitle}>{this.props.field}</Text>
+        <Text style={styles.inputTitle}>{`*${this.props.field}`}</Text>
         <TouchableHighlight
           underlayColor='transparent'
           onPress={() => { this.props.onShowFieldPicker() }}
-          style={styles.inputFieldContainer}
+          style={styles.inputSelectContainer}
         >
-          <Text style={styles.inputField}>
+          <Text style={styles.selectField}>
             {selectFieldText}
           </Text>
         </TouchableHighlight>
@@ -90,13 +91,13 @@ class ProductForm extends React.Component {
       selectedName: this.props.product ? this.props.product.name : '',
       selectedCategory: this.props.productCategory ? this.props.productCategory.id : null,
       selectedPurveyor: this.props.product ? this.props.product.purveyors : null,
-      selectedAmount: this.props.product ? this.props.product.amount : null,
-      selectedUnits: this.props.product ? this.props.product.unit : '',
+      selectedAmount: this.props.product ? this.props.product.amount : 1,
+      selectedUnits: this.props.product ? this.props.product.unit : 'ea',
       selectedSku: this.props.product ? this.props.product.sku : '',
       selectedPrice: this.props.product ? this.props.product.price : '',
       selectedPar: this.props.product ? this.props.product.par : '',
     }
-    this.fields = ['Purveyor','Category','Amount']//,'Units']
+    this.fields = ['Purveyor','Category','Amount']//,'/QtyUnits']
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -282,7 +283,7 @@ class ProductForm extends React.Component {
     // }
 
     return (
-      <View style={{flex:1}}>
+      <View style={styles.container}>
         <ScrollView
           automaticallyAdjustContentInsets={false}
           style={styles.scrollView}
@@ -290,7 +291,8 @@ class ProductForm extends React.Component {
           <FieldRow
             key='name'
             ref='name'
-            label='Name'
+            label='*Name'
+            placeholder='Golden Beets'
             value={this.state.selectedName}
             onChange={(e) => {
               this.setState({
@@ -304,7 +306,8 @@ class ProductForm extends React.Component {
           <FieldRow
             key='unit'
             ref='unit'
-            label='Unit'
+            label='*Base Unit'
+            placeholder='case, ea, lb'
             value={this.state.selectedUnits}
             onChange={(e) => {
               this.setState({
@@ -331,6 +334,7 @@ class ProductForm extends React.Component {
             key='price'
             ref='price'
             label='Price'
+            placeholder='$'
             keyboardType='numeric'
             value={selectedPrice}
             onChange={(e) => {
@@ -346,6 +350,7 @@ class ProductForm extends React.Component {
             key='par'
             ref='par'
             label='Par'
+            placeholder='5 ea'
             value={this.state.selectedPar}
             onChange={(e) => {
               this.setState({
@@ -392,47 +397,47 @@ class ProductForm extends React.Component {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.mainBackgroundColor,
+    padding: 10,
+    paddingTop: 10,
+  },
   scrollView: {
-    // backgroundColor: 'blue',
-    // backgroundColor: Colors.mainBackgroundColor,
     flex: 1,
   },
   inputContainer: {
+    backgroundColor: 'white',
     flex: 1,
-    // marginTop: 2,
-    // backgroundColor: 'red',
     flexDirection: 'row',
-    justifyContent: 'space-around',
     alignItems: 'center',
+    marginTop: 4,
+    marginBottom: 4,
   },
   inputTitle: {
     flex: 1,
     fontFamily: 'OpenSans',
-    fontWeight: 'bold',
-    fontSize: 14,
-    paddingTop: 10,
-    paddingBottom: 10,
     paddingLeft: 8,
-    color: Colors.greyText,
   },
   inputFieldContainer: {
-    flex: 3,
-    marginRight: 4,
+    justifyContent: 'center',
+    flex: 1,
   },
-  inputFieldUnderline: {
-    borderBottomColor: Colors.inputUnderline,
-    borderBottomWidth: 1,
+  inputSelectContainer: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+  },
+  selectField: {
+    fontFamily: 'OpenSans',
+    fontSize: 11,
+    paddingTop: 15,
+    paddingBottom: 15,
   },
   inputField: {
-    padding: 4,
-    paddingLeft: 8,
-    paddingRight: 8,
-    fontWeight: 'bold',
-    fontSize: Sizes.inputFieldFontSize,
-    color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
-    textAlign: 'right',
-    height: Sizes.inputFieldHeight,
+    fontSize: 11,
+    height: 40,
   },
 });
 
