@@ -81,6 +81,7 @@ class PickerFieldRow extends React.Component {
 class ProductForm extends React.Component {
   constructor(props) {
     super(props);
+    console.log('props: ', props)
     this.state = {
       newProduct: {},
       fieldPicker: null,
@@ -88,7 +89,7 @@ class ProductForm extends React.Component {
       modalVisible: false,
       selectedName: this.props.product ? this.props.product.name : '',
       selectedCategory: this.props.productCategory ? this.props.productCategory.id : null,
-      selectedPurveyor: this.props.product ? this.props.product.purveyors : null,
+      selectedPurveyor: this.props.product ? this.props.product.purveyors : (this.props.fromPurveyorId ? [this.props.fromPurveyorId] : null),
       selectedAmount: this.props.product ? this.props.product.amount : 1,
       selectedUnits: this.props.product ? this.props.product.unit : 'cs',
       selectedSku: this.props.product ? this.props.product.sku : '',
