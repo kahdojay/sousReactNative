@@ -32,7 +32,8 @@ const {
 
 class App extends React.Component {
   constructor(props, ctx) {
-    super(props, ctx);
+    super(props, ctx)
+    const constructorNow = (new Date()).getTime()
     this.state = {
       category: null,
       connectionStats: {
@@ -57,7 +58,7 @@ class App extends React.Component {
           orders: null,
           messages: null,
           betaAccess: null,
-        }
+        },
       },
       email: this.props.session.email,
       firstName: this.props.session.firstName,
@@ -86,6 +87,8 @@ class App extends React.Component {
         },
       },
       touchToClose: false,
+      lastResourceInfoRetrieval: (new Date(constructorNow - ((60*60*1000) + 100) )).toISOString(),
+      lastResourceInfoFetching: false,
     }
     this.reconnectTimeout = null
     this.initialRoute = 'Signup'
@@ -120,6 +123,7 @@ class App extends React.Component {
   }}
 
   componentWillReceiveProps(nextProps) {
+    const {dispatch} = nextProps
     let processRedirect = false
     let currentTeamInfo = Object.assign({}, this.state.currentTeamInfo)
     currentTeamInfo.team = nextProps.teams.currentTeam
@@ -130,37 +134,70 @@ class App extends React.Component {
       // ---------------------------------------------------
       if(nextProps.purveyors.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.purveyors = nextProps.purveyors.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.purveyors = nextProps.purveyors.lastUpdated
+        const sortedPurveyors = _.sortBy(currentTeamInfo.purveyors, 'updatedAt')
+        if(sortedPurveyors.length > 0){
+          const lastPurveyor = _.last(sortedPurveyors)
+          if(lastPurveyor.hasOwnProperty('updatedAt') === true){
+            currentTeamInfo.lastUpdated.purveyors = _.last(sortedPurveyors).updatedAt
+          }
+        }
       } else {
         currentTeamInfo.purveyors = {}
+        currentTeamInfo.lastUpdated.purveyors = null
       }
-      currentTeamInfo.lastUpdated.purveyors = nextProps.purveyors.lastUpdated;
       // ---------------------------------------------------
       // categories
       // ---------------------------------------------------
       if(nextProps.categories.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.categories = nextProps.categories.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.categories = nextProps.categories.lastUpdated
+        const sortedCategories = _.sortBy(currentTeamInfo.categories, 'updatedAt')
+        if(sortedCategories.length > 0){
+          const lastCategory = _.last(sortedCategories)
+          if(lastCategory.hasOwnProperty('updatedAt') === true){
+            currentTeamInfo.lastUpdated.categories = _.last(sortedCategories).updatedAt
+          }
+        }
       } else {
         currentTeamInfo.categories = {}
+        currentTeamInfo.lastUpdated.categories = null
       }
-      currentTeamInfo.lastUpdated.categories = nextProps.categories.lastUpdated;
+
       // ---------------------------------------------------
       // products
       // ---------------------------------------------------
       if(nextProps.products.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.products = nextProps.products.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.products = nextProps.products.lastUpdated
+        const sortedProducts = _.sortBy(currentTeamInfo.products, 'updatedAt')
+        if(sortedProducts.length > 0){
+          const lastProduct = _.last(sortedProducts)
+          if(lastProduct.hasOwnProperty('updatedAt') === true){
+            currentTeamInfo.lastUpdated.products = _.last(sortedProducts).updatedAt
+          }
+        }
       } else {
         currentTeamInfo.products = {}
+        currentTeamInfo.lastUpdated.products = null
       }
-      currentTeamInfo.lastUpdated.products = nextProps.products.lastUpdated;
       // ---------------------------------------------------
       // messages
       // ---------------------------------------------------
       if(nextProps.messages.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.messages = nextProps.messages.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.messages = nextProps.messages.lastUpdated
+        const sortedMessages = _.sortBy(currentTeamInfo.messages, 'updatedAt')
+        if(sortedMessages.length > 0){
+          const lastMessage = _.last(sortedMessages)
+          if(lastMessage.hasOwnProperty('updatedAt') === true){
+            currentTeamInfo.lastUpdated.messages = _.last(sortedMessages).updatedAt
+          }
+        }
       } else {
         currentTeamInfo.messages = {}
+        currentTeamInfo.lastUpdated.messages = null
       }
-      currentTeamInfo.lastUpdated.messages = nextProps.messages.lastUpdated;
       // ---------------------------------------------------
       // cartItems
       // ---------------------------------------------------
@@ -189,10 +226,18 @@ class App extends React.Component {
       if(nextProps.orders.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.orders = nextProps.orders.teams[currentTeamInfo.team.id]
         // console.log('cWRP: ', nextProps.orders.teams[currentTeamInfo.team.id]["Tp3cqFkgne8Amznft"].confirm)
+        currentTeamInfo.lastUpdated.orders = nextProps.orders.lastUpdated
+        const sortedOrders = _.sortBy(currentTeamInfo.orders, 'updatedAt')
+        if(sortedOrders.length > 0){
+          const lastOrder = _.last(sortedOrders)
+          if(lastOrder.hasOwnProperty('updatedAt') === true){
+            currentTeamInfo.lastUpdated.orders = _.last(sortedOrders).updatedAt
+          }
+        }
       } else {
         currentTeamInfo.orders = {}
+        currentTeamInfo.lastUpdated.orders = null
       }
-      currentTeamInfo.lastUpdated.orders = nextProps.orders.lastUpdated;
       // ---------------------------------------------------
       // resources
       // ---------------------------------------------------
@@ -229,6 +274,26 @@ class App extends React.Component {
       email: nextProps.session.email,
       currentTeamInfo: currentTeamInfo,
     }
+
+    if(currentTeamInfo.team !== null){
+      if(currentTeamInfo.resources && currentTeamInfo.resources.meta && currentTeamInfo.resources.meta.retrievedAt){
+        componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval = currentTeamInfo.resources.meta.retrievedAt;
+      } else {
+        componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval = this.state.lastResourceInfoRetrieval
+      }
+      if(
+        moment().diff(componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval) > (60*1000)
+        && this.state.lastResourceInfoFetching === false
+      ){
+        componentWillReceivePropsStateUpdate.lastResourceInfoFetching = true
+        // console.log('Dispatching ')
+        dispatch(actions.getTeamResourceInfo(currentTeamInfo.team.id))
+      } else {
+        // console.log(moment().diff(componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval), (60*1000))
+        componentWillReceivePropsStateUpdate.lastResourceInfoFetching = false
+      }
+    }
+
     let updatedOrder = null
     if(
       this.state.order !== null
@@ -768,8 +833,13 @@ class App extends React.Component {
             messagesByTeams: messages.teams,
             onUpdateTeam: (teamId) => {
               _.debounce(() => {
-                // dispatch(actions.resetPurveyors());
-                dispatch(actions.setCurrentTeam(teamId));
+                const teamIndexNow = (new Date()).getTime()
+                this.setState({
+                  lastResourceInfoRetrieval: (new Date(teamIndexNow - ((60*60*1000) + 100) )).toISOString(),
+                }, () => {
+                  // dispatch(actions.resetPurveyors());
+                  dispatch(actions.setCurrentTeam(teamId));
+                })
               }, 25)()
               nav.replacePreviousAndPop({
                 name: 'Feed',
@@ -2065,6 +2135,17 @@ class App extends React.Component {
           session={session}
           open={this.state.open}
           onNavToPurveyor={() => {
+            if(this.state.currentTeamInfo.resources.hasOwnProperty('lastUpdated') === true){
+              const resourcesLastUpdated = this.state.currentTeamInfo.resources.lastUpdated
+              // console.log('update? ', resourcesLastUpdated.categories, this.state.currentTeamInfo.lastUpdated.categories, moment(resourcesLastUpdated.categories).diff(this.state.currentTeamInfo.lastUpdated.categories), (60*1000))
+              if(
+                resourcesLastUpdated.hasOwnProperty('categories') === true
+                && moment(resourcesLastUpdated.categories).diff(this.state.currentTeamInfo.lastUpdated.categories) > 0
+              ) {
+                // console.log('Dispatching get categories...')
+                dispatch(actions.getCategories(session.teamId))
+              }
+            }
             this.setState({
               order: null,
               orderId: null,
@@ -2094,9 +2175,9 @@ class App extends React.Component {
     let connectionStatus = null
     if(connect.status === actions.CONNECT.OFFLINE){
       let reconnectText = `reconnecting in ${Math.floor(this.state.connectionStats.reconnect/1000)}s`
-      if(this.state.connectionStats.attempt === 0 || this.state.connectionStats.reconnect === 0){
-        reconnectText = 'connecting...'
-      }
+      // if(this.state.connectionStats.attempt === 0 || this.state.connectionStats.reconnect === 0){
+      //   reconnectText = 'connecting...'
+      // }
       connectionStatus = (
         <TouchableHighlight
           onPress={() => {

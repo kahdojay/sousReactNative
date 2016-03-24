@@ -289,6 +289,7 @@ export default function TeamActions(allActions) {
         dispatch(messageActions.getTeamMessages(team.id))
       }
       dispatch(productActions.getProducts(team.id))
+      dispatch(categoryActions.getCategories(team.id))
       dispatch(cartItemActions.getTeamCartItems(team.id))
       dispatch(orderActions.getTeamOrders(team.id))
       dispatch(getTeamUsers(team.id))
