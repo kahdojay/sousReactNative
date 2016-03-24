@@ -40,6 +40,7 @@ const initialState = {
       model: null,
       appVersion: null,
       appBuildNumber: null,
+      deviceId: null,
       deviceName: null,
       systemName: null,
       systemVersion: null,

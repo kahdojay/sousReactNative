@@ -132,10 +132,25 @@ function products(state = initialState.products, action) {
     addProductTeamState[action.teamId][action.productId] = Object.assign(addOriginalTeamProduct, action.product, {
       updatedAt: (new Date()).toISOString()
     })
+
+    const addReducedProduct = addProductTeamState[action.teamId][action.productId]
+    let addProductPurveyorsState = Object.assign({}, state.purveyors);
+    if(addReducedProduct.hasOwnProperty('purveyors') === true){
+      addReducedProduct.purveyors.forEach((purveyorId) => {
+        if(addProductPurveyorsState.hasOwnProperty(purveyorId) === false){
+          addProductPurveyorsState[purveyorId] = {}
+        }
+        if(addProductPurveyorsState[purveyorId].hasOwnProperty(addReducedProduct.id) === false){
+          addProductPurveyorsState[purveyorId][addReducedProduct.id] = true
+        }
+      });
+    }
+
     // console.log(addProductTeamState[action.teamId][action.productId]);
     return Object.assign({}, state, {
       errors: null,
       teams: addProductTeamState,
+      purveyors: addProductPurveyorsState,
       lastUpdated: (new Date()).toISOString()
     });
 

@@ -53,7 +53,7 @@ export default function ProductActions(allActions){
         }),
       });
 
-      dispatch(connectActions.ddpCall('createProduct', [Object.assign({}, newProductAttributes), session.userId]))
+      dispatch(connectActions.ddpCall('createProduct', [Object.assign({}, newProductAttributes)]))
 
       return dispatch(categoryActions.addProductCategory(productAttributes.categoryId, productId))
     }

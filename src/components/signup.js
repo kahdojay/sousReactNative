@@ -137,6 +137,7 @@ class Signup extends React.Component {
     }
     let tosLink =
         <TouchableHighlight
+          style={styles.tosButton}
           underlayColor='transparent'
           onPress={() => {
             LinkingIOS.openURL('http://eula.sousapp.com/')
@@ -309,10 +310,12 @@ let styles = StyleSheet.create({
     color: 'white',
     fontFamily: 'OpenSans',
   },
+  tosButton: {
+    marginTop: 100,
+  },
   tosLink: {
     color: 'white',
     textAlign: 'center',
-    marginTop: 80,
   },
   buttonActive: {
     flex: 1,

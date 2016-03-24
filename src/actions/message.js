@@ -61,7 +61,8 @@ export default function MessageActions(allActions){
         })
       })
 
-      dispatch(connectActions.ddpCall('createMessage', [Object.assign({}, newMessage), session.userId]))
+      const triggerPushNotification = true
+      dispatch(connectActions.ddpCall('createMessage', [Object.assign({}, newMessage), triggerPushNotification, session.userId]))
     }
   }
 

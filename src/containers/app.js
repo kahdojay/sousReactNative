@@ -986,6 +986,12 @@ class App extends React.Component {
               const navValue = evt.nativeEvent.value
               switch(navValue){
                 case 'Purveyor':
+                  this.setState({
+                    order: null,
+                    orderId: null,
+                    category: null,
+                    purveyor: null,
+                  })
                   // nav.replace({
                   //   name: 'PurveyorIndex',
                   // });
@@ -1395,6 +1401,7 @@ class App extends React.Component {
           component: Components.ProductForm,
           props: {
             productCategory: this.state.category,
+            fromPurveyorId: this.state.purveyor ? this.state.purveyor.id : null,
             product: this.state.product,
             team: this.state.currentTeamInfo.team,
             categories: this.state.currentTeamInfo.categories,
@@ -1676,9 +1683,9 @@ class App extends React.Component {
                 disabled={(this.state.currentTeamInfo.team === null)}
               />
             ),
-            customNext: (
-              <Components.FeedViewRightButton />
-            ),
+            // customNext: (
+            //   <Components.FeedViewRightButton />
+            // ),
           })
           break;
         case 'PurveyorIndex':
@@ -2175,9 +2182,9 @@ class App extends React.Component {
     let connectionStatus = null
     if(connect.status === actions.CONNECT.OFFLINE){
       let reconnectText = `reconnecting in ${Math.floor(this.state.connectionStats.reconnect/1000)}s`
-      // if(this.state.connectionStats.attempt === 0 || this.state.connectionStats.reconnect === 0){
-      //   reconnectText = 'connecting...'
-      // }
+      if(this.state.connectionStats.attempt === 0 || this.state.connectionStats.reconnect === 0){
+        reconnectText = 'establishing connection...'
+      }
       connectionStatus = (
         <TouchableHighlight
           onPress={() => {
