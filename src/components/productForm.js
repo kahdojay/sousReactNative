@@ -426,6 +426,7 @@ const styles = StyleSheet.create({
   },
   textDivider: {
     color: Colors.darkGrey,
+    fontSize: 20,
     marginTop: 10,
     marginBottom: 10,
   },
@@ -449,15 +450,15 @@ const styles = StyleSheet.create({
   selectField: {
     flex: 1,
     fontFamily: 'OpenSans',
-    fontSize: 11,
+    fontSize: 16,
     marginLeft: 10,
-    paddingTop: 10,
-    paddingBottom: 10,
+    paddingTop: 13,
+    paddingBottom: 13,
   },
   inputField: {
     fontFamily: 'OpenSans',
-    fontSize: 11,
-    height: 30,
+    fontSize: 16,
+    height: 45,
     marginLeft: 10,
   },
 });

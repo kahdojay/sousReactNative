@@ -156,13 +156,13 @@ class CartView extends React.Component {
   render() {
     const {cartItems, cartPurveyors, products, connected, teamBetaAccess, offlineQueueCount} = this.props
 
-    // if(connected === false){
-    //   return (
-    //     <View style={styles.container}>
-    //       <Text style={styles.inaccessible}>Cart inaccessible in offline mode</Text>
-    //     </View>
-    //   )
-    // }
+    if(connected === false){
+      return (
+        <View style={styles.container}>
+          <Text style={styles.inaccessible}>Cart inaccessible in offline mode</Text>
+        </View>
+      )
+    }
 
     const purveyorInfoDismiss = () => {
       this.setState({
