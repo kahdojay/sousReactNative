@@ -342,7 +342,7 @@ export default function ConnectActions(ddpClient) {
         // console.log(`[${new Date()}] MAIN DDP MSG`, log);
         const {connect, session} = getState()
         if(connect.status !== CONNECT.CONNECTED){
-          // Treat an message as a "ping"
+          // Treat a message as a "ping"
           clearTimeout(connect.timeoutId)
           dispatch(connectionStatusConnected(connect.attempt))
         }
@@ -424,6 +424,8 @@ export default function ConnectActions(ddpClient) {
               // console.log("TODO: wire up collection: ", log.collection);
               break;
           }
+        // } else if(log.msg && log.msg === 'ping'){
+        //   console.log(`PING [${(new Date()).getTime()}]`, log);
         } else if(log){
           // console.log("MAIN DDP MSG", log);
         }
@@ -545,8 +547,36 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
+  function connectionHeartBeat() {
+    return (dispatch, getState) => {
+      const {connect, session} = getState()
+      if(connect.status === CONNECT.CONNECTED){
+        ddpClient.call('💓', [{
+          userId: session.userId,
+        }], (err, results) => {
+          if(err){
+            dispatch({
+              type: CONNECTION_STATUS,
+              status: CONNECT.OFFLINE,
+              timeoutId: null,
+              error: error,
+              attempt: 0,
+            })
+          } else {
+            window.setTimeout(() => {
+              dispatch(connectionHeartBeat())
+            }, 5000)
+          }
+        })
+      }
+    }
+  }
+
   function connectionStatusConnected(attempt) {
     return (dispatch, getState) => {
+      window.setTimeout(() => {
+        dispatch(connectionHeartBeat())
+      }, 5000)
       return dispatch({
         type: CONNECTION_STATUS,
         timeoutId: null,
