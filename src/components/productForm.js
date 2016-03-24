@@ -92,7 +92,7 @@ class ProductForm extends React.Component {
       selectedCategory: this.props.productCategory ? this.props.productCategory.id : null,
       selectedPurveyor: this.props.product ? this.props.product.purveyors : null,
       selectedAmount: this.props.product ? this.props.product.amount : 1,
-      selectedUnits: this.props.product ? this.props.product.unit : 'ea',
+      selectedUnits: this.props.product ? this.props.product.unit : 'cs',
       selectedSku: this.props.product ? this.props.product.sku : '',
       selectedPrice: this.props.product ? this.props.product.price : '',
       selectedPar: this.props.product ? this.props.product.par : '',
@@ -321,6 +321,7 @@ class ProductForm extends React.Component {
             key='sku'
             ref='sku'
             label='SKU'
+            placeholder='(optional)'
             value={this.state.selectedSku}
             onChange={(e) => {
               this.setState({
@@ -334,7 +335,7 @@ class ProductForm extends React.Component {
             key='price'
             ref='price'
             label='Price'
-            placeholder='$'
+            placeholder='(optional)'
             keyboardType='numeric'
             value={selectedPrice}
             onChange={(e) => {
@@ -350,7 +351,7 @@ class ProductForm extends React.Component {
             key='par'
             ref='par'
             label='Par'
-            placeholder='5 ea'
+            placeholder='(optional)'
             value={this.state.selectedPar}
             onChange={(e) => {
               this.setState({
