@@ -987,6 +987,8 @@ class App extends React.Component {
               switch(navValue){
                 case 'Purveyor':
                   this.setState({
+                    order: null,
+                    orderId: null,
                     category: null,
                     purveyor: null,
                   })
