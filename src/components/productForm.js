@@ -30,7 +30,6 @@ class FieldRow extends React.Component {
   render() {
     return (
       <View key={this.props.key} style={styles.inputContainer}>
-        <Text style={styles.inputTitle}>{this.props.label}</Text>
         <View style={styles.inputFieldContainer}>
           <TextInput
             ref='field'
@@ -65,7 +64,6 @@ class PickerFieldRow extends React.Component {
     }
     return (
       <View style={styles.inputContainer}>
-        <Text style={styles.inputTitle}>{`*${this.props.field}`}</Text>
         <TouchableHighlight
           underlayColor='transparent'
           onPress={() => { this.props.onShowFieldPicker() }}
@@ -171,7 +169,7 @@ class ProductForm extends React.Component {
         selectedValue = this.state[selectedValueId]
         if(field === 'Purveyor' && selectedValue !== null){
           const purveyorIds = this.state[selectedValueId]
-          selectedValue = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Selected`
+          selectedValue = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Purveyors Selected`
           if(purveyorIds.length === 0){
             selectedValue = null
           }
@@ -288,11 +286,12 @@ class ProductForm extends React.Component {
           automaticallyAdjustContentInsets={false}
           style={styles.scrollView}
         >
+          <Text style={styles.textDivider}>Product Details</Text>
           <FieldRow
             key='name'
             ref='name'
-            label='*Name'
-            placeholder='Golden Beets'
+            label='Name'
+            placeholder='Avocado, Ripe (48 ct)'
             value={this.state.selectedName}
             onChange={(e) => {
               this.setState({
@@ -306,7 +305,7 @@ class ProductForm extends React.Component {
           <FieldRow
             key='unit'
             ref='unit'
-            label='*Base Unit'
+            label='Base Unit'
             placeholder='case, ea, lb'
             value={this.state.selectedUnits}
             onChange={(e) => {
@@ -317,11 +316,12 @@ class ProductForm extends React.Component {
               });
             }}
           />
+          <Text style={styles.textDivider}>Additional Info (optional)</Text>
           <FieldRow
             key='sku'
             ref='sku'
             label='SKU'
-            placeholder='(optional)'
+            placeholder='SKU'
             value={this.state.selectedSku}
             onChange={(e) => {
               this.setState({
@@ -335,7 +335,7 @@ class ProductForm extends React.Component {
             key='price'
             ref='price'
             label='Price'
-            placeholder='(optional)'
+            placeholder='Price'
             keyboardType='numeric'
             value={selectedPrice}
             onChange={(e) => {
@@ -351,7 +351,7 @@ class ProductForm extends React.Component {
             key='par'
             ref='par'
             label='Par'
-            placeholder='(optional)'
+            placeholder='Par'
             value={this.state.selectedPar}
             onChange={(e) => {
               this.setState({
@@ -401,24 +401,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
-    padding: 10,
+    padding: 5,
     paddingTop: 10,
   },
   scrollView: {
     flex: 1,
+  },
+  textDivider: {
+    color: Colors.darkGrey,
+    marginTop: 10,
+    marginBottom: 10,
   },
   inputContainer: {
     backgroundColor: 'white',
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
-    marginBottom: 4,
-  },
-  inputTitle: {
-    flex: 1,
-    fontFamily: 'OpenSans',
-    paddingLeft: 8,
+    marginTop: 1,
+    marginBottom: 1,
   },
   inputFieldContainer: {
     justifyContent: 'center',
@@ -430,15 +430,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   selectField: {
+    flex: 1,
     fontFamily: 'OpenSans',
     fontSize: 11,
-    paddingTop: 15,
-    paddingBottom: 15,
+    marginLeft: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   inputField: {
     fontFamily: 'OpenSans',
     fontSize: 11,
-    height: 40,
+    height: 30,
+    marginLeft: 10,
   },
 });
 
