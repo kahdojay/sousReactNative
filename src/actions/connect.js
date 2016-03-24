@@ -30,6 +30,7 @@ export default function ConnectActions(ddpClient) {
   let heartbeatTimeoutDisconnectId = null
   let heartbeatTimeoutId = null
   let ddpClientConnected = false
+  let successfulHeartbeatCounter = 0
 
   // const APPROVED_OFFLINE_METHODS = {
   //   'addCartItem': { allow: true },
@@ -346,12 +347,12 @@ export default function ConnectActions(ddpClient) {
         var log = JSON.parse(msg);
         // console.log(`[${new Date()}] MAIN DDP MSG`, log);
         const {connect, session} = getState()
-        if(connect.status !== CONNECT.CONNECTED){
-          // Treat a message as a "ping"
-          // clearTimeout(connect.timeoutId)
-          // dispatch(connectionStatusConnected(0))
-          dispatch(connectionHeartBeat())
-        }
+        // if(connect.status !== CONNECT.CONNECTED){
+        //   // Treat a message as a "ping"
+        //   // clearTimeout(connect.timeoutId)
+        //   // dispatch(connectionStatusConnected(0))
+        //   dispatch(connectionHeartBeat())
+        // }
 
         // process the subscribe events to collections and their fields
         if (log.hasOwnProperty('fields')){
@@ -509,8 +510,9 @@ export default function ConnectActions(ddpClient) {
 
   function reconnectDDPClient(error, resetAttempt){
     return (dispatch, getState) => {
-      clearTimeout(heartbeatTimeoutId)
       const {connect} = getState()
+      successfulHeartbeatCounter = 0
+      clearTimeout(heartbeatTimeoutId)
       clearTimeout(connect.timeoutId)
       let attempt = connect.attempt
       if(isNaN(attempt) === true){
@@ -587,11 +589,12 @@ export default function ConnectActions(ddpClient) {
         clearTimeout(heartbeatTimeoutDisconnectId)
         heartbeatTimeoutDisconnectId = window.setTimeout(() => {
           dispatch(reconnectDDPClient('Connection heartbeat timed out'))
-        }, 9000)
+        }, 4000)
 
-        ddpClient.call('💓', [{
+        const heartbeatData = [{
           userId: session.userId,
-        }], (err, results) => {
+        }]
+        ddpClient.call('💓', heartbeatData, (err, results) => {
           if(err){
             // NOTE: Do we need to set the flag to be disconnected?
             // ddpClientConnected = false
@@ -599,16 +602,20 @@ export default function ConnectActions(ddpClient) {
           } else {
             clearTimeout(heartbeatTimeoutDisconnectId)
             clearTimeout(connect.timeoutId)
-            dispatch({
-              type: CONNECTION_STATUS,
-              timeoutId: null,
-              status: CONNECT.CONNECTED,
-              error: null,
-              attempt: 0,
-            })
+            if(successfulHeartbeatCounter > 1){
+              dispatch({
+                type: CONNECTION_STATUS,
+                timeoutId: null,
+                status: CONNECT.CONNECTED,
+                error: null,
+                attempt: 0,
+              })
+            } else {
+              successfulHeartbeatCounter++
+            }
             heartbeatTimeoutId = window.setTimeout(() => {
               dispatch(connectionHeartBeat())
-            }, 5000)
+            }, 2000)
           }
         })
       // }
