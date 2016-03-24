@@ -436,7 +436,7 @@ export default function ConnectActions(ddpClient) {
       ddpClient.on('connected', () => {
         const {connect, session, teams} = getState()
         clearTimeout(connect.timeoutId)
-        dispatch(connectionStatusConnected(0))
+        // dispatch(connectionStatusConnected(0))
         dispatch(getAppStoreVersion())
         dispatch(getSettingsConfig())
         dispatch(updateInstallation({}))
@@ -547,9 +547,6 @@ export default function ConnectActions(ddpClient) {
 
   function connectionStatusConnected(attempt) {
     return (dispatch, getState) => {
-
-
-
       return dispatch({
         type: CONNECTION_STATUS,
         timeoutId: null,

@@ -135,6 +135,37 @@ export default function CategoryActions(allActions){
     }
   }
 
+  function getCategories(categoryTeamId) {
+    // console.log('Getting categories for: ', categoryTeamId)
+    return (dispatch, getState) => {
+      const {session} = getState();
+      let teamId = session.teamId
+      if(categoryTeamId) {
+        teamId = categoryTeamId
+      }
+
+      const getCategoriesCb = (err, result) => {
+        dispatch({
+          type: GET_CATEGORIES,
+          isFetching: false,
+        })
+        // console.log('called function, result: ', result);
+        if(result.length > 0){
+          result.forEach((category) => {
+            category.id = category._id
+            delete category._id
+            dispatch(receiveCategories(category));
+          })
+        }
+      }
+      dispatch(connectActions.ddpCall('getCategories', [teamId], getCategoriesCb))
+      return dispatch({
+        type: GET_CATEGORIES,
+        isFetching: true,
+      })
+    }
+  }
+
   return {
     RESET_CATEGORIES,
     GET_CATEGORIES,
@@ -149,6 +180,7 @@ export default function CategoryActions(allActions){
     // updateCategory,
     // deleteCategory,
     addProductCategory,
+    getCategories,
     updateProductCategory,
     receiveCategories,
     resetCategories,
