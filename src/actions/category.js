@@ -48,7 +48,7 @@ export default function CategoryActions(allActions){
   //         id: categoryId
   //       })
   //     })
-  //     dispatch(connectActions.ddpCall('createCategory', [Object.assign({}, newCategoryAttributes), session.userId]))
+  //     dispatch(connectActions.ddpCall('createCategory', [Object.assign({}, newCategoryAttributes)]))
   //   }
   // }
   //

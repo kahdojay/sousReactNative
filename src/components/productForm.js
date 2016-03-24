@@ -81,7 +81,7 @@ class PickerFieldRow extends React.Component {
 class ProductForm extends React.Component {
   constructor(props) {
     super(props);
-    console.log('props: ', props)
+    // console.log('props: ', props)
     this.state = {
       newProduct: {},
       fieldPicker: null,
@@ -95,8 +95,9 @@ class ProductForm extends React.Component {
       selectedSku: this.props.product ? this.props.product.sku : '',
       selectedPrice: this.props.product ? this.props.product.price : '',
       selectedPar: this.props.product ? this.props.product.par : '',
+      selectedPackSize: this.props.product ? this.props.product.packSize : '',
     }
-    this.fields = ['Purveyor','Category','Amount']//,'/QtyUnits']
+    this.fields = ['Purveyor','Category','Amount']//,'QtyUnits']
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -142,6 +143,7 @@ class ProductForm extends React.Component {
         sku: this.state.selectedSku,
         price: this.state.selectedPrice,
         par: this.state.selectedPar,
+        packSize: this.state.selectedPackSize,
       }
       this.props.onProcessProduct(productAttributes);
     } else {
@@ -357,6 +359,20 @@ class ProductForm extends React.Component {
             onChange={(e) => {
               this.setState({
                 selectedPar: e.nativeEvent.text,
+              }, () => {
+                this.checkValidForm();
+              });
+            }}
+          />
+          <FieldRow
+            key='packSize'
+            ref='packSize'
+            label='Pack Size'
+            placeholder='Pack Size'
+            value={this.state.selectedPackSize}
+            onChange={(e) => {
+              this.setState({
+                selectedPackSize: e.nativeEvent.text,
               }, () => {
                 this.checkValidForm();
               });
