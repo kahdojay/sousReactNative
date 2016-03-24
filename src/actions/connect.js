@@ -27,6 +27,8 @@ export default function ConnectActions(ddpClient) {
 
   const connectedChannels = {}, noop = ()=>{}
   let connectAllActions = null
+  let heartbeatTimeoutId = null
+  let ddpClientConnected = false
 
   // const APPROVED_OFFLINE_METHODS = {
   //   'addCartItem': { allow: true },
@@ -345,8 +347,9 @@ export default function ConnectActions(ddpClient) {
         const {connect, session} = getState()
         if(connect.status !== CONNECT.CONNECTED){
           // Treat a message as a "ping"
-          clearTimeout(connect.timeoutId)
-          dispatch(connectionStatusConnected(connect.attempt))
+          // clearTimeout(connect.timeoutId)
+          // dispatch(connectionStatusConnected(0))
+          dispatch(connectionHeartBeat())
         }
 
         // process the subscribe events to collections and their fields
@@ -438,9 +441,11 @@ export default function ConnectActions(ddpClient) {
   function subscribeDDPConnected(){
     return (dispatch, getState) => {
       ddpClient.on('connected', () => {
+        // console.log('connected')
         const {connect, session, teams} = getState()
-        clearTimeout(connect.timeoutId)
+        // clearTimeout(connect.timeoutId)
         // dispatch(connectionStatusConnected(0))
+        dispatch(connectionHeartBeat())
         dispatch(getAppStoreVersion())
         dispatch(getSettingsConfig())
         dispatch(updateInstallation({}))
@@ -456,40 +461,35 @@ export default function ConnectActions(ddpClient) {
   function subscribeDDPSocketClose() {
     return (dispatch, getState) => {
       ddpClient.on('socket-close', (code, message) => {
-        const {connect} = getState()
-        // console.log("Close: %s %s", code, message);
-        clearTimeout(connect.timeoutId)
-        dispatch({
-          type: CONNECTION_STATUS,
-          timeoutId: null,
-          status: CONNECT.OFFLINE,
-          error: 'Socket connection was closed, attempting to reconnect.',
-          attempt: connect.attempt,
-        })
-        // autoReconnect();
+        ddpClientConnected = false
+        dispatch(reconnectDDPClient('Socket connection was closed, attempting to reconnect.'))
       })
     }
   }
   function subscribeDDPSocketError() {
     return (dispatch, getState) => {
       ddpClient.on('socket-error', (code, message) => {
-        const {connect} = getState()
-        clearTimeout(connect.timeoutId)
-        dispatch({
-          type: CONNECTION_STATUS,
-          timeoutId: null,
-          status: CONNECT.OFFLINE,
-          error: 'Socket connnection errored out, attempting to reconnect.',
-          attempt: connect.attempt,
-        })
+        ddpClientConnected = false
+        dispatch(reconnectDDPClient('Socket connnection error, attempting to reconnect.'))
       })
     }
   }
 
-  function connectDDPClient() {
+  function connectDDPClient(resetAttempt) {
     return (dispatch, getState) => {
-      const {connect} = getState()
-      ddpClient.connect();
+      // const {connect} = getState()
+      if(ddpClientConnected === false){
+        ddpClient.connect((error, reconnectAttempt) => {
+          if (error) {
+            ddpClientConnected = false
+            dispatch(reconnectDDPClient(error, resetAttempt))
+          } else {
+            ddpClientConnected = true
+          }
+        });
+      } else {
+        console.log('skipping, already connected')
+      }
     }
   }
 
@@ -500,7 +500,7 @@ export default function ConnectActions(ddpClient) {
     }
   }
 
-  function connectDDPTimeoutId(timeoutId, timeoutMilliseconds){
+  function reconnectDDPClient(error, resetAttempt){
     return (dispatch, getState) => {
       const {connect} = getState()
       clearTimeout(connect.timeoutId)
@@ -508,14 +508,39 @@ export default function ConnectActions(ddpClient) {
       if(isNaN(attempt) === true){
         attempt = 0
       }
+      if(resetAttempt){
+        attempt = 0
+      }
+      attempt = (attempt + 1)
+      let timeoutMilliseconds = 5000
+
+      if(attempt > 34){
+        timeoutMilliseconds = 31000
+      } else if(attempt > 21){
+        timeoutMilliseconds = 21000
+      } else if(attempt > 13){
+        timeoutMilliseconds = 15000
+      } else if(attempt > 8){
+        timeoutMilliseconds = 11000
+      } else if(attempt > 5){
+        timeoutMilliseconds = 9000
+      } else if (attempt > 3) {
+        timeoutMilliseconds = 7000
+      }
+
+      const timeoutId = window.setTimeout(() => {
+        dispatch(connectDDPClient())
+      }, timeoutMilliseconds)
+
       dispatch({
         type: CONNECTION_STATUS,
         timeoutId: timeoutId,
         status: CONNECT.OFFLINE,
-        error: null,
-        attempt: (attempt + 1),
+        error: error,
+        attempt: attempt,
         timeoutMilliseconds: timeoutMilliseconds,
       })
+
     }
   }
 
@@ -533,44 +558,42 @@ export default function ConnectActions(ddpClient) {
       //--------------------------------------
       // Connect the DDP client
       //--------------------------------------
-      ddpClient.connect((error, reconnectAttempt) => {
-        if (error) {
-          const {connect} = getState()
-          clearTimeout(connect.timeoutId)
-          dispatch({
-            type: CONNECTION_STATUS,
-            status: CONNECT.OFFLINE,
-            timeoutId: null,
-            error: error,
-            attempt: connect.attempt,
-          })
-        }
-      });
+      dispatch(connectDDPClient(true))
     }
   }
 
   function connectionHeartBeat() {
     return (dispatch, getState) => {
       const {connect, session} = getState()
-      if(connect.status === CONNECT.CONNECTED){
+      // if(connect.status === CONNECT.CONNECTED){
+
+        clearTimeout(heartbeatTimeoutId)
+        heartbeatTimeoutId = window.setTimeout(() => {
+          dispatch(reconnectDDPClient('Connection heartbeat timed out'))
+        }, 6000)
+
         ddpClient.call('💓', [{
           userId: session.userId,
         }], (err, results) => {
           if(err){
+            // NOTE: Do we need to set the flag to be disconnected?
+            // ddpClientConnected = false
+            dispatch(reconnectDDPClient(err.toString()))
+          } else {
+            clearTimeout(connect.timeoutId)
             dispatch({
               type: CONNECTION_STATUS,
-              status: CONNECT.OFFLINE,
               timeoutId: null,
-              error: error,
+              status: CONNECT.CONNECTED,
+              error: null,
               attempt: 0,
             })
-          } else {
             window.setTimeout(() => {
               dispatch(connectionHeartBeat())
             }, 5000)
           }
         })
-      }
+      // }
     }
   }
 
@@ -658,7 +681,7 @@ export default function ConnectActions(ddpClient) {
     'connectDDP': connectDDP,
     'connectDDPClient': connectDDPClient,
     'disconnectDDPClient': disconnectDDPClient,
-    'connectDDPTimeoutId': connectDDPTimeoutId,
+    // 'connectDDPTimeoutId': connectDDPTimeoutId,
     'subscribeDDP': subscribeDDP,
     'sendEmail': sendEmail,
     'getSettingsConfig': getSettingsConfig,
