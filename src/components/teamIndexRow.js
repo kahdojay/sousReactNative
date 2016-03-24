@@ -20,13 +20,13 @@ class TeamIndexRow extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      enabled: (this.props.connected === true && this.props.selected === false)
+      enabled: (this.props.connected === true)
     };
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      enabled: (nextProps.connected === true && nextProps.selected === false)
+      enabled: (nextProps.connected === true)
     })
   }
 

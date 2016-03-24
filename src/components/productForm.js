@@ -30,14 +30,14 @@ class FieldRow extends React.Component {
   render() {
     return (
       <View key={this.props.key} style={styles.inputContainer}>
-        <Text style={styles.inputTitle}>{this.props.label}</Text>
-        <View style={[styles.inputFieldContainer, styles.inputFieldUnderline]}>
+        <View style={styles.inputFieldContainer}>
           <TextInput
             ref='field'
-            style={[styles.inputField,{}]}
+            style={styles.inputField}
             value={this.props.value}
             keyboardType={this.props.keyboardType || 'default'}
-            placeholder={this.props.label}
+            placeholder={this.props.placeholder}
+            inputPlaceholderColor={Colors.inputPlaceholderColor}
             onChange={this.props.onChange}
           />
         </View>
@@ -64,13 +64,12 @@ class PickerFieldRow extends React.Component {
     }
     return (
       <View style={styles.inputContainer}>
-        <Text style={styles.inputTitle}>{this.props.field}</Text>
         <TouchableHighlight
           underlayColor='transparent'
           onPress={() => { this.props.onShowFieldPicker() }}
-          style={styles.inputFieldContainer}
+          style={styles.inputSelectContainer}
         >
-          <Text style={styles.inputField}>
+          <Text style={styles.selectField}>
             {selectFieldText}
           </Text>
         </TouchableHighlight>
@@ -82,6 +81,7 @@ class PickerFieldRow extends React.Component {
 class ProductForm extends React.Component {
   constructor(props) {
     super(props);
+    console.log('props: ', props)
     this.state = {
       newProduct: {},
       fieldPicker: null,
@@ -89,14 +89,14 @@ class ProductForm extends React.Component {
       modalVisible: false,
       selectedName: this.props.product ? this.props.product.name : '',
       selectedCategory: this.props.productCategory ? this.props.productCategory.id : null,
-      selectedPurveyor: this.props.product ? this.props.product.purveyors : null,
-      selectedAmount: this.props.product ? this.props.product.amount : null,
-      selectedUnits: this.props.product ? this.props.product.unit : '',
+      selectedPurveyor: this.props.product ? this.props.product.purveyors : (this.props.fromPurveyorId ? [this.props.fromPurveyorId] : null),
+      selectedAmount: this.props.product ? this.props.product.amount : 1,
+      selectedUnits: this.props.product ? this.props.product.unit : 'cs',
       selectedSku: this.props.product ? this.props.product.sku : '',
       selectedPrice: this.props.product ? this.props.product.price : '',
       selectedPar: this.props.product ? this.props.product.par : '',
     }
-    this.fields = ['Purveyor','Category','Amount']//,'Units']
+    this.fields = ['Purveyor','Category','Amount']//,'/QtyUnits']
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -170,7 +170,7 @@ class ProductForm extends React.Component {
         selectedValue = this.state[selectedValueId]
         if(field === 'Purveyor' && selectedValue !== null){
           const purveyorIds = this.state[selectedValueId]
-          selectedValue = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Selected`
+          selectedValue = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Purveyors Selected`
           if(purveyorIds.length === 0){
             selectedValue = null
           }
@@ -282,15 +282,17 @@ class ProductForm extends React.Component {
     // }
 
     return (
-      <View style={{flex:1}}>
+      <View style={styles.container}>
         <ScrollView
           automaticallyAdjustContentInsets={false}
           style={styles.scrollView}
         >
+          <Text style={styles.textDivider}>Product Details</Text>
           <FieldRow
             key='name'
             ref='name'
             label='Name'
+            placeholder='Avocado, Ripe (48 ct)'
             value={this.state.selectedName}
             onChange={(e) => {
               this.setState({
@@ -304,7 +306,8 @@ class ProductForm extends React.Component {
           <FieldRow
             key='unit'
             ref='unit'
-            label='Unit'
+            label='Base Unit'
+            placeholder='case, ea, lb'
             value={this.state.selectedUnits}
             onChange={(e) => {
               this.setState({
@@ -314,10 +317,12 @@ class ProductForm extends React.Component {
               });
             }}
           />
+          <Text style={styles.textDivider}>Additional Info (optional)</Text>
           <FieldRow
             key='sku'
             ref='sku'
             label='SKU'
+            placeholder='SKU'
             value={this.state.selectedSku}
             onChange={(e) => {
               this.setState({
@@ -331,6 +336,7 @@ class ProductForm extends React.Component {
             key='price'
             ref='price'
             label='Price'
+            placeholder='Price'
             keyboardType='numeric'
             value={selectedPrice}
             onChange={(e) => {
@@ -346,6 +352,7 @@ class ProductForm extends React.Component {
             key='par'
             ref='par'
             label='Par'
+            placeholder='Par'
             value={this.state.selectedPar}
             onChange={(e) => {
               this.setState({
@@ -392,47 +399,50 @@ class ProductForm extends React.Component {
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
-    // backgroundColor: 'blue',
-    // backgroundColor: Colors.mainBackgroundColor,
+  container: {
     flex: 1,
+    backgroundColor: Colors.mainBackgroundColor,
+    padding: 5,
+    paddingTop: 10,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  textDivider: {
+    color: Colors.darkGrey,
+    marginTop: 10,
+    marginBottom: 10,
   },
   inputContainer: {
+    backgroundColor: 'white',
     flex: 1,
-    // marginTop: 2,
-    // backgroundColor: 'red',
     flexDirection: 'row',
-    justifyContent: 'space-around',
     alignItems: 'center',
-  },
-  inputTitle: {
-    flex: 1,
-    fontFamily: 'OpenSans',
-    fontWeight: 'bold',
-    fontSize: 14,
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 8,
-    color: Colors.greyText,
+    marginTop: 1,
+    marginBottom: 1,
   },
   inputFieldContainer: {
-    flex: 3,
-    marginRight: 4,
+    justifyContent: 'center',
+    flex: 1,
   },
-  inputFieldUnderline: {
-    borderBottomColor: Colors.inputUnderline,
-    borderBottomWidth: 1,
+  inputSelectContainer: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+  },
+  selectField: {
+    flex: 1,
+    fontFamily: 'OpenSans',
+    fontSize: 11,
+    marginLeft: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
   },
   inputField: {
-    padding: 4,
-    paddingLeft: 8,
-    paddingRight: 8,
-    fontWeight: 'bold',
-    fontSize: Sizes.inputFieldFontSize,
-    color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
-    textAlign: 'right',
-    height: Sizes.inputFieldHeight,
+    fontSize: 11,
+    height: 30,
+    marginLeft: 10,
   },
 });
 

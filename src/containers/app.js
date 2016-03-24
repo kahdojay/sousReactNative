@@ -986,6 +986,10 @@ class App extends React.Component {
               const navValue = evt.nativeEvent.value
               switch(navValue){
                 case 'Purveyor':
+                  this.setState({
+                    category: null,
+                    purveyor: null,
+                  })
                   // nav.replace({
                   //   name: 'PurveyorIndex',
                   // });
@@ -1395,6 +1399,7 @@ class App extends React.Component {
           component: Components.ProductForm,
           props: {
             productCategory: this.state.category,
+            fromPurveyorId: this.state.purveyor ? this.state.purveyor.id : null,
             product: this.state.product,
             team: this.state.currentTeamInfo.team,
             categories: this.state.currentTeamInfo.categories,
@@ -1676,9 +1681,9 @@ class App extends React.Component {
                 disabled={(this.state.currentTeamInfo.team === null)}
               />
             ),
-            customNext: (
-              <Components.FeedViewRightButton />
-            ),
+            // customNext: (
+            //   <Components.FeedViewRightButton />
+            // ),
           })
           break;
         case 'PurveyorIndex':

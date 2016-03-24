@@ -91,14 +91,14 @@ function formatMessage(msg, messageLength = null) {
         <Text style={styles.welcomeText}>
           Welcome to Sous! We've created this Demo Team for you to explore.{'\n\n'}
         </Text>
-        <Text style={styles.welcomeText}>
+        {/*<Text style={styles.welcomeText}>
           This is your Team Feed - use this space to communicate with your team. Add members by tapping the invite button within <Text style={{fontWeight: 'bold'}}>Team Members</Text>.{'\n\n'}
+        </Text>*/}
+        <Text style={styles.welcomeText}>
+          Feel free to create and submit purveyor orders in the Demo Team (don't worry, they won't go to any real purveyors).{'\n\n'}
         </Text>
         <Text style={styles.welcomeText}>
-          Feel free to create and submit purveyor orders in the Demo Team <Text style={{fontWeight: 'bold'}}>Order Guide</Text>​ (don't worry, they'll go to us only and not any real purveyors).{'\n\n'}
-        </Text>
-        <Text style={styles.welcomeText}>
-          Whenever you're ready to create your own Order Guide, create a New Team by accessing <Text style={{fontWeight: 'bold'}}>Switch Teams</Text>​ from the Menu.
+          When you're ready to create your own Order Guide, create a New Team by accessing <Text style={{fontWeight: 'bold'}}>Switch Teams</Text>​ from the Menu, or chat us below and we'll be in touch.
         </Text>
       </Text>
     );
