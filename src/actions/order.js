@@ -24,15 +24,16 @@ export default function OrderActions(allActions){
   function updateOrderInvoices(orderId, orderAttributes) {
     return (dispatch, getState) => {
       const {session, orders} = getState()
+      const sessionTeamId = session.teamId
       if(orderAttributes.hasOwnProperty('invoiceImages') === true){
         let invoiceImages = []
         let invoices = []
         if(
-          orders.teams.hasOwnProperty(session.teamId) === true
-          && orders.teams[session.teamId].hasOwnProperty(orderId) === true
-          && orders.teams[session.teamId][orderId].hasOwnProperty('invoices') === true
+          orders.teams.hasOwnProperty(sessionTeamId) === true
+          && orders.teams[sessionTeamId].hasOwnProperty(orderId) === true
+          && orders.teams[sessionTeamId][orderId].hasOwnProperty('invoices') === true
         ){
-          invoices = orders.teams[session.teamId][orderId].invoices
+          invoices = orders.teams[sessionTeamId][orderId].invoices
         }
         _.each(orderAttributes.invoiceImages, (source, idx) => {
           const invoiceId = generateId()
@@ -42,7 +43,7 @@ export default function OrderActions(allActions){
             orderId: orderId,
             userId: session.userId,
             type: "image/jpeg",
-            name: `invoices/${session.teamId}/OrderId-${orderId}-InvoiceId-${invoiceId}.jpeg`,
+            name: `invoices/${sessionTeamId}/OrderId-${orderId}-InvoiceId-${invoiceId}.jpeg`,
             data: source.data,
             createdAt: (new Date()).toISOString(),
           })
@@ -67,7 +68,7 @@ export default function OrderActions(allActions){
       }
       return dispatch({
         type: UPDATE_ORDER,
-        teamId: session.teamId,
+        teamId: sessionTeamId,
         orderId: orderId,
         order: orderAttributes
       })
@@ -77,10 +78,11 @@ export default function OrderActions(allActions){
   function updateOrder(orderId, orderAttributes) {
     return (dispatch, getState) => {
       const {session} = getState()
+      const sessionTeamId = session.teamId
       dispatch(connectActions.ddpCall('updateOrder', [session.userId, orderId, orderAttributes]))
       return dispatch({
         type: UPDATE_ORDER,
-        teamId: session.teamId,
+        teamId: sessionTeamId,
         orderId: orderId,
         order: orderAttributes
       })
@@ -99,6 +101,7 @@ export default function OrderActions(allActions){
   function getOrders(orderIds) {
     return (dispatch, getState) => {
       const {session} = getState()
+      const sessionTeamId = session.teamId
       const getOrdersCb = (err, result) => {
         dispatch({
           type: GET_ORDERS,
@@ -113,8 +116,8 @@ export default function OrderActions(allActions){
           })
         }
       }
-      dispatch(cartItemActions.getTeamOrderItems(session.teamId, orderIds))
-      dispatch(connectActions.ddpCall('getOrders', [session.teamId, orderIds], getOrdersCb))
+      dispatch(cartItemActions.getTeamOrderItems(sessionTeamId, orderIds))
+      dispatch(connectActions.ddpCall('getOrders', [sessionTeamId, orderIds], getOrdersCb))
       return dispatch({
         type: GET_ORDERS,
         isFetching: true,

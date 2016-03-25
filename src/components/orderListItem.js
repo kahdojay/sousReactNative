@@ -1,9 +1,11 @@
 import React from 'react-native';
 import { Icon, } from 'react-native-icons';
 import _ from 'lodash';
+import s from 'underscore.string';
 import CheckBox from './checkbox';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
+import PickerModal from './modal/pickerModal';
 
 const {
   PropTypes,
@@ -21,7 +23,9 @@ class OrderListItem extends React.Component {
       product: null,
       cartItem: null,
       productConfirm: null,
-      loaded: false
+      loaded: false,
+      editQuantity: false,
+      quantityReceived: null,
     }
   }
 
@@ -31,6 +35,7 @@ class OrderListItem extends React.Component {
       product: nextProps.product,
       cartItem: nextProps.cartItem,
       productConfirm: nextProps.productConfirm,
+      quantityReceived: nextProps.cartItem.quantityReceived || nextProps.cartItem.quantity,
     })
   }
 
@@ -40,12 +45,15 @@ class OrderListItem extends React.Component {
       product: this.props.product,
       cartItem: this.props.cartItem,
       productConfirm: this.props.productConfirm,
-      loaded: true
+      loaded: true,
+      quantityReceived: this.props.cartItem.quantityReceived || this.props.cartItem.quantity,
     })
   }
 
   render() {
     const {orderConfirm, product, cartItem, productConfirm} = this.state
+    const {teamBetaAccess} = this.props
+
     let productRow = null
     if(this.state.loaded === false){
       productRow = (
@@ -74,37 +82,97 @@ class OrderListItem extends React.Component {
         TouchableWrapper = View
         iconColor = Colors.disabled
       }
-      productRow = (
-        <TouchableWrapper
-          underlayColor='transparent'
-          onPress={() => {
-            if(orderConfirm.order === false){
+      let quantityItems = []
+      quantityItems = quantityItems.concat(_.map(_.range(1, 501), (n, idx) => {
+        return {
+          key: idx,
+          value: n,
+          label: n.toString(),
+        }
+      }))
+      const modal = (
+        <PickerModal
+          modalVisible={this.state.editQuantity}
+          headerText='Select Quantity Received'
+          leftButtonText='Update'
+          items={quantityItems}
+          pickerType='PickerIOS'
+          selectedValue={this.state.quantityReceived}
+          onHideModal={() => {
+            this.setState({
+              editQuantity: false,
+            })
+          }}
+          onSubmitValue={(value) => {
+            if(value !== null && value.hasOwnProperty('selectedValue') === true){
+              const selectedValue = value.selectedValue
               this.setState({
-                productConfirm: !productConfirm
+                quantityReceived: selectedValue,
+                editQuantity: false,
               },() => {
                 const updateCartItem = Object.assign({}, cartItem, {
-                  status: this.state.productConfirm === true ? 'RECEIVED' : 'ORDERED'
+                  quantityReceived: this.state.quantityReceived
                 })
                 this.props.onHandleProductConfirm(updateCartItem)
               })
             }
           }}
-        >
-          <View style={styles.row}>
+        />
+      )
+
+      let showProductPrices = false
+      if(
+        teamBetaAccess.hasOwnProperty('showProductPrices') === true
+        && teamBetaAccess.showProductPrices === true
+      ){
+        showProductPrices = true        
+      }
+
+      productRow = (
+        <View style={styles.row}>
+          <TouchableWrapper
+            underlayColor='transparent'
+            onPress={() => {
+              this.setState({
+                editQuantity: true,
+              })
+            }}
+            style={{flex: 1}}
+          >
             <View style={styles.quantityContainer}>
-              <Text style={styles.quantity}>{cartItem.quantity}x</Text>
+              <Text style={styles.quantity}>{cartItem.quantityReceived || cartItem.quantity}x</Text>
             </View>
-            <View style={styles.productInfo}>
-              <Text style={styles.text}>{product.name}</Text>
-              <Text style={styles.text}>{product.amount} {product.unit}</Text>
-            </View>
-            <View style={styles.confirmCheckbox}>
-              <View style={[styles.iconContainer]}>
-                <Icon name={iconName} size={20} color={iconColor} style={[styles.icon]}/>
+          </TouchableWrapper>
+          <TouchableWrapper
+            underlayColor='transparent'
+            onPress={() => {
+              if(orderConfirm.order === false){
+                this.setState({
+                  productConfirm: !productConfirm
+                },() => {
+                  const updateCartItem = Object.assign({}, cartItem, {
+                    status: this.state.productConfirm === true ? 'RECEIVED' : 'ORDERED'
+                  })
+                  this.props.onHandleProductConfirm(updateCartItem)
+                })
+              }
+            }}
+            style={{flex: 8}}
+          >
+            <View style={{flexDirection: 'row', alignItems: 'center',}}>
+              <View style={styles.productInfo}>
+                <Text style={[styles.text, styles.boldText]}>{product.name}</Text>
+                <Text style={styles.text}>Ordered: {cartItem.quantity} x {product.amount} {product.unit} {cartItem.productPrice && showProductPrices === true ? '• $' + s.numberFormat(parseFloat(cartItem.productPrice), 2) : ''}</Text>
+              </View>
+              <View style={styles.confirmCheckbox}>
+                <View style={[styles.iconContainer]}>
+                  <Icon name={iconName} size={20} color={iconColor} style={[styles.icon]}/>
+                </View>
               </View>
             </View>
-          </View>
-        </TouchableWrapper>
+          </TouchableWrapper>
+          {modal}
+        </View>
       )
     }
     return (
@@ -150,6 +218,9 @@ const styles = StyleSheet.create({
   },
   text: {
     fontFamily: 'OpenSans',
+  },
+  boldText: {
+    fontWeight: 'bold',
   },
   loading: {
     textAlign: 'center',

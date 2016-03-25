@@ -2,6 +2,7 @@ import React from 'react-native';
 import ProductToggle from './productToggle';
 import { Icon } from 'react-native-icons';
 import _ from 'lodash';
+import s from 'underscore.string';
 import { CART } from '../actions/actionTypes';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
@@ -88,6 +89,7 @@ class ProductListItem extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
+      product: nextProps.product,
       purveyorId: nextProps.cartPurveyorId,
     }, () => {
       // console.log('componentWillReceiveProps ', nextProps.product.unit)
@@ -147,7 +149,7 @@ class ProductListItem extends React.Component {
     this.setState(newState);
   }
 
-  cartUpdateFromLocalState() {
+  cartUpdateFromLocalState(deleteProduct) {
     const cartAttributes = Object.assign({}, this.state.cartItem, {
       purveyorId: this.state.selectedPurveyorId,
       productId: this.props.product.id,
@@ -165,15 +167,17 @@ class ProductListItem extends React.Component {
     } else {
       cartAction = CART.DELETE
     }
-    this.props.onUpdateProductInCart(cartAction, cartAttributes);
+    this.props.onUpdateProductInCart(cartAction, cartAttributes, deleteProduct);
   }
 
-  handleToggleProduct(purveyorId) {
+  handleToggleProduct(purveyorId, deleteProduct) {
     this.setState({
       added: !this.state.added,
       selectedPurveyorId: purveyorId,
       purveyorId: purveyorId,
-    }, this.cartUpdateFromLocalState.bind(this))
+    }, () => {
+      this.cartUpdateFromLocalState(deleteProduct)
+    })
   }
 
   render() {
@@ -203,7 +207,7 @@ class ProductListItem extends React.Component {
       let productColor = 'black'
       let productQuantityBorderStyle = {}
       if(this.state.added === true){
-        if(this.state.selectedPurveyorId !== this.state.purveyorId){
+        if(showPurveyorInfo === false && this.state.selectedPurveyorId !== this.state.purveyorId){
           selectedStyle = styles.selectedRowDisabled
           productDetailsColor = Colors.darkGrey
           productQuantityBorderStyle = {
@@ -225,9 +229,16 @@ class ProductListItem extends React.Component {
       let availablePurveyors = product.purveyors
 
       if(showPurveyorInfo === true){
+        let purveyor = null
         if(purveyors.hasOwnProperty(this.state.selectedPurveyorId) === true){
+          purveyor = purveyors[this.state.selectedPurveyorId]
+        }
+        if(purveyors.hasOwnProperty(this.state.purveyorId) === true){
+          purveyor = purveyors[this.state.purveyorId]
+        }
+        if(purveyor){
           purveyorInfo = (
-            <Text style={[styles.productDetailsSubText, {color: productDetailsColor}]}>{purveyors[this.state.selectedPurveyorId].name || '-NOT SET-'}</Text>
+            <Text style={[styles.productDetailsSubText, {color: productDetailsColor}]}>{purveyor.name || '-NOT SET-'}</Text>
           )
         } else {
           // Single purveyor, grab name off props.purveyors
@@ -273,7 +284,7 @@ class ProductListItem extends React.Component {
                 : <Text style={{fontStyle: 'italic', color: Colors.red}}>Name missing</Text> }
               </Text>
               <Text style={[styles.productDetailsSubText, {color: productDetailsColor}]} >
-                {`${product.amount} ${product.unit} ${product.price ? '• $' + product.price : ''}`}
+                {`${product.amount} ${product.unit} ${product.price ? '• $' + s.numberFormat(parseFloat(product.price), 2) : ''}`}
               </Text>
               <View style={{flexDirection: 'row'}}>
                 {purveyorInfo}{productInfoSeparator}{categoryInfo}
@@ -391,11 +402,11 @@ class ProductListItem extends React.Component {
             showConfirmationModal: !this.state.showConfirmationModal,
           }, () => {
             if(this.state.added === true){
-              this.setState({
-                added: false,
-              }, this.cartUpdateFromLocalState.bind(this))
+              const deleteProduct = true
+              this.handleToggleProduct(this.state.selectedPurveyorId, deleteProduct)
+            } else {
+              this.props.onProductDelete()
             }
-            this.props.onProductDelete()
           })
         }}
       />

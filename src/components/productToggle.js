@@ -125,7 +125,6 @@ class ProductToggle extends React.Component {
 var styles = StyleSheet.create({
   button: {
     flex: 1,
-    backgroundColor: Colors.button,
     borderRadius: Sizes.rowBorderRadius,
   },
   modalContainer: {

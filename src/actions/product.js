@@ -28,10 +28,12 @@ export default function ProductActions(allActions){
   function addProduct(productAttributes) {
     return (dispatch, getState) => {
       const { session, teams } = getState();
+      const sessionTeamId = session.teamId
       const { currentTeam } = teams;
+      const productId = generateId()
       var newProductAttributes = {
-        _id: generateId(),
-        teamId: session.teamId,
+        _id: productId,
+        teamId: sessionTeamId,
         teamCode: currentTeam.teamCode,
         name: productAttributes.name,
         description: productAttributes.description || '',
@@ -42,8 +44,6 @@ export default function ProductActions(allActions){
         deleted: false,
       }
 
-      const productId = newProductAttributes._id
-
       dispatch({
         type: ADD_PRODUCT,
         teamId: currentTeam.id,
@@ -53,7 +53,7 @@ export default function ProductActions(allActions){
         }),
       });
 
-      dispatch(connectActions.ddpCall('createProduct', [newProductAttributes]))
+      dispatch(connectActions.ddpCall('createProduct', [Object.assign({}, newProductAttributes)]))
 
       return dispatch(categoryActions.addProductCategory(productAttributes.categoryId, productId))
     }
@@ -64,7 +64,13 @@ export default function ProductActions(allActions){
       const { session, teams } = getState();
       const { currentTeam } = teams;
 
-      dispatch(categoryActions.updateProductCategory(productAttributes.previousCategoryId, productAttributes.categoryId,productId))
+      if(productAttributes.previousCategoryId !== productAttributes.categoryId){
+        dispatch(categoryActions.updateProductCategory(
+          productAttributes.previousCategoryId,
+          productAttributes.categoryId,
+          productId
+        ))
+      }
 
       dispatch({
         type: UPDATE_PRODUCT,

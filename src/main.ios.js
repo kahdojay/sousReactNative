@@ -36,16 +36,19 @@ class SousAppBase extends React.Component {
   componentWillMount() {
     const {connect} = store.getState()
     // connect the app with server
-    const willMountTimeoutMilliseconds = 1000
-    const willMountTimeoutId = setTimeout(() => {
+    // const willMountTimeoutMilliseconds = 1000
+    // const willMountTimeoutId = setTimeout(() => {
       // connect the app with server
       store.dispatch(actions.connectApp())
-    }, 1000)
-    store.dispatch(actions.connectDDPTimeoutId(willMountTimeoutId, willMountTimeoutMilliseconds))
+    // }, 1000)
+    // store.dispatch(actions.connectDDPTimeoutId(willMountTimeoutId, willMountTimeoutMilliseconds))
     // persist the store
     persistStore(
       store,
-      {storage: AsyncStorage},
+      {
+        storage: AsyncStorage,
+        debounce: 250, // debounce interval applied to storage calls.
+      },
       () => {
         // dispatch(actions.connectApp())
         this.setState({ rehydrated: true })
@@ -53,28 +56,28 @@ class SousAppBase extends React.Component {
     )
   }
 
-  componentWillReceiveProps(nextProps) {
-    if(nextProps.connect.status === actions.CONNECT.OFFLINE && nextProps.connect.timeoutId === null){
-      const {connect} = store.getState()
-      let willReceivePropsTimeoutMilliseconds = 1500
-      if(connect.attempt > 21){
-        willReceivePropsTimeoutMilliseconds = 15000
-      } else if(connect.attempt > 13){
-        willReceivePropsTimeoutMilliseconds = 15000
-      } else if(connect.attempt > 8){
-        willReceivePropsTimeoutMilliseconds = 10000
-      } else if(connect.attempt > 5){
-        willReceivePropsTimeoutMilliseconds = 5000
-      } else if (connect.attempt > 3) {
-        willReceivePropsTimeoutMilliseconds = 3000
-      }
-      const willReceivePropsTimeoutId = setTimeout(() => {
-        // connect the app with server
-        store.dispatch(actions.connectDDPClient())
-      }, willReceivePropsTimeoutMilliseconds)
-      store.dispatch(actions.connectDDPTimeoutId(willReceivePropsTimeoutId, willReceivePropsTimeoutMilliseconds))
-    }
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   if(nextProps.connect.status === actions.CONNECT.OFFLINE && nextProps.connect.timeoutId === null){
+  //     const {connect} = store.getState()
+  //     let willReceivePropsTimeoutMilliseconds = 1500
+  //     if(connect.attempt > 21){
+  //       willReceivePropsTimeoutMilliseconds = 15000
+  //     } else if(connect.attempt > 13){
+  //       willReceivePropsTimeoutMilliseconds = 15000
+  //     } else if(connect.attempt > 8){
+  //       willReceivePropsTimeoutMilliseconds = 10000
+  //     } else if(connect.attempt > 5){
+  //       willReceivePropsTimeoutMilliseconds = 5000
+  //     } else if (connect.attempt > 3) {
+  //       willReceivePropsTimeoutMilliseconds = 3000
+  //     }
+  //     const willReceivePropsTimeoutId = setTimeout(() => {
+  //       // connect the app with server
+  //       store.dispatch(actions.connectDDPClient())
+  //     }, willReceivePropsTimeoutMilliseconds)
+  //     store.dispatch(actions.connectDDPTimeoutId(willReceivePropsTimeoutId, willReceivePropsTimeoutMilliseconds))
+  //   }
+  // }
 
   render() {
     if (this.state.rehydrated === false) {

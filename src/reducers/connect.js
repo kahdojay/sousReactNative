@@ -18,6 +18,8 @@ import {
   RECEIVE_APPSTORE_VERSION,
 } from '../actions'
 
+let OFFLINE_COUNTER = 0
+
 const initialState = {
   offline: {
     queue: {},
@@ -38,6 +40,7 @@ const initialState = {
       model: null,
       appVersion: null,
       appBuildNumber: null,
+      deviceId: null,
       deviceName: null,
       systemName: null,
       systemVersion: null,
@@ -68,7 +71,12 @@ function offline(state = initialState.offline, action) {
   case OFFLINE_ADD_QUEUE:
     const currentOfflineQueueState = Object.assign({}, state);
     const currentOfflineQueue = currentOfflineQueueState.queue;
-    currentOfflineQueue[action.item.calledAt] = action.item
+    currentOfflineQueue[`${action.item.calledAt}-${OFFLINE_COUNTER}`] = action.item
+    if(OFFLINE_COUNTER > 10000){
+      OFFLINE_COUNTER = 0
+    } else {
+      OFFLINE_COUNTER += 1
+    }
     return {
       queue: currentOfflineQueue,
       processing: currentOfflineQueueState.processing,

@@ -1,6 +1,7 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
+import dismissKeyboard from 'dismissKeyboard'
 
 const {
   View,
@@ -18,6 +19,7 @@ class FeedViewLeftButton extends React.Component {
   handlePress(e) {
     if(this.props.disabled === false){
       this.context.menuActions.toggle();
+      dismissKeyboard()
     }
   }
 

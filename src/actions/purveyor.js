@@ -29,15 +29,16 @@ export default function PurveyorActions(allActions){
   function addPurveyor(name) {
     return (dispatch, getState) => {
       const { session } = getState();
+      const sessionTeamId = session.teamId
+      const purveyorId = generateId()
       var newPurveyorAttributes = {
-        _id: generateId(),
-        teamId: session.teamId,
+        _id: purveyorId,
+        teamId: sessionTeamId,
         name: name,
         description: '',
         // products:    [],
         deleted:  false
       }
-      const purveyorId = newPurveyorAttributes._id
       dispatch({
         type: ADD_PURVEYOR,
         purveyorId: purveyorId,
@@ -45,7 +46,7 @@ export default function PurveyorActions(allActions){
           id: purveyorId,
         })
       })
-      dispatch(connectActions.ddpCall('createPurveyor', [newPurveyorAttributes]))
+      dispatch(connectActions.ddpCall('createPurveyor', [Object.assign({}, newPurveyorAttributes), session.userId]))
     }
   }
 

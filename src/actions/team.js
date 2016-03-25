@@ -16,6 +16,7 @@ import {
   LEAVE_TEAM,
   RECEIVE_TEAMS_USERS,
   RECEIVE_TEAM_RESOURCE_INFO,
+  RECEIVE_TEAM_BETA_ACCESS,
   RECEIVE_TEAMS,
   REQUEST_TEAMS,
   RESET_TEAMS,
@@ -49,7 +50,8 @@ export default function TeamActions(allActions) {
 
   function addTeam(name, demoTeam = false) {
     return (dispatch, getState) => {
-      let {session, teams, messages} = getState();
+      const {session, teams, messages} = getState();
+      const sessionTeamId = session.teamId
 
       const teamNames = teams.data.map((team) => {
         if (! team.deleted)
@@ -67,9 +69,10 @@ export default function TeamActions(allActions) {
         teamCode = teamCode.toUpperCase()
         // TODO: add any other filters besides TEAM?
         teamCode = teamCode.replace('TEAM', '')
+        const teamId = generateId();
         // TODO: check for unique teamCode?
         var newTeamAttributes = {
-          _id: generateId(),
+          _id: teamId,
           teamCode: teamCode,
           name: name,
           tasks: [],
@@ -94,7 +97,6 @@ export default function TeamActions(allActions) {
           newTeamAttributes.demoTeam = true;
         }
 
-        const teamId = newTeamAttributes._id;
 
         dispatch({
           type: ADD_TEAM,
@@ -102,25 +104,25 @@ export default function TeamActions(allActions) {
           team: Object.assign({}, newTeamAttributes, {
             id: teamId,
           }),
-          sessionTeamId: session.teamId
+          sessionTeamId: sessionTeamId
         })
 
         dispatch(sessionActions.updateSession({teamId: newTeamAttributes._id}))
 
-        dispatch(connectActions.ddpCall('createTeam', [newTeamAttributes, session.userId]))
+        dispatch(connectActions.ddpCall('createTeam', [Object.assign({}, newTeamAttributes), session.userId]))
 
 
         dispatch(receiveSessionTeamsUser())
 
         // add the teamId to the session
-        session = Object.assign({}, session, {
+        const newSession = Object.assign({}, session, {
           teamId: newTeamAttributes.id
         })
 
         // subscribe to newly-added team
         let teamIds = _.pluck(teams.data, 'id');
         teamIds.push(newTeamAttributes.id)
-        dispatch(connectActions.subscribeDDP(session, teamIds))
+        dispatch(connectActions.subscribeDDP(newSession, teamIds))
       }
     }
   }
@@ -137,13 +139,15 @@ export default function TeamActions(allActions) {
   function addTeamTask(taskAttributes){
     return (dispatch, getState) => {
       const {session, teams} = getState();
+      const sessionTeamId = session.teamId
       let tasks = teams.currentTeam.tasks.map((task) => {
         if (! task.deleted)
           return task.name;
       });
       if (tasks.indexOf(taskAttributes.name) === -1) {
+        const recipeId = generateId()
         var newTaskAttributes = {
-          recipeId: generateId(),
+          recipeId: recipeId,
           name: taskAttributes.name,
           description: "",
           deleted: false,
@@ -151,13 +155,13 @@ export default function TeamActions(allActions) {
           quantity: 1,
           unit: 0, // for future use
         }
-        dispatch(connectActions.ddpCall('addTeamTask', [session.userId, session.teamId, newTaskAttributes]))
+        dispatch(connectActions.ddpCall('addTeamTask', [session.userId, sessionTeamId, Object.assign({}, newTaskAttributes)]))
         return dispatch({
           type: UPDATE_TEAM,
-          teamId: session.teamId,
-          recipeId: newTaskAttributes.recipeId,
+          teamId: sessionTeamId,
+          recipeId: recipeId,
           task: newTaskAttributes,
-          sessionTeamId: session.teamId
+          sessionTeamId: sessionTeamId
         })
       } else {
         return dispatch(errorTeams([{
@@ -172,6 +176,7 @@ export default function TeamActions(allActions) {
     return (dispatch, getState) => {
       // TODO: explore moving this logic into the set timeout in order to send localState at the time timeOut expires instead of an outdated localState (at the time timeOut is setup)
       const {session, teams} = getState();
+      const sessionTeamId = session.teamId
       // console.log(teams.currentTeam)
       const currentTeam = Object.assign({}, teams.currentTeam)
       const taskIdx = _.findIndex(currentTeam.tasks, (item, idx) => {
@@ -191,17 +196,17 @@ export default function TeamActions(allActions) {
 
       clearTimeout(teams.taskTimeoutId);
       const taskTimeoutId = setTimeout(() => {
-        // dispatch(connectActions.ddpCall('updateTeamTask', [session.teamId, recipeId, taskAttributes]))
-        dispatch(connectActions.ddpCall('updateTeam', [session.teamId, {
+        // dispatch(connectActions.ddpCall('updateTeamTask', [sessionTeamId, recipeId, taskAttributes]))
+        dispatch(connectActions.ddpCall('updateTeam', [sessionTeamId, {
           tasks: currentTeam.tasks
         }]))
 
         // dispatch({
         //   type: UPDATE_TEAM,
-        //   teamId: session.teamId,
+        //   teamId: sessionTeamId,
         //   recipeId: recipeId,
         //   task: taskAttributes,
-        //   sessionTeamId: session.teamId
+        //   sessionTeamId: sessionTeamId
         // })
       }, 1500);
 
@@ -233,10 +238,11 @@ export default function TeamActions(allActions) {
   function deleteTeam() {
     return (dispatch, getState) => {
       const {session} = getState();
-      dispatch(connectActions.ddpCall('deleteTeam', [session.teamId, session.userId]))
+      const sessionTeamId = session.teamId
+      dispatch(connectActions.ddpCall('deleteTeam', [sessionTeamId, session.userId]))
       return dispatch({
         type: DELETE_TEAM,
-        teamId: session.teamId
+        teamId: sessionTeamId
       })
     }
   }
@@ -257,6 +263,7 @@ export default function TeamActions(allActions) {
   function receiveTeams(team) {
     return (dispatch, getState) => {
       const {session, teams, messages} = getState();
+      const sessionTeamId = session.teamId
       let teamIds = _.pluck(teams.data, 'id');
 
       if( teamIds.indexOf(team.id) === -1 ){
@@ -264,7 +271,7 @@ export default function TeamActions(allActions) {
         dispatch(connectActions.subscribeDDP(session, teamIds))
       }
 
-      if(team.id === session.teamId){
+      if(team.id === sessionTeamId){
         dispatch({
           type: SET_CURRENT_TEAM,
           team: Object.assign({}, teams.currentTeam, team)
@@ -272,6 +279,7 @@ export default function TeamActions(allActions) {
       }
 
       dispatch(getTeamResourceInfo(team.id))
+      dispatch(getTeamBetaAccess(team.id))
 
       let messageCount = 0
       if(messages.teams.hasOwnProperty(team.id) && Object.keys(messages.teams[team.id]).length > 0){
@@ -281,6 +289,7 @@ export default function TeamActions(allActions) {
         dispatch(messageActions.getTeamMessages(team.id))
       }
       dispatch(productActions.getProducts(team.id))
+      dispatch(categoryActions.getCategories(team.id))
       dispatch(cartItemActions.getTeamCartItems(team.id))
       dispatch(orderActions.getTeamOrders(team.id))
       dispatch(getTeamUsers(team.id))
@@ -325,6 +334,7 @@ export default function TeamActions(allActions) {
       dispatch(messageActions.getTeamMessages(teamId))
       dispatch(sessionActions.updateSession({ teamId: teamId }))
       dispatch(getTeamResourceInfo(teamId))
+      dispatch(getTeamBetaAccess(teamId))
       dispatch(getTeamUsers(teamId))
       return dispatch({
         type: SET_CURRENT_TEAM,
@@ -336,6 +346,7 @@ export default function TeamActions(allActions) {
   function leaveCurrentTeam(teamId) {
     return (dispatch, getState) => {
       const {session, teams} = getState()
+      const sessionTeamId = session.teamId
 
       // console.log('leaving teamId: ', teamId)
 
@@ -358,7 +369,7 @@ export default function TeamActions(allActions) {
       const currentTeamIdx = allTeamIds.indexOf(teamId);
       delete allTeamIds[currentTeamIdx];
       allTeamIds = allTeamIds.filter((v) => { return v !== undefined && v !== null; })
-      if(allTeamIds.indexOf(session.teamId) === -1){
+      if(allTeamIds.indexOf(sessionTeamId) === -1){
         const newTeamId = allTeamIds[0];
         // set a new team id
         dispatch(setCurrentTeam(newTeamId));
@@ -434,6 +445,22 @@ export default function TeamActions(allActions) {
     }
   }
 
+  function getTeamBetaAccess(teamId){
+    return (dispatch, getState) => {
+      const {session} = getState()
+      var getTeamBetaAccessCb = (err, results) => {
+        if(!err){
+          dispatch({
+            type: RECEIVE_TEAM_BETA_ACCESS,
+            teamId: teamId,
+            betaAccess: results.betaAccess,
+          })
+        }
+      }
+      dispatch(connectActions.ddpCall('getTeamBetaAccess', [session.userId, teamId], getTeamBetaAccessCb))
+    }
+  }
+
   return {
     ADD_TEAM,
     DELETE_TEAM,
@@ -442,6 +469,7 @@ export default function TeamActions(allActions) {
     LEAVE_TEAM,
     RECEIVE_TEAMS_USERS,
     RECEIVE_TEAM_RESOURCE_INFO,
+    RECEIVE_TEAM_BETA_ACCESS,
     RECEIVE_TEAMS,
     REQUEST_TEAMS,
     RESET_TEAMS,
@@ -456,6 +484,7 @@ export default function TeamActions(allActions) {
     completeTeamTask,
     deleteTeam,
     getTeamResourceInfo,
+    getTeamBetaAccess,
     leaveCurrentTeam,
     receiveTeams,
     receiveTeamsUsers,

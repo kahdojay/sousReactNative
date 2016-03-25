@@ -17,7 +17,6 @@ import * as ModalComponents from '../components/modal';
 import Dimensions from 'Dimensions';
 import PushManager from 'react-native-remote-push/RemotePushIOS';
 import Communications from 'react-native-communications';
-import DeviceInfo from 'react-native-device-info';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import semver from 'semver';
 
@@ -33,7 +32,8 @@ const {
 
 class App extends React.Component {
   constructor(props, ctx) {
-    super(props, ctx);
+    super(props, ctx)
+    const constructorNow = (new Date()).getTime()
     this.state = {
       category: null,
       connectionStats: {
@@ -49,6 +49,7 @@ class App extends React.Component {
         products: {},
         purveyors: {},
         resources: {},
+        betaAccess: {},
         team: this.props.teams.currentTeam,
         lastUpdated: {
           purveyors: null,
@@ -56,7 +57,8 @@ class App extends React.Component {
           products: null,
           orders: null,
           messages: null,
-        }
+          betaAccess: null,
+        },
       },
       email: this.props.session.email,
       firstName: this.props.session.firstName,
@@ -85,6 +87,8 @@ class App extends React.Component {
         },
       },
       touchToClose: false,
+      lastResourceInfoRetrieval: (new Date(constructorNow - ((60*60*1000) + 100) )).toISOString(),
+      lastResourceInfoFetching: false,
     }
     this.reconnectTimeout = null
     this.initialRoute = 'Signup'
@@ -119,6 +123,7 @@ class App extends React.Component {
   }}
 
   componentWillReceiveProps(nextProps) {
+    const {dispatch} = nextProps
     let processRedirect = false
     let currentTeamInfo = Object.assign({}, this.state.currentTeamInfo)
     currentTeamInfo.team = nextProps.teams.currentTeam
@@ -129,37 +134,70 @@ class App extends React.Component {
       // ---------------------------------------------------
       if(nextProps.purveyors.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.purveyors = nextProps.purveyors.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.purveyors = nextProps.purveyors.lastUpdated
+        const sortedPurveyors = _.sortBy(currentTeamInfo.purveyors, 'updatedAt')
+        if(sortedPurveyors.length > 0){
+          const lastPurveyor = _.last(sortedPurveyors)
+          if(lastPurveyor.hasOwnProperty('updatedAt') === true){
+            currentTeamInfo.lastUpdated.purveyors = _.last(sortedPurveyors).updatedAt
+          }
+        }
       } else {
         currentTeamInfo.purveyors = {}
+        currentTeamInfo.lastUpdated.purveyors = null
       }
-      currentTeamInfo.lastUpdated.purveyors = nextProps.purveyors.lastUpdated;
       // ---------------------------------------------------
       // categories
       // ---------------------------------------------------
       if(nextProps.categories.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.categories = nextProps.categories.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.categories = nextProps.categories.lastUpdated
+        const sortedCategories = _.sortBy(currentTeamInfo.categories, 'updatedAt')
+        if(sortedCategories.length > 0){
+          const lastCategory = _.last(sortedCategories)
+          if(lastCategory.hasOwnProperty('updatedAt') === true){
+            currentTeamInfo.lastUpdated.categories = _.last(sortedCategories).updatedAt
+          }
+        }
       } else {
         currentTeamInfo.categories = {}
+        currentTeamInfo.lastUpdated.categories = null
       }
-      currentTeamInfo.lastUpdated.categories = nextProps.categories.lastUpdated;
+
       // ---------------------------------------------------
       // products
       // ---------------------------------------------------
       if(nextProps.products.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.products = nextProps.products.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.products = nextProps.products.lastUpdated
+        const sortedProducts = _.sortBy(currentTeamInfo.products, 'updatedAt')
+        if(sortedProducts.length > 0){
+          const lastProduct = _.last(sortedProducts)
+          if(lastProduct.hasOwnProperty('updatedAt') === true){
+            currentTeamInfo.lastUpdated.products = _.last(sortedProducts).updatedAt
+          }
+        }
       } else {
         currentTeamInfo.products = {}
+        currentTeamInfo.lastUpdated.products = null
       }
-      currentTeamInfo.lastUpdated.products = nextProps.products.lastUpdated;
       // ---------------------------------------------------
       // messages
       // ---------------------------------------------------
       if(nextProps.messages.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.messages = nextProps.messages.teams[currentTeamInfo.team.id]
+        currentTeamInfo.lastUpdated.messages = nextProps.messages.lastUpdated
+        const sortedMessages = _.sortBy(currentTeamInfo.messages, 'updatedAt')
+        if(sortedMessages.length > 0){
+          const lastMessage = _.last(sortedMessages)
+          if(lastMessage.hasOwnProperty('updatedAt') === true){
+            currentTeamInfo.lastUpdated.messages = _.last(sortedMessages).updatedAt
+          }
+        }
       } else {
         currentTeamInfo.messages = {}
+        currentTeamInfo.lastUpdated.messages = null
       }
-      currentTeamInfo.lastUpdated.messages = nextProps.messages.lastUpdated;
       // ---------------------------------------------------
       // cartItems
       // ---------------------------------------------------
@@ -188,18 +226,35 @@ class App extends React.Component {
       if(nextProps.orders.teams.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.orders = nextProps.orders.teams[currentTeamInfo.team.id]
         // console.log('cWRP: ', nextProps.orders.teams[currentTeamInfo.team.id]["Tp3cqFkgne8Amznft"].confirm)
+        currentTeamInfo.lastUpdated.orders = nextProps.orders.lastUpdated
+        const sortedOrders = _.sortBy(currentTeamInfo.orders, 'updatedAt')
+        if(sortedOrders.length > 0){
+          const lastOrder = _.last(sortedOrders)
+          if(lastOrder.hasOwnProperty('updatedAt') === true){
+            currentTeamInfo.lastUpdated.orders = _.last(sortedOrders).updatedAt
+          }
+        }
       } else {
         currentTeamInfo.orders = {}
+        currentTeamInfo.lastUpdated.orders = null
       }
-      currentTeamInfo.lastUpdated.orders = nextProps.orders.lastUpdated;
       // ---------------------------------------------------
-      // categories
+      // resources
       // ---------------------------------------------------
       if(nextProps.teams.teamResources.hasOwnProperty(currentTeamInfo.team.id) === true){
         currentTeamInfo.resources = nextProps.teams.teamResources[currentTeamInfo.team.id]
         // console.log('cWRP: ', nextProps.orders.teams[currentTeamInfo.team.id]["Tp3cqFkgne8Amznft"].confirm)
       } else {
         currentTeamInfo.resources = {}
+      }
+      // ---------------------------------------------------
+      // betaAccess
+      // ---------------------------------------------------
+      if(nextProps.teams.teamBetaAccess.hasOwnProperty(currentTeamInfo.team.id) === true){
+        currentTeamInfo.betaAccess = nextProps.teams.teamBetaAccess[currentTeamInfo.team.id]
+        // console.log('cWRP: ', nextProps.orders.teams[currentTeamInfo.team.id]["Tp3cqFkgne8Amznft"].confirm)
+      } else {
+        currentTeamInfo.betaAccess = {}
       }
     }
     // console.log(processRedirect, currentTeamInfo.resources)
@@ -219,6 +274,26 @@ class App extends React.Component {
       email: nextProps.session.email,
       currentTeamInfo: currentTeamInfo,
     }
+
+    if(currentTeamInfo.team !== null){
+      if(currentTeamInfo.resources && currentTeamInfo.resources.meta && currentTeamInfo.resources.meta.retrievedAt){
+        componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval = currentTeamInfo.resources.meta.retrievedAt;
+      } else {
+        componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval = this.state.lastResourceInfoRetrieval
+      }
+      if(
+        moment().diff(componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval) > (60*1000)
+        && this.state.lastResourceInfoFetching === false
+      ){
+        componentWillReceivePropsStateUpdate.lastResourceInfoFetching = true
+        // console.log('Dispatching ')
+        dispatch(actions.getTeamResourceInfo(currentTeamInfo.team.id))
+      } else {
+        // console.log(moment().diff(componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval), (60*1000))
+        componentWillReceivePropsStateUpdate.lastResourceInfoFetching = false
+      }
+    }
+
     let updatedOrder = null
     if(
       this.state.order !== null
@@ -289,41 +364,36 @@ class App extends React.Component {
     // console.log(this.state.currentTeamInfo.team)
     if(this.state.isAuthenticated === true && this.state.currentTeamInfo.team !== null){
       const {dispatch, connect, session} = this.props
-      if (
-        this.state.installationRegistered === false
-        && this.state.installationRegisterInProgress === false
-        && connect.status === actions.CONNECT.CONNECTED
-      ) {
-        this.setState({
-          installationRegistered: true,
-          installationRegisterInProgress: true,
-        }, () => {
-          PushManager.requestPermissions((err, data) => {
-            if (err) {
-              dispatch(actions.registerInstallationError())
-            } else {
-              // if(userDoesNotAllow === true){
-              //   dispatch(actions.registerInstallationDeclined())
-              // }
-              if(data.hasOwnProperty('token')){
-                dispatch(actions.registerInstallation({
-                  token: data.token,
-                  model: DeviceInfo.getModel(),
-                  appVersion: DeviceInfo.getVersion(),
-                  appBuildNumber: DeviceInfo.getBuildNumber(),
-                  deviceName: DeviceInfo.getDeviceName(),
-                  systemName: DeviceInfo.getSystemName(),
-                  systemVersion: DeviceInfo.getSystemVersion(),
-                }))
-              } else {
+      if(connect.status === actions.CONNECT.CONNECTED){
+        if (
+          this.state.installationRegistered === false
+          && this.state.installationRegisterInProgress === false
+        ) {
+          this.setState({
+            installationRegistered: true,
+            installationRegisterInProgress: true,
+          }, () => {
+            PushManager.requestPermissions((err, data) => {
+              if (err) {
                 dispatch(actions.registerInstallationError())
+              } else {
+                // if(userDoesNotAllow === true){
+                //   dispatch(actions.registerInstallationDeclined())
+                // }
+                if(data.hasOwnProperty('token')){
+                  dispatch(actions.registerInstallation({
+                    token: data.token,
+                  }))
+                } else {
+                  dispatch(actions.registerInstallationError())
+                }
               }
-            }
-            this.setState({
-              installationRegisterInProgress: false,
-            })
-          });
-        })
+              this.setState({
+                installationRegisterInProgress: false,
+              })
+            });
+          })
+        }
       }
     }
     this.redirectBasedOnData()
@@ -357,6 +427,24 @@ class App extends React.Component {
         } else if(this.props.teams.data.length > 0){
           this.refs.appNavigator.replacePrevious({
             name: 'TeamIndex'
+          });
+        }
+      }
+
+      // redirect to Feed if app is on Update view and it shouldnt be there.
+      if(rbodRouteName === 'Update'){
+        if(
+          this.props.connect.settings.appVersion
+          && this.props.connect.appStoreVersion
+        ){
+          if(semver.lt(this.props.connect.settings.appVersion, this.props.connect.appStoreVersion) === false){
+            this.refs.appNavigator.replacePrevious({
+              name: 'Feed'
+            });
+          }
+        } else {
+          this.refs.appNavigator.replacePrevious({
+            name: 'Feed'
           });
         }
       }
@@ -563,6 +651,7 @@ class App extends React.Component {
       session,
       settingsConfig,
       teams,
+      offline,
     } = this.props;
 
     switch (route.name) {
@@ -744,8 +833,13 @@ class App extends React.Component {
             messagesByTeams: messages.teams,
             onUpdateTeam: (teamId) => {
               _.debounce(() => {
-                // dispatch(actions.resetPurveyors());
-                dispatch(actions.setCurrentTeam(teamId));
+                const teamIndexNow = (new Date()).getTime()
+                this.setState({
+                  lastResourceInfoRetrieval: (new Date(teamIndexNow - ((60*60*1000) + 100) )).toISOString(),
+                }, () => {
+                  // dispatch(actions.resetPurveyors());
+                  dispatch(actions.setCurrentTeam(teamId));
+                })
               }, 25)()
               nav.replacePreviousAndPop({
                 name: 'Feed',
@@ -847,8 +941,6 @@ class App extends React.Component {
             onClearBadge: () => {
               dispatch(actions.updateInstallation({
                 badge: 0,
-                appVersion: DeviceInfo.getVersion(),
-                appBuildNumber: DeviceInfo.getBuildNumber(),
               }))
             },
             onGetMoreMessages: () => {
@@ -894,6 +986,12 @@ class App extends React.Component {
               const navValue = evt.nativeEvent.value
               switch(navValue){
                 case 'Purveyor':
+                  this.setState({
+                    order: null,
+                    orderId: null,
+                    category: null,
+                    purveyor: null,
+                  })
                   // nav.replace({
                   //   name: 'PurveyorIndex',
                   // });
@@ -1163,6 +1261,7 @@ class App extends React.Component {
         return {
           component: Components.OrderView,
           props: {
+            teamBetaAccess: this.state.currentTeamInfo.betaAccess,
             userId: session.userId,
             orderId: orderId,
             orderFetching: orders.isFetching,
@@ -1180,6 +1279,7 @@ class App extends React.Component {
                   orderId: this.state.order.id,
                   productId: cartItem.productId,
                   status: cartItem.status,
+                  quantityReceived: cartItem.quantityReceived || cartItem.quantity,
                 }))
               }, 25)()
             },
@@ -1301,6 +1401,7 @@ class App extends React.Component {
           component: Components.ProductForm,
           props: {
             productCategory: this.state.category,
+            fromPurveyorId: this.state.purveyor ? this.state.purveyor.id : null,
             product: this.state.product,
             team: this.state.currentTeamInfo.team,
             categories: this.state.currentTeamInfo.categories,
@@ -1427,6 +1528,8 @@ class App extends React.Component {
           component: Components.CartView,
           props: {
             // team: this.state.currentTeamInfo.team,
+            offlineQueueCount: Object.keys(offline.queue).length,
+            teamBetaAccess: this.state.currentTeamInfo.betaAccess,
             cartItems: this.state.currentTeamInfo.cart,
             cartPurveyors: cartPurveyors,
             products: this.state.currentTeamInfo.products,
@@ -1443,9 +1546,9 @@ class App extends React.Component {
                 }
               }, 25)()
             },
-            onSubmitOrder: (purveyorIds, navigateToFeed) => {
+            onSendCart: (cartInfo, navigateToFeed) => {
               _.debounce(() => {
-                dispatch(actions.sendCart(purveyorIds));
+                dispatch(actions.sendCart(cartInfo));
               }, 25)()
               if(navigateToFeed === true){
                 nav.replacePreviousAndPop({
@@ -1580,9 +1683,9 @@ class App extends React.Component {
                 disabled={(this.state.currentTeamInfo.team === null)}
               />
             ),
-            customNext: (
-              <Components.FeedViewRightButton />
-            ),
+            // customNext: (
+            //   <Components.FeedViewRightButton />
+            // ),
           })
           break;
         case 'PurveyorIndex':
@@ -2039,6 +2142,17 @@ class App extends React.Component {
           session={session}
           open={this.state.open}
           onNavToPurveyor={() => {
+            if(this.state.currentTeamInfo.resources.hasOwnProperty('lastUpdated') === true){
+              const resourcesLastUpdated = this.state.currentTeamInfo.resources.lastUpdated
+              // console.log('update? ', resourcesLastUpdated.categories, this.state.currentTeamInfo.lastUpdated.categories, moment(resourcesLastUpdated.categories).diff(this.state.currentTeamInfo.lastUpdated.categories), (60*1000))
+              if(
+                resourcesLastUpdated.hasOwnProperty('categories') === true
+                && moment(resourcesLastUpdated.categories).diff(this.state.currentTeamInfo.lastUpdated.categories) > 0
+              ) {
+                // console.log('Dispatching get categories...')
+                dispatch(actions.getCategories(session.teamId))
+              }
+            }
             this.setState({
               order: null,
               orderId: null,
@@ -2069,7 +2183,7 @@ class App extends React.Component {
     if(connect.status === actions.CONNECT.OFFLINE){
       let reconnectText = `reconnecting in ${Math.floor(this.state.connectionStats.reconnect/1000)}s`
       if(this.state.connectionStats.attempt === 0 || this.state.connectionStats.reconnect === 0){
-        reconnectText = 'connecting...'
+        reconnectText = 'establishing connection...'
       }
       connectionStatus = (
         <TouchableHighlight
@@ -2195,6 +2309,7 @@ function mapStateToProps(state) {
     session: state.session,
     settingsConfig: state.settingsConfig,
     teams: state.teams,
+    offline: state.offline,
   }
 }
 

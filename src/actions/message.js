@@ -28,18 +28,20 @@ export default function MessageActions(allActions){
     // console.log('imageUrl', imageUrl)
     return (dispatch, getState) => {
       const {session} = getState()
+      const sessionTeamId = session.teamId
       author = author ? author : `${session.firstName}`;
       imageUrl = imageUrl ? imageUrl : session.imageUrl;
 
       message.text = message.text.replace(/\{\{author\}\}/g, author);
+      const messageId = generateId()
       var newMessage = {
-        _id: generateId(),
+        _id: messageId,
         author: author || "Default",
         createdAt: (new Date()).toISOString(),
         delete: false,
         imageUrl: imageUrl,
         message: message.text,
-        teamId: session.teamId,
+        teamId: sessionTeamId,
         type: message.type,
         userId: session.userId,
       };
@@ -49,7 +51,7 @@ export default function MessageActions(allActions){
       if(message.hasOwnProperty('orderId') === true){
         newMessage.orderId = message.orderId
       }
-      const messageId = newMessage._id
+
       // console.log('newMessage', newMessage);
       dispatch({
         type: CREATE_MESSAGE,
@@ -59,7 +61,8 @@ export default function MessageActions(allActions){
         })
       })
 
-      dispatch(connectActions.ddpCall('createMessage', [newMessage]))
+      const triggerPushNotification = true
+      dispatch(connectActions.ddpCall('createMessage', [Object.assign({}, newMessage), triggerPushNotification, session.userId]))
     }
   }
 

@@ -75,12 +75,14 @@ class Signup extends React.Component {
     if(this.refs.phone){
       this.refs.phone.blur();
     }
-    let phoneNumber = this.state.phoneNumber.replace(/\D/g,'')
-    if(this.state.phoneNumber.substr(0,1) === '+'){
+    const statePhoneNumber = this.state.phoneNumber || ''
+    let phoneNumber = statePhoneNumber
+    phoneNumber = phoneNumber.replace(/\D/g,'')
+    if(statePhoneNumber.substr(0,1) === '+'){
       phoneNumber = `+${phoneNumber}`
     }
     if(
-      this.state.phoneNumber !== null
+      statePhoneNumber !== ''
       && phoneNumber !==  ''
       && phoneNumber !== undefined
       && phoneNumber !== 'undefined'
@@ -135,6 +137,7 @@ class Signup extends React.Component {
     }
     let tosLink =
         <TouchableHighlight
+          style={styles.tosButton}
           underlayColor='transparent'
           onPress={() => {
             LinkingIOS.openURL('http://eula.sousapp.com/')
@@ -241,7 +244,6 @@ class Signup extends React.Component {
     return (
       <ScrollView
         contentContainerStyle={styles.outerContainer}
-        keyboardShouldPersistTaps={false}
         automaticallyAdjustContentInsets={false}
       >
         {this.state.submitting !== false ? fetching : signup}
@@ -308,10 +310,12 @@ let styles = StyleSheet.create({
     color: 'white',
     fontFamily: 'OpenSans',
   },
+  tosButton: {
+    marginTop: 100,
+  },
   tosLink: {
     color: 'white',
     textAlign: 'center',
-    marginTop: 80,
   },
   buttonActive: {
     flex: 1,

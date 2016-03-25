@@ -1,4 +1,5 @@
 import React from 'react-native';
+import _ from 'lodash';
 import ProductListItem from './productListItem';
 import { greyText, productCompletedBackgroundColor } from '../utilities/colors';
 
@@ -15,6 +16,7 @@ class ProductList extends React.Component {
     this.state = {
       products: null,
       allowScroll: true,
+      deletedProducts: {}
     }
     this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => {
       return r1 !== r2
@@ -29,15 +31,46 @@ class ProductList extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // this.setState({
-    //   products: []
-    // }, () => {
-    //
-    // })
+    let nextPropsProducts = nextProps.products
+    const deletedProductsKeys = Object.keys(this.state.deletedProducts)
+    if(deletedProductsKeys.length > 0){
+      let deletedProducts = this.state.deletedProducts
+      deletedProductsKeys.forEach((productId) => {
+        const updatedProductIdx = _.findIndex(nextPropsProducts, {'id': productId })
+        if(nextPropsProducts.hasOwnProperty(updatedProductIdx) === true && nextPropsProducts[updatedProductIdx].deleted === false){
+          delete deletedProducts[productId]
+        }
+      })
+      if(Object.keys(deletedProducts).length !== deletedProductsKeys.length){
+        this.setState({
+          deletedProducts: deletedProducts
+        }, () => {
+          if(Object.keys(this.state.deletedProducts).length > 0){
+            nextPropsProducts = _.filter(nextProps.products, (tmpProd) => {
+              return tmpProd.deleted !== true && this.state.deletedProducts.hasOwnProperty(tmpProd.id) === false
+            })
+          }
+          this.setState({
+            products: this.ds.cloneWithRows(nextPropsProducts)
+          })
+        })
+      } else {
+        nextPropsProducts = _.filter(nextProps.products, (tmpProd) => {
+          return tmpProd.deleted !== true && this.state.deletedProducts.hasOwnProperty(tmpProd.id) === false
+        })
+        this.setState({
+          products: this.ds.cloneWithRows(nextPropsProducts)
+        })
+      }
+    } else {
+      this.setState({
+        products: this.ds.cloneWithRows(nextPropsProducts)
+      })
+    }
 
-    this.setState({
-      products: this.ds.cloneWithRows(nextProps.products)
-    })
+
+
+
   }
 
   componentWillMount() {
@@ -72,6 +105,22 @@ class ProductList extends React.Component {
       })
     }
 
+    const onProductDelete = () => {
+      let products = _.filter(this.props.products, (tmpProd) => {
+        return tmpProd.deleted !== true && tmpProd.id !== product.id
+      })
+      // TODO: Optimize this for larger lists, perhaps just delete from hashmap
+      // and then process?
+      let deletedProducts = this.state.deletedProducts
+      deletedProducts[product.id] = true
+      this.setState({
+        products: this.ds.cloneWithRows(products),
+        deletedProducts: deletedProducts,
+      }, () => {
+        this.props.onProductDelete(product.id)
+      })
+    }
+
     const props = {
       cartItem: cartItem,
       cartPurveyorId: cartPurveyorId,
@@ -86,18 +135,14 @@ class ProductList extends React.Component {
         this.props.onProductEdit(product)
       },
       onProductDelete: () => {
-        let products = _.filter(this.props.products, (tmpProd) => {
-          return tmpProd.deleted !== true && tmpProd.id !== product.id
-        })
-        // TODO: Optimize this for larger lists, perhaps just delete from hashmap
-        // and then process?
-        this.setState({
-          products: this.ds.cloneWithRows(products),
-        }, () => {
-          this.props.onProductDelete(product.id)
-        })
+        onProductDelete()
       },
-      onUpdateProductInCart: this.props.onUpdateProductInCart,
+      onUpdateProductInCart: (cartAction, cartAttributes, deleteProduct) => {
+        this.props.onUpdateProductInCart(cartAction, cartAttributes)
+        if(deleteProduct === true){
+          setTimeout(onProductDelete, 150)
+        }
+      },
       onAllowScroll: (allowScroll) => {
         this.setState({
           allowScroll: allowScroll,

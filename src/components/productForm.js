@@ -2,6 +2,7 @@ import React from 'react-native';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import _ from 'lodash';
+import s from 'underscore.string';
 import PickerModal from './modal/pickerModal';
 
 const {
@@ -13,6 +14,37 @@ const {
   TouchableOpacity,
   View,
 } = React;
+
+class FieldRow extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  isFocused() {
+    return this.refs.field.isFocused()
+  }
+  blur(cb) {
+    let callback = cb || function(){}
+    this.refs.field.blur()
+    setTimeout(callback, 50)
+  }
+  render() {
+    return (
+      <View key={this.props.key} style={styles.inputContainer}>
+        <View style={styles.inputFieldContainer}>
+          <TextInput
+            ref='field'
+            style={styles.inputField}
+            value={this.props.value}
+            keyboardType={this.props.keyboardType || 'default'}
+            placeholder={this.props.placeholder}
+            inputPlaceholderColor={Colors.inputPlaceholderColor}
+            onChange={this.props.onChange}
+          />
+        </View>
+      </View>
+    )
+  }
+}
 
 class PickerFieldRow extends React.Component {
   constructor(props) {
@@ -32,13 +64,12 @@ class PickerFieldRow extends React.Component {
     }
     return (
       <View style={styles.inputContainer}>
-        <Text style={styles.inputTitle}>{this.props.field}</Text>
         <TouchableHighlight
           underlayColor='transparent'
           onPress={() => { this.props.onShowFieldPicker() }}
-          style={styles.inputFieldContainer}
+          style={styles.inputSelectContainer}
         >
-          <Text style={styles.inputField}>
+          <Text style={styles.selectField}>
             {selectFieldText}
           </Text>
         </TouchableHighlight>
@@ -50,6 +81,7 @@ class PickerFieldRow extends React.Component {
 class ProductForm extends React.Component {
   constructor(props) {
     super(props);
+    // console.log('props: ', props)
     this.state = {
       newProduct: {},
       fieldPicker: null,
@@ -57,11 +89,15 @@ class ProductForm extends React.Component {
       modalVisible: false,
       selectedName: this.props.product ? this.props.product.name : '',
       selectedCategory: this.props.productCategory ? this.props.productCategory.id : null,
-      selectedPurveyor: this.props.product ? this.props.product.purveyors : null,
-      selectedAmount: this.props.product ? this.props.product.amount : null,
-      selectedUnits: this.props.product ? this.props.product.unit : null,
+      selectedPurveyor: this.props.product ? this.props.product.purveyors : (this.props.fromPurveyorId ? [this.props.fromPurveyorId] : null),
+      selectedAmount: this.props.product ? this.props.product.amount : 1,
+      selectedUnits: this.props.product ? this.props.product.unit : 'cs',
+      selectedSku: this.props.product ? this.props.product.sku : '',
+      selectedPrice: this.props.product ? this.props.product.price : '',
+      selectedPar: this.props.product ? this.props.product.par : '',
+      selectedPackSize: this.props.product ? this.props.product.packSize : '',
     }
-    this.fields = ['Purveyor','Category','Amount']//,'Units']
+    this.fields = ['Purveyor','Category','Amount']//,'QtyUnits']
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -72,29 +108,42 @@ class ProductForm extends React.Component {
   }
 
   showFieldPicker(field, idx) {
-    this.refs.name.blur()
-    this.setState({
-      modalVisible: true,
-      fieldPicker: field,
-      fieldPickerIdx: idx,
-    })
+    const cb = () => {
+      this.setState({
+        modalVisible: true,
+        fieldPicker: field,
+        fieldPickerIdx: idx,
+      })
+    }
+    if(this.refs.name && this.refs.name.isFocused() === true){
+      this.refs.name.blur(cb)
+    } else if(this.refs.unit && this.refs.unit.isFocused() === true){
+      this.refs.unit.blur(cb)
+    } else {
+      cb()
+    }
   }
 
   checkValidForm(){
+    let selectedName = _.trim(this.state.selectedName.replace('\u00A0',' '))
     if (
       this.state.selectedPurveyor !== null &&
       this.state.selectedPurveyor.length > 0 &&
       this.state.selectedCategory &&
       this.state.selectedAmount &&
       this.state.selectedUnits &&
-      this.state.selectedName !== ''
+      selectedName !== ''
     ) {
       const productAttributes = {
-        name: this.state.selectedName,
+        name: selectedName,
         purveyors: this.state.selectedPurveyor,
         amount: this.state.selectedAmount,
         unit: this.state.selectedUnits,
         categoryId: this.state.selectedCategory,
+        sku: this.state.selectedSku,
+        price: this.state.selectedPrice,
+        par: this.state.selectedPar,
+        packSize: this.state.selectedPackSize,
       }
       this.props.onProcessProduct(productAttributes);
     } else {
@@ -123,7 +172,7 @@ class ProductForm extends React.Component {
         selectedValue = this.state[selectedValueId]
         if(field === 'Purveyor' && selectedValue !== null){
           const purveyorIds = this.state[selectedValueId]
-          selectedValue = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Selected`
+          selectedValue = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Purveyors Selected`
           if(purveyorIds.length === 0){
             selectedValue = null
           }
@@ -176,7 +225,7 @@ class ProductForm extends React.Component {
             }
           })
           items.unshift({
-            key: '--null',
+            key: '--null--',
             value: null,
             label: '',
           })
@@ -200,7 +249,7 @@ class ProductForm extends React.Component {
             }
           }))
           items.unshift({
-            key: '--null',
+            key: '--null--',
             value: null,
             label: '',
           })
@@ -217,7 +266,7 @@ class ProductForm extends React.Component {
         //     }
         //   })
         //   items.unshift({
-        //     key: '--null',
+        //     key: '--null--',
         //     value: null,
         //     label: '',
         //   })
@@ -229,49 +278,106 @@ class ProductForm extends React.Component {
       }
     }
 
+    let selectedPrice = this.state.selectedPrice
+    // if(selectedPrice && selectedPrice.length > 0){
+    //   selectedPrice = s.numberFormat(parseFloat(selectedPrice), 2)
+    // }
+
     return (
-      <View style={{flex:1}}>
+      <View style={styles.container}>
         <ScrollView
           automaticallyAdjustContentInsets={false}
           style={styles.scrollView}
         >
-          <View key={'name'} style={styles.inputContainer}>
-            <Text style={styles.inputTitle}>Name</Text>
-            <View style={[styles.inputFieldContainer, styles.inputFieldUnderline]}>
-              <TextInput
-                ref='name'
-                style={[styles.inputField,{}]}
-                value={this.state.selectedName}
-                placeholder='Name'
-                onChange={(e) => {
-                  this.setState({
-                    selectedName: e.nativeEvent.text,
-                  }, () => {
-                    this.checkValidForm();
-                  });
-                }}
-              />
-            </View>
-          </View>
+          <Text style={styles.textDivider}>Product Details</Text>
+          <FieldRow
+            key='name'
+            ref='name'
+            label='Name'
+            placeholder='Avocado, Ripe (48 ct)'
+            value={this.state.selectedName}
+            onChange={(e) => {
+              this.setState({
+                selectedName: e.nativeEvent.text.replace(' ','\u00A0'),
+              }, () => {
+                this.checkValidForm();
+              });
+            }}
+          />
           {fields}
-          <View key={'unit'} style={styles.inputContainer}>
-            <Text style={styles.inputTitle}>Unit</Text>
-            <View style={[styles.inputFieldContainer, styles.inputFieldUnderline]}>
-              <TextInput
-                ref='unit'
-                style={[styles.inputField,{}]}
-                value={this.state.selectedUnits}
-                placeholder='Unit'
-                onChange={(e) => {
-                  this.setState({
-                    selectedUnits: e.nativeEvent.text,
-                  }, () => {
-                    this.checkValidForm();
-                  });
-                }}
-              />
-            </View>
-          </View>
+          <FieldRow
+            key='unit'
+            ref='unit'
+            label='Base Unit'
+            placeholder='case, ea, lb'
+            value={this.state.selectedUnits}
+            onChange={(e) => {
+              this.setState({
+                selectedUnits: e.nativeEvent.text,
+              }, () => {
+                this.checkValidForm();
+              });
+            }}
+          />
+          <Text style={styles.textDivider}>Additional Info (optional)</Text>
+          <FieldRow
+            key='sku'
+            ref='sku'
+            label='SKU'
+            placeholder='SKU'
+            value={this.state.selectedSku}
+            onChange={(e) => {
+              this.setState({
+                selectedSku: e.nativeEvent.text,
+              }, () => {
+                this.checkValidForm();
+              });
+            }}
+          />
+          <FieldRow
+            key='price'
+            ref='price'
+            label='Price'
+            placeholder='Price'
+            keyboardType='numeric'
+            value={selectedPrice}
+            onChange={(e) => {
+              let price = e.nativeEvent.text.replace(',','')
+              this.setState({
+                selectedPrice: price,
+              }, () => {
+                this.checkValidForm();
+              });
+            }}
+          />
+          <FieldRow
+            key='par'
+            ref='par'
+            label='Par'
+            placeholder='Par'
+            value={this.state.selectedPar}
+            onChange={(e) => {
+              this.setState({
+                selectedPar: e.nativeEvent.text,
+              }, () => {
+                this.checkValidForm();
+              });
+            }}
+          />
+          <FieldRow
+            key='packSize'
+            ref='packSize'
+            label='Pack Size'
+            placeholder='Pack Size'
+            value={this.state.selectedPackSize}
+            onChange={(e) => {
+              this.setState({
+                selectedPackSize: e.nativeEvent.text,
+              }, () => {
+                this.checkValidForm();
+              });
+            }}
+          />
         </ScrollView>
         <PickerModal
           modalVisible={this.state.modalVisible}
@@ -309,47 +415,51 @@ class ProductForm extends React.Component {
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
-    // backgroundColor: 'blue',
-    // backgroundColor: Colors.mainBackgroundColor,
+  container: {
     flex: 1,
+    backgroundColor: Colors.mainBackgroundColor,
+    padding: 5,
+    paddingTop: 10,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  textDivider: {
+    color: Colors.darkGrey,
+    fontSize: 20,
+    marginTop: 10,
+    marginBottom: 10,
   },
   inputContainer: {
+    backgroundColor: 'white',
     flex: 1,
-    // marginTop: 2,
-    // backgroundColor: 'red',
     flexDirection: 'row',
-    justifyContent: 'space-around',
     alignItems: 'center',
-  },
-  inputTitle: {
-    flex: 1,
-    fontFamily: 'OpenSans',
-    fontWeight: 'bold',
-    fontSize: 14,
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 8,
-    color: Colors.greyText,
+    marginTop: 1,
+    marginBottom: 1,
   },
   inputFieldContainer: {
-    flex: 3,
-    marginRight: 4,
+    justifyContent: 'center',
+    flex: 1,
   },
-  inputFieldUnderline: {
-    borderBottomColor: Colors.inputUnderline,
-    borderBottomWidth: 1,
+  inputSelectContainer: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+  },
+  selectField: {
+    flex: 1,
+    fontFamily: 'OpenSans',
+    fontSize: 16,
+    marginLeft: 10,
+    paddingTop: 13,
+    paddingBottom: 13,
   },
   inputField: {
-    padding: 4,
-    paddingLeft: 8,
-    paddingRight: 8,
-    fontWeight: 'bold',
-    fontSize: Sizes.inputFieldFontSize,
-    color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
-    textAlign: 'right',
-    height: Sizes.inputFieldHeight,
+    fontSize: 16,
+    height: 45,
+    marginLeft: 10,
   },
 });
 

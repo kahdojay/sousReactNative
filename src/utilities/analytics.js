@@ -49,6 +49,7 @@ export default mixpanel({
       const userProfileSettingsData = {
         'settings__appBuildNumber': state.connect.settings.appBuildNumber,
         'settings__appVersion': state.connect.settings.appVersion,
+        'settings__deviceId': state.connect.settings.deviceId,
         'settings__deviceName': state.connect.settings.deviceName,
         'settings__model': state.connect.settings.model,
         'settings__systemName': state.connect.settings.systemName,
