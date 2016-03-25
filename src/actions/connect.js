@@ -603,13 +603,16 @@ export default function ConnectActions(ddpClient) {
             clearTimeout(heartbeatTimeoutDisconnectId)
             clearTimeout(connect.timeoutId)
             if(successfulHeartbeatCounter > 1){
-              dispatch({
-                type: CONNECTION_STATUS,
-                timeoutId: null,
-                status: CONNECT.CONNECTED,
-                error: null,
-                attempt: 0,
-              })
+              if(connect.status !== CONNECT.CONNECTED){
+                console.log('here')
+                dispatch({
+                  type: CONNECTION_STATUS,
+                  timeoutId: null,
+                  status: CONNECT.CONNECTED,
+                  error: null,
+                  attempt: 0,
+                })
+              }
             } else {
               successfulHeartbeatCounter++
             }
