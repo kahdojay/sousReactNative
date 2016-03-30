@@ -122,9 +122,9 @@ module.exports = class Menu extends React.Component {
               underlayColor='#3e444f'
             >
               <View style={styles.menuTextContainer}>
-                <Icon name='material|transform' size={20} color='white' style={styles.menuIcon}/>
+                <Icon name='material|group-work' size={20} color='white' style={styles.menuIcon}/>
                 <Text style={styles.menuItemText}>
-                  Switch Teams
+                  All Teams
                 </Text>
               </View>
             </TouchableHighlight>
