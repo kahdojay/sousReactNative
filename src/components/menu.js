@@ -61,6 +61,17 @@ module.exports = class Menu extends React.Component {
         <View style={styles.menuBody}>
           <ScrollView>
             <TouchableHighlight
+              key='team-members'
+              onPress={this.props.onNavToTeamMemberListing}
+              style={styles.menuItemButton}
+              underlayColor='#3e444f'
+            >
+              <View style={styles.menuTextContainer}>
+                <Icon name='material|accounts' size={20} color='white' style={styles.menuIcon}/>
+                <Text style={styles.menuItemText}>{this.props.team.name}</Text>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight
               key='order-guide'
               onPress={this.props.onNavToPurveyor}
               style={styles.menuItemButton}
@@ -106,17 +117,6 @@ module.exports = class Menu extends React.Component {
               </View>
             </TouchableHighlight>*/}
             <TouchableHighlight
-              key='team-members'
-              onPress={this.props.onNavToTeamMemberListing}
-              style={styles.menuItemButton}
-              underlayColor='#3e444f'
-            >
-              <View style={styles.menuTextContainer}>
-                <Icon name='material|accounts' size={20} color='white' style={styles.menuIcon}/>
-                <Text style={styles.menuItemText}>Team Members</Text>
-              </View>
-            </TouchableHighlight>
-            <TouchableHighlight
               onPress={this.props.onNavToTeamIndex}
               style={styles.menuItemButton}
               underlayColor='#3e444f'
@@ -132,8 +132,8 @@ module.exports = class Menu extends React.Component {
         </View>
         <View style={styles.separator} />
         <View style={styles.teamNameContainer}>
-          <Text style={styles.teamName}>{team ? team.name : ''}</Text>
-          <Text style={styles.buildInfo}>version: {version} - build: {build}</Text>
+          <Text style={styles.sous}>Sous</Text>
+          <Text style={styles.buildInfo}>{version}({build})</Text>
         </View>
       </View>
     );
@@ -239,8 +239,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingBottom: 10,
   },
-  teamName: {
+  sous: {
     color: 'white',
+    fontSize: 13,
     fontFamily: 'OpenSans',
   },
   buildInfo: {

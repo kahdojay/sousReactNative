@@ -95,7 +95,7 @@ function formatMessage(msg, messageLength = null) {
           This is your Team Feed - use this space to communicate with your team. Add members by tapping the invite button within <Text style={{fontWeight: 'bold'}}>Team Members</Text>.{'\n\n'}
         </Text>*/}
         <Text style={styles.welcomeText}>
-          Feel free to create and submit purveyor orders in the Demo Team (don't worry, they won't go to any real purveyors).{'\n\n'}
+          Welcome to Sous, this is a demo team - feel free to create and submit dummy orders (don't worry, they won't go to anybody).{'\n\n'}
         </Text>
         <Text style={styles.welcomeText}>
           When you're ready to create your own Order Guide, create a New Team by accessing <Text style={{fontWeight: 'bold'}}>Switch Teams</Text>​ from the Menu, or chat us below and we'll be in touch.
