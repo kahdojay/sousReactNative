@@ -874,9 +874,9 @@ class App extends React.Component {
             },
           },
         }
-      case 'TeamView':
+      case 'TeamTasksView':
         return {
-          component: Components.TeamView,
+          component: Components.TeamTasksView,
           props: {
             teamTasks: this.state.currentTeamInfo.team.tasks,
             onNavToTask: (recipeId) => {
@@ -1562,9 +1562,9 @@ class App extends React.Component {
         return {
           component: Components.Loading
         }
-      case 'TeamMemberListing':
+      case 'TeamView':
         return {
-          component: Components.TeamMemberListing,
+          component: Components.TeamView,
           props: {
             settingsConfig: settingsConfig,
             userId: session.userId,
@@ -1712,7 +1712,7 @@ class App extends React.Component {
             )
           })
           break;
-        case 'TeamView':
+        case 'TeamTasksView':
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
@@ -2027,7 +2027,7 @@ class App extends React.Component {
             ),
           })
           break;
-        case 'TeamMemberListing':
+        case 'TeamView':
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
@@ -2044,7 +2044,7 @@ class App extends React.Component {
               />
             ),
             customNext: (
-              <Components.TeamMemberRightInvite
+              <Components.TeamViewRightInvite
                 connected={(connect.status === actions.CONNECT.CONNECTED)}
                 navigateToInviteView={() => {
                   nav.push({
@@ -2167,10 +2167,10 @@ class App extends React.Component {
             nav.push({ name: 'Profile', })
           }}
           onNavToTeam={() => {
-            nav.push({ name: 'TeamView', })
+            nav.push({ name: 'TeamTasksView', })
           }}
-          onNavToTeamMemberListing={() => {
-            nav.push({ name: 'TeamMemberListing', })
+          onNavToTeamView={() => {
+            nav.push({ name: 'TeamView', })
           }}
           onNavToTeamIndex={() => {
             nav.push({ name: 'TeamIndex', })

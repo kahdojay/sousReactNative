@@ -62,7 +62,7 @@ module.exports = class Menu extends React.Component {
           <ScrollView>
             <TouchableHighlight
               key='team-members'
-              onPress={this.props.onNavToTeamMemberListing}
+              onPress={this.props.onNavToTeamView}
               style={styles.menuItemButton}
               underlayColor='#3e444f'
             >
