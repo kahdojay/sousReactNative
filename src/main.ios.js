@@ -58,19 +58,19 @@ class SousAppBase extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if(nextProps.connect.status === actions.CONNECT.OFFLINE && nextProps.connect.timeoutId === null){
-      const {connect} = store.getState()
-      let willReceivePropsTimeoutMilliseconds = 1500
-      if(connect.attempt > 21){
-        willReceivePropsTimeoutMilliseconds = 15000
-      } else if(connect.attempt > 13){
-        willReceivePropsTimeoutMilliseconds = 15000
-      } else if(connect.attempt > 8){
-        willReceivePropsTimeoutMilliseconds = 10000
-      } else if(connect.attempt > 5){
-        willReceivePropsTimeoutMilliseconds = 5000
-      } else if (connect.attempt > 3) {
+      // const {connect} = store.getState()
+      // let willReceivePropsTimeoutMilliseconds = 1500
+      // if(connect.attempt > 21){
+      //   willReceivePropsTimeoutMilliseconds = 15000
+      // } else if(connect.attempt > 13){
+      //   willReceivePropsTimeoutMilliseconds = 15000
+      // } else if(connect.attempt > 8){
+      //   willReceivePropsTimeoutMilliseconds = 10000
+      // } else if(connect.attempt > 5){
+      //   willReceivePropsTimeoutMilliseconds = 5000
+      // } else if (connect.attempt > 3) {
         willReceivePropsTimeoutMilliseconds = 3000
-      }
+      // }
       const willReceivePropsTimeoutId = setTimeout(() => {
         // connect the app with server
         store.dispatch(actions.connectDDPClient())
