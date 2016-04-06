@@ -52,7 +52,7 @@ class PickerFieldRow extends React.Component {
   }
 
   render() {
-    let selectFieldText = `(Tap to Select)`
+    let selectFieldText = `(Tap to Update)`
     if(this.props.selectFieldText){
       selectFieldText = this.props.selectFieldText
     }
@@ -89,7 +89,7 @@ class ProductForm extends React.Component {
       modalVisible: false,
       selectedName: this.props.product ? this.props.product.name : '',
       selectedCategory: this.props.productCategory ? this.props.productCategory.id : null,
-      selectedPurveyor: this.props.product ? this.props.product.purveyors : (this.props.fromPurveyorId ? [this.props.fromPurveyorId] : null),
+      selectedPurveyors: this.props.product ? this.props.product.purveyors : (this.props.fromPurveyorId ? [this.props.fromPurveyorId] : null),
       selectedAmount: this.props.product ? this.props.product.amount : 1,
       selectedUnits: this.props.product ? this.props.product.unit : 'cs',
       selectedDescription: this.props.product ? this.props.product.description : '',
@@ -128,8 +128,8 @@ class ProductForm extends React.Component {
   checkValidForm(){
     let selectedName = _.trim(this.state.selectedName.replace('\u00A0',' '))
     if (
-      this.state.selectedPurveyor !== null &&
-      this.state.selectedPurveyor.length > 0 &&
+      this.state.selectedPurveyors !== null &&
+      this.state.selectedPurveyors.length > 0 &&
       this.state.selectedCategory &&
       this.state.selectedAmount &&
       this.state.selectedUnits &&
@@ -137,7 +137,7 @@ class ProductForm extends React.Component {
     ) {
       const productAttributes = {
         name: selectedName,
-        purveyors: this.state.selectedPurveyor,
+        purveyors: this.state.selectedPurveyors,
         amount: this.state.selectedAmount,
         unit: this.state.selectedUnits,
         categoryId: this.state.selectedCategory,
@@ -163,7 +163,7 @@ class ProductForm extends React.Component {
 
     this.fields.forEach((field, idx) => {
       let selectedValue = null
-      let selectFieldText = `(Tap to Select)`
+      let selectFieldText = `(Tap to Update)`
       const selectedValueId = `selected${field}`
 
       if(this.state.hasOwnProperty(selectedValueId) === true) {
@@ -212,7 +212,7 @@ class ProductForm extends React.Component {
             }
           })
           headerText = `Select ${this.state.fieldPicker}`
-          selectedValue = this.state.selectedPurveyor
+          selectedValue = this.state.selectedPurveyors
           pickerType = 'ListView'
           break;
 
