@@ -52,7 +52,7 @@ class PickerFieldRow extends React.Component {
   }
 
   render() {
-    let selectFieldText = `Tap to Select`
+    let selectFieldText = `(Tap to Select)`
     if(this.props.selectFieldText){
       selectFieldText = this.props.selectFieldText
     }
@@ -92,6 +92,7 @@ class ProductForm extends React.Component {
       selectedPurveyor: this.props.product ? this.props.product.purveyors : (this.props.fromPurveyorId ? [this.props.fromPurveyorId] : null),
       selectedAmount: this.props.product ? this.props.product.amount : 1,
       selectedUnits: this.props.product ? this.props.product.unit : 'cs',
+      selectedDescription: this.props.product ? this.props.product.description : '',
       selectedSku: this.props.product ? this.props.product.sku : '',
       selectedPrice: this.props.product ? this.props.product.price : '',
       selectedPar: this.props.product ? this.props.product.par : '',
@@ -140,6 +141,7 @@ class ProductForm extends React.Component {
         amount: this.state.selectedAmount,
         unit: this.state.selectedUnits,
         categoryId: this.state.selectedCategory,
+        description: this.state.selectedDescription,
         sku: this.state.selectedSku,
         price: this.state.selectedPrice,
         par: this.state.selectedPar,
@@ -161,7 +163,7 @@ class ProductForm extends React.Component {
 
     this.fields.forEach((field, idx) => {
       let selectedValue = null
-      let selectFieldText = `Tap to Select`
+      let selectFieldText = `(Tap to Select)`
       const selectedValueId = `selected${field}`
 
       if(this.state.hasOwnProperty(selectedValueId) === true) {
@@ -321,6 +323,21 @@ class ProductForm extends React.Component {
             }}
           />
           <Text style={styles.textDivider}>Additional Info (optional)</Text>
+          <Text>Note to Purveyor</Text>
+          <FieldRow
+            key='notes'
+            ref='notes'
+            label='Notes'
+            placeholder='ex. "Please no substitutions"'
+            value={this.state.selectedDescription} //FIX THIS
+            onChange={(e) => {
+              this.setState({
+                selectedDescription: e.nativeEvent.text,
+              }, () => {
+                this.checkValidForm();
+              });
+            }}
+          />
           <Text>SKU</Text>
           <FieldRow
             key='sku'
