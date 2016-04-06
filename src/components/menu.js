@@ -61,17 +61,6 @@ module.exports = class Menu extends React.Component {
         <View style={styles.menuBody}>
           <ScrollView>
             <TouchableHighlight
-              key='team-members'
-              onPress={this.props.onNavToTeamView}
-              style={styles.menuItemButton}
-              underlayColor='#3e444f'
-            >
-              <View style={styles.menuTextContainer}>
-                <Icon name='material|accounts' size={20} color='white' style={styles.menuIcon}/>
-                <Text style={styles.menuItemText}>{this.props.team.name}</Text>
-              </View>
-            </TouchableHighlight>
-            <TouchableHighlight
               key='order-guide'
               onPress={this.props.onNavToPurveyor}
               style={styles.menuItemButton}
@@ -116,6 +105,17 @@ module.exports = class Menu extends React.Component {
                 </View>
               </View>
             </TouchableHighlight>*/}
+            <TouchableHighlight
+              key='team-members'
+              onPress={this.props.onNavToTeamView}
+              style={styles.menuItemButton}
+              underlayColor='#3e444f'
+            >
+              <View style={styles.menuTextContainer}>
+                <Icon name='material|settings' size={20} color='white' style={styles.menuIcon}/>
+                <Text style={styles.menuItemText}>{this.props.team.name}</Text>
+              </View>
+            </TouchableHighlight>
             <TouchableHighlight
               onPress={this.props.onNavToTeamIndex}
               style={styles.menuItemButton}
