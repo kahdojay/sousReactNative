@@ -233,7 +233,7 @@ class ProductForm extends React.Component {
           break;
 
         case 'Amount':
-          items = _.map(['1/8','1/4','1/2'], (frac, idx) => {
+          items = _.map(['1/8','1/4','1/2', '3/4'], (frac, idx) => {
             const dec = frac.split('/')
             return {
               key: `d-${idx}`,
@@ -241,7 +241,7 @@ class ProductForm extends React.Component {
               label: frac,
             }
           })
-          items = items.concat(_.map(_.range(1, 501), (n, idx) => {
+          items = items.concat(_.map(_.range(1, 1001), (n, idx) => {
             return {
               key: idx,
               value: n,
