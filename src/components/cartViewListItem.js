@@ -69,24 +69,29 @@ class CartViewListItem extends React.Component {
           right={buttons}
           backgroundColor={Colors.mainBackgroundColor}
         >
-          <View key={product.id} style={styles.productContainer}>
-            <Text style={styles.productTitle}>{productName}</Text>
-            <TouchableHighlight
-              onPress={() => {
-                this.setState({
-                  editQuantity: true
-                })
-              }}
-              underlayColor='transparent'
-              style={styles.productQuantityContainer}
-            >
-              <Text style={styles.productQuantity}>{quantity} {productUnit}</Text>
-            </TouchableHighlight>
-            {rowDisabled === true ?
-              <View style={styles.productContainerDisabled}>
-                <Text style={styles.productDisabledText}>{rowDisabledReason}</Text>
-              </View>
-            : null}
+          <View style={styles.productContainer}>
+            <View key={product.id} style={styles.productDetails}>
+              <Text style={styles.productTitle}>{productName}</Text>
+              <TouchableHighlight
+                onPress={() => {
+                  this.setState({
+                    editQuantity: true
+                  })
+                }}
+                underlayColor='transparent'
+                style={styles.productQuantityContainer}
+              >
+                <Text style={styles.productQuantity}>{quantity} {productUnit}</Text>
+              </TouchableHighlight>
+              {rowDisabled === true ?
+                <View style={styles.productContainerDisabled}>
+                  <Text style={styles.productDisabledText}>{rowDisabledReason}</Text>
+                </View>
+              : null}
+            </View>
+            <View>
+              <Text style={styles.productNoteText}>{!!product.description.trim() ? `"${product.description}"` : ""}</Text>
+            </View>
           </View>
         </Swipeout>
         <PickerModal
@@ -125,12 +130,9 @@ class CartViewListItem extends React.Component {
 
 const styles = StyleSheet.create({
   productContainer: {
-    flex: 1,
-    flexDirection: 'row',
     backgroundColor: 'white',
+    borderRadius: 3,
     marginTop: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
     paddingLeft: 5,
     paddingRight: 5,
     paddingTop: 5,
@@ -147,12 +149,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  productDetails: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   productDisabledText: {
     flex: 1,
     color: 'white',
     fontWeight: 'bold',
     fontSize: 14,
     textAlign: 'center',
+  },
+  productNoteText: {
+    color: Colors.darkGrey,
+    fontSize: 12,
+    fontStyle: 'italic',
   },
   icon: {
     width: 30,
@@ -177,9 +190,6 @@ const styles = StyleSheet.create({
   },
   productTitle: {
     flex: 2,
-    paddingTop: 10,
-    paddingLeft: 5,
-    paddingBottom: 10,
     fontFamily: 'OpenSans',
     fontSize: 14,
   },
