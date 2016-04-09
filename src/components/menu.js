@@ -107,13 +107,13 @@ module.exports = class Menu extends React.Component {
             </TouchableHighlight>*/}
             <TouchableHighlight
               key='team-members'
-              onPress={this.props.onNavToTeamMemberListing}
+              onPress={this.props.onNavToTeamView}
               style={styles.menuItemButton}
               underlayColor='#3e444f'
             >
               <View style={styles.menuTextContainer}>
-                <Icon name='material|accounts' size={20} color='white' style={styles.menuIcon}/>
-                <Text style={styles.menuItemText}>Team Members</Text>
+                <Icon name='material|settings' size={20} color='white' style={styles.menuIcon}/>
+                <Text style={styles.menuItemText}>{this.props.team.name}</Text>
               </View>
             </TouchableHighlight>
             <TouchableHighlight
@@ -122,9 +122,9 @@ module.exports = class Menu extends React.Component {
               underlayColor='#3e444f'
             >
               <View style={styles.menuTextContainer}>
-                <Icon name='material|transform' size={20} color='white' style={styles.menuIcon}/>
+                <Icon name='material|group-work' size={20} color='white' style={styles.menuIcon}/>
                 <Text style={styles.menuItemText}>
-                  Switch Teams
+                  All Teams
                 </Text>
               </View>
             </TouchableHighlight>
@@ -132,8 +132,8 @@ module.exports = class Menu extends React.Component {
         </View>
         <View style={styles.separator} />
         <View style={styles.teamNameContainer}>
-          <Text style={styles.teamName}>{team ? team.name : ''}</Text>
-          <Text style={styles.buildInfo}>version: {version} - build: {build}</Text>
+          <Text style={styles.sous}>Sous</Text>
+          <Text style={styles.buildInfo}>{version}({build})</Text>
         </View>
       </View>
     );
@@ -239,8 +239,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingBottom: 10,
   },
-  teamName: {
+  sous: {
     color: 'white',
+    fontSize: 13,
     fontFamily: 'OpenSans',
   },
   buildInfo: {

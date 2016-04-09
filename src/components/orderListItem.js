@@ -141,6 +141,10 @@ class OrderListItem extends React.Component {
           >
             <View style={styles.quantityContainer}>
               <Text style={styles.quantity}>{cartItem.quantityReceived || cartItem.quantity}x</Text>
+              <View style={styles.caretContainer}>
+                <Icon name='material|caret-up' size={13} color='black' style={styles.iconCaret} />
+                <Icon name='material|caret-down' size={13} color='black' style={styles.iconCaret} />
+              </View>
             </View>
           </TouchableWrapper>
           <TouchableWrapper
@@ -203,18 +207,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   quantityContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 4,
+    flexDirection: 'row',
   },
   quantity: {
+    flex: 1,
     textAlign: 'center',
     fontFamily: 'OpenSans',
     fontSize: 18,
     width: 36,
-    borderColor: Colors.lightGrey,
-    borderWidth: .5,
-    borderRadius: 15,
+  },
+  caretContainer: {
+    flex: 1,
+    alignSelf: 'center',
+  },
+  iconCaret: {
+    width: 8,
+    height: 8,
   },
   text: {
     fontFamily: 'OpenSans',

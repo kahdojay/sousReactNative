@@ -498,6 +498,7 @@ class App extends React.Component {
   }
 
   onProductEdit(route, nav, product) {
+    console.log(route, nav, product)
     let productCategory = null
     Object.keys(this.state.currentTeamInfo.categories).forEach((categoryId) => {
       const category = this.state.currentTeamInfo.categories[categoryId]
@@ -874,9 +875,9 @@ class App extends React.Component {
             },
           },
         }
-      case 'TeamView':
+      case 'TeamTasksView':
         return {
-          component: Components.TeamView,
+          component: Components.TeamTasksView,
           props: {
             teamTasks: this.state.currentTeamInfo.team.tasks,
             onNavToTask: (recipeId) => {
@@ -1530,6 +1531,7 @@ class App extends React.Component {
             // team: this.state.currentTeamInfo.team,
             offlineQueueCount: Object.keys(offline.queue).length,
             teamBetaAccess: this.state.currentTeamInfo.betaAccess,
+            onProductEdit: this.onProductEdit.bind(this, route, nav),
             cartItems: this.state.currentTeamInfo.cart,
             cartPurveyors: cartPurveyors,
             products: this.state.currentTeamInfo.products,
@@ -1562,9 +1564,9 @@ class App extends React.Component {
         return {
           component: Components.Loading
         }
-      case 'TeamMemberListing':
+      case 'TeamView':
         return {
-          component: Components.TeamMemberListing,
+          component: Components.TeamView,
           props: {
             settingsConfig: settingsConfig,
             userId: session.userId,
@@ -1712,7 +1714,7 @@ class App extends React.Component {
             )
           })
           break;
-        case 'TeamView':
+        case 'TeamTasksView':
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
@@ -2027,7 +2029,7 @@ class App extends React.Component {
             ),
           })
           break;
-        case 'TeamMemberListing':
+        case 'TeamView':
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
@@ -2044,7 +2046,7 @@ class App extends React.Component {
               />
             ),
             customNext: (
-              <Components.TeamMemberRightInvite
+              <Components.TeamViewRightInvite
                 connected={(connect.status === actions.CONNECT.CONNECTED)}
                 navigateToInviteView={() => {
                   nav.push({
@@ -2167,10 +2169,10 @@ class App extends React.Component {
             nav.push({ name: 'Profile', })
           }}
           onNavToTeam={() => {
-            nav.push({ name: 'TeamView', })
+            nav.push({ name: 'TeamTasksView', })
           }}
-          onNavToTeamMemberListing={() => {
-            nav.push({ name: 'TeamMemberListing', })
+          onNavToTeamView={() => {
+            nav.push({ name: 'TeamView', })
           }}
           onNavToTeamIndex={() => {
             nav.push({ name: 'TeamIndex', })

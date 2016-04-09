@@ -31,9 +31,9 @@ import PurveyorView from './purveyorView';
 import Signup from './signup';
 import TaskView from './taskView';
 import TeamIndex from './teamIndex';
-import TeamMemberListing from './teamMemberListing';
-import TeamMemberRightInvite from './TeamMemberRightInvite';
-import TeamView from './teamView';
+import TeamView from './TeamView';
+import TeamViewRightInvite from './teamViewRightInvite';
+import TeamTasksView from './teamTasksView';
 import Update from './update';
 import UserInfo from './userInfo';
 import UserTeam from './userTeam';
@@ -72,9 +72,9 @@ export default {
   Signup,
   TaskView,
   TeamIndex,
-  TeamMemberListing,
-  TeamMemberRightInvite,
   TeamView,
+  TeamViewRightInvite,
+  TeamTasksView,
   Update,
   UserInfo,
   UserTeam,

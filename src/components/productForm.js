@@ -52,7 +52,7 @@ class PickerFieldRow extends React.Component {
   }
 
   render() {
-    let selectFieldText = `Select ${this.props.field}`
+    let selectFieldText = `(Tap to Update)`
     if(this.props.selectFieldText){
       selectFieldText = this.props.selectFieldText
     }
@@ -89,15 +89,16 @@ class ProductForm extends React.Component {
       modalVisible: false,
       selectedName: this.props.product ? this.props.product.name : '',
       selectedCategory: this.props.productCategory ? this.props.productCategory.id : null,
-      selectedPurveyor: this.props.product ? this.props.product.purveyors : (this.props.fromPurveyorId ? [this.props.fromPurveyorId] : null),
+      selectedPurveyors: this.props.product ? this.props.product.purveyors : (this.props.fromPurveyorId ? [this.props.fromPurveyorId] : null),
       selectedAmount: this.props.product ? this.props.product.amount : 1,
       selectedUnits: this.props.product ? this.props.product.unit : 'cs',
+      selectedDescription: this.props.product ? this.props.product.description : '',
       selectedSku: this.props.product ? this.props.product.sku : '',
       selectedPrice: this.props.product ? this.props.product.price : '',
       selectedPar: this.props.product ? this.props.product.par : '',
       selectedPackSize: this.props.product ? this.props.product.packSize : '',
     }
-    this.fields = ['Purveyor','Category','Amount']//,'QtyUnits']
+    this.fields = ['Purveyors','Category','Amount']//,'QtyUnits']
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -127,8 +128,8 @@ class ProductForm extends React.Component {
   checkValidForm(){
     let selectedName = _.trim(this.state.selectedName.replace('\u00A0',' '))
     if (
-      this.state.selectedPurveyor !== null &&
-      this.state.selectedPurveyor.length > 0 &&
+      this.state.selectedPurveyors !== null &&
+      this.state.selectedPurveyors.length > 0 &&
       this.state.selectedCategory &&
       this.state.selectedAmount &&
       this.state.selectedUnits &&
@@ -136,10 +137,11 @@ class ProductForm extends React.Component {
     ) {
       const productAttributes = {
         name: selectedName,
-        purveyors: this.state.selectedPurveyor,
+        purveyors: this.state.selectedPurveyors,
         amount: this.state.selectedAmount,
         unit: this.state.selectedUnits,
         categoryId: this.state.selectedCategory,
+        description: this.state.selectedDescription,
         sku: this.state.selectedSku,
         price: this.state.selectedPrice,
         par: this.state.selectedPar,
@@ -161,16 +163,12 @@ class ProductForm extends React.Component {
 
     this.fields.forEach((field, idx) => {
       let selectedValue = null
-      let selectFieldText = `Select ${field}`
+      let selectFieldText = `(Tap to Update)`
       const selectedValueId = `selected${field}`
-
-      if(field === 'Purveyor'){
-        selectFieldText = `Select ${field}(s)`
-      }
 
       if(this.state.hasOwnProperty(selectedValueId) === true) {
         selectedValue = this.state[selectedValueId]
-        if(field === 'Purveyor' && selectedValue !== null){
+        if(field === 'Purveyors' && selectedValue !== null){
           const purveyorIds = this.state[selectedValueId]
           selectedValue = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Purveyors Selected`
           if(purveyorIds.length === 0){
@@ -184,15 +182,18 @@ class ProductForm extends React.Component {
       }
 
       fields.push(
-        <PickerFieldRow
-          key={field}
-          field={field}
-          selectFieldText={selectFieldText}
-          selectedValue={selectedValue}
-          onShowFieldPicker={() => {
-            this.showFieldPicker(field, idx)
-          }}
-        />
+        <View>
+          <Text>{field}</Text>
+          <PickerFieldRow
+            key={field}
+            field={field}
+            selectFieldText={selectFieldText}
+            selectedValue={selectedValue}
+            onShowFieldPicker={() => {
+              this.showFieldPicker(field, idx)
+            }}
+          />
+        </View>
       )
     })
 
@@ -201,7 +202,7 @@ class ProductForm extends React.Component {
       // get the items by switching by fieldPicker
       switch (this.state.fieldPicker) {
 
-        case 'Purveyor':
+        case 'Purveyors':
           const purveyors = _.sortBy(this.props.purveyors, 'name')
           items = _.map(purveyors, (purveyor, idx) => {
             return {
@@ -210,8 +211,8 @@ class ProductForm extends React.Component {
               label: purveyor.name,
             }
           })
-          headerText = `Select ${this.state.fieldPicker}(s)`
-          selectedValue = this.state.selectedPurveyor
+          headerText = `Select ${this.state.fieldPicker}`
+          selectedValue = this.state.selectedPurveyors
           pickerType = 'ListView'
           break;
 
@@ -233,7 +234,7 @@ class ProductForm extends React.Component {
           break;
 
         case 'Amount':
-          items = _.map(['1/8','1/4','1/2'], (frac, idx) => {
+          items = _.map(['1/8','1/4','1/2', '3/4'], (frac, idx) => {
             const dec = frac.split('/')
             return {
               key: `d-${idx}`,
@@ -241,7 +242,7 @@ class ProductForm extends React.Component {
               label: frac,
             }
           })
-          items = items.concat(_.map(_.range(1, 501), (n, idx) => {
+          items = items.concat(_.map(_.range(1, 1001), (n, idx) => {
             return {
               key: idx,
               value: n,
@@ -290,6 +291,7 @@ class ProductForm extends React.Component {
           style={styles.scrollView}
         >
           <Text style={styles.textDivider}>Product Details</Text>
+          <Text>Name</Text>
           <FieldRow
             key='name'
             ref='name'
@@ -305,6 +307,7 @@ class ProductForm extends React.Component {
             }}
           />
           {fields}
+          <Text>Base Unit</Text>
           <FieldRow
             key='unit'
             ref='unit'
@@ -320,11 +323,26 @@ class ProductForm extends React.Component {
             }}
           />
           <Text style={styles.textDivider}>Additional Info (optional)</Text>
+          <Text>Note to Purveyor</Text>
+          <FieldRow
+            key='notes'
+            ref='notes'
+            label='Notes'
+            placeholder='ex. "Please no substitutions"'
+            value={this.state.selectedDescription} //FIX THIS
+            onChange={(e) => {
+              this.setState({
+                selectedDescription: e.nativeEvent.text,
+              }, () => {
+                this.checkValidForm();
+              });
+            }}
+          />
+          <Text>SKU</Text>
           <FieldRow
             key='sku'
             ref='sku'
             label='SKU'
-            placeholder='SKU'
             value={this.state.selectedSku}
             onChange={(e) => {
               this.setState({
@@ -334,11 +352,11 @@ class ProductForm extends React.Component {
               });
             }}
           />
+          <Text>Price</Text>
           <FieldRow
             key='price'
             ref='price'
             label='Price'
-            placeholder='Price'
             keyboardType='numeric'
             value={selectedPrice}
             onChange={(e) => {
@@ -350,11 +368,11 @@ class ProductForm extends React.Component {
               });
             }}
           />
+          <Text>Par</Text>
           <FieldRow
             key='par'
             ref='par'
             label='Par'
-            placeholder='Par'
             value={this.state.selectedPar}
             onChange={(e) => {
               this.setState({
@@ -364,11 +382,11 @@ class ProductForm extends React.Component {
               });
             }}
           />
+          <Text>Pack Size</Text>
           <FieldRow
             key='packSize'
             ref='packSize'
             label='Pack Size'
-            placeholder='Pack Size'
             value={this.state.selectedPackSize}
             onChange={(e) => {
               this.setState({
@@ -450,14 +468,14 @@ const styles = StyleSheet.create({
   selectField: {
     flex: 1,
     fontFamily: 'OpenSans',
-    fontSize: 16,
+    fontSize: 14,
     marginLeft: 10,
     paddingTop: 13,
     paddingBottom: 13,
   },
   inputField: {
     fontFamily: 'OpenSans',
-    fontSize: 16,
+    fontSize: 14,
     height: 45,
     marginLeft: 10,
   },
