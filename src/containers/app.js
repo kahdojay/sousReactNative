@@ -498,6 +498,7 @@ class App extends React.Component {
   }
 
   onProductEdit(route, nav, product) {
+    console.log(route, nav, product)
     let productCategory = null
     Object.keys(this.state.currentTeamInfo.categories).forEach((categoryId) => {
       const category = this.state.currentTeamInfo.categories[categoryId]
@@ -1530,6 +1531,7 @@ class App extends React.Component {
             // team: this.state.currentTeamInfo.team,
             offlineQueueCount: Object.keys(offline.queue).length,
             teamBetaAccess: this.state.currentTeamInfo.betaAccess,
+            onProductEdit: this.onProductEdit.bind(this, route, nav),
             cartItems: this.state.currentTeamInfo.cart,
             cartPurveyors: cartPurveyors,
             products: this.state.currentTeamInfo.products,

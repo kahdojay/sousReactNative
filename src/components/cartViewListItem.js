@@ -40,6 +40,15 @@ class CartViewListItem extends React.Component {
     const buttons = [{
       backgroundColor: 'transparent',
       component: (
+        <Icon name='material|edit' size={30} color={Colors.lightBlue} style={styles.iconEdit}/>
+      ),
+      onPress: () => {
+       this.props.onProductEdit(product)
+      }
+    },
+    {
+      backgroundColor: 'transparent',
+      component: (
         <Icon name='material|close' size={30} color={Colors.lightBlue} style={styles.iconRemove}/>
       ),
       onPress: () => {
@@ -173,6 +182,15 @@ const styles = StyleSheet.create({
   icon: {
     width: 30,
     height: 30,
+  },
+  iconEdit: {
+    flex: 1,
+    alignSelf: 'center',
+    width: 54,
+    height: 40,
+    marginLeft: 2,
+    marginTop: 7,
+    marginBottom: 7,
   },
   iconRemove: {
     flex: 1,
