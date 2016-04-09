@@ -14,6 +14,10 @@ const {
 } = React;
 
 class PurveyorIndexRow extends React.Component {
+  formatDollar(amount) {
+    let formattedAmount = '$'.concat(amount.replace(/^\$/, ''))
+    return formattedAmount
+  }
   render() {
     let { purveyor, products } = this.props
     let purveyorProducts = _.filter(products, {purveyorId: purveyor.id, deleted: false})
@@ -28,9 +32,12 @@ class PurveyorIndexRow extends React.Component {
         onPress={this.props.onPress}
       >
         <View style={styles.row}>
-          <View style={styles.textProgressContainer} >
+          <View style={styles.purveyorContainer} >
             <View style={styles.purveyorInfo} >
-              <Text style={styles.rowText}>{purveyorName}</Text>
+              <Text style={styles.purveyorName}>{purveyorName}</Text>
+              <Text style={styles.purveyorDetails}>{purveyor.orderCutoffTime}</Text>
+              {!!purveyor.orderMinimum.trim() ? <Text style={styles.purveyorDetails}>(min. {this.formatDollar(purveyor.orderMinimum)})</Text> : <View/>}
+              {!!purveyor.notes.trim() ? <Text style={styles.purveyorDetails}>{purveyor.notes}</Text> : <View/>}
             </View>
           </View>
           <View style={styles.iconContainer}>
@@ -57,24 +64,23 @@ const styles = StyleSheet.create({
     marginRight: 5,
     marginLeft: 5,
   },
-  textProgressContainer: {
-    flex: 6,
+  purveyorContainer: {
+    flex: 5,
+  },
+  purveyorInfo: {
+    width: 175,
   },
   seperator: {
     height: 5,
     borderBottomColor: Colors.lightGrey,
     borderBottomWidth: 1,
   },
-  purveyorInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  rowText: {
-    paddingLeft: 5,
-    paddingRight: 5,
+  purveyorName: {
     fontSize: 18,
-    fontFamily: 'OpenSans'
+    fontWeight: 'bold',
+  },
+  purveyorDetails: {
+    color: Colors.darkGrey,
   },
   iconContainer: {
     flex: 1,
