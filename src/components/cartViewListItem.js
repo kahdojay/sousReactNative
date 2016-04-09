@@ -89,9 +89,12 @@ class CartViewListItem extends React.Component {
                 </View>
               : null}
             </View>
-            <View>
-              <Text style={styles.productNoteText}>{!!product.description.trim() ? `"${product.description}"` : ""}</Text>
-            </View>
+            {!!product.description.trim() ? (
+                <View>
+                  <Text style={styles.productNoteText}>"{product.description}" 
+                  </Text>
+                </View>
+              ) : (<View></View>)}
           </View>
         </Swipeout>
         <PickerModal
