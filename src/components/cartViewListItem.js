@@ -90,7 +90,13 @@ class CartViewListItem extends React.Component {
                 underlayColor='transparent'
                 style={styles.productQuantityContainer}
               >
-                <Text style={styles.productQuantity}>{quantity} {productUnit}</Text>
+                <View style={styles.productQuantityInnerContainer}>
+                  <Text style={styles.productQuantity}>{quantity} {productUnit}</Text>
+                  <View style={styles.caretContainer}>
+                    <Icon name='material|caret-up' size={13} color='black' style={styles.iconCaret} />
+                    <Icon name='material|caret-down' size={13} color='black' style={styles.iconCaret} />
+                  </View>
+                </View>
               </TouchableHighlight>
               {rowDisabled === true ?
                 <View style={styles.productContainerDisabled}>
@@ -217,9 +223,20 @@ const styles = StyleSheet.create({
   productQuantityContainer: {
     flex: 1,
   },
+  productQuantityInnerContainer: {
+    flexDirection: 'row',
+    alignSelf: 'flex-end',
+  },
   productQuantity: {
     padding: 5,
     textAlign: 'right',
+  },
+  caretContainer: {
+    alignSelf: 'center',
+  },
+  iconCaret: {
+    width: 8,
+    height: 8,
   },
 })
 
