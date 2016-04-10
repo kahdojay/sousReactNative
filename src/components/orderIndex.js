@@ -67,6 +67,10 @@ class OrderIndex extends React.Component {
       )
     }
 
+    let openOrders = _.filter(orders, (order) => {
+      return order.confirm.order === false
+    })
+
     let fullOrders = _.map(orders, (order) => {
       let orderItems = null
       if(cartItemsOrders.hasOwnProperty(order.id) === true){
@@ -177,6 +181,9 @@ class OrderIndex extends React.Component {
 
     return (
       <View style={styles.container}>
+        <View style={styles.orderDetails}>
+          <Text style={styles.orderDetailsText}>{`${openOrders.length} Active Orders`}</Text>
+        </View>
         <ScrollView
           automaticallyAdjustContentInsets={false}
           keyboardShouldPersistTaps={false}
@@ -240,8 +247,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     marginLeft: 6,
   },
-  scrollView: {
+  orderDetails: {
     flex: 1,
+  },
+  scrollView: {
+    flex: 8,
     backgroundColor: Colors.mainBackgroundColor,
   },
   separator: {

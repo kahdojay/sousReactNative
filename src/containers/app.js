@@ -1811,10 +1811,6 @@ class App extends React.Component {
           })
           break;
         case 'OrderIndex':
-          let allOrders = this.state.currentTeamInfo.orders
-          const openOrders = _.filter(allOrders, (order) => {
-            return order.confirm.order === false
-          })
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
@@ -1823,10 +1819,9 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton iconFont={'material|close'} />
             ),
-            // title: `${openOrders.length} Open Orders`,
             customTitle: (
               <TextComponents.NavBarTitle
-                content={`${Object.keys(allOrders).length} Orders (${openOrders.length} Open)`}
+                content="Receiving Guide"
               />
             ),
             hideNext: true,
