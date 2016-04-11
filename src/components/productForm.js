@@ -1,5 +1,6 @@
 import React from 'react-native';
 import Colors from '../utilities/colors';
+import { Icon } from 'react-native-icons';
 import Sizes from '../utilities/sizes';
 import _ from 'lodash';
 import s from 'underscore.string';
@@ -29,8 +30,7 @@ class FieldRow extends React.Component {
   }
   render() {
     return (
-      <View key={this.props.key} style={styles.inputContainer}>
-        <View style={styles.inputFieldContainer}>
+        <View key={this.props.key} style={styles.inputContainer}>
           <TextInput
             ref='field'
             style={styles.inputField}
@@ -41,7 +41,6 @@ class FieldRow extends React.Component {
             onChange={this.props.onChange}
           />
         </View>
-      </View>
     )
   }
 }
@@ -278,184 +277,211 @@ class ProductForm extends React.Component {
       const purveyorIds = this.state.selectedPurveyors
       selectedPurveyorsText = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Purveyors Selected`
     }
-    let rowFormStyle = {
-      flex: 1,
-      marginLeft: 5,
-      marginRight: 5,
-    }
     return (
       <View style={styles.container}>
         <ScrollView
           automaticallyAdjustContentInsets={false}
           style={styles.scrollView}
         >
-          <Text style={styles.header}>Product Details</Text>
-          <Text style={styles.formLabel}>Name</Text>
-          <FieldRow
-            key='name'
-            ref='name'
-            label='Name'
-            placeholder='Avocado, Ripe (48 ct)'
-            value={this.state.selectedName}
-            onChange={(e) => {
-              this.setState({
-                selectedName: e.nativeEvent.text.replace(' ','\u00A0'),
-              }, () => {
-                this.checkValidForm();
-              });
-            }}
-          />
-          <View style={styles.pickerRow}>
-            <View style={rowFormStyle}>
-              <Text style={styles.formLabel}>Purveyors</Text>
-              <PickerFieldRow
-                key='Purveyors'
-                field='Purveyors'
-                selectFieldText={selectedPurveyorsText}
-                selectedValue={this.selectedPurveyorValue()}
-                onShowFieldPicker={() => {
-                  this.showFieldPicker('Purveyors', null)
-                }}
-              />
-            </View>
-            <View style={rowFormStyle}>
-              <Text style={styles.formLabel}>Category</Text>
-              <PickerFieldRow
-                key='Category'
-                field='Category'
-                selectFieldText={selectedCategoryText}
-                selectedValue={this.selectedCategoryValue()}
-                onShowFieldPicker={() => {
-                  this.showFieldPicker('Category', null)
-                }}
-              />
-            </View>
+          <View style={styles.headerContainer}>
+            <Text style={styles.headerText}>Product Details</Text>
           </View>
-          <View style={styles.pickerRow}>
-            <View style={rowFormStyle}>
-              <Text style={styles.formLabel}>Base Amount</Text>
-              <PickerFieldRow
-                key='Amount'
-                field='Amount'
-                selectFieldText={'(Tap to Update)'}
-                selectedValue={this.state.selectedAmount}
-                onShowFieldPicker={() => {
-                  this.showFieldPicker('Amount', null)
-                }}
-              />
+          <View style={styles.fieldRow}>
+            <View style={styles.formLabelContainer}>
+              <Text>Name</Text>
             </View>
-            <View style={rowFormStyle}>
-              <Text style={styles.formLabel}>Base Unit</Text>
-              <FieldRow
-                key='unit'
-                ref='unit'
-                label='Base Unit'
-                placeholder='case, ea, lb'
-                value={this.state.selectedUnits}
-                onChange={(e) => {
-                  this.setState({
-                    selectedUnits: e.nativeEvent.text,
-                  }, () => {
-                    this.checkValidForm();
-                  });
-                }}
-              />
-            </View>
+            <FieldRow
+              key='name'
+              ref='name'
+              label='Name'
+              placeholder='Avocado, Ripe (48 ct)'
+              value={this.state.selectedName}
+              onChange={(e) => {
+                this.setState({
+                  selectedName: e.nativeEvent.text.replace(' ','\u00A0'),
+                }, () => {
+                  this.checkValidForm();
+                });
+              }}
+            />
           </View>
+          <View style={styles.divider}></View>
+          <View style={styles.fieldRow}>
+            <View style={styles.formLabelContainer}>
+              <Text>Purveyors</Text>
+            </View>
+            <PickerFieldRow
+              key='Purveyors'
+              field='Purveyors'
+              selectFieldText={selectedPurveyorsText}
+              selectedValue={this.selectedPurveyorValue()}
+              onShowFieldPicker={() => {
+                this.showFieldPicker('Purveyors', null)
+              }}
+            />
+          </View>
+          <View style={styles.divider}></View>
+          <View style={styles.fieldRow}>
+            <View style={styles.formLabelContainer}>
+              <Text>Category</Text>
+            </View>
+            <PickerFieldRow
+              key='Category'
+              field='Category'
+              selectFieldText={selectedCategoryText}
+              selectedValue={this.selectedCategoryValue()}
+              onShowFieldPicker={() => {
+                this.showFieldPicker('Category', null)
+              }}
+            />
+          </View>
+          <View style={styles.divider}></View>
+          <View style={styles.fieldRow}>
+            <View style={styles.formLabelContainer}>
+              <Text>Base Qty</Text>
+            </View>
+            <PickerFieldRow
+              key='Amount'
+              field='Amount'
+              selectFieldText={'(Tap to Update)'}
+              selectedValue={this.state.selectedAmount}
+              onShowFieldPicker={() => {
+                this.showFieldPicker('Amount', null)
+              }}
+            />
+          </View>
+          <View style={styles.divider}></View>
+          <View style={styles.fieldRow}>
+            <View style={styles.formLabelContainer}>
+              <Text>Base Unit</Text>
+            </View>
+            <FieldRow
+              key='unit'
+              ref='unit'
+              label='Base Unit'
+              placeholder='case, ea, lb'
+              value={this.state.selectedUnits}
+              onChange={(e) => {
+                this.setState({
+                  selectedUnits: e.nativeEvent.text,
+                }, () => {
+                  this.checkValidForm();
+                });
+              }}
+            />
+          </View>
+          <Text>{' '}</Text>
           <TouchableHighlight
             underlayColor='transparent'
             onPress={() => {this.setState({showAdvanced: !this.state.showAdvanced})}}
           >
-            <Text style={styles.header}>Advanced (optional)</Text>
+            <View style={styles.headerContainer}>
+              <Text style={styles.headerText}>Advanced</Text>
+              <View style={styles.headerIconContainer}>
+                <Icon name='material|caret-down' size={20} color={Colors.darkGrey} style={styles.iconDropDown}/>
+              </View>
+            </View>
           </TouchableHighlight>
           {this.state.showAdvanced ? (
               <View>
-                <Text style={styles.formLabel}>Note to Purveyor</Text>
-                <FieldRow
-                  key='notes'
-                  ref='notes'
-                  label='Notes'
-                  placeholder='ex. "Please no substitutions"'
-                  value={this.state.selectedDescription} //FIX THIS
-                  onChange={(e) => {
-                    this.setState({
-                      selectedDescription: e.nativeEvent.text,
-                    }, () => {
-                      this.checkValidForm();
-                    });
-                  }}
-                />
-                <View style={styles.pickerRow}>
-                  <View style={rowFormStyle}>
-                    <Text style={styles.formLabel}>SKU</Text>
-                    <FieldRow
-                      key='sku'
-                      ref='sku'
-                      label='SKU'
-                      value={this.state.selectedSku}
-                      onChange={(e) => {
-                        this.setState({
-                          selectedSku: e.nativeEvent.text,
-                        }, () => {
-                          ('sku ', this.state.selectedSku)
-                          this.checkValidForm();
-                        });
-                      }}
-                    />  
+                <View style={styles.fieldRow}>
+                  <View style={styles.formLabelContainer}>
+                    <Text>Note</Text>
                   </View>
-                  <View style={rowFormStyle}>
-                    <Text style={styles.formLabel}>Price</Text>
-                    <FieldRow
-                      key='price'
-                      ref='price'
-                      label='Price'
-                      keyboardType='numeric'
-                      value={selectedPrice}
-                      onChange={(e) => {
-                        let price = e.nativeEvent.text.replace(',','')
-                        this.setState({
-                          selectedPrice: price,
-                        }, () => {
-                          this.checkValidForm();
-                        });
-                      }}
-                    />
-                  </View>
+                  <FieldRow
+                    key='notes'
+                    ref='notes'
+                    label='Notes'
+                    placeholder='ex. "Please no substitutions"'
+                    value={this.state.selectedDescription}
+                    onChange={(e) => {
+                      this.setState({
+                        selectedDescription: e.nativeEvent.text,
+                      }, () => {
+                        this.checkValidForm();
+                      });
+                    }}
+                  />
                 </View>
-                <View style={styles.pickerRow}>
-                  <View style={rowFormStyle}>
-                    <Text style={styles.formLabel}>Par</Text>
-                    <FieldRow
-                      key='par'
-                      ref='par'
-                      label='Par'
-                      value={this.state.selectedPar}
-                      onChange={(e) => {
-                        this.setState({
-                          selectedPar: e.nativeEvent.text,
-                        }, () => {
-                          this.checkValidForm();
-                        });
-                      }}
-                    />
+                <View style={styles.divider}></View>
+                <View style={styles.fieldRow}>
+                  <View style={styles.formLabelContainer}>
+                    <Text>SKU</Text>
                   </View>
-                  <View style={rowFormStyle}>
-                    <Text style={styles.formLabel}>Pack Size</Text>
-                    <FieldRow
-                      key='packSize'
-                      ref='packSize'
-                      label='Pack Size'
-                      value={this.state.selectedPackSize}
-                      onChange={(e) => {
-                        this.setState({
-                          selectedPackSize: e.nativeEvent.text,
-                        }, () => {
-                          this.checkValidForm();
-                        });
-                      }}
-                    />
+                  <FieldRow
+                    key='sku'
+                    ref='sku'
+                    label='SKU'
+                    value={this.state.selectedSku}
+                    onChange={(e) => {
+                      this.setState({
+                        selectedSku: e.nativeEvent.text,
+                      }, () => {
+                        ('sku ', this.state.selectedSku)
+                        this.checkValidForm();
+                      });
+                    }}
+                  />  
+                </View>
+                <View style={styles.divider}></View>
+                <View style={styles.fieldRow}>
+                  <View style={styles.formLabelContainer}>
+                    <Text>Price</Text>
                   </View>
-                </View>  
+                  <FieldRow
+                    key='price'
+                    ref='price'
+                    label='Price'
+                    keyboardType='numeric'
+                    value={selectedPrice}
+                    onChange={(e) => {
+                      let price = e.nativeEvent.text.replace(',','')
+                      this.setState({
+                        selectedPrice: price,
+                      }, () => {
+                        this.checkValidForm();
+                      });
+                    }}
+                  />
+                </View>
+                <View style={styles.divider}></View>
+                <View style={styles.fieldRow}>
+                  <View style={styles.formLabelContainer}>
+                    <Text>Par</Text>
+                  </View>
+                  <FieldRow
+                    key='par'
+                    ref='par'
+                    label='Par'
+                    value={this.state.selectedPar}
+                    onChange={(e) => {
+                      this.setState({
+                        selectedPar: e.nativeEvent.text,
+                      }, () => {
+                        this.checkValidForm();
+                      });
+                    }}
+                  />
+                </View>
+                <View style={styles.divider}></View>
+                <View style={styles.fieldRow}>
+                  <View style={styles.formLabelContainer}>
+                    <Text>Pack Size</Text>
+                  </View>
+                  <FieldRow
+                    key='packSize'
+                    ref='packSize'
+                    label='Pack Size'
+                    value={this.state.selectedPackSize}
+                    onChange={(e) => {
+                      this.setState({
+                        selectedPackSize: e.nativeEvent.text,
+                      }, () => {
+                        this.checkValidForm();
+                      });
+                    }}
+                  />
+                </View>
               </View>
             ) 
             : <View/>
@@ -500,37 +526,54 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
-    padding: 5,
-    paddingTop: 10,
+    padding: 10,
   },
   scrollView: {
     flex: 1,
   },
-  pickerRow: {
+  headerContainer: {
     flexDirection: 'row',
+    borderBottomWidth: 1.5,
+    borderColor: Colors.lightGrey,
+    marginTop: 5,
+    alignItems: 'center',
   },
-  header: {
+  headerText: {
+    flex: 1,
     paddingTop: 5,
     paddingBottom: 5,
     color: Colors.darkGrey,
     fontSize: 20,
-    textDecorationLine: 'underline',
-    marginTop: 10,
   },
-  formLabel: {
-    marginTop: 10,
+  headerIconContainer: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  iconDropDown: {
+    width: 10,
+    height: 10,
+  },
+  fieldRow: {
+    flexDirection: 'row',
+  },
+  formLabelContainer: {
+    flex: 1,
+    height: 45,
+    justifyContent: 'center',
   },
   inputContainer: {
-    backgroundColor: 'white',
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 1,
-    marginBottom: 1,
+    flex: 3,
   },
-  inputFieldContainer: {
-    justifyContent: 'center',
+  inputField: {
+    fontFamily: 'OpenSans',
+    fontSize: 14,
+    height: 45,
+    marginLeft: 10,
+  },
+  divider: {
     flex: 1,
+    borderBottomWidth: 1,
+    borderColor: Colors.lightGrey,
   },
   inputSelectContainer: {
     alignItems: 'center',
@@ -544,12 +587,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     paddingTop: 13,
     paddingBottom: 13,
-  },
-  inputField: {
-    fontFamily: 'OpenSans',
-    fontSize: 14,
-    height: 45,
-    marginLeft: 10,
   },
 });
 
