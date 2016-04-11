@@ -305,7 +305,7 @@ class ProductForm extends React.Component {
               }}
             />
           </View>
-          <View style={styles.divider}></View>
+          <View style={styles.separator}></View>
           <View style={styles.fieldRow}>
             <View style={styles.formLabelContainer}>
               <Text>Purveyors</Text>
@@ -320,7 +320,7 @@ class ProductForm extends React.Component {
               }}
             />
           </View>
-          <View style={styles.divider}></View>
+          <View style={styles.separator}></View>
           <View style={styles.fieldRow}>
             <View style={styles.formLabelContainer}>
               <Text>Category</Text>
@@ -335,7 +335,7 @@ class ProductForm extends React.Component {
               }}
             />
           </View>
-          <View style={styles.divider}></View>
+          <View style={styles.separator}></View>
           <View style={styles.fieldRow}>
             <View style={styles.formLabelContainer}>
               <Text>Base Qty</Text>
@@ -350,7 +350,7 @@ class ProductForm extends React.Component {
               }}
             />
           </View>
-          <View style={styles.divider}></View>
+          <View style={styles.separator}></View>
           <View style={styles.fieldRow}>
             <View style={styles.formLabelContainer}>
               <Text>Base Unit</Text>
@@ -403,7 +403,7 @@ class ProductForm extends React.Component {
                     }}
                   />
                 </View>
-                <View style={styles.divider}></View>
+                <View style={styles.separator}></View>
                 <View style={styles.fieldRow}>
                   <View style={styles.formLabelContainer}>
                     <Text>SKU</Text>
@@ -423,7 +423,7 @@ class ProductForm extends React.Component {
                     }}
                   />  
                 </View>
-                <View style={styles.divider}></View>
+                <View style={styles.separator}></View>
                 <View style={styles.fieldRow}>
                   <View style={styles.formLabelContainer}>
                     <Text>Price</Text>
@@ -444,7 +444,7 @@ class ProductForm extends React.Component {
                     }}
                   />
                 </View>
-                <View style={styles.divider}></View>
+                <View style={styles.separator}></View>
                 <View style={styles.fieldRow}>
                   <View style={styles.formLabelContainer}>
                     <Text>Par</Text>
@@ -463,7 +463,7 @@ class ProductForm extends React.Component {
                     }}
                   />
                 </View>
-                <View style={styles.divider}></View>
+                <View style={styles.separator}></View>
                 <View style={styles.fieldRow}>
                   <View style={styles.formLabelContainer}>
                     <Text>Pack Size</Text>
@@ -533,8 +533,8 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flexDirection: 'row',
-    borderBottomWidth: 1.5,
-    borderColor: Colors.lightGrey,
+    borderBottomWidth: 1,
+    borderColor: Colors.separatorColor,
     marginTop: 5,
     alignItems: 'center',
   },
@@ -570,10 +570,10 @@ const styles = StyleSheet.create({
     height: 45,
     marginLeft: 10,
   },
-  divider: {
+  separator: {
     flex: 1,
-    borderBottomWidth: 1,
-    borderColor: Colors.lightGrey,
+    borderBottomWidth: .5,
+    borderColor: Colors.separatorColor,
   },
   inputSelectContainer: {
     alignItems: 'center',
