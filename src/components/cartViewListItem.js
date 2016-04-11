@@ -159,6 +159,8 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingBottom: 5,
     overflow: 'hidden',
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: .5,
   },
   productContainerDisabled: {
     height: 50,
@@ -220,7 +222,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   productTitle: {
-    flex: 2,
+    flex: 4,
     fontFamily: 'OpenSans',
     fontSize: 14,
   },

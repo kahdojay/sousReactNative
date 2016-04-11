@@ -75,20 +75,23 @@ class TeamIndex extends React.Component {
               }
               if (team.deleted === false) {
                 return (
-                  <TeamIndexRow
-                    key={index}
-                    connected={this.props.connected}
-                    selected={(this.props.currentTeam !== null && this.props.currentTeam.id === team.id)}
-                    team={team}
-                    teamsCount={teamsCount}
-                    teamsUsers={teams.teamsUsers}
-                    messages={teamMessages}
-                    onPress={() => {
-                      this.props.onUpdateTeam(team.id);
-                    }}
-                    onLeaveTeam={this.props.onLeaveTeam}
-                    onShowLeaveError={this.props.onShowLeaveError}
-                  />
+                  <View>
+                    <TeamIndexRow
+                      key={index}
+                      connected={this.props.connected}
+                      selected={(this.props.currentTeam !== null && this.props.currentTeam.id === team.id)}
+                      team={team}
+                      teamsCount={teamsCount}
+                      teamsUsers={teams.teamsUsers}
+                      messages={teamMessages}
+                      onPress={() => {
+                        this.props.onUpdateTeam(team.id);
+                      }}
+                      onLeaveTeam={this.props.onLeaveTeam}
+                      onShowLeaveError={this.props.onShowLeaveError}
+                    />
+                    <View style={styles.separator} />
+                  </View>
                 );
               }
               })

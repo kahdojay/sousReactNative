@@ -429,6 +429,7 @@ class ProductListItem extends React.Component {
         >
           {productInfo}
         </Swipeout>
+        <View style={styles.separator}></View>
         {modal}
         {confirmationModal}
       </View>
@@ -449,7 +450,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 5,
     paddingLeft: 15,
-    marginRight: 2,
     alignItems: 'center'
   },
   productDetailsContainer: {
@@ -504,8 +504,12 @@ const styles = StyleSheet.create({
     width: 54,
     height: 40,
     marginLeft: 2,
-    marginTop: 7,
-    marginBottom: 7,
+  },
+  separator: {
+    marginTop: 5,
+    flex: 1,
+    borderBottomWidth: .5,
+    borderColor: Colors.separatorColor,
   },
   modalContainer: {
     flex: 1,
@@ -549,11 +553,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Colors.lightBlue,
     paddingTop: 15,
-  },
-  separator: {
-    height: 0,
-    borderBottomColor: Colors.separatorColor,
-    borderBottomWidth: 1,
   },
 });
 
