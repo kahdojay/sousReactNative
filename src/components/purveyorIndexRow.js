@@ -52,17 +52,13 @@ class PurveyorIndexRow extends React.Component {
 const styles = StyleSheet.create({
   row: {
     flex: 1,
-    borderRadius: Sizes.rowBorderRadius,
     flexDirection: 'row',
-    backgroundColor: 'white',
     padding: 5,
     paddingLeft: 15,
     paddingRight: 15,
     alignItems: 'center',
     marginTop: 3,
     marginBottom: 3,
-    marginRight: 5,
-    marginLeft: 5,
   },
   purveyorContainer: {
     flex: 5,
