@@ -140,11 +140,11 @@ class OrderListItem extends React.Component {
             style={{flex: 1}}
           >
             <View style={styles.quantityContainer}>
-              <Text style={styles.quantity}>{cartItem.quantityReceived || cartItem.quantity}x</Text>
               <View style={styles.caretContainer}>
                 <Icon name='material|caret-up' size={13} color='black' style={styles.iconCaret} />
                 <Icon name='material|caret-down' size={13} color='black' style={styles.iconCaret} />
               </View>
+              <Text style={styles.quantity}>{cartItem.quantityReceived || cartItem.quantity}x</Text>
             </View>
           </TouchableWrapper>
           <TouchableWrapper
@@ -194,23 +194,16 @@ const styles = StyleSheet.create({
   },
   row: {
     flex: 1,
-    marginTop: 5,
-    marginBottom: 5,
-    marginRight: 10,
-    marginLeft: 10,
     borderRadius: Sizes.rowBorderRadius,
     padding: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
     flexDirection: 'row',
-    backgroundColor: 'white',
     alignItems: 'center',
   },
   quantityContainer: {
     flexDirection: 'row',
   },
   quantity: {
-    flex: 1,
+    flex: 2,
     textAlign: 'center',
     fontFamily: 'OpenSans',
     fontSize: 18,
@@ -218,6 +211,7 @@ const styles = StyleSheet.create({
   },
   caretContainer: {
     flex: 1,
+    alignItems: 'center',
     alignSelf: 'center',
   },
   iconCaret: {
@@ -245,7 +239,8 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   productInfo: {
-    flex: 6
+    flex: 6,
+    paddingLeft: 5,
   },
   confirmCheckbox: {
     flex: 1

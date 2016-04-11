@@ -172,10 +172,18 @@ class OrderIndex extends React.Component {
       ))
     }
 
+    let headerText = ''
+    switch (openOrders.length) {
+      case 1:
+        headerText = '1 Active Order'
+      default:
+        headerText = `${openOrders.length} Active Orders`
+    }
+
     return (
       <View style={styles.container}>
         <View style={styles.orderDetails}>
-          <Text style={styles.orderDetailsText}>{`${openOrders.length} Active Orders`}</Text>
+          <Text style={styles.orderDetailsText}>{headerText}</Text>
         </View>
         <ScrollView
           automaticallyAdjustContentInsets={false}
@@ -254,18 +262,15 @@ const styles = StyleSheet.create({
   orderDetails: {
     flex: 1,
     flexDirection: 'row',
-    padding: 10,
+    padding: 5,
     borderBottomWidth: 1,
     borderColor: Colors.lightGrey,
     backgroundColor: Colors.lightBlue,
-    // marginTop: 5,
     alignItems: 'center',
   },
   orderDetailsText: {
-    paddingTop: 5,
-    paddingBottom: 5,
     color: 'white',
-    fontSize: 20,
+    fontSize: 17.5,
   },
   iconContainer: {
     flex: 1,
