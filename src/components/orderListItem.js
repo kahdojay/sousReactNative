@@ -182,6 +182,7 @@ class OrderListItem extends React.Component {
     return (
       <View style={styles.container}>
         {productRow}
+        <View style={styles.separator} />
       </View>
     )
   }
@@ -252,6 +253,11 @@ const styles = StyleSheet.create({
   icon: {
     width: 40,
     height: 40,
+  },
+  separator: {
+    height: 0,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: .5,
   },
 });
 

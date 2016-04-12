@@ -14,9 +14,13 @@ const {
 } = React;
 
 class PurveyorIndexRow extends React.Component {
-  formatDollar(amount) {
-    let formattedAmount = '$'.concat(amount.replace(/^\$/, ''))
-    return formattedAmount
+  formatMinimumMsg(amount) {
+    if(!!amount.trim()){
+      let formattedAmount = '$'.concat(amount.replace(/^\$/, ''))
+      return `(min. ${formattedAmount})`
+    } else {
+      return ''
+    }
   }
   render() {
     let { purveyor, products } = this.props
@@ -35,8 +39,8 @@ class PurveyorIndexRow extends React.Component {
           <View style={styles.purveyorContainer} >
             <View style={styles.purveyorInfo} >
               <Text style={styles.purveyorName}>{purveyorName}</Text>
-              {!!purveyor.orderCutoffTime.trim() ? <Text style={styles.purveyorDetails}>`Order by ${purveyor.orderCutoffTime}`</Text> : <View/>}
-              {!!purveyor.orderMinimum.trim() ? <Text style={styles.purveyorDetails}>(min. {this.formatDollar(purveyor.orderMinimum)})</Text> : <View/>}
+              {!!purveyor.orderCutoffTime.trim() ? <Text style={styles.purveyorDetails}>Order by {purveyor.orderCutoffTime}</Text> : <View/>}
+              {!!purveyor.orderMinimum.trim() ? <Text style={styles.purveyorDetails}>{this.formatMinimumMsg(purveyor.orderMinimum)}</Text> : <View/>}
               {!!purveyor.notes.trim() ? <Text style={styles.purveyorDetails}>{purveyor.notes}</Text> : <View/>}
             </View>
           </View>

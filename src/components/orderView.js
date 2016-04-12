@@ -32,6 +32,7 @@ class OrderView extends React.Component {
       // messages: null,
       teamsUsers: null,
       loaded: false,
+      selectAll: false,
       showConfirm: false,
       confirmationMessage: '',
       showOrderContents: false,
@@ -75,6 +76,10 @@ class OrderView extends React.Component {
     } = this.state;
 
     return (products === null || products.length === 0 || purveyor === null || order === null)
+  }
+
+  selectAllProducts() {
+    this.setState({selectAll: !this.state.selectAll})
   }
 
   confirmOrder() {
@@ -155,7 +160,7 @@ class OrderView extends React.Component {
               orderConfirm={order.confirm}
               product={product}
               cartItem={cartItem}
-              productConfirm={productConfirm}
+              productConfirm={this.state.selectAll || productConfirm}
               onHandleProductConfirm={this.props.onConfirmOrderProduct}
             />
           )
@@ -268,7 +273,6 @@ class OrderView extends React.Component {
       invoiceButtonTextColor = Colors.lightBlue
     }
     let receivedBy = ''
-    console.log(this.props)
     return (
       <View style={styles.container}>
         { this.state.loaded === true ?
@@ -311,7 +315,7 @@ class OrderView extends React.Component {
                 <View style={styles.separator} />
               </View>
             : null */}
-            <View style={styles.buttonContainer}>
+            <View style={styles.sectionHeader}>
               <TouchableHighlight
                 underlayColor='transparent'
                 onPress={() => {
@@ -330,11 +334,21 @@ class OrderView extends React.Component {
                   keyboardShouldPersistTaps={false}
                   style={styles.scrollView}
                 >
+                  <View style={styles.sectionSubHeader}>
+                    <Text># Rcvd</Text>
+                    <TouchableHighlight
+                      onPress={::this.selectAllProducts}                      
+                      underlayColor='transparent'
+                    >
+                      <Text style={styles.buttonSelectAll}>Select All</Text>
+                    </TouchableHighlight>
+                  </View>
+                  <View style={styles.separator} />
                   {productsList}
                 </ScrollView>
               ) : <View/>
             }
-            <View style={styles.buttonContainer}>
+            <View style={styles.sectionHeader}>
               <TouchableHighlight
                 underlayColor='transparent'
                 onPress={() => {
@@ -345,7 +359,7 @@ class OrderView extends React.Component {
               </TouchableHighlight>
               <View style={styles.separator} />
             </View>
-            <View style={styles.buttonContainer}>
+            <View style={styles.sectionHeader}>
               <TouchableHighlight
                 underlayColor='transparent'
                 onPress={() => {
@@ -384,7 +398,7 @@ class OrderView extends React.Component {
                   style={styles.buttonContainerLink}
                 >
                   <View style={[styles.buttonContainer, buttonDisabledStyle]}>
-                    <Text style={[styles.buttonText, buttonTextDisabledStyle]}>Confirm & Upload Invoice</Text>
+                    <Text style={[styles.buttonText, buttonTextDisabledStyle]}>Confirm Delivery</Text>
                   </View>
                 </TouchableHighlight>
               </View>
@@ -418,11 +432,11 @@ const styles = StyleSheet.create({
   },
   purveyorName: {
     color: 'white',
-    fontSize: 17.5,
+    fontSize: 20,
   },
   confirmedText: {
     // alignSelf: 'center',
-    fontSize: 10,
+    fontSize: 13,
     color: 'white',
     fontFamily: 'OpenSans',
   },
@@ -434,11 +448,11 @@ const styles = StyleSheet.create({
     flex: 2,
   },
   purveyorContactText: {
-    fontSize: 13,
+    fontSize: 15,
     color: 'white',
   },
   purveyorContactSubText: {
-    fontSize: 8,
+    fontSize: 10,
     color: 'white',
   },
   contactIconsContainer: {
@@ -453,6 +467,20 @@ const styles = StyleSheet.create({
     borderRadius: 12.5,
     width: 25,
     height: 25,
+  },
+  sectionHeader: {
+    justifyContent: 'center',
+  },
+  sectionSubHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingLeft: 5,
+    paddingRight: 10,
+  },
+  buttonSelectAll: {
+    color: Colors.lightBlue,
+    fontWeight: 'bold',
   },
   // confirmedIconContainer: {
   //   width: 30,
@@ -510,7 +538,7 @@ const styles = StyleSheet.create({
   separator: {
     height: 0,
     borderBottomColor: Colors.separatorColor,
-    borderBottomWidth: 1,
+    borderBottomWidth: .5,
   },
   scrollView: {
     flex: 1,
