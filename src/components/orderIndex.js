@@ -148,7 +148,7 @@ class OrderIndex extends React.Component {
                   {order.purveyor ? order.purveyor.name : ''}
                   <Text style={[styles.metaInfo,confirmedOrderMetaInfoStyle]}> ({`${itemCount} Item${itemCount > 1 ? 's' : ''}`})</Text>
                 </Text>
-                <Text style={[styles.metaInfo, confirmedOrderMetaInfoStyle]}>{orderedAtDate.format('ddd M/D')} {orderedAtDate.format('h:mma')}</Text>
+                <Text style={[styles.metaInfo, confirmedOrderMetaInfoStyle]}>Ordered {orderedAtDate.format('ddd M/D')} {orderedAtDate.format('h:mma')}</Text>
               </View>
               <View style={styles.iconContainer}>
                 <Icon name='material|chevron-right' size={30} color={Colors.lightBlue} style={styles.iconArrow}/>
@@ -177,7 +177,7 @@ class OrderIndex extends React.Component {
       case 1:
         headerText = '1 Active Order'
       default:
-        headerText = `${openOrders.length} Active Orders`
+        headerText = `${openOrders.length} Upcoming Deliveries`
     }
 
     return (
