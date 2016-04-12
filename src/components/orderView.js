@@ -34,6 +34,8 @@ class OrderView extends React.Component {
       loaded: false,
       showConfirm: false,
       confirmationMessage: '',
+      showOrderContents: false,
+      showOrderDiscussion: false,
     }
   }
 
@@ -234,6 +236,8 @@ class OrderView extends React.Component {
     let buttonTextDisabledStyle = []
     let orderUser = null
     let confirmUser = null
+    let confirmUserName = ''
+    let confirmTime = ''
     let senderName = null
 
     if(order.hasOwnProperty('userId')){
@@ -249,50 +253,51 @@ class OrderView extends React.Component {
       confirmUser = teamsUsers[order.confirm.userId]
     }
 
-    let orderUserName = ''
-    if(orderUser){
-      orderUserName = `${orderUser.firstName} ${orderUser.lastName[0]}.`
-    }
-
-    let confirmUserName = ''
-    if(confirmUser){
-      confirmUserName = `${confirmUser.firstName} ${confirmUser.lastName[0]}.`
-    }
-
     let invoiceIconBackgroundColor = 'white'
     let invoiceIconCheckmarkColor = 'transparent'
     let invoiceButtonText = 'Upload Invoice(s)'
     let confirmedContainerBackgroundColor = Colors.disabled
-    let invoiceButtonContainerBackgroundColor = Colors.gold
+    // let invoiceButtonContainerBackgroundColor = Colors.gold
     let invoiceButtonTextColor = 'white'
     // if(true){
     if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
       invoiceIconBackgroundColor = Colors.green
       invoiceIconCheckmarkColor = 'white'
       invoiceButtonText = 'View Invoice(s)'
-      invoiceButtonContainerBackgroundColor = 'white'
+      // invoiceButtonContainerBackgroundColor = 'white'
       invoiceButtonTextColor = Colors.lightBlue
     }
-    if(order.confirm.order === true){
-      confirmedContainerBackgroundColor = Colors.sky
-    }
-
+    let receivedBy = ''
+    console.log(this.props)
     return (
       <View style={styles.container}>
         { this.state.loaded === true ?
           <View style={styles.container}>
-            <View>
-              <View style={[styles.confirmedContainer, styles.buttonContainerLink, styles.buttonContainer]}>
-                <View style={{flex: 1 }}>
-                  <Text style={[styles.confirmedText]}>Order sent by: {orderUserName}</Text>
-                  <Text style={[styles.confirmedText]}>{order.orderedAt !== null ? moment(order.orderedAt).format('M/D/YY h:mm a') : ''}</Text>
+            <View style={styles.confirmedContainer}>
+              <View style={styles.confirmationDetails}>
+                <Text style={styles.purveyorName}>{this.props.purveyor.name}</Text>
+                <Text style={[styles.confirmedText]}>Sent: {order.orderedAt !== null ? moment(order.orderedAt).format('ddd M/D, h:mma') : ''} ({orderUser.firstName})</Text>
+                {order.confirm.order === true ? (
+                    <View>
+                      <Text style={[styles.confirmedText]}>{`Received: ${moment(order.confirm.confirmedAt).format('ddd M/D, h:mma')} (${confirmUser.firstName})`}</Text>
+                    </View>
+                  ) : <View/>
+                }
+                
+              </View>
+              <View style={styles.purveyorContactContainer}>
+                <Text style={styles.purveyorContactText}>{this.props.purveyor.orderContact} <Text style={styles.purveyorContactSubText}>(rep)</Text></Text>
+                <View style={styles.contactIconsContainer}>
+                  <Icon name='material|email' size={15} color={'white'} style={styles.iconContact}/>
+                  <Icon name='material|phone' size={15} color={'white'} style={styles.iconContact}/>
+                  <Icon name='material|smartphone-iphone' size={15} color={'white'} style={styles.iconContact}/>
                 </View>
               </View>
-              <View style={styles.separator} />
             </View>
-            { order.confirm.order === true ?
+            <View style={styles.separator} />
+            {/* order.confirm.order === true ?
               <View>
-                <View style={[styles.confirmedContainer, styles.buttonContainerLink, styles.buttonContainer, {backgroundColor: confirmedContainerBackgroundColor}]}>
+                <View style={[styles.confirmedContainer, {backgroundColor: confirmedContainerBackgroundColor}]}>
                   <View style={styles.confirmedIconContainer}>
                     <Icon name='material|circle' size={20} color={invoiceIconBackgroundColor} style={styles.confirmedIconContainer}>
                       <Icon name='material|check' size={25} color={invoiceIconCheckmarkColor} style={styles.confirmedIconCheckmark} />
@@ -305,29 +310,64 @@ class OrderView extends React.Component {
                 </View>
                 <View style={styles.separator} />
               </View>
-            : null }
-            { order.confirm.order === true ?
-              <View>
-                <TouchableHighlight
-                  underlayColor='transparent'
-                  onPress={() => {
-                    this.props.onNavToInvoices(order.id)
-                  }}
+            : null */}
+            <View style={styles.buttonContainer}>
+              <TouchableHighlight
+                underlayColor='transparent'
+                onPress={() => {
+                  this.setState({
+                    showOrderContents: !this.state.showOrderContents
+                  })
+                }}
+              >
+                <Text style={[styles.invoiceButtonText]}>{'Order Contents'}</Text>
+              </TouchableHighlight>
+              <View style={styles.separator} />
+            </View>
+            {this.state.showOrderContents === true ? (
+                <ScrollView
+                  automaticallyAdjustContentInsets={false}
+                  keyboardShouldPersistTaps={false}
+                  style={styles.scrollView}
                 >
-                  <View style={[styles.invoiceButtonContainer, {backgroundColor: invoiceButtonContainerBackgroundColor}]}>
-                    <Text style={[styles.invoiceButtonText, {color: invoiceButtonTextColor}]}>{invoiceButtonText}</Text>
-                  </View>
-                </TouchableHighlight>
-                <View style={styles.separator} />
-              </View>
-            : null }
-            <ScrollView
-              automaticallyAdjustContentInsets={false}
-              keyboardShouldPersistTaps={false}
-              style={styles.scrollView}
-            >
-              {productsList}
-            </ScrollView>
+                  {productsList}
+                </ScrollView>
+              ) : <View/>
+            }
+            <View style={styles.buttonContainer}>
+              <TouchableHighlight
+                underlayColor='transparent'
+                onPress={() => {
+                  this.props.onNavToInvoices(order.id)
+                }}
+              >
+                <Text style={[styles.invoiceButtonText]}>{'Invoice/Photos'}</Text>
+              </TouchableHighlight>
+              <View style={styles.separator} />
+            </View>
+            <View style={styles.buttonContainer}>
+              <TouchableHighlight
+                underlayColor='transparent'
+                onPress={() => {
+                  this.setState({
+                    showOrderDiscussion: !this.state.showOrderDiscussion
+                  })
+                }}
+              >
+                <Text style={[styles.invoiceButtonText]}>{'Discussion'}</Text>
+              </TouchableHighlight>
+              <View style={styles.separator} />
+            </View>
+            {this.state.showOrderDiscussion === true ? (
+                <ScrollView
+                  automaticallyAdjustContentInsets={false}
+                  keyboardShouldPersistTaps={false}
+                  style={styles.scrollView}
+                >
+                  <Text>Order Discussion goes here</Text>
+                </ScrollView>
+              ) : <View/>
+            }
             {modal}
             { order.confirm.order === false ?
               <View>
@@ -359,44 +399,92 @@ class OrderView extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.mainBackgroundColor,
+    // backgroundColor: Colors.mainBackgroundColor,
   },
   confirmedContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.sky,
+    backgroundColor: Colors.lightBlue,
+    // backgroundColor: Colors.sky,
+    // alignItems: 'center',
+    // margin: 10,
+    // borderRadius: 3,
+    padding: 5,
+  },
+  confirmationDetails: {
+    // backgroundColor: 'red',
+    justifyContent: 'center',
+    height: 60,
+    flex: 3,
+  },
+  purveyorName: {
+    color: 'white',
+    fontSize: 17.5,
+  },
+  confirmedText: {
+    // alignSelf: 'center',
+    fontSize: 10,
+    color: 'white',
+    fontFamily: 'OpenSans',
+  },
+  purveyorContactContainer: {
+    // backgroundColor: 'green',
+    height: 60,
+    justifyContent: 'center',
     alignItems: 'center',
-    margin: 10,
-    borderRadius: 3,
-    padding: 8,
+    flex: 2,
   },
-  confirmedIconContainer: {
-    width: 30,
-    height: 30,
+  purveyorContactText: {
+    fontSize: 13,
+    color: 'white',
   },
-  confirmedIconCheckmark: {
+  purveyorContactSubText: {
+    fontSize: 8,
+    color: 'white',
+  },
+  contactIconsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: 100,
+  },
+  iconContact: {
+    // backgroundColor: 'blue',
+    borderWidth: .5,
+    borderColor: 'white',
+    borderRadius: 12.5,
     width: 25,
     height: 25,
-    backgroundColor: 'transparent',
-    marginLeft: 6,
   },
-  invoiceButtonContainer: {
-    height: 60,
-    alignItems: 'center',
-    backgroundColor: Colors.gold,
-    justifyContent: 'center',
-  },
+  // confirmedIconContainer: {
+  //   width: 30,
+  //   height: 30,
+  // },
+  // confirmedIconCheckmark: {
+  //   width: 25,
+  //   height: 25,
+  //   backgroundColor: 'transparent',
+  //   marginLeft: 6,
+  // },
+  // invoiceButtonContainer: {
+    // height: 60,
+    // alignItems: 'center',
+    // backgroundColor: Colors.gold,
+    // justifyContent: 'center',
+  // },
   invoiceButtonText: {
-    color: 'white',
-    fontSize: Sizes.inputFieldFontSize,
+    // color: 'white',
+    alignSelf: 'center',
+    color: 'black',
+    // fontSize: Sizes.inputFieldFontSize,
     fontFamily: 'OpenSans',
-    fontWeight: 'bold',
-    paddingBottom: 1,
+    // fontWeight: 'bold',
+    // paddingBottom: 1,
   },
   buttonContainerLink: {
   },
   buttonContainer: {
-    height: 60,
-    backgroundColor: 'white',
+    // height: 60,
+    // backgroundColor: 'orange',
+    // backgroundColor: 'white',
     justifyContent: 'center',
   },
   buttonDisabled: {
@@ -413,18 +501,12 @@ const styles = StyleSheet.create({
   buttonTextDisabled: {
     color: Colors.greyText,
   },
-  confirmedText: {
-    alignSelf: 'center',
-    fontSize: 14,
-    color: Colors.inputTextColor,
-    fontFamily: 'OpenSans',
-  },
-  orderMessage: {
-    backgroundColor: 'white',
-    padding: 5,
-    margin: 5,
-    borderRadius: 3,
-  },
+  // orderMessage: {
+  //   backgroundColor: 'white',
+  //   padding: 5,
+  //   margin: 5,
+  //   borderRadius: 3,
+  // },
   separator: {
     height: 0,
     borderBottomColor: Colors.separatorColor,
@@ -438,7 +520,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flex: 1,
     padding: 10,
-    marginBottom: 20,
+    // marginBottom: 20,
   },
   orderText: {
     fontWeight: 'bold',
@@ -466,10 +548,10 @@ const styles = StyleSheet.create({
   },
   row: {
     flex: 1,
-    marginTop: 5,
-    marginBottom: 5,
-    marginRight: 10,
-    marginLeft: 10,
+    // marginTop: 5,
+    // marginBottom: 5,
+    // marginRight: 10,
+    // marginLeft: 10,
     borderRadius: Sizes.rowBorderRadius,
     padding: 5,
     paddingLeft: 10,
