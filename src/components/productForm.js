@@ -376,7 +376,7 @@ class ProductForm extends React.Component {
             onPress={() => {this.setState({showAdvanced: !this.state.showAdvanced})}}
           >
             <View style={styles.headerContainer}>
-              <Text style={styles.headerText}>Advanced</Text>
+              <Text style={styles.headerText}>Additional Info </Text>
               <View style={styles.headerIconContainer}>
                 <Icon name='material|caret-down' size={20} color={Colors.darkGrey} style={styles.iconDropDown}/>
               </View>
