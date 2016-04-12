@@ -35,7 +35,7 @@ class PurveyorIndexRow extends React.Component {
           <View style={styles.purveyorContainer} >
             <View style={styles.purveyorInfo} >
               <Text style={styles.purveyorName}>{purveyorName}</Text>
-              <Text style={styles.purveyorDetails}>{purveyor.orderCutoffTime}</Text>
+              {!!purveyor.orderCutoffTime.trim() ? <Text style={styles.purveyorDetails}>`Order by ${purveyor.orderCutoffTime}`</Text> : <View/>}
               {!!purveyor.orderMinimum.trim() ? <Text style={styles.purveyorDetails}>(min. {this.formatDollar(purveyor.orderMinimum)})</Text> : <View/>}
               {!!purveyor.notes.trim() ? <Text style={styles.purveyorDetails}>{purveyor.notes}</Text> : <View/>}
             </View>
