@@ -1,9 +1,11 @@
 import React from 'react-native';
 import { Icon, } from 'react-native-icons';
+import Communications from 'react-native-communications';
 import _ from 'lodash';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import OrderListItem from './orderListItem';
+import AddMessageForm from './addMessageForm';
 import moment from 'moment';
 import messageUtils from '../utilities/message';
 import GenericModal from './modal/genericModal';
@@ -79,6 +81,33 @@ class OrderView extends React.Component {
     return (products === null || products.length === 0 || purveyor === null || order === null)
   }
 
+  handleContactPress(type) {
+    const order = this.props.order
+    const purveyor = this.props.purveyor
+    const team = this.props.team
+    const orderProducts = this.props.products
+    switch (type) {
+      case 'phone':
+        Communications.phonecall(purveyor.phone, true)
+      case 'email':
+        let timeZone = 'UTC';
+        if(purveyor.hasOwnProperty('timeZone') && purveyor.timeZone){
+          timeZone = purveyor.timeZone;
+        }
+        const orderDate = moment(order.orderedAt).tz(timeZone);
+        const to = purveyor.orderEmails.split(',')
+        const cc = ['orders@sousapp.com']
+        const subject = `Order Comment from ${team.name} • 's Order on ${orderDate.format('dddd, MMMM D')}`
+        let body = 'Order Reference: '
+        orderProducts.forEach(function(o) {
+          body += `\n ${o.cartItem.productName} x ${o.cartItem.amount * o.cartItem.quantity} ${o.cartItem.unit}`
+        })
+        Communications.email(to, cc, null, subject, body)
+      case 'text':
+        Communications.text(purveyor.phone)
+    }
+  }
+
   selectAllProducts() {
     _.each(this.state.products, (productPkg, idx) => {
       const cartItem = productPkg.cartItem
@@ -108,7 +137,7 @@ class OrderView extends React.Component {
         confirm: orderConfirm
       })
     }, () => {
-      this.props.onConfirmOrder(this.state.order)
+      this.props.onUpdateOrder(this.state.order)
       this.props.onSendConfirmationMessage({
         type: 'orderConfirmation',
         purveyor: this.state.purveyor.name,
@@ -116,6 +145,23 @@ class OrderView extends React.Component {
         orderId: this.state.order.id,
       });
       this.props.onNavToInvoices(this.state.order.id)
+    })
+  }
+
+  handleCommentSubmit(msg) {
+    let orderComments = this.state.order.comments || []
+    orderComments.push({
+      userId: this.props.userId,
+      author: this.props.userName,
+      message: msg,
+      createdAt: new Date().toISOString()
+    })
+    this.setState({
+      order: Object.assign({}, this.state.order, {
+        comments: orderComments,
+      })
+    }, () => {
+      this.props.onUpdateOrder(this.state.order)
     })
   }
 
@@ -170,7 +216,7 @@ class OrderView extends React.Component {
           productsList.push(
             <OrderListItem
               key={productKey}
-              teamBetaAccess={this.props.teamBetaAccess}
+              teamBetaAccess={this.props.team.betaAccess}
               orderConfirm={order.confirm}
               product={product}
               cartItem={cartItem}
@@ -286,6 +332,20 @@ class OrderView extends React.Component {
       invoiceButtonTextColor = Colors.lightBlue
     }
     let receivedBy = ''
+    let orderComments = []
+    if(order.comments && order.comments.length > 0){
+      _.each(order.comments, (comment, idx) => {
+        orderComments.push(
+          <View key={idx}>
+            <Text>{comment.message}</Text>
+            <Text>{comment.author}</Text>
+            <Text>{comment.userId}</Text>
+            <Text>{comment.createdAt}</Text>
+          </View>
+        )
+      })
+    }
+
     return (
       <View style={styles.container}>
         { this.state.loaded === true ?
@@ -305,9 +365,30 @@ class OrderView extends React.Component {
               <View style={styles.purveyorContactContainer}>
                 <Text style={styles.purveyorContactText}>{this.props.purveyor.orderContact} <Text style={styles.purveyorContactSubText}>(rep)</Text></Text>
                 <View style={styles.contactIconsContainer}>
-                  <Icon name='material|email' size={15} color={'white'} style={styles.iconContact}/>
-                  <Icon name='material|phone' size={15} color={'white'} style={styles.iconContact}/>
-                  <Icon name='material|smartphone-iphone' size={15} color={'white'} style={styles.iconContact}/>
+                  <TouchableHighlight
+                    underlayColor='white'
+                    onPress={() => {
+                      this.handleContactPress('email')
+                    }}
+                  >
+                    <Icon name='material|email' size={15} color={'white'} style={styles.iconContact}/>
+                  </TouchableHighlight>
+                  <TouchableHighlight
+                    underlayColor='white'
+                    onPress={() => {
+                      this.handleContactPress('phone')
+                    }}
+                  >
+                    <Icon name='material|phone' size={15} color={'white'} style={styles.iconContact}/>
+                  </TouchableHighlight>
+                  <TouchableHighlight
+                    underlayColor='white'
+                    onPress={() => {
+                      this.handleContactPress('text')
+                    }}
+                  >
+                    <Icon name='material|smartphone-iphone' size={15} color={'white'} style={styles.iconContact}/>
+                  </TouchableHighlight>
                 </View>
               </View>
             </View>
@@ -417,6 +498,12 @@ class OrderView extends React.Component {
                   keyboardShouldPersistTaps={false}
                   style={styles.scrollView}
                 >
+                  <AddMessageForm
+                    placeholder='Comment on this order..'
+                    onSubmit={::this.handleCommentSubmit}
+                  />
+                  {orderComments}
+
                   <Text>Order Discussion goes here</Text>
                 </ScrollView>
               ) : <View/>
@@ -439,24 +526,25 @@ const styles = StyleSheet.create({
   },
   confirmationDetails: {
     justifyContent: 'center',
-    height: 60,
-    flex: 3,
+    flex: 2,
   },
   purveyorName: {
     fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
   confirmedText: {
     fontSize: 13,
     fontFamily: 'OpenSans',
   },
   purveyorContactContainer: {
-    height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 2,
+    flex: 1,
   },
   purveyorContactText: {
     fontSize: 15,
+    marginBottom: 10,    
   },
   purveyorContactSubText: {
     fontSize: 10,
@@ -467,8 +555,10 @@ const styles = StyleSheet.create({
     width: 100,
   },
   iconContact: {
+    backgroundColor: Colors.gold,
     borderWidth: .5,
     borderRadius: 12.5,
+    borderColor: Colors.gold,
     width: 25,
     height: 25,
   },
