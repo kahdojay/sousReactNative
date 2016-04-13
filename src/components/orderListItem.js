@@ -165,8 +165,8 @@ class OrderListItem extends React.Component {
           >
             <View style={{flexDirection: 'row', alignItems: 'center',}}>
               <View style={styles.productInfo}>
-                <Text style={[styles.text, styles.boldText]}>{product.name}</Text>
-                <Text style={styles.text}>Ordered: {cartItem.quantity} x {product.amount} {product.unit} {cartItem.productPrice && showProductPrices === true ? '• $' + s.numberFormat(parseFloat(cartItem.productPrice), 2) : ''}</Text>
+                <Text style={styles.productName}>{product.name}</Text>
+                <Text style={styles.text}>{cartItem.quantity}x {product.amount}{product.unit} {cartItem.productPrice && showProductPrices === true ? '• $' + s.numberFormat(parseFloat(cartItem.productPrice), 2) : ''}</Text>
               </View>
               <View style={styles.confirmCheckbox}>
                 <View style={[styles.iconContainer]}>
@@ -195,7 +195,6 @@ const styles = StyleSheet.create({
   },
   row: {
     flex: 1,
-    borderRadius: Sizes.rowBorderRadius,
     padding: 5,
     flexDirection: 'row',
     alignItems: 'center',
@@ -222,7 +221,8 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: 'OpenSans',
   },
-  boldText: {
+  productName: {
+    fontSize: 17,
     fontWeight: 'bold',
   },
   loading: {
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
   },
   productInfo: {
     flex: 6,
-    paddingLeft: 5,
+    paddingLeft: 15,
   },
   confirmCheckbox: {
     flex: 1

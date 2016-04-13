@@ -50,9 +50,7 @@ function formatMessage(msg, messageLength = null) {
           {'\n'}
           { message !== '' ?
             <Text style={{fontSize: 13}}>
-              (<Text style={{fontStyle: 'italic', color: Colors.gold}}>Note:</Text>
-              {' '}
-              {message})
+              {message}
               {'\n'}
             </Text>
           : null }
