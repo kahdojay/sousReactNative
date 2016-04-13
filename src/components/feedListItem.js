@@ -41,12 +41,7 @@ class FeedListItem extends React.Component {
     });
   }
 
-  render() {
-    const {msg} = this.state
-
-    if(msg === null){
-      return (<View />);
-    }
+  formatTimeStamp(msg) {
     const now = new Date()
     const msgDate = moment(msg.createdAt)
     const withinSameDay = moment(now).clone().subtract(1, 'd').startOf('day').isSame(msgDate.clone().startOf('day'))
@@ -63,6 +58,18 @@ class FeedListItem extends React.Component {
       } else {
         displayDate = msgDate.format("M/D ddd h:mma")
       }
+    }
+    return displayDate
+  }
+
+  render() {
+    const {msg} = this.state
+    let msgDisplayDate = ''
+
+    if(msg === null){
+      return (<View />);
+    } else {
+      msgDisplayDate = this.formatTimeStamp(msg)
     }
 
     let user = null
@@ -99,7 +106,7 @@ class FeedListItem extends React.Component {
           <View style={styles.messageContentContainer}>
             <View style={styles.messageTextContainer}>
               <Text style={styles.messageAuthor}>{msg.author}</Text>
-              <Text style={styles.messageTimestamp}>{displayDate}</Text>
+              <Text style={styles.messageTimestamp}>{msgDisplayDate}</Text>
             </View>
             { (msg.hasOwnProperty('orderId') === true && msg.orderId) ?
               <TouchableHighlight
