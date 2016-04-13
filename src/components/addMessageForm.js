@@ -49,14 +49,15 @@ export default class AddForm extends React.Component {
         value={this.state.message.text}
         placeholderTextColor={'#aaa'}
         placeholder={this.props.placeholder}
-        onChangeText={this.handleChangeMessage.bind(this)}
-        multiline={true}
+        onChangeText={::this.handleChangeMessage}
+        multiline={this.props.multiline}
+        onSubmitEditing={this.props.multiline ? null : ::this.handleSubmit}
       />
     )
     let submit = (
       <TouchableHighlight
         key='send'
-        onPress={this.handleSubmit.bind(this)}
+        onPress={::this.handleSubmit}
         underlayColor={"#eee"}
         style={styles.button}
       >
@@ -105,12 +106,12 @@ let styles = StyleSheet.create({
     height: 50,
     flexDirection: 'row',
     justifyContent: 'center',
-    backgroundColor: Colors.mainBackgroundColor,
+    backgroundColor: '#f3f3f3',
   },
   inputContainer: {
     flex: 5,
     flexDirection: 'row',
-    backgroundColor: Colors.mainBackgroundColor,
+    backgroundColor: '#f3f3f3',
     padding: 8,
     paddingRight: 0,
   },

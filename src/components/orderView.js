@@ -5,6 +5,7 @@ import _ from 'lodash';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import OrderListItem from './orderListItem';
+import OrderComment from './orderComment';
 import AddMessageForm from './addMessageForm';
 import moment from 'moment';
 import messageUtils from '../utilities/message';
@@ -336,12 +337,12 @@ class OrderView extends React.Component {
     if(order.comments && order.comments.length > 0){
       _.each(order.comments, (comment, idx) => {
         orderComments.push(
-          <View key={idx}>
-            <Text>{comment.message}</Text>
-            <Text>{comment.author}</Text>
-            <Text>{comment.userId}</Text>
-            <Text>{comment.createdAt}</Text>
-          </View>
+          <OrderComment
+            key={idx}
+            message={comment.message}
+            author={comment.author}
+            createdAt={comment.createdAt}
+          />
         )
       })
     }
@@ -435,7 +436,7 @@ class OrderView extends React.Component {
                       >
                         <Text style={styles.buttonSelectAll}>Select All</Text>
                       </TouchableHighlight>
-                      : null }
+                      : <Text>Delivered</Text> }
                   </View>
                   <ScrollView
                     automaticallyAdjustContentInsets={false}
@@ -496,15 +497,14 @@ class OrderView extends React.Component {
                 <ScrollView
                   automaticallyAdjustContentInsets={false}
                   keyboardShouldPersistTaps={false}
-                  style={styles.scrollView}
+                  contentContainerStyle={styles.commentsContainer}
                 >
                   <AddMessageForm
                     placeholder='Comment on this order..'
                     onSubmit={::this.handleCommentSubmit}
+                    multiline={false}
                   />
                   {orderComments}
-
-                  <Text>Order Discussion goes here</Text>
                 </ScrollView>
               ) : <View/>
             }
@@ -571,6 +571,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   sectionSubHeader: {
+    backgroundColor: '#f3f3f3',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -618,6 +619,11 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
+    paddingTop: 5,
+  },
+  commentsContainer: {
+    flex: 1,
+    backgroundColor: '#f3f3f3',
     paddingTop: 5,
   },
   orderText: {
