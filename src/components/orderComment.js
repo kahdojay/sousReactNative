@@ -1,7 +1,7 @@
 import React from 'react-native';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
-import moment from 'moment';
+import messageUtils from '../utilities/message';
 
 const {
   // Dimensions,
@@ -20,8 +20,18 @@ class OrderComment extends React.Component {
   render() {
     const {message, author, createdAt} = this.props
     return (
-      <View style={styles.commentContainer}>
-        <Text>{message}</Text>
+      <View>
+        <View style={styles.commentContainer}>
+          <View style={styles.commentHeader}>
+            <Text style={styles.author}>{author || 'Sous Support'}</Text>
+          </View>
+          <View style={styles.commentBody}>
+            <Text>{message}</Text>
+          </View>
+          <View style={styles.commentFooter}>
+            <Text>{messageUtils.formatMessageTimeStamp(message)}</Text>
+          </View>
+        </View>
       </View>
     )
   }
@@ -29,7 +39,21 @@ class OrderComment extends React.Component {
 
 const styles = StyleSheet.create({
   commentContainer: {
-    // backgroundColor: 'orange',
+    paddingLeft: 40,
+    marginBottom: 15,
+  },
+  commentHeader: {
+  },
+  author: {
+    fontWeight: 'bold',
+  },
+  commentBody: {
+
+  },
+  separator: {
+    height: 0,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: .5,
   },
 })
 

@@ -354,10 +354,11 @@ class OrderView extends React.Component {
             <View style={styles.confirmedContainer}>
               <View style={styles.confirmationDetails}>
                 <Text style={styles.purveyorName}>{this.props.purveyor.name}</Text>
-                <Text style={[styles.confirmedText]}>Ordered: {order.orderedAt !== null ? moment(order.orderedAt).format('ddd M/D, h:mma') : ''} ({orderUser.firstName})</Text>
+                <Text style={[styles.confirmedText]}>
+                  Ordered: {order.orderedAt !== null ? moment(order.orderedAt).format('ddd M/D, h:mma') : ''} {orderUser ? `(${orderUser.firstName})` : ''}</Text>
                 {order.confirm.order === true ? (
                     <View>
-                      <Text style={[styles.confirmedText]}>{`Received: ${moment(order.confirm.confirmedAt).format('ddd M/D, h:mma')} (${confirmUser.firstName})`}</Text>
+                      <Text style={[styles.confirmedText]}>Received: {order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('ddd M/D, h:mma') : ''} {confirmUser ? `(${confirmUser.firstName})` : ''}</Text>
                     </View>
                   ) : <View/>
                 }
@@ -494,18 +495,19 @@ class OrderView extends React.Component {
               <View style={styles.separator} />
             </View>
             {this.state.showOrderDiscussion === true ? (
-                <ScrollView
-                  automaticallyAdjustContentInsets={false}
-                  keyboardShouldPersistTaps={false}
-                  contentContainerStyle={styles.commentsContainer}
-                >
+              <ScrollView
+                automaticallyAdjustContentInsets={false}
+                keyboardShouldPersistTaps={false}
+              >
+                <View style={styles.commentsInnerContainer}>
                   <AddMessageForm
                     placeholder='Comment on this order..'
                     onSubmit={::this.handleCommentSubmit}
                     multiline={false}
                   />
                   {orderComments}
-                </ScrollView>
+                </View>
+              </ScrollView>
               ) : <View/>
             }
             {modal}
@@ -621,8 +623,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.mainBackgroundColor,
     paddingTop: 5,
   },
-  commentsContainer: {
-    flex: 1,
+  commentsInnerContainer: {
     backgroundColor: '#f3f3f3',
     paddingTop: 5,
   },
