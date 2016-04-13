@@ -1258,12 +1258,12 @@ class App extends React.Component {
         if(order && order.hasOwnProperty('purveyorId') === true){
           purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
         }
-
         return {
           component: Components.OrderView,
           props: {
-            teamBetaAccess: this.state.currentTeamInfo.betaAccess,
+            team: this.state.currentTeamInfo,
             userId: session.userId,
+            userName: session.firstName,
             orderId: orderId,
             orderFetching: orders.isFetching,
             order: order,
@@ -1284,11 +1284,9 @@ class App extends React.Component {
                 }))
               }, 25)()
             },
-            onConfirmOrder: (order) => {
+            onUpdateOrder: (order) => {
               _.debounce(() => {
-                dispatch(actions.updateOrder(order.id, {
-                  confirm: order.confirm
-                }))
+                dispatch(actions.updateOrder(order.id, order))
               }, 25)()
             },
             onSendConfirmationMessage: (msg) => {
@@ -1685,9 +1683,6 @@ class App extends React.Component {
                 disabled={(this.state.currentTeamInfo.team === null)}
               />
             ),
-            // customNext: (
-            //   <Components.FeedViewRightButton />
-            // ),
           })
           break;
         case 'PurveyorIndex':
@@ -1841,38 +1836,9 @@ class App extends React.Component {
                 iconFont={'material|chevron-left'}
               />
             ),
-            // title: this.state.purveyor.name.substr(0,16) + (this.state.purveyor.name.length > 16 ? '...' : ''),
             customTitle: (
               <TextComponents.NavBarTitle
                 content={purveyorNameTitle}
-              />
-            ),
-            customNext: (
-              <Components.OrderRightButton
-                purveyor={this.state.purveyor}
-                onHandlePress={(type) => {
-                  const order = this.state.order
-                  const purveyor = this.state.purveyor
-                  const team = this.state.currentTeamInfo.team
-                  if(type === 'call') {
-                    Communications.phonecall(purveyor.phone, true)
-                  } else if(type === 'email'){
-                    let timeZone = 'UTC';
-                    if(purveyor.hasOwnProperty('timeZone') && purveyor.timeZone){
-                      timeZone = purveyor.timeZone;
-                    }
-                    const orderDate = moment(order.orderedAt).tz(timeZone);
-                    const to = purveyor.orderEmails.split(',')
-                    const cc = ['orders@sousapp.com']
-                    const subject = `re: ${purveyor.name} • Order Received from ${team.name} on ${orderDate.format('dddd, MMMM D')}`
-                    let orderProducts = this.getOrderItems(this.state.orderId)
-                    let body = 'Order: '
-                    orderProducts.forEach(function(o) {
-                      body += `\n ${o.cartItem.productName} x ${o.cartItem.amount * o.cartItem.quantity} ${o.cartItem.unit}`
-                    })
-                    Communications.email(to, cc, null, subject, body)
-                  }
-                }}
               />
             ),
           })
