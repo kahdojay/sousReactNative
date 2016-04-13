@@ -1,6 +1,5 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
-import moment from 'moment';
 import messageUtils from '../utilities/message';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
@@ -41,27 +40,6 @@ class FeedListItem extends React.Component {
     });
   }
 
-  formatTimeStamp(msg) {
-    const now = new Date()
-    const msgDate = moment(msg.createdAt)
-    const withinSameDay = moment(now).clone().subtract(1, 'd').startOf('day').isSame(msgDate.clone().startOf('day'))
-    const withinSameWeek = moment(now).diff(msgDate, 'days') < 7
-    let displayDate = ''
-
-    if (msgDate.isSame(now, 'day')) {
-      displayDate = `Today, ${msgDate.format("h:mma")}`
-    } else {
-      if (withinSameDay) {
-        displayDate = `Yesterday, ${msgDate.format("h:mma")}`
-      } else if (withinSameWeek) {
-        displayDate = msgDate.format("ddd h:mma")
-      } else {
-        displayDate = msgDate.format("M/D ddd h:mma")
-      }
-    }
-    return displayDate
-  }
-
   render() {
     const {msg} = this.state
     let msgDisplayDate = ''
@@ -69,7 +47,7 @@ class FeedListItem extends React.Component {
     if(msg === null){
       return (<View />);
     } else {
-      msgDisplayDate = this.formatTimeStamp(msg)
+      msgDisplayDate = messageUtils.formatMessageTimeStamp(msg)
     }
 
     let user = null

@@ -1,6 +1,7 @@
 import React from 'react-native';
 import Colors from './colors';
 import { Icon } from 'react-native-icons';
+import moment from 'moment';
 
 const {
   View,
@@ -110,6 +111,27 @@ function formatMessage(msg, messageLength = null) {
   return messageString
 }
 
+function formatMessageTimeStamp(msg) {
+  const now = new Date()
+  const msgDate = moment(msg.createdAt)
+  const withinSameDay = moment(now).clone().subtract(1, 'd').startOf('day').isSame(msgDate.clone().startOf('day'))
+  const withinSameWeek = moment(now).diff(msgDate, 'days') < 7
+  let displayDate = ''
+
+  if (msgDate.isSame(now, 'day')) {
+    displayDate = `Today, ${msgDate.format("h:mma")}`
+  } else {
+    if (withinSameDay) {
+      displayDate = `Yesterday, ${msgDate.format("h:mma")}`
+    } else if (withinSameWeek) {
+      displayDate = msgDate.format("ddd h:mma")
+    } else {
+      displayDate = msgDate.format("M/D ddd h:mma")
+    }
+  }
+  return displayDate
+}
+
 const styles = StyleSheet.create({
   messageText: {
     fontFamily: 'OpenSans',
@@ -127,4 +149,5 @@ const styles = StyleSheet.create({
 
 export default {
   'formatMessage': formatMessage,
+  'formatMessageTimeStamp': formatMessageTimeStamp,
 }
