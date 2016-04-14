@@ -5,6 +5,8 @@ import _ from 'lodash';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import OrderListItem from './orderListItem';
+import OrderInvoices from './orderInvoices';
+import OrderInvoiceUpload from './orderInvoiceUpload';
 import OrderComment from './orderComment';
 import AddMessageForm from './addMessageForm';
 import moment from 'moment';
@@ -40,6 +42,7 @@ class OrderView extends React.Component {
       selectAll: false,
       showConfirm: false,
       confirmationMessage: null,
+      showInvoices: false,
       showOrderContents: false,
       showOrderDiscussion: false,
     }
@@ -110,11 +113,14 @@ class OrderView extends React.Component {
   }
 
   selectAllProducts() {
+    this.setState({
+      selectAll: !this.state.selectAll
+    })
     _.each(this.state.products, (productPkg, idx) => {
       const cartItem = productPkg.cartItem
       const productConfirmed = (cartItem.status === 'RECEIVED')
       const updateCartItem = Object.assign({}, cartItem, {
-        status: 'RECEIVED'
+        status: this.state.selectAll ? 'ORDERED' : 'RECEIVED'
       })
       this.props.onConfirmOrderProduct(updateCartItem)
     })
@@ -166,6 +172,30 @@ class OrderView extends React.Component {
     })
   }
 
+  getInvoiceView(order) {
+    if (this.state.showInvoices === true) {
+      if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
+        return (
+          <View>
+            <OrderInvoices
+              order={order}
+              onNavtoUploadInvoices={console.log('nav')}
+            />
+          </View>
+        )
+      } else {
+        return (
+          <View>
+            <OrderInvoiceUpload
+              order={order}
+              onNavtoUploadInvoices={console.log('nav')}
+            />
+          </View>
+        )
+      }
+    }
+  }
+
   render() {
     const {
       order,
@@ -173,6 +203,7 @@ class OrderView extends React.Component {
       products,
       teamsUsers,
     } = this.state;
+    console.log(order)
 
     if(this.checkMissingData() === true){
       return (
@@ -423,8 +454,8 @@ class OrderView extends React.Component {
               >
                 <Text style={[styles.sectionHeaderText]}>{'Order Contents'}</Text>
               </TouchableHighlight>
-              <View style={styles.separator} />
             </View>
+            <View style={styles.separator} />
             <View style={styles.orderContentsContainer}>
               {this.state.showOrderContents === true ? (
                 <View>
@@ -435,7 +466,7 @@ class OrderView extends React.Component {
                         onPress={::this.selectAllProducts}                      
                         underlayColor='transparent'
                       >
-                        <Text style={styles.buttonSelectAll}>Select All</Text>
+                        <Text style={styles.buttonSelectAll}>{this.state.selectAll ? 'Unselect All' : 'Select All'}</Text>
                       </TouchableHighlight>
                       : <Text>Delivered</Text> }
                   </View>
@@ -474,13 +505,17 @@ class OrderView extends React.Component {
               <TouchableHighlight
                 underlayColor='transparent'
                 onPress={() => {
-                  this.props.onNavToInvoices(order.id)
+                  this.setState({
+                    showInvoices: !this.state.showInvoices
+                  })
+                  // this.props.onNavToInvoices(order.id)
                 }}
               >
                 <Text style={[styles.sectionHeaderText]}>{'Invoice/Photos'}</Text>
               </TouchableHighlight>
-              <View style={styles.separator} />
             </View>
+            <View style={styles.separator} />
+            {this.getInvoiceView(order)}
             <View style={styles.sectionHeader}>
               <TouchableHighlight
                 underlayColor='transparent'
@@ -492,8 +527,8 @@ class OrderView extends React.Component {
               >
                 <Text style={[styles.sectionHeaderText]}>{'Discussion'}</Text>
               </TouchableHighlight>
-              <View style={styles.separator} />
             </View>
+            <View style={styles.separator} />
             {this.state.showOrderDiscussion === true ? (
               <ScrollView
                 automaticallyAdjustContentInsets={false}

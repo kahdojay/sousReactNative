@@ -1307,15 +1307,15 @@ class App extends React.Component {
                 order: order,
                 purveyor: purveyor,
               }, () => {
-                if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
-                  nav.push({
-                    name: 'OrderInvoices'
-                  })
-                } else {
-                  nav.push({
-                    name: 'OrderInvoiceUpload'
-                  })
-                }
+                // if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
+                //   nav.push({
+                //     name: 'OrderInvoices'
+                //   })
+                // } else {
+                //   nav.push({
+                //     name: 'OrderInvoiceUpload'
+                //   })
+                // }
               })
             },
             onGetOrderDetails: (orderId) => {
@@ -1838,7 +1838,7 @@ class App extends React.Component {
             ),
             customTitle: (
               <TextComponents.NavBarTitle
-                content={purveyorNameTitle}
+                content={'Order History'}
               />
             ),
           })
