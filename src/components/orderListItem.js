@@ -137,7 +137,7 @@ class OrderListItem extends React.Component {
                 editQuantity: true,
               })
             }}
-            style={{flex: 1}}
+            style={{flex: 1.25}}
           >
             <View style={styles.quantityContainer}>
               <View style={styles.caretContainer}>
@@ -203,11 +203,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   quantity: {
-    flex: 2,
-    textAlign: 'center',
+    flex: 3,
+    textAlign: 'left',
     fontFamily: 'OpenSans',
     fontSize: 18,
-    width: 36,
   },
   caretContainer: {
     flex: 1,
@@ -241,7 +240,7 @@ const styles = StyleSheet.create({
   },
   productInfo: {
     flex: 6,
-    paddingLeft: 15,
+    paddingLeft: 5,
   },
   confirmCheckbox: {
     flex: 1
