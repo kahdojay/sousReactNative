@@ -655,6 +655,10 @@ class App extends React.Component {
       offline,
     } = this.props;
 
+    let orderId = this.state.orderId
+    let orderProducts = this.getOrderItems(orderId)
+    let order = this.state.order
+
     switch (route.name) {
       case 'Update':
         return {
@@ -1247,10 +1251,6 @@ class App extends React.Component {
           },
         }
       case 'OrderView':
-        // let orderProducts = null
-        let orderId = this.state.orderId
-        let orderProducts = this.getOrderItems(orderId)
-        let order = this.state.order
         if(order === null && this.state.orderId){
           order = this.state.currentTeamInfo.orders[orderId]
         }
@@ -1270,34 +1270,21 @@ class App extends React.Component {
             purveyor: purveyor,
             products: orderProducts,
             teamsUsers: teams.teamsUsers,
-            // messages: orderMessages,
-            onConfirmOrderProduct: (cartItem, confirm) => {
-              _.debounce(() => {
-                dispatch(actions.updateCartItem({
-                  id: cartItem.id,
-                  teamId: cartItem.teamId,
-                  purveyorId: cartItem.purveyorId,
-                  orderId: this.state.order.id,
-                  productId: cartItem.productId,
-                  status: cartItem.status,
-                  quantityReceived: cartItem.quantityReceived || cartItem.quantity,
-                }))
-              }, 25)()
+            onNavToOrderContents: () => {
+              this.setState({
+                order: order,
+                products: orderProducts,
+                purveyor: purveyor,
+              }, () => {
+                nav.push({
+                  name: 'OrderContentsView',
+                })
+              })
             },
             onUpdateOrder: (order) => {
               _.debounce(() => {
                 dispatch(actions.updateOrder(order.id, order))
               }, 25)()
-            },
-            onSendConfirmationMessage: (msg) => {
-              _.debounce(() => {
-                dispatch(actions.createMessage(msg))
-              }, 25)()
-            },
-            onNavToOrders: () => {
-              nav.replacePreviousAndPop({
-                name: 'OrderIndex',
-              })
             },
             onNavToInvoices: (orderId) => {
               const order = this.state.currentTeamInfo.orders[orderId]
@@ -1307,20 +1294,74 @@ class App extends React.Component {
                 order: order,
                 purveyor: purveyor,
               }, () => {
-                // if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
-                //   nav.push({
-                //     name: 'OrderInvoices'
-                //   })
-                // } else {
-                //   nav.push({
-                //     name: 'OrderInvoiceUpload'
-                //   })
-                // }
+                if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
+                  nav.push({
+                    name: 'OrderInvoices'
+                  })
+                } else {
+                  nav.push({
+                    name: 'OrderInvoiceUpload'
+                  })
+                }
               })
             },
             onGetOrderDetails: (orderId) => {
               dispatch(actions.getOrders([orderId]))
             }
+          },
+        }
+      case 'OrderContentsView':
+        return {
+          component: Components.OrderContentsView,
+          props: {
+            order: this.state.order,
+            purveyor: this.state.purveyor,
+            products: orderProducts,
+            onConfirmOrderProduct: (updateCartItem) => {
+              _.debounce(() => {
+                dispatch(actions.updateCartItem({
+                  id: updateCartItem.id,
+                  teamId: updateCartItem.teamId,
+                  purveyorId: updateCartItem.purveyorId,
+                  orderId: this.state.order.id,
+                  productId: updateCartItem.productId,
+                  status: updateCartItem.status,
+                  quantityReceived: updateCartItem.quantityReceived || updateCartItem.quantity,
+                }))
+              }, 25)()
+            },
+            onGetOrderDetails: (orderId) => {
+              dispatch(actions.getOrders([orderId]))
+            },
+            onNavToInvoices: (orderId) => {
+              const order = this.state.currentTeamInfo.orders[orderId]
+              const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
+              this.setState({
+                orderId: orderId,
+                order: order,
+                purveyor: purveyor,
+              }, () => {
+                if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
+                  nav.push({
+                    name: 'OrderInvoices'
+                  })
+                } else {
+                  nav.push({
+                    name: 'OrderInvoiceUpload'
+                  })
+                }
+              })
+            },
+            onSendConfirmationMessage: (msg) => {
+              _.debounce(() => {
+                dispatch(actions.createMessage(msg))
+              }, 25)()
+            },
+            onUpdateOrder: (order) => {
+              _.debounce(() => {
+                dispatch(actions.updateOrder(order.id, order))
+              }, 25)()
+            },
           },
         }
       case 'OrderInvoices':
@@ -1823,10 +1864,18 @@ class App extends React.Component {
           })
           break;
         case 'OrderView':
-          let purveyorNameTitle = 'Processing'
-          if(this.state.purveyor !== null){
-            purveyorNameTitle = this.state.purveyor.name.substr(0,12) + (this.state.purveyor.name.length > 12 ? '...' : '')
-          }
+          navBar = React.cloneElement(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                pop={true}
+                iconFont={'material|chevron-left'}
+              />
+            ),
+          })
+          break;
+        case 'OrderContentsView':
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
@@ -1838,7 +1887,7 @@ class App extends React.Component {
             ),
             customTitle: (
               <TextComponents.NavBarTitle
-                content={'Order History'}
+                content={'Order Contents'}
               />
             ),
           })

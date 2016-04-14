@@ -5,12 +5,12 @@ import _ from 'lodash';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import OrderListItem from './orderListItem';
+import OrderContentsView from './orderContentsView';
 import OrderInvoices from './orderInvoices';
 import OrderInvoiceUpload from './orderInvoiceUpload';
 import OrderComment from './orderComment';
 import AddMessageForm from './addMessageForm';
 import moment from 'moment';
-import messageUtils from '../utilities/message';
 import GenericModal from './modal/genericModal';
 import Loading from './loading';
 
@@ -112,47 +112,12 @@ class OrderView extends React.Component {
     }
   }
 
-  selectAllProducts() {
-    this.setState({
-      selectAll: !this.state.selectAll
-    })
-    _.each(this.state.products, (productPkg, idx) => {
-      const cartItem = productPkg.cartItem
-      const productConfirmed = (cartItem.status === 'RECEIVED')
-      const updateCartItem = Object.assign({}, cartItem, {
-        status: this.state.selectAll ? 'ORDERED' : 'RECEIVED'
-      })
-      this.props.onConfirmOrderProduct(updateCartItem)
-    })
-  }
-
   getNumberSelected() {
     let count = 0
     this.state.products.forEach(function(product) {
       count += product.cartItem.status === 'RECEIVED' ? 1 : 0
     })
     return count
-  }
-
-  confirmOrder() {
-    let orderConfirm = Object.assign({}, this.state.order.confirm)
-    orderConfirm.userId = this.state.userId
-    orderConfirm.order = true
-    orderConfirm.confirmedAt = (new Date()).toISOString()
-    this.setState({
-      order: Object.assign({}, this.state.order, {
-        confirm: orderConfirm
-      })
-    }, () => {
-      this.props.onUpdateOrder(this.state.order)
-      this.props.onSendConfirmationMessage({
-        type: 'orderConfirmation',
-        purveyor: this.state.purveyor.name,
-        text: `${this.getNumberSelected()} of ${this.state.products.length} delivered. ${this.state.confirmationMessage || ''}`,
-        orderId: this.state.order.id,
-      });
-      this.props.onNavToInvoices(this.state.order.id)
-    })
   }
 
   handleCommentSubmit(msg) {
@@ -203,7 +168,6 @@ class OrderView extends React.Component {
       products,
       teamsUsers,
     } = this.state;
-    console.log(order)
 
     if(this.checkMissingData() === true){
       return (
@@ -227,112 +191,6 @@ class OrderView extends React.Component {
       )
     }
 
-    let productsList = null
-    let modal = null
-
-    if(this.state.loaded === true){
-      productsList = []
-      let missingProducts = []
-      _.each(products, (productPkg, idx) => {
-        const product = productPkg.product
-        const cartItem = productPkg.cartItem
-        const productConfirm = (cartItem.status === 'RECEIVED')
-        let productKey = `missing-id-${idx}`
-        if(cartItem.hasOwnProperty('id') === true){
-          productKey = cartItem.id
-        }
-
-        if(!product || !cartItem){
-          missingProducts.push(productPkg)
-        } else {
-          productsList.push(
-            <OrderListItem
-              key={productKey}
-              teamBetaAccess={this.props.team.betaAccess}
-              orderConfirm={order.confirm}
-              product={product}
-              cartItem={cartItem}
-              productConfirm={this.state.selectAll || productConfirm}
-              onHandleProductConfirm={this.props.onConfirmOrderProduct}
-            />
-          )
-        }
-      })
-      if(missingProducts.length > 0){
-        productsList.push(
-          <View style={styles.row}>
-            <View style={{flex: 1}}>
-              <Text style={styles.missing}>Product details unavailable</Text>
-            </View>
-          </View>
-        )
-      }
-
-      if(order.confirm.order === false){
-        modal = (
-          <GenericModal
-            ref='errorModal'
-            modalVisible={this.state.showConfirm}
-            modalHeaderText='Order Delivered'
-            modalSubHeaderText='(Only members of your team will be notified)'
-            onHideModal={() => {
-              this.setState({
-                showConfirm: false,
-              })
-            }}
-            leftButton={{
-              text: 'Cancel',
-              onPress: () => {
-                if(order.confirm.order === false){
-                  this.setState({
-                    showConfirm: false,
-                  })
-                }
-              }
-            }}
-            rightButton={{
-              text: 'Confirm',
-              onPress: () => {
-                if(order.confirm.order === false){
-                  this.setState({
-                    showConfirm: false,
-                  }, () => {
-                    this.confirmOrder()
-                  })
-                }
-              }
-            }}
-          >
-            <View style={styles.confirmationHeaderContainer}>
-              <Text style={styles.confirmationHeaderText}>{purveyor.name} order delivered</Text>
-              <Text style={styles.confirmationSubText}>({`${this.getNumberSelected()} of ${this.state.products.length} received`})</Text>
-            </View>
-            <Text>{' '}</Text>
-            <Icon name='material|check-circle' size={50} color={Colors.green} style={styles.iconConfirm}/>
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Note to team:</Text>
-              <TextInput
-                style={styles.input}
-                placeholderTextColor={Colors.inputPlaceholderColor}
-                value={this.state.confirmationMessage}
-                placeholder='"All set"'
-                onChangeText={(text) => {
-                  if(order.confirm.order === false){
-                    this.setState({
-                      confirmationMessage: text
-                    })
-                  }
-                }}
-                onEndEditing={() => {}}
-              />
-            </View>
-          </GenericModal>
-        )
-      }
-    }
-
-    let buttonDisabledStyle = []
-    let buttonTextDisabledStyle = []
     let orderUser = null
     let confirmUser = null
     let confirmUserName = ''
@@ -347,8 +205,6 @@ class OrderView extends React.Component {
       senderName = order.sender
     }
     if(order.confirm.order === true){
-      buttonDisabledStyle = styles.buttonDisabled
-      buttonTextDisabledStyle = styles.buttonTextDisabled
       confirmUser = teamsUsers[order.confirm.userId]
     }
 
@@ -426,81 +282,17 @@ class OrderView extends React.Component {
               </View>
             </View>
             <View style={styles.separator} />
-            {/* order.confirm.order === true ?
-              <View>
-                <View style={[styles.confirmedContainer, {backgroundColor: confirmedContainerBackgroundColor}]}>
-                  <View style={styles.confirmedIconContainer}>
-                    <Icon name='material|circle' size={20} color={invoiceIconBackgroundColor} style={styles.confirmedIconContainer}>
-                      <Icon name='material|check' size={25} color={invoiceIconCheckmarkColor} style={styles.confirmedIconCheckmark} />
-                    </Icon>
-                  </View>
-                  <View style={{flex: 9 }}>
-                    <Text style={[styles.confirmedText]}>Delivery confirmed by: {confirmUserName}</Text>
-                    <Text style={[styles.confirmedText]}>{order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('M/D/YY h:mm a') : ''}</Text>
-                  </View>
-                </View>
-                <View style={styles.separator} />
-              </View>
-            : null */}
-{/* ===Order Contents=== */}
             <View style={styles.sectionHeader}>
               <TouchableHighlight
                 underlayColor='transparent'
                 onPress={() => {
-                  this.setState({
-                    showOrderContents: !this.state.showOrderContents
-                  })
+                  this.props.onNavToOrderContents(order, products, this.props.purveyor)
                 }}
               >
                 <Text style={[styles.sectionHeaderText]}>{'Order Contents'}</Text>
               </TouchableHighlight>
             </View>
             <View style={styles.separator} />
-            <View style={styles.orderContentsContainer}>
-              {this.state.showOrderContents === true ? (
-                <View>
-                  <View style={styles.sectionSubHeader}>
-                    <Text># Rcvd</Text>
-                    { order.confirm.order === false ? 
-                      <TouchableHighlight
-                        onPress={::this.selectAllProducts}                      
-                        underlayColor='transparent'
-                      >
-                        <Text style={styles.buttonSelectAll}>{this.state.selectAll ? 'Unselect All' : 'Select All'}</Text>
-                      </TouchableHighlight>
-                      : <Text>Delivered</Text> }
-                  </View>
-                  <ScrollView
-                    automaticallyAdjustContentInsets={false}
-                    keyboardShouldPersistTaps={false}
-                    style={styles.scrollView}
-                  >
-                    {productsList}
-                    { order.confirm.order === false ?
-                      <View>
-                        <View style={styles.separator} />
-                        <TouchableHighlight
-                          onPress={() => {
-                            if(order.confirm.order === false){
-                              this.setState({
-                                showConfirm: true
-                              })
-                            }
-                          }}
-                          underlayColor='transparent'
-                          style={styles.buttonContainerLink}
-                        >
-                          <View style={[styles.buttonContainer, buttonDisabledStyle]}>
-                            <Text style={[styles.buttonText, buttonTextDisabledStyle]}>Confirm Delivery</Text>
-                          </View>
-                        </TouchableHighlight>
-                      </View>
-                    : null }
-                  </ScrollView>
-                </View>
-              ) : <View/>
-              }
-            </View>
             <View style={styles.sectionHeader}>
               <TouchableHighlight
                 underlayColor='transparent'
@@ -545,7 +337,6 @@ class OrderView extends React.Component {
               </ScrollView>
               ) : <View/>
             }
-            {modal}
           </View>
         : <Text style={[styles.text, styles.textCentered, {padding: 25}]}>Loading, please wait.</Text> }
       </View>
@@ -665,45 +456,6 @@ const styles = StyleSheet.create({
   orderText: {
     fontWeight: 'bold',
     color: Colors.blue,
-  },
-  confirmationHeaderContainer: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  confirmationHeaderText: {
-    fontSize: 14,
-  },
-  confirmationSubText: {
-    fontSize: 12,
-  },
-  iconConfirm: {
-    width: 50,
-    height: 50,
-    alignSelf: 'center',
-    marginBottom: 10,
-  },
-  inputContainer: {
-    alignItems: 'center',
-    alignSelf: 'center',
-    width: window.width * .5,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.lightGrey,
-  },
-  inputWrapper: {
-    // alignItems: 'center',
-  },
-  inputLabel: {
-    flex: 1,
-    fontSize: 12,
-  },
-  input: {
-    flex: 5,
-    textAlign: 'center',
-    height: 30,
-  },
-  text: {
-    fontFamily: 'OpenSans',
-    color: Colors.greyText,
   },
   textCentered: {
     textAlign: 'center',
