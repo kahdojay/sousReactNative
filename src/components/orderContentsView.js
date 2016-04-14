@@ -296,6 +296,32 @@ const styles = StyleSheet.create({
     color: Colors.lightBlue,
     fontWeight: 'bold',
   },
+  invoiceButtonText: {
+    alignSelf: 'center',
+    color: 'black',
+    fontFamily: 'OpenSans',
+  },
+  buttonContainerLink: {
+  },
+  buttonContainer: {
+    borderRadius: Sizes.rowBorderRadius,
+    alignSelf: 'center',
+    width: window.width * .9,
+    height: 40,
+    backgroundColor: Colors.gold,
+    justifyContent: 'center',
+  },
+  buttonDisabled: {
+    backgroundColor: Colors.disabled,
+  },
+  buttonText: {
+    alignSelf: 'center',
+    fontSize: 16,
+    paddingBottom: 1,
+    color: 'white',
+    fontWeight: 'bold',
+    fontFamily: 'OpenSans',
+  },
   confirmationHeaderContainer: {
     flex: 1,
     alignItems: 'center',

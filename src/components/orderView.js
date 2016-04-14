@@ -42,9 +42,7 @@ class OrderView extends React.Component {
       selectAll: false,
       showConfirm: false,
       confirmationMessage: null,
-      showInvoices: false,
       showOrderContents: false,
-      showOrderDiscussion: false,
     }
   }
 
@@ -137,30 +135,6 @@ class OrderView extends React.Component {
     })
   }
 
-  getInvoiceView(order) {
-    if (this.state.showInvoices === true) {
-      if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
-        return (
-          <View>
-            <OrderInvoices
-              order={order}
-              onNavtoUploadInvoices={console.log('nav')}
-            />
-          </View>
-        )
-      } else {
-        return (
-          <View>
-            <OrderInvoiceUpload
-              order={order}
-              onNavtoUploadInvoices={console.log('nav')}
-            />
-          </View>
-        )
-      }
-    }
-  }
-
   render() {
     const {
       order,
@@ -172,7 +146,7 @@ class OrderView extends React.Component {
     if(this.checkMissingData() === true){
       return (
         <View style={styles.container}>
-          <Text style={[styles.text, styles.textCentered, {padding: 25}]}>Order details unavailable.</Text>
+          <Text style={[styles.guidance, {padding: 25}]}>Order details unavailable.</Text>
           { this.state.orderFetching === true ?
             <Loading />
           :
@@ -208,18 +182,6 @@ class OrderView extends React.Component {
       confirmUser = teamsUsers[order.confirm.userId]
     }
 
-    let invoiceIconBackgroundColor = 'white'
-    let invoiceIconCheckmarkColor = 'transparent'
-    let invoiceButtonText = 'Upload Invoice(s)'
-    let confirmedContainerBackgroundColor = Colors.disabled
-    let invoiceButtonTextColor = 'white'
-    if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
-      invoiceIconBackgroundColor = Colors.green
-      invoiceIconCheckmarkColor = 'white'
-      invoiceButtonText = 'View Invoice(s)'
-      invoiceButtonTextColor = Colors.lightBlue
-    }
-    let receivedBy = ''
     let orderComments = []
     if(order.comments && order.comments.length > 0){
       _.each(order.comments, (comment, idx) => {
@@ -289,7 +251,7 @@ class OrderView extends React.Component {
                   this.props.onNavToOrderContents(order, products, this.props.purveyor)
                 }}
               >
-                <Text style={[styles.sectionHeaderText]}>{'Order Contents'}</Text>
+                <Text style={[styles.sectionHeaderText]}>{'Review Order'}</Text>
               </TouchableHighlight>
             </View>
             <View style={styles.separator} />
@@ -297,48 +259,28 @@ class OrderView extends React.Component {
               <TouchableHighlight
                 underlayColor='transparent'
                 onPress={() => {
-                  this.setState({
-                    showInvoices: !this.state.showInvoices
-                  })
-                  // this.props.onNavToInvoices(order.id)
+                  this.props.onNavToInvoices(order.id)
                 }}
               >
                 <Text style={[styles.sectionHeaderText]}>{'Invoice/Photos'}</Text>
               </TouchableHighlight>
             </View>
             <View style={styles.separator} />
-            {this.getInvoiceView(order)}
-            <View style={styles.sectionHeader}>
-              <TouchableHighlight
-                underlayColor='transparent'
-                onPress={() => {
-                  this.setState({
-                    showOrderDiscussion: !this.state.showOrderDiscussion
-                  })
-                }}
-              >
-                <Text style={[styles.sectionHeaderText]}>{'Discussion'}</Text>
-              </TouchableHighlight>
-            </View>
-            <View style={styles.separator} />
-            {this.state.showOrderDiscussion === true ? (
-              <ScrollView
-                automaticallyAdjustContentInsets={false}
-                keyboardShouldPersistTaps={false}
-              >
-                <View style={styles.commentsInnerContainer}>
-                  <AddMessageForm
-                    placeholder='Comment on this order..'
-                    onSubmit={::this.handleCommentSubmit}
-                    multiline={false}
-                  />
-                  {orderComments}
-                </View>
-              </ScrollView>
-              ) : <View/>
-            }
+            <ScrollView
+              automaticallyAdjustContentInsets={false}
+              keyboardShouldPersistTaps={false}
+            >
+              <View style={styles.commentsInnerContainer}>
+                <AddMessageForm
+                  placeholder='Comment on this order..'
+                  onSubmit={::this.handleCommentSubmit}
+                  multiline={false}
+                />
+                {orderComments}
+              </View>
+            </ScrollView>
           </View>
-        : <Text style={[styles.text, styles.textCentered, {padding: 25}]}>Loading, please wait.</Text> }
+        : <Text style={[styles.guidance, {padding: 25}]}>Loading, please wait.</Text> }
       </View>
     )
   }
@@ -406,39 +348,6 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
     paddingRight: 10,
   },
-  buttonSelectAll: {
-    color: Colors.lightBlue,
-    fontWeight: 'bold',
-  },
-  invoiceButtonText: {
-    alignSelf: 'center',
-    color: 'black',
-    fontFamily: 'OpenSans',
-  },
-  buttonContainerLink: {
-  },
-  buttonContainer: {
-    borderRadius: Sizes.rowBorderRadius,
-    alignSelf: 'center',
-    width: window.width * .9,
-    height: 40,
-    backgroundColor: Colors.gold,
-    justifyContent: 'center',
-  },
-  buttonDisabled: {
-    backgroundColor: Colors.disabled,
-  },
-  buttonText: {
-    alignSelf: 'center',
-    fontSize: 16,
-    paddingBottom: 1,
-    color: 'white',
-    fontWeight: 'bold',
-    fontFamily: 'OpenSans',
-  },
-  buttonTextDisabled: {
-    color: Colors.greyText,
-  },
   separator: {
     height: 0,
     borderBottomColor: Colors.separatorColor,
@@ -457,25 +366,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: Colors.blue,
   },
-  textCentered: {
+  guidance: {
     textAlign: 'center',
-  },
-  row: {
-    flex: 1,
-    borderRadius: Sizes.rowBorderRadius,
-    padding: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    alignItems: 'center',
-  },
-  missing: {
-    textAlign: 'center',
-    fontFamily: 'OpenSans',
-    fontSize: 11,
-    color: Colors.disabled,
-    fontStyle: 'italic',
   },
   updateOrderContainer: {
     alignSelf: 'center',
