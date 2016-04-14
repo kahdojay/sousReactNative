@@ -1,6 +1,7 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
 import _ from 'lodash';
+import Styles from '../utilities/styles';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 
@@ -63,6 +64,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 3,
     marginBottom: 3,
+    backgroundColor: Colors.rowColor,
   },
   purveyorContainer: {
     flex: 5,

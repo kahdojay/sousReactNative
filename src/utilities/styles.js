@@ -1,10 +1,22 @@
-const React = require('react-native');
+import Colors from '../utilities/colors';
 
+const React = require('react-native');
 const NAV_BAR_HEIGHT = 30;
 const STATUS_BAR_HEIGHT = 20;
 const NAV_HEIGHT = NAV_BAR_HEIGHT + STATUS_BAR_HEIGHT;
 
-const NavigationBarStyles = React.StyleSheet.create({
+const Styles = React.StyleSheet.create({
+  row: {
+    flex: 1,
+    flexDirection: 'row',
+    padding: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
+    alignItems: 'center',
+    marginTop: 3,
+    marginBottom: 3,
+    backgroundColor: Colors.rowColor,
+  },
   navBarContainer: {
     height: NAV_HEIGHT,
     backgroundColor: 'white',
@@ -53,5 +65,5 @@ const NavigationBarStyles = React.StyleSheet.create({
 });
 
 export default {
-  NavigationBarStyles
+  Styles
 }

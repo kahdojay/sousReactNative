@@ -15,18 +15,15 @@ class OrderComment extends React.Component {
     super(props)
   }
   render() {
-    const {message, author, createdAt} = this.props
+    const {message} = this.props
     return (
       <View>
         <View style={styles.commentContainer}>
-          <View style={styles.commentHeader}>
-            <Text style={styles.author}>{author || 'Sous Support'}</Text>
-          </View>
-          <View style={styles.commentBody}>
-            <Text>{message}</Text>
+          <View>
+            <Text style={styles.message}>{message.text}</Text>
           </View>
           <View style={styles.commentFooter}>
-            <Text>{messageUtils.formatMessageTimeStamp(message)}</Text>
+            <Text><Text style={styles.author}>{message.author || 'Sous Support'}</Text><Text style={styles.timeStamp}>, {messageUtils.formatMessageTimeStamp(message)}</Text></Text>
           </View>
         </View>
       </View>
@@ -36,16 +33,21 @@ class OrderComment extends React.Component {
 
 const styles = StyleSheet.create({
   commentContainer: {
-    paddingLeft: 40,
-    marginBottom: 15,
-  },
-  commentHeader: {
+    backgroundColor: Colors.rowColor,
+    borderColor: Colors.rowColor,
+    borderWidth: 1,
+    borderRadius: 15,
+    margin: 5,
+    padding: 15,
   },
   author: {
     fontWeight: 'bold',
   },
-  commentBody: {
-
+  message: {
+    fontSize: 16,
+  },
+  timeStamp: {
+    color: Colors.darkGrey,
   },
   separator: {
     height: 0,

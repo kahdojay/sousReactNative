@@ -2,6 +2,7 @@ import React from 'react-native';
 import { Icon, } from 'react-native-icons';
 import Communications from 'react-native-communications';
 import _ from 'lodash';
+import Styles from '../utilities/styles';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import OrderListItem from './orderListItem';
@@ -125,10 +126,10 @@ class OrderView extends React.Component {
 
   handleCommentSubmit(msg) {
     let orderComments = this.state.order.comments || []
-    orderComments.push({
+    orderComments.unshift({
       userId: this.props.userId,
       author: this.props.userName,
-      message: msg,
+      text: msg,
       createdAt: new Date().toISOString()
     })
     this.setState({
@@ -193,9 +194,7 @@ class OrderView extends React.Component {
         orderComments.push(
           <OrderComment
             key={idx}
-            message={comment.message}
-            author={comment.author}
-            createdAt={comment.createdAt}
+            message={comment}
           />
         )
       })
@@ -209,25 +208,63 @@ class OrderView extends React.Component {
               <View style={styles.confirmationDetails}>
                 <Text style={styles.purveyorName}>{this.props.purveyor.name}</Text>
                 <Text style={[styles.confirmedText]}>
-                  Ordered: {order.orderedAt !== null ? moment(order.orderedAt).format('ddd M/D, h:mma') : ''} {orderUser ? `(${orderUser.firstName})` : ''}</Text>
+                  <Text style={{fontStyle: 'italic'}}>Ord.</Text> {order.orderedAt !== null ? moment(order.orderedAt).format('ddd, MMM D, h:mma') : ''} {orderUser ? `- ${orderUser.firstName}` : ''}</Text>
                 {order.confirm.order === true ? (
                     <View>
-                      <Text style={[styles.confirmedText]}>Received: {order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('ddd M/D, h:mma') : ''} {confirmUser ? `(${confirmUser.firstName})` : ''}</Text>
+                      <Text style={[styles.confirmedText]}><Text style={{fontStyle: 'italic'}}>Rec.</Text> {order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('ddd, MMM D, h:mma') : ''} {confirmUser ? `- ${confirmUser.firstName}` : ''}</Text>
                     </View>
                   ) : <View/>
                 }
                 
               </View>
-              <View style={styles.purveyorContactContainer}>
-                <Text style={styles.purveyorContactText}>{this.props.purveyor.orderContact} <Text style={styles.purveyorContactSubText}>(rep)</Text></Text>
-                <View style={styles.contactIconsContainer}>
+            </View>
+            <View style={styles.separator} />
+            <View style={styles.option}>
+              <View style={styles.optionInnerContainer}>
+                <TouchableHighlight
+                  underlayColor='transparent'
+                  onPress={() => {
+                    this.props.onNavToOrderContents(order, products, this.props.purveyor)
+                  }}
+                >
+                  <View>
+                    <Text style={[styles.optionText]}>Review Order</Text>
+                    <Text style={[styles.optionSubText]}>{`${this.getNumberConfirmed().count} / ${this.getNumberConfirmed().total} items`}</Text>
+                  </View>
+                </TouchableHighlight>
+              </View>
+              <View style={styles.iconArrowContainer}>
+                <Icon name='material|chevron-right' size={35} color={Colors.lightBlue} style={styles.iconArrow}/>
+              </View>
+            </View>
+            <View style={styles.option}>
+              <View style={styles.optionInnerContainer}>
+                <TouchableHighlight
+                  underlayColor='transparent'
+                  onPress={() => {
+                    this.props.onNavToInvoices(order.id)
+                  }}
+                >
+                  <Text style={[styles.optionText]}>{'Invoice/Photos'}</Text>
+                </TouchableHighlight>
+              </View>
+              <View style={styles.iconArrowContainer}>
+                <Icon name='material|chevron-right' size={35} color={Colors.lightBlue} style={styles.iconArrow}/>
+              </View>
+            </View>
+            <View style={styles.option}>
+              <View style={styles.optionInnerContainer}>
+                <View style={styles.purveyorDetailContainer}>
+                  <Text style={styles.purveyorContactText}>Contact {this.props.purveyor.orderContact}</Text>
+                </View>
+                <View style={styles.iconContactContainer}>
                   <TouchableHighlight
                     underlayColor='white'
                     onPress={() => {
                       this.handleContactPress('email')
                     }}
                   >
-                    <Icon name='material|email' size={15} color={'white'} style={styles.iconContact}/>
+                    <Icon name='material|email' size={32.5} color={Colors.gold} style={styles.iconContact}/>
                   </TouchableHighlight>
                   <TouchableHighlight
                     underlayColor='white'
@@ -235,7 +272,7 @@ class OrderView extends React.Component {
                       this.handleContactPress('phone')
                     }}
                   >
-                    <Icon name='material|phone' size={15} color={'white'} style={styles.iconContact}/>
+                    <Icon name='material|phone' size={32.5} color={Colors.gold} style={styles.iconContact}/>
                   </TouchableHighlight>
                   <TouchableHighlight
                     underlayColor='white'
@@ -243,35 +280,13 @@ class OrderView extends React.Component {
                       this.handleContactPress('text')
                     }}
                   >
-                    <Icon name='material|smartphone-iphone' size={15} color={'white'} style={styles.iconContact}/>
+                    <Icon name='material|smartphone-iphone' size={32.5} color={Colors.gold} style={styles.iconContact}/>
                   </TouchableHighlight>
                 </View>
               </View>
-            </View>
-            <View style={styles.separator} />
-            <View style={styles.sectionHeader}>
-              <TouchableHighlight
-                underlayColor='transparent'
-                onPress={() => {
-                  this.props.onNavToOrderContents(order, products, this.props.purveyor)
-                }}
-              >
-                <View>
-                  <Text style={[styles.sectionHeaderText]}>Review Order</Text>
-                  <Text style={[styles.sectionHeaderText]}>{`${this.getNumberConfirmed().count} / ${this.getNumberConfirmed().total} items`}</Text>
-                </View>
-              </TouchableHighlight>
-            </View>
-            <View style={styles.separator} />
-            <View style={styles.sectionHeader}>
-              <TouchableHighlight
-                underlayColor='transparent'
-                onPress={() => {
-                  this.props.onNavToInvoices(order.id)
-                }}
-              >
-                <Text style={[styles.sectionHeaderText]}>{'Invoice/Photos'}</Text>
-              </TouchableHighlight>
+              <View style={styles.iconArrowContainer}>
+                <Icon name='material|chevron-right' size={35} color={Colors.lightBlue} style={styles.iconArrow}/>
+              </View>
             </View>
             <View style={styles.separator} />
             <ScrollView
@@ -296,70 +311,79 @@ class OrderView extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: Colors.mainBackgroundColor,
     flex: 1,
   },
   confirmedContainer: {
     flexDirection: 'row',
+    backgroundColor: Colors.lightBlue,
     padding: 5,
   },
   confirmationDetails: {
-    justifyContent: 'center',
     flex: 2,
   },
   purveyorName: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontSize: 40,
+    color: 'white',
   },
   confirmedText: {
-    fontSize: 13,
     fontFamily: 'OpenSans',
+    color: 'white',
+    fontSize: 15,
   },
-  purveyorContactContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
+  sectionPurveyor: {
+  },
+  option: {
+    flexDirection: 'row',
+    padding: 10,
+    margin: 3,
+    borderRadius: 4,
+    backgroundColor: Colors.rowColor,
+  },
+  optionText: {
+    fontSize: 20,
+  },
+  optionSubText: {
+    fontSize: 15,
+    fontStyle: 'italic',
+    color: Colors.darkGrey,
+  },
+  optionInnerContainer: {
+    flex: 13,
+    flexDirection: 'row',
+  },
+  iconArrowContainer: {
     flex: 1,
   },
-  purveyorContactText: {
-    fontSize: 15,
-    marginBottom: 10,    
+  iconArrow: {
+    width: 35,
+    height: 35,
   },
-  purveyorContactSubText: {
-    fontSize: 10,
-  },
-  contactIconsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: 100,
-  },
-  iconContact: {
-    backgroundColor: Colors.gold,
-    borderWidth: .5,
-    borderRadius: 12.5,
-    borderColor: Colors.gold,
-    width: 25,
-    height: 25,
-  },
-  sectionHeader: {
-    backgroundColor: Colors.lightBlue,
+  purveyorDetailContainer: {
+    flex: 2,
     justifyContent: 'center',
   },
-  sectionHeaderText: {
-    color: 'white',
-    alignSelf: 'center',
+  purveyorContactText: {
+    paddingTop: 10,
+    fontSize: 20,
   },
-  sectionSubHeader: {
-    backgroundColor: '#f3f3f3',
+  iconContactContainer: {
+    flex: 5,
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingLeft: 5,
-    paddingRight: 10,
+    padding: 10,
+  },
+  iconContact: {
+    borderWidth: 1,
+    borderRadius: 31,
+    borderColor: Colors.gold,
+    width: 60,
+    height: 60,
   },
   separator: {
     height: 0,
     borderBottomColor: Colors.separatorColor,
-    borderBottomWidth: .5,
+    borderBottomWidth: .75,
   },
   scrollView: {
     flex: 1,
@@ -369,10 +393,6 @@ const styles = StyleSheet.create({
   commentsInnerContainer: {
     backgroundColor: '#f3f3f3',
     paddingTop: 5,
-  },
-  orderText: {
-    fontWeight: 'bold',
-    color: Colors.blue,
   },
   guidance: {
     textAlign: 'center',

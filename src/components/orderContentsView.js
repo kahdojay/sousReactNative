@@ -100,7 +100,7 @@ class OrderContentsView extends React.Component {
     confirmedOrder.order = true
     confirmedOrder.confirmedAt = (new Date()).toISOString()
 
-    let msg = `${this.getNumberSelected()} of ${this.state.products.length} delivered. ${this.state.confirmationMessage || ''}`
+    let msg = `Order received - ${this.getNumberSelected()} of ${this.state.products.length} delivered. ${this.state.confirmationMessage || ''}`
     let orderComments = this.state.order.comments || []
     orderComments.push({
       userId: this.props.userId,

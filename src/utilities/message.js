@@ -112,6 +112,7 @@ function formatMessage(msg, messageLength = null) {
 }
 
 function formatMessageTimeStamp(msg) {
+  console.log('formatMessageTimeStamp msg: ', msg)
   const now = new Date()
   const msgDate = moment(msg.createdAt)
   const withinSameDay = moment(now).clone().subtract(1, 'd').startOf('day').isSame(msgDate.clone().startOf('day'))
