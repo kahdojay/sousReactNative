@@ -110,12 +110,17 @@ class OrderView extends React.Component {
     }
   }
 
-  getNumberSelected() {
+  getNumberConfirmed() {
     let count = 0
+    let total = 0
     this.state.products.forEach(function(product) {
       count += product.cartItem.status === 'RECEIVED' ? 1 : 0
+      total += 1
     })
-    return count
+    return {
+      count: count,
+      total: total
+    }
   }
 
   handleCommentSubmit(msg) {
@@ -251,7 +256,10 @@ class OrderView extends React.Component {
                   this.props.onNavToOrderContents(order, products, this.props.purveyor)
                 }}
               >
-                <Text style={[styles.sectionHeaderText]}>{'Review Order'}</Text>
+                <View>
+                  <Text style={[styles.sectionHeaderText]}>Review Order</Text>
+                  <Text style={[styles.sectionHeaderText]}>{`${this.getNumberConfirmed().count} / ${this.getNumberConfirmed().total} items`}</Text>
+                </View>
               </TouchableHighlight>
             </View>
             <View style={styles.separator} />
