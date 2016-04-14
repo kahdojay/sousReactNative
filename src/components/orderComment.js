@@ -4,14 +4,11 @@ import Sizes from '../utilities/sizes';
 import messageUtils from '../utilities/message';
 
 const {
-  // Dimensions,
   PropTypes,
   StyleSheet,
   Text,
   View,
 } = React;
-
-// const window = Dimensions.get('window');
 
 class OrderComment extends React.Component {
   constructor(props) {

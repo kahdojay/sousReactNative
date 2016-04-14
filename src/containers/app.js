@@ -1317,6 +1317,8 @@ class App extends React.Component {
             order: this.state.order,
             purveyor: this.state.purveyor,
             products: orderProducts,
+            userId: session.userId,
+            userName: session.firstName,
             onConfirmOrderProduct: (updateCartItem) => {
               _.debounce(() => {
                 dispatch(actions.updateCartItem({

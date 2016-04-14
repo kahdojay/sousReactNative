@@ -74,7 +74,7 @@ class OrderContentsView extends React.Component {
   checkAllReceived(products) {
     let allChecked = true
     _.each(products, (productPkg, idx) => {
-      if (productPkg.cartItem.status === 'ORDERED')
+      if (productPkg.cartItem.status !== 'RECEIVED')
         allChecked = false
     })
     return allChecked
@@ -95,20 +95,31 @@ class OrderContentsView extends React.Component {
   }
 
   confirmOrder() {
-    let orderConfirm = Object.assign({}, this.state.order.confirm)
-    orderConfirm.userId = this.state.userId
-    orderConfirm.order = true
-    orderConfirm.confirmedAt = (new Date()).toISOString()
+    let confirmedOrder = Object.assign({}, this.state.order.confirm)
+    confirmedOrder.userId = this.state.userId
+    confirmedOrder.order = true
+    confirmedOrder.confirmedAt = (new Date()).toISOString()
+
+    let msg = `${this.getNumberSelected()} of ${this.state.products.length} delivered. ${this.state.confirmationMessage || ''}`
+    let orderComments = this.state.order.comments || []
+    orderComments.push({
+      userId: this.props.userId,
+      author: this.props.userName,
+      message: msg,
+      createdAt: new Date().toISOString()
+    })
+
     this.setState({
       order: Object.assign({}, this.state.order, {
-        confirm: orderConfirm
+        confirm: confirmedOrder,
+        comments: orderComments,
       })
     }, () => {
       this.props.onUpdateOrder(this.state.order)
       this.props.onSendConfirmationMessage({
         type: 'orderConfirmation',
         purveyor: this.state.purveyor.name,
-        text: `${this.getNumberSelected()} of ${this.state.products.length} delivered. ${this.state.confirmationMessage || ''}`,
+        text: msg,
         orderId: this.state.order.id,
       });
       this.props.onNavToInvoices(this.state.order.id)
