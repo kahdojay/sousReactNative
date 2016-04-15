@@ -44,6 +44,7 @@ class OrderView extends React.Component {
       showConfirm: false,
       confirmationMessage: null,
       showOrderContents: false,
+      showPurveyorContact: false,
     }
   }
 
@@ -218,91 +219,105 @@ class OrderView extends React.Component {
                 
               </View>
             </View>
-            <View style={styles.separator} />
-            <View style={styles.option}>
-              <View style={styles.optionInnerContainer}>
-                <TouchableHighlight
-                  underlayColor='transparent'
-                  onPress={() => {
-                    this.props.onNavToOrderContents(order, products, this.props.purveyor)
-                  }}
-                >
-                  <View>
-                    <Text style={[styles.optionText]}>Review Order</Text>
-                    <Text style={[styles.optionSubText]}>{`${this.getNumberConfirmed().count} / ${this.getNumberConfirmed().total} items`}</Text>
+            <View style={styles.optionsContainer}>
+              <View style={styles.separator} />
+              <TouchableHighlight
+                underlayColor='transparent'
+                onPress={() => {
+                  this.props.onNavToOrderContents()
+                }}
+              >
+                <View style={styles.option}>
+                  <View style={styles.optionInnerContainer}>
+                      <View>
+                        <Text style={[styles.optionText]}>Review Order</Text>
+                        <Text style={[styles.optionSubText]}>{`${this.getNumberConfirmed().count} / ${this.getNumberConfirmed().total} items`}</Text>
+                      </View>
                   </View>
-                </TouchableHighlight>
-              </View>
-              <View style={styles.iconArrowContainer}>
-                <Icon name='material|chevron-right' size={35} color={Colors.lightBlue} style={styles.iconArrow}/>
-              </View>
-            </View>
-            <View style={styles.option}>
-              <View style={styles.optionInnerContainer}>
-                <TouchableHighlight
-                  underlayColor='transparent'
-                  onPress={() => {
-                    this.props.onNavToInvoices(order.id)
-                  }}
-                >
-                  <Text style={[styles.optionText]}>{'Invoice/Photos'}</Text>
-                </TouchableHighlight>
-              </View>
-              <View style={styles.iconArrowContainer}>
-                <Icon name='material|chevron-right' size={35} color={Colors.lightBlue} style={styles.iconArrow}/>
-              </View>
-            </View>
-            <View style={styles.option}>
-              <View style={styles.optionInnerContainer}>
-                <View style={styles.purveyorDetailContainer}>
-                  <Text style={styles.purveyorContactText}>Contact {this.props.purveyor.orderContact}</Text>
+                  <View style={styles.iconArrowContainer}>
+                    <Icon name='material|chevron-right' size={35} color={Colors.lightBlue} style={styles.iconArrow}/>
+                  </View>
                 </View>
-                <View style={styles.iconContactContainer}>
+              </TouchableHighlight>
+              <TouchableHighlight
+                underlayColor='transparent'
+                onPress={() => {
+                  this.props.onNavToInvoices(order.id)
+                }}
+              >
+                <View style={styles.option}>
+                  <View style={styles.optionInnerContainer}>
+                      <Text style={[styles.optionText]}>{'Invoice/Photos'}</Text>
+                  </View>
+                  <View style={styles.iconArrowContainer}>
+                    <Icon name='material|chevron-right' size={35} color={Colors.lightBlue} style={styles.iconArrow}/>
+                  </View>
+                </View>
+              </TouchableHighlight>
+              <View style={styles.option}>
+                <View style={styles.optionInnerContainer}>
                   <TouchableHighlight
-                    underlayColor='white'
                     onPress={() => {
-                      this.handleContactPress('email')
+                      this.setState({
+                        showPurveyorContact: !this.state.showPurveyorContact,
+                      })
                     }}
-                  >
-                    <Icon name='material|email' size={32.5} color={Colors.gold} style={styles.iconContact}/>
+                    underlayColor='transparent'>
+                    <View style={styles.purveyorDetailContainer}>
+                      <Text style={styles.purveyorContactText}>Contact {this.props.purveyor.orderContact}</Text>
+                      <Icon name='material|caret-down' size={35} color={Colors.lightBlue} style={styles.iconCaret} />
+                    </View>
                   </TouchableHighlight>
-                  <TouchableHighlight
-                    underlayColor='white'
-                    onPress={() => {
-                      this.handleContactPress('phone')
-                    }}
-                  >
-                    <Icon name='material|phone' size={32.5} color={Colors.gold} style={styles.iconContact}/>
-                  </TouchableHighlight>
-                  <TouchableHighlight
-                    underlayColor='white'
-                    onPress={() => {
-                      this.handleContactPress('text')
-                    }}
-                  >
-                    <Icon name='material|smartphone-iphone' size={32.5} color={Colors.gold} style={styles.iconContact}/>
-                  </TouchableHighlight>
+                  { this.state.showPurveyorContact ? 
+                    <View>
+                      <View style={styles.separator} />
+                      <View style={styles.iconContactContainer}>
+                        <TouchableHighlight
+                          underlayColor='white'
+                          onPress={() => {
+                            this.handleContactPress('email')
+                          }}
+                        >
+                          <Icon name='material|email' size={32.5} color={Colors.gold} style={styles.iconContact}/>
+                        </TouchableHighlight>
+                        <TouchableHighlight
+                          underlayColor='white'
+                          onPress={() => {
+                            this.handleContactPress('phone')
+                          }}
+                        >
+                          <Icon name='material|phone' size={32.5} color={Colors.gold} style={styles.iconContact}/>
+                        </TouchableHighlight>
+                        <TouchableHighlight
+                          underlayColor='white'
+                          onPress={() => {
+                            this.handleContactPress('text')
+                          }}
+                        >
+                          <Icon name='material|smartphone-iphone' size={32.5} color={Colors.gold} style={styles.iconContact}/>
+                        </TouchableHighlight>
+                      </View>
+                    </View>
+                    : <View/>
+                  }
                 </View>
               </View>
-              <View style={styles.iconArrowContainer}>
-                <Icon name='material|chevron-right' size={35} color={Colors.lightBlue} style={styles.iconArrow}/>
-              </View>
             </View>
-            <View style={styles.separator} />
-            <AddMessageForm
-              placeholder='Comment on this order..'
-              onSubmit={::this.handleCommentSubmit}
-              multiline={false}
-            />
-            <View style={styles.separator} />
-            <ScrollView
-              automaticallyAdjustContentInsets={false}
-              keyboardShouldPersistTaps={false}
-            >
-              <View style={styles.commentsInnerContainer}>
-                {orderComments}
-              </View>
-            </ScrollView>
+            <View style={styles.commentsOuterContainer}>
+              <AddMessageForm
+                placeholder='Comment on this order..'
+                onSubmit={::this.handleCommentSubmit}
+                multiline={false}
+              />
+              <ScrollView
+                automaticallyAdjustContentInsets={false}
+                keyboardShouldPersistTaps={false}
+              >
+                <View style={styles.commentsInnerContainer}>
+                  {orderComments}
+                </View>
+              </ScrollView>
+            </View>
           </View>
         : <Text style={[styles.guidance, {padding: 25}]}>Loading, please wait.</Text> }
       </View>
@@ -324,7 +339,7 @@ const styles = StyleSheet.create({
     flex: 2,
   },
   purveyorName: {
-    fontSize: 40,
+    fontSize: 25,
     color: 'white',
   },
   confirmedText: {
@@ -332,7 +347,8 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 15,
   },
-  sectionPurveyor: {
+  optionsContainer: {
+    marginTop: 15,
   },
   option: {
     flexDirection: 'row',
@@ -351,7 +367,7 @@ const styles = StyleSheet.create({
   },
   optionInnerContainer: {
     flex: 13,
-    flexDirection: 'row',
+    alignItems: 'stretch',
   },
   iconArrowContainer: {
     flex: 1,
@@ -362,16 +378,21 @@ const styles = StyleSheet.create({
   },
   purveyorDetailContainer: {
     flex: 2,
-    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   purveyorContactText: {
-    paddingTop: 10,
     fontSize: 20,
+  },
+  iconCaret: {
+    width: 35,
+    height: 35,
   },
   iconContactContainer: {
     flex: 5,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     padding: 10,
   },
   iconContact: {
@@ -390,6 +411,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
     paddingTop: 5,
+  },
+  commentsOuterContainer: {
+    flex: 1,
+    marginTop: 15,
+    padding: 15,
   },
   commentsInnerContainer: {
     backgroundColor: '#f3f3f3',

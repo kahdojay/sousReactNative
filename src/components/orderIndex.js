@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   },
   orderDetailsText: {
     color: 'white',
-    fontSize: 17.5,
+    fontSize: 25,
   },
   iconContainer: {
     flex: 1,

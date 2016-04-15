@@ -498,7 +498,7 @@ class App extends React.Component {
   }
 
   onProductEdit(route, nav, product) {
-    console.log(route, nav, product)
+    // console.log(route, nav, product)
     let productCategory = null
     Object.keys(this.state.currentTeamInfo.categories).forEach((categoryId) => {
       const category = this.state.currentTeamInfo.categories[categoryId]
@@ -1873,6 +1873,11 @@ class App extends React.Component {
               <Components.NavBackButton
                 pop={true}
                 iconFont={'material|chevron-left'}
+              />
+            ),
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'Order'}
               />
             ),
           })
