@@ -68,9 +68,6 @@ class FeedListItem extends React.Component {
     }
 
     let icon = AvatarUtils.getAvatar(user, 40)
-    if (icon === null) {
-      icon = <Icon name='material|account-circle' size={50} color='#aaa' style={styles.avatar}/>
-    }
     let messageString = messageUtils.formatMessage(msg);
     let superUserIndicator = <View/>;
     // if(this.props.teamsUsers.hasOwnProperty(msg.userId) === true && this.props.teamsUsers[msg.userId].superUser === true){
@@ -140,18 +137,6 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     color: Colors.lightGrey,
     marginBottom: 1,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignSelf: 'flex-start',
-    backgroundColor: '#eee',
-  },
-  avatarImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
   },
   separator: {
     height: 5,
