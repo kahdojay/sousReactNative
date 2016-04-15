@@ -289,16 +289,17 @@ class OrderView extends React.Component {
               </View>
             </View>
             <View style={styles.separator} />
+            <AddMessageForm
+              placeholder='Comment on this order..'
+              onSubmit={::this.handleCommentSubmit}
+              multiline={false}
+            />
+            <View style={styles.separator} />
             <ScrollView
               automaticallyAdjustContentInsets={false}
               keyboardShouldPersistTaps={false}
             >
               <View style={styles.commentsInnerContainer}>
-                <AddMessageForm
-                  placeholder='Comment on this order..'
-                  onSubmit={::this.handleCommentSubmit}
-                  multiline={false}
-                />
                 {orderComments}
               </View>
             </ScrollView>
