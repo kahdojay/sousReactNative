@@ -234,7 +234,7 @@ class OrderView extends React.Component {
                       </View>
                   </View>
                   <View style={styles.iconArrowContainer}>
-                    <Icon name='material|chevron-right' size={35} color={Colors.lightBlue} style={styles.iconArrow}/>
+                    <Icon name='material|chevron-right' size={27.5} color={Colors.lightBlue} style={styles.iconArrow}/>
                   </View>
                 </View>
               </TouchableHighlight>
@@ -249,7 +249,7 @@ class OrderView extends React.Component {
                       <Text style={[styles.optionText]}>{'Invoice/Photos'}</Text>
                   </View>
                   <View style={styles.iconArrowContainer}>
-                    <Icon name='material|chevron-right' size={35} color={Colors.lightBlue} style={styles.iconArrow}/>
+                    <Icon name='material|chevron-right' size={27.5} color={Colors.lightBlue} style={styles.iconArrow}/>
                   </View>
                 </View>
               </TouchableHighlight>
@@ -264,7 +264,7 @@ class OrderView extends React.Component {
                     underlayColor='transparent'>
                     <View style={styles.purveyorDetailContainer}>
                       <Text style={styles.purveyorContactText}>Contact {this.props.purveyor.orderContact}</Text>
-                      <Icon name='material|caret-down' size={35} color={Colors.lightBlue} style={styles.iconCaret} />
+                      <Icon name='material|caret-down' size={27.5} color={Colors.lightBlue} style={styles.iconCaret} />
                     </View>
                   </TouchableHighlight>
                   { this.state.showPurveyorContact ? 
@@ -351,8 +351,12 @@ const styles = StyleSheet.create({
   },
   option: {
     flexDirection: 'row',
-    padding: 10,
+    padding: 5,
+    paddingLeft: 40,
+    paddingRight: 40,
     margin: 3,
+    marginLeft: 20,
+    marginRight: 20,
     borderRadius: 4,
     backgroundColor: Colors.rowColor,
   },
@@ -372,8 +376,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   iconArrow: {
-    width: 35,
-    height: 35,
+    width: 20,
+    height: 20,
   },
   purveyorDetailContainer: {
     flex: 2,
