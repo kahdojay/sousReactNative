@@ -29,6 +29,7 @@ class OrderContentsView extends React.Component {
       selectAll: this.checkAllReceived(this.props.products),
       showConfirm: false,
       confirmationMessage: null,
+      userId: null
     }
   }
 
@@ -47,6 +48,7 @@ class OrderContentsView extends React.Component {
       products: this.props.products,
       purveyor: this.props.purveyor,
       loaded: true,
+      userId: this.props.userId,
     }, () => {
       if(this.checkMissingData() === true){
         this.props.onGetOrderDetails(this.state.orderId)
@@ -102,10 +104,10 @@ class OrderContentsView extends React.Component {
 
     let msg = `Order received - ${this.getNumberSelected()} of ${this.state.products.length} delivered. ${this.state.confirmationMessage || ''}`
     let orderComments = this.state.order.comments || []
-    orderComments.push({
+    orderComments.unshift({
       userId: this.props.userId,
       author: this.props.userName,
-      message: msg,
+      text: msg,
       createdAt: new Date().toISOString()
     })
 
@@ -116,6 +118,7 @@ class OrderContentsView extends React.Component {
       })
     }, () => {
       this.props.onUpdateOrder(this.state.order)
+
       this.props.onSendConfirmationMessage({
         type: 'orderConfirmation',
         purveyor: this.state.purveyor.name,

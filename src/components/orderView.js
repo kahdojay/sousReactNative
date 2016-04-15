@@ -200,7 +200,6 @@ class OrderView extends React.Component {
         )
       })
     }
-
     return (
       <View style={styles.container}>
         { this.state.loaded === true ?
