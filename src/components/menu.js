@@ -54,6 +54,7 @@ module.exports = class Menu extends React.Component {
                 {avatar}
               </View>
               <Text style={styles.name}>{session.firstName} {session.lastName}</Text>
+              <Text style={styles.editProfile}>Edit Profile</Text>
             </View>
           </TouchableHighlight>
         </View>
@@ -170,9 +171,10 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   editProfile: {
+    fontSize: 12,
     fontFamily: 'OpenSans',
     textAlign: 'center',
-    color: 'white',
+    color: Colors.lightBlue,
   },
   menuItem: {
   },
@@ -195,7 +197,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
     justifyContent: 'center',
-    // alignItems: 'center',
     paddingTop: 15,
     paddingBottom: 15,
     paddingLeft: 10,
