@@ -288,7 +288,7 @@ class OrderView extends React.Component {
                         this.handleContactPress('email')
                       }}
                     >
-                      <Icon name='material|email' size={32.5} color={Colors.gold} style={styles.iconContact}/>
+                      <Icon name='material|email' size={27} color={Colors.gold} style={styles.iconContact}/>
                     </TouchableHighlight>
                     <TouchableHighlight
                       underlayColor='white'
@@ -296,7 +296,7 @@ class OrderView extends React.Component {
                         this.handleContactPress('phone')
                       }}
                     >
-                      <Icon name='material|phone' size={32.5} color={Colors.gold} style={styles.iconContact}/>
+                      <Icon name='material|phone' size={27} color={Colors.gold} style={styles.iconContact}/>
                     </TouchableHighlight>
                     <TouchableHighlight
                       underlayColor='white'
@@ -304,7 +304,7 @@ class OrderView extends React.Component {
                         this.handleContactPress('text')
                       }}
                     >
-                      <Icon name='material|smartphone-iphone' size={32.5} color={Colors.gold} style={styles.iconContact}/>
+                      <Icon name='material|smartphone-iphone' size={27} color={Colors.gold} style={styles.iconContact}/>
                     </TouchableHighlight>
                   </View>
                 </View>
@@ -412,10 +412,10 @@ const styles = StyleSheet.create({
   },
   iconContact: {
     borderWidth: 2,
-    borderRadius: 31,
+    borderRadius: 26,
     borderColor: Colors.gold,
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
   },
   separator: {
     height: 0,

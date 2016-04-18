@@ -27,20 +27,18 @@ function getAvatar(user, size = 40) {
       />
     )
   }else{
-    return <Icon name='material|account-circle' size={50} color='#aaa' style={styles.avatar}/>
+    avatar =(
+      <Icon name='material|account-circle' size={size} color='#aaa' style={{
+        width: size,
+        height: size,
+        borderRadius: (size/2),
+      }}/>
+    )
   }
-
   return avatar;
 }
 
 const styles = StyleSheet.create({
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignSelf: 'flex-start',
-    backgroundColor: '#eee',
-  },
 })
 
 export default {

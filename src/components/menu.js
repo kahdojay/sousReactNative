@@ -30,7 +30,7 @@ module.exports = class Menu extends React.Component {
       return <View />;
     }
 
-    let avatar = AvatarUtils.getAvatar(session, 50)
+    let avatar = AvatarUtils.getAvatar(session, 60)
     if (avatar === null) {
       avatar = <Icon name='material|account-circle' size={60} color={Colors.lightGrey} style={styles.avatar} />
     }
@@ -50,7 +50,7 @@ module.exports = class Menu extends React.Component {
             }}
           >
             <View style={{alignItems: 'center'}}>
-              <View style={[styles.avatar, {width: 54, height: 54, borderRadius: 27, padding: 1}]}>
+              <View style={[styles.avatar, {width: 54, height: 54, borderRadius: 27}]}>
                 {avatar}
               </View>
               <Text style={styles.name}>{session.firstName} {session.lastName}</Text>
@@ -160,8 +160,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    borderWidth: 1,
-    borderColor: Colors.lightGrey,
   },
   name: {
     flex: 1,
