@@ -261,53 +261,55 @@ class OrderView extends React.Component {
                   </View>
                 </View>
               </TouchableHighlight>
-              <View style={styles.option}>
-                <View style={styles.optionInnerContainer}>
-                  <TouchableHighlight
-                    onPress={() => {
-                      this.setState({
-                        showPurveyorContact: !this.state.showPurveyorContact,
-                      })
-                    }}
-                    underlayColor='transparent'>
-                    <View style={styles.purveyorDetailContainer}>
-                      <Text style={styles.purveyorContactText}>Contact {this.props.purveyor.orderContact}</Text>
-                      <Icon name='material|caret-down' size={27.5} color={Colors.lightBlue} style={styles.iconCaret} />
-                    </View>
-                  </TouchableHighlight>
-                  { this.state.showPurveyorContact ? 
-                    <View>
-                      <View style={styles.iconContactContainer}>
-                        <TouchableHighlight
-                          underlayColor='white'
-                          onPress={() => {
-                            this.handleContactPress('email')
-                          }}
-                        >
-                          <Icon name='material|email' size={32.5} color={Colors.gold} style={styles.iconContact}/>
-                        </TouchableHighlight>
-                        <TouchableHighlight
-                          underlayColor='white'
-                          onPress={() => {
-                            this.handleContactPress('phone')
-                          }}
-                        >
-                          <Icon name='material|phone' size={32.5} color={Colors.gold} style={styles.iconContact}/>
-                        </TouchableHighlight>
-                        <TouchableHighlight
-                          underlayColor='white'
-                          onPress={() => {
-                            this.handleContactPress('text')
-                          }}
-                        >
-                          <Icon name='material|smartphone-iphone' size={32.5} color={Colors.gold} style={styles.iconContact}/>
-                        </TouchableHighlight>
-                      </View>
-                    </View>
-                    : <View/>
-                  }
+              <TouchableHighlight
+                onPress={() => {
+                  this.setState({
+                    showPurveyorContact: !this.state.showPurveyorContact,
+                  })
+                }}
+                underlayColor='transparent'
+              >
+                <View style={styles.option}>
+                  <View style={styles.optionInnerContainer}>
+                    <Text style={styles.optionText}>Contact Rep</Text>
+                  </View>
+                  <View style={styles.iconArrowContainer}>
+                    <Icon name='material|caret-down' size={27.5} color={Colors.lightBlue} style={styles.iconArrow} />
+                  </View>
                 </View>
-              </View>
+              </TouchableHighlight>
+              { this.state.showPurveyorContact ? 
+                <View style={styles.purveyorContactContainer}>
+                  <Text style={styles.purveyorRepName}>{this.props.purveyor.orderContact || 'Rep'}</Text>
+                  <View style={styles.iconContactContainer}>
+                    <TouchableHighlight
+                      underlayColor='white'
+                      onPress={() => {
+                        this.handleContactPress('email')
+                      }}
+                    >
+                      <Icon name='material|email' size={32.5} color={Colors.gold} style={styles.iconContact}/>
+                    </TouchableHighlight>
+                    <TouchableHighlight
+                      underlayColor='white'
+                      onPress={() => {
+                        this.handleContactPress('phone')
+                      }}
+                    >
+                      <Icon name='material|phone' size={32.5} color={Colors.gold} style={styles.iconContact}/>
+                    </TouchableHighlight>
+                    <TouchableHighlight
+                      underlayColor='white'
+                      onPress={() => {
+                        this.handleContactPress('text')
+                      }}
+                    >
+                      <Icon name='material|smartphone-iphone' size={32.5} color={Colors.gold} style={styles.iconContact}/>
+                    </TouchableHighlight>
+                  </View>
+                </View>
+                : <View/>
+              }
             </View>
             <View style={styles.commentsOuterContainer}>
               <View style={styles.separator}/>
@@ -365,11 +367,11 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingLeft: 40,
     paddingRight: 40,
-    margin: 3,
+    marginTop: 5,
     marginLeft: 20,
     marginRight: 20,
     borderRadius: 4,
-    backgroundColor: Colors.rowColor,
+    backgroundColor: 'white',
   },
   optionText: {
     fontSize: 20,
@@ -390,27 +392,26 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
-  purveyorDetailContainer: {
-    flex: 2,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  purveyorContactContainer: {
+    borderRadius: 4,
+    marginLeft: 20,
+    marginRight: 20,
+    backgroundColor: 'white',
   },
-  purveyorContactText: {
-    fontSize: 20,
-  },
-  iconCaret: {
-    width: 35,
-    height: 35,
+  purveyorRepName: {
+    alignSelf: 'center',
+    fontSize: 18,
   },
   iconContactContainer: {
-    flex: 5,
     flexDirection: 'row',
+    alignSelf: 'center',
     justifyContent: 'space-around',
+    width: window.width * .75,
+    backgroundColor: 'white',
     padding: 10,
   },
   iconContact: {
-    borderWidth: 1,
+    borderWidth: 2,
     borderRadius: 31,
     borderColor: Colors.gold,
     width: 60,
