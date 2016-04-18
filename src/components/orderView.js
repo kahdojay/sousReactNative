@@ -196,6 +196,7 @@ class OrderView extends React.Component {
           <OrderComment
             key={idx}
             message={comment}
+            imgUrl={this.props.userImgUrl}
           />
         )
       })
@@ -219,7 +220,6 @@ class OrderView extends React.Component {
               </View>
             </View>
             <View style={styles.optionsContainer}>
-              <View style={styles.separator} />
               <TouchableHighlight
                 underlayColor='transparent'
                 onPress={() => {
@@ -269,7 +269,6 @@ class OrderView extends React.Component {
                   </TouchableHighlight>
                   { this.state.showPurveyorContact ? 
                     <View>
-                      <View style={styles.separator} />
                       <View style={styles.iconContactContainer}>
                         <TouchableHighlight
                           underlayColor='white'
@@ -303,11 +302,13 @@ class OrderView extends React.Component {
               </View>
             </View>
             <View style={styles.commentsOuterContainer}>
-              <AddMessageForm
-                placeholder='Comment on this order..'
-                onSubmit={::this.handleCommentSubmit}
-                multiline={false}
-              />
+              <View style={styles.inputContainer}>
+                <AddMessageForm
+                  placeholder='Comment on this order..'
+                  onSubmit={::this.handleCommentSubmit}
+                  multiline={false}
+                />
+              </View>
               <ScrollView
                 automaticallyAdjustContentInsets={false}
                 keyboardShouldPersistTaps={false}
