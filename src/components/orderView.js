@@ -10,7 +10,7 @@ import OrderContentsView from './orderContentsView';
 import OrderInvoices from './orderInvoices';
 import OrderInvoiceUpload from './orderInvoiceUpload';
 import OrderComment from './orderComment';
-import AddMessageForm from './addMessageForm';
+import AddCommentForm from './addMessageForm';
 import moment from 'moment';
 import GenericModal from './modal/genericModal';
 import Loading from './loading';
@@ -302,13 +302,15 @@ class OrderView extends React.Component {
               </View>
             </View>
             <View style={styles.commentsOuterContainer}>
+              <View style={styles.separator}/>
               <View style={styles.inputContainer}>
-                <AddMessageForm
+                <AddCommentForm
                   placeholder='Comment on this order..'
                   onSubmit={::this.handleCommentSubmit}
                   multiline={false}
                 />
               </View>
+              <View style={styles.separator}/>
               <ScrollView
                 automaticallyAdjustContentInsets={false}
                 keyboardShouldPersistTaps={false}

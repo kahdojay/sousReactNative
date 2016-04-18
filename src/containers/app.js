@@ -1263,6 +1263,7 @@ class App extends React.Component {
           props: {
             team: this.state.currentTeamInfo,
             userId: session.userId,
+            userImgUrl: session.imageUrl,
             userName: session.firstName,
             orderId: orderId,
             orderFetching: orders.isFetching,
