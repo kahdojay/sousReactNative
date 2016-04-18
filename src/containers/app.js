@@ -1397,7 +1397,7 @@ class App extends React.Component {
               dispatch(actions.updateOrderInvoices(this.state.order.id, {
                 invoiceImages: invoiceImages
               }))
-              nav.replace({
+              nav.replacePreviousAndPop({
                 name: 'OrderInvoices'
               })
             }
