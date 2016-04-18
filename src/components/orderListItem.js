@@ -140,10 +140,12 @@ class OrderListItem extends React.Component {
             style={{flex: 1.25}}
           >
             <View style={styles.quantityContainer}>
-              <View style={styles.caretContainer}>
-                <Icon name='material|caret-up' size={13} color='black' style={styles.iconCaret} />
-                <Icon name='material|caret-down' size={13} color='black' style={styles.iconCaret} />
-              </View>
+              {this.props.orderConfirm === false ? 
+                <View style={styles.caretContainer}>
+                  <Icon name='material|caret-up' size={13} color='black' style={styles.iconCaret} />
+                  <Icon name='material|caret-down' size={13} color='black' style={styles.iconCaret} />
+                </View>
+              : <View style={styles.caretContainer}/>}
               <Text style={styles.quantity}>{cartItem.quantityReceived || cartItem.quantity}x</Text>
             </View>
           </TouchableWrapper>
@@ -256,7 +258,7 @@ const styles = StyleSheet.create({
   separator: {
     height: 0,
     borderBottomColor: Colors.separatorColor,
-    borderBottomWidth: .5,
+    borderBottomWidth: 1,
   },
 });
 

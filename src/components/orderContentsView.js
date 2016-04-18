@@ -132,13 +132,6 @@ class OrderContentsView extends React.Component {
   render() {
     let { products, order, purveyor, } = this.props    
     let productsList = []
-    let buttonDisabledStyle = []
-    let buttonTextDisabledStyle = []
-
-    if(order.confirm.order === true){
-      buttonDisabledStyle = styles.buttonDisabled
-      buttonTextDisabledStyle = styles.buttonTextDisabled
-    }
 
     if(this.state.loaded === true){
       let missingProducts = []
@@ -242,7 +235,6 @@ class OrderContentsView extends React.Component {
 
     return (
       <View style={styles.orderContentsContainer}>
-        <View>
           <View style={styles.sectionSubHeader}>
             <Text># Rcvd</Text>
             { order.confirm.order === false ? 
@@ -254,55 +246,47 @@ class OrderContentsView extends React.Component {
               </TouchableHighlight>
               : <Text>Delivered</Text> }
           </View>
-          <ScrollView
-            automaticallyAdjustContentInsets={false}
-            keyboardShouldPersistTaps={false}
-            style={styles.scrollView}
-          >
-            {productsList}
-            { order.confirm.order === false ?
-              <View>
-                <View style={styles.separator} />
-                <TouchableHighlight
-                  onPress={() => {
-                    if(order.confirm.order === false){
-                      this.setState({
-                        showConfirm: true
-                      })
-                    }
-                  }}
-                  underlayColor='transparent'
-                  style={styles.buttonContainerLink}
-                >
-                  <View style={[styles.buttonContainer, buttonDisabledStyle]}>
-                    <Text style={[styles.buttonText, buttonTextDisabledStyle]}>Confirm Delivery</Text>
-                  </View>
-                </TouchableHighlight>
-              </View>
-            : null }
-          </ScrollView>
+          <View style={styles.scrollViewContainer}>
+            <ScrollView
+              automaticallyAdjustContentInsets={false}
+              keyboardShouldPersistTaps={false}
+              style={styles.scrollView}
+            >
+              {productsList}
+            </ScrollView>
+          </View>
           {confirmModal}
-        </View>
+          <View style={styles.separator} />
+          { order.confirm.order === false ?
+              <TouchableHighlight
+                onPress={() => {
+                  if(order.confirm.order === false){
+                    this.setState({
+                      showConfirm: true
+                    })
+                  }
+                }}
+                underlayColor='transparent'
+                style={styles.buttonConfirmContainer}
+              >
+                  <Text style={styles.buttonText}>Confirm Delivery</Text>
+              </TouchableHighlight>
+          : null }
       </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  iconConfirm: {
-    width: 50,
-    height: 50,
-    alignSelf: 'center',
-    marginBottom: 10,
-  },
   orderContentsContainer: {
-    // backgroundColor: 'blue'
+    flex: 1,
   },
   sectionSubHeader: {
-    backgroundColor: '#f3f3f3',
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    backgroundColor: '#f3f3f3',
     paddingLeft: 5,
     paddingRight: 10,
   },
@@ -310,23 +294,15 @@ const styles = StyleSheet.create({
     color: Colors.lightBlue,
     fontWeight: 'bold',
   },
-  invoiceButtonText: {
-    alignSelf: 'center',
-    color: 'black',
-    fontFamily: 'OpenSans',
+  scrollViewContainer: {
+    flex: 16,
   },
-  buttonContainerLink: {
-  },
-  buttonContainer: {
-    borderRadius: Sizes.rowBorderRadius,
-    alignSelf: 'center',
-    width: window.width * .9,
-    height: 40,
-    backgroundColor: Colors.gold,
+  buttonConfirmContainer: {
+    flex: 2,
     justifyContent: 'center',
-  },
-  buttonDisabled: {
-    backgroundColor: Colors.disabled,
+    borderRadius: Sizes.rowBorderRadius,
+    backgroundColor: Colors.gold,
+    alignSelf: 'stretch',
   },
   buttonText: {
     alignSelf: 'center',
