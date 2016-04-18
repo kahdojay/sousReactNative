@@ -167,12 +167,24 @@ class OrderView extends React.Component {
         </View>
       )
     }
-
     let orderUser = null
     let confirmUser = null
     let confirmUserName = ''
     let confirmTime = ''
     let senderName = null
+    let numberOfInvoices = order.invoices ? order.invoices.length : 0
+    let invoiceButtonText = 'Upload Invoice / Photo'
+    switch (numberOfInvoices) {
+      case 0: 
+        invoiceButtonText = 'Upload Invoice / Photo'
+        break
+      case 1:
+        invoiceButtonText = '1 Invoice / Photo'
+        break
+      default:
+        invoiceButtonText = `${numberOfInvoices} Invoices / Photos`
+        break
+    }
 
     if(order.hasOwnProperty('userId')){
       orderUser = teamsUsers[order.userId]
@@ -242,7 +254,7 @@ class OrderView extends React.Component {
               >
                 <View style={styles.option}>
                   <View style={styles.optionInnerContainer}>
-                      <Text style={[styles.optionText]}>{'Invoice/Photos'}</Text>
+                      <Text style={[styles.optionText]}>{invoiceButtonText}</Text>
                   </View>
                   <View style={styles.iconArrowContainer}>
                     <Icon name='material|chevron-right' size={27.5} color={Colors.lightBlue} style={styles.iconArrow}/>
