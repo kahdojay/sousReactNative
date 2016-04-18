@@ -1381,7 +1381,7 @@ class App extends React.Component {
                 order: order,
                 purveyor: purveyor,
               }, () => {
-                nav.replace({
+                nav.push({
                   name: 'OrderInvoiceUpload'
                 })
               })
@@ -1923,10 +1923,6 @@ class App extends React.Component {
           })
           break;
         case 'OrderInvoiceUpload':
-          let titleOrderInvoiceUpload = 'Processing'
-          if(this.state.purveyor !== null){
-            titleOrderInvoiceUpload = this.state.purveyor.name.substr(0,12) + (this.state.purveyor.name.length > 12 ? '...' : '')
-          }
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
@@ -1938,7 +1934,7 @@ class App extends React.Component {
             ),
             customTitle: (
               <TextComponents.NavBarTitle
-                content={titleOrderInvoiceUpload}
+                content={'Upload Invoice/Photo'}
               />
             ),
           })
