@@ -258,6 +258,7 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     paddingRight: 15,
     alignItems: 'center',
+    backgroundColor: 'white',
   },
   orderDetails: {
     flex: 1,

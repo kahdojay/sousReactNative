@@ -237,8 +237,7 @@ class OrderView extends React.Component {
                 <View style={styles.option}>
                   <View style={styles.optionInnerContainer}>
                       <View>
-                        <Text style={[styles.optionText]}>Review Order</Text>
-                        <Text style={[styles.optionSubText]}>{`${this.getNumberConfirmed().count} / ${this.getNumberConfirmed().total} items`}</Text>
+                        <Text style={[styles.optionText]}>Review Order <Text style={[styles.optionSubText]}>{`(${this.getNumberConfirmed().count} / ${this.getNumberConfirmed().total} items)`}</Text></Text>
                       </View>
                   </View>
                   <View style={styles.iconArrowContainer}>
@@ -280,6 +279,7 @@ class OrderView extends React.Component {
               </TouchableHighlight>
               { this.state.showPurveyorContact ? 
                 <View style={styles.purveyorContactContainer}>
+                  <View style={styles.separator}/>
                   <Text style={styles.purveyorRepName}>{this.props.purveyor.orderContact || 'Rep'}</Text>
                   <View style={styles.iconContactContainer}>
                     <TouchableHighlight
@@ -312,7 +312,6 @@ class OrderView extends React.Component {
               }
             </View>
             <View style={styles.commentsOuterContainer}>
-              <View style={styles.separator}/>
               <View style={styles.inputContainer}>
                 <AddCommentForm
                   placeholder='Comment on this order..'
@@ -320,7 +319,6 @@ class OrderView extends React.Component {
                   multiline={false}
                 />
               </View>
-              <View style={styles.separator}/>
               <ScrollView
                 automaticallyAdjustContentInsets={false}
                 keyboardShouldPersistTaps={false}
@@ -360,13 +358,13 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   optionsContainer: {
-    marginTop: 15,
+    marginTop: 10,
   },
   option: {
     flexDirection: 'row',
     padding: 5,
-    paddingLeft: 40,
-    paddingRight: 40,
+    paddingLeft: 30,
+    paddingRight: 30,
     marginTop: 5,
     marginLeft: 20,
     marginRight: 20,
@@ -374,12 +372,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   optionText: {
-    fontSize: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   optionSubText: {
-    fontSize: 15,
+    fontSize: 12,
     fontStyle: 'italic',
     color: Colors.darkGrey,
+    fontWeight: 'normal',
   },
   optionInnerContainer: {
     flex: 13,
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   },
   commentsOuterContainer: {
     flex: 1,
-    marginTop: 15,
+    marginTop: 10,
     padding: 15,
   },
   commentsInnerContainer: {

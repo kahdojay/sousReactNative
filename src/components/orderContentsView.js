@@ -283,6 +283,7 @@ class OrderContentsView extends React.Component {
 const styles = StyleSheet.create({
   orderContentsContainer: {
     flex: 1,
+    backgroundColor: Colors.mainBackgroundColor,
   },
   sectionSubHeader: {
     flex: 1,
