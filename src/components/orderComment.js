@@ -17,7 +17,7 @@ class OrderComment extends React.Component {
   }
   render() {
     const {message} = this.props
-    let icon = AvatarUtils.getAvatar({imageUrl: this.props.imgUrl})
+    let icon = AvatarUtils.getAvatar({imageUrl: this.props.imgUrl}, 50)
 
     return (
       <View style={styles.container}>
