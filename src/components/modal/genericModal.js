@@ -176,7 +176,6 @@ const styles = StyleSheet.create({
     color: Colors.darkGrey,
   },
   modalSubHeaderText: {
-    marginTop: 10,
     flex: 1,
     fontFamily: 'OpenSans',
     textAlign: 'center',

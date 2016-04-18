@@ -6,11 +6,14 @@ import Swipeout from 'react-native-swipeout';
 import PickerModal from './modal/pickerModal';
 
 const {
+  Dimensions,
   StyleSheet,
   Text,
   TouchableHighlight,
   View,
 } = React;
+
+const window = Dimensions.get('window');
 
 class CartViewListItem extends React.Component {
   constructor(props) {
@@ -156,6 +159,8 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     paddingBottom: 5,
     overflow: 'hidden',
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: .5,
   },
   productContainerDisabled: {
     height: 50,
@@ -181,6 +186,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   productNoteText: {
+    width: window.width * .85,
     color: Colors.darkGrey,
     fontSize: 12,
     fontStyle: 'italic',
@@ -216,7 +222,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   productTitle: {
-    flex: 2,
+    flex: 4,
     fontFamily: 'OpenSans',
     fontSize: 14,
   },

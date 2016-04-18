@@ -40,7 +40,7 @@ class OrderRightButton extends React.Component {
           <Icon
             name='material|email'
             size={30}
-            color={Colors.lightBlue}
+            color={Colors.navIcon}
             style={styles.icon}
           />
         </TouchableHighlight>
@@ -53,7 +53,7 @@ class OrderRightButton extends React.Component {
           <Icon
             name='material|phone'
             size={30}
-            color={Colors.lightBlue}
+            color={Colors.navIcon}
             style={styles.icon}
           />
         </TouchableHighlight>

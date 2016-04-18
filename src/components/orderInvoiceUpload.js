@@ -102,13 +102,20 @@ class OrderInvoiceUpload extends React.Component {
       return image
     })
 
-    let uploadButtonUnderlayColor = Colors.light
-    let uploadButtonStyle = {}
-    let uploadButtonTextStyle = {}
-    if(this.state.selectedPhotos.length === 0){
-      uploadButtonUnderlayColor = Colors.disabled
-      uploadButtonStyle = {backgroundColor: Colors.disabled}
-      uploadButtonTextStyle = {color: Colors.darkGrey}
+    let uploadButton = <View/>
+    if(this.state.selectedPhotos.length > 0){
+      uploadButton = 
+        <TouchableHighlight
+          underlayColor={'transparent'}
+          onPress={() => {
+            if(this.state.selectedPhotos.length > 0){
+              this.props.onUploadInvoices(this.state.selectedPhotos)
+            }
+          }}
+          style={styles.uploadButton}
+        >
+          <Text style={styles.uploadButtonText}>Confirm Upload</Text>
+        </TouchableHighlight>
     }
 
     return (
@@ -133,23 +140,13 @@ class OrderInvoiceUpload extends React.Component {
               style={styles.itemContainer}
             >
               <View style={styles.addButton}>
-                <Icon name='material|plus' size={40} color={Colors.lightBlue} style={{width: 50, height: 50,}} />
+                <Icon name='material|camera' size={40} color={Colors.lightBlue} style={{width: 50, height: 50,}} />
                 <Text style={{color: Colors.lightBlue}}>Add</Text>
               </View>
             </TouchableHighlight>
           </View>
         </ScrollView>
-        <TouchableHighlight
-          underlayColor={uploadButtonUnderlayColor}
-          onPress={() => {
-            if(this.state.selectedPhotos.length > 0){
-              this.props.onUploadInvoices(this.state.selectedPhotos)
-            }
-          }}
-          style={[styles.uploadButton, uploadButtonStyle]}
-        >
-          <Text style={[styles.uploadButtonText, uploadButtonTextStyle]}>Upload Invoice(s)</Text>
-        </TouchableHighlight>
+        {uploadButton}
       </View>
     );
   }
@@ -183,10 +180,10 @@ let styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   itemContainer: {
+    alignItems: 'center',
     height: 150,
     width: 125,
     margin: 15,
-    alignItems: 'center',
   },
   addButton: {
     borderWidth: 2,
@@ -196,6 +193,7 @@ let styles = StyleSheet.create({
     width: 125,
     height: 150,
     alignItems: 'center',
+    justifyContent: 'space-around',
   },
   imageDelete: {
     position: 'absolute',
@@ -215,11 +213,11 @@ let styles = StyleSheet.create({
     height: 60,
     borderTopColor: Colors.separatorColor,
     borderTopWidth: 1,
-    backgroundColor: 'white',
+    backgroundColor: Colors.gold,
     justifyContent: 'center',
   },
   uploadButtonText: {
-    color: Colors.lightBlue,
+    color: 'white',
     textAlign: 'center',
     paddingBottom: 1,
     fontFamily: 'OpenSans',

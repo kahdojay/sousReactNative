@@ -37,9 +37,12 @@ export default function ProductActions(allActions){
         teamCode: currentTeam.teamCode,
         name: productAttributes.name,
         description: productAttributes.description || '',
+        packSize: productAttributes.packSize,
+        par: productAttributes.par,
         price: productAttributes.price || '',
         purveyors: productAttributes.purveyors,
         amount: productAttributes.amount,
+        sku: productAttributes.sku,
         unit: productAttributes.unit,
         deleted: false,
       }

@@ -34,14 +34,17 @@ class CategoryIndex extends React.Component {
           categoryProducts[productId] = products[productId]
         })
         return (
-          <CategoryIndexRow
-            products={categoryProducts}
-            key={category.id}
-            category={category}
-            onPress={() => {
-              this.props.onNavigateToCategory(category.id)
-            }}
-          />
+          <View>
+            <CategoryIndexRow
+              products={categoryProducts}
+              key={category.id}
+              category={category}
+              onPress={() => {
+                this.props.onNavigateToCategory(category.id)
+              }}
+            />
+            <View style={styles.separator}></View>
+          </View>
         )
       }
     })
@@ -96,6 +99,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'OpenSans',
     paddingTop: 25,
+  },
+  separator: {
+    flex: 1,
+    borderBottomWidth: .5,
+    borderColor: Colors.separatorColor,
   },
 });
 

@@ -33,13 +33,16 @@ class PurveyorIndex extends React.Component {
       _.sortBy(purveyors, 'name'), (purveyor) => {
         if (purveyor.deleted === false) {
           return (
-            <PurveyorIndexRow
-              key={purveyor.id}
-              purveyor={purveyor}
-              onPress={() => {
-                this.props.onNavToPurveyor(purveyor.id)
-              }}
-            />
+            <View>
+              <PurveyorIndexRow
+                key={purveyor.id}
+                purveyor={purveyor}
+                onPress={() => {
+                  this.props.onNavToPurveyor(purveyor.id)
+                }}
+              />
+              <View style={styles.separator}></View>
+            </View>
           )
         }
       },
@@ -60,7 +63,6 @@ class PurveyorIndex extends React.Component {
         <ScrollView
           automaticallyAdjustContentInsets={false}
           keyboardShouldPersistTaps={false}
-          style={styles.purveyorsContainer}
         >
           {purveyorsList}
         </ScrollView>
@@ -73,9 +75,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
-  },
-  purveyorsContainer: {
-    paddingVertical: 5,
   },
   segmentedControlContainer: {
     paddingTop: 3,
@@ -96,6 +95,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'OpenSans',
     paddingTop: 25,
+  },
+  separator: {
+    flex: 1,
+    borderBottomWidth: .5,
+    borderColor: Colors.separatorColor,
   },
 });
 
