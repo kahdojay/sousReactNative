@@ -22,6 +22,7 @@ import semver from 'semver';
 
 const {
   Navigator,
+  NetInfo,
   PropTypes,
   ScrollView,
   StyleSheet,
@@ -89,6 +90,7 @@ class App extends React.Component {
       touchToClose: false,
       lastResourceInfoRetrieval: (new Date(constructorNow - ((60*60*1000) + 100) )).toISOString(),
       lastResourceInfoFetching: false,
+      networkConnected: true,
     }
     this.reconnectTimeout = null
     this.initialRoute = 'Signup'
@@ -397,6 +399,24 @@ class App extends React.Component {
       }
     }
     this.redirectBasedOnData()
+  }
+
+  componentDidMount() {
+    NetInfo.addEventListener('change', (reach) => {
+      let reachVal = reach.toUpperCase();
+      this.setState({
+        networkConnected: reachVal && reachVal !== 'NONE' && reachVal !== 'UNKNOWN' ? true : false,
+        // showGenericModal: true,
+        // genericModalMessage: (
+        //   <Text style={{textAlign: 'center'}}>{JSON.stringify(reach)}</Text>
+        // )
+      })
+    })
+    NetInfo.isConnected.fetch().then((isConnected) => {
+      this.setState({
+        networkConnected: isConnected ? true : false,
+      })
+    })
   }
 
   redirectBasedOnData() {
@@ -1592,14 +1612,22 @@ class App extends React.Component {
               }, 25)()
             },
             onSendCart: (cartInfo, navigateToFeed) => {
-              _.debounce(() => {
-                dispatch(actions.sendCart(cartInfo));
-              }, 25)()
-              if(navigateToFeed === true){
-                nav.replacePreviousAndPop({
-                  name: 'Feed',
-                });
-              }
+
+              NetInfo.isConnected.fetch().then((isConnected) => {
+                if(isConnected === true){
+                  _.debounce(() => {
+                    dispatch(actions.sendCart(cartInfo));
+                  }, 25)()
+                  if(navigateToFeed === true){
+                    nav.replacePreviousAndPop({
+                      name: 'Feed',
+                    });
+                  }
+                } else {
+                  dispatch(actions.createError('network-connectivity', 'Please check that your device is connected to the internet and try again'))
+                }
+              })
+
             },
           },
         }
@@ -2223,6 +2251,16 @@ class App extends React.Component {
         </TouchableHighlight>
       )
     }
+    let reactStatus = null
+    if(this.state.networkConnected === false){
+      reactStatus = (
+        <View style={[styles.offlineContainer, {backgroundColor: Colors.error}]}>
+          <View style={styles.offlineInnerContainer}>
+            <Text style={[styles.offlineText, {paddingTop: 3,}]}>Network connectivity issues</Text>
+          </View>
+        </View>
+      )
+    }
 
     return (
       <CustomSideView
@@ -2236,6 +2274,7 @@ class App extends React.Component {
           {errorModal}
           {genericModal}
           {connectionStatus}
+          {reactStatus}
           {scene}
           <KeyboardSpacer />
         </View>
