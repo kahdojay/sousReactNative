@@ -121,13 +121,13 @@ class OrderListItem extends React.Component {
         />
       )
 
-      let showProductPrices = false
-      if(
-        teamBetaAccess.hasOwnProperty('showProductPrices') === true
-        && teamBetaAccess.showProductPrices === true
-      ){
-        showProductPrices = true        
-      }
+      // let showProductPrices = false
+      // if(
+      //   teamBetaAccess.hasOwnProperty('showProductPrices') === true
+      //   && teamBetaAccess.showProductPrices === true
+      // ){
+      //   showProductPrices = true        
+      // }
 
       productRow = (
         <View style={styles.container}>
@@ -170,7 +170,7 @@ class OrderListItem extends React.Component {
               <View style={{flexDirection: 'row', alignItems: 'center',}}>
                 <View style={styles.productInfo}>
                   <Text style={styles.productName}>{product.name}</Text>
-                  <Text style={styles.text}>{cartItem.quantity}x {product.amount}{product.unit} {cartItem.productPrice && showProductPrices === true ? '• $' + s.numberFormat(parseFloat(cartItem.productPrice), 2) : ''}</Text>
+                  <Text style={styles.text}>{cartItem.quantity}x {product.amount}{product.unit} {(product.price && !!product.price.trim()) ? '• $' + s.numberFormat(parseFloat(product.price), 2) : ''}</Text>
                 </View>
                 <View style={styles.confirmCheckbox}>
                   <View style={[styles.iconContainer]}>
@@ -193,7 +193,7 @@ class OrderListItem extends React.Component {
         component: (
           <Icon name='material|edit' size={30} color={Colors.lightBlue} style={styles.iconEdit}/>
         ),
-        onPress: function() {console.log('hi')}
+        onPress: this.props.onProductEdit
       }]}
       >
         {productRow}

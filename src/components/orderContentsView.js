@@ -154,6 +154,9 @@ class OrderContentsView extends React.Component {
               orderConfirm={order.confirm}
               product={product}
               cartItem={cartItem}
+              onProductEdit={() => {
+                this.props.onProductEdit(product)
+              }}
               productConfirm={productConfirm}
               onHandleProductConfirm={(updateCartItem) => {
                 this.props.onConfirmOrderProduct(updateCartItem)

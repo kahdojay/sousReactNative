@@ -1320,6 +1320,7 @@ class App extends React.Component {
             products: orderProducts,
             userId: session.userId,
             userName: session.firstName,
+            onProductEdit: this.onProductEdit.bind(this, route, nav),
             onConfirmOrderProduct: (updateCartItem) => {
               _.debounce(() => {
                 dispatch(actions.updateCartItem({
