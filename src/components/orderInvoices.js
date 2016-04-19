@@ -1,5 +1,6 @@
 import React from 'react-native';
 import Swiper from 'react-native-swiper';
+import { Icon } from 'react-native-icons';
 import Colors from '../utilities/colors';
 
 const {
@@ -78,14 +79,22 @@ class OrderInvoices extends React.Component {
     return (
       <View style={styles.container}>
         <Swiper
+          style={styles.swiperContainer}
           autoplay={false}
           loop={true}
-          style={styles.swiperContainer}
           height={invoiceHeight}
+          showsButtons={true}
+          buttonWrapperStyle={styles.buttonWrapper}
+          nextButton={(
+            <Text style={styles.swiperButton}>›</Text>
+          )}
+          prevButton={(
+            <Text style={styles.swiperButton}>‹</Text>
+          )}
           showsPagination={true}
           paginationStyle={styles.swiperPagination}
           dot={(
-            <View style={styles.dot} />
+            <View style={styles.dotInactive} />
           )}
           activeDot={(
             <View style={styles.dotActive} />
@@ -101,9 +110,12 @@ class OrderInvoices extends React.Component {
             }}
             style={styles.invoiceButton}
           >
-            <Text style={[styles.invoiceButtonText]}>
-              Upload Invoice(s)
-            </Text>
+            <View style={styles.invoiceButtonTextContainer}>
+              <Icon name='material|plus' size={25} color={'white'} style={styles.addIcon}/>
+              <Text style={[styles.invoiceButtonText]}>
+                Add New
+              </Text>
+            </View>
           </TouchableHighlight>
         </View>
       </View>
@@ -113,13 +125,10 @@ class OrderInvoices extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    height: invoiceHeight,
+    flex: 1,
   },
   swiperContainer: {
     flex: 1,
-  },
-  swiperPagination: {
-    bottom: 70,
   },
   invoice: {
     flex: 1,
@@ -140,21 +149,24 @@ const styles = StyleSheet.create({
   },
   bottomContainer: {
     flex: 1,
-    borderTopWidth: 1,
-    borderTopColor: Colors.separatorColor,
     justifyContent: 'flex-end',
     backgroundColor: 'transparent',
   },
   invoiceButton: {
-    height: 60,
-    backgroundColor: 'white',
-    borderTopColor: Colors.separatorColor,
-    borderTopWidth: 1,
+    backgroundColor: Colors.gold,
     justifyContent: 'center',
   },
+  addIcon: {
+    height: 50,
+    width: 50,
+  },
+  invoiceButtonTextContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   invoiceButtonText: {
-    paddingBottom: 1,
-    color: Colors.lightBlue,
+    color: 'white',
     textAlign: 'center',
     fontWeight: 'bold',
     fontFamily: 'OpenSans',
@@ -170,13 +182,29 @@ const styles = StyleSheet.create({
     padding: 15,
     color: Colors.disabled,
   },
-  dot: {
-    backgroundColor: Colors.lightGrey,
-    borderWidth: 1,
-    borderColor: Colors.darkGrey,
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+  buttonWrapper: {
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    flex: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  swiperButton: {
+    color: Colors.gold,
+    fontSize: 60,
+  },
+  swiperPagination: {
+    bottom: 70,
+  },
+  dotInactive: {
+    backgroundColor: Colors.lighterGrey,
+    width: 8,
+    height: 8,borderRadius: 4,
     marginLeft: 3,
     marginRight: 3,
     marginTop: 3,
@@ -184,11 +212,9 @@ const styles = StyleSheet.create({
   },
   dotActive: {
     backgroundColor: Colors.gold,
-    borderWidth: 1,
-    borderColor: 'white',
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
     marginLeft: 3,
     marginRight: 3,
     marginTop: 3,

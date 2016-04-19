@@ -127,6 +127,7 @@ class CartView extends React.Component {
           product={cartItemPkg.product}
           cartItem={cartItemPkg.cartItem}
           onUpdateProductInCart={this.props.onUpdateProductInCart}
+          onProductEdit={this.props.onProductEdit}
         />
       )
     });

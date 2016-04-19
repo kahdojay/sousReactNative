@@ -77,7 +77,7 @@ class CategoryView extends React.Component {
             <TextInput
               style={styles.searchInput}
               value={this.state.search}
-              placeholder='Find Product'
+              placeholder='Search'
               onChangeText={(text) => {
                 this.setState({
                   search: text
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     flex: 1,
     height: Sizes.inputFieldHeight,
-    backgroundColor: Colors.mainBackgroundColor,
+    backgroundColor: Colors.lightGrey,
     color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
     borderRadius: Sizes.inputBorderRadius,

@@ -49,13 +49,13 @@ export default function CartItemActions(allActions) {
         cartItemAttributes.purveyorId
         && cartItemAttributes.productId
       ){
-        dispatch({
-          type: ADD_CART_ITEM,
-          cartItemId: cartItemId,
-          cartItem: Object.assign({}, cartItemAttributes, {
-            id: cartItemId,
-          }),
-        })
+        // dispatch({
+        //   type: ADD_CART_ITEM,
+        //   cartItemId: cartItemId,
+        //   cartItem: Object.assign({}, cartItemAttributes, {
+        //     id: cartItemId,
+        //   }),
+        // })
         dispatch(connectActions.ddpCall('addCartItem', [session.userId, sessionTeamId, Object.assign({}, cartItemAttributes)]))
       } else {
         dispatch(errorActions.createError('add-cart-item', 'Please check product details and try again', Object.assign({}, cartItemAttributes)))

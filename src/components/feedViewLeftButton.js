@@ -26,7 +26,7 @@ class FeedViewLeftButton extends React.Component {
   render() {
     let { navigator, route } = this.props;
 
-    let iconColor = Colors.lightBlue
+    let iconColor = Colors.navIcon
     if(this.props.disabled === true){
       iconColor = Colors.disabled
     }

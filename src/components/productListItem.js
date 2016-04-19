@@ -290,7 +290,7 @@ class ProductListItem extends React.Component {
                 {purveyorInfo}{productInfoSeparator}{categoryInfo}
               </View>
             </View>
-            <View style={styles.quantityContainer}>
+            <View style={styles.quantityOuterContainer}>
               { this.state.added === true ?
                 (
                   <View style={styles.quantityButton}>
@@ -302,7 +302,13 @@ class ProductListItem extends React.Component {
                       }}
                       underlayColor='transparent'
                     >
-                      <Text style={[styles.quantityText, productQuantityBorderStyle, {color: productColor}]}>{`${this.state.quantity}x`}</Text>
+                      <View style={[styles.quantityInnerContainer, productQuantityBorderStyle]}>
+                        <Text style={[styles.quantityText, {color: productColor}]}>{`${this.state.quantity}x`}</Text>
+                        <View style={styles.caretContainer}>
+                          <Icon name='material|caret-up' size={13} color='white' style={styles.iconCaret} />
+                          <Icon name='material|caret-down' size={13} color='white' style={styles.iconCaret} />
+                        </View>
+                      </View>
                     </TouchableHighlight>
                   </View>
                 )
@@ -423,6 +429,7 @@ class ProductListItem extends React.Component {
         >
           {productInfo}
         </Swipeout>
+        <View style={styles.separator}></View>
         {modal}
         {confirmationModal}
       </View>
@@ -443,7 +450,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: 5,
     paddingLeft: 15,
-    marginRight: 2,
     alignItems: 'center'
   },
   productDetailsContainer: {
@@ -456,17 +462,20 @@ const styles = StyleSheet.create({
   productDetailsSubText: {
     fontSize: 14,
   },
-  quantityContainer: {
+  quantityOuterContainer: {
     flex: 1,
+  },
+  quantityInnerContainer: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    padding: 6,
   },
   quantityButton: {
     flex: 1,
   },
   quantityText: {
-    alignSelf: 'center',
     fontSize: 20,
     flex: 1,
-    padding: 6,
   },
   parText: {
     fontSize: 10,
@@ -482,14 +491,25 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
   },
+  caretContainer: {
+    alignSelf: 'center',
+  },
+  iconCaret: {
+    width: 8,
+    height: 8,
+  },
   iconEdit: {
     flex: 1,
     alignSelf: 'center',
     width: 54,
     height: 40,
     marginLeft: 2,
-    marginTop: 7,
-    marginBottom: 7,
+  },
+  separator: {
+    marginTop: 5,
+    flex: 1,
+    borderBottomWidth: .5,
+    borderColor: Colors.separatorColor,
   },
   modalContainer: {
     flex: 1,
@@ -533,11 +553,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Colors.lightBlue,
     paddingTop: 15,
-  },
-  separator: {
-    height: 0,
-    borderBottomColor: Colors.separatorColor,
-    borderBottomWidth: 1,
   },
 });
 

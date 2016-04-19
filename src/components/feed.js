@@ -227,6 +227,7 @@ class Feed extends React.Component {
           disabled={(this.props.connected === false)}
           placeholder="Message..."
           onSubmit={this.onHandleSubmit.bind(this)}
+          multiline={true}
         />
       </View>
     );

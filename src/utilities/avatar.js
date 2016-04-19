@@ -1,7 +1,9 @@
 import React from 'react-native';
+import { Icon } from 'react-native-icons';
 
 const {
   Image,
+  StyleSheet,
 } = React;
 
 function getAvatar(user, size = 40) {
@@ -24,10 +26,20 @@ function getAvatar(user, size = 40) {
         }}
       />
     )
+  }else{
+    avatar =(
+      <Icon name='material|account-circle' size={size} color='#aaa' style={{
+        width: size,
+        height: size,
+        borderRadius: (size/2),
+      }}/>
+    )
   }
-
   return avatar;
 }
+
+const styles = StyleSheet.create({
+})
 
 export default {
   'getAvatar': getAvatar

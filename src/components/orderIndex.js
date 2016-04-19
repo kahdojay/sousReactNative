@@ -67,6 +67,10 @@ class OrderIndex extends React.Component {
       )
     }
 
+    let openOrders = _.filter(orders, (order) => {
+      return order.confirm.order === false
+    })
+
     let fullOrders = _.map(orders, (order) => {
       let orderItems = null
       if(cartItemsOrders.hasOwnProperty(order.id) === true){
@@ -96,13 +100,8 @@ class OrderIndex extends React.Component {
         const orderedAtDate = moment(order.orderedAt)
         if(order.orderItems === null || order.purveyor === null){
           return (
-            <View style={styles.row}>
-              <View style={{flex:2}}>
-                <Text style={[styles.metaInfo, {paddingTop: 7, fontStyle: 'italic'}]}>Order details unavailable.</Text></View>
-              <View style={{flex:1}}>
-                <Text style={[styles.metaInfo, styles.bold, styles.rightAlign]}>{orderedAtDate.format('M/D/YY')}</Text>
-                <Text style={[styles.metaInfo, styles.rightAlign]}>{orderedAtDate.format('h:mm a')}</Text>
-              </View>
+            <View style={styles.orderRow}>
+              <Text style={[styles.metaInfo, {paddingTop: 7, fontStyle: 'italic'}]}>Order details unavailable.</Text>
             </View>
           )
         }
@@ -119,46 +118,44 @@ class OrderIndex extends React.Component {
         if(order.user !== null){
           orderUserName = `${order.user.firstName} ${order.user.lastName}`
         }
-        let invoiceIconBackgroundColor = Colors.disabled
-        let invoiceIconCheckmarkColor = 'transparent'
-        let invoiceButtonTextColor = 'white'
+        // let invoiceIconBackgroundColor = Colors.disabled
+        // let invoiceIconCheckmarkColor = 'transparent'
 
-        if(order.confirm.order === true){
-          invoiceIconBackgroundColor = 'white'
-        }
+        // if(order.confirm.order === true){
+          // invoiceIconBackgroundColor = 'white'
+        // }
 
-        if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
-          invoiceIconBackgroundColor = Colors.green
-          invoiceIconCheckmarkColor = 'white'
-          invoiceButtonTextColor = Colors.lightBlue
-        }
+        // if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
+          // invoiceIconBackgroundColor = Colors.green
+          // invoiceIconCheckmarkColor = 'white'
+        // }
         return (
-          <TouchableHighlight
+          <TouchableOpacity
             key={order.id}
             underlayColor='transparent'
             onPress={() => {
               this.props.onNavToOrder(order.id)
             }}
           >
-            <View style={[styles.row, confirmedOrderStyle]}>
-              <View style={styles.confirmedIconContainer}>
-                <Icon name='material|circle' size={20} color={invoiceIconBackgroundColor} style={styles.confirmedIconContainer}>
-                  <Icon name='material|check' size={25} color={invoiceIconCheckmarkColor} style={styles.confirmedIconCheckmark} />
-                </Icon>
-              </View>
-              <View style={{flex:2}}>
-                <Text style={[styles.purveyorName, styles.bold]}>
+            <View style={[confirmedOrderStyle, styles.orderRow]}>
+              <View style={styles.purveyorContainer}>
+                {/*<View style={styles.confirmedIconContainer}>
+                  <Icon name='material|circle' size={20} color={invoiceIconBackgroundColor} style={styles.confirmedIconContainer}>
+                    <Icon name='material|check' size={25} color={invoiceIconCheckmarkColor} style={styles.confirmedIconCheckmark} />
+                  </Icon>
+                </View>*/}
+                <Text style={styles.purveyorName}>
                   {order.purveyor ? order.purveyor.name : ''}
-                  <Text style={[styles.metaInfo,confirmedOrderMetaInfoStyle]}> {`${itemCount} Item${itemCount > 1 ? 's' : ''}`}</Text>
+                  <Text style={[styles.metaInfo,confirmedOrderMetaInfoStyle]}> ({`${itemCount} Item${itemCount > 1 ? 's' : ''}`})</Text>
                 </Text>
-                <Text style={[styles.metaInfo,confirmedOrderMetaInfoStyle]}>{orderUserName}</Text>
+                <Text style={[styles.metaInfo, confirmedOrderMetaInfoStyle]}>Ordered {orderedAtDate.format('ddd M/D')} {orderedAtDate.format('h:mma')}</Text>
               </View>
-              <View style={{flex:1}}>
-                <Text style={[styles.metaInfo, styles.bold, styles.rightAlign,confirmedOrderMetaInfoStyle]}>{orderedAtDate.format('M/D/YY')}</Text>
-                <Text style={[styles.metaInfo, styles.rightAlign,confirmedOrderMetaInfoStyle]}>{orderedAtDate.format('h:mm a')}</Text>
+              <View style={styles.iconContainer}>
+                <Icon name='material|chevron-right' size={30} color={Colors.lightBlue} style={styles.iconArrow}/>
               </View>
             </View>
-          </TouchableHighlight>
+            <View style={styles.separator}></View>
+          </TouchableOpacity>
         )
       }
     })
@@ -175,8 +172,19 @@ class OrderIndex extends React.Component {
       ))
     }
 
+    let headerText = ''
+    switch (openOrders.length) {
+      case 1:
+        headerText = '1 Active Order'
+      default:
+        headerText = `${openOrders.length} Upcoming Deliveries`
+    }
+
     return (
       <View style={styles.container}>
+        <View style={styles.orderDetails}>
+          <Text style={styles.orderDetailsText}>{headerText}</Text>
+        </View>
         <ScrollView
           automaticallyAdjustContentInsets={false}
           keyboardShouldPersistTaps={false}
@@ -223,6 +231,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
   },
+  scrollView: {
+    flex: 8,
+    backgroundColor: Colors.mainBackgroundColor,
+  },
   emptyOrdersContainer: {
     padding: 30,
   },
@@ -240,47 +252,58 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     marginLeft: 6,
   },
-  scrollView: {
+  orderRow: {
     flex: 1,
-    backgroundColor: Colors.mainBackgroundColor,
+    flexDirection: 'row',
+    paddingLeft: 15,
+    paddingRight: 15,
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  orderDetails: {
+    flex: 1,
+    flexDirection: 'row',
+    padding: 5,
+    borderBottomWidth: 1,
+    borderColor: Colors.lightGrey,
+    backgroundColor: Colors.lightBlue,
+    alignItems: 'center',
+  },
+  orderDetailsText: {
+    color: 'white',
+    fontSize: 25,
+  },
+  iconContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  iconArrow: {
+    width: 50,
+    height: 50,
   },
   separator: {
     height: 0,
     borderBottomColor: Colors.separatorColor,
-    borderBottomWidth: 1,
-  },
-  row: {
-    marginTop: 5,
-    marginBottom: 5,
-    marginRight: 10,
-    marginLeft: 10,
-    borderRadius: Sizes.rowBorderRadius,
-    padding: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
-    flexDirection: 'row',
-    backgroundColor: 'white',
+    borderBottomWidth: .5,
   },
   confirmedOrder: {
-    backgroundColor: Colors.sky,
+    backgroundColor: Colors.lightGrey,
+  },
+  purveyorContainer: {
+    flex: 5,
   },
   purveyorName: {
     color: 'black',
-    fontSize: 14
+    fontWeight:'bold',
+    fontSize: 16,
   },
   metaInfo: {
-    color: '#999',
+    color: Colors.darkGrey,
     fontWeight: 'normal',
     fontSize: 12,
   },
   confirmedOrderMetaInfo: {
-    color: '#333',
-  },
-  bold: {
-    fontWeight: 'bold'
-  },
-  rightAlign: {
-    textAlign: 'right'
+    color: Colors.darkGrey,
   },
   buttonContainerLink: {
   },

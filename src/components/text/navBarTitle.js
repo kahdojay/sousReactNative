@@ -1,5 +1,6 @@
 import React from 'react-native';
 import NavigationBarStyles from 'react-native-navbar/styles';
+import Colors from '../../utilities/colors';
 
 const {
   StyleSheet,
@@ -26,6 +27,7 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: 'OpenSans',
     fontSize: 16,
+    color: Colors.navBarTitle,
   },
   textCentered: {
     textAlign: 'center',

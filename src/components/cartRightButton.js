@@ -52,12 +52,12 @@ class CartRightButton extends React.Component {
         <TouchableHighlight
           underlayColor='transparent'
           onPress={this.props.onCreateProduct} >
-          <Icon name='material|plus' size={30} color={Colors.lightBlue} style={[styles.add, styles.navIcon]}/>
+          <Icon name='material|plus' size={30} color={Colors.navIcon} style={[styles.add, styles.navIcon]}/>
         </TouchableHighlight>
         <TouchableHighlight
           underlayColor='transparent'
           onPress={::this.handlePress} >
-          <Icon name='material|shopping-cart' size={30} color={Colors.lightBlue} style={styles.navIcon}>
+          <Icon name='material|shopping-cart' size={30} color={Colors.navIcon} style={styles.navIcon}>
             {badgeValue !== '' ? <Icon name='material|circle' size={24} color={Colors.red} style={styles.badge}><Text style={styles.badgeText}>{badgeValue}</Text></Icon> : <View/> }
           </Icon>
         </TouchableHighlight>
