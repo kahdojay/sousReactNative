@@ -175,7 +175,7 @@ class OrderIndex extends React.Component {
     let headerText = ''
     switch (openOrders.length) {
       case 1:
-        headerText = '1 Active Order'
+        headerText = '1 Upcoming Delivery'
       default:
         headerText = `${openOrders.length} Upcoming Deliveries`
     }
