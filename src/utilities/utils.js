@@ -20,6 +20,11 @@ function generateId (len = 17) {
   return id.substring(0, len);
 }
 
+function truncateId(id) {
+  return id.substring(0,4).toUpperCase()
+}
+
 export default {
-  'generateId': generateId
+  'generateId': generateId,
+  'truncateId': truncateId
 }

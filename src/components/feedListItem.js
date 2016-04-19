@@ -1,6 +1,5 @@
 import React from 'react-native';
 import { Icon } from 'react-native-icons';
-import moment from 'moment';
 import messageUtils from '../utilities/message';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
@@ -43,26 +42,12 @@ class FeedListItem extends React.Component {
 
   render() {
     const {msg} = this.state
+    let msgDisplayDate = ''
 
     if(msg === null){
       return (<View />);
-    }
-    const now = new Date()
-    const msgDate = moment(msg.createdAt)
-    const withinSameDay = moment(now).clone().subtract(1, 'd').startOf('day').isSame(msgDate.clone().startOf('day'))
-    const withinSameWeek = moment(now).diff(msgDate, 'days') < 7
-    let displayDate = ''
-
-    if (msgDate.isSame(now, 'day')) {
-      displayDate = `Today, ${msgDate.format("h:mma")}`
     } else {
-      if (withinSameDay) {
-        displayDate = `Yesterday, ${msgDate.format("h:mma")}`
-      } else if (withinSameWeek) {
-        displayDate = msgDate.format("ddd h:mma")
-      } else {
-        displayDate = msgDate.format("M/D ddd h:mma")
-      }
+      msgDisplayDate = messageUtils.formatMessageTimeStamp(msg)
     }
 
     let user = null
@@ -83,9 +68,6 @@ class FeedListItem extends React.Component {
     }
 
     let icon = AvatarUtils.getAvatar(user, 40)
-    if (icon === null) {
-      icon = <Icon name='material|account-circle' size={50} color='#aaa' style={styles.avatar}/>
-    }
     let messageString = messageUtils.formatMessage(msg);
     let superUserIndicator = <View/>;
     // if(this.props.teamsUsers.hasOwnProperty(msg.userId) === true && this.props.teamsUsers[msg.userId].superUser === true){
@@ -99,7 +81,7 @@ class FeedListItem extends React.Component {
           <View style={styles.messageContentContainer}>
             <View style={styles.messageTextContainer}>
               <Text style={styles.messageAuthor}>{msg.author}</Text>
-              <Text style={styles.messageTimestamp}>{displayDate}</Text>
+              <Text style={styles.messageTimestamp}>{msgDisplayDate}</Text>
             </View>
             { (msg.hasOwnProperty('orderId') === true && msg.orderId) ?
               <TouchableHighlight
@@ -155,18 +137,6 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans',
     color: Colors.lightGrey,
     marginBottom: 1,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    alignSelf: 'flex-start',
-    backgroundColor: '#eee',
-  },
-  avatarImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
   },
   separator: {
     height: 5,

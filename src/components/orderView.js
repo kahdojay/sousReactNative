@@ -1,15 +1,18 @@
 import React from 'react-native';
 import { Icon, } from 'react-native-icons';
+import Communications from 'react-native-communications';
 import _ from 'lodash';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
-import OrderListItem from './orderListItem';
+import OrderContentsView from './orderContentsView';
+import OrderComment from './orderComment';
+import AddCommentForm from './addMessageForm';
 import moment from 'moment';
-import messageUtils from '../utilities/message';
 import GenericModal from './modal/genericModal';
 import Loading from './loading';
 
 const {
+  Dimensions,
   PropTypes,
   ScrollView,
   StyleSheet,
@@ -18,6 +21,8 @@ const {
   TouchableHighlight,
   View,
 } = React;
+
+const window = Dimensions.get('window');
 
 class OrderView extends React.Component {
   constructor(props) {
@@ -29,11 +34,13 @@ class OrderView extends React.Component {
       order: null,
       products: null,
       purveyor: null,
-      // messages: null,
       teamsUsers: null,
       loaded: false,
+      selectAll: false,
       showConfirm: false,
-      confirmationMessage: '',
+      confirmationMessage: null,
+      showOrderContents: false,
+      showPurveyorContact: false,
     }
   }
 
@@ -55,7 +62,6 @@ class OrderView extends React.Component {
       order: this.props.order,
       products: this.props.products,
       purveyor: this.props.purveyor,
-      // messages: this.props.messages,
       teamsUsers: this.props.teamsUsers,
       loaded: true,
     }, () => {
@@ -75,25 +81,60 @@ class OrderView extends React.Component {
     return (products === null || products.length === 0 || purveyor === null || order === null)
   }
 
-  confirmOrder() {
-    let orderConfirm = Object.assign({}, this.state.order.confirm)
-    orderConfirm.userId = this.state.userId
-    orderConfirm.order = true
-    orderConfirm.confirmedAt = (new Date()).toISOString()
+  handleContactPress(type) {
+    const order = this.props.order
+    const purveyor = this.props.purveyor
+    const team = this.props.team
+    const orderProducts = this.props.products
+    switch (type) {
+      case 'phone':
+        Communications.phonecall(purveyor.phone, true)
+      case 'email':
+        let timeZone = 'UTC';
+        if(purveyor.hasOwnProperty('timeZone') && purveyor.timeZone){
+          timeZone = purveyor.timeZone;
+        }
+        const orderDate = moment(order.orderedAt).tz(timeZone);
+        const to = purveyor.orderEmails.split(',')
+        const cc = ['orders@sousapp.com']
+        const subject = `Order Comment from ${team.name} • 's Order on ${orderDate.format('dddd, MMMM D')}`
+        // let body = 'Order Reference: '
+        // orderProducts.forEach(function(o) {
+        //   body += `\n ${o.cartItem.productName} x ${o.cartItem.amount * o.cartItem.quantity} ${o.cartItem.unit}`
+        // })
+        Communications.email(to, cc, null, subject)
+      case 'text':
+        Communications.text(purveyor.phone)
+    }
+  }
+
+  getNumberConfirmed() {
+    let count = 0
+    let total = 0
+    this.state.products.forEach(function(product) {
+      count += product.cartItem.status === 'RECEIVED' ? 1 : 0
+      total += 1
+    })
+    return {
+      count: count,
+      total: total
+    }
+  }
+
+  handleCommentSubmit(msg) {
+    let orderComments = this.state.order.comments || []
+    orderComments.unshift({
+      userId: this.props.userId,
+      author: this.props.userName,
+      text: msg,
+      createdAt: new Date().toISOString()
+    })
     this.setState({
       order: Object.assign({}, this.state.order, {
-        confirm: orderConfirm
+        comments: orderComments,
       })
     }, () => {
-      this.props.onConfirmOrder(this.state.order)
-      this.props.onSendConfirmationMessage({
-        type: 'orderConfirmation',
-        purveyor: this.state.purveyor.name,
-        text: this.state.confirmationMessage,
-        orderId: this.state.order.id,
-      });
-      // this.props.onNavToOrders()
-      this.props.onNavToInvoices(this.state.order.id)
+      this.props.onUpdateOrder(this.state.order)
     })
   }
 
@@ -102,14 +143,13 @@ class OrderView extends React.Component {
       order,
       purveyor,
       products,
-      // messages,
       teamsUsers,
     } = this.state;
 
     if(this.checkMissingData() === true){
       return (
         <View style={styles.container}>
-          <Text style={[styles.text, styles.textCentered, {padding: 25}]}>Order details unavailable.</Text>
+          <Text style={[styles.guidance, {padding: 25}]}>Order details unavailable.</Text>
           { this.state.orderFetching === true ?
             <Loading />
           :
@@ -127,114 +167,24 @@ class OrderView extends React.Component {
         </View>
       )
     }
-
-    let productsList = null
-    let modal = null
-
-    if(this.state.loaded === true){
-      productsList = []
-      let missingProducts = []
-      _.each(products, (productPkg, idx) => {
-        const product = productPkg.product
-        const cartItem = productPkg.cartItem
-        const productConfirm = (cartItem.status === 'RECEIVED')
-        let productKey = `missing-id-${idx}`
-        if(cartItem.hasOwnProperty('id') === true){
-          productKey = cartItem.id
-        }
-
-        if(!product || !cartItem){
-          missingProducts.push(productPkg)
-        } else {
-          productsList.push(
-            <OrderListItem
-              key={productKey}
-              teamBetaAccess={this.props.teamBetaAccess}
-              orderConfirm={order.confirm}
-              product={product}
-              cartItem={cartItem}
-              productConfirm={productConfirm}
-              onHandleProductConfirm={this.props.onConfirmOrderProduct}
-            />
-          )
-        }
-      })
-      if(missingProducts.length > 0){
-        productsList.push(
-          <View style={styles.row}>
-            <View style={{flex: 1}}>
-              <Text style={styles.missing}>Product details unavailable</Text>
-            </View>
-          </View>
-        )
-      }
-
-      if(order.confirm.order === false){
-        modal = (
-          <GenericModal
-            ref='errorModal'
-            modalVisible={this.state.showConfirm}
-            modalHeaderText='Confirmation Message'
-            onHideModal={() => {
-              this.setState({
-                showConfirm: false,
-              })
-            }}
-            leftButton={{
-              text: 'Cancel',
-              onPress: () => {
-                if(order.confirm.order === false){
-                  this.setState({
-                    showConfirm: false,
-                  })
-                }
-              }
-            }}
-            rightButton={{
-              text: 'Confirm',
-              onPress: () => {
-                if(order.confirm.order === false){
-                  this.setState({
-                    showConfirm: false,
-                  }, () => {
-                    this.confirmOrder()
-                  })
-                }
-              }
-            }}
-          >
-            <View style={styles.inputContainer}>
-              <Text>
-                <Text style={styles.orderText}>{purveyor.name}</Text> order checked in.
-              </Text>
-              <View style={styles.inputWrapper}>
-                <TextInput
-                  multiline={true}
-                  style={styles.input}
-                  placeholderTextColor={Colors.inputPlaceholderColor}
-                  value={this.state.confirmationMessage}
-                  placeholder='Add a note to the message.'
-                  onChangeText={(text) => {
-                    if(order.confirm.order === false){
-                      this.setState({
-                        confirmationMessage: text
-                      })
-                    }
-                  }}
-                  onEndEditing={() => {}}
-                />
-              </View>
-            </View>
-          </GenericModal>
-        )
-      }
-    }
-
-    let buttonDisabledStyle = []
-    let buttonTextDisabledStyle = []
     let orderUser = null
     let confirmUser = null
+    let confirmUserName = ''
+    let confirmTime = ''
     let senderName = null
+    let numberOfInvoices = order.invoices ? order.invoices.length : 0
+    let invoiceButtonText = 'Upload Invoice / Photo'
+    switch (numberOfInvoices) {
+      case 0: 
+        invoiceButtonText = 'Upload Invoice / Photo'
+        break
+      case 1:
+        invoiceButtonText = '1 Invoice / Photo'
+        break
+      default:
+        invoiceButtonText = `${numberOfInvoices} Invoices / Photos`
+        break
+    }
 
     if(order.hasOwnProperty('userId')){
       orderUser = teamsUsers[order.userId]
@@ -244,113 +194,142 @@ class OrderView extends React.Component {
       senderName = order.sender
     }
     if(order.confirm.order === true){
-      buttonDisabledStyle = styles.buttonDisabled
-      buttonTextDisabledStyle = styles.buttonTextDisabled
       confirmUser = teamsUsers[order.confirm.userId]
     }
 
-    let orderUserName = ''
-    if(orderUser){
-      orderUserName = `${orderUser.firstName} ${orderUser.lastName[0]}.`
+    let orderComments = []
+    if(order.comments && order.comments.length > 0){
+      _.each(order.comments, (comment, idx) => {
+        orderComments.push(
+          <OrderComment
+            key={idx}
+            message={comment}
+            imgUrl={this.props.userImgUrl}
+          />
+        )
+      })
     }
-
-    let confirmUserName = ''
-    if(confirmUser){
-      confirmUserName = `${confirmUser.firstName} ${confirmUser.lastName[0]}.`
-    }
-
-    let invoiceIconBackgroundColor = 'white'
-    let invoiceIconCheckmarkColor = 'transparent'
-    let invoiceButtonText = 'Upload Invoice(s)'
-    let confirmedContainerBackgroundColor = Colors.disabled
-    let invoiceButtonContainerBackgroundColor = Colors.gold
-    let invoiceButtonTextColor = 'white'
-    // if(true){
-    if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
-      invoiceIconBackgroundColor = Colors.green
-      invoiceIconCheckmarkColor = 'white'
-      invoiceButtonText = 'View Invoice(s)'
-      invoiceButtonContainerBackgroundColor = 'white'
-      invoiceButtonTextColor = Colors.lightBlue
-    }
-    if(order.confirm.order === true){
-      confirmedContainerBackgroundColor = Colors.sky
-    }
-
     return (
       <View style={styles.container}>
         { this.state.loaded === true ?
           <View style={styles.container}>
-            <View>
-              <View style={[styles.confirmedContainer, styles.buttonContainerLink, styles.buttonContainer]}>
-                <View style={{flex: 1 }}>
-                  <Text style={[styles.confirmedText]}>Order sent by: {orderUserName}</Text>
-                  <Text style={[styles.confirmedText]}>{order.orderedAt !== null ? moment(order.orderedAt).format('M/D/YY h:mm a') : ''}</Text>
-                </View>
+            <View style={styles.confirmedContainer}>
+              <View style={styles.confirmationDetails}>
+                <Text style={styles.purveyorName}>{this.props.purveyor.name}</Text>
+                <Text style={[styles.confirmedText]}>
+                  <Text style={{fontStyle: 'italic'}}>Ord.</Text> {order.orderedAt !== null ? moment(order.orderedAt).format('ddd, MMM D, h:mma') : ''} {orderUser ? `- ${orderUser.firstName}` : ''}</Text>
+                {order.confirm.order === true ? (
+                    <View>
+                      <Text style={[styles.confirmedText]}><Text style={{fontStyle: 'italic'}}>Rec.</Text> {order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('ddd, MMM D, h:mma') : ''} {confirmUser ? `- ${confirmUser.firstName}` : ''}</Text>
+                    </View>
+                  ) : <View/>
+                }
+                
               </View>
-              <View style={styles.separator} />
             </View>
-            { order.confirm.order === true ?
-              <View>
-                <View style={[styles.confirmedContainer, styles.buttonContainerLink, styles.buttonContainer, {backgroundColor: confirmedContainerBackgroundColor}]}>
-                  <View style={styles.confirmedIconContainer}>
-                    <Icon name='material|circle' size={20} color={invoiceIconBackgroundColor} style={styles.confirmedIconContainer}>
-                      <Icon name='material|check' size={25} color={invoiceIconCheckmarkColor} style={styles.confirmedIconCheckmark} />
-                    </Icon>
+            <View style={styles.optionsContainer}>
+              <TouchableHighlight
+                underlayColor='transparent'
+                onPress={() => {
+                  this.props.onNavToOrderContents()
+                }}
+              >
+                <View style={styles.option}>
+                  <View style={styles.optionInnerContainer}>
+                      <View>
+                        <Text style={[styles.optionText]}>Review Order <Text style={[styles.optionSubText]}>{`(${this.getNumberConfirmed().count} / ${this.getNumberConfirmed().total} items)`}</Text></Text>
+                      </View>
                   </View>
-                  <View style={{flex: 9 }}>
-                    <Text style={[styles.confirmedText]}>Delivery confirmed by: {confirmUserName}</Text>
-                    <Text style={[styles.confirmedText]}>{order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('M/D/YY h:mm a') : ''}</Text>
+                  <View style={styles.iconArrowContainer}>
+                    <Icon name='material|chevron-right' size={27.5} color={Colors.lightBlue} style={styles.iconArrow}/>
                   </View>
                 </View>
-                <View style={styles.separator} />
-              </View>
-            : null }
-            { order.confirm.order === true ?
-              <View>
-                <TouchableHighlight
-                  underlayColor='transparent'
-                  onPress={() => {
-                    this.props.onNavToInvoices(order.id)
-                  }}
-                >
-                  <View style={[styles.invoiceButtonContainer, {backgroundColor: invoiceButtonContainerBackgroundColor}]}>
-                    <Text style={[styles.invoiceButtonText, {color: invoiceButtonTextColor}]}>{invoiceButtonText}</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                underlayColor='transparent'
+                onPress={() => {
+                  this.props.onNavToInvoices(order.id)
+                }}
+              >
+                <View style={styles.option}>
+                  <View style={styles.optionInnerContainer}>
+                      <Text style={[styles.optionText]}>{invoiceButtonText}</Text>
                   </View>
-                </TouchableHighlight>
-                <View style={styles.separator} />
-              </View>
-            : null }
-            <ScrollView
-              automaticallyAdjustContentInsets={false}
-              keyboardShouldPersistTaps={false}
-              style={styles.scrollView}
-            >
-              {productsList}
-            </ScrollView>
-            {modal}
-            { order.confirm.order === false ?
-              <View>
-                <View style={styles.separator} />
-                <TouchableHighlight
-                  onPress={() => {
-                    if(order.confirm.order === false){
-                      this.setState({
-                        showConfirm: true
-                      })
-                    }
-                  }}
-                  underlayColor='transparent'
-                  style={styles.buttonContainerLink}
-                >
-                  <View style={[styles.buttonContainer, buttonDisabledStyle]}>
-                    <Text style={[styles.buttonText, buttonTextDisabledStyle]}>Confirm & Upload Invoice</Text>
+                  <View style={styles.iconArrowContainer}>
+                    <Icon name='material|chevron-right' size={27.5} color={Colors.lightBlue} style={styles.iconArrow}/>
                   </View>
-                </TouchableHighlight>
+                </View>
+              </TouchableHighlight>
+              <TouchableHighlight
+                onPress={() => {
+                  this.setState({
+                    showPurveyorContact: !this.state.showPurveyorContact,
+                  })
+                }}
+                underlayColor='transparent'
+              >
+                <View style={styles.option}>
+                  <View style={styles.optionInnerContainer}>
+                    <Text style={styles.optionText}>Contact Rep</Text>
+                  </View>
+                  <View style={styles.iconArrowContainer}>
+                    <Icon name='material|caret-down' size={27.5} color={Colors.lightBlue} style={styles.iconArrow} />
+                  </View>
+                </View>
+              </TouchableHighlight>
+              { this.state.showPurveyorContact ? 
+                <View style={styles.purveyorContactContainer}>
+                  <View style={styles.separator}/>
+                  <Text style={styles.purveyorRepName}>{this.props.purveyor.orderContact || 'Rep'}</Text>
+                  <View style={styles.iconContactContainer}>
+                    <TouchableHighlight
+                      underlayColor='white'
+                      onPress={() => {
+                        this.handleContactPress('email')
+                      }}
+                    >
+                      <Icon name='material|email' size={27} color={Colors.gold} style={styles.iconContact}/>
+                    </TouchableHighlight>
+                    <TouchableHighlight
+                      underlayColor='white'
+                      onPress={() => {
+                        this.handleContactPress('phone')
+                      }}
+                    >
+                      <Icon name='material|phone' size={27} color={Colors.gold} style={styles.iconContact}/>
+                    </TouchableHighlight>
+                    <TouchableHighlight
+                      underlayColor='white'
+                      onPress={() => {
+                        this.handleContactPress('text')
+                      }}
+                    >
+                      <Icon name='material|smartphone-iphone' size={27} color={Colors.gold} style={styles.iconContact}/>
+                    </TouchableHighlight>
+                  </View>
+                </View>
+                : <View/>
+              }
+            </View>
+            <View style={styles.commentsOuterContainer}>
+              <View style={styles.inputContainer}>
+                <AddCommentForm
+                  placeholder='Comment on this order..'
+                  onSubmit={::this.handleCommentSubmit}
+                  multiline={false}
+                />
               </View>
-            : null }
+              <ScrollView
+                automaticallyAdjustContentInsets={false}
+                keyboardShouldPersistTaps={false}
+              >
+                <View style={styles.commentsInnerContainer}>
+                  {orderComments}
+                </View>
+              </ScrollView>
+            </View>
           </View>
-        : <Text style={[styles.text, styles.textCentered, {padding: 25}]}>Loading, please wait.</Text> }
+        : <Text style={[styles.guidance, {padding: 25}]}>Loading, please wait.</Text> }
       </View>
     )
   }
@@ -358,132 +337,107 @@ class OrderView extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
+    flex: 1,
   },
   confirmedContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.sky,
-    alignItems: 'center',
-    margin: 10,
-    borderRadius: 3,
-    padding: 8,
+    backgroundColor: Colors.lightBlue,
+    padding: 5,
   },
-  confirmedIconContainer: {
-    width: 30,
-    height: 30,
+  confirmationDetails: {
+    flex: 2,
   },
-  confirmedIconCheckmark: {
-    width: 25,
-    height: 25,
-    backgroundColor: 'transparent',
-    marginLeft: 6,
-  },
-  invoiceButtonContainer: {
-    height: 60,
-    alignItems: 'center',
-    backgroundColor: Colors.gold,
-    justifyContent: 'center',
-  },
-  invoiceButtonText: {
+  purveyorName: {
+    fontSize: 25,
     color: 'white',
-    fontSize: Sizes.inputFieldFontSize,
-    fontFamily: 'OpenSans',
-    fontWeight: 'bold',
-    paddingBottom: 1,
-  },
-  buttonContainerLink: {
-  },
-  buttonContainer: {
-    height: 60,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-  },
-  buttonDisabled: {
-    backgroundColor: Colors.disabled,
-  },
-  buttonText: {
-    alignSelf: 'center',
-    fontSize: 16,
-    paddingBottom: 1,
-    color: Colors.lightBlue,
-    fontWeight: 'bold',
-    fontFamily: 'OpenSans',
-  },
-  buttonTextDisabled: {
-    color: Colors.greyText,
   },
   confirmedText: {
-    alignSelf: 'center',
-    fontSize: 14,
-    color: Colors.inputTextColor,
     fontFamily: 'OpenSans',
+    color: 'white',
+    fontSize: 15,
   },
-  orderMessage: {
-    backgroundColor: 'white',
+  optionsContainer: {
+    marginTop: 10,
+  },
+  option: {
+    flexDirection: 'row',
     padding: 5,
-    margin: 5,
-    borderRadius: 3,
+    paddingLeft: 30,
+    paddingRight: 30,
+    marginTop: 5,
+    marginLeft: 20,
+    marginRight: 20,
+    borderRadius: 4,
+    backgroundColor: 'white',
+  },
+  optionText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  optionSubText: {
+    fontSize: 12,
+    fontStyle: 'italic',
+    color: Colors.darkGrey,
+    fontWeight: 'normal',
+  },
+  optionInnerContainer: {
+    flex: 13,
+    alignItems: 'stretch',
+  },
+  iconArrowContainer: {
+    flex: 1,
+  },
+  iconArrow: {
+    width: 20,
+    height: 20,
+  },
+  purveyorContactContainer: {
+    borderRadius: 4,
+    marginLeft: 20,
+    marginRight: 20,
+    backgroundColor: 'white',
+  },
+  purveyorRepName: {
+    alignSelf: 'center',
+    fontSize: 18,
+  },
+  iconContactContainer: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    justifyContent: 'space-around',
+    width: window.width * .75,
+    backgroundColor: 'white',
+    padding: 10,
+  },
+  iconContact: {
+    borderWidth: 2,
+    borderRadius: 26,
+    borderColor: Colors.gold,
+    width: 50,
+    height: 50,
   },
   separator: {
     height: 0,
     borderBottomColor: Colors.separatorColor,
-    borderBottomWidth: 1,
+    borderBottomWidth: .75,
   },
   scrollView: {
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
     paddingTop: 5,
   },
-  inputContainer: {
+  commentsOuterContainer: {
     flex: 1,
-    padding: 10,
-    marginBottom: 20,
+    marginTop: 10,
+    padding: 15,
   },
-  orderText: {
-    fontWeight: 'bold',
-    color: Colors.blue,
+  commentsInnerContainer: {
+    backgroundColor: '#f3f3f3',
+    paddingTop: 5,
   },
-  inputWrapper: {
-    borderBottomColor: Colors.inputUnderline,
-    borderBottomWidth: 1,
-  },
-  input: {
-    flex: 1,
-    padding: 4,
-    fontSize: Sizes.inputFieldFontSize,
-    color: Colors.inputTextColor,
-    fontFamily: 'OpenSans',
+  guidance: {
     textAlign: 'center',
-    height: 40,
-  },
-  text: {
-    fontFamily: 'OpenSans',
-    color: Colors.greyText,
-  },
-  textCentered: {
-    textAlign: 'center',
-  },
-  row: {
-    flex: 1,
-    marginTop: 5,
-    marginBottom: 5,
-    marginRight: 10,
-    marginLeft: 10,
-    borderRadius: Sizes.rowBorderRadius,
-    padding: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
-    flexDirection: 'row',
-    backgroundColor: 'white',
-    alignItems: 'center',
-  },
-  missing: {
-    textAlign: 'center',
-    fontFamily: 'OpenSans',
-    fontSize: 11,
-    color: Colors.disabled,
-    fontStyle: 'italic',
   },
   updateOrderContainer: {
     alignSelf: 'center',

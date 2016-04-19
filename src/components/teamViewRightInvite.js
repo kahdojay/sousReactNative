@@ -11,7 +11,7 @@ const {
   StyleSheet,
 } = React;
 
-class TeamMemberRightInvite extends React.Component {
+class TeamViewRightInvite extends React.Component {
   constructor(props) {
     super(props)
     this.state = {}
@@ -47,4 +47,4 @@ let styles = StyleSheet.create({
   },
 })
 
-export default TeamMemberRightInvite;
+export default TeamViewRightInvite;

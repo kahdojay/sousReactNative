@@ -1,5 +1,6 @@
 import React from 'react-native';
 import Colors from '../utilities/colors';
+import { Icon } from 'react-native-icons';
 import Sizes from '../utilities/sizes';
 import _ from 'lodash';
 import s from 'underscore.string';
@@ -29,8 +30,7 @@ class FieldRow extends React.Component {
   }
   render() {
     return (
-      <View key={this.props.key} style={styles.inputContainer}>
-        <View style={styles.inputFieldContainer}>
+        <View key={this.props.key} style={styles.inputContainer}>
           <TextInput
             ref='field'
             style={styles.inputField}
@@ -41,7 +41,6 @@ class FieldRow extends React.Component {
             onChange={this.props.onChange}
           />
         </View>
-      </View>
     )
   }
 }
@@ -52,7 +51,7 @@ class PickerFieldRow extends React.Component {
   }
 
   render() {
-    let selectFieldText = `Select ${this.props.field}`
+    let selectFieldText = `(Tap to Update)`
     if(this.props.selectFieldText){
       selectFieldText = this.props.selectFieldText
     }
@@ -81,7 +80,6 @@ class PickerFieldRow extends React.Component {
 class ProductForm extends React.Component {
   constructor(props) {
     super(props);
-    // console.log('props: ', props)
     this.state = {
       newProduct: {},
       fieldPicker: null,
@@ -89,15 +87,17 @@ class ProductForm extends React.Component {
       modalVisible: false,
       selectedName: this.props.product ? this.props.product.name : '',
       selectedCategory: this.props.productCategory ? this.props.productCategory.id : null,
-      selectedPurveyor: this.props.product ? this.props.product.purveyors : (this.props.fromPurveyorId ? [this.props.fromPurveyorId] : null),
+      selectedPurveyors: this.props.product ? this.props.product.purveyors : (this.props.fromPurveyorId ? [this.props.fromPurveyorId] : null),
       selectedAmount: this.props.product ? this.props.product.amount : 1,
       selectedUnits: this.props.product ? this.props.product.unit : 'cs',
+      selectedDescription: this.props.product ? this.props.product.description : '',
       selectedSku: this.props.product ? this.props.product.sku : '',
       selectedPrice: this.props.product ? this.props.product.price : '',
       selectedPar: this.props.product ? this.props.product.par : '',
       selectedPackSize: this.props.product ? this.props.product.packSize : '',
+      showAdvanced: false,
     }
-    this.fields = ['Purveyor','Category','Amount']//,'QtyUnits']
+    this.fields = ['Purveyors','Category','Amount']//,'QtyUnits']
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -127,8 +127,8 @@ class ProductForm extends React.Component {
   checkValidForm(){
     let selectedName = _.trim(this.state.selectedName.replace('\u00A0',' '))
     if (
-      this.state.selectedPurveyor !== null &&
-      this.state.selectedPurveyor.length > 0 &&
+      this.state.selectedPurveyors !== null &&
+      this.state.selectedPurveyors.length > 0 &&
       this.state.selectedCategory &&
       this.state.selectedAmount &&
       this.state.selectedUnits &&
@@ -136,10 +136,11 @@ class ProductForm extends React.Component {
     ) {
       const productAttributes = {
         name: selectedName,
-        purveyors: this.state.selectedPurveyor,
+        purveyors: this.state.selectedPurveyors,
         amount: this.state.selectedAmount,
         unit: this.state.selectedUnits,
         categoryId: this.state.selectedCategory,
+        description: this.state.selectedDescription,
         sku: this.state.selectedSku,
         price: this.state.selectedPrice,
         par: this.state.selectedPar,
@@ -150,58 +151,31 @@ class ProductForm extends React.Component {
       this.props.onProductNotReady();
     }
   }
+  selectedCategoryValue() {
+    let selectedValue = '(Tap to Update)'
+    let categoryId = this.state.selectedCategory
+    if(categoryId !== null) {
+      selectedValue = this.props.categories[categoryId].name
+    }
+    return selectedValue
+  }
+  selectedPurveyorValue() {
+    let selectedValue = '(Tap to Update)'
+    if (this.state.selectedPurveyors !== null){
+      const purveyorIds = this.state.selectedPurveyors
+      selectedValue = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Purveyors Selected`
+    }
+    return selectedValue
+  }
 
-  render() {
-    let fields = []
-    let items = []
-    let headerText = `Select ${this.state.fieldPicker}`
-    let leftButtonText = 'Update'
-    let selectedValue = null
-    let pickerType = 'PickerIOS'
-
-    this.fields.forEach((field, idx) => {
-      let selectedValue = null
-      let selectFieldText = `Select ${field}`
-      const selectedValueId = `selected${field}`
-
-      if(field === 'Purveyor'){
-        selectFieldText = `Select ${field}(s)`
-      }
-
-      if(this.state.hasOwnProperty(selectedValueId) === true) {
-        selectedValue = this.state[selectedValueId]
-        if(field === 'Purveyor' && selectedValue !== null){
-          const purveyorIds = this.state[selectedValueId]
-          selectedValue = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Purveyors Selected`
-          if(purveyorIds.length === 0){
-            selectedValue = null
-          }
-        }
-        if(field === 'Category'){
-          const categoryId = this.state[selectedValueId]
-          selectedValue = categoryId ? this.props.categories[categoryId].name : null
-        }
-      }
-
-      fields.push(
-        <PickerFieldRow
-          key={field}
-          field={field}
-          selectFieldText={selectFieldText}
-          selectedValue={selectedValue}
-          onShowFieldPicker={() => {
-            this.showFieldPicker(field, idx)
-          }}
-        />
-      )
-    })
-
+  getPickerOptions() {
     if(this.state.fieldPicker !== null){
-      items = []
+      let items = []
+      let selectedValue = null
+      let pickerType = null
       // get the items by switching by fieldPicker
       switch (this.state.fieldPicker) {
-
-        case 'Purveyor':
+        case 'Purveyors':
           const purveyors = _.sortBy(this.props.purveyors, 'name')
           items = _.map(purveyors, (purveyor, idx) => {
             return {
@@ -210,8 +184,7 @@ class ProductForm extends React.Component {
               label: purveyor.name,
             }
           })
-          headerText = `Select ${this.state.fieldPicker}(s)`
-          selectedValue = this.state.selectedPurveyor
+          selectedValue = this.state.selectedPurveyors
           pickerType = 'ListView'
           break;
 
@@ -233,7 +206,7 @@ class ProductForm extends React.Component {
           break;
 
         case 'Amount':
-          items = _.map(['1/8','1/4','1/2'], (frac, idx) => {
+          items = _.map(['1/8','1/4','1/2', '3/4'], (frac, idx) => {
             const dec = frac.split('/')
             return {
               key: `d-${idx}`,
@@ -241,7 +214,7 @@ class ProductForm extends React.Component {
               label: frac,
             }
           })
-          items = items.concat(_.map(_.range(1, 501), (n, idx) => {
+          items = items.concat(_.map(_.range(1, 1001), (n, idx) => {
             return {
               key: idx,
               value: n,
@@ -276,116 +249,251 @@ class ProductForm extends React.Component {
         default:
           break;
       }
+      return {
+        items: items,
+        selectedValue: selectedValue,
+        pickerType: pickerType
+      }
+    } else {
+      return {
+        items: null,
+        selectedValue: null,
+        pickerType: null
+      }
     }
+  }
 
+  render() {
+    let fields = []
+    let items = []
+    let leftButtonText = 'Update'
+    let selectedValue = null
+    let pickerType = 'PickerIOS'
+    let pickerOptions = this.getPickerOptions()
     let selectedPrice = this.state.selectedPrice
-    // if(selectedPrice && selectedPrice.length > 0){
-    //   selectedPrice = s.numberFormat(parseFloat(selectedPrice), 2)
-    // }
-
+    let selectedPurveyors = this.state.selectedPurveyors
+    let selectedPurveyorsText, selectedCategoryText = '(Tap to Update)'
+    if (selectedPurveyors && selectedPurveyors !== null){
+      const purveyorIds = this.state.selectedPurveyors
+      selectedPurveyorsText = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Purveyors Selected`
+    }
     return (
       <View style={styles.container}>
         <ScrollView
           automaticallyAdjustContentInsets={false}
           style={styles.scrollView}
         >
-          <Text style={styles.textDivider}>Product Details</Text>
-          <FieldRow
-            key='name'
-            ref='name'
-            label='Name'
-            placeholder='Avocado, Ripe (48 ct)'
-            value={this.state.selectedName}
-            onChange={(e) => {
-              this.setState({
-                selectedName: e.nativeEvent.text.replace(' ','\u00A0'),
-              }, () => {
-                this.checkValidForm();
-              });
-            }}
-          />
-          {fields}
-          <FieldRow
-            key='unit'
-            ref='unit'
-            label='Base Unit'
-            placeholder='case, ea, lb'
-            value={this.state.selectedUnits}
-            onChange={(e) => {
-              this.setState({
-                selectedUnits: e.nativeEvent.text,
-              }, () => {
-                this.checkValidForm();
-              });
-            }}
-          />
-          <Text style={styles.textDivider}>Additional Info (optional)</Text>
-          <FieldRow
-            key='sku'
-            ref='sku'
-            label='SKU'
-            placeholder='SKU'
-            value={this.state.selectedSku}
-            onChange={(e) => {
-              this.setState({
-                selectedSku: e.nativeEvent.text,
-              }, () => {
-                this.checkValidForm();
-              });
-            }}
-          />
-          <FieldRow
-            key='price'
-            ref='price'
-            label='Price'
-            placeholder='Price'
-            keyboardType='numeric'
-            value={selectedPrice}
-            onChange={(e) => {
-              let price = e.nativeEvent.text.replace(',','')
-              this.setState({
-                selectedPrice: price,
-              }, () => {
-                this.checkValidForm();
-              });
-            }}
-          />
-          <FieldRow
-            key='par'
-            ref='par'
-            label='Par'
-            placeholder='Par'
-            value={this.state.selectedPar}
-            onChange={(e) => {
-              this.setState({
-                selectedPar: e.nativeEvent.text,
-              }, () => {
-                this.checkValidForm();
-              });
-            }}
-          />
-          <FieldRow
-            key='packSize'
-            ref='packSize'
-            label='Pack Size'
-            placeholder='Pack Size'
-            value={this.state.selectedPackSize}
-            onChange={(e) => {
-              this.setState({
-                selectedPackSize: e.nativeEvent.text,
-              }, () => {
-                this.checkValidForm();
-              });
-            }}
-          />
+          <View style={styles.headerContainer}>
+            <Text style={styles.headerText}>Product Details</Text>
+          </View>
+          <View style={styles.fieldRow}>
+            <View style={styles.formLabelContainer}>
+              <Text>Name</Text>
+            </View>
+            <FieldRow
+              key='name'
+              ref='name'
+              label='Name'
+              placeholder='Avocado, Ripe (48 ct)'
+              value={this.state.selectedName}
+              onChange={(e) => {
+                this.setState({
+                  selectedName: e.nativeEvent.text.replace(' ','\u00A0'),
+                }, () => {
+                  this.checkValidForm();
+                });
+              }}
+            />
+          </View>
+          <View style={styles.separator}></View>
+          <View style={styles.fieldRow}>
+            <View style={styles.formLabelContainer}>
+              <Text>Purveyors</Text>
+            </View>
+            <PickerFieldRow
+              key='Purveyors'
+              field='Purveyors'
+              selectFieldText={selectedPurveyorsText}
+              selectedValue={this.selectedPurveyorValue()}
+              onShowFieldPicker={() => {
+                this.showFieldPicker('Purveyors', null)
+              }}
+            />
+          </View>
+          <View style={styles.separator}></View>
+          <View style={styles.fieldRow}>
+            <View style={styles.formLabelContainer}>
+              <Text>Category</Text>
+            </View>
+            <PickerFieldRow
+              key='Category'
+              field='Category'
+              selectFieldText={selectedCategoryText}
+              selectedValue={this.selectedCategoryValue()}
+              onShowFieldPicker={() => {
+                this.showFieldPicker('Category', null)
+              }}
+            />
+          </View>
+          <View style={styles.separator}></View>
+          <View style={styles.fieldRow}>
+            <View style={styles.formLabelContainer}>
+              <Text>Base Qty</Text>
+            </View>
+            <PickerFieldRow
+              key='Amount'
+              field='Amount'
+              selectFieldText={'(Tap to Update)'}
+              selectedValue={this.state.selectedAmount}
+              onShowFieldPicker={() => {
+                this.showFieldPicker('Amount', null)
+              }}
+            />
+          </View>
+          <View style={styles.separator}></View>
+          <View style={styles.fieldRow}>
+            <View style={styles.formLabelContainer}>
+              <Text>Base Unit</Text>
+            </View>
+            <FieldRow
+              key='unit'
+              ref='unit'
+              label='Base Unit'
+              placeholder='case, ea, lb'
+              value={this.state.selectedUnits}
+              onChange={(e) => {
+                this.setState({
+                  selectedUnits: e.nativeEvent.text,
+                }, () => {
+                  this.checkValidForm();
+                });
+              }}
+            />
+          </View>
+          <Text>{' '}</Text>
+          <TouchableHighlight
+            underlayColor='transparent'
+            onPress={() => {this.setState({showAdvanced: !this.state.showAdvanced})}}
+          >
+            <View style={styles.headerContainer}>
+              <Text style={styles.headerText}>Additional Info </Text>
+              <View style={styles.headerIconContainer}>
+                <Icon name='material|caret-down' size={20} color={Colors.darkGrey} style={styles.iconDropDown}/>
+              </View>
+            </View>
+          </TouchableHighlight>
+          {this.state.showAdvanced ? (
+              <View>
+                <View style={styles.fieldRow}>
+                  <View style={styles.formLabelContainer}>
+                    <Text>Note</Text>
+                  </View>
+                  <FieldRow
+                    key='notes'
+                    ref='notes'
+                    label='Notes'
+                    placeholder='ex. "Please no substitutions"'
+                    value={this.state.selectedDescription}
+                    onChange={(e) => {
+                      this.setState({
+                        selectedDescription: e.nativeEvent.text,
+                      }, () => {
+                        this.checkValidForm();
+                      });
+                    }}
+                  />
+                </View>
+                <View style={styles.separator}></View>
+                <View style={styles.fieldRow}>
+                  <View style={styles.formLabelContainer}>
+                    <Text>SKU</Text>
+                  </View>
+                  <FieldRow
+                    key='sku'
+                    ref='sku'
+                    label='SKU'
+                    value={this.state.selectedSku}
+                    onChange={(e) => {
+                      this.setState({
+                        selectedSku: e.nativeEvent.text,
+                      }, () => {
+                        ('sku ', this.state.selectedSku)
+                        this.checkValidForm();
+                      });
+                    }}
+                  />  
+                </View>
+                <View style={styles.separator}></View>
+                <View style={styles.fieldRow}>
+                  <View style={styles.formLabelContainer}>
+                    <Text>Price</Text>
+                  </View>
+                  <FieldRow
+                    key='price'
+                    ref='price'
+                    label='Price'
+                    keyboardType='numeric'
+                    value={selectedPrice}
+                    onChange={(e) => {
+                      let price = e.nativeEvent.text.replace(',','')
+                      this.setState({
+                        selectedPrice: price,
+                      }, () => {
+                        this.checkValidForm();
+                      });
+                    }}
+                  />
+                </View>
+                <View style={styles.separator}></View>
+                <View style={styles.fieldRow}>
+                  <View style={styles.formLabelContainer}>
+                    <Text>Par</Text>
+                  </View>
+                  <FieldRow
+                    key='par'
+                    ref='par'
+                    label='Par'
+                    value={this.state.selectedPar}
+                    onChange={(e) => {
+                      this.setState({
+                        selectedPar: e.nativeEvent.text,
+                      }, () => {
+                        this.checkValidForm();
+                      });
+                    }}
+                  />
+                </View>
+                <View style={styles.separator}></View>
+                <View style={styles.fieldRow}>
+                  <View style={styles.formLabelContainer}>
+                    <Text>Pack Size</Text>
+                  </View>
+                  <FieldRow
+                    key='packSize'
+                    ref='packSize'
+                    label='Pack Size'
+                    value={this.state.selectedPackSize}
+                    onChange={(e) => {
+                      this.setState({
+                        selectedPackSize: e.nativeEvent.text,
+                      }, () => {
+                        this.checkValidForm();
+                      });
+                    }}
+                  />
+                </View>
+              </View>
+            ) 
+            : <View/>
+          }
         </ScrollView>
         <PickerModal
           modalVisible={this.state.modalVisible}
-          headerText={headerText}
+          headerText={`Select ${this.state.fieldPicker}`}
           leftButtonText={leftButtonText}
-          items={items}
-          pickerType={pickerType}
-          selectedValue={selectedValue}
+          items={pickerOptions.items}
+          pickerType={pickerOptions.pickerType}
+          selectedValue={pickerOptions.selectedValue}
           onHideModal={() => {
             this.setState({
               modalVisible: false,
@@ -418,29 +526,54 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.mainBackgroundColor,
-    padding: 5,
-    paddingTop: 10,
+    padding: 10,
   },
   scrollView: {
     flex: 1,
   },
-  textDivider: {
+  headerContainer: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderColor: Colors.separatorColor,
+    marginTop: 5,
+    alignItems: 'center',
+  },
+  headerText: {
+    flex: 1,
+    paddingTop: 5,
+    paddingBottom: 5,
     color: Colors.darkGrey,
     fontSize: 20,
-    marginTop: 10,
-    marginBottom: 10,
+  },
+  headerIconContainer: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  iconDropDown: {
+    width: 10,
+    height: 10,
+  },
+  fieldRow: {
+    flexDirection: 'row',
+  },
+  formLabelContainer: {
+    flex: 1,
+    height: 45,
+    justifyContent: 'center',
   },
   inputContainer: {
-    backgroundColor: 'white',
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 1,
-    marginBottom: 1,
+    flex: 3,
   },
-  inputFieldContainer: {
-    justifyContent: 'center',
+  inputField: {
+    fontFamily: 'OpenSans',
+    fontSize: 14,
+    height: 45,
+    marginLeft: 10,
+  },
+  separator: {
     flex: 1,
+    borderBottomWidth: .5,
+    borderColor: Colors.separatorColor,
   },
   inputSelectContainer: {
     alignItems: 'center',
@@ -450,16 +583,10 @@ const styles = StyleSheet.create({
   selectField: {
     flex: 1,
     fontFamily: 'OpenSans',
-    fontSize: 16,
+    fontSize: 14,
     marginLeft: 10,
     paddingTop: 13,
     paddingBottom: 13,
-  },
-  inputField: {
-    fontFamily: 'OpenSans',
-    fontSize: 16,
-    height: 45,
-    marginLeft: 10,
   },
 });
 

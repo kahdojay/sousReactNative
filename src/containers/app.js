@@ -22,6 +22,7 @@ import semver from 'semver';
 
 const {
   Navigator,
+  NetInfo,
   PropTypes,
   ScrollView,
   StyleSheet,
@@ -89,6 +90,7 @@ class App extends React.Component {
       touchToClose: false,
       lastResourceInfoRetrieval: (new Date(constructorNow - ((60*60*1000) + 100) )).toISOString(),
       lastResourceInfoFetching: false,
+      networkConnected: true,
     }
     this.reconnectTimeout = null
     this.initialRoute = 'Signup'
@@ -399,6 +401,24 @@ class App extends React.Component {
     this.redirectBasedOnData()
   }
 
+  componentDidMount() {
+    NetInfo.addEventListener('change', (reach) => {
+      let reachVal = reach.toUpperCase();
+      this.setState({
+        networkConnected: reachVal && reachVal !== 'NONE' && reachVal !== 'UNKNOWN' ? true : false,
+        // showGenericModal: true,
+        // genericModalMessage: (
+        //   <Text style={{textAlign: 'center'}}>{JSON.stringify(reach)}</Text>
+        // )
+      })
+    })
+    NetInfo.isConnected.fetch().then((isConnected) => {
+      this.setState({
+        networkConnected: isConnected ? true : false,
+      })
+    })
+  }
+
   redirectBasedOnData() {
     if(this.refs.appNavigator){
       const rbodRoutes = this.refs.appNavigator.getCurrentRoutes()
@@ -498,6 +518,7 @@ class App extends React.Component {
   }
 
   onProductEdit(route, nav, product) {
+    // console.log(route, nav, product)
     let productCategory = null
     Object.keys(this.state.currentTeamInfo.categories).forEach((categoryId) => {
       const category = this.state.currentTeamInfo.categories[categoryId]
@@ -653,6 +674,10 @@ class App extends React.Component {
       teams,
       offline,
     } = this.props;
+
+    let orderId = this.state.orderId
+    let orderProducts = this.getOrderItems(orderId)
+    let order = this.state.order
 
     switch (route.name) {
       case 'Update':
@@ -874,9 +899,9 @@ class App extends React.Component {
             },
           },
         }
-      case 'TeamView':
+      case 'TeamTasksView':
         return {
-          component: Components.TeamView,
+          component: Components.TeamTasksView,
           props: {
             teamTasks: this.state.currentTeamInfo.team.tasks,
             onNavToTask: (recipeId) => {
@@ -1246,10 +1271,6 @@ class App extends React.Component {
           },
         }
       case 'OrderView':
-        // let orderProducts = null
-        let orderId = this.state.orderId
-        let orderProducts = this.getOrderItems(orderId)
-        let order = this.state.order
         if(order === null && this.state.orderId){
           order = this.state.currentTeamInfo.orders[orderId]
         }
@@ -1257,48 +1278,34 @@ class App extends React.Component {
         if(order && order.hasOwnProperty('purveyorId') === true){
           purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
         }
-
         return {
           component: Components.OrderView,
           props: {
-            teamBetaAccess: this.state.currentTeamInfo.betaAccess,
+            team: this.state.currentTeamInfo,
             userId: session.userId,
+            userImgUrl: session.imageUrl,
+            userName: session.firstName,
             orderId: orderId,
             orderFetching: orders.isFetching,
             order: order,
             purveyor: purveyor,
             products: orderProducts,
             teamsUsers: teams.teamsUsers,
-            // messages: orderMessages,
-            onConfirmOrderProduct: (cartItem, confirm) => {
-              _.debounce(() => {
-                dispatch(actions.updateCartItem({
-                  id: cartItem.id,
-                  teamId: cartItem.teamId,
-                  purveyorId: cartItem.purveyorId,
-                  orderId: this.state.order.id,
-                  productId: cartItem.productId,
-                  status: cartItem.status,
-                  quantityReceived: cartItem.quantityReceived || cartItem.quantity,
-                }))
-              }, 25)()
-            },
-            onConfirmOrder: (order) => {
-              _.debounce(() => {
-                dispatch(actions.updateOrder(order.id, {
-                  confirm: order.confirm
-                }))
-              }, 25)()
-            },
-            onSendConfirmationMessage: (msg) => {
-              _.debounce(() => {
-                dispatch(actions.createMessage(msg))
-              }, 25)()
-            },
-            onNavToOrders: () => {
-              nav.replacePreviousAndPop({
-                name: 'OrderIndex',
+            onNavToOrderContents: () => {
+              this.setState({
+                order: order,
+                products: orderProducts,
+                purveyor: purveyor,
+              }, () => {
+                nav.push({
+                  name: 'OrderContentsView',
+                })
               })
+            },
+            onUpdateOrder: (order) => {
+              _.debounce(() => {
+                dispatch(actions.updateOrder(order.id, order))
+              }, 25)()
             },
             onNavToInvoices: (orderId) => {
               const order = this.state.currentTeamInfo.orders[orderId]
@@ -1324,6 +1331,63 @@ class App extends React.Component {
             }
           },
         }
+      case 'OrderContentsView':
+        return {
+          component: Components.OrderContentsView,
+          props: {
+            order: this.state.order,
+            purveyor: this.state.purveyor,
+            products: orderProducts,
+            userId: session.userId,
+            userName: session.firstName,
+            onProductEdit: this.onProductEdit.bind(this, route, nav),
+            onConfirmOrderProduct: (updateCartItem) => {
+              _.debounce(() => {
+                dispatch(actions.updateCartItem({
+                  id: updateCartItem.id,
+                  teamId: updateCartItem.teamId,
+                  purveyorId: updateCartItem.purveyorId,
+                  orderId: this.state.order.id,
+                  productId: updateCartItem.productId,
+                  status: updateCartItem.status,
+                  quantityReceived: updateCartItem.quantityReceived || updateCartItem.quantity,
+                }))
+              }, 25)()
+            },
+            onGetOrderDetails: (orderId) => {
+              dispatch(actions.getOrders([orderId]))
+            },
+            onNavToInvoices: (orderId) => {
+              const order = this.state.currentTeamInfo.orders[orderId]
+              const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
+              this.setState({
+                orderId: orderId,
+                order: order,
+                purveyor: purveyor,
+              }, () => {
+                if(order.hasOwnProperty('invoices') === true && order.invoices.length > 0){
+                  nav.push({
+                    name: 'OrderInvoices'
+                  })
+                } else {
+                  nav.push({
+                    name: 'OrderInvoiceUpload'
+                  })
+                }
+              })
+            },
+            onSendConfirmationMessage: (msg) => {
+              _.debounce(() => {
+                dispatch(actions.createMessage(msg))
+              }, 25)()
+            },
+            onUpdateOrder: (order) => {
+              _.debounce(() => {
+                dispatch(actions.updateOrder(order.id, order))
+              }, 25)()
+            },
+          },
+        }
       case 'OrderInvoices':
         return {
           component: Components.OrderInvoices,
@@ -1337,7 +1401,7 @@ class App extends React.Component {
                 order: order,
                 purveyor: purveyor,
               }, () => {
-                nav.replace({
+                nav.push({
                   name: 'OrderInvoiceUpload'
                 })
               })
@@ -1353,7 +1417,7 @@ class App extends React.Component {
               dispatch(actions.updateOrderInvoices(this.state.order.id, {
                 invoiceImages: invoiceImages
               }))
-              nav.replace({
+              nav.replacePreviousAndPop({
                 name: 'OrderInvoices'
               })
             }
@@ -1530,6 +1594,7 @@ class App extends React.Component {
             // team: this.state.currentTeamInfo.team,
             offlineQueueCount: Object.keys(offline.queue).length,
             teamBetaAccess: this.state.currentTeamInfo.betaAccess,
+            onProductEdit: this.onProductEdit.bind(this, route, nav),
             cartItems: this.state.currentTeamInfo.cart,
             cartPurveyors: cartPurveyors,
             products: this.state.currentTeamInfo.products,
@@ -1547,14 +1612,22 @@ class App extends React.Component {
               }, 25)()
             },
             onSendCart: (cartInfo, navigateToFeed) => {
-              _.debounce(() => {
-                dispatch(actions.sendCart(cartInfo));
-              }, 25)()
-              if(navigateToFeed === true){
-                nav.replacePreviousAndPop({
-                  name: 'Feed',
-                });
-              }
+
+              NetInfo.isConnected.fetch().then((isConnected) => {
+                if(isConnected === true){
+                  _.debounce(() => {
+                    dispatch(actions.sendCart(cartInfo));
+                  }, 25)()
+                  if(navigateToFeed === true){
+                    nav.replacePreviousAndPop({
+                      name: 'Feed',
+                    });
+                  }
+                } else {
+                  dispatch(actions.createError('network-connectivity', 'Please check that your device is connected to the internet and try again'))
+                }
+              })
+
             },
           },
         }
@@ -1562,9 +1635,9 @@ class App extends React.Component {
         return {
           component: Components.Loading
         }
-      case 'TeamMemberListing':
+      case 'TeamView':
         return {
-          component: Components.TeamMemberListing,
+          component: Components.TeamView,
           props: {
             settingsConfig: settingsConfig,
             userId: session.userId,
@@ -1683,9 +1756,6 @@ class App extends React.Component {
                 disabled={(this.state.currentTeamInfo.team === null)}
               />
             ),
-            // customNext: (
-            //   <Components.FeedViewRightButton />
-            // ),
           })
           break;
         case 'PurveyorIndex':
@@ -1712,7 +1782,7 @@ class App extends React.Component {
             )
           })
           break;
-        case 'TeamView':
+        case 'TeamTasksView':
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
@@ -1809,10 +1879,6 @@ class App extends React.Component {
           })
           break;
         case 'OrderIndex':
-          let allOrders = this.state.currentTeamInfo.orders
-          const openOrders = _.filter(allOrders, (order) => {
-            return order.confirm.order === false
-          })
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
@@ -1821,20 +1887,15 @@ class App extends React.Component {
             customPrev: (
               <Components.NavBackButton iconFont={'material|close'} />
             ),
-            // title: `${openOrders.length} Open Orders`,
             customTitle: (
               <TextComponents.NavBarTitle
-                content={`${Object.keys(allOrders).length} Orders (${openOrders.length} Open)`}
+                content="Receiving Guide"
               />
             ),
             hideNext: true,
           })
           break;
         case 'OrderView':
-          let purveyorNameTitle = 'Processing'
-          if(this.state.purveyor !== null){
-            purveyorNameTitle = this.state.purveyor.name.substr(0,12) + (this.state.purveyor.name.length > 12 ? '...' : '')
-          }
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
@@ -1844,38 +1905,26 @@ class App extends React.Component {
                 iconFont={'material|chevron-left'}
               />
             ),
-            // title: this.state.purveyor.name.substr(0,16) + (this.state.purveyor.name.length > 16 ? '...' : ''),
             customTitle: (
               <TextComponents.NavBarTitle
-                content={purveyorNameTitle}
+                content={'Order'}
               />
             ),
-            customNext: (
-              <Components.OrderRightButton
-                purveyor={this.state.purveyor}
-                onHandlePress={(type) => {
-                  const order = this.state.order
-                  const purveyor = this.state.purveyor
-                  const team = this.state.currentTeamInfo.team
-                  if(type === 'call') {
-                    Communications.phonecall(purveyor.phone, true)
-                  } else if(type === 'email'){
-                    let timeZone = 'UTC';
-                    if(purveyor.hasOwnProperty('timeZone') && purveyor.timeZone){
-                      timeZone = purveyor.timeZone;
-                    }
-                    const orderDate = moment(order.orderedAt).tz(timeZone);
-                    const to = purveyor.orderEmails.split(',')
-                    const cc = ['orders@sousapp.com']
-                    const subject = `re: ${purveyor.name} • Order Received from ${team.name} on ${orderDate.format('dddd, MMMM D')}`
-                    let orderProducts = this.getOrderItems(this.state.orderId)
-                    let body = 'Order: '
-                    orderProducts.forEach(function(o) {
-                      body += `\n ${o.cartItem.productName} x ${o.cartItem.amount * o.cartItem.quantity} ${o.cartItem.unit}`
-                    })
-                    Communications.email(to, cc, null, subject, body)
-                  }
-                }}
+          })
+          break;
+        case 'OrderContentsView':
+          navBar = React.cloneElement(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                pop={true}
+                iconFont={'material|chevron-left'}
+              />
+            ),
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'Order Contents'}
               />
             ),
           })
@@ -1902,10 +1951,6 @@ class App extends React.Component {
           })
           break;
         case 'OrderInvoiceUpload':
-          let titleOrderInvoiceUpload = 'Processing'
-          if(this.state.purveyor !== null){
-            titleOrderInvoiceUpload = this.state.purveyor.name.substr(0,12) + (this.state.purveyor.name.length > 12 ? '...' : '')
-          }
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
@@ -1917,7 +1962,7 @@ class App extends React.Component {
             ),
             customTitle: (
               <TextComponents.NavBarTitle
-                content={titleOrderInvoiceUpload}
+                content={'Upload Invoice/Photo'}
               />
             ),
           })
@@ -2027,7 +2072,7 @@ class App extends React.Component {
             ),
           })
           break;
-        case 'TeamMemberListing':
+        case 'TeamView':
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
@@ -2044,7 +2089,7 @@ class App extends React.Component {
               />
             ),
             customNext: (
-              <Components.TeamMemberRightInvite
+              <Components.TeamViewRightInvite
                 connected={(connect.status === actions.CONNECT.CONNECTED)}
                 navigateToInviteView={() => {
                   nav.push({
@@ -2167,10 +2212,10 @@ class App extends React.Component {
             nav.push({ name: 'Profile', })
           }}
           onNavToTeam={() => {
-            nav.push({ name: 'TeamView', })
+            nav.push({ name: 'TeamTasksView', })
           }}
-          onNavToTeamMemberListing={() => {
-            nav.push({ name: 'TeamMemberListing', })
+          onNavToTeamView={() => {
+            nav.push({ name: 'TeamView', })
           }}
           onNavToTeamIndex={() => {
             nav.push({ name: 'TeamIndex', })
@@ -2206,6 +2251,16 @@ class App extends React.Component {
         </TouchableHighlight>
       )
     }
+    let reactStatus = null
+    if(this.state.networkConnected === false){
+      reactStatus = (
+        <View style={[styles.offlineContainer, {backgroundColor: Colors.error}]}>
+          <View style={styles.offlineInnerContainer}>
+            <Text style={[styles.offlineText, {paddingTop: 3,}]}>Network connectivity issues</Text>
+          </View>
+        </View>
+      )
+    }
 
     return (
       <CustomSideView
@@ -2219,6 +2274,7 @@ class App extends React.Component {
           {errorModal}
           {genericModal}
           {connectionStatus}
+          {reactStatus}
           {scene}
           <KeyboardSpacer />
         </View>

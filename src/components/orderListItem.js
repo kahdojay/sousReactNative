@@ -3,6 +3,7 @@ import { Icon, } from 'react-native-icons';
 import _ from 'lodash';
 import s from 'underscore.string';
 import CheckBox from './checkbox';
+import Swipeout from 'react-native-swipeout';
 import Colors from '../utilities/colors';
 import Sizes from '../utilities/sizes';
 import PickerModal from './modal/pickerModal';
@@ -120,64 +121,87 @@ class OrderListItem extends React.Component {
         />
       )
 
-      let showProductPrices = false
-      if(
-        teamBetaAccess.hasOwnProperty('showProductPrices') === true
-        && teamBetaAccess.showProductPrices === true
-      ){
-        showProductPrices = true        
-      }
+      // let showProductPrices = false
+      // if(
+      //   teamBetaAccess.hasOwnProperty('showProductPrices') === true
+      //   && teamBetaAccess.showProductPrices === true
+      // ){
+      //   showProductPrices = true        
+      // }
 
       productRow = (
-        <View style={styles.row}>
-          <TouchableWrapper
-            underlayColor='transparent'
-            onPress={() => {
-              this.setState({
-                editQuantity: true,
-              })
-            }}
-            style={{flex: 1}}
-          >
-            <View style={styles.quantityContainer}>
-              <Text style={styles.quantity}>{cartItem.quantityReceived || cartItem.quantity}x</Text>
-            </View>
-          </TouchableWrapper>
-          <TouchableWrapper
-            underlayColor='transparent'
-            onPress={() => {
-              if(orderConfirm.order === false){
+        <View style={styles.container}>
+          <View style={styles.row}>
+            <TouchableWrapper
+              underlayColor='transparent'
+              onPress={() => {
                 this.setState({
-                  productConfirm: !productConfirm
-                },() => {
-                  const updateCartItem = Object.assign({}, cartItem, {
-                    status: this.state.productConfirm === true ? 'RECEIVED' : 'ORDERED'
-                  })
-                  this.props.onHandleProductConfirm(updateCartItem)
+                  editQuantity: true,
                 })
-              }
-            }}
-            style={{flex: 8}}
-          >
-            <View style={{flexDirection: 'row', alignItems: 'center',}}>
-              <View style={styles.productInfo}>
-                <Text style={[styles.text, styles.boldText]}>{product.name}</Text>
-                <Text style={styles.text}>Ordered: {cartItem.quantity} x {product.amount} {product.unit} {cartItem.productPrice && showProductPrices === true ? '• $' + s.numberFormat(parseFloat(cartItem.productPrice), 2) : ''}</Text>
+              }}
+              style={{flex: 1.25}}
+            >
+              <View style={styles.quantityContainer}>
+                {this.props.orderConfirm === false ? 
+                  <View style={styles.caretContainer}>
+                    <Icon name='material|caret-up' size={13} color='black' style={styles.iconCaret} />
+                    <Icon name='material|caret-down' size={13} color='black' style={styles.iconCaret} />
+                  </View>
+                : <View style={styles.caretContainer}/>}
+                <Text style={styles.quantity}>{cartItem.quantityReceived || cartItem.quantity}x</Text>
               </View>
-              <View style={styles.confirmCheckbox}>
-                <View style={[styles.iconContainer]}>
-                  <Icon name={iconName} size={20} color={iconColor} style={[styles.icon]}/>
+            </TouchableWrapper>
+            <TouchableWrapper
+              underlayColor='transparent'
+              onPress={() => {
+                if(orderConfirm.order === false){
+                  this.setState({
+                    productConfirm: !productConfirm
+                  },() => {
+                    const updateCartItem = Object.assign({}, cartItem, {
+                      status: this.state.productConfirm === true ? 'RECEIVED' : 'ORDERED'
+                    })
+                    this.props.onHandleProductConfirm(updateCartItem)
+                  })
+                }
+              }}
+              style={{flex: 8}}
+            >
+              <View style={{flexDirection: 'row', alignItems: 'center',}}>
+                <View style={styles.productInfo}>
+                  <Text style={styles.productName}>{product.name}</Text>
+                  <Text style={styles.text}>{cartItem.quantity}x {product.amount}{product.unit} {(product.price && !!product.price.trim()) ? '• $' + s.numberFormat(parseFloat(product.price), 2) : ''}</Text>
+                </View>
+                <View style={styles.confirmCheckbox}>
+                  <View style={[styles.iconContainer]}>
+                    <Icon name={iconName} size={20} color={iconColor} style={[styles.icon]}/>
+                  </View>
                 </View>
               </View>
-            </View>
-          </TouchableWrapper>
-          {modal}
+            </TouchableWrapper>
+            {modal}
+          </View>
+          <View style={styles.separator} />
         </View>
       )
     }
+
+    let wrappedProductRow = this.props.orderConfirm.order === false ?
+      <Swipeout
+        right={[{
+        backgroundColor: 'white',
+        component: (
+          <Icon name='material|edit' size={30} color={Colors.lightBlue} style={styles.iconEdit}/>
+        ),
+        onPress: this.props.onProductEdit
+      }]}
+      >
+        {productRow}
+      </Swipeout>
+    : productRow
     return (
       <View style={styles.container}>
-        {productRow}
+        {wrappedProductRow}
       </View>
     )
   }
@@ -190,37 +214,42 @@ const styles = StyleSheet.create({
   },
   row: {
     flex: 1,
-    marginTop: 5,
-    marginBottom: 5,
-    marginRight: 10,
-    marginLeft: 10,
-    borderRadius: Sizes.rowBorderRadius,
     padding: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
     flexDirection: 'row',
-    backgroundColor: 'white',
     alignItems: 'center',
+    backgroundColor: 'white',
   },
   quantityContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 4,
+    flexDirection: 'row',
   },
   quantity: {
-    textAlign: 'center',
+    flex: 3,
+    textAlign: 'left',
     fontFamily: 'OpenSans',
     fontSize: 18,
-    width: 36,
-    borderColor: Colors.lightGrey,
-    borderWidth: .5,
-    borderRadius: 15,
+  },
+  caretContainer: {
+    flex: 1,
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+  iconCaret: {
+    width: 8,
+    height: 8,
   },
   text: {
     fontFamily: 'OpenSans',
   },
-  boldText: {
+  productName: {
+    fontSize: 17,
     fontWeight: 'bold',
+  },
+  iconEdit: {
+    flex: 1,
+    alignSelf: 'center',
+    width: 54,
+    height: 40,
+    marginLeft: 2,
   },
   loading: {
     textAlign: 'center',
@@ -237,7 +266,8 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   productInfo: {
-    flex: 6
+    flex: 6,
+    paddingLeft: 5,
   },
   confirmCheckbox: {
     flex: 1
@@ -249,6 +279,11 @@ const styles = StyleSheet.create({
   icon: {
     width: 40,
     height: 40,
+  },
+  separator: {
+    height: 0,
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: 1,
   },
 });
 

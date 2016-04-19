@@ -1,6 +1,7 @@
 import React from 'react-native';
 import Colors from './colors';
 import { Icon } from 'react-native-icons';
+import moment from 'moment';
 
 const {
   View,
@@ -50,9 +51,7 @@ function formatMessage(msg, messageLength = null) {
           {'\n'}
           { message !== '' ?
             <Text style={{fontSize: 13}}>
-              (<Text style={{fontStyle: 'italic', color: Colors.gold}}>Note:</Text>
-              {' '}
-              {message})
+              {message}
               {'\n'}
             </Text>
           : null }
@@ -70,16 +69,13 @@ function formatMessage(msg, messageLength = null) {
     messageString = (
       <Text style={styles.welcomeTextContainer}>
         <Text style={styles.welcomeText}>
-          Welcome to Sous! If you haven't already uploaded your <Text style={{fontWeight: 'bold'}}>order guide</Text>, we can help you set it up.{'\n\n'}
+          Welcome to Sous! If you haven't already, you can setup your <Text style={{fontWeight: 'bold'}}>Order Guide</Text> by accessing the menu or contacting us.{'\n\n'}
         </Text>
         <Text style={styles.welcomeText}>
-          When an order is placed, it will notify the team in this window.  You can also use this space to send messages to your team - tap <Text style={{fontWeight: 'bold'}}>Team Members</Text> on the navigation bar to see who's using the app.{'\n\n'}
+          You can communicate with your team here. Orders placed/received will appear here as well.{'\n\n'}
         </Text>
         <Text style={styles.welcomeText}>
-          Finally, you can contact us at Sous Support <Text style={{fontWeight: 'bold'}}>24/7</Text> with any issues you may have.
-          Feel free to message us in the app, or e-mail us at
-          <Text style={{fontWeight: 'bold'}}> sous@sousapp.com </Text>
-          with any advice on how we can improve.
+          If you have any questions or feedback, message us here, or e-mail us at <Text style={{fontWeight: 'bold'}}> sous@sousapp.com </Text>
         </Text>
       </Text>
     );
@@ -95,10 +91,10 @@ function formatMessage(msg, messageLength = null) {
           This is your Team Feed - use this space to communicate with your team. Add members by tapping the invite button within <Text style={{fontWeight: 'bold'}}>Team Members</Text>.{'\n\n'}
         </Text>*/}
         <Text style={styles.welcomeText}>
-          Feel free to create and submit purveyor orders in the Demo Team (don't worry, they won't go to any real purveyors).{'\n\n'}
+          Feel free to create and submit dummy orders (don't worry, they won't go to anybody).{'\n\n'}
         </Text>
         <Text style={styles.welcomeText}>
-          When you're ready to create your own Order Guide, create a New Team by accessing <Text style={{fontWeight: 'bold'}}>Switch Teams</Text>​ from the Menu, or chat us below and we'll be in touch.
+          If you haven't already, you can setup your <Text style={{fontWeight: 'bold'}}>Order Guide</Text> by accessing the menu, or simply message us here or email us at sous@sousapp.com.
         </Text>
       </Text>
     );
@@ -113,6 +109,27 @@ function formatMessage(msg, messageLength = null) {
     );
   }
   return messageString
+}
+
+function formatMessageTimeStamp(msg) {
+  const now = new Date()
+  const msgDate = moment(msg.createdAt)
+  const withinSameDay = moment(now).clone().subtract(1, 'd').startOf('day').isSame(msgDate.clone().startOf('day'))
+  const withinSameWeek = moment(now).diff(msgDate, 'days') < 7
+  let displayDate = ''
+
+  if (msgDate.isSame(now, 'day')) {
+    displayDate = `Today, ${msgDate.format("h:mma")}`
+  } else {
+    if (withinSameDay) {
+      displayDate = `Yesterday, ${msgDate.format("h:mma")}`
+    } else if (withinSameWeek) {
+      displayDate = msgDate.format("ddd h:mma")
+    } else {
+      displayDate = msgDate.format("M/D ddd h:mma")
+    }
+  }
+  return displayDate
 }
 
 const styles = StyleSheet.create({
@@ -132,4 +149,5 @@ const styles = StyleSheet.create({
 
 export default {
   'formatMessage': formatMessage,
+  'formatMessageTimeStamp': formatMessageTimeStamp,
 }

@@ -30,7 +30,7 @@ module.exports = class Menu extends React.Component {
       return <View />;
     }
 
-    let avatar = AvatarUtils.getAvatar(session, 50)
+    let avatar = AvatarUtils.getAvatar(session, 60)
     if (avatar === null) {
       avatar = <Icon name='material|account-circle' size={60} color={Colors.lightGrey} style={styles.avatar} />
     }
@@ -50,10 +50,11 @@ module.exports = class Menu extends React.Component {
             }}
           >
             <View style={{alignItems: 'center'}}>
-              <View style={[styles.avatar, {width: 54, height: 54, borderRadius: 27, padding: 1}]}>
+              <View style={[styles.avatar, {width: 54, height: 54, borderRadius: 27}]}>
                 {avatar}
               </View>
               <Text style={styles.name}>{session.firstName} {session.lastName}</Text>
+              <Text style={styles.editProfile}>Edit Profile</Text>
             </View>
           </TouchableHighlight>
         </View>
@@ -107,13 +108,13 @@ module.exports = class Menu extends React.Component {
             </TouchableHighlight>*/}
             <TouchableHighlight
               key='team-members'
-              onPress={this.props.onNavToTeamMemberListing}
+              onPress={this.props.onNavToTeamView}
               style={styles.menuItemButton}
               underlayColor='#3e444f'
             >
               <View style={styles.menuTextContainer}>
-                <Icon name='material|accounts' size={20} color='white' style={styles.menuIcon}/>
-                <Text style={styles.menuItemText}>Team Members</Text>
+                <Icon name='material|settings' size={20} color='white' style={styles.menuIcon}/>
+                <Text style={styles.menuItemText}>{this.props.team.name}</Text>
               </View>
             </TouchableHighlight>
             <TouchableHighlight
@@ -122,9 +123,9 @@ module.exports = class Menu extends React.Component {
               underlayColor='#3e444f'
             >
               <View style={styles.menuTextContainer}>
-                <Icon name='material|transform' size={20} color='white' style={styles.menuIcon}/>
+                <Icon name='material|group-work' size={20} color='white' style={styles.menuIcon}/>
                 <Text style={styles.menuItemText}>
-                  Switch Teams
+                  All Teams
                 </Text>
               </View>
             </TouchableHighlight>
@@ -132,8 +133,8 @@ module.exports = class Menu extends React.Component {
         </View>
         <View style={styles.separator} />
         <View style={styles.teamNameContainer}>
-          <Text style={styles.teamName}>{team ? team.name : ''}</Text>
-          <Text style={styles.buildInfo}>version: {version} - build: {build}</Text>
+          <Text style={styles.sous}>Sous</Text>
+          <Text style={styles.buildInfo}>{version}({build})</Text>
         </View>
       </View>
     );
@@ -159,8 +160,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    borderWidth: 1,
-    borderColor: Colors.lightGrey,
   },
   name: {
     flex: 1,
@@ -170,9 +169,10 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   editProfile: {
+    fontSize: 12,
     fontFamily: 'OpenSans',
     textAlign: 'center',
-    color: 'white',
+    color: Colors.lightBlue,
   },
   menuItem: {
   },
@@ -195,7 +195,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
     justifyContent: 'center',
-    // alignItems: 'center',
     paddingTop: 15,
     paddingBottom: 15,
     paddingLeft: 10,
@@ -239,8 +238,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingBottom: 10,
   },
-  teamName: {
+  sous: {
     color: 'white',
+    fontSize: 13,
     fontFamily: 'OpenSans',
   },
   buildInfo: {

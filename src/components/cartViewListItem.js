@@ -6,11 +6,14 @@ import Swipeout from 'react-native-swipeout';
 import PickerModal from './modal/pickerModal';
 
 const {
+  Dimensions,
   StyleSheet,
   Text,
   TouchableHighlight,
   View,
 } = React;
+
+const window = Dimensions.get('window');
 
 class CartViewListItem extends React.Component {
   constructor(props) {
@@ -38,6 +41,15 @@ class CartViewListItem extends React.Component {
     }
 
     const buttons = [{
+      backgroundColor: 'transparent',
+      component: (
+        <Icon name='material|edit' size={30} color={Colors.lightBlue} style={styles.iconEdit}/>
+      ),
+      onPress: () => {
+       this.props.onProductEdit(product)
+      }
+    },
+    {
       backgroundColor: 'transparent',
       component: (
         <Icon name='material|close' size={30} color={Colors.lightBlue} style={styles.iconRemove}/>
@@ -69,24 +81,38 @@ class CartViewListItem extends React.Component {
           right={buttons}
           backgroundColor={Colors.mainBackgroundColor}
         >
-          <View key={product.id} style={styles.productContainer}>
-            <Text style={styles.productTitle}>{productName}</Text>
-            <TouchableHighlight
-              onPress={() => {
-                this.setState({
-                  editQuantity: true
-                })
-              }}
-              underlayColor='transparent'
-              style={styles.productQuantityContainer}
-            >
-              <Text style={styles.productQuantity}>{quantity} {productUnit}</Text>
-            </TouchableHighlight>
-            {rowDisabled === true ?
-              <View style={styles.productContainerDisabled}>
-                <Text style={styles.productDisabledText}>{rowDisabledReason}</Text>
-              </View>
-            : null}
+          <View style={styles.productContainer}>
+            <View key={product.id} style={styles.productDetails}>
+              <Text style={styles.productTitle}>{productName}</Text>
+              <TouchableHighlight
+                onPress={() => {
+                  this.setState({
+                    editQuantity: true
+                  })
+                }}
+                underlayColor='transparent'
+                style={styles.productQuantityContainer}
+              >
+                <View style={styles.productQuantityInnerContainer}>
+                  <Text style={styles.productQuantity}>{quantity} {productUnit}</Text>
+                  <View style={styles.caretContainer}>
+                    <Icon name='material|caret-up' size={13} color='black' style={styles.iconCaret} />
+                    <Icon name='material|caret-down' size={13} color='black' style={styles.iconCaret} />
+                  </View>
+                </View>
+              </TouchableHighlight>
+              {rowDisabled === true ?
+                <View style={styles.productContainerDisabled}>
+                  <Text style={styles.productDisabledText}>{rowDisabledReason}</Text>
+                </View>
+              : null}
+            </View>
+            {!!product.description.trim() ? (
+                <View>
+                  <Text style={styles.productNoteText}>"{product.description}" 
+                  </Text>
+                </View>
+              ) : (<View></View>)}
           </View>
         </Swipeout>
         <PickerModal
@@ -125,17 +151,16 @@ class CartViewListItem extends React.Component {
 
 const styles = StyleSheet.create({
   productContainer: {
-    flex: 1,
-    flexDirection: 'row',
     backgroundColor: 'white',
+    borderRadius: 3,
     marginTop: 1,
-    justifyContent: 'space-between',
-    alignItems: 'center',
     paddingLeft: 5,
     paddingRight: 5,
     paddingTop: 5,
     paddingBottom: 5,
     overflow: 'hidden',
+    borderBottomColor: Colors.separatorColor,
+    borderBottomWidth: .5,
   },
   productContainerDisabled: {
     height: 50,
@@ -147,6 +172,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  productDetails: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   productDisabledText: {
     flex: 1,
     color: 'white',
@@ -154,9 +185,24 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
   },
+  productNoteText: {
+    width: window.width * .85,
+    color: Colors.darkGrey,
+    fontSize: 12,
+    fontStyle: 'italic',
+  },
   icon: {
     width: 30,
     height: 30,
+  },
+  iconEdit: {
+    flex: 1,
+    alignSelf: 'center',
+    width: 54,
+    height: 40,
+    marginLeft: 2,
+    marginTop: 7,
+    marginBottom: 7,
   },
   iconRemove: {
     flex: 1,
@@ -176,19 +222,27 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   productTitle: {
-    flex: 2,
-    paddingTop: 10,
-    paddingLeft: 5,
-    paddingBottom: 10,
+    flex: 4,
     fontFamily: 'OpenSans',
     fontSize: 14,
   },
   productQuantityContainer: {
     flex: 1,
   },
+  productQuantityInnerContainer: {
+    flexDirection: 'row',
+    alignSelf: 'flex-end',
+  },
   productQuantity: {
     padding: 5,
     textAlign: 'right',
+  },
+  caretContainer: {
+    alignSelf: 'center',
+  },
+  iconCaret: {
+    width: 8,
+    height: 8,
   },
 })
 

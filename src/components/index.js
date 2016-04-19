@@ -14,6 +14,7 @@ import Menu from './menu';
 import NavBackButton from './navBackButton';
 import NavbarTitle from './NavbarTitle';
 import NavOrderGuide from './navOrderGuide';
+import OrderContentsView from './orderContentsView';
 import OrderGuide from './orderGuide';
 import OrderGuideLoading from './orderGuideLoading';
 import OrderGuideUpload from './orderGuideUpload';
@@ -31,9 +32,9 @@ import PurveyorView from './purveyorView';
 import Signup from './signup';
 import TaskView from './taskView';
 import TeamIndex from './teamIndex';
-import TeamMemberListing from './teamMemberListing';
-import TeamMemberRightInvite from './TeamMemberRightInvite';
-import TeamView from './teamView';
+import TeamView from './TeamView';
+import TeamViewRightInvite from './teamViewRightInvite';
+import TeamTasksView from './teamTasksView';
 import Update from './update';
 import UserInfo from './userInfo';
 import UserTeam from './userTeam';
@@ -55,6 +56,7 @@ export default {
   NavBackButton,
   NavbarTitle,
   NavOrderGuide,
+  OrderContentsView,
   OrderGuide,
   OrderGuideLoading,
   OrderGuideUpload,
@@ -72,9 +74,9 @@ export default {
   Signup,
   TaskView,
   TeamIndex,
-  TeamMemberListing,
-  TeamMemberRightInvite,
   TeamView,
+  TeamViewRightInvite,
+  TeamTasksView,
   Update,
   UserInfo,
   UserTeam,
