@@ -89,6 +89,7 @@ class OrderView extends React.Component {
     switch (type) {
       case 'phone':
         Communications.phonecall(purveyor.phone, true)
+        break
       case 'email':
         let timeZone = 'UTC';
         if(purveyor.hasOwnProperty('timeZone') && purveyor.timeZone){
@@ -103,8 +104,10 @@ class OrderView extends React.Component {
         //   body += `\n ${o.cartItem.productName} x ${o.cartItem.amount * o.cartItem.quantity} ${o.cartItem.unit}`
         // })
         Communications.email(to, cc, null, subject)
+        break
       case 'text':
         Communications.text(purveyor.phone)
+        break
     }
   }
 
