@@ -142,7 +142,7 @@ class OrderListItem extends React.Component {
               style={{flex: 1.25}}
             >
               <View style={styles.quantityContainer}>
-                {this.props.orderConfirm === false ? 
+                {this.props.orderConfirm.order === false ? 
                   <View style={styles.caretContainer}>
                     <Icon name='material|caret-up' size={13} color='black' style={styles.iconCaret} />
                     <Icon name='material|caret-down' size={13} color='black' style={styles.iconCaret} />
