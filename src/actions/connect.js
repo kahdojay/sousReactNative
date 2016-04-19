@@ -464,10 +464,10 @@ export default function ConnectActions(ddpClient) {
           error: 'Socket connection was closed, attempting to reconnect.',
           attempt: connect.attempt,
         })
-        // autoReconnect();
       })
     }
   }
+
   function subscribeDDPSocketError() {
     return (dispatch, getState) => {
       ddpClient.on('socket-error', (code, message) => {
