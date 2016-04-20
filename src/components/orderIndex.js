@@ -113,7 +113,6 @@ class OrderIndex extends React.Component {
           confirmedOrderStyle = styles.confirmedOrder
           confirmedOrderMetaInfoStyle = styles.confirmedOrderMetaInfo
         }
-
         let orderUserName = ''
         if(order.user !== null){
           orderUserName = `${order.user.firstName} ${order.user.lastName}`
@@ -137,7 +136,7 @@ class OrderIndex extends React.Component {
               this.props.onNavToOrder(order.id)
             }}
           >
-            <View style={[confirmedOrderStyle, styles.orderRow]}>
+            <View style={[styles.orderRow, confirmedOrderStyle]}>
               <View style={styles.purveyorContainer}>
                 {/*<View style={styles.confirmedIconContainer}>
                   <Icon name='material|circle' size={20} color={invoiceIconBackgroundColor} style={styles.confirmedIconContainer}>
@@ -175,7 +174,7 @@ class OrderIndex extends React.Component {
     let headerText = ''
     switch (openOrders.length) {
       case 1:
-        headerText = '1 Active Order'
+        headerText = '1 Upcoming Delivery'
       default:
         headerText = `${openOrders.length} Upcoming Deliveries`
     }

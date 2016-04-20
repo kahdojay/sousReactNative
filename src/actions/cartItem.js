@@ -68,7 +68,7 @@ export default function CartItemActions(allActions) {
       const {session} = getState()
       const sessionTeamId = session.teamId
       dispatch(connectActions.ddpCall('updateCartItem', [session.userId, sessionTeamId, cartItem.id, cartItem]))
-      return dispatch(receiveCartItems(cartItem))
+      // return dispatch(receiveCartItems(cartItem))
     }
   }
 
@@ -77,11 +77,11 @@ export default function CartItemActions(allActions) {
       const {session} = getState()
       const sessionTeamId = session.teamId
       dispatch(connectActions.ddpCall('deleteCartItem', [session.userId, sessionTeamId, cartItem.id]))
-      return dispatch({
-        type: DELETE_CART_ITEM,
-        teamId: sessionTeamId,
-        cartItem: cartItem,
-      })
+      // return dispatch({
+      //   type: DELETE_CART_ITEM,
+      //   teamId: sessionTeamId,
+      //   cartItem: cartItem,
+      // })
     }
   }
 

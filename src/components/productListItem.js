@@ -88,13 +88,14 @@ class ProductListItem extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      product: nextProps.product,
-      purveyorId: nextProps.cartPurveyorId,
-    }, () => {
-      // console.log('componentWillReceiveProps ', nextProps.product.unit)
-      this.localStateUpdateFromCart(nextProps.cartItem, nextProps.product)
-    })
+    if (nextProps.actionType === 'RECEIVE_CART_ITEM') {
+      this.setState({
+        product: nextProps.product,
+        purveyorId: nextProps.cartPurveyorId,
+      }, () => {
+        this.localStateUpdateFromCart(nextProps.cartItem, nextProps.product)
+      })
+    }
   }
 
   componentDidMount() {

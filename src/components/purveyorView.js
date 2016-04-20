@@ -57,7 +57,7 @@ class PurveyorView extends React.Component {
   }
 
   render() {
-    const {categories, purveyors, products, cartItems, connected} = this.props;
+    const {actionType, categories, purveyors, products, cartItems, connected} = this.props;
 
     if(connected === false){
       return (
@@ -115,6 +115,7 @@ class PurveyorView extends React.Component {
           { this.state.search !== '' ?
             ((this.state.searchedProducts.length > 0) ?
               <ProductList
+                actionType={actionType}
                 cartItems={cartItems}
                 showCategoryInfo={true}
                 showPurveyorInfo={false}
@@ -127,6 +128,7 @@ class PurveyorView extends React.Component {
               />
             : <Text style={styles.noFoundText}>No results for '{ this.state.search }'</Text>)
           :  <ProductList
+                actionType={actionType}
                 cartItems={cartItems}
                 showCategoryInfo={true}
                 showPurveyorInfo={false}

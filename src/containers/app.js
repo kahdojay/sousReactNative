@@ -1085,6 +1085,7 @@ class App extends React.Component {
         return {
           component: Components.PurveyorView,
           props: {
+            actionType: this.props.actionType,
             cartItems: this.state.currentTeamInfo.cart,
             categories: this.state.currentTeamInfo.categories,
             purveyor: this.state.purveyor,
@@ -1958,6 +1959,7 @@ class App extends React.Component {
               <Components.NavBackButton
                 pop={true}
                 iconFont={'material|chevron-left'}
+                iconText={'Cancel'}
               />
             ),
             customTitle: (
@@ -2345,8 +2347,6 @@ const styles = StyleSheet.create({
   offlineIcon: {
     width: 24,
     height: 24,
-    // backgroundColor: Colors.lightBlue,
-    // borderRadius: 12,
     marginLeft: 12
   }
 })
@@ -2366,6 +2366,7 @@ function mapStateToProps(state) {
     settingsConfig: state.settingsConfig,
     teams: state.teams,
     offline: state.offline,
+    actionType: state.actionType,
   }
 }
 

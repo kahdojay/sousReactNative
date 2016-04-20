@@ -46,7 +46,12 @@ const initialState = {
       systemVersion: null,
     }
   },
+  actionType: null,
   settingsConfig: {},
+}
+
+function actionType(state = initialState.actionType, action) {
+  return action.type
 }
 
 function offline(state = initialState.offline, action) {
@@ -180,6 +185,7 @@ function connect(state = initialState.connect, action) {
 const connectReducers = {
   'connect': connect,
   'offline': offline,
+  'actionType': actionType,
   'settingsConfig': settingsConfig,
 }
 

@@ -142,7 +142,7 @@ class OrderListItem extends React.Component {
               style={{flex: 1.25}}
             >
               <View style={styles.quantityContainer}>
-                {this.props.orderConfirm === false ? 
+                {this.props.orderConfirm.order === false ? 
                   <View style={styles.caretContainer}>
                     <Icon name='material|caret-up' size={13} color='black' style={styles.iconCaret} />
                     <Icon name='material|caret-down' size={13} color='black' style={styles.iconCaret} />
@@ -170,7 +170,7 @@ class OrderListItem extends React.Component {
               <View style={{flexDirection: 'row', alignItems: 'center',}}>
                 <View style={styles.productInfo}>
                   <Text style={styles.productName}>{product.name}</Text>
-                  <Text style={styles.text}>{cartItem.quantity}x {product.amount}{product.unit} {(product.price && !!product.price.trim()) ? '• $' + s.numberFormat(parseFloat(product.price), 2) : ''}</Text>
+                  <Text style={styles.text}><Text style={{fontStyle: 'italic'}}>Ord.</Text> {cartItem.quantity}x {product.amount}{product.unit} {(product.price && !!product.price.trim()) ? '• $' + s.numberFormat(parseFloat(product.price), 2) : ''}</Text>
                 </View>
                 <View style={styles.confirmCheckbox}>
                   <View style={[styles.iconContainer]}>
