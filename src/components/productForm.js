@@ -51,7 +51,7 @@ class PickerFieldRow extends React.Component {
   }
 
   render() {
-    let selectFieldText = `(Tap to Update)`
+    let selectFieldText = `(Select)`
     if(this.props.selectFieldText){
       selectFieldText = this.props.selectFieldText
     }
@@ -152,7 +152,7 @@ class ProductForm extends React.Component {
     }
   }
   selectedCategoryValue() {
-    let selectedValue = '(Tap to Update)'
+    let selectedValue = '(Select)'
     let categoryId = this.state.selectedCategory
     if(categoryId !== null) {
       selectedValue = this.props.categories[categoryId].name
@@ -160,7 +160,7 @@ class ProductForm extends React.Component {
     return selectedValue
   }
   selectedPurveyorValue() {
-    let selectedValue = '(Tap to Update)'
+    let selectedValue = '(Select)'
     if (this.state.selectedPurveyors !== null){
       const purveyorIds = this.state.selectedPurveyors
       selectedValue = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Purveyors Selected`
@@ -272,7 +272,7 @@ class ProductForm extends React.Component {
     let pickerOptions = this.getPickerOptions()
     let selectedPrice = this.state.selectedPrice
     let selectedPurveyors = this.state.selectedPurveyors
-    let selectedPurveyorsText, selectedCategoryText = '(Tap to Update)'
+    let selectedPurveyorsText, selectedCategoryText = '(Select)'
     if (selectedPurveyors && selectedPurveyors !== null){
       const purveyorIds = this.state.selectedPurveyors
       selectedPurveyorsText = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Purveyors Selected`
@@ -343,7 +343,7 @@ class ProductForm extends React.Component {
             <PickerFieldRow
               key='Amount'
               field='Amount'
-              selectFieldText={'(Tap to Update)'}
+              selectFieldText={'(Select)'}
               selectedValue={this.state.selectedAmount}
               onShowFieldPicker={() => {
                 this.showFieldPicker('Amount', null)

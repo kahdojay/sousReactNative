@@ -8,6 +8,8 @@ import FeedListItem from './feedListItem';
 import FeedViewLeftButton from './feedViewLeftButton';
 import FeedViewRightButton from './feedViewRightButton';
 import InviteView from './inviteView';
+import InvoicesRightButton from './invoicesRightButton';
+import InvoicesUploadRightButton from './invoicesUploadRightButton';
 import Loading from './loading';
 import Login from './login';
 import Menu from './menu';
@@ -50,6 +52,8 @@ export default {
   FeedViewLeftButton,
   FeedViewRightButton,
   InviteView,
+  InvoicesRightButton,
+  InvoicesUploadRightButton,
   Loading,
   Login,
   Menu,
