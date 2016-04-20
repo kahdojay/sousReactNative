@@ -286,9 +286,9 @@ class ProductForm extends React.Component {
           <View style={styles.headerContainer}>
             <Text style={styles.headerText}>Product Details</Text>
           </View>
-          <View style={styles.fieldRow}>
+          <View style={styles.fieldRowContainer}>
             <View style={styles.formLabelContainer}>
-              <Text>Name</Text>
+              <Text style={styles.formLabelText}>Name</Text>
             </View>
             <FieldRow
               key='name'
@@ -306,9 +306,9 @@ class ProductForm extends React.Component {
             />
           </View>
           <View style={styles.separator}></View>
-          <View style={styles.fieldRow}>
+          <View style={styles.fieldRowContainer}>
             <View style={styles.formLabelContainer}>
-              <Text>Purveyors</Text>
+              <Text style={styles.formLabelText}>Purveyors</Text>
             </View>
             <PickerFieldRow
               key='Purveyors'
@@ -321,9 +321,9 @@ class ProductForm extends React.Component {
             />
           </View>
           <View style={styles.separator}></View>
-          <View style={styles.fieldRow}>
+          <View style={styles.fieldRowContainer}>
             <View style={styles.formLabelContainer}>
-              <Text>Category</Text>
+              <Text style={styles.formLabelText}>Category</Text>
             </View>
             <PickerFieldRow
               key='Category'
@@ -336,9 +336,9 @@ class ProductForm extends React.Component {
             />
           </View>
           <View style={styles.separator}></View>
-          <View style={styles.fieldRow}>
+          <View style={styles.fieldRowContainer}>
             <View style={styles.formLabelContainer}>
-              <Text>Base Qty</Text>
+              <Text style={styles.formLabelText}>Base Qty</Text>
             </View>
             <PickerFieldRow
               key='Amount'
@@ -351,9 +351,9 @@ class ProductForm extends React.Component {
             />
           </View>
           <View style={styles.separator}></View>
-          <View style={styles.fieldRow}>
+          <View style={styles.fieldRowContainer}>
             <View style={styles.formLabelContainer}>
-              <Text>Base Unit</Text>
+              <Text style={styles.formLabelText}>Base Unit</Text>
             </View>
             <FieldRow
               key='unit'
@@ -377,16 +377,14 @@ class ProductForm extends React.Component {
           >
             <View style={styles.headerContainer}>
               <Text style={styles.headerText}>Additional Info </Text>
-              <View style={styles.headerIconContainer}>
-                <Icon name='material|caret-down' size={20} color={Colors.darkGrey} style={styles.iconDropDown}/>
-              </View>
+              <Icon name='material|caret-down' size={20} color={'white'} style={styles.iconDropDown}/>
             </View>
           </TouchableHighlight>
           {this.state.showAdvanced ? (
               <View>
-                <View style={styles.fieldRow}>
+                <View style={styles.fieldRowContainer}>
                   <View style={styles.formLabelContainer}>
-                    <Text>Note</Text>
+                    <Text style={styles.formLabelText}>Note</Text>
                   </View>
                   <FieldRow
                     key='notes'
@@ -404,9 +402,9 @@ class ProductForm extends React.Component {
                   />
                 </View>
                 <View style={styles.separator}></View>
-                <View style={styles.fieldRow}>
+                <View style={styles.fieldRowContainer}>
                   <View style={styles.formLabelContainer}>
-                    <Text>SKU</Text>
+                    <Text style={styles.formLabelText}>SKU</Text>
                   </View>
                   <FieldRow
                     key='sku'
@@ -424,9 +422,9 @@ class ProductForm extends React.Component {
                   />  
                 </View>
                 <View style={styles.separator}></View>
-                <View style={styles.fieldRow}>
+                <View style={styles.fieldRowContainer}>
                   <View style={styles.formLabelContainer}>
-                    <Text>Price</Text>
+                    <Text style={styles.formLabelText}>Price</Text>
                   </View>
                   <FieldRow
                     key='price'
@@ -445,9 +443,9 @@ class ProductForm extends React.Component {
                   />
                 </View>
                 <View style={styles.separator}></View>
-                <View style={styles.fieldRow}>
+                <View style={styles.fieldRowContainer}>
                   <View style={styles.formLabelContainer}>
-                    <Text>Par</Text>
+                    <Text style={styles.formLabelText}>Par</Text>
                   </View>
                   <FieldRow
                     key='par'
@@ -464,9 +462,9 @@ class ProductForm extends React.Component {
                   />
                 </View>
                 <View style={styles.separator}></View>
-                <View style={styles.fieldRow}>
+                <View style={styles.fieldRowContainer}>
                   <View style={styles.formLabelContainer}>
-                    <Text>Pack Size</Text>
+                    <Text style={styles.formLabelText}>Pack Size</Text>
                   </View>
                   <FieldRow
                     key='packSize'
@@ -525,7 +523,7 @@ class ProductForm extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.mainBackgroundColor,
+    backgroundColor: Colors.lighterGrey,
     padding: 10,
   },
   scrollView: {
@@ -533,36 +531,36 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderColor: Colors.separatorColor,
-    marginTop: 5,
+    borderColor: Colors.lightGrey,
+    backgroundColor: Colors.lightBlue,
     alignItems: 'center',
+    borderRadius: 2,
+    padding: 10,
+    marginBottom: 10,
   },
   headerText: {
-    flex: 1,
-    paddingTop: 5,
-    paddingBottom: 5,
-    color: Colors.darkGrey,
+    color: 'white',
     fontSize: 20,
-  },
-  headerIconContainer: {
-    flex: 1,
-    alignItems: 'flex-end',
   },
   iconDropDown: {
     width: 10,
     height: 10,
   },
-  fieldRow: {
+  fieldRowContainer: {
     flexDirection: 'row',
   },
   formLabelContainer: {
     flex: 1,
-    height: 45,
     justifyContent: 'center',
+    height: 45,
+    marginRight: 10,
+  },
+  formLabelText: {
+    fontWeight: 'bold',
   },
   inputContainer: {
-    flex: 3,
+    backgroundColor: 'white',
+    flex: 3.5,
   },
   inputField: {
     fontFamily: 'OpenSans',
@@ -572,7 +570,7 @@ const styles = StyleSheet.create({
   },
   separator: {
     flex: 1,
-    borderBottomWidth: .5,
+    borderBottomWidth: 1,
     borderColor: Colors.separatorColor,
   },
   inputSelectContainer: {
