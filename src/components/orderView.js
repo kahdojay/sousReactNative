@@ -42,6 +42,7 @@ class OrderView extends React.Component {
       showOrderContents: false,
       showPurveyorContact: false,
     }
+    this.commentTimeoutId = null
   }
 
   componentWillReceiveProps(nextProps) {
@@ -52,6 +53,9 @@ class OrderView extends React.Component {
       purveyor: nextProps.purveyor,
       products: nextProps.products,
     })
+    if(nextProps.actionType === 'RECEIVE_ORDERS'){
+      this.checkForOrderDetails()
+    }
   }
 
   componentWillMount(){
@@ -69,6 +73,21 @@ class OrderView extends React.Component {
         this.props.onGetOrderDetails(this.state.orderId)
       }
     })
+  }
+
+  componentDidMount() {
+    this.checkForOrderDetails()
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.commentTimeoutId)
+  }
+
+  checkForOrderDetails() {
+    clearTimeout(this.commentTimeoutId)
+    this.commentTimeoutId = setTimeout(() =>{
+      this.props.onGetOrderDetails(this.state.orderId)
+    }, 1000)
   }
 
   checkMissingData() {
@@ -178,7 +197,7 @@ class OrderView extends React.Component {
     let numberOfInvoices = order.invoices ? order.invoices.length : 0
     let invoiceButtonText = 'Upload Invoice / Photo'
     switch (numberOfInvoices) {
-      case 0: 
+      case 0:
         invoiceButtonText = 'Upload Invoice / Photo'
         break
       case 1:
@@ -227,7 +246,7 @@ class OrderView extends React.Component {
                     </View>
                   ) : <View/>
                 }
-                
+
               </View>
             </View>
             <View style={styles.scrollViewContainer}>
@@ -285,7 +304,7 @@ class OrderView extends React.Component {
                       </View>
                     </View>
                   </TouchableHighlight>
-                  { this.state.showPurveyorContact ? 
+                  { this.state.showPurveyorContact ?
                     <View style={styles.purveyorContactContainer}>
                       <Text style={styles.purveyorRepName}>{this.props.purveyor.orderContact || ''}</Text>
                       <View style={styles.iconContactContainer}>
