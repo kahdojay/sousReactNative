@@ -283,7 +283,7 @@ class OrderView extends React.Component {
               { this.state.showPurveyorContact ? 
                 <View style={styles.purveyorContactContainer}>
                   <View style={styles.separator}/>
-                  <Text style={styles.purveyorRepName}>{this.props.purveyor.orderContact || 'Rep'}</Text>
+                  <Text style={styles.purveyorRepName}>{this.props.purveyor.orderContact || ''}</Text>
                   <View style={styles.iconContactContainer}>
                     <TouchableHighlight
                       underlayColor='white'
