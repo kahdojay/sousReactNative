@@ -37,7 +37,6 @@ class NavBackButton extends React.Component {
     if(iconText){
       navBack = <Text style={styles.navText}>{iconText}</Text>
     }
-    console.log(navBack, this.props)
     return (
       <TouchableHighlight
         underlayColor='white'
