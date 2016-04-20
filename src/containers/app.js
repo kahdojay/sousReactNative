@@ -1285,6 +1285,7 @@ class App extends React.Component {
         return {
           component: Components.OrderView,
           props: {
+            actionType: this.props.actionType,
             team: this.state.currentTeamInfo.team,
             userId: session.userId,
             userImgUrl: session.imageUrl,
