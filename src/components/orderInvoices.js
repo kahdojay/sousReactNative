@@ -13,7 +13,7 @@ const {
 } = React;
 
 const window = Dimensions.get('window');
-const invoiceHeight = window.height-86
+const invoiceHeight = window.height-84
 
 class Invoice extends React.Component {
   constructor(props) {
@@ -94,22 +94,6 @@ class OrderInvoices extends React.Component {
         >
           {swiperInvoices}
         </Swiper>
-        <View style={styles.bottomContainer}>
-          <TouchableHighlight
-            underlayColor='white'
-            onPress={() => {
-              this.props.onNavtoUploadInvoices(order.id)
-            }}
-            style={styles.invoiceButton}
-          >
-            <View style={styles.invoiceButtonTextContainer}>
-              <Icon name='material|plus' size={25} color={'white'} style={styles.addIcon}/>
-              <Text style={[styles.invoiceButtonText]}>
-                Add New
-              </Text>
-            </View>
-          </TouchableHighlight>
-        </View>
       </View>
     )
   }
@@ -175,12 +159,13 @@ const styles = StyleSheet.create({
     color: Colors.disabled,
   },
   swiperPagination: {
-    bottom: 70,
+    bottom: 40,
   },
   dotInactive: {
     backgroundColor: Colors.lighterGrey,
-    width: 8,
-    height: 8,borderRadius: 4,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     marginLeft: 3,
     marginRight: 3,
     marginTop: 3,
@@ -188,9 +173,9 @@ const styles = StyleSheet.create({
   },
   dotActive: {
     backgroundColor: Colors.gold,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     marginLeft: 3,
     marginRight: 3,
     marginTop: 3,
