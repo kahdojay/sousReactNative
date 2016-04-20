@@ -1949,6 +1949,12 @@ class App extends React.Component {
                 content={titleOrderInvoices}
               />
             ),
+            // customNext: (
+            //   <Components.InvoicesRightButton
+            //     onNavtoUploadInvoices={
+            //     }
+            //   >
+            // )
           })
           break;
         case 'OrderInvoiceUpload':
