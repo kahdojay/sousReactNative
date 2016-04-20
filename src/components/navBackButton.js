@@ -32,13 +32,19 @@ class NavBackButton extends React.Component {
   }
 
   render() {
-    // let { navigator, route } = this.props;
-
+    let { iconText } = this.props;
+    let navBack = <Icon name={`${this.state.iconFont}`} size={30} color={Colors.navIcon} style={styles.navBack} />
+    if(iconText){
+      navBack = <Text style={styles.navText}>{iconText}</Text>
+    }
+    console.log(navBack, this.props)
     return (
       <TouchableHighlight
         underlayColor='white'
-        onPress={this.handlePress.bind(this)} >
-        <Icon name={`${this.state.iconFont}`} size={30} color={Colors.navIcon} style={styles.navBack} />
+        onPress={this.handlePress.bind(this)} 
+        style={styles.button}
+      >
+        {navBack}
       </TouchableHighlight>
     );
   }
@@ -49,7 +55,16 @@ let styles = StyleSheet.create({
     width: 50,
     height: 50,
     marginTop: 12,
-  }
+  },
+  navText: {
+    textAlign: 'center',
+    marginTop: 12,
+    marginLeft: 12,
+    color: Colors.lightBlue
+  },
+  button: {
+    justifyContent: 'center',
+  },
 })
 
 export default NavBackButton;

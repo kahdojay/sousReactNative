@@ -1958,6 +1958,7 @@ class App extends React.Component {
               <Components.NavBackButton
                 pop={true}
                 iconFont={'material|chevron-left'}
+                iconText={'Cancel'}
               />
             ),
             customTitle: (
