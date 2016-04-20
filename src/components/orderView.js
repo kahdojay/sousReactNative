@@ -99,11 +99,11 @@ class OrderView extends React.Component {
         const to = purveyor.orderEmails.split(',')
         const cc = ['orders@sousapp.com']
         const subject = `Order Comment from ${team.name} • 's Order on ${orderDate.format('dddd, MMMM D')}`
-        // let body = 'Order Reference: '
+        let body = `Order Ref: ${order.orderRef || order.createdAt}`
         // orderProducts.forEach(function(o) {
         //   body += `\n ${o.cartItem.productName} x ${o.cartItem.amount * o.cartItem.quantity} ${o.cartItem.unit}`
         // })
-        Communications.email(to, cc, null, subject)
+        Communications.email(to, cc, null, subject, body)
         break
       case 'text':
         Communications.text(purveyor.phone)
