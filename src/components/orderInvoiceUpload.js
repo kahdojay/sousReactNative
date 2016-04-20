@@ -42,12 +42,8 @@ class OrderInvoiceUpload extends React.Component {
     UIImagePickerManager.showImagePicker(options, (didCancel, response) => {
       // console.log('Response = ', response);
 
-      if (didCancel) {
-        const selectedPhotos = this.state.selectedPhotos.slice(0, (this.state.selectedPhotos.length-1))
-        this.setState({
-          selectedPhotos: selectedPhotos,
-        })
-      } else {
+      let selectedPhotos = this.state.selectedPhotos.slice(0, (this.state.selectedPhotos.length-1))
+      if (!didCancel) {
         // const source = {uri: response.uri.replace('file://', ''), isStatic: true};
         const source = {
           data: response.data,
@@ -55,12 +51,13 @@ class OrderInvoiceUpload extends React.Component {
           // uri: 'data:image/jpeg;base64,' + response.data,
           uri: response.uri,
         };
-        let selectedPhotos = this.state.selectedPhotos.slice(0, (this.state.selectedPhotos.length-1))
         selectedPhotos.push(source)
-        this.setState({
-          selectedPhotos: selectedPhotos,
-        })
       }
+      this.setState({
+        selectedPhotos: selectedPhotos,
+      }, () => {
+        this.props.onAddInvoices(this.state.selectedPhotos)
+      })
     });
   }
 
@@ -102,22 +99,6 @@ class OrderInvoiceUpload extends React.Component {
       return image
     })
 
-    let uploadButton = <View/>
-    if(this.state.selectedPhotos.length > 0){
-      uploadButton = 
-        <TouchableHighlight
-          underlayColor={'transparent'}
-          onPress={() => {
-            if(this.state.selectedPhotos.length > 0){
-              this.props.onUploadInvoices(this.state.selectedPhotos)
-            }
-          }}
-          style={styles.uploadButton}
-        >
-          <Text style={styles.uploadButtonText}>Confirm Upload</Text>
-        </TouchableHighlight>
-    }
-
     return (
       <View style={styles.container}>
         <ScrollView
@@ -146,7 +127,6 @@ class OrderInvoiceUpload extends React.Component {
             </TouchableHighlight>
           </View>
         </ScrollView>
-        {uploadButton}
       </View>
     );
   }
@@ -208,21 +188,6 @@ let styles = StyleSheet.create({
     height: 22,
     backgroundColor: Colors.red,
     borderRadius: 11,
-  },
-  uploadButton: {
-    height: 60,
-    borderTopColor: Colors.separatorColor,
-    borderTopWidth: 1,
-    backgroundColor: Colors.gold,
-    justifyContent: 'center',
-  },
-  uploadButtonText: {
-    color: 'white',
-    textAlign: 'center',
-    paddingBottom: 1,
-    fontFamily: 'OpenSans',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   sendEmail: {
     flex: 1,

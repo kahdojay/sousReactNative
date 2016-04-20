@@ -86,6 +86,9 @@ class App extends React.Component {
         OrderIndex: {
           showConfirmedOrders: false,
         },
+        OrderInvoiceUpload: {
+          invoiceImages: [],
+        }
       },
       touchToClose: false,
       lastResourceInfoRetrieval: (new Date(constructorNow - ((60*60*1000) + 100) )).toISOString(),
@@ -1394,19 +1397,6 @@ class App extends React.Component {
           component: Components.OrderInvoices,
           props: {
             order: this.state.order,
-            onNavtoUploadInvoices: (orderId) => {
-              const order = this.state.currentTeamInfo.orders[orderId]
-              const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]
-              this.setState({
-                orderId: orderId,
-                order: order,
-                purveyor: purveyor,
-              }, () => {
-                nav.push({
-                  name: 'OrderInvoiceUpload'
-                })
-              })
-            }
           }
         }
       case 'OrderInvoiceUpload':
@@ -1414,12 +1404,11 @@ class App extends React.Component {
           component: Components.OrderInvoiceUpload,
           props: {
             order: this.state.order,
-            onUploadInvoices: (invoiceImages) => {
-              dispatch(actions.updateOrderInvoices(this.state.order.id, {
-                invoiceImages: invoiceImages
-              }))
-              nav.replacePreviousAndPop({
-                name: 'OrderInvoices'
+            onAddInvoices: (invoiceImages) => {
+              const sceneStateOrderInvoiceUpload = Object.assign({}, this.state.sceneState);
+              sceneStateOrderInvoiceUpload.OrderInvoiceUpload.invoiceImages = invoiceImages;
+              this.setState({
+                sceneState: sceneStateOrderInvoiceUpload,
               })
             }
           }
@@ -1949,22 +1938,27 @@ class App extends React.Component {
                 content={titleOrderInvoices}
               />
             ),
-            // customNext: (
-            //   <Components.InvoicesRightButton
-            //     onNavtoUploadInvoices={
-            //     }
-            //   >
-            // )
+            customNext: (
+              <Components.InvoicesRightButton
+                onNavtoUploadInvoices={(orderId) => {
+                  nav.push({
+                    name: 'OrderInvoiceUpload'
+                  })
+                }}
+              />
+            )
           })
           break;
         case 'OrderInvoiceUpload':
+          const displayInvoicedUploadButton = this.state.sceneState.OrderInvoiceUpload.invoiceImages.length > 0 ? true : false;
+
+
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
             route: route,
             customPrev: (
               <Components.NavBackButton
                 pop={true}
-                iconFont={'material|chevron-left'}
                 iconText={'Cancel'}
               />
             ),
@@ -1973,6 +1967,30 @@ class App extends React.Component {
                 content={'Upload Invoice/Photo'}
               />
             ),
+            customNext: (
+              <Components.InvoicesUploadRightButton
+                uploadReady={displayInvoicedUploadButton}
+                onUploadInvoices={() => {
+                  if(this.state.sceneState.OrderInvoiceUpload.invoiceImages.length > 0){
+                    const invoiceImages = Object.assign({}, this.state.sceneState.OrderInvoiceUpload.invoiceImages)
+                    dispatch(actions.updateOrderInvoices(this.state.order.id, {
+                      invoiceImages: invoiceImages
+                    }))
+                    this.setState({
+                      sceneState: Object.assign({}, this.state.sceneState, {
+                        OrderInvoiceUpload: {
+                          invoiceImages: []
+                        }
+                      })
+                    }, () => {
+                      nav.replacePreviousAndPop({
+                        name: 'OrderInvoices'
+                      })
+                    })
+                  }
+                }}
+              />
+            )
           })
           break;
         // case 'ProductView':
