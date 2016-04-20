@@ -80,7 +80,7 @@ class ProductList extends React.Component {
   }
 
   renderRow(product, sectionID, rowID, highlightRow) {
-    const {categories, cartItems, purveyors, showPurveyorInfo, showCategoryInfo} = this.props
+    const {actionType, categories, cartItems, purveyors, showPurveyorInfo, showCategoryInfo} = this.props
 
     let cartItem = null
     let cartPurveyorId = ''
@@ -122,6 +122,7 @@ class ProductList extends React.Component {
     }
 
     const props = {
+      actionType: actionType,
       cartItem: cartItem,
       cartPurveyorId: cartPurveyorId,
       loadDelay: 0,
