@@ -83,14 +83,6 @@ class OrderInvoices extends React.Component {
           autoplay={false}
           loop={true}
           height={invoiceHeight}
-          showsButtons={true}
-          buttonWrapperStyle={styles.buttonWrapper}
-          nextButton={(
-            <Text style={styles.swiperButton}>›</Text>
-          )}
-          prevButton={(
-            <Text style={styles.swiperButton}>‹</Text>
-          )}
           showsPagination={true}
           paginationStyle={styles.swiperPagination}
           dot={(
@@ -181,22 +173,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 15,
     color: Colors.disabled,
-  },
-  buttonWrapper: {
-    backgroundColor: 'transparent',
-    flexDirection: 'row',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    flex: 1,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  swiperButton: {
-    color: Colors.gold,
-    fontSize: 60,
   },
   swiperPagination: {
     bottom: 70,
