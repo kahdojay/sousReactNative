@@ -64,7 +64,7 @@ class PickerFieldRow extends React.Component {
     }
     if(selectFieldText === '(Select)')
       selectStyle = {color: Colors.lightBlue}
-    
+
     return (
       <View style={styles.inputContainer}>
         <TouchableHighlight
@@ -528,7 +528,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.lighterGrey,
-    padding: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
   },
   scrollView: {
     flex: 1,
