@@ -2067,10 +2067,10 @@ class App extends React.Component {
                 pop={true}
               />
             ),
-            // title: (this.state.product === null) ? 'Add New Product' : 'Edit Product',
+            // title: (this.state.product === null) ? 'New Ingredient' : 'Edit Product',
             customTitle: (
               <TextComponents.NavBarTitle
-                content={(this.state.product === null) ? 'Add New Product' : 'Edit Product'}
+                content={(this.state.product === null) ? 'New Ingredient' : 'Edit Product'}
               />
             ),
             customNext: (
