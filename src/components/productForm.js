@@ -29,18 +29,23 @@ class FieldRow extends React.Component {
     setTimeout(callback, 50)
   }
   render() {
+    let fieldRowProps = {
+      ref: 'field',
+      style: styles.inputField,
+      value: this.props.value,
+      keyboardType: this.props.keyboardType || 'default',
+      placeholder: this.props.placeholder,
+      inputPlaceholderColor: Colors.inputPlaceholderColor,
+      onChange: this.props.onChange,
+    }
+    if(this.props.hasOwnProperty('onFocus') === true){
+      fieldRowProps.onFocus = this.props.onFocus
+    }
+    let textInput = React.createElement(TextInput, fieldRowProps);
     return (
-        <View key={this.props.key} style={styles.inputContainer}>
-          <TextInput
-            ref='field'
-            style={styles.inputField}
-            value={this.props.value}
-            keyboardType={this.props.keyboardType || 'default'}
-            placeholder={this.props.placeholder}
-            inputPlaceholderColor={Colors.inputPlaceholderColor}
-            onChange={this.props.onChange}
-          />
-        </View>
+      <View key={this.props.key} style={styles.inputContainer}>
+        {textInput}
+      </View>
     )
   }
 }
@@ -151,6 +156,7 @@ class ProductForm extends React.Component {
       this.props.onProductNotReady();
     }
   }
+
   selectedCategoryValue() {
     let selectedValue = '(Select)'
     let categoryId = this.state.selectedCategory
@@ -159,6 +165,7 @@ class ProductForm extends React.Component {
     }
     return selectedValue
   }
+
   selectedPurveyorValue() {
     let selectedValue = '(Select)'
     if (this.state.selectedPurveyors !== null){
@@ -166,6 +173,19 @@ class ProductForm extends React.Component {
       selectedValue = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Purveyors Selected`
     }
     return selectedValue
+  }
+
+  // Scroll a component into view. Just pass the component ref string.
+  inputFocused (refName) {
+    // console.log(this.refs)
+    setTimeout(() => {
+      let scrollResponder = this.refs.scrollView.getScrollResponder();
+      scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
+        React.findNodeHandle(this.refs[refName]),
+        100, //additionalOffset
+        true
+      );
+    }, 20);
   }
 
   getPickerOptions() {
@@ -280,6 +300,7 @@ class ProductForm extends React.Component {
     return (
       <View style={styles.container}>
         <ScrollView
+          ref='scrollView'
           automaticallyAdjustContentInsets={false}
           style={styles.scrollView}
         >
@@ -303,6 +324,7 @@ class ProductForm extends React.Component {
                   this.checkValidForm();
                 });
               }}
+              onFocus={this.inputFocused.bind(this, 'name')}
             />
           </View>
           <View style={styles.separator}></View>
@@ -368,6 +390,7 @@ class ProductForm extends React.Component {
                   this.checkValidForm();
                 });
               }}
+              onFocus={this.inputFocused.bind(this, 'unit')}
             />
           </View>
           <Text>{' '}</Text>
@@ -399,6 +422,7 @@ class ProductForm extends React.Component {
                         this.checkValidForm();
                       });
                     }}
+                    onFocus={this.inputFocused.bind(this, 'notes')}
                   />
                 </View>
                 <View style={styles.separator}></View>
@@ -419,7 +443,8 @@ class ProductForm extends React.Component {
                         this.checkValidForm();
                       });
                     }}
-                  />  
+                    onFocus={this.inputFocused.bind(this, 'sku')}
+                  />
                 </View>
                 <View style={styles.separator}></View>
                 <View style={styles.fieldRowContainer}>
@@ -440,6 +465,7 @@ class ProductForm extends React.Component {
                         this.checkValidForm();
                       });
                     }}
+                    onFocus={this.inputFocused.bind(this, 'price')}
                   />
                 </View>
                 <View style={styles.separator}></View>
@@ -459,6 +485,7 @@ class ProductForm extends React.Component {
                         this.checkValidForm();
                       });
                     }}
+                    onFocus={this.inputFocused.bind(this, 'par')}
                   />
                 </View>
                 <View style={styles.separator}></View>
@@ -478,10 +505,11 @@ class ProductForm extends React.Component {
                         this.checkValidForm();
                       });
                     }}
+                    onFocus={this.inputFocused.bind(this, 'packSize')}
                   />
                 </View>
               </View>
-            ) 
+            )
             : <View/>
           }
         </ScrollView>
@@ -524,10 +552,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.lighterGrey,
-    padding: 10,
   },
   scrollView: {
     flex: 1,
+    padding: 10,
   },
   headerContainer: {
     flexDirection: 'row',
