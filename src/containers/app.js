@@ -581,7 +581,7 @@ class App extends React.Component {
   }
 
   getOrderItems(orderId) {
-    if(this.state.currentTeamInfo.cartItems['orders'].hasOwnProperty(orderId) === true){
+    if(orderId && this.state.currentTeamInfo.cartItems['orders'].hasOwnProperty(orderId) === true){
       const orderItemsIds = Object.keys(this.state.currentTeamInfo.cartItems['orders'][orderId])
       let orderProducts = []
       _.each(orderItemsIds, (cartItemId) => {

@@ -29,18 +29,23 @@ class OrderContentsView extends React.Component {
       selectAll: this.checkAllReceived(this.props.products),
       showConfirm: false,
       confirmationMessage: null,
-      userId: null
+      userId: null,
+      toggleAll: false,
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if(nextProps.actionType === 'RECEIVE_CART_ITEM'){
-      this.setState({
+      let updatedState = {
         order: nextProps.order,
         purveyor: nextProps.purveyor,
         products: nextProps.products,
-        selectAll: this.checkAllReceived(nextProps.products),
-      })
+        selectAll: this.state.selectAll,
+      }
+      if(this.state.toggleAll === false){
+        updatedState.selectAll = this.checkAllReceived(nextProps.products);
+      }
+      this.setState(updatedState)
     }
   }
 
@@ -85,16 +90,17 @@ class OrderContentsView extends React.Component {
   }
 
   selectAllProducts() {
-    this.setState({
-      selectAll: !this.state.selectAll
-    })
-    _.each(this.state.products, (productPkg, idx) => {
+    _.each(this.props.products, (productPkg, idx) => {
       const cartItem = productPkg.cartItem
       const productConfirmed = (cartItem.status === 'RECEIVED')
       const updateCartItem = Object.assign({}, cartItem, {
         status: this.state.selectAll ? 'ORDERED' : 'RECEIVED'
       })
       this.props.onConfirmOrderProduct(updateCartItem)
+    })
+    this.setState({
+      selectAll: !this.state.selectAll,
+      toggleAll: true,
     })
   }
 
@@ -162,7 +168,11 @@ class OrderContentsView extends React.Component {
               }}
               productConfirm={productConfirm}
               onHandleProductConfirm={(updateCartItem) => {
-                this.props.onConfirmOrderProduct(updateCartItem)
+                this.setState({
+                  toggleAll: false,
+                }, () => {
+                  this.props.onConfirmOrderProduct(updateCartItem)
+                })
               }}
             />
           )
