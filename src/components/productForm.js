@@ -57,6 +57,7 @@ class PickerFieldRow extends React.Component {
 
   render() {
     let selectFieldText = `(Select)`
+    let selectStyle = {}
     if(this.props.selectFieldText){
       selectFieldText = this.props.selectFieldText
     }
@@ -66,6 +67,9 @@ class PickerFieldRow extends React.Component {
         selectFieldText = selectFieldText.substr(0,20) + '...'
       }
     }
+    if(selectFieldText === '(Select)')
+      selectStyle = {color: Colors.lightBlue}
+
     return (
       <View style={styles.inputContainer}>
         <TouchableHighlight
@@ -73,7 +77,7 @@ class PickerFieldRow extends React.Component {
           onPress={() => { this.props.onShowFieldPicker() }}
           style={styles.inputSelectContainer}
         >
-          <Text style={styles.selectField}>
+          <Text style={[styles.selectField, selectStyle]}>
             {selectFieldText}
           </Text>
         </TouchableHighlight>
@@ -176,7 +180,7 @@ class ProductForm extends React.Component {
   }
 
   // Scroll a component into view. Just pass the component ref string.
-  inputFocused (refName) {
+  inputFocused(refName) {
     // console.log(this.refs)
     setTimeout(() => {
       let scrollResponder = this.refs.scrollView.getScrollResponder();
