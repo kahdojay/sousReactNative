@@ -31,13 +31,15 @@ class OrderListItem extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      orderConfirm: nextProps.orderConfirm,
-      product: nextProps.product,
-      cartItem: nextProps.cartItem,
-      productConfirm: nextProps.productConfirm,
-      quantityReceived: nextProps.cartItem.quantityReceived || nextProps.cartItem.quantity,
-    })
+    if(nextProps.actionType === 'RECEIVE_CART_ITEM'){      
+      this.setState({
+        orderConfirm: nextProps.orderConfirm,
+        product: nextProps.product,
+        cartItem: nextProps.cartItem,
+        productConfirm: nextProps.productConfirm,
+        quantityReceived: nextProps.cartItem.quantityReceived || nextProps.cartItem.quantity,
+      })
+    }
   }
 
   componentWillMount(){
@@ -126,7 +128,7 @@ class OrderListItem extends React.Component {
       //   teamBetaAccess.hasOwnProperty('showProductPrices') === true
       //   && teamBetaAccess.showProductPrices === true
       // ){
-      //   showProductPrices = true        
+      //   showProductPrices = true
       // }
 
       productRow = (
@@ -142,7 +144,7 @@ class OrderListItem extends React.Component {
               style={{flex: 1.25}}
             >
               <View style={styles.quantityContainer}>
-                {this.props.orderConfirm.order === false ? 
+                {this.props.orderConfirm.order === false ?
                   <View style={styles.caretContainer}>
                     <Icon name='material|caret-up' size={13} color='black' style={styles.iconCaret} />
                     <Icon name='material|caret-down' size={13} color='black' style={styles.iconCaret} />

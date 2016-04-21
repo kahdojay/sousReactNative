@@ -34,12 +34,14 @@ class OrderContentsView extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      order: nextProps.order,
-      purveyor: nextProps.purveyor,
-      products: nextProps.products,
-      selectAll: this.checkAllReceived(nextProps.products),
-    })
+    if(nextProps.actionType === 'RECEIVE_CART_ITEM'){
+      this.setState({
+        order: nextProps.order,
+        purveyor: nextProps.purveyor,
+        products: nextProps.products,
+        selectAll: this.checkAllReceived(nextProps.products),
+      })
+    }
   }
 
   componentWillMount(){
@@ -130,7 +132,7 @@ class OrderContentsView extends React.Component {
   }
 
   render() {
-    let { products, order, purveyor, } = this.props    
+    let { products, order, purveyor, actionType } = this.props
     let productsList = []
 
     if(this.state.loaded === true){
@@ -149,6 +151,7 @@ class OrderContentsView extends React.Component {
         } else {
           productsList.push(
             <OrderListItem
+              actionType={actionType}
               key={productKey}
               teamBetaAccess={{}}
               orderConfirm={order.confirm}
@@ -240,9 +243,9 @@ class OrderContentsView extends React.Component {
       <View style={styles.orderContentsContainer}>
           <View style={styles.sectionSubHeader}>
             <Text># Rcvd</Text>
-            { order.confirm.order === false ? 
+            { order.confirm.order === false ?
               <TouchableHighlight
-                onPress={::this.selectAllProducts}                      
+                onPress={::this.selectAllProducts}
                 underlayColor='transparent'
               >
                 <Text style={styles.buttonSelectAll}>{this.state.selectAll ? 'Unselect All' : 'Select All'}</Text>
