@@ -1340,6 +1340,7 @@ class App extends React.Component {
         return {
           component: Components.OrderContentsView,
           props: {
+            actionType: this.props.actionType,
             order: this.state.order,
             purveyor: this.state.purveyor,
             products: orderProducts,
