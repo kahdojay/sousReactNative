@@ -117,7 +117,7 @@ class OrderView extends React.Component {
         const orderDate = moment(order.orderedAt).tz(timeZone);
         const to = purveyor.orderEmails.split(',')
         const cc = ['orders@sousapp.com']
-        const subject = `Order Comment from ${team.name} • 's Order on ${orderDate.format('dddd, MMMM D')}`
+        const subject = `Order Comment from ${team.name} (Ref: ${order.orderRef || order.createdAt})`
         let body = `Order Ref: ${order.orderRef || order.createdAt}`
         // orderProducts.forEach(function(o) {
         //   body += `\n ${o.cartItem.productName} x ${o.cartItem.amount * o.cartItem.quantity} ${o.cartItem.unit}`
