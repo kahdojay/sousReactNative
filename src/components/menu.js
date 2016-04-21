@@ -21,7 +21,7 @@ const window = Dimensions.get('window');
 /*
  * Modal for side bar Modal for side bar
  */
-module.exports = class Menu extends React.Component {
+class Menu extends React.Component {
   render() {
     const {team, session} = this.props
     const version = pkgInfo.version;
@@ -148,13 +148,13 @@ const styles = StyleSheet.create({
     height: window.height,
   },
   avatarContainer: {
-    flex: 1,
+    flex: 2,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#3e444f',
     paddingTop: 10,
-    paddingBottom: 20,
+    paddingBottom: 10,
   },
   avatar: {
     width: 50,
@@ -162,6 +162,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
   name: {
+    paddingTop: 10,
     flex: 1,
     fontSize: 18,
     fontFamily: 'OpenSans',
@@ -249,3 +250,5 @@ const styles = StyleSheet.create({
     color: '#aaaaaa',
   }
 });
+
+export default Menu;

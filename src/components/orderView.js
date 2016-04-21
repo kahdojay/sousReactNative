@@ -17,7 +17,6 @@ const {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableHighlight,
   View,
 } = React;
@@ -41,6 +40,7 @@ class OrderView extends React.Component {
       confirmationMessage: null,
       showOrderContents: false,
       showPurveyorContact: false,
+      hideOrderHeader: false,
     }
     this.commentTimeoutId = null
   }
@@ -160,6 +160,19 @@ class OrderView extends React.Component {
     })
   }
 
+  // Scroll a component into view. Just pass the component ref string.
+  inputFocused(refName) {
+    // console.log(this.refs)
+    setTimeout(() => {
+      let scrollResponder = this.refs.scrollView.getScrollResponder();
+      scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
+        React.findNodeHandle(this.refs[refName]),
+        100, //additionalOffset
+        true
+      );
+    }, 20);
+  }
+
   render() {
     const {
       order,
@@ -235,24 +248,28 @@ class OrderView extends React.Component {
       <View style={styles.container}>
         { this.state.loaded === true ?
           <View style={styles.container}>
-            <View style={styles.confirmedContainer}>
-              <View style={styles.confirmationDetails}>
-                <Text style={styles.purveyorName}>{this.props.purveyor.name}</Text>
-                <Text style={[styles.confirmedText]}>
-                  <Text style={{fontStyle: 'italic'}}>Ord.</Text> {order.orderedAt !== null ? moment(order.orderedAt).format('ddd, MMM D, h:mma') : ''} {orderUser ? `- ${orderUser.firstName}` : ''}</Text>
-                {order.confirm.order === true ? (
-                    <View>
-                      <Text style={[styles.confirmedText]}><Text style={{fontStyle: 'italic'}}>Rec.</Text> {order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('ddd, MMM D, h:mma') : ''} {confirmUser ? `- ${confirmUser.firstName}` : ''}</Text>
-                    </View>
-                  ) : <View/>
-                }
+            { this.state.hideOrderHeader === false ?
+              <View style={styles.confirmedContainer}>
+                <View style={styles.confirmationDetails}>
+                  <Text style={styles.purveyorName}>{this.props.purveyor.name}</Text>
+                  <Text style={[styles.confirmedText]}>
+                    <Text style={{fontStyle: 'italic'}}>Ord.</Text> {order.orderedAt !== null ? moment(order.orderedAt).format('ddd, MMM D, h:mma') : ''} {orderUser ? `- ${orderUser.firstName}` : ''}</Text>
+                  {order.confirm.order === true ? (
+                      <View>
+                        <Text style={[styles.confirmedText]}><Text style={{fontStyle: 'italic'}}>Rec.</Text> {order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('ddd, MMM D, h:mma') : ''} {confirmUser ? `- ${confirmUser.firstName}` : ''}</Text>
+                      </View>
+                    ) : <View/>
+                  }
 
+                </View>
               </View>
-            </View>
+            : null }
             <View style={styles.scrollViewContainer}>
               <ScrollView
+                ref='scrollView'
                 automaticallyAdjustContentInsets={false}
                 keyboardShouldPersistTaps={false}
+                style={styles.scrollView}
               >
                 <View style={styles.optionsContainer}>
                   <TouchableHighlight
@@ -340,9 +357,21 @@ class OrderView extends React.Component {
                 <View style={styles.commentsContainer}>
                   <View style={styles.inputContainer}>
                     <AddCommentForm
+                      ref='comment'
                       placeholder='Comment on this order..'
                       onSubmit={::this.handleCommentSubmit}
                       multiline={false}
+                      onFocus={() => {
+                        this.setState({
+                          hideOrderHeader: true
+                        })
+                        this.inputFocused('comment')
+                      }}
+                      onBlur={() => {
+                        this.setState({
+                          hideOrderHeader: false
+                        })
+                      }}
                     />
                   </View>
                   {orderComments}
@@ -380,12 +409,10 @@ const styles = StyleSheet.create({
   },
   scrollViewContainer: {
     flex: 1,
-    padding: 5,
   },
   scrollView: {
     flex: 1,
-    backgroundColor: Colors.mainBackgroundColor,
-    paddingTop: 5,
+    padding: 5,
   },
   optionsContainer: {
     marginTop: 10,
