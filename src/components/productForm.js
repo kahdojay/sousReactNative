@@ -7,6 +7,7 @@ import s from 'underscore.string';
 import PickerModal from './modal/pickerModal';
 
 const {
+  LayoutAnimation,
   ScrollView,
   StyleSheet,
   Text,
@@ -424,6 +425,7 @@ class ProductForm extends React.Component {
                   stateUpdated: false,
                 })
               });
+              LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
             }}
           >
             <View style={styles.headerContainer}>
