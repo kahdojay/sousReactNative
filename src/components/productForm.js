@@ -7,6 +7,7 @@ import s from 'underscore.string';
 import PickerModal from './modal/pickerModal';
 
 const {
+  LayoutAnimation,
   ScrollView,
   StyleSheet,
   Text,
@@ -400,7 +401,10 @@ class ProductForm extends React.Component {
           <Text>{' '}</Text>
           <TouchableHighlight
             underlayColor='transparent'
-            onPress={() => {this.setState({showAdvanced: !this.state.showAdvanced})}}
+            onPress={() => {
+              this.setState({showAdvanced: !this.state.showAdvanced})
+              LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+            }}
           >
             <View style={styles.headerContainer}>
               <Text style={styles.headerText}>Additional Info </Text>
