@@ -31,15 +31,13 @@ class OrderListItem extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.actionType === 'RECEIVE_CART_ITEM'){      
-      this.setState({
-        orderConfirm: nextProps.orderConfirm,
-        product: nextProps.product,
-        cartItem: nextProps.cartItem,
-        productConfirm: nextProps.productConfirm,
-        quantityReceived: nextProps.cartItem.quantityReceived || nextProps.cartItem.quantity,
-      })
-    }
+    this.setState({
+      orderConfirm: nextProps.orderConfirm,
+      product: nextProps.product,
+      cartItem: nextProps.cartItem,
+      productConfirm: nextProps.productConfirm,
+      quantityReceived: nextProps.cartItem.quantityReceived || nextProps.cartItem.quantity,
+    })
   }
 
   componentWillMount(){
@@ -158,13 +156,12 @@ class OrderListItem extends React.Component {
               onPress={() => {
                 if(orderConfirm.order === false){
                   this.setState({
-                    productConfirm: !productConfirm
-                  },() => {
-                    const updateCartItem = Object.assign({}, cartItem, {
-                      status: this.state.productConfirm === true ? 'RECEIVED' : 'ORDERED'
-                    })
-                    this.props.onHandleProductConfirm(updateCartItem)
+                    productConfirm: !this.state.productConfirm
                   })
+                  const updateCartItem = Object.assign({}, cartItem, {
+                    status: this.state.productConfirm === true ? 'ORDERED' : 'RECEIVED'
+                  })
+                  this.props.onHandleProductConfirm(updateCartItem)
                 }
               }}
               style={{flex: 8}}

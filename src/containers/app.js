@@ -1349,6 +1349,7 @@ class App extends React.Component {
             onProductEdit: this.onProductEdit.bind(this, route, nav),
             onConfirmOrderProduct: (updateCartItem) => {
               _.debounce(() => {
+                let allowOptimisticUpdatesOrderContentsView = true
                 dispatch(actions.updateCartItem({
                   id: updateCartItem.id,
                   teamId: updateCartItem.teamId,
@@ -1357,7 +1358,7 @@ class App extends React.Component {
                   productId: updateCartItem.productId,
                   status: updateCartItem.status,
                   quantityReceived: updateCartItem.quantityReceived || updateCartItem.quantity,
-                }))
+                }, allowOptimisticUpdatesOrderContentsView))
               }, 25)()
             },
             onGetOrderDetails: (orderId) => {

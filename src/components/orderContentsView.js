@@ -168,10 +168,9 @@ class OrderContentsView extends React.Component {
               }}
               productConfirm={productConfirm}
               onHandleProductConfirm={(updateCartItem) => {
+                this.props.onConfirmOrderProduct(updateCartItem)
                 this.setState({
                   toggleAll: false,
-                }, () => {
-                  this.props.onConfirmOrderProduct(updateCartItem)
                 })
               }}
             />
