@@ -63,12 +63,14 @@ export default function CartItemActions(allActions) {
     }
   }
 
-  function updateCartItem(cartItem) {
+  function updateCartItem(cartItem, allowOptimisticUpdates = false) {
     return (dispatch, getState) => {
       const {session} = getState()
       const sessionTeamId = session.teamId
+      if(allowOptimisticUpdates === true){
+        dispatch(receiveCartItems(cartItem))
+      }
       dispatch(connectActions.ddpCall('updateCartItem', [session.userId, sessionTeamId, cartItem.id, cartItem]))
-      // return dispatch(receiveCartItems(cartItem))
     }
   }
 
