@@ -58,7 +58,6 @@ class Menu extends React.Component {
             </View>
           </TouchableHighlight>
         </View>
-        <View style={styles.separator} />
         <View style={styles.menuBody}>
           <ScrollView>
             <TouchableHighlight
@@ -131,7 +130,6 @@ class Menu extends React.Component {
             </TouchableHighlight>
           </ScrollView>
         </View>
-        <View style={styles.separator} />
         <View style={styles.teamNameContainer}>
           <Text style={styles.sous}>Sous</Text>
           <Text style={styles.buildInfo}>{version}({build})</Text>
@@ -141,6 +139,11 @@ class Menu extends React.Component {
   }
 }
 
+let avatarContainerFlex = 1
+if(window.height < 568){
+  avatarContainerFlex = 2
+}
+
 const styles = StyleSheet.create({
   menu: {
     marginTop: 20,
@@ -148,13 +151,15 @@ const styles = StyleSheet.create({
     height: window.height,
   },
   avatarContainer: {
-    flex: 2,
+    flex: avatarContainerFlex,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#3e444f',
     paddingTop: 10,
     paddingBottom: 10,
+    borderBottomWidth: 2,
+    borderColor: '#eee',
   },
   avatar: {
     width: 50,
@@ -181,11 +186,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between'
-  },
-  separator: {
-    height: 1,
-    borderColor: '#eee',
-    borderWidth: 1,
   },
   menuBody: {
     flex: 5,
@@ -238,6 +238,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#3e444f',
     justifyContent: 'center',
     paddingBottom: 10,
+    borderTopWidth: 2,
+    borderColor: '#eee',
   },
   sous: {
     color: 'white',
