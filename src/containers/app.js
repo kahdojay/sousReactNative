@@ -1756,6 +1756,16 @@ class App extends React.Component {
                 disabled={(this.state.currentTeamInfo.team === null)}
               />
             ),
+            customNext: (
+              <Components.FeedViewRightButton
+                onShowCreateOptions={() => {
+                  this.setState({
+                    showCreateOptions: !this.state.showCreateOptions,
+                  })
+                  // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+                }}
+              />
+            )
           })
           break;
         case 'PurveyorIndex':
@@ -1780,7 +1790,7 @@ class App extends React.Component {
                   this.setState({
                     showCreateOptions: !this.state.showCreateOptions,
                   })
-                  LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+                  // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
                 }}
                 // onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
                 cartItems={this.state.currentTeamInfo.cart}
@@ -1851,7 +1861,12 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
+                onShowCreateOptions={() => {
+                  this.setState({
+                    showCreateOptions: !this.state.showCreateOptions,
+                  })
+                  // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+                }}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -1878,7 +1893,13 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav, this.state.category)}
+                onShowCreateOptions={() => {
+                  this.setState({
+                    showCreateOptions: !this.state.showCreateOptions,
+                  })
+                  // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+                }}
+                // onCreateProduct={this.onCreateProduct.bind(this, route, nav, this.state.category)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
             )
@@ -2305,57 +2326,91 @@ class App extends React.Component {
       )
     }
 
-    let createOptions = this.state.showCreateOptions === true ? (
-      <View>
-        <View style={styles.createOptionsHeader}>
-          <Text style={styles.createOptionsHeaderText}>Create New:</Text>
-        </View>
-        <TouchableHighlight
-          onPress={() => {
-            this.onCreateProduct(route, nav, null)
-            this.setState({showCreateOptions: false})
-          }}
-          underlayColor='transparent'
-          style={styles.createOptionButton}
-        >
-            <Text style={styles.createOptionText}>Ingredient</Text>
-        </TouchableHighlight>
-        <TouchableHighlight
-          onPress={() => {
-            console.log('nav to purveyorCreate')
-            this.setState({showCreateOptions: false})
-          }}
-          underlayColor='transparent'
-          style={styles.createOptionButton}
-        >
-            <Text style={styles.createOptionText}>Purveyor</Text>
-        </TouchableHighlight>
-        <TouchableHighlight
-          onPress={() => {
-            console.log('show create category modal')
-            this.setState({showCreateOptions: false})
-          }}
-          underlayColor='transparent'
-          style={styles.createOptionButton}
-        >
-            <Text style={styles.createOptionText}>Category</Text>
-        </TouchableHighlight>
-      </View>
-    ) : <View/>
-    // let createOptions = (
-    //   <ModalComponents.GenericModal
-    //     modalVisible={this.state.showCreateOptions}
-    //     onHideModal={genericModalDismiss}
-    //     leftButton={{
-    //       text: 'Ok',
-    //       onPress: () => {
+    // let createOptions = this.state.showCreateOptions === true ? (
+    //   <View>
+    //     <View style={styles.createOptionsHeader}>
+    //       <Text style={styles.createOptionsHeaderText}>Create New:</Text>
+    //     </View>
+    //     <TouchableHighlight
+    //       onPress={() => {
+    //         this.onCreateProduct(route, nav, null)
     //         this.setState({showCreateOptions: false})
-    //       }
-    //     }}
-    //   >
-    //     <Text>hi</Text>
-    //   </ModalComponents.GenericModal>
-    // )
+    //       }}
+    //       underlayColor='transparent'
+    //       style={styles.createOptionButton}
+    //     >
+    //         <Text style={styles.createOptionText}>Ingredient</Text>
+    //     </TouchableHighlight>
+    //     <TouchableHighlight
+    //       onPress={() => {
+    //         console.log('nav to purveyorCreate')
+    //         this.setState({showCreateOptions: false})
+    //       }}
+    //       underlayColor='transparent'
+    //       style={styles.createOptionButton}
+    //     >
+    //         <Text style={styles.createOptionText}>Purveyor</Text>
+    //     </TouchableHighlight>
+    //     <TouchableHighlight
+    //       onPress={() => {
+    //         console.log('show create category modal')
+    //         this.setState({showCreateOptions: false})
+    //       }}
+    //       underlayColor='transparent'
+    //       style={styles.createOptionButton}
+    //     >
+    //         <Text style={styles.createOptionText}>Category</Text>
+    //     </TouchableHighlight>
+    //   </View>
+    // ) : <View/>
+    let createOptions = (
+      <ModalComponents.GenericModal
+        modalVisible={this.state.showCreateOptions}
+        onHideModal={genericModalDismiss}
+        leftButton={{
+          text: 'Cancel',
+          onPress: () => {
+            this.setState({showCreateOptions: false})
+          }
+        }}
+      >
+        <View>
+          <View style={styles.createOptionsHeader}>
+            <Text style={styles.createOptionsHeaderText}>Create New:</Text>
+          </View>
+          <TouchableHighlight
+            onPress={() => {
+              this.onCreateProduct(route, nav, null)
+              this.setState({showCreateOptions: false})
+            }}
+            underlayColor='transparent'
+            style={styles.createOptionButton}
+          >
+              <Text style={styles.createOptionText}>Ingredient</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            onPress={() => {
+              console.log('nav to purveyorCreate')
+              this.setState({showCreateOptions: false})
+            }}
+            underlayColor='transparent'
+            style={styles.createOptionButton}
+          >
+              <Text style={styles.createOptionText}>Purveyor</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            onPress={() => {
+              console.log('show create category modal')
+              this.setState({showCreateOptions: false})
+            }}
+            underlayColor='transparent'
+            style={styles.createOptionButton}
+          >
+              <Text style={styles.createOptionText}>Category</Text>
+          </TouchableHighlight>
+        </View>
+      </ModalComponents.GenericModal>
+    )
     return (
       <CustomSideView
         ref='customSideView'
