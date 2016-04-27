@@ -14,9 +14,6 @@ class FeedViewRightButton extends React.Component {
   constructor(props) {
     super(props)
   }
-  handlePress(e) {
-    this.props.navigator.push({ name: 'TeamIndex', });
-  }
 
   render() {
     let { navigator, route } = this.props;
@@ -24,20 +21,20 @@ class FeedViewRightButton extends React.Component {
     return (
       <TouchableHighlight
         underlayColor='white'
-        onPress={this.handlePress.bind(this)}
+        onPress={this.props.onShowCreateOptions}
       >
-        <Icon name='material|transform' size={30} color={Colors.navIcon} style={styles.bubble} />
+        <Icon name='material|plus' size={30} color={Colors.navIcon} style={styles.navIcon}/>
       </TouchableHighlight>
     );
   }
 }
 
 let styles = StyleSheet.create({
-  bubble: {
+  navIcon: {
     width: 50,
     height: 50,
     marginTop: 12,
-  }
+  },
 })
 
 FeedViewRightButton.propTypes = {
