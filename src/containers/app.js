@@ -521,8 +521,14 @@ class App extends React.Component {
     })
   }
 
+  onCreateCategory(route, nav) {
+    nav.push({
+      name: 'CategoryForm',
+      // newRoute: routeName,
+    })
+  }
+
   onProductEdit(route, nav, product) {
-    console.log(route, nav, product)
     let productCategory = null
     Object.keys(this.state.currentTeamInfo.categories).forEach((categoryId) => {
       const category = this.state.currentTeamInfo.categories[categoryId]
@@ -1498,6 +1504,18 @@ class App extends React.Component {
             },
           },
         }
+      case 'CategoryForm': 
+        return {
+          component: Components.CategoryForm,
+          props: {
+            onProcessCategory: () => {
+              console.log('onProcessCategory')
+            },
+            onCategoryNotReady: () => {
+              console.log('onCategoryNotReady')
+            }
+          },
+        }
       case 'UserInfo':
         return {
           component: Components.UserInfo,
@@ -2143,6 +2161,51 @@ class App extends React.Component {
             ),
           })
           break;
+        case 'CategoryForm':
+          navBar = React.cloneElement(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'material|close'}
+                pop={true}
+                iconText={'Cancel'}
+              />
+            ),
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'New Category'}
+              />
+            ),
+            customNext: (
+              <Components.ProductFormRightCheckbox
+                submitReady={false}
+                onProcessCategory={() => {
+                  _.debounce(() => {
+                    console.log('creating category')
+                    // const {productId, productAttributes} = this.state.sceneState.ProductForm
+                    // if(productId === null){
+                    //   dispatch(actions.addProduct(productAttributes))
+                    //   dispatch(actions.getTeamResourceInfo(this.state.currentTeamInfo.team.id))
+                    // } else {
+                    //   dispatch(actions.updateProduct(productId, productAttributes))
+                    // }
+                    // if(this.state.sceneState.ProductForm.cartItem){
+                    //   const cartItemPurveyorId = this.state.sceneState.ProductForm.cartItem.purveyorId
+                    //   const allowOptimisticUpdates = true
+                    //   if(productAttributes.purveyors.indexOf(cartItemPurveyorId) === -1){
+                    //     dispatch(actions.deleteCartItem(this.state.sceneState.ProductForm.cartItem, allowOptimisticUpdates))
+                    //   }
+                    // }
+                    nav.replacePreviousAndPop({
+                      name: route.newRoute,
+                    });
+                  }, 5)()
+                }}
+              />
+            ),
+          })
+          break;
         case 'TeamView':
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
@@ -2407,7 +2470,7 @@ class App extends React.Component {
           </TouchableHighlight>
           <TouchableHighlight
             onPress={() => {
-              console.log('show create category modal')
+              this.onCreateCategory(route, nav)
               this.setState({showCreateOptions: false})
             }}
             underlayColor='transparent'

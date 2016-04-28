@@ -1,5 +1,6 @@
 import CartRightButton from './CartRightButton';
 import CartView from './cartView';
+import CategoryForm from './form/categoryForm';
 import CategoryIndex from './categoryIndex';
 import CategoryView from './categoryView';
 import ErrorModal from '../components/errorModal';
@@ -44,6 +45,7 @@ import UserTeam from './userTeam';
 export default {
   CartRightButton,
   CartView,
+  CategoryForm,
   CategoryIndex,
   CategoryView,
   ErrorModal,
