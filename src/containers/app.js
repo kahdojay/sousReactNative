@@ -1586,6 +1586,7 @@ class App extends React.Component {
         return {
           component: Components.CartView,
           props: {
+            actionType: this.props.actionType,
             // team: this.state.currentTeamInfo.team,
             offlineQueueCount: Object.keys(offline.queue).length,
             teamBetaAccess: this.state.currentTeamInfo.betaAccess,

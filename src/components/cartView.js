@@ -72,11 +72,16 @@ class CartView extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const {numberOfOrders, numberOfProducts} = this.getCounts(nextProps)
-    this.setState({
-      numberOfOrders: numberOfOrders.length,
-      numberOfProducts: numberOfProducts,
-    })
+    const approvedActionTypes = [
+      'RECEIVE_CART_ITEM',
+    ]
+    if (approvedActionTypes.indexOf(nextProps.actionType) !== -1) {
+      const {numberOfOrders, numberOfProducts} = this.getCounts(nextProps)
+      this.setState({
+        numberOfOrders: numberOfOrders.length,
+        numberOfProducts: numberOfProducts,
+      })
+    }
   }
 
   handleSubmitPress(cartPurveyors, singlePurveyor) {
