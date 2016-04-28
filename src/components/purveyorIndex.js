@@ -33,7 +33,7 @@ class PurveyorIndex extends React.Component {
       _.sortBy(purveyors, 'name'), (purveyor) => {
         if (purveyor.deleted === false) {
           return (
-            <View>
+            <View key={`container-${purveyor.id}`}>
               <PurveyorIndexRow
                 key={purveyor.id}
                 purveyor={purveyor}
