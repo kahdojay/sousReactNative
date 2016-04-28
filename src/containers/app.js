@@ -1543,6 +1543,7 @@ class App extends React.Component {
           component: Components.InviteView,
           props: {
             contacts: contacts.data,
+            currentTeamInfo: this.state.currentTeamInfo,
             isFetching: contacts.isFetching,
             denied: contacts.contactsPermissionDenied,
             getContacts: () => {
