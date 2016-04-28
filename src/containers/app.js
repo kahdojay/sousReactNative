@@ -1103,16 +1103,17 @@ class App extends React.Component {
             onProductEdit: this.onProductEdit.bind(this, route, nav),
             onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
+                const allowOptimisticUpdates = true
                 switch(cartAction){
                   case actions.CART.DELETE:
-                    dispatch(actions.deleteCartItem(cartAttributes))
+                    dispatch(actions.deleteCartItem(cartAttributes, allowOptimisticUpdates))
                     break;
                   case actions.CART.UPDATE:
-                    dispatch(actions.updateCartItem(cartAttributes))
+                    dispatch(actions.updateCartItem(cartAttributes, allowOptimisticUpdates))
                     break;
                   case actions.CART.ADD:
                   default:
-                    dispatch(actions.addCartItem(cartAttributes))
+                    dispatch(actions.addCartItem(cartAttributes, allowOptimisticUpdates))
                     break;
                 }
               }, 25)()
@@ -1212,16 +1213,17 @@ class App extends React.Component {
             onProductEdit: this.onProductEdit.bind(this, route, nav),
             onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
+                const allowOptimisticUpdates = true
                 switch(cartAction){
                   case actions.CART.DELETE:
-                    dispatch(actions.deleteCartItem(cartAttributes))
+                    dispatch(actions.deleteCartItem(cartAttributes, allowOptimisticUpdates))
                     break;
                   case actions.CART.UPDATE:
-                    dispatch(actions.updateCartItem(cartAttributes))
+                    dispatch(actions.updateCartItem(cartAttributes, allowOptimisticUpdates))
                     break;
                   case actions.CART.ADD:
                   default:
-                    dispatch(actions.addCartItem(cartAttributes))
+                    dispatch(actions.addCartItem(cartAttributes, allowOptimisticUpdates))
                     break;
                 }
               }, 25)()
@@ -1347,17 +1349,17 @@ class App extends React.Component {
             userId: session.userId,
             userName: session.firstName,
             onProductEdit: this.onProductEdit.bind(this, route, nav),
-            onConfirmOrderProduct: (updateCartItem) => {
+            onConfirmOrderProduct: (cartItemToUpdate) => {
               _.debounce(() => {
                 let allowOptimisticUpdatesOrderContentsView = true
                 dispatch(actions.updateCartItem({
-                  id: updateCartItem.id,
-                  teamId: updateCartItem.teamId,
-                  purveyorId: updateCartItem.purveyorId,
+                  id: cartItemToUpdate.id,
+                  teamId: cartItemToUpdate.teamId,
+                  purveyorId: cartItemToUpdate.purveyorId,
                   orderId: this.state.order.id,
-                  productId: updateCartItem.productId,
-                  status: updateCartItem.status,
-                  quantityReceived: updateCartItem.quantityReceived || updateCartItem.quantity,
+                  productId: cartItemToUpdate.productId,
+                  status: cartItemToUpdate.status,
+                  quantityReceived: cartItemToUpdate.quantityReceived || cartItemToUpdate.quantity,
                 }, allowOptimisticUpdatesOrderContentsView))
               }, 25)()
             },
@@ -1593,13 +1595,14 @@ class App extends React.Component {
             products: this.state.currentTeamInfo.products,
             onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
+                const allowOptimisticUpdates = true
                 switch(cartAction){
                   case actions.CART.DELETE:
-                    dispatch(actions.deleteCartItem(cartAttributes))
+                    dispatch(actions.deleteCartItem(cartAttributes, allowOptimisticUpdates))
                     break;
                   case actions.CART.UPDATE:
                   default:
-                    dispatch(actions.updateCartItem(cartAttributes))
+                    dispatch(actions.updateCartItem(cartAttributes, allowOptimisticUpdates))
                     break;
                 }
               }, 25)()
@@ -2088,8 +2091,9 @@ class App extends React.Component {
                     }
                     if(this.state.sceneState.ProductForm.cartItem){
                       const cartItemPurveyorId = this.state.sceneState.ProductForm.cartItem.purveyorId
+                      const allowOptimisticUpdates = true
                       if(productAttributes.purveyors.indexOf(cartItemPurveyorId) === -1){
-                        dispatch(actions.deleteCartItem(this.state.sceneState.ProductForm.cartItem))
+                        dispatch(actions.deleteCartItem(this.state.sceneState.ProductForm.cartItem, allowOptimisticUpdates))
                       }
                     }
                     nav.replacePreviousAndPop({
