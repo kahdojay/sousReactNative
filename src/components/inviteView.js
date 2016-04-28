@@ -15,12 +15,14 @@ const {
   TouchableHighlight,
   PropTypes,
   StyleSheet,
+  WebView
 } = React;
 
 class InviteView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      currentTeamInfo: null,
       selectedContacts: [],
       query: '',
       searching: false,
@@ -28,6 +30,7 @@ class InviteView extends React.Component {
       isFetching: this.props.isFetching,
       contacts: [],
       timeout: null,
+      url: 'https://plasso.co/s/DXWzBS5dyE',
     }
   }
 
@@ -36,6 +39,7 @@ class InviteView extends React.Component {
       this.props.getContacts()
     } else {
       this.setState({
+        currentTeamInfo: this.props.currentTeamInfo,
         contacts: this.props.contacts.slice(0,10)
       })
     }
@@ -245,7 +249,20 @@ class InviteView extends React.Component {
       </TouchableHighlight>
     )
 
-    if (this.props.denied) {
+    if((this.state.currentTeamInfo.team.users.length <= this.state.currentTeamInfo.team.allowedUserCount) !== true) {
+      return (
+        <WebView
+          automaticallyAdjustContentInsets={false}
+          style={styles.webView}
+          url={this.state.url}
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
+          decelerationRate="normal"
+          startInLoadingState={true}
+          scalesPageToFit={true}
+        />
+      )
+    }else if (this.props.denied) {
       return (
         <View style={styles.modalContainer}>
           <View style={styles.modalInnerContainer}>
@@ -419,6 +436,10 @@ const styles = StyleSheet.create({
     padding: 5,
     textAlign: 'center',
   },
+  webView: {
+    flex: 1,
+    backgroundColor: Colors.mainBackgroundColor,
+  }
 })
 
 InviteView.propTypes = {

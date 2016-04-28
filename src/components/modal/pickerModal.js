@@ -28,12 +28,14 @@ class PickerModal extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      modalVisible: nextProps.modalVisible,
-      items: nextProps.items,
-      selectedValue: nextProps.selectedValue,
-      pickerType: nextProps.pickerType,
-    })
+    if(this.props.selectedValue !== nextProps.selectedValue){
+      this.setState({
+        modalVisible: nextProps.modalVisible,
+        items: nextProps.items,
+        selectedValue: nextProps.selectedValue,
+        pickerType: nextProps.pickerType,
+      })
+    }
   }
 
   handleSubmitValue(returnSelectedValue) {
