@@ -32,8 +32,8 @@ const {
 } = React;
 
 class App extends React.Component {
-  constructor(props, ctx) {
-    super(props, ctx)
+  constructor(props) {
+    super(props)
     const constructorNow = (new Date()).getTime()
     this.state = {
       category: null,
@@ -1540,6 +1540,7 @@ class App extends React.Component {
         return {
           component: Components.InviteView,
           props: {
+            currentTeamInfo: this.state.currentTeamInfo,
             contacts: contacts.data,
             isFetching: contacts.isFetching,
             denied: contacts.contactsPermissionDenied,
