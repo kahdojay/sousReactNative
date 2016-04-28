@@ -34,7 +34,7 @@ class CategoryIndex extends React.Component {
           categoryProducts[productId] = products[productId]
         })
         return (
-          <View>
+          <View key={`container-${category.id}`}>
             <CategoryIndexRow
               products={categoryProducts}
               key={category.id}

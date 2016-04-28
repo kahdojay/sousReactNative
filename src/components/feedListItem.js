@@ -40,6 +40,23 @@ class FeedListItem extends React.Component {
     });
   }
 
+  getMessageString(msg) {
+    const messageString = messageUtils.formatMessage(msg)
+    if(msg.hasOwnProperty('orderId') === true && msg.orderId){
+      return (
+        <TouchableHighlight
+          underlayColor='transparent'
+          onPress={() => {
+            this.props.onNavToOrder(msg.orderId)
+          }}
+        >
+          {messageString}
+        </TouchableHighlight>
+      )
+    }
+    return messageString
+  }
+
   render() {
     const {msg} = this.state
     let msgDisplayDate = ''
@@ -68,7 +85,6 @@ class FeedListItem extends React.Component {
     }
 
     let icon = AvatarUtils.getAvatar(user, 40)
-    let messageString = messageUtils.formatMessage(msg);
     let superUserIndicator = <View/>;
     // if(this.props.teamsUsers.hasOwnProperty(msg.userId) === true && this.props.teamsUsers[msg.userId].superUser === true){
     //   superUserIndicator = <Text style={{position: 'absolute', top: 7, left: 2, color: darkBlue, backgroundColor: 'transparent'}}>*</Text>;
@@ -83,18 +99,7 @@ class FeedListItem extends React.Component {
               <Text style={styles.messageAuthor}>{msg.author}</Text>
               <Text style={styles.messageTimestamp}>{msgDisplayDate}</Text>
             </View>
-            { (msg.hasOwnProperty('orderId') === true && msg.orderId) ?
-              <TouchableHighlight
-                underlayColor='transparent'
-                onPress={() => {
-                  this.props.onNavToOrder(msg.orderId)
-                }}
-              >
-              {messageString}
-              </TouchableHighlight>
-              :
-              {messageString}
-            }
+            {this.getMessageString(msg)}
 
           </View>
         </View>
