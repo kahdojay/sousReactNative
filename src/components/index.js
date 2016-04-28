@@ -25,7 +25,7 @@ import OrderInvoices from './orderInvoices';
 import OrderInvoiceUpload from './orderInvoiceUpload';
 import OrderRightButton from './orderRightButton'
 import OrderView from './orderView';
-import ProductForm from './productForm';
+import ProductForm from './form/productForm';
 import ProductFormRightCheckbox from './productFormRightCheckbox';
 import ProductView from './productView';
 import ProfileView from './profileView';
