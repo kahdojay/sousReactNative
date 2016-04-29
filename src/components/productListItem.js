@@ -24,6 +24,7 @@ class ProductListItem extends React.Component {
     this.state = {
       loaded: false,
       product: null,
+      productUpdated: false,
       purveyors: null,
       added: false,
       quantity: 1,
@@ -54,6 +55,11 @@ class ProductListItem extends React.Component {
 
     if(this.state.editQuantity !== nextState.editQuantity){
       if(debugUpdates) console.log('Edit Quantity Modal: ', this.state.editQuantity, nextState.editQuantity)
+      return true;
+    }
+
+    if(this.state.productUpdated === true){
+      if(debugUpdates) console.log('Product Updated: ', this.state.productUpdated)
       return true;
     }
 
@@ -88,9 +94,20 @@ class ProductListItem extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.actionType === 'RECEIVE_CART_ITEM') {
+    // console.log(nextProps.actionType)
+    const approvedActionTypes = [
+      'RECEIVE_CART_ITEM',
+      'RECEIVE_PRODUCTS',
+      'RECEIVE_TEAM_RESOURCE_INFO',
+    ]
+    if (approvedActionTypes.indexOf(nextProps.actionType) !== -1) {
+      let productUpdated = false
+      if(JSON.stringify(this.state.product) !== JSON.stringify(nextProps.product)){
+        productUpdated = true
+      }
       this.setState({
         product: nextProps.product,
+        productUpdated: productUpdated,
         purveyorId: nextProps.cartPurveyorId,
       }, () => {
         this.localStateUpdateFromCart(nextProps.cartItem, nextProps.product)
@@ -124,7 +141,9 @@ class ProductListItem extends React.Component {
   }
 
   localStateUpdateFromCart(cartItem, product) {
-    let newState = {}
+    let newState = {
+      productUpdated: false,
+    }
     if (cartItem !== null) {
       newState = {
         note: cartItem.note,

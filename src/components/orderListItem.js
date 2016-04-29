@@ -31,13 +31,16 @@ class OrderListItem extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      orderConfirm: nextProps.orderConfirm,
-      product: nextProps.product,
-      cartItem: nextProps.cartItem,
-      productConfirm: nextProps.productConfirm,
-      quantityReceived: nextProps.cartItem.quantityReceived || nextProps.cartItem.quantity,
-    })
+    if(nextProps.actionType === 'RECEIVE_CART_ITEM'){
+      // console.log(nextProps.actionType)
+      this.setState({
+        orderConfirm: nextProps.orderConfirm,
+        product: nextProps.product,
+        cartItem: nextProps.cartItem,
+        productConfirm: nextProps.productConfirm,
+        quantityReceived: nextProps.cartItem.quantityReceived || nextProps.cartItem.quantity,
+      })
+    }
   }
 
   componentWillMount(){

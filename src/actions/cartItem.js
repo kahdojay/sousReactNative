@@ -31,7 +31,7 @@ export default function CartItemActions(allActions) {
     }
   }
 
-  function addCartItem(cartItemAttributes) {
+  function addCartItem(cartItemAttributes, allowOptimisticUpdates = false) {
     return (dispatch, getState) => {
       const {session} = getState()
       const cartItemId = generateId()
@@ -49,13 +49,15 @@ export default function CartItemActions(allActions) {
         cartItemAttributes.purveyorId
         && cartItemAttributes.productId
       ){
-        // dispatch({
-        //   type: ADD_CART_ITEM,
-        //   cartItemId: cartItemId,
-        //   cartItem: Object.assign({}, cartItemAttributes, {
-        //     id: cartItemId,
-        //   }),
-        // })
+        if(allowOptimisticUpdates === true){
+          dispatch({
+            type: ADD_CART_ITEM,
+            cartItemId: cartItemId,
+            cartItem: Object.assign({}, cartItemAttributes, {
+              id: cartItemId,
+            }),
+          })
+        }
         dispatch(connectActions.ddpCall('addCartItem', [session.userId, sessionTeamId, Object.assign({}, cartItemAttributes)]))
       } else {
         dispatch(errorActions.createError('add-cart-item', 'Please check product details and try again', Object.assign({}, cartItemAttributes)))
@@ -74,16 +76,18 @@ export default function CartItemActions(allActions) {
     }
   }
 
-  function deleteCartItem(cartItem) {
+  function deleteCartItem(cartItem, allowOptimisticUpdates = false) {
     return (dispatch, getState) => {
       const {session} = getState()
       const sessionTeamId = session.teamId
+      if(allowOptimisticUpdates === true){
+        dispatch({
+          type: DELETE_CART_ITEM,
+          teamId: sessionTeamId,
+          cartItem: cartItem,
+        })
+      }
       dispatch(connectActions.ddpCall('deleteCartItem', [session.userId, sessionTeamId, cartItem.id]))
-      // return dispatch({
-      //   type: DELETE_CART_ITEM,
-      //   teamId: sessionTeamId,
-      //   cartItem: cartItem,
-      // })
     }
   }
 
