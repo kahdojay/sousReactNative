@@ -1,7 +1,7 @@
 {
   "name": "sousmobile",
-  "version": "1.9.0",
-  "build": "8",
+  "version": "1.9.1",
+  "build": "1",
   "private": true,
   "scripts": {
     "start": "HOT=1 ./node_modules/.bin/react-native-webpack-server start --hot",
@@ -27,6 +27,8 @@
     "lodash": "^3.10.1",
     "moment": "^2.10.6",
     "moment-timezone": "^0.4.1",
+    "react": "0.14.7",
+    "react-dom": "0.14.7",
     "react-native": "^0.11.0",
     "react-native-addressbook": "^1.2.0",
     "react-native-communications": "0.0.6",
