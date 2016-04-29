@@ -87,6 +87,11 @@ class App extends React.Component {
           productId: null,
           productAttributes: {},
         },
+        PurveyorForm: {
+          submitReady: false,
+          purveyorId: null,
+          purveyorAttributes: {},
+        },
         OrderIndex: {
           showConfirmedOrders: false,
         },
@@ -532,6 +537,20 @@ class App extends React.Component {
     }, () => {
       nav.push({
         name: 'CategoryForm',
+        newRoute: route.name,
+      })
+    })
+  }
+
+  onCreatePurveyor(route, nav) {
+    const sceneState = Object.assign({}, this.state.sceneState);
+    sceneState.PurveyorForm.submitReady = false;
+    this.setState({
+      sceneState: sceneState,
+      // purveyor: null,
+    }, () => {
+      nav.push({
+        name: 'PurveyorForm',
         newRoute: route.name,
       })
     })
@@ -1513,6 +1532,31 @@ class App extends React.Component {
             },
           },
         }
+      case 'PurveyorForm':
+        return {
+          component: Components.PurveyorForm,
+          props: {
+            purveyor: this.state.purveyor,
+            team: this.state.currentTeamInfo.team,
+            // purveyors: this.state.currentTeamInfo.purveyors,
+            onProcessPurveyor: (purveyorAttributes) => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              const existingPurveyorAttributes = Object.assign({}, sceneState.PurveyorForm.purveyorAttributes);
+              sceneState.PurveyorForm.submitReady = true;
+              sceneState.PurveyorForm.purveyorAttributes = existingPurveyorAttributes;
+              this.setState({
+                sceneState: sceneState
+              })
+            },
+            onPurveyorNotReady: () => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.PurveyorForm.submitReady = false;
+              this.setState({
+                sceneState: sceneState
+              })
+            },
+          },
+        }
       case 'CategoryForm': 
         return {
           component: Components.CategoryForm,
@@ -2180,6 +2224,38 @@ class App extends React.Component {
             ),
           })
           break;
+        case 'PurveyorForm':
+          navBar = React.cloneElement(this.navBar, {
+            ref: 'navBar',
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                pop={true}
+                iconText={'Cancel'}
+              />
+            ),
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'New Purveyor'}
+                // content={(this.state.purveyor === null) ? 'New Purveyor' : 'Edit Purveyor'}
+              />
+            ),
+            customNext: (
+              <Components.PurveyorFormRightCheckbox
+                submitReady={this.state.sceneState.PurveyorForm.submitReady}
+                onProcessPurveyor={() => {
+                  _.debounce(() => {
+                    console.log('TODO: create purveyor')
+                    nav.replacePreviousAndPop({
+                      name: route.newRoute,
+                    });
+                  }, 5)()
+                }}
+              />
+            ),
+          })
+          break;
         case 'CategoryForm':
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
@@ -2465,7 +2541,7 @@ class App extends React.Component {
           </TouchableHighlight>
           <TouchableHighlight
             onPress={() => {
-              console.log('nav to purveyorCreate')
+              this.onCreatePurveyor(route, nav, null)
               this.setState({showCreateOptions: false})
             }}
             underlayColor='transparent'

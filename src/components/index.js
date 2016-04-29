@@ -31,6 +31,8 @@ import ProductForm from './form/productForm';
 import ProductFormRightCheckbox from './productFormRightCheckbox';
 import ProductView from './productView';
 import ProfileView from './profileView';
+import PurveyorForm from './form/purveyorForm';
+import PurveyorFormRightCheckbox from './purveyorFormRightCheckbox';
 import PurveyorIndex from './purveyorIndex';
 import PurveyorView from './purveyorView';
 import Signup from './signup';
@@ -77,6 +79,8 @@ export default {
   ProductFormRightCheckbox,
   ProductView,
   ProfileView,
+  PurveyorForm,
+  PurveyorFormRightCheckbox,
   PurveyorIndex,
   PurveyorView,
   Signup,
