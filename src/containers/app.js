@@ -78,6 +78,9 @@ class App extends React.Component {
       purveyor: null,
       showGenericModal: false,
       sceneState: {
+        CategoryForm: {
+          submitReady: false,
+        },
         ProductForm: {
           cartItem: null,
           submitReady: false,
@@ -509,22 +512,28 @@ class App extends React.Component {
     sceneState.ProductForm.cartItem = null;
     sceneState.ProductForm.productId = null;
     sceneState.ProductForm.productAttributes = {};
-    const routeName = route.name;
     this.setState({
       sceneState: sceneState,
       product: null,
     }, () => {
       nav.push({
         name: 'ProductForm',
-        newRoute: routeName,
+        newRoute: route.name,
       })
     })
   }
 
   onCreateCategory(route, nav) {
-    nav.push({
-      name: 'CategoryForm',
-      // newRoute: routeName,
+    const sceneState = Object.assign({}, this.state.sceneState);
+    sceneState.CategoryForm.submitReady = false;
+    this.setState({
+      sceneState: sceneState,
+      // category: null,
+    }, () => {
+      nav.push({
+        name: 'CategoryForm',
+        newRoute: route.name,
+      })
     })
   }
 
@@ -1509,10 +1518,20 @@ class App extends React.Component {
           component: Components.CategoryForm,
           props: {
             onProcessCategory: () => {
-              console.log('onProcessCategory')
+              const sceneState = Object.assign({}, this.state.sceneState);
+              // const existingCategoryAttributes = Object.assign({}, sceneState.CategoryForm.categoryAttributes);
+              sceneState.CategoryForm.submitReady = true;
+              // sceneState.CategoryForm.categoryAttributes = Object.assign({}, existingCategoryAttributes, categoryAttributes);
+              this.setState({
+                sceneState: sceneState
+              })
             },
             onCategoryNotReady: () => {
-              console.log('onCategoryNotReady')
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.CategoryForm.submitReady = false;
+              this.setState({
+                sceneState: sceneState
+              })
             }
           },
         }
@@ -2178,25 +2197,11 @@ class App extends React.Component {
               />
             ),
             customNext: (
-              <Components.ProductFormRightCheckbox
-                submitReady={false}
+              <Components.CategoryFormRightCheckbox
+                submitReady={this.state.sceneState.CategoryForm.submitReady}
                 onProcessCategory={() => {
                   _.debounce(() => {
-                    console.log('creating category')
-                    // const {productId, productAttributes} = this.state.sceneState.ProductForm
-                    // if(productId === null){
-                    //   dispatch(actions.addProduct(productAttributes))
-                    //   dispatch(actions.getTeamResourceInfo(this.state.currentTeamInfo.team.id))
-                    // } else {
-                    //   dispatch(actions.updateProduct(productId, productAttributes))
-                    // }
-                    // if(this.state.sceneState.ProductForm.cartItem){
-                    //   const cartItemPurveyorId = this.state.sceneState.ProductForm.cartItem.purveyorId
-                    //   const allowOptimisticUpdates = true
-                    //   if(productAttributes.purveyors.indexOf(cartItemPurveyorId) === -1){
-                    //     dispatch(actions.deleteCartItem(this.state.sceneState.ProductForm.cartItem, allowOptimisticUpdates))
-                    //   }
-                    // }
+                    console.log('TODO: create category')
                     nav.replacePreviousAndPop({
                       name: route.newRoute,
                     });
