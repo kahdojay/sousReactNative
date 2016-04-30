@@ -94,6 +94,7 @@ class App extends React.Component {
       lastResourceInfoRetrieval: (new Date(constructorNow - ((60*60*1000) + 100) )).toISOString(),
       lastResourceInfoFetching: false,
       networkConnected: true,
+      navigateNext: null,
     }
     this.reconnectTimeout = null
     this.initialRoute = 'Signup'
@@ -470,6 +471,16 @@ class App extends React.Component {
             name: 'Feed'
           });
         }
+      }
+
+      if(rbodRouteName === 'CartView' && this.props.actionType === 'ORDER_SENT' && this.state.navigateNext !== null){
+        this.setState({
+          navigateNext: null,
+        }, () => {
+          this.refs.appNavigator.replacePreviousAndPop({
+            name: 'Feed',
+          });
+        })
       }
 
       // ...
@@ -1614,12 +1625,12 @@ class App extends React.Component {
               NetInfo.isConnected.fetch().then((isConnected) => {
                 if(isConnected === true){
                   _.debounce(() => {
-                    dispatch(actions.sendCart(cartInfo));
+                    dispatch(actions.verifyCart(cartInfo));
                   }, 25)()
                   if(navigateToFeed === true){
-                    nav.replacePreviousAndPop({
-                      name: 'Feed',
-                    });
+                    this.setState({
+                      navigateNext: 'Feed'
+                    })
                   }
                 } else {
                   dispatch(actions.createError('network-connectivity', 'Please check that your device is connected to the internet and try again'))

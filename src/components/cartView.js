@@ -9,6 +9,7 @@ import ConfirmationModal from './modal/confirmationModal';
 import MiniCalendar from 'react-native-minicalendar';
 
 const {
+  ActivityIndicatorIOS,
   ScrollView,
   StyleSheet,
   Text,
@@ -31,6 +32,7 @@ class CartView extends React.Component {
       showDeliveryDateCalendar: false,
       confirmationMessage: 'Send order?',
       navigateToFeed: true,
+      submittingOrder: false,
     }
   }
 
@@ -80,6 +82,10 @@ class CartView extends React.Component {
       this.setState({
         numberOfOrders: numberOfOrders.length,
         numberOfProducts: numberOfProducts,
+      })
+    } else if(['ORDER_SENT','DELETE_ERRORS'].indexOf(nextProps.actionType) !== -1 && this.state.submittingOrder === true){
+      this.setState({
+        submittingOrder: false
       })
     }
   }
@@ -162,13 +168,25 @@ class CartView extends React.Component {
   render() {
     const {cartItems, cartPurveyors, products, connected, teamBetaAccess, offlineQueueCount} = this.props
 
-    if(connected === false){
-      return (
-        <View style={styles.container}>
-          <Text style={styles.inaccessible}>Cart inaccessible in offline mode</Text>
-        </View>
-      )
-    }
+    // if(connected === false){
+    //   return (
+    //     <View style={styles.container}>
+    //       <Text style={styles.inaccessible}>Cart inaccessible in offline mode</Text>
+    //     </View>
+    //   )
+    // }
+
+    const submittingOrder = (
+      <View style={styles.container}>
+        <ActivityIndicatorIOS
+          animating={true}
+          color={'#808080'}
+          style={styles.activity}
+          size={'large'}
+        />
+        <Text style={[styles.inaccessible, {color: Colors.darkGrey}]}>Please wait, processing your order request.</Text>
+      </View>
+    )
 
     const purveyorInfoDismiss = () => {
       this.setState({
@@ -176,6 +194,7 @@ class CartView extends React.Component {
         purveyor: null,
       })
     }
+    
     const modal = (
       <GenericModal
         modalVisible={this.state.showPurveyorInfo}
@@ -225,11 +244,23 @@ class CartView extends React.Component {
         onConfirmYes={() => {
           this.setState({
             showConfirmationModal: false,
+            submittingOrder: true,
           }, () => {
             if(this.state.numberOfOrders > 0){
               // console.log(this.state.purveyorIds);
+              let cartItemIds = {}
+              this.state.purveyorIds.forEach((purveyorId) => {
+                const purveyorCartItemIds = _.map(_.filter(cartItems[purveyorId], (cartItem) => {
+                  return cartItem.status === 'NEW'
+                }), (cartItem) => {
+                  return cartItem.id
+                });
+                cartItemIds[purveyorId] = purveyorCartItemIds
+              })
+
               this.props.onSendCart({
                 purveyorIds: this.state.purveyorIds,
+                cartItemIds: cartItemIds,
                 purveyorDeliveryDates: this.state.purveyorDeliveryDates,
               }, this.state.navigateToFeed);
             }
@@ -363,23 +394,28 @@ class CartView extends React.Component {
 
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.scrollView}>
-          {cartViewDetails}
-        </ScrollView>
-        <TouchableOpacity
-          onPress={() => {
-            if(buttonDisabledFlag === false){
-              this.handleSubmitPress(cartPurveyors)
-            }
-          }}
-          style={[
-            styles.button,
-            buttonDisabled
-          ]}
-          activeOpacity={.75}
-        >
-          <Text style={styles.buttonText}>Submit All Orders</Text>
-        </TouchableOpacity>
+        { this.state.submittingOrder === true ?
+          submittingOrder :
+          <View style={{flex: 1}}>
+            <ScrollView style={styles.scrollView}>
+              {cartViewDetails}
+            </ScrollView>
+            <TouchableOpacity
+              onPress={() => {
+                if(buttonDisabledFlag === false){
+                  this.handleSubmitPress(cartPurveyors)
+                }
+              }}
+              style={[
+                styles.button,
+                buttonDisabled
+              ]}
+              activeOpacity={.75}
+            >
+              <Text style={styles.buttonText}>Submit All Orders</Text>
+            </TouchableOpacity>
+          </View>
+        }
         {modal}
         {confirmationModal}
         {calendarModal}
@@ -498,6 +534,12 @@ const styles = StyleSheet.create({
   },
   boldText: {
     fontWeight: 'bold',
+  },
+  activity: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginTop: 15,
   },
   emptyContainer: {
     padding: 25,

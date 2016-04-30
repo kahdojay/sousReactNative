@@ -21,13 +21,13 @@ class PurveyorIndex extends React.Component {
   render() {
     const { purveyors, products, session, connected } = this.props
 
-    if(connected === false){
-      return (
-        <View style={styles.container}>
-          <Text style={styles.inaccessible}>Order Guide inaccessible in offline mode</Text>
-        </View>
-      )
-    }
+    // if(connected === false){
+    //   return (
+    //     <View style={styles.container}>
+    //       <Text style={styles.inaccessible}>Order Guide inaccessible in offline mode</Text>
+    //     </View>
+    //   )
+    // }
 
     let purveyorsList = _.map(
       _.sortBy(purveyors, 'name'), (purveyor) => {
