@@ -52,7 +52,15 @@ class CartViewListItem extends React.Component {
       }
     }]
 
-    let quantityItems = []
+    let quantityItems = _.map(['1/8','1/4','1/2', '3/4'], (frac, idx) => {
+      const dec = frac.split('/')
+      return {
+        key: `d-${idx}`,
+        value: parseFloat(dec[0]/dec[1]),
+        label: frac,
+      }
+    })
+
     quantityItems = quantityItems.concat(_.map(_.range(1, 501), (n, idx) => {
       return {
         key: idx,

@@ -75,7 +75,7 @@ class TeamIndex extends React.Component {
               }
               if (team.deleted === false) {
                 return (
-                  <View>
+                  <View key={`container-${index}`}>
                     <TeamIndexRow
                       key={index}
                       connected={this.props.connected}
