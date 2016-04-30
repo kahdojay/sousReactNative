@@ -59,13 +59,13 @@ class PurveyorView extends React.Component {
   render() {
     const {actionType, categories, purveyors, products, cartItems, connected} = this.props;
 
-    if(connected === false){
-      return (
-        <View style={styles.container}>
-          <Text style={styles.inaccessible}>Order Guide inaccessible in offline mode</Text>
-        </View>
-      )
-    }
+    // if(connected === false){
+    //   return (
+    //     <View style={styles.container}>
+    //       <Text style={styles.inaccessible}>Order Guide inaccessible in offline mode</Text>
+    //     </View>
+    //   )
+    // }
 
     const fetching = (
       <ActivityIndicatorIOS

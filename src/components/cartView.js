@@ -168,6 +168,14 @@ class CartView extends React.Component {
   render() {
     const {cartItems, cartPurveyors, products, connected, teamBetaAccess, offlineQueueCount} = this.props
 
+    // if(connected === false){
+    //   return (
+    //     <View style={styles.container}>
+    //       <Text style={styles.inaccessible}>Cart inaccessible in offline mode</Text>
+    //     </View>
+    //   )
+    // }
+
     const submittingOrder = (
       <View style={styles.container}>
         <ActivityIndicatorIOS
@@ -180,20 +188,13 @@ class CartView extends React.Component {
       </View>
     )
 
-    if(connected === false){
-      return (
-        <View style={styles.container}>
-          <Text style={styles.inaccessible}>Cart inaccessible in offline mode</Text>
-        </View>
-      )
-    }
-
     const purveyorInfoDismiss = () => {
       this.setState({
         showPurveyorInfo: false,
         purveyor: null,
       })
     }
+    
     const modal = (
       <GenericModal
         modalVisible={this.state.showPurveyorInfo}
