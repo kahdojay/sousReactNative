@@ -47,21 +47,38 @@ class CartView extends React.Component {
     }), (total, n) => {
       return total + n
     })
-    return {
+    const ret = {
       numberOfOrders,
       numberOfProducts
     }
+    return ret
   }
 
-  shouldComponentUpdate(nextProps) {
-    const {numberOfOrdersUpdated, numberOfProductsUpdated} = this.getCounts(nextProps)
-    if(nextProps.connected !== false){
-      return true;
-    } else if(numberOfOrdersUpdated && numberOfOrdersUpdated.length !== this.state.numberOfOrders){
-      return true;
-    } else if(numberOfProductsUpdated !== this.state.numberOfProducts){
+  shouldComponentUpdate(nextProps, nextState) {
+    const {numberOfOrders, numberOfProducts} = this.getCounts(this.props)
+    const debugUpdates = false
+
+    if(this.state.showPurveyorInfo !== nextState.showPurveyorInfo){
+      if(debugUpdates) console.log('Purveyor Info Modal: ', this.state.showPurveyorInfo, nextState.showPurveyorInfo)
       return true;
     }
+
+    if(this.state.showDeliveryDateCalendar !== nextState.showDeliveryDateCalendar){
+      if(debugUpdates) console.log('Delivery Calendar Modal: ', this.state.showDeliveryDateCalendar, nextState.showDeliveryDateCalendar)
+      return true;
+    }
+
+    if(nextProps.connected !== false){
+      if(debugUpdates) console.log('Connection Update: ', nextProps.connected)
+      return true;
+    } else if(numberOfOrders && numberOfOrders.length !== this.state.numberOfOrders){
+      if(debugUpdates) console.log('Number of Orders Update: ', numberOfOrders.length, ' vs ', this.state.numberOfOrders)
+      return true;
+    } else if(numberOfProducts !== this.state.numberOfProducts){
+      if(debugUpdates) console.log('Number of Products Update: ', numberOfProducts, ' vs ', this.state.numberOfProducts)
+      return true;
+    }
+    console.log('never')
     return false;
   }
 
@@ -194,7 +211,7 @@ class CartView extends React.Component {
         purveyor: null,
       })
     }
-    
+
     const modal = (
       <GenericModal
         modalVisible={this.state.showPurveyorInfo}
@@ -301,7 +318,7 @@ class CartView extends React.Component {
           selectedDate={(this.state.purveyor && this.state.purveyorDeliveryDates.hasOwnProperty(this.state.purveyor.id) === true) ? moment(this.state.purveyorDeliveryDates[this.state.purveyor.id]).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD')}
           numberOfDaysToShow={14}
           enabledDaysOfTheWeek={this.state.purveyor ? this.state.purveyor.deliveryDays.split(',') : []}
-          headingStyle={{backgroundColor: Colors.blue}}
+          headingStyle={{backgroundColor: Colors.darkBlue}}
           activeDayStyle={{backgroundColor: Colors.lightBlue, color: 'white'}}
           disabledDayStyle={{backgroundColor: Colors.disabled, color: Colors.darkGrey}}
           selectedDayStyle={{backgroundColor: Colors.gold}}
@@ -317,7 +334,7 @@ class CartView extends React.Component {
     if(this.state.numberOfOrders > 0){
       let submitOrderIconColor = 'white'
       if(connected === false || offlineQueueCount !== 0){
-        submitOrderIconColor =  Colors.darkGrey
+        submitOrderIconColor =  Colors.disabledBlue
       }
       cartViewDetails = _.map(cartPurveyors, (purveyor) => {
         return (
