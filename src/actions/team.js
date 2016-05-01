@@ -10,6 +10,7 @@ import {
   ADD_TEAM,
   CART,
   COMPLETE_TEAM_TASK,
+  CONNECT,
   DELETE_TEAM,
   ERROR_TEAMS,
   GET_TEAMS,
@@ -431,17 +432,19 @@ export default function TeamActions(allActions) {
 
   function getTeamResourceInfo(teamId){
     return (dispatch, getState) => {
-      const {session} = getState()
-      var getTeamResourceInfoCb = (err, results) => {
-        if(!err){
-          dispatch({
-            type: RECEIVE_TEAM_RESOURCE_INFO,
-            teamId: teamId,
-            resources: results,
-          })
+      const {connect, session} = getState()
+      if(connect.status === CONNECT.CONNECTED){
+        var getTeamResourceInfoCb = (err, results) => {
+          if(!err){
+            dispatch({
+              type: RECEIVE_TEAM_RESOURCE_INFO,
+              teamId: teamId,
+              resources: results,
+            })
+          }
         }
+        dispatch(connectActions.ddpCall('getTeamResourceInfo', [session.userId, teamId], getTeamResourceInfoCb))
       }
-      dispatch(connectActions.ddpCall('getTeamResourceInfo', [session.userId, teamId], getTeamResourceInfoCb))
     }
   }
 

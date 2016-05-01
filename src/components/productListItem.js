@@ -100,11 +100,20 @@ class ProductListItem extends React.Component {
       'RECEIVE_PRODUCTS',
       'RECEIVE_TEAM_RESOURCE_INFO',
     ]
-    if (approvedActionTypes.indexOf(nextProps.actionType) !== -1) {
-      let productUpdated = false
-      if(JSON.stringify(this.state.product) !== JSON.stringify(nextProps.product)){
-        productUpdated = true
-      }
+    let allowUpdates = false
+    let productUpdated = false
+    if(approvedActionTypes.indexOf(nextProps.actionType) !== -1){
+      allowUpdates = true
+    }
+    if(JSON.stringify(this.state.product) !== JSON.stringify(nextProps.product)){
+      allowUpdates = true
+      productUpdated = true
+    }
+    if(nextProps.cartItem !== null && this.state.quantity !== nextProps.cartItem.quantity){
+      allowUpdates = true
+      productUpdated = true
+    }
+    if(allowUpdates) {
       this.setState({
         product: nextProps.product,
         productUpdated: productUpdated,
