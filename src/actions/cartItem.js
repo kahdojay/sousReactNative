@@ -199,7 +199,7 @@ export default function CartItemActions(allActions) {
           dispatch(verifyCart(orderPkg))
         }, 1000)
       } else {
-        dispatch(errorActions.createError('sync-cart-item', 'Internet Connection Error - please try submitting the order again.'))
+        dispatch(errorActions.createError('sync-cart-item', 'Internet connection error, please check your signal and resubmit.'))
       }
     }
   }
