@@ -47,7 +47,7 @@ function formatMessage(msg, messageLength = null) {
     messageString = (
         <Text style={styles.messageText}>
           <Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
-          order received.
+          order delivered.
           {'\n'}
           { message !== '' ?
             <Text style={{fontSize: 13}}>
@@ -62,7 +62,7 @@ function formatMessage(msg, messageLength = null) {
       messageString = (
         <Text>
           <Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
-          order received.
+          order delivered.
         </Text>
       )
   } else if (msg.type === 'welcome') {
@@ -100,7 +100,24 @@ function formatMessage(msg, messageLength = null) {
     );
     if (messageLength !== null)
       messageString = <Text>Welcome to Sous!</Text>
-  } else {
+  } else if (msg.type === 'purveyorConfirmation') {
+    messageString = (
+        <Text style={styles.messageText}>
+          <Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
+          order confirmed.
+          {'\n'}
+          <Text style={{color: Colors.lightBlue, fontSize: 11}}>View Order Details</Text>
+        </Text>
+    );
+    if (messageLength !== null)
+      messageString = (
+        <Text>
+          <Text style={{fontWeight: 'bold'}}>{msg.purveyor} </Text>
+          order confirmed.
+        </Text>
+      )
+  }
+  else {
     if(messageLength !== null && message.length > messageLength){
       message = message.substring(0, messageLength) + '...'
     }
