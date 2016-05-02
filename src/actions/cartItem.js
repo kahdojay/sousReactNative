@@ -85,7 +85,10 @@ export default function CartItemActions(allActions) {
         dispatch({
           type: DELETE_CART_ITEM,
           teamId: sessionTeamId,
-          cartItem: cartItem,
+          cartItem: Object.assign({}, cartItem, {
+            status: 'DELETED'
+          }),
+          cartItemId: cartItem.id,
         })
       }
       dispatch(connectActions.ddpCall('deleteCartItem', [session.userId, sessionTeamId, cartItem.id]))

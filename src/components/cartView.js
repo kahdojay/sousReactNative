@@ -78,7 +78,6 @@ class CartView extends React.Component {
       if(debugUpdates) console.log('Number of Products Update: ', numberOfProducts, ' vs ', this.state.numberOfProducts)
       return true;
     }
-    console.log('never')
     return false;
   }
 

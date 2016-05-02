@@ -200,6 +200,7 @@ class ProductListItem extends React.Component {
   }
 
   handleToggleProduct(purveyorId, deleteProduct) {
+    console.log(purveyorId, this.state.purveyorId)
     this.setState({
       added: !this.state.added,
       selectedPurveyorId: purveyorId,
@@ -228,6 +229,7 @@ class ProductListItem extends React.Component {
       if(product.deleted === true){
         return <View />;
       }
+
       let purveyorInfo = null
       let categoryInfo = null
       let productInfoSeparator = null
@@ -255,6 +257,7 @@ class ProductListItem extends React.Component {
           }
         }
       }
+
       let availablePurveyors = product.purveyors
 
       if(showPurveyorInfo === true){
@@ -281,6 +284,21 @@ class ProductListItem extends React.Component {
         availablePurveyors = [this.state.selectedPurveyorId]
       }
 
+      let ProductWrapper = ProductToggle
+      let productWrapperProps = {
+        added: this.state.added,
+        availablePurveyors: availablePurveyors,
+        allPurveyors: purveyors,
+        currentlySelectedPurveyorId: this.state.selectedPurveyorId,
+        onToggleCartProduct: (purveyorId) => {
+          this.handleToggleProduct(purveyorId)
+        },
+      }
+      if(this.state.added === true && this.state.selectedPurveyorId !== this.state.purveyorId){
+        ProductWrapper = View
+        productWrapperProps = {}
+      }
+
       if(showCategoryInfo === true) {
         categoryInfo = (
           <Text style={{fontSize: 9,  color: productDetailsColor}}>
@@ -295,64 +313,56 @@ class ProductListItem extends React.Component {
           <Icon name='material|chevron-right' size={16} color={productDetailsColor} style={{width: 16, height: 11}}/>
         )
       }
-      productInfo = (
-        <ProductToggle
-          added={this.state.added}
-          availablePurveyors={availablePurveyors}
-          allPurveyors={purveyors}
-          currentlySelectedPurveyorId={this.state.selectedPurveyorId}
-          onToggleCartProduct={(purveyorId) => {
-            this.handleToggleProduct(purveyorId)
-          }}
-        >
-          <View style={[styles.productRow, selectedStyle]}>
-            <View style={styles.productDetailsContainer}>
-              <Text style={[styles.productText, {color: productColor}]}>
-                { product.hasOwnProperty('name') === true ?
-                  product.name
-                : <Text style={{fontStyle: 'italic', color: Colors.red}}>Name missing</Text> }
-              </Text>
-              <Text style={[styles.productDetailsSubText, {color: productDetailsColor}]} >
-                {`${product.amount} ${product.unit} ${product.price ? '• $' + s.numberFormat(parseFloat(product.price), 2) : ''}`}
-              </Text>
-              <View style={{flexDirection: 'row'}}>
-                {purveyorInfo}{productInfoSeparator}{categoryInfo}
-              </View>
-            </View>
-            <View style={styles.quantityOuterContainer}>
-              { this.state.added === true ?
-                (
-                  <View style={styles.quantityButton}>
-                    <TouchableHighlight
-                      onPress={() => {
-                        this.setState({
-                          editQuantity: true
-                        })
-                      }}
-                      underlayColor='transparent'
-                    >
-                      <View style={[styles.quantityInnerContainer, productQuantityBorderStyle]}>
-                        <Text style={[styles.quantityText, {color: productColor}]}>{`${this.state.quantity}x`}</Text>
-                        <View style={styles.caretContainer}>
-                          <Icon name='material|caret-up' size={13} color='white' style={styles.iconCaret} />
-                          <Icon name='material|caret-down' size={13} color='white' style={styles.iconCaret} />
-                        </View>
-                      </View>
-                    </TouchableHighlight>
-                  </View>
-                )
-                : (
-                  <Text style={styles.quantityText}>{' '}</Text>
-                )
-              }
-              { product.par && product.par !== '' && product.par !== '0' ?
-                <Text style={[styles.parText, {color: productDetailsColor}]}>Par: {product.par}</Text>
-                : <View/>
-              }
+
+      productInfo = React.createElement(ProductWrapper, productWrapperProps, (
+        <View style={[styles.productRow, selectedStyle]}>
+          <View style={styles.productDetailsContainer}>
+            <Text style={[styles.productText, {color: productColor}]}>
+              { product.hasOwnProperty('name') === true ?
+                product.name
+              : <Text style={{fontStyle: 'italic', color: Colors.red}}>Name missing</Text> }
+            </Text>
+            <Text style={[styles.productDetailsSubText, {color: productDetailsColor}]} >
+              {`${product.amount} ${product.unit} ${product.price ? '• $' + s.numberFormat(parseFloat(product.price), 2) : ''}`}
+            </Text>
+            <View style={{flexDirection: 'row'}}>
+              {purveyorInfo}{productInfoSeparator}{categoryInfo}
             </View>
           </View>
-        </ProductToggle>
-      )
+          <View style={styles.quantityOuterContainer}>
+            { this.state.added === true ?
+              (
+                <View style={styles.quantityButton}>
+                  <TouchableHighlight
+                    onPress={() => {
+                      this.setState({
+                        editQuantity: true
+                      })
+                    }}
+                    underlayColor='transparent'
+                  >
+                    <View style={[styles.quantityInnerContainer, productQuantityBorderStyle]}>
+                      <Text style={[styles.quantityText, {color: productColor}]}>{`${this.state.quantity}x`}</Text>
+                      <View style={styles.caretContainer}>
+                        <Icon name='material|caret-up' size={13} color='white' style={styles.iconCaret} />
+                        <Icon name='material|caret-down' size={13} color='white' style={styles.iconCaret} />
+                      </View>
+                    </View>
+                  </TouchableHighlight>
+                </View>
+              )
+              : (
+                <Text style={styles.quantityText}>{' '}</Text>
+              )
+            }
+            { product.par && product.par !== '' && product.par !== '0' ?
+              <Text style={[styles.parText, {color: productDetailsColor}]}>Par: {product.par}</Text>
+              : <View/>
+            }
+          </View>
+        </View>
+      ))
+
       buttons = [{
         backgroundColor: 'transparent',
         component: (
