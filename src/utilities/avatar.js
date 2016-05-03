@@ -19,6 +19,7 @@ function getAvatar(user, size = 40) {
     avatar = (
       <Image
         source={{uri: avatarUrl}}
+        resizeMode={'contain'}
         style={{
           width: size,
           height: size,

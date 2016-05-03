@@ -181,7 +181,6 @@ class OrderView extends React.Component {
       products,
       teamsUsers,
     } = this.state;
-
     if(this.checkMissingData() === true){
       return (
         <View style={styles.container}>
@@ -239,7 +238,7 @@ class OrderView extends React.Component {
         orderComments.push(
           <OrderComment
             key={idx}
-            message={comment.text}
+            message={comment}
             imgUrl={comment.imageUrl}
           />
         )
