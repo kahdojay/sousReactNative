@@ -148,6 +148,7 @@ class OrderView extends React.Component {
     orderComments.unshift({
       userId: this.props.userId,
       author: this.props.userName,
+      imageUrl: this.props.userImgUrl,
       text: msg,
       createdAt: new Date().toISOString()
     })
@@ -238,8 +239,8 @@ class OrderView extends React.Component {
         orderComments.push(
           <OrderComment
             key={idx}
-            message={comment}
-            imgUrl={this.props.userImgUrl}
+            message={comment.text}
+            imgUrl={comment.imageUrl}
           />
         )
       })
