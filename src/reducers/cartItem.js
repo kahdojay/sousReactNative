@@ -172,8 +172,11 @@ function cartItems(state = initialState.cartItems, action) {
     });
 
   case DELETE_CART_ITEM:
-    const newDeletedTeamsCartItemsState = Object.assign({}, state.teams);
+    const newDeletedCartItemsState = processCartItem(Object.assign({}, state.items), action.cartItem, action.cartItemId)
+    const newDeletedTeamsCartItemsState = processCartAndOrders(newDeletedCartItemsState, Object.assign({}, state.teams), action.cartItemId);
+    // console.log(action)
     if(newDeletedTeamsCartItemsState.hasOwnProperty(action.teamId) === true){
+      // console.log(newDeletedTeamsCartItemsState[action.teamId]['cart'])
       if(newDeletedTeamsCartItemsState[action.teamId]['cart'].hasOwnProperty(action.cartItem.purveyorId) === true){
         if(newDeletedTeamsCartItemsState[action.teamId]['cart'][action.cartItem.purveyorId].hasOwnProperty(action.cartItem.productId) === true){
           delete newDeletedTeamsCartItemsState[action.teamId]['cart'][action.cartItem.purveyorId][action.cartItem.productId]
@@ -184,7 +187,7 @@ function cartItems(state = initialState.cartItems, action) {
       }
     }
     return Object.assign({}, state, {
-      items: state.items,
+      items: newDeletedCartItemsState,
       teams: newDeletedTeamsCartItemsState,
       isFetching: false,
       errors: null,

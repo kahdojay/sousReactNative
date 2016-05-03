@@ -249,7 +249,7 @@ class InviteView extends React.Component {
       </TouchableHighlight>
     )
 
-    if((this.state.currentTeamInfo.team.users.length <= this.state.currentTeamInfo.team.allowedUserCount) !== true) {
+    if((this.state.currentTeamInfo.team.users.length < this.state.currentTeamInfo.team.allowedUserCount) !== true) {
       return (
         <WebView
           automaticallyAdjustContentInsets={false}

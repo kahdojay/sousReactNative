@@ -2170,7 +2170,18 @@ class App extends React.Component {
   }
 
   renderScene(route, nav) {
-    const { dispatch, session, teams, messages, purveyors, products, categories, errors, connect } = this.props;
+    const {
+      dispatch,
+      session,
+      teams,
+      messages,
+      purveyors,
+      products,
+      categories,
+      errors,
+      connect,
+      offline,
+    } = this.props;
 
     route = this.getRoute(route, nav);
 
@@ -2271,27 +2282,46 @@ class App extends React.Component {
     }
 
     let connectionStatus = null
-    if(connect.status === actions.CONNECT.OFFLINE){
+    if(connect.status === actions.CONNECT.OFFLINE || Object.keys(offline.queue).length > 0){
       let reconnectText = `reconnecting in ${Math.floor(this.state.connectionStats.reconnect/1000)}s`
       // if(this.state.connectionStats.attempt === 0 || this.state.connectionStats.reconnect === 0){
       //   reconnectText = 'connecting...'
       // }
+      let messageText = null
+      let genericModalMessage = null
+      let showIcon = true
+      if(connect.status === actions.CONNECT.OFFLINE) {
+        genericModalMessage = (
+          <TextComponents.LearnMoreMessage />
+        )
+        messageText = (
+          <Text style={styles.offlineText}>Connection offline, {reconnectText}</Text>
+        )
+      } else if(Object.keys(offline.queue).length > 0){
+        genericModalMessage = null
+        messageText = (
+          <Text style={[styles.offlineText, {lineHeight: 19}]}>Syncing offline data</Text>
+        )
+        showIcon = false
+      }
       connectionStatus = (
         <TouchableHighlight
           onPress={() => {
-            this.setState({
-              genericModalMessage: (
-                <TextComponents.LearnMoreMessage />
-              ),
-              showGenericModal: true,
-            })
+            if(genericModalMessage !== null){
+              this.setState({
+                genericModalMessage: genericModalMessage,
+                showGenericModal: true,
+              })
+            }
           }}
           underlayColor='transparent'
         >
           <View style={styles.offlineContainer}>
             <View style={styles.offlineInnerContainer}>
-              <Icon name='material|info' size={20} color={'white'} style={styles.offlineIcon} />
-              <Text style={styles.offlineText}>Connection offline, {reconnectText}</Text>
+              { showIcon === true ?
+                <Icon name='material|info' size={20} color={'white'} style={styles.offlineIcon} />
+              : null }
+              <Text style={styles.offlineText}>{messageText}</Text>
             </View>
           </View>
         </TouchableHighlight>

@@ -27,11 +27,22 @@ class OrderListItem extends React.Component {
       loaded: false,
       editQuantity: false,
       quantityReceived: null,
+      stateUpdated: false,
     }
   }
 
+  shouldComponentUpdate() {
+    if(this.state.stateUpdated === true){
+      return true
+    }
+    return false
+  }
+
   componentWillReceiveProps(nextProps) {
-    if(nextProps.actionType === 'RECEIVE_CART_ITEM'){
+    if(
+      nextProps.actionType === 'RECEIVE_CART_ITEM'
+      || this.state.productConfirm !== nextProps.productConfirm
+    ){
       // console.log(nextProps.actionType)
       this.setState({
         orderConfirm: nextProps.orderConfirm,
@@ -39,6 +50,11 @@ class OrderListItem extends React.Component {
         cartItem: nextProps.cartItem,
         productConfirm: nextProps.productConfirm,
         quantityReceived: nextProps.cartItem.quantityReceived || nextProps.cartItem.quantity,
+        stateUpdated: true,
+      }, () => {
+        this.setState({
+          stateUpdated: false,
+        })
       })
     }
   }
@@ -51,6 +67,11 @@ class OrderListItem extends React.Component {
       productConfirm: this.props.productConfirm,
       loaded: true,
       quantityReceived: this.props.cartItem.quantityReceived || this.props.cartItem.quantity,
+      stateUpdated: true,
+    }, () => {
+      this.setState({
+        stateUpdated: false,
+      })
     })
   }
 
@@ -94,6 +115,7 @@ class OrderListItem extends React.Component {
           label: n.toString(),
         }
       }))
+      console.log(this.state.quantityReceived)
       const modal = (
         <PickerModal
           modalVisible={this.state.editQuantity}
@@ -105,6 +127,11 @@ class OrderListItem extends React.Component {
           onHideModal={() => {
             this.setState({
               editQuantity: false,
+              stateUpdated: true,
+            }, () => {
+              this.setState({
+                stateUpdated: false,
+              })
             })
           }}
           onSubmitValue={(value) => {
@@ -113,11 +140,16 @@ class OrderListItem extends React.Component {
               this.setState({
                 quantityReceived: selectedValue,
                 editQuantity: false,
+                stateUpdated: true,
               },() => {
                 const updateCartItem = Object.assign({}, cartItem, {
                   quantityReceived: this.state.quantityReceived
                 })
                 this.props.onHandleProductConfirm(updateCartItem)
+                this.setState({
+                  stateUpdated: false,
+                  cartItem: updateCartItem,
+                })
               })
             }
           }}
@@ -140,6 +172,11 @@ class OrderListItem extends React.Component {
               onPress={() => {
                 this.setState({
                   editQuantity: true,
+                  stateUpdated: true,
+                }, () => {
+                  this.setState({
+                    stateUpdated: false,
+                  })
                 })
               }}
               style={{flex: 1.25}}
@@ -159,7 +196,12 @@ class OrderListItem extends React.Component {
               onPress={() => {
                 if(orderConfirm.order === false){
                   this.setState({
-                    productConfirm: !this.state.productConfirm
+                    productConfirm: !this.state.productConfirm,
+                    stateUpdated: true,
+                  }, () => {
+                    this.setState({
+                      stateUpdated: false,
+                    })
                   })
                   const updateCartItem = Object.assign({}, cartItem, {
                     status: this.state.productConfirm === true ? 'ORDERED' : 'RECEIVED'

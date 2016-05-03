@@ -1,6 +1,7 @@
 import { generateId } from '../utilities/utils';
 import {
   CART,
+  CONNECT,
   ORDER_SENT,
   RESET_CART_ITEMS,
   RECEIVE_CART_ITEM,
@@ -85,7 +86,10 @@ export default function CartItemActions(allActions) {
         dispatch({
           type: DELETE_CART_ITEM,
           teamId: sessionTeamId,
-          cartItem: cartItem,
+          cartItem: Object.assign({}, cartItem, {
+            status: 'DELETED'
+          }),
+          cartItemId: cartItem.id,
         })
       }
       dispatch(connectActions.ddpCall('deleteCartItem', [session.userId, sessionTeamId, cartItem.id]))
@@ -147,7 +151,10 @@ export default function CartItemActions(allActions) {
 
   function verifyCart(cartInfo) {
     return (dispatch, getState) => {
-      const {session} = getState()
+      const {connect, session} = getState()
+      if(connect.status === CONNECT.OFFLINE){
+        return dispatch(errorActions.createError('verify-cart-items', 'Internet connection error, please check your signal and resubmit.'))
+      }
       const sessionTeamId = session.teamId
       let orderPkg = cartInfo
       if(cartInfo.hasOwnProperty('purveyorIds') === true){
@@ -181,7 +188,10 @@ export default function CartItemActions(allActions) {
 
   function syncCart(orderPkg, missingCartItems) {
     return (dispatch, getState) => {
-      const {session, cartItems} = getState()
+      const {connect, session, cartItems} = getState()
+      if(connect.status === CONNECT.OFFLINE){
+        return dispatch(errorActions.createError('sync-cart-items', 'Internet connection error, please check your signal and resubmit.'))
+      }
       const sessionTeamId = session.teamId
       const syncPurveyorIds = Object.keys(missingCartItems)
       syncPurveyorIds.forEach(function(purveyorId) {
@@ -199,14 +209,17 @@ export default function CartItemActions(allActions) {
           dispatch(verifyCart(orderPkg))
         }, 1000)
       } else {
-        dispatch(errorActions.createError('sync-cart-item', 'Internet connection error, please check your signal and resubmit.'))
+        dispatch(errorActions.createError('sync-cart-items', 'Internet connection error, please check your signal and resubmit.'))
       }
     }
   }
 
   function sendCart(orderPkg) {
     return (dispatch, getState) => {
-      const {session, cartItems} = getState()
+      const {connect, session, cartItems} = getState()
+      if(connect.status === CONNECT.OFFLINE){
+        return dispatch(errorActions.createError('send-cart-items', 'Internet connection error, please check your signal and resubmit.'))
+      }
       const sessionTeamId = session.teamId
       dispatch(connectActions.ddpCall('sendCartItems', [session.userId, sessionTeamId, orderPkg]))
       return dispatch({
