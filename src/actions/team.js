@@ -91,7 +91,9 @@ export default function TeamActions(allActions) {
           zipCode: '',
           orderContacts: `${session.firstName} • ${DataUtils.formatPhoneNumber(session.username)}`,
           orderEmails: session.email,
-          deleted: false
+          deleted: false,
+          betaAccess: 'showDeliveryDate',
+          allowedUserCount: 1,
         }
 
         if(demoTeam === true){

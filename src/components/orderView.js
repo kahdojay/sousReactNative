@@ -46,14 +46,14 @@ class OrderView extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      orderId: nextProps.orderId,
-      orderFetching: nextProps.orderFetching,
-      order: nextProps.order,
-      purveyor: nextProps.purveyor,
-      products: nextProps.products,
-    })
-    if(nextProps.actionType === 'RECEIVE_ORDERS'){
+    if(['RECEIVE_ORDERS', 'UPDATE_ORDER'].indexOf(nextProps.actionType) !== -1){
+      this.setState({
+        orderId: nextProps.orderId,
+        orderFetching: nextProps.orderFetching,
+        order: nextProps.order,
+        purveyor: nextProps.purveyor,
+        products: nextProps.products,
+      })
       this.checkForOrderDetails()
     }
   }
@@ -148,7 +148,8 @@ class OrderView extends React.Component {
     orderComments.unshift({
       userId: this.props.userId,
       author: this.props.userName,
-      text: msg,
+      imageUrl: this.props.userImgUrl,
+      text: msg.text,
       createdAt: new Date().toISOString()
     })
     this.setState({
@@ -180,7 +181,6 @@ class OrderView extends React.Component {
       products,
       teamsUsers,
     } = this.state;
-
     if(this.checkMissingData() === true){
       return (
         <View style={styles.container}>
@@ -239,7 +239,7 @@ class OrderView extends React.Component {
           <OrderComment
             key={idx}
             message={comment}
-            imgUrl={this.props.userImgUrl}
+            imgUrl={comment.imageUrl}
           />
         )
       })

@@ -105,14 +105,16 @@ class ProductForm extends React.Component {
       selectedPar: this.props.product ? this.props.product.par : '',
       selectedPackSize: this.props.product ? this.props.product.packSize : '',
       showAdvanced: false,
+      stateUpdated: false,
     }
     this.fields = ['Purveyors','Category','Amount']//,'QtyUnits']
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if(nextProps.connected === false && JSON.stringify(this.state) === JSON.stringify(nextState)){
+    if(nextProps.connected === false && nextState.stateUpdated === false){
       return false
     }
+    console.log(nextState.stateUpdated)
     return true
   }
 
@@ -122,6 +124,11 @@ class ProductForm extends React.Component {
         modalVisible: true,
         fieldPicker: field,
         fieldPickerIdx: idx,
+        stateUpdated: true,
+      }, () => {
+        this.setState({
+          stateUpdated: false,
+        })
       })
     }
     if(this.refs.name && this.refs.name.isFocused() === true){
@@ -324,8 +331,12 @@ class ProductForm extends React.Component {
               onChange={(e) => {
                 this.setState({
                   selectedName: e.nativeEvent.text.replace(' ','\u00A0'),
+                  stateUpdated: true,
                 }, () => {
                   this.checkValidForm();
+                  this.setState({
+                    stateUpdated: false,
+                  })
                 });
               }}
               onFocus={this.inputFocused.bind(this, 'name')}
@@ -390,8 +401,12 @@ class ProductForm extends React.Component {
               onChange={(e) => {
                 this.setState({
                   selectedUnits: e.nativeEvent.text,
+                  stateUpdated: true,
                 }, () => {
                   this.checkValidForm();
+                  this.setState({
+                    stateUpdated: false,
+                  })
                 });
               }}
               onFocus={this.inputFocused.bind(this, 'unit')}
@@ -400,7 +415,16 @@ class ProductForm extends React.Component {
           <Text>{' '}</Text>
           <TouchableHighlight
             underlayColor='transparent'
-            onPress={() => {this.setState({showAdvanced: !this.state.showAdvanced})}}
+            onPress={() => {
+              this.setState({
+                showAdvanced: !this.state.showAdvanced,
+                stateUpdated: true,
+              }, () => {
+                this.setState({
+                  stateUpdated: false,
+                })
+              });
+            }}
           >
             <View style={styles.headerContainer}>
               <Text style={styles.headerText}>Additional Info </Text>
@@ -422,8 +446,12 @@ class ProductForm extends React.Component {
                     onChange={(e) => {
                       this.setState({
                         selectedDescription: e.nativeEvent.text,
+                        stateUpdated: true,
                       }, () => {
                         this.checkValidForm();
+                        this.setState({
+                          stateUpdated: false,
+                        })
                       });
                     }}
                     onFocus={this.inputFocused.bind(this, 'notes')}
@@ -442,9 +470,12 @@ class ProductForm extends React.Component {
                     onChange={(e) => {
                       this.setState({
                         selectedSku: e.nativeEvent.text,
+                        stateUpdated: true,
                       }, () => {
-                        ('sku ', this.state.selectedSku)
                         this.checkValidForm();
+                        this.setState({
+                          stateUpdated: false,
+                        })
                       });
                     }}
                     onFocus={this.inputFocused.bind(this, 'sku')}
@@ -465,8 +496,12 @@ class ProductForm extends React.Component {
                       let price = e.nativeEvent.text.replace(',','')
                       this.setState({
                         selectedPrice: price,
+                        stateUpdated: true,
                       }, () => {
                         this.checkValidForm();
+                        this.setState({
+                          stateUpdated: false,
+                        })
                       });
                     }}
                     onFocus={this.inputFocused.bind(this, 'price')}
@@ -485,8 +520,12 @@ class ProductForm extends React.Component {
                     onChange={(e) => {
                       this.setState({
                         selectedPar: e.nativeEvent.text,
+                        stateUpdated: true,
                       }, () => {
                         this.checkValidForm();
+                        this.setState({
+                          stateUpdated: false,
+                        })
                       });
                     }}
                     onFocus={this.inputFocused.bind(this, 'par')}
@@ -505,8 +544,12 @@ class ProductForm extends React.Component {
                     onChange={(e) => {
                       this.setState({
                         selectedPackSize: e.nativeEvent.text,
+                        stateUpdated: true,
                       }, () => {
                         this.checkValidForm();
+                        this.setState({
+                          stateUpdated: false,
+                        })
                       });
                     }}
                     onFocus={this.inputFocused.bind(this, 'packSize')}
@@ -527,11 +570,17 @@ class ProductForm extends React.Component {
           onHideModal={() => {
             this.setState({
               modalVisible: false,
+              stateUpdated: true,
+            }, () => {
+              this.setState({
+                stateUpdated: false,
+              })
             })
           }}
           onSubmitValue={(value) => {
             const updateState = {
               modalVisible: false,
+              stateUpdated: true,
             }
             const selectedValueId = `selected${this.state.fieldPicker}`
             if(this.state.hasOwnProperty(selectedValueId) === true) {
@@ -544,6 +593,9 @@ class ProductForm extends React.Component {
 
             this.setState(updateState, () => {
               this.checkValidForm();
+              this.setState({
+                stateUpdated: false,
+              })
             })
           }}
         />
