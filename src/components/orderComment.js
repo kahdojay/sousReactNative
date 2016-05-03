@@ -18,7 +18,10 @@ class OrderComment extends React.Component {
   render() {
     const {message} = this.props
     let icon = AvatarUtils.getAvatar({imageUrl: this.props.imgUrl}, 50)
-
+    let messageText = message.text
+    if(message.text.hasOwnProperty('text') === true){
+      messageText = message.text.text
+    }
     return (
       <View style={styles.container}>
         <View style={styles.avatarContainer}>
@@ -27,7 +30,7 @@ class OrderComment extends React.Component {
         <View style={styles.commentOuterContainer}>
           <Text style={styles.author}>{message.author}</Text>
           <View style={styles.commentContainer}>
-            <Text style={styles.message}>{message.text}</Text>
+            <Text style={styles.message}>{messageText}</Text>
           </View>
           <View style={styles.commentFooter}>
             <Text style={styles.timeStamp}>{messageUtils.formatMessageTimeStamp(message)}</Text>

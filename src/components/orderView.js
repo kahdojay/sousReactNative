@@ -46,14 +46,14 @@ class OrderView extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      orderId: nextProps.orderId,
-      orderFetching: nextProps.orderFetching,
-      order: nextProps.order,
-      purveyor: nextProps.purveyor,
-      products: nextProps.products,
-    })
-    if(nextProps.actionType === 'RECEIVE_ORDERS'){
+    if(['RECEIVE_ORDERS', 'UPDATE_ORDER'].indexOf(nextProps.actionType) !== -1){
+      this.setState({
+        orderId: nextProps.orderId,
+        orderFetching: nextProps.orderFetching,
+        order: nextProps.order,
+        purveyor: nextProps.purveyor,
+        products: nextProps.products,
+      })
       this.checkForOrderDetails()
     }
   }
@@ -149,7 +149,7 @@ class OrderView extends React.Component {
       userId: this.props.userId,
       author: this.props.userName,
       imageUrl: this.props.userImgUrl,
-      text: msg,
+      text: msg.text,
       createdAt: new Date().toISOString()
     })
     this.setState({

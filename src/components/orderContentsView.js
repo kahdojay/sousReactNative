@@ -35,6 +35,7 @@ class OrderContentsView extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    // console.log(nextProps.actionType)
     if(nextProps.actionType === 'RECEIVE_CART_ITEM'){
       let updatedState = {
         order: nextProps.order,
@@ -90,17 +91,20 @@ class OrderContentsView extends React.Component {
   }
 
   selectAllProducts() {
-    _.each(this.props.products, (productPkg, idx) => {
+    const currentStateProducts = Object.assign([], this.state.products)
+    _.each(currentStateProducts, (productPkg, idx) => {
       const cartItem = productPkg.cartItem
       const productConfirmed = (cartItem.status === 'RECEIVED')
       const updateCartItem = Object.assign({}, cartItem, {
         status: this.state.selectAll ? 'ORDERED' : 'RECEIVED'
       })
       this.props.onConfirmOrderProduct(updateCartItem)
+      currentStateProducts[idx].cartItem.status = updateCartItem.status
     })
     this.setState({
       selectAll: !this.state.selectAll,
       toggleAll: true,
+      products: currentStateProducts,
     })
   }
 
@@ -138,7 +142,8 @@ class OrderContentsView extends React.Component {
   }
 
   render() {
-    let { products, order, purveyor, actionType } = this.props
+    let { actionType } = this.props
+    let { products, order, purveyor } = this.state
     let productsList = []
 
     if(this.state.loaded === true){
@@ -146,6 +151,7 @@ class OrderContentsView extends React.Component {
       _.each(products, (productPkg, idx) => {
         const product = productPkg.product
         const cartItem = productPkg.cartItem
+        // console.log(cartItem.status)
         const productConfirm = (cartItem.status === 'RECEIVED')
         let productKey = `missing-id-${idx}`
         if(cartItem.hasOwnProperty('id') === true){
@@ -316,7 +322,6 @@ const styles = StyleSheet.create({
   buttonConfirmContainer: {
     flex: 2,
     justifyContent: 'center',
-    borderRadius: Sizes.rowBorderRadius,
     backgroundColor: Colors.gold,
     alignSelf: 'stretch',
   },

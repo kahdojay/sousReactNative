@@ -51,6 +51,7 @@ const initialState = {
 }
 
 function actionType(state = initialState.actionType, action) {
+  // console.log(action.type)
   return action.type
 }
 
