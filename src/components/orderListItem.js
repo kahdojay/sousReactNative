@@ -115,7 +115,6 @@ class OrderListItem extends React.Component {
           label: n.toString(),
         }
       }))
-      console.log(this.state.quantityReceived)
       const modal = (
         <PickerModal
           modalVisible={this.state.editQuantity}
