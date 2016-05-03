@@ -195,16 +195,17 @@ class OrderListItem extends React.Component {
               underlayColor='transparent'
               onPress={() => {
                 if(orderConfirm.order === false){
+                  const updateCartItem = Object.assign({}, cartItem, {
+                    status: this.state.productConfirm === true ? 'ORDERED' : 'RECEIVED'
+                  })
                   this.setState({
                     productConfirm: !this.state.productConfirm,
+                    cartItem: updateCartItem,
                     stateUpdated: true,
                   }, () => {
                     this.setState({
                       stateUpdated: false,
                     })
-                  })
-                  const updateCartItem = Object.assign({}, cartItem, {
-                    status: this.state.productConfirm === true ? 'ORDERED' : 'RECEIVED'
                   })
                   this.props.onHandleProductConfirm(updateCartItem)
                 }
