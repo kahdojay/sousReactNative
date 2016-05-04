@@ -111,7 +111,7 @@ class ProductForm extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if(nextProps.connected === false && nextState.stateUpdated === false){
+    if(nextProps.connected === false && nextState.stateUpdated === false && this.state.stateUpdated === false){
       return false
     }
     // console.log(nextState.stateUpdated)
