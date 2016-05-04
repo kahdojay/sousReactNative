@@ -148,7 +148,8 @@ class OrderContentsView extends React.Component {
 
     if(this.state.loaded === true){
       let missingProducts = []
-      _.each(products, (productPkg, idx) => {
+      const displayProducts = Object.assign([], products)
+      _.each(displayProducts, (productPkg, idx) => {
         const product = productPkg.product
         const cartItem = productPkg.cartItem
         // console.log(cartItem.status)
@@ -174,9 +175,11 @@ class OrderContentsView extends React.Component {
               }}
               productConfirm={productConfirm}
               onHandleProductConfirm={(updateCartItem) => {
+                displayProducts[idx].cartItem = updateCartItem
                 this.props.onConfirmOrderProduct(updateCartItem)
                 this.setState({
                   toggleAll: false,
+                  products: displayProducts,
                 })
               }}
             />

@@ -287,14 +287,20 @@ class App extends React.Component {
       } else {
         componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval = this.state.lastResourceInfoRetrieval
       }
+      // console.log(nextProps.actionType, this.state.lastResourceInfoFetching)
       if(
-        moment().diff(componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval) > (60*1000)
+        moment().diff(componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval) > (5*60*1000)
         && this.state.lastResourceInfoFetching === false
       ){
         componentWillReceivePropsStateUpdate.lastResourceInfoFetching = true
         // console.log('Dispatching ')
         dispatch(actions.getTeamResourceInfo(currentTeamInfo.team.id))
-      } else {
+      } else if(
+        moment().diff(componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval) > (15*60*1000)
+        && this.state.lastResourceInfoFetching === true
+      ){
+        componentWillReceivePropsStateUpdate.lastResourceInfoFetching = false
+      } else if(nextProps.actionType === 'RECEIVE_TEAM_RESOURCE_INFO') {
         // console.log(moment().diff(componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval), (60*1000))
         componentWillReceivePropsStateUpdate.lastResourceInfoFetching = false
       }
@@ -1633,7 +1639,7 @@ class App extends React.Component {
                     })
                   }
                 } else {
-                  dispatch(actions.createError('network-connectivity', 'Please check that your device is connected to the internet and try again'))
+                  dispatch(actions.createError('network-connectivity', 'Internet connection error, please check your signal and resubmit.'))
                 }
               })
 

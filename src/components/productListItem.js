@@ -200,7 +200,7 @@ class ProductListItem extends React.Component {
   }
 
   handleToggleProduct(purveyorId, deleteProduct) {
-    console.log(purveyorId, this.state.purveyorId)
+    // console.log(purveyorId, this.state.purveyorId)
     this.setState({
       added: !this.state.added,
       selectedPurveyorId: purveyorId,
@@ -237,6 +237,8 @@ class ProductListItem extends React.Component {
       let productDetailsColor = Colors.greyText
       let productColor = 'black'
       let productQuantityBorderStyle = {}
+      let allowQualityChange = true
+
       if(this.state.added === true){
         if(showPurveyorInfo === false && this.state.selectedPurveyorId !== this.state.purveyorId){
           selectedStyle = styles.selectedRowDisabled
@@ -297,6 +299,7 @@ class ProductListItem extends React.Component {
       if(this.state.added === true && this.state.selectedPurveyorId !== this.state.purveyorId){
         ProductWrapper = View
         productWrapperProps = {}
+        allowQualityChange = false
       }
 
       if(showCategoryInfo === true) {
@@ -330,7 +333,7 @@ class ProductListItem extends React.Component {
             </View>
           </View>
           <View style={styles.quantityOuterContainer}>
-            { this.state.added === true ?
+            { this.state.added === true && allowQualityChange === true ?
               (
                 <View style={styles.quantityButton}>
                   <TouchableHighlight
