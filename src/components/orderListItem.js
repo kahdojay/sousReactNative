@@ -31,8 +31,8 @@ class OrderListItem extends React.Component {
     }
   }
 
-  shouldComponentUpdate() {
-    if(this.state.stateUpdated === true){
+  shouldComponentUpdate(nextProps, nextState) {
+    if(this.state.stateUpdated === true || nextState.stateUpdated === true){
       return true
     }
     return false
