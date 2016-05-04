@@ -1639,7 +1639,7 @@ class App extends React.Component {
                     })
                   }
                 } else {
-                  dispatch(actions.createError('network-connectivity', 'Please check that your device is connected to the internet and try again'))
+                  dispatch(actions.createError('network-connectivity', 'Internet connection error, please check your signal and resubmit.'))
                 }
               })
 

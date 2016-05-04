@@ -269,7 +269,11 @@ class CartView extends React.Component {
                 const purveyorCartItemIds = _.map(_.filter(cartItems[purveyorId], (cartItem) => {
                   return cartItem.status === 'NEW'
                 }), (cartItem) => {
-                  return cartItem.id
+                  return {
+                    id: cartItem.id,
+                    quantity: cartItem.quantity,
+                    productName: products[cartItem.productId].name,
+                  }
                 });
                 cartItemIds[purveyorId] = purveyorCartItemIds
               })

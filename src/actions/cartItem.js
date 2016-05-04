@@ -179,26 +179,26 @@ export default function CartItemActions(allActions) {
           dispatch(sendCart(orderPkg))
         } else {
           verifyCartAttempt = verifyCartAttempt + 1
-          dispatch(syncCart(orderPkg, results.missingCartItems))
+          dispatch(syncCart(orderPkg, results.unverifiedCartItems))
         }
       }
       dispatch(connectActions.ddpCall('verifyCartItems', [session.userId, sessionTeamId, orderPkg], verifyCartItemsCb))
     }
   }
 
-  function syncCart(orderPkg, missingCartItems) {
+  function syncCart(orderPkg, unverifiedCartItems) {
     return (dispatch, getState) => {
       const {connect, session, cartItems} = getState()
       if(connect.status === CONNECT.OFFLINE){
         return dispatch(errorActions.createError('sync-cart-items', 'Internet connection error, please check your signal and resubmit.'))
       }
       const sessionTeamId = session.teamId
-      const syncPurveyorIds = Object.keys(missingCartItems)
+      const syncPurveyorIds = Object.keys(unverifiedCartItems)
       syncPurveyorIds.forEach(function(purveyorId) {
-        const syncMissingCartItems = missingCartItems[purveyorId]
-        syncMissingCartItems.forEach(function(cartItemId){
-          const addCartItem = Object.assign({}, cartItems.items[cartItemId])
-          addCartItem._id = cartItems.items[cartItemId].id
+        const syncMissingCartItems = unverifiedCartItems[purveyorId]
+        syncMissingCartItems.forEach(function(cartItem){
+          const addCartItem = Object.assign({}, cartItems.items[cartItem.id])
+          addCartItem._id = cartItems.items[cartItem.id].id
           delete addCartItem.id
           dispatch(connectActions.ddpCall('addCartItem', [session.userId, sessionTeamId, addCartItem]))
         })
