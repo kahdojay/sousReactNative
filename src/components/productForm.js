@@ -114,7 +114,7 @@ class ProductForm extends React.Component {
     if(nextProps.connected === false && nextState.stateUpdated === false){
       return false
     }
-    console.log(nextState.stateUpdated)
+    // console.log(nextState.stateUpdated)
     return true
   }
 

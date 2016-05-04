@@ -41,20 +41,35 @@ class OrderView extends React.Component {
       showOrderContents: false,
       showPurveyorContact: false,
       hideOrderHeader: false,
+      stateUpdated: false,
     }
     this.commentTimeoutId = null
   }
 
+  shouldComponentUpdate(nextProps) {
+    if(this.state.stateUpdated === true){
+      return true
+    }
+    return false
+  }
+
   componentWillReceiveProps(nextProps) {
     if(['RECEIVE_ORDERS', 'UPDATE_ORDER'].indexOf(nextProps.actionType) !== -1){
+      console.log(nextProps.actionType)
       this.setState({
         orderId: nextProps.orderId,
         orderFetching: nextProps.orderFetching,
         order: nextProps.order,
         purveyor: nextProps.purveyor,
         products: nextProps.products,
+        stateUpdated: true,
+      }, () => {
+        this.checkForOrderDetails()
+        this.setState({
+          stateUpdated: false,
+        })
       })
-      this.checkForOrderDetails()
+
     }
   }
 
@@ -68,10 +83,14 @@ class OrderView extends React.Component {
       purveyor: this.props.purveyor,
       teamsUsers: this.props.teamsUsers,
       loaded: true,
+      stateUpdated: true,
     }, () => {
       if(this.checkMissingData() === true){
         this.props.onGetOrderDetails(this.state.orderId)
       }
+      this.setState({
+        stateUpdated: false,
+      })
     })
   }
 
@@ -87,7 +106,7 @@ class OrderView extends React.Component {
     clearTimeout(this.commentTimeoutId)
     this.commentTimeoutId = setTimeout(() =>{
       this.props.onGetOrderDetails(this.state.orderId)
-    }, 1000)
+    }, 500)
   }
 
   checkMissingData() {
@@ -155,9 +174,13 @@ class OrderView extends React.Component {
     this.setState({
       order: Object.assign({}, this.state.order, {
         comments: orderComments,
-      })
+      }),
+      stateUpdated: true,
     }, () => {
       this.props.onUpdateOrder(this.state.order)
+      this.setState({
+        stateUpdated: false,
+      })
     })
   }
 
@@ -308,6 +331,11 @@ class OrderView extends React.Component {
                     onPress={() => {
                       this.setState({
                         showPurveyorContact: !this.state.showPurveyorContact,
+                        stateUpdated: true,
+                      }, () => {
+                        this.setState({
+                          stateUpdated: false,
+                        })
                       })
                     }}
                     underlayColor='transparent'
@@ -363,13 +391,23 @@ class OrderView extends React.Component {
                       multiline={false}
                       onFocus={() => {
                         this.setState({
-                          hideOrderHeader: true
+                          hideOrderHeader: true,
+                          stateUpdated: true,
+                        }, () => {
+                          this.setState({
+                            stateUpdated: false,
+                          })
                         })
                         this.inputFocused('comment')
                       }}
                       onBlur={() => {
                         this.setState({
-                          hideOrderHeader: false
+                          hideOrderHeader: false,
+                          stateUpdated: true,
+                        }, () => {
+                          this.setState({
+                            stateUpdated: false,
+                          })
                         })
                       }}
                     />
