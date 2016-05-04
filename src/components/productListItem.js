@@ -200,7 +200,7 @@ class ProductListItem extends React.Component {
   }
 
   handleToggleProduct(purveyorId, deleteProduct) {
-    console.log(purveyorId, this.state.purveyorId)
+    // console.log(purveyorId, this.state.purveyorId)
     this.setState({
       added: !this.state.added,
       selectedPurveyorId: purveyorId,

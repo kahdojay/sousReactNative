@@ -434,8 +434,9 @@ export default function TeamActions(allActions) {
 
   function getTeamResourceInfo(teamId){
     return (dispatch, getState) => {
-      const {connect, session} = getState()
-      if(connect.status === CONNECT.CONNECTED){
+      const {offline, connect, session} = getState()
+      if(Object.keys(offline.queue).length === 0 && connect.status === CONNECT.CONNECTED){
+        console.log('Resume retrieving team resources...')
         var getTeamResourceInfoCb = (err, results) => {
           if(!err){
             dispatch({
