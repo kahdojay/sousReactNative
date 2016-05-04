@@ -46,8 +46,8 @@ class OrderView extends React.Component {
     this.commentTimeoutId = null
   }
 
-  shouldComponentUpdate(nextProps) {
-    if(this.state.stateUpdated === true){
+  shouldComponentUpdate(nextProps, nextState) {
+    if(this.state.stateUpdated === true || nextState.stateUpdated === true){
       return true
     }
     return false
