@@ -13,7 +13,7 @@ const {
   Image,
   Text,
   TouchableHighlight,
-  ProgressViewIOS
+  ProgressViewIOS,
 } = React;
 
 const window = Dimensions.get('window');
@@ -59,7 +59,7 @@ class Menu extends React.Component {
           </TouchableHighlight>
         </View>
         <View style={styles.menuBody}>
-          <ScrollView>
+          <ScrollView style={styles.menuMainBody}>
             <TouchableHighlight
               key='order-guide'
               onPress={this.props.onNavToPurveyor}
@@ -129,6 +129,20 @@ class Menu extends React.Component {
               </View>
             </TouchableHighlight>
           </ScrollView>
+          { session.superUser === true ?
+          <TouchableHighlight
+              onPress={this.props.onNavToAdmin}
+              style={styles.menuItemButton}
+              underlayColor='#3e444f'
+            >
+              <View style={styles.menuTextContainer}>
+                <Icon name='material|account-circle' size={20} color='white' style={styles.menuIcon}/>
+                <Text style={styles.menuItemText}>
+                  Admin
+                </Text>
+              </View>
+            </TouchableHighlight>
+          : null }
         </View>
         <View style={styles.teamNameContainer}>
           <Text style={styles.sous}>Sous</Text>
@@ -140,8 +154,10 @@ class Menu extends React.Component {
 }
 
 let avatarContainerFlex = 1
+let menuMainContainerFlex = 15
 if(window.height < 568){
   avatarContainerFlex = 2
+  menuMainContainerFlex = 10
 }
 
 const styles = StyleSheet.create({
@@ -191,6 +207,9 @@ const styles = StyleSheet.create({
     flex: 5,
     width: window.width * (2/3),
     backgroundColor: '#5f697a',
+  },
+  menuMainBody: {
+    flex: menuMainContainerFlex,
   },
   menuItemButton: {
     flex: 1,

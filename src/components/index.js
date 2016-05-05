@@ -1,3 +1,4 @@
+import AdminView from './AdminView';
 import CartRightButton from './CartRightButton';
 import CartView from './cartView';
 import CategoryForm from './form/categoryForm';
@@ -46,6 +47,7 @@ import UserInfo from './userInfo';
 import UserTeam from './userTeam';
 
 export default {
+  AdminView,
   CartRightButton,
   CartView,
   CategoryForm,

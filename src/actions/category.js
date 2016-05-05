@@ -16,6 +16,7 @@ export default function CategoryActions(allActions){
 
   const {
     connectActions,
+    errorActions,
   } = allActions
 
   function resetCategories(teamId = null){
@@ -52,14 +53,21 @@ export default function CategoryActions(allActions){
   }
 
   function updateCategory(categoryId, categoryAttributes){
-    console.log(arguments)
     return (dispatch, getState) => {
-      // dispatch(connectActions.ddpCall('updateCategory', [categoryId, categoryAttributes]))
-      // return dispatch({
-      //   type: UPDATE_CATEGORY,
-      //   categoryId: categoryId,
-      //   category: categoryAttributes
-      // })
+      const { categories, session } = getState();
+      const sessionTeamId = session.teamId;
+      if(categories.teams.hasOwnProperty(sessionTeamId) === true){
+        if(categories.teams[sessionTeamId].hasOwnProperty(categoryId) === true){
+          dispatch({
+            type: UPDATE_CATEGORY,
+            categoryId: categoryId,
+            category: Object.assign({}, categories.teams[sessionTeamId][categoryId], categoryAttributes),
+          })
+          dispatch(connectActions.ddpCall('updateCategory', [categoryId, categoryAttributes]))
+        } else {
+          // dispatch(errorActions.createError('update-category', 'Unable to update category'))
+        }
+      }
     }
   }
   //

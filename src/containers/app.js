@@ -1755,6 +1755,17 @@ class App extends React.Component {
             },
           },
         }
+      case 'AdminView':
+        return {
+          component: Components.AdminView,
+          props: {
+            onTest: () => {
+              dispatch(actions.updateCategory("SJJabEYWH1xkTbEFZ", {
+                name: 'Test 6'
+              }))
+            },
+          },
+        }
       default:
         return;
     }
@@ -2341,6 +2352,22 @@ class App extends React.Component {
             ),
           })
           break;
+        case 'AdminView':
+          navBar = React.cloneElement(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                pop={true}
+              />
+            ),
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'Admin'}
+              />
+            ),
+          })
+          break;
         case 'session/onboarding':
         case 'UserInfo':
         case 'UserTeam':
@@ -2471,6 +2498,9 @@ class App extends React.Component {
           }}
           onNavToTeamIndex={() => {
             nav.push({ name: 'TeamIndex', })
+          }}
+          onNavToAdmin={() => {
+            nav.push({ name: 'AdminView', })
           }}
         />
       );
