@@ -70,17 +70,29 @@ export default function CategoryActions(allActions){
       }
     }
   }
-  //
-  // function deleteCategory(categoryId) {
-  //   return (dispatch, getState) => {
-  //     const {session} = getState()
-  //     dispatch(connectActions.ddpCall('deleteCategory', [categoryId, session.userId]))
-  //     return dispatch({
-  //       type: DELETE_CATEGORY,
-  //       categoryId: categoryId
-  //     })
-  //   }
-  // }
+
+  function deleteCategory(categoryId) {
+    return (dispatch, getState) => {
+      const { categories, session } = getState()
+      const sessionTeamId = session.teamId;
+      if(categories.teams.hasOwnProperty(sessionTeamId) === true){
+        if(categories.teams[sessionTeamId].hasOwnProperty(categoryId) === true){
+          const deleteCategoryAttributes = Object.assign({}, categories.teams[sessionTeamId][categoryId], {
+            deleted: true,
+            deletedBy: session.userId,
+            deletedAt: (new Date()).toISOString(),
+          })
+          dispatch({
+            type: DELETE_CATEGORY,
+            category: deleteCategoryAttributes,
+          })
+          dispatch(connectActions.ddpCall('deleteCategory', [categoryId, deleteCategoryAttributes]))
+        } else {
+          // dispatch(errorActions.createError('update-category', 'Unable to update category'))
+        }
+      }
+    }
+  }
 
   function addProductCategory(categoryId, productId){
     // console.log(categoryId, productId)
@@ -186,7 +198,7 @@ export default function CategoryActions(allActions){
     REMOVE_PRODUCT_CATEGORY,
     addCategory,
     updateCategory,
-    // deleteCategory,
+    deleteCategory,
     addProductCategory,
     getCategories,
     updateProductCategory,

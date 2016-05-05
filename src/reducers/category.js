@@ -128,6 +128,22 @@ function categories(state = initialState.categories, action) {
       lastUpdated: (new Date()).toISOString()
     });
 
+  case DELETE_CATEGORY:
+    const deleteCategoryTeamState = Object.assign({}, state.teams);
+    if(deleteCategoryTeamState.hasOwnProperty(action.category.teamId) === false){
+      deleteCategoryTeamState[action.category.teamId] = {};
+    }
+    let originalTeamDeleteCategory = {}
+    if(deleteCategoryTeamState[action.category.teamId].hasOwnProperty(action.category.id)){
+      originalTeamDeleteCategory = deleteCategoryTeamState[action.category.teamId][action.category.id] = deleteCategoryTeamState[action.category.teamId][action.category.id]
+    }
+    deleteCategoryTeamState[action.category.teamId][action.category.id] = Object.assign(originalTeamDeleteCategory, action.category)
+    return Object.assign({}, state, {
+      errors: null,
+      teams: deleteCategoryTeamState,
+      lastUpdated: (new Date()).toISOString()
+    });
+
   // everything else
   case GET_CATEGORIES:
   default:
