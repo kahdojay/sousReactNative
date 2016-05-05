@@ -1,5 +1,5 @@
 import { generateId } from '../utilities/utils'
-import MessageActions from './message'
+import { getIdx } from '../utilities/reducer'
 import {
   RESET_CATEGORIES,
   GET_CATEGORIES,
@@ -25,43 +25,43 @@ export default function CategoryActions(allActions){
     }
   }
 
-  // function addCategory(name) {
-  //   return (dispatch, getState) => {
-  //     const { session } = getState();
-  //     const sessionTeamId = session.teamId
-  //     const categoryId = generateId()
-  //     var newCategoryAttributes = {
-  //       _id: categoryId,
-  //       teamId: sessionTeamId,
-  //       name: categoryRow.name,
-  //       description: categoryRow.description,
-  //       price: categoryRow.price,
-  //       purveyors: purveyors,
-  //       amount: categoryRow.amount,
-  //       unit: categoryRow.unit,
-  //       deleted: false,
-  //     }
-  //     dispatch({
-  //       type: ADD_CATEGORY,
-  //       categoryId: categoryId,
-  //       category: Object.assign({}, newCategoryAttributes, {
-  //         id: categoryId
-  //       })
-  //     })
-  //     dispatch(connectActions.ddpCall('createCategory', [Object.assign({}, newCategoryAttributes)]))
-  //   }
-  // }
-  //
-  // function updateCategory(categoryId, categoryAttributes){
-  //   return (dispatch, getState) => {
-  //     dispatch(connectActions.ddpCall('updateCategory', [categoryId, categoryAttributes]))
-  //     return dispatch({
-  //       type: UPDATE_CATEGORY,
-  //       categoryId: categoryId,
-  //       category: categoryAttributes
-  //     })
-  //   }
-  // }
+  function addCategory(categoryAttributes) {
+    return (dispatch, getState) => {
+      const { teams, session } = getState();
+      const sessionTeamId = session.teamId
+      const teamIdx = getIdx(teams.data, sessionTeamId);
+      const categoryId = generateId()
+      const newCategoryAttributes = {
+        _id: categoryId,
+        name: categoryAttributes.name,
+        teamId: sessionTeamId,
+        teamCode: teams.data[teamIdx].teamCode,
+        products: [],
+        deleted: false,
+      }
+      // console.log(newCategoryAttributes)
+      dispatch({
+        type: ADD_CATEGORY,
+        categoryId: categoryId,
+        category: Object.assign({}, newCategoryAttributes, {
+          id: categoryId
+        })
+      })
+      dispatch(connectActions.ddpCall('createCategory', [Object.assign({}, newCategoryAttributes), {_id: newCategoryAttributes._id}]))
+    }
+  }
+
+  function updateCategory(categoryId, categoryAttributes){
+    console.log(arguments)
+    return (dispatch, getState) => {
+      // dispatch(connectActions.ddpCall('updateCategory', [categoryId, categoryAttributes]))
+      // return dispatch({
+      //   type: UPDATE_CATEGORY,
+      //   categoryId: categoryId,
+      //   category: categoryAttributes
+      // })
+    }
+  }
   //
   // function deleteCategory(categoryId) {
   //   return (dispatch, getState) => {
@@ -176,8 +176,8 @@ export default function CategoryActions(allActions){
     DELETE_CATEGORY,
     ADD_PRODUCT_CATEGORY,
     REMOVE_PRODUCT_CATEGORY,
-    // addCategory,
-    // updateCategory,
+    addCategory,
+    updateCategory,
     // deleteCategory,
     addProductCategory,
     getCategories,

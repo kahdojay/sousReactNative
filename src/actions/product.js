@@ -1,5 +1,4 @@
 import { generateId } from '../utilities/utils'
-import MessageActions from './message'
 import {
   RESET_PRODUCTS,
   GET_PRODUCTS,
@@ -25,29 +24,6 @@ export default function ProductActions(allActions){
       type: RESET_PRODUCTS
     }
   }
-
-  // This will go away post minimongo refactor
-  // function addCategory(categoryAttributes) {
-  //   return (dispatch, getState) => {
-  //     const { session, teams } = getState();
-  //     const { currentTeam } = teams;
-  //     const categoryId = generateId()
-  //     var newCategoryAttributes = {
-  //       _id: categoryId,
-  //       teamid: session.teamId,
-  //       teamCode: currentTeam.teamCode,
-  //       name: categoryAttributes.name,
-  //     }
-  //     dispatch({
-  //       type: ADD_CATEGORY,
-  //       teamid: currentTeam.id,
-  //       categoryId: categoryId,
-  //       category: Object.assign({}, newCategoryAttributes, {
-  //         id: categoryId,
-  //       })
-  //     })
-  //   }
-  // }
 
   function addProduct(productAttributes) {
     return (dispatch, getState) => {

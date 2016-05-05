@@ -2,7 +2,6 @@ import _ from 'lodash'
 import slug from 'slug'
 import { DDP } from '../resources/apiConfig'
 import { generateId } from '../utilities/utils'
-import MessageActions from './message'
 import { getIdx } from '../utilities/reducer'
 import Urls from '../resources/urls';
 import DataUtils from '../utilities/data';

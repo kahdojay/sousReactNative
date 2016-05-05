@@ -80,6 +80,8 @@ class App extends React.Component {
       sceneState: {
         CategoryForm: {
           submitReady: false,
+          categoryId: null,
+          categoryAttributes: {},
         },
         ProductForm: {
           cartItem: null,
@@ -1578,11 +1580,11 @@ class App extends React.Component {
         return {
           component: Components.CategoryForm,
           props: {
-            onProcessCategory: () => {
+            onProcessCategory: (categoryAttributes) => {
               const sceneState = Object.assign({}, this.state.sceneState);
-              // const existingCategoryAttributes = Object.assign({}, sceneState.CategoryForm.categoryAttributes);
+              const existingCategoryAttributes = Object.assign({}, sceneState.CategoryForm.categoryAttributes);
               sceneState.CategoryForm.submitReady = true;
-              // sceneState.CategoryForm.categoryAttributes = Object.assign({}, existingCategoryAttributes, categoryAttributes);
+              sceneState.CategoryForm.categoryAttributes = Object.assign({}, existingCategoryAttributes, categoryAttributes);
               this.setState({
                 sceneState: sceneState
               })
@@ -2295,7 +2297,13 @@ class App extends React.Component {
                 submitReady={this.state.sceneState.CategoryForm.submitReady}
                 onProcessCategory={() => {
                   _.debounce(() => {
-                    console.log('TODO: create category')
+                    const {categoryId, categoryAttributes} = this.state.sceneState.CategoryForm
+                    if(categoryId === null){
+                      dispatch(actions.addCategory(categoryAttributes))
+                      dispatch(actions.getTeamResourceInfo(this.state.currentTeamInfo.team.id))
+                    } else {
+                      dispatch(actions.updateCategory(categoryId, categoryAttributes))
+                    }
                     nav.replacePreviousAndPop({
                       name: route.newRoute,
                     });

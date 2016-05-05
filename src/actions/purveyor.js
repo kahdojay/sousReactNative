@@ -1,5 +1,4 @@
 import { generateId } from '../utilities/utils'
-import MessageActions from './message'
 import {
   RESET_PURVEYORS,
   GET_PURVEYORS,

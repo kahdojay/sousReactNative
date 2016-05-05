@@ -57,6 +57,23 @@ function categories(state = initialState.categories, action) {
       lastUpdated: (new Date()).toISOString()
     });
 
+  // add category
+  case ADD_CATEGORY:
+    const addCategoryTeamState = Object.assign({}, state.teams);
+    if(addCategoryTeamState.hasOwnProperty(action.category.teamId) === false){
+      addCategoryTeamState[action.category.teamId] = {};
+    }
+    let originalTeamAddCategory = {}
+    if(addCategoryTeamState[action.category.teamId].hasOwnProperty(action.category.id)){
+      originalTeamAddCategory = addCategoryTeamState[action.category.teamId][action.category.id] = addCategoryTeamState[action.category.teamId][action.category.id]
+    }
+    addCategoryTeamState[action.category.teamId][action.category.id] = Object.assign(originalTeamAddCategory, action.category)
+    return Object.assign({}, state, {
+      errors: null,
+      teams: addCategoryTeamState,
+      lastUpdated: (new Date()).toISOString()
+    });
+
   // add product to categories
   case ADD_PRODUCT_CATEGORY:
     const newCategoryTeamProductsState = Object.assign({}, state.teams);
