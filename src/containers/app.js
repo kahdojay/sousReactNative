@@ -1560,7 +1560,7 @@ class App extends React.Component {
             // purveyors: this.state.currentTeamInfo.purveyors,
             onProcessPurveyor: (purveyorAttributes) => {
               const sceneState = Object.assign({}, this.state.sceneState);
-              const existingPurveyorAttributes = Object.assign({}, sceneState.PurveyorForm.purveyorAttributes);
+              const existingPurveyorAttributes = Object.assign({}, sceneState.PurveyorForm.purveyorAttributes, purveyorAttributes);
               sceneState.PurveyorForm.submitReady = true;
               sceneState.PurveyorForm.purveyorAttributes = existingPurveyorAttributes;
               this.setState({
@@ -1760,9 +1760,7 @@ class App extends React.Component {
           component: Components.AdminView,
           props: {
             onTest: () => {
-              dispatch(actions.updateCategory("SJJabEYWH1xkTbEFZ", {
-                name: 'Test 6'
-              }))
+              console.log(purveyors)
             },
           },
         }
@@ -2277,7 +2275,13 @@ class App extends React.Component {
                 submitReady={this.state.sceneState.PurveyorForm.submitReady}
                 onProcessPurveyor={() => {
                   _.debounce(() => {
-                    console.log('TODO: create purveyor')
+                    const {purveyorId, purveyorAttributes} = this.state.sceneState.PurveyorForm
+                    if(purveyorId === null){
+                      dispatch(actions.addPurveyor(purveyorAttributes))
+                      dispatch(actions.getTeamResourceInfo(this.state.currentTeamInfo.team.id))
+                    } else {
+                      dispatch(actions.updatePurveyor(purveyorId, purveyorAttributes))
+                    }
                     nav.replacePreviousAndPop({
                       name: route.newRoute,
                     });

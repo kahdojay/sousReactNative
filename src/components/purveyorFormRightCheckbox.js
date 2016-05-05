@@ -12,7 +12,6 @@ const {
 
 class PurveyorFormRightCheckbox extends React.Component {
   constructor(props) {
-    console.log('PFRC')
     super(props)
     this.state = {
       iconFont: this.props.iconFont || 'material|check',
