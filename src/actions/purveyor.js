@@ -43,7 +43,7 @@ export default function PurveyorActions(allActions){
         purveyorCode: `${teams.data[teamIdx].teamCode}-${purveyorCode}`,
         teamCode: teams.data[teamIdx].teamCode,
         name: purveyorAttributes.name,
-        company: null,
+        company: purveyorAttributes.name,
         city: null,
         state: null,
         zipCode: null,
@@ -95,12 +95,24 @@ export default function PurveyorActions(allActions){
 
   function deletePurveyor(purveyorId) {
     return (dispatch, getState) => {
-      const {session} = getState()
-      dispatch({
-        type: DELETE_PURVEYOR,
-        purveyorId: purveyorId
-      })
-      dispatch(connectActions.ddpCall('deletePurveyor', [purveyorId, session.userId]))
+      const { purveyors, session } = getState()
+      const sessionTeamId = session.teamId;
+      if(purveyors.teams.hasOwnProperty(sessionTeamId) === true){
+        if(purveyors.teams[sessionTeamId].hasOwnProperty(purveyorId) === true){
+          const deletePurveyorAttributes = Object.assign({}, purveyors.teams[sessionTeamId][purveyorId], {
+            deleted: true,
+            deletedBy: session.userId,
+            deletedAt: (new Date()).toISOString(),
+          })
+          dispatch({
+            type: DELETE_PURVEYOR,
+            purveyor: deletePurveyorAttributes,
+          })
+          dispatch(connectActions.ddpCall('deletePurveyor', [purveyorId, deletePurveyorAttributes]))
+        } else {
+          // dispatch(errorActions.createError('update-category', 'Unable to update category'))
+        }
+      }
     }
   }
 

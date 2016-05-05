@@ -1113,9 +1113,6 @@ class App extends React.Component {
                 })
               })
             },
-            onAddPurveyor: (name) => {
-              dispatch(actions.addPurveyor(name))
-            },
             // onCreateProduct: this.onCreateProduct.bind(this, route, nav, null),
           },
         }
@@ -1760,7 +1757,7 @@ class App extends React.Component {
           component: Components.AdminView,
           props: {
             onTest: () => {
-              console.log(purveyors)
+              dispatch(actions.deletePurveyor("HJHsG8tbr1xSiz8YW"))
             },
           },
         }
