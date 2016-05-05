@@ -1574,7 +1574,7 @@ class App extends React.Component {
             },
           },
         }
-      case 'CategoryForm': 
+      case 'CategoryForm':
         return {
           component: Components.CategoryForm,
           props: {
@@ -1891,9 +1891,9 @@ class App extends React.Component {
                   })
                   // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
                 }}
-                // onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
+              // onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
             )
           })
           break;
@@ -1942,6 +1942,7 @@ class App extends React.Component {
                 }}
                 cartItems={this.state.currentTeamInfo.cart}
               />
+              // onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
             )
           })
           break;
@@ -1971,9 +1972,9 @@ class App extends React.Component {
                   })
                   // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
                 }}
-                // onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
+              // onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
             )
           })
           break;
@@ -2004,9 +2005,9 @@ class App extends React.Component {
                   })
                   // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
                 }}
-                // onCreateProduct={this.onCreateProduct.bind(this, route, nav, this.state.category)}
                 cartItems={this.state.currentTeamInfo.cart}
               />
+              // onCreateProduct={this.onCreateProduct.bind(this, route, nav, this.state.category)}
             )
           })
           break;
