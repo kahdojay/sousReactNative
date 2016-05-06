@@ -47,7 +47,7 @@ function purveyors(state = initialState.purveyors, action) {
     }
     let originalTeamPurveyor = {}
     if(newPurveyorTeamState[action.purveyor.teamId].hasOwnProperty(action.purveyor.id)){
-      originalTeamPurveyor = newPurveyorTeamState[action.purveyor.teamId][action.purveyor.id] = newPurveyorTeamState[action.purveyor.teamId][action.purveyor.id]
+      originalTeamPurveyor = newPurveyorTeamState[action.purveyor.teamId][action.purveyor.id]
     }
     newPurveyorTeamState[action.purveyor.teamId][action.purveyor.id] = Object.assign(originalTeamPurveyor, action.purveyor)
     // console.log(action.purveyor)
@@ -65,7 +65,7 @@ function purveyors(state = initialState.purveyors, action) {
     }
     let originalTeamAddPurveyor = {}
     if(addPurveyorTeamState[action.purveyor.teamId].hasOwnProperty(action.purveyor.id)){
-      originalTeamAddPurveyor = addPurveyorTeamState[action.purveyor.teamId][action.purveyor.id] = addPurveyorTeamState[action.purveyor.teamId][action.purveyor.id]
+      originalTeamAddPurveyor = addPurveyorTeamState[action.purveyor.teamId][action.purveyor.id]
     }
     addPurveyorTeamState[action.purveyor.teamId][action.purveyor.id] = Object.assign(originalTeamAddPurveyor, action.purveyor)
     // console.log(action.purveyor)
@@ -83,7 +83,7 @@ function purveyors(state = initialState.purveyors, action) {
     }
     let originalTeamUpdatePurveyor = {}
     if(updatePurveyorTeamState[action.purveyor.teamId].hasOwnProperty(action.purveyor.id)){
-      originalTeamUpdatePurveyor = updatePurveyorTeamState[action.purveyor.teamId][action.purveyor.id] = updatePurveyorTeamState[action.purveyor.teamId][action.purveyor.id]
+      originalTeamUpdatePurveyor = updatePurveyorTeamState[action.purveyor.teamId][action.purveyor.id]
     }
     updatePurveyorTeamState[action.purveyor.teamId][action.purveyor.id] = Object.assign(originalTeamUpdatePurveyor, action.purveyor)
     // console.log(action.purveyor)
@@ -101,7 +101,7 @@ function purveyors(state = initialState.purveyors, action) {
     }
     let originalTeamDeletePurveyor = {}
     if(deletePurveyorTeamState[action.purveyor.teamId].hasOwnProperty(action.purveyor.id)){
-      originalTeamDeletePurveyor = deletePurveyorTeamState[action.purveyor.teamId][action.purveyor.id] = deletePurveyorTeamState[action.purveyor.teamId][action.purveyor.id]
+      originalTeamDeletePurveyor = deletePurveyorTeamState[action.purveyor.teamId][action.purveyor.id]
     }
     deletePurveyorTeamState[action.purveyor.teamId][action.purveyor.id] = Object.assign(originalTeamDeletePurveyor, action.purveyor)
     // console.log(action.purveyor)

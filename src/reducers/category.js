@@ -48,7 +48,7 @@ function categories(state = initialState.categories, action) {
     }
     let originalTeamCategory = {}
     if(newCategoryTeamState[action.category.teamId].hasOwnProperty(action.category.id)){
-      originalTeamCategory = newCategoryTeamState[action.category.teamId][action.category.id] = newCategoryTeamState[action.category.teamId][action.category.id]
+      originalTeamCategory = newCategoryTeamState[action.category.teamId][action.category.id]
     }
     newCategoryTeamState[action.category.teamId][action.category.id] = Object.assign(originalTeamCategory, action.category)
     return Object.assign({}, state, {
@@ -65,7 +65,7 @@ function categories(state = initialState.categories, action) {
     }
     let originalTeamAddCategory = {}
     if(addCategoryTeamState[action.category.teamId].hasOwnProperty(action.category.id)){
-      originalTeamAddCategory = addCategoryTeamState[action.category.teamId][action.category.id] = addCategoryTeamState[action.category.teamId][action.category.id]
+      originalTeamAddCategory = addCategoryTeamState[action.category.teamId][action.category.id]
     }
     addCategoryTeamState[action.category.teamId][action.category.id] = Object.assign(originalTeamAddCategory, action.category)
     return Object.assign({}, state, {
@@ -82,7 +82,7 @@ function categories(state = initialState.categories, action) {
     }
     let originalTeamUpdateCategory = {}
     if(updateCategoryTeamState[action.category.teamId].hasOwnProperty(action.category.id)){
-      originalTeamUpdateCategory = updateCategoryTeamState[action.category.teamId][action.category.id] = updateCategoryTeamState[action.category.teamId][action.category.id]
+      originalTeamUpdateCategory = updateCategoryTeamState[action.category.teamId][action.category.id]
     }
     updateCategoryTeamState[action.category.teamId][action.category.id] = Object.assign(originalTeamUpdateCategory, action.category)
     return Object.assign({}, state, {
@@ -135,7 +135,7 @@ function categories(state = initialState.categories, action) {
     }
     let originalTeamDeleteCategory = {}
     if(deleteCategoryTeamState[action.category.teamId].hasOwnProperty(action.category.id)){
-      originalTeamDeleteCategory = deleteCategoryTeamState[action.category.teamId][action.category.id] = deleteCategoryTeamState[action.category.teamId][action.category.id]
+      originalTeamDeleteCategory = deleteCategoryTeamState[action.category.teamId][action.category.id]
     }
     deleteCategoryTeamState[action.category.teamId][action.category.id] = Object.assign(originalTeamDeleteCategory, action.category)
     return Object.assign({}, state, {
