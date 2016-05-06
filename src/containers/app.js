@@ -1757,7 +1757,7 @@ class App extends React.Component {
           component: Components.AdminView,
           props: {
             onTest: () => {
-              dispatch(actions.deletePurveyor("HJHsG8tbr1xSiz8YW"))
+              console.log('test')
             },
           },
         }
