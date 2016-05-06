@@ -57,6 +57,40 @@ function categories(state = initialState.categories, action) {
       lastUpdated: (new Date()).toISOString()
     });
 
+  // add category
+  case ADD_CATEGORY:
+    const addCategoryTeamState = Object.assign({}, state.teams);
+    if(addCategoryTeamState.hasOwnProperty(action.category.teamId) === false){
+      addCategoryTeamState[action.category.teamId] = {};
+    }
+    let originalTeamAddCategory = {}
+    if(addCategoryTeamState[action.category.teamId].hasOwnProperty(action.category.id)){
+      originalTeamAddCategory = addCategoryTeamState[action.category.teamId][action.category.id] = addCategoryTeamState[action.category.teamId][action.category.id]
+    }
+    addCategoryTeamState[action.category.teamId][action.category.id] = Object.assign(originalTeamAddCategory, action.category)
+    return Object.assign({}, state, {
+      errors: null,
+      teams: addCategoryTeamState,
+      lastUpdated: (new Date()).toISOString()
+    });
+
+  // update category
+  case UPDATE_CATEGORY:
+    const updateCategoryTeamState = Object.assign({}, state.teams);
+    if(updateCategoryTeamState.hasOwnProperty(action.category.teamId) === false){
+      updateCategoryTeamState[action.category.teamId] = {};
+    }
+    let originalTeamUpdateCategory = {}
+    if(updateCategoryTeamState[action.category.teamId].hasOwnProperty(action.category.id)){
+      originalTeamUpdateCategory = updateCategoryTeamState[action.category.teamId][action.category.id] = updateCategoryTeamState[action.category.teamId][action.category.id]
+    }
+    updateCategoryTeamState[action.category.teamId][action.category.id] = Object.assign(originalTeamUpdateCategory, action.category)
+    return Object.assign({}, state, {
+      errors: null,
+      teams: updateCategoryTeamState,
+      lastUpdated: (new Date()).toISOString()
+    });
+
   // add product to categories
   case ADD_PRODUCT_CATEGORY:
     const newCategoryTeamProductsState = Object.assign({}, state.teams);
@@ -91,6 +125,22 @@ function categories(state = initialState.categories, action) {
     return Object.assign({}, state, {
       errors: null,
       teams: removeCategoryTeamProductsState,
+      lastUpdated: (new Date()).toISOString()
+    });
+
+  case DELETE_CATEGORY:
+    const deleteCategoryTeamState = Object.assign({}, state.teams);
+    if(deleteCategoryTeamState.hasOwnProperty(action.category.teamId) === false){
+      deleteCategoryTeamState[action.category.teamId] = {};
+    }
+    let originalTeamDeleteCategory = {}
+    if(deleteCategoryTeamState[action.category.teamId].hasOwnProperty(action.category.id)){
+      originalTeamDeleteCategory = deleteCategoryTeamState[action.category.teamId][action.category.id] = deleteCategoryTeamState[action.category.teamId][action.category.id]
+    }
+    deleteCategoryTeamState[action.category.teamId][action.category.id] = Object.assign(originalTeamDeleteCategory, action.category)
+    return Object.assign({}, state, {
+      errors: null,
+      teams: deleteCategoryTeamState,
       lastUpdated: (new Date()).toISOString()
     });
 

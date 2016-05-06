@@ -104,7 +104,6 @@ const styles = StyleSheet.create({
 });
 
 PurveyorIndex.propTypes = {
-  onAddPurveyor: React.PropTypes.func,
   purveyors: React.PropTypes.object,
 };
 

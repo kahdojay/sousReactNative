@@ -14,7 +14,6 @@ const {
   Text,
   TextInput,
   TouchableHighlight,
-  TouchableOpacity,
   View,
 } = React;
 

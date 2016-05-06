@@ -21,6 +21,7 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import semver from 'semver';
 
 const {
+  LayoutAnimation,
   Navigator,
   NetInfo,
   PropTypes,
@@ -77,11 +78,21 @@ class App extends React.Component {
       purveyor: null,
       showGenericModal: false,
       sceneState: {
+        CategoryForm: {
+          submitReady: false,
+          categoryId: null,
+          categoryAttributes: {},
+        },
         ProductForm: {
           cartItem: null,
           submitReady: false,
           productId: null,
           productAttributes: {},
+        },
+        PurveyorForm: {
+          submitReady: false,
+          purveyorId: null,
+          purveyorAttributes: {},
         },
         OrderIndex: {
           showConfirmedOrders: false,
@@ -90,6 +101,7 @@ class App extends React.Component {
           invoiceImages: [],
         }
       },
+      showCreateOptions: false,
       touchToClose: false,
       lastResourceInfoRetrieval: (new Date(constructorNow - ((60*60*1000) + 100) )).toISOString(),
       lastResourceInfoFetching: false,
@@ -524,21 +536,46 @@ class App extends React.Component {
     sceneState.ProductForm.cartItem = null;
     sceneState.ProductForm.productId = null;
     sceneState.ProductForm.productAttributes = {};
-    const routeName = route.name;
     this.setState({
       sceneState: sceneState,
-      category: category,
       product: null,
     }, () => {
       nav.push({
         name: 'ProductForm',
-        newRoute: routeName,
+        newRoute: route.name,
+      })
+    })
+  }
+
+  onCreateCategory(route, nav) {
+    const sceneState = Object.assign({}, this.state.sceneState);
+    sceneState.CategoryForm.submitReady = false;
+    this.setState({
+      sceneState: sceneState,
+      // category: null,
+    }, () => {
+      nav.push({
+        name: 'CategoryForm',
+        newRoute: route.name,
+      })
+    })
+  }
+
+  onCreatePurveyor(route, nav) {
+    const sceneState = Object.assign({}, this.state.sceneState);
+    sceneState.PurveyorForm.submitReady = false;
+    this.setState({
+      sceneState: sceneState,
+      // purveyor: null,
+    }, () => {
+      nav.push({
+        name: 'PurveyorForm',
+        newRoute: route.name,
       })
     })
   }
 
   onProductEdit(route, nav, product) {
-    // console.log(route, nav, product)
     let productCategory = null
     Object.keys(this.state.currentTeamInfo.categories).forEach((categoryId) => {
       const category = this.state.currentTeamInfo.categories[categoryId]
@@ -1076,10 +1113,7 @@ class App extends React.Component {
                 })
               })
             },
-            onAddPurveyor: (name) => {
-              dispatch(actions.addPurveyor(name))
-            },
-            onCreateProduct: this.onCreateProduct.bind(this, route, nav, null),
+            // onCreateProduct: this.onCreateProduct.bind(this, route, nav, null),
           },
         }
       case 'PurveyorView':
@@ -1206,7 +1240,7 @@ class App extends React.Component {
                 })
               })
             },
-            onCreateProduct: this.onCreateProduct.bind(this, route, nav, null),
+            // onCreateProduct: this.onCreateProduct.bind(this, route, nav, null),
           },
         }
       case 'CategoryView':
@@ -1514,6 +1548,53 @@ class App extends React.Component {
             },
           },
         }
+      case 'PurveyorForm':
+        return {
+          component: Components.PurveyorForm,
+          props: {
+            purveyor: this.state.purveyor,
+            team: this.state.currentTeamInfo.team,
+            // purveyors: this.state.currentTeamInfo.purveyors,
+            onProcessPurveyor: (purveyorAttributes) => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              const existingPurveyorAttributes = Object.assign({}, sceneState.PurveyorForm.purveyorAttributes, purveyorAttributes);
+              sceneState.PurveyorForm.submitReady = true;
+              sceneState.PurveyorForm.purveyorAttributes = existingPurveyorAttributes;
+              this.setState({
+                sceneState: sceneState
+              })
+            },
+            onPurveyorNotReady: () => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.PurveyorForm.submitReady = false;
+              this.setState({
+                sceneState: sceneState
+              })
+            },
+          },
+        }
+      case 'CategoryForm':
+        return {
+          component: Components.CategoryForm,
+          props: {
+            onProcessCategory: (categoryAttributes) => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              const existingCategoryAttributes = Object.assign({}, sceneState.CategoryForm.categoryAttributes);
+              sceneState.CategoryForm.submitReady = true;
+              sceneState.CategoryForm.categoryAttributes = Object.assign({}, existingCategoryAttributes, categoryAttributes);
+              this.setState({
+                sceneState: sceneState
+              })
+            },
+            onCategoryNotReady: () => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.CategoryForm.submitReady = false;
+              this.setState({
+                sceneState: sceneState
+              })
+            }
+          },
+        }
       case 'UserInfo':
         return {
           component: Components.UserInfo,
@@ -1671,6 +1752,15 @@ class App extends React.Component {
             },
           },
         }
+      case 'AdminView':
+        return {
+          component: Components.AdminView,
+          props: {
+            onTest: () => {
+              console.log('test')
+            },
+          },
+        }
       default:
         return;
     }
@@ -1771,6 +1861,18 @@ class App extends React.Component {
                 disabled={(this.state.currentTeamInfo.team === null)}
               />
             ),
+            customNext: (
+              <Components.FeedViewRightButton
+                onShowCreateOptions={() => {
+                  this.setState({
+                    showCreateOptions: true,
+                    category: null,
+                    purveyor: null,
+                  })
+                  // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+                }}
+              />
+            )
           })
           break;
         case 'PurveyorIndex':
@@ -1791,9 +1893,15 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
+                onShowCreateOptions={() => {
+                  this.setState({
+                    showCreateOptions: true,
+                  })
+                  // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+                }}
                 cartItems={this.state.currentTeamInfo.cart}
               />
+              // onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
             )
           })
           break;
@@ -1834,9 +1942,15 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
+                onShowCreateOptions={() => {
+                  this.setState({
+                    showCreateOptions: true,
+                  })
+                  // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+                }}
                 cartItems={this.state.currentTeamInfo.cart}
               />
+              // onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
             )
           })
           break;
@@ -1860,9 +1974,15 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
+                onShowCreateOptions={() => {
+                  this.setState({
+                    showCreateOptions: true,
+                  })
+                  // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+                }}
                 cartItems={this.state.currentTeamInfo.cart}
               />
+              // onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
             )
           })
           break;
@@ -1887,9 +2007,15 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav, this.state.category)}
+                onShowCreateOptions={() => {
+                  this.setState({
+                    showCreateOptions: true,
+                  })
+                  // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+                }}
                 cartItems={this.state.currentTeamInfo.cart}
               />
+              // onCreateProduct={this.onCreateProduct.bind(this, route, nav, this.state.category)}
             )
           })
           break;
@@ -2086,8 +2212,8 @@ class App extends React.Component {
             route: route,
             customPrev: (
               <Components.NavBackButton
-                iconFont={'material|close'}
                 pop={true}
+                iconText={'Cancel'}
               />
             ),
             // title: (this.state.product === null) ? 'New Ingredient' : 'Edit Product',
@@ -2124,6 +2250,81 @@ class App extends React.Component {
             ),
           })
           break;
+        case 'PurveyorForm':
+          navBar = React.cloneElement(this.navBar, {
+            ref: 'navBar',
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                pop={true}
+                iconText={'Cancel'}
+              />
+            ),
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'New Purveyor'}
+                // content={(this.state.purveyor === null) ? 'New Purveyor' : 'Edit Purveyor'}
+              />
+            ),
+            customNext: (
+              <Components.PurveyorFormRightCheckbox
+                submitReady={this.state.sceneState.PurveyorForm.submitReady}
+                onProcessPurveyor={() => {
+                  _.debounce(() => {
+                    const {purveyorId, purveyorAttributes} = this.state.sceneState.PurveyorForm
+                    if(purveyorId === null){
+                      dispatch(actions.addPurveyor(purveyorAttributes))
+                      dispatch(actions.getTeamResourceInfo(this.state.currentTeamInfo.team.id))
+                    } else {
+                      dispatch(actions.updatePurveyor(purveyorId, purveyorAttributes))
+                    }
+                    nav.replacePreviousAndPop({
+                      name: route.newRoute,
+                    });
+                  }, 5)()
+                }}
+              />
+            ),
+          })
+          break;
+        case 'CategoryForm':
+          navBar = React.cloneElement(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'material|close'}
+                pop={true}
+                iconText={'Cancel'}
+              />
+            ),
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'New Category'}
+              />
+            ),
+            customNext: (
+              <Components.CategoryFormRightCheckbox
+                submitReady={this.state.sceneState.CategoryForm.submitReady}
+                onProcessCategory={() => {
+                  _.debounce(() => {
+                    const {categoryId, categoryAttributes} = this.state.sceneState.CategoryForm
+                    if(categoryId === null){
+                      dispatch(actions.addCategory(categoryAttributes))
+                      dispatch(actions.getTeamResourceInfo(this.state.currentTeamInfo.team.id))
+                    } else {
+                      dispatch(actions.updateCategory(categoryId, categoryAttributes))
+                    }
+                    nav.replacePreviousAndPop({
+                      name: route.newRoute,
+                    });
+                  }, 5)()
+                }}
+              />
+            ),
+          })
+          break;
         case 'TeamView':
           navBar = React.cloneElement(this.navBar, {
             navigator: nav,
@@ -2148,6 +2349,22 @@ class App extends React.Component {
                     name: 'InviteView',
                   })
                 }}
+              />
+            ),
+          })
+          break;
+        case 'AdminView':
+          navBar = React.cloneElement(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                pop={true}
+              />
+            ),
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'Admin'}
               />
             ),
           })
@@ -2283,6 +2500,9 @@ class App extends React.Component {
           onNavToTeamIndex={() => {
             nav.push({ name: 'TeamIndex', })
           }}
+          onNavToAdmin={() => {
+            nav.push({ name: 'AdminView', })
+          }}
         />
       );
     }
@@ -2344,6 +2564,91 @@ class App extends React.Component {
       )
     }
 
+    // let createOptions = this.state.showCreateOptions === true ? (
+    //   <View>
+    //     <View style={styles.createOptionsHeader}>
+    //       <Text style={styles.createOptionsHeaderText}>Create New:</Text>
+    //     </View>
+    //     <TouchableHighlight
+    //       onPress={() => {
+    //         this.onCreateProduct(route, nav, null)
+    //         this.setState({showCreateOptions: false})
+    //       }}
+    //       underlayColor='transparent'
+    //       style={styles.createOptionButton}
+    //     >
+    //         <Text style={styles.createOptionText}>Ingredient</Text>
+    //     </TouchableHighlight>
+    //     <TouchableHighlight
+    //       onPress={() => {
+    //         console.log('nav to purveyorCreate')
+    //         this.setState({showCreateOptions: false})
+    //       }}
+    //       underlayColor='transparent'
+    //       style={styles.createOptionButton}
+    //     >
+    //         <Text style={styles.createOptionText}>Purveyor</Text>
+    //     </TouchableHighlight>
+    //     <TouchableHighlight
+    //       onPress={() => {
+    //         console.log('show create category modal')
+    //         this.setState({showCreateOptions: false})
+    //       }}
+    //       underlayColor='transparent'
+    //       style={styles.createOptionButton}
+    //     >
+    //         <Text style={styles.createOptionText}>Category</Text>
+    //     </TouchableHighlight>
+    //   </View>
+    // ) : <View/>
+    let createOptions = (
+      <ModalComponents.GenericModal
+        modalVisible={this.state.showCreateOptions}
+        onHideModal={genericModalDismiss}
+        leftButton={{
+          text: 'Cancel',
+          onPress: () => {
+            this.setState({showCreateOptions: false})
+          }
+        }}
+      >
+        <View>
+          <View style={styles.createOptionsHeader}>
+            <Text style={styles.createOptionsHeaderText}>Create New:</Text>
+          </View>
+          <TouchableHighlight
+            onPress={() => {
+              this.onCreateProduct(route, nav, null)
+              this.setState({showCreateOptions: false})
+            }}
+            underlayColor='transparent'
+            style={styles.createOptionButton}
+          >
+              <Text style={styles.createOptionText}>Ingredient</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            onPress={() => {
+              this.onCreatePurveyor(route, nav, null)
+              this.setState({showCreateOptions: false})
+            }}
+            underlayColor='transparent'
+            style={styles.createOptionButton}
+          >
+              <Text style={styles.createOptionText}>Purveyor</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            onPress={() => {
+              this.onCreateCategory(route, nav)
+              this.setState({showCreateOptions: false})
+            }}
+            underlayColor='transparent'
+            style={styles.createOptionButton}
+          >
+              <Text style={styles.createOptionText}>Category</Text>
+          </TouchableHighlight>
+        </View>
+      </ModalComponents.GenericModal>
+    )
     return (
       <CustomSideView
         ref='customSideView'
@@ -2353,6 +2658,7 @@ class App extends React.Component {
       >
         <View style={styles.container} >
           {navBar}
+          {createOptions}
           {errorModal}
           {genericModal}
           {connectionStatus}
@@ -2406,6 +2712,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.navbarColor,
     borderBottomWidth: 2,
     borderBottomColor: '#ccc',
+  },
+  createOptionsHeader: {
+    backgroundColor: Colors.blue,
+  },
+  createOptionsHeaderText: {
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  createOptionButton: {
+    // backgroundColor: Colors.blue,
+  },
+  createOptionText: {
+    fontWeight: 'bold',
+    color: Colors.lightBlue,
   },
   offlineContainer: {
     width: window.width,
