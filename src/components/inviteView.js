@@ -22,7 +22,7 @@ class InviteView extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      currentTeamInfo: null,
+      currentTeamInfo: this.props.currentTeamInfo,
       selectedContacts: [],
       query: '',
       searching: false,
@@ -39,10 +39,12 @@ class InviteView extends React.Component {
       this.props.getContacts()
     } else {
       this.setState({
-        contacts: this.props.contacts.slice(0,10),
-        currentTeamInfo: this.props.currentTeamInfo,
+        contacts: this.props.contacts.slice(0,10)
       })
     }
+    this.setState({
+      currentTeamInfo: this.props.currentTeamInfo
+    })
   }
 
   componentWillReceiveProps(nextProps) {
