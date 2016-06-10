@@ -2,7 +2,6 @@ import _ from 'lodash'
 import slug from 'slug'
 import { DDP } from '../resources/apiConfig'
 import { generateId } from '../utilities/utils'
-import MessageActions from './message'
 import { getIdx } from '../utilities/reducer'
 import Urls from '../resources/urls';
 import DataUtils from '../utilities/data';
@@ -10,6 +9,7 @@ import {
   ADD_TEAM,
   CART,
   COMPLETE_TEAM_TASK,
+  CONNECT,
   DELETE_TEAM,
   ERROR_TEAMS,
   GET_TEAMS,
@@ -90,7 +90,9 @@ export default function TeamActions(allActions) {
           zipCode: '',
           orderContacts: `${session.firstName} • ${DataUtils.formatPhoneNumber(session.username)}`,
           orderEmails: session.email,
-          deleted: false
+          deleted: false,
+          betaAccess: 'showDeliveryDate',
+          allowedUserCount: 1,
         }
 
         if(demoTeam === true){
@@ -431,17 +433,20 @@ export default function TeamActions(allActions) {
 
   function getTeamResourceInfo(teamId){
     return (dispatch, getState) => {
-      const {session} = getState()
-      var getTeamResourceInfoCb = (err, results) => {
-        if(!err){
-          dispatch({
-            type: RECEIVE_TEAM_RESOURCE_INFO,
-            teamId: teamId,
-            resources: results,
-          })
+      const {offline, connect, session} = getState()
+      if(Object.keys(offline.queue).length === 0 && connect.status === CONNECT.CONNECTED){
+        // console.log('Resume retrieving team resources...')
+        var getTeamResourceInfoCb = (err, results) => {
+          if(!err){
+            dispatch({
+              type: RECEIVE_TEAM_RESOURCE_INFO,
+              teamId: teamId,
+              resources: results,
+            })
+          }
         }
+        dispatch(connectActions.ddpCall('getTeamResourceInfo', [session.userId, teamId], getTeamResourceInfoCb))
       }
-      dispatch(connectActions.ddpCall('getTeamResourceInfo', [session.userId, teamId], getTeamResourceInfoCb))
     }
   }
 

@@ -48,15 +48,17 @@ export default function ConnectActions(ddpClient) {
   function ddpCall(method, args, methodCb = noop, serverCb = noop){
     return (dispatch, getState) => {
       const {connect, offline} = getState()
+      const offlineItem = {
+        method: method,
+        args: args,
+        methodCb: methodCb,
+        serverCb: serverCb,
+        calledAt: (new Date()).toISOString()
+      };
+      // console.log(offlineItem)
       dispatch({
         type: OFFLINE_ADD_QUEUE,
-        item: {
-          method: method,
-          args: args,
-          methodCb: methodCb,
-          serverCb: serverCb,
-          calledAt: (new Date()).toISOString()
-        }
+        item: offlineItem
       })
       if(connect.status === CONNECT.CONNECTED){
         dispatch(sendOfflineQueue())
@@ -67,12 +69,12 @@ export default function ConnectActions(ddpClient) {
   function sendOfflineQueue() {
     return (dispatch, getState) => {
       const {connect, offline} = getState()
-        const queueKeys = Object.keys(offline.queue)
+      const queueKeys = Object.keys(offline.queue)
 
       // console.log(JSON.stringify(queueKeys))
       // console.log(offline.processing)
       if(connect.status === CONNECT.CONNECTED && queueKeys.length > 0){
-        const queueKey = queueKeys.pop()
+        const queueKey = queueKeys.shift()
         if(queueKey !== null){
           const item = offline.queue[queueKey]
           dispatch({

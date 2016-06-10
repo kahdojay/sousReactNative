@@ -19,13 +19,13 @@ class CategoryIndex extends React.Component {
   render() {
     const { categories, products, connected } = this.props
 
-    if(connected === false){
-      return (
-        <View style={styles.container}>
-          <Text style={styles.inaccessible}>Order Guide inaccessible in offline mode</Text>
-        </View>
-      )
-    }
+    // if(connected === false){
+    //   return (
+    //     <View style={styles.container}>
+    //       <Text style={styles.inaccessible}>Order Guide inaccessible in offline mode</Text>
+    //     </View>
+    //   )
+    // }
 
     let categoriesList = _.map(_.sortBy(categories, 'name'), (category) => {
       if (category.deleted === false) {
@@ -34,7 +34,7 @@ class CategoryIndex extends React.Component {
           categoryProducts[productId] = products[productId]
         })
         return (
-          <View>
+          <View key={`container-${category.id}`}>
             <CategoryIndexRow
               products={categoryProducts}
               key={category.id}

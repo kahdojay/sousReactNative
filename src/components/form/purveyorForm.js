@@ -1,12 +1,14 @@
 import React from 'react-native';
-import Colors from '../utilities/colors';
+import Colors from '../../utilities/colors';
 import { Icon } from 'react-native-icons';
-import Sizes from '../utilities/sizes';
 import _ from 'lodash';
 import s from 'underscore.string';
-import PickerModal from './modal/pickerModal';
+import PickerModal from '../modal/pickerModal';
+import FieldRow from './fieldRow';
+import PickerFieldRow from './pickerFieldRow';
 
 const {
+  LayoutAnimation,
   ScrollView,
   StyleSheet,
   Text,
@@ -16,88 +18,27 @@ const {
   View,
 } = React;
 
-class FieldRow extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-  isFocused() {
-    return this.refs.field.isFocused()
-  }
-  blur(cb) {
-    let callback = cb || function(){}
-    this.refs.field.blur()
-    setTimeout(callback, 50)
-  }
-  render() {
-    return (
-        <View key={this.props.key} style={styles.inputContainer}>
-          <TextInput
-            ref='field'
-            style={styles.inputField}
-            value={this.props.value}
-            keyboardType={this.props.keyboardType || 'default'}
-            placeholder={this.props.placeholder}
-            inputPlaceholderColor={Colors.inputPlaceholderColor}
-            onChange={this.props.onChange}
-          />
-        </View>
-    )
-  }
-}
-
-class PickerFieldRow extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    let selectFieldText = `(Select)`
-    if(this.props.selectFieldText){
-      selectFieldText = this.props.selectFieldText
-    }
-    if(this.props.selectedValue !== null){
-      selectFieldText = this.props.selectedValue.toString()
-      if(selectFieldText.length > 20){
-        selectFieldText = selectFieldText.substr(0,20) + '...'
-      }
-    }
-    return (
-      <View style={styles.inputContainer}>
-        <TouchableHighlight
-          underlayColor='transparent'
-          onPress={() => { this.props.onShowFieldPicker() }}
-          style={styles.inputSelectContainer}
-        >
-          <Text style={styles.selectField}>
-            {selectFieldText}
-          </Text>
-        </TouchableHighlight>
-      </View>
-    )
-  }
-}
-
-class ProductForm extends React.Component {
+class PurveyorForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      newProduct: {},
+      newPurveyor: {},
       fieldPicker: null,
       fieldPickerIdx: null,
       modalVisible: false,
-      selectedName: this.props.product ? this.props.product.name : '',
-      selectedCategory: this.props.productCategory ? this.props.productCategory.id : null,
-      selectedPurveyors: this.props.product ? this.props.product.purveyors : (this.props.fromPurveyorId ? [this.props.fromPurveyorId] : null),
-      selectedAmount: this.props.product ? this.props.product.amount : 1,
-      selectedUnits: this.props.product ? this.props.product.unit : 'cs',
-      selectedDescription: this.props.product ? this.props.product.description : '',
-      selectedSku: this.props.product ? this.props.product.sku : '',
-      selectedPrice: this.props.product ? this.props.product.price : '',
-      selectedPar: this.props.product ? this.props.product.par : '',
-      selectedPackSize: this.props.product ? this.props.product.packSize : '',
+      selectedName: this.props.purveyor ? this.props.purveyor.name : '',
+      // selectedCategory: this.props.purveyorCategory ? this.props.purveyorCategory.id : null,
+      // selectedPurveyors: this.props.purveyor ? this.props.purveyor.purveyors : (this.props.fromPurveyorId ? [this.props.fromPurveyorId] : null),
+      // selectedAmount: this.props.purveyor ? this.props.purveyor.amount : 1,
+      // selectedUnits: this.props.purveyor ? this.props.purveyor.unit : 'cs',
+      // selectedDescription: this.props.purveyor ? this.props.purveyor.description : '',
+      // selectedSku: this.props.purveyor ? this.props.purveyor.sku : '',
+      // selectedPrice: this.props.purveyor ? this.props.purveyor.price : '',
+      // selectedPar: this.props.purveyor ? this.props.purveyor.par : '',
+      // selectedPackSize: this.props.purveyor ? this.props.purveyor.packSize : '',
       showAdvanced: false,
     }
-    this.fields = ['Purveyors','Category','Amount']//,'QtyUnits']
+    // this.fields = ['Purveyors','Category','Amount']//,'QtyUnits']
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -127,30 +68,31 @@ class ProductForm extends React.Component {
   checkValidForm(){
     let selectedName = _.trim(this.state.selectedName.replace('\u00A0',' '))
     if (
-      this.state.selectedPurveyors !== null &&
-      this.state.selectedPurveyors.length > 0 &&
-      this.state.selectedCategory &&
-      this.state.selectedAmount &&
-      this.state.selectedUnits &&
+      // this.state.selectedPurveyors !== null &&
+      // this.state.selectedPurveyors.length > 0 &&
+      // this.state.selectedCategory &&
+      // this.state.selectedAmount &&
+      // this.state.selectedUnits &&
       selectedName !== ''
     ) {
-      const productAttributes = {
+      const purveyorAttributes = {
         name: selectedName,
-        purveyors: this.state.selectedPurveyors,
-        amount: this.state.selectedAmount,
-        unit: this.state.selectedUnits,
-        categoryId: this.state.selectedCategory,
-        description: this.state.selectedDescription,
-        sku: this.state.selectedSku,
-        price: this.state.selectedPrice,
-        par: this.state.selectedPar,
-        packSize: this.state.selectedPackSize,
+        // purveyors: this.state.selectedPurveyors,
+        // amount: this.state.selectedAmount,
+        // unit: this.state.selectedUnits,
+        // categoryId: this.state.selectedCategory,
+        // description: this.state.selectedDescription,
+        // sku: this.state.selectedSku,
+        // price: this.state.selectedPrice,
+        // par: this.state.selectedPar,
+        // packSize: this.state.selectedPackSize,
       }
-      this.props.onProcessProduct(productAttributes);
+      this.props.onProcessPurveyor(purveyorAttributes);
     } else {
-      this.props.onProductNotReady();
+      this.props.onPurveyorNotReady();
     }
   }
+
   selectedCategoryValue() {
     let selectedValue = '(Select)'
     let categoryId = this.state.selectedCategory
@@ -159,6 +101,7 @@ class ProductForm extends React.Component {
     }
     return selectedValue
   }
+
   selectedPurveyorValue() {
     let selectedValue = '(Select)'
     if (this.state.selectedPurveyors !== null){
@@ -168,99 +111,113 @@ class ProductForm extends React.Component {
     return selectedValue
   }
 
+  // Scroll a component into view. Just pass the component ref string.
+  inputFocused(refName) {
+    // console.log(this.refs)
+    setTimeout(() => {
+      let scrollResponder = this.refs.scrollView.getScrollResponder();
+      scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
+        React.findNodeHandle(this.refs[refName]),
+        100, //additionalOffset
+        true
+      );
+    }, 20);
+  }
+
   getPickerOptions() {
-    if(this.state.fieldPicker !== null){
-      let items = []
-      let selectedValue = null
-      let pickerType = null
-      // get the items by switching by fieldPicker
-      switch (this.state.fieldPicker) {
-        case 'Purveyors':
-          const purveyors = _.sortBy(this.props.purveyors, 'name')
-          items = _.map(purveyors, (purveyor, idx) => {
-            return {
-              key: purveyor.id,
-              value: purveyor.id,
-              label: purveyor.name,
-            }
-          })
-          selectedValue = this.state.selectedPurveyors
-          pickerType = 'ListView'
-          break;
+    console.log('getPickerOptions')
+    // if(this.state.fieldPicker !== null){
+    //   let items = []
+    //   let selectedValue = null
+    //   let pickerType = null
+    //   // get the items by switching by fieldPicker
+    //   switch (this.state.fieldPicker) {
+    //     case 'Purveyors':
+    //       const purveyors = _.sortBy(this.props.purveyors, 'name')
+    //       items = _.map(purveyors, (purveyor, idx) => {
+    //         return {
+    //           key: purveyor.id,
+    //           value: purveyor.id,
+    //           label: purveyor.name,
+    //         }
+    //       })
+    //       selectedValue = this.state.selectedPurveyors
+    //       pickerType = 'ListView'
+    //       break;
 
-        case 'Category':
-          const categories = _.sortBy(this.props.categories, 'name')
-          items = _.map(categories, (category, idx) => {
-            return {
-              key: category.id,
-              value: category.id,
-              label: category.name,
-            }
-          })
-          items.unshift({
-            key: '--null--',
-            value: null,
-            label: '',
-          })
-          selectedValue = this.state.selectedCategory ? this.state.selectedCategory : null
-          break;
+    //     case 'Category':
+    //       const categories = _.sortBy(this.props.categories, 'name')
+    //       items = _.map(categories, (category, idx) => {
+    //         return {
+    //           key: category.id,
+    //           value: category.id,
+    //           label: category.name,
+    //         }
+    //       })
+    //       items.unshift({
+    //         key: '--null--',
+    //         value: null,
+    //         label: '',
+    //       })
+    //       selectedValue = this.state.selectedCategory ? this.state.selectedCategory : null
+    //       break;
 
-        case 'Amount':
-          items = _.map(['1/8','1/4','1/2', '3/4'], (frac, idx) => {
-            const dec = frac.split('/')
-            return {
-              key: `d-${idx}`,
-              value: parseFloat(dec[0]/dec[1]),
-              label: frac,
-            }
-          })
-          items = items.concat(_.map(_.range(1, 1001), (n, idx) => {
-            return {
-              key: idx,
-              value: n,
-              label: n.toString(),
-            }
-          }))
-          items.unshift({
-            key: '--null--',
-            value: null,
-            label: '',
-          })
-          selectedValue = this.state.selectedAmount ? parseFloat(this.state.selectedAmount) : null
-          break;
+    //     case 'Amount':
+    //       items = _.map(['1/8','1/4','1/2', '3/4'], (frac, idx) => {
+    //         const dec = frac.split('/')
+    //         return {
+    //           key: `d-${idx}`,
+    //           value: parseFloat(dec[0]/dec[1]),
+    //           label: frac,
+    //         }
+    //       })
+    //       items = items.concat(_.map(_.range(1, 1001), (n, idx) => {
+    //         return {
+    //           key: idx,
+    //           value: n,
+    //           label: n.toString(),
+    //         }
+    //       }))
+    //       items.unshift({
+    //         key: '--null--',
+    //         value: null,
+    //         label: '',
+    //       })
+    //       selectedValue = this.state.selectedAmount ? parseFloat(this.state.selectedAmount) : null
+    //       break;
 
-        // case 'Units':
-        //   const units = ['bag', 'btl', 'bunch', 'can', 'cs', 'ct', 'dozen', 'ea', 'g', 'jug', 'kg', 'lb', 'oz', 'pack', 'pc', 'tub']
-        //   items = _.map(units, (unit, idx) => {
-        //     return {
-        //       key: idx,
-        //       value: unit,
-        //       label: unit,
-        //     }
-        //   })
-        //   items.unshift({
-        //     key: '--null--',
-        //     value: null,
-        //     label: '',
-        //   })
-        //   selectedValue = this.state.selectedUnits ? this.state.selectedUnits : null
-        //   break;
+    //     // case 'Units':
+    //     //   const units = ['bag', 'btl', 'bunch', 'can', 'cs', 'ct', 'dozen', 'ea', 'g', 'jug', 'kg', 'lb', 'oz', 'pack', 'pc', 'tub']
+    //     //   items = _.map(units, (unit, idx) => {
+    //     //     return {
+    //     //       key: idx,
+    //     //       value: unit,
+    //     //       label: unit,
+    //     //     }
+    //     //   })
+    //     //   items.unshift({
+    //     //     key: '--null--',
+    //     //     value: null,
+    //     //     label: '',
+    //     //   })
+    //     //   selectedValue = this.state.selectedUnits ? this.state.selectedUnits : null
+    //     //   break;
 
-        default:
-          break;
-      }
-      return {
-        items: items,
-        selectedValue: selectedValue,
-        pickerType: pickerType
-      }
-    } else {
-      return {
-        items: null,
-        selectedValue: null,
-        pickerType: null
-      }
-    }
+    //     default:
+    //       break;
+    //   }
+    //   return {
+    //     items: items,
+    //     selectedValue: selectedValue,
+    //     pickerType: pickerType
+    //   }
+    // } else {
+    //   return {
+    //     items: null,
+    //     selectedValue: null,
+    //     pickerType: null
+    //   }
+    // }
   }
 
   render() {
@@ -269,22 +226,23 @@ class ProductForm extends React.Component {
     let leftButtonText = 'Update'
     let selectedValue = null
     let pickerType = 'PickerIOS'
-    let pickerOptions = this.getPickerOptions()
-    let selectedPrice = this.state.selectedPrice
-    let selectedPurveyors = this.state.selectedPurveyors
-    let selectedPurveyorsText, selectedCategoryText = '(Select)'
-    if (selectedPurveyors && selectedPurveyors !== null){
-      const purveyorIds = this.state.selectedPurveyors
-      selectedPurveyorsText = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Purveyors Selected`
-    }
+    // let pickerOptions = this.getPickerOptions()
+    // let selectedPrice = this.state.selectedPrice
+    // let selectedPurveyors = this.state.selectedPurveyors
+    // let selectedPurveyorsText, selectedCategoryText = '(Select)'
+    // if (selectedPurveyors && selectedPurveyors !== null){
+    //   const purveyorIds = this.state.selectedPurveyors
+    //   selectedPurveyorsText = purveyorIds && purveyorIds.length === 1 ? this.props.purveyors[purveyorIds[0]].name : `${purveyorIds.length.toString()} Purveyors Selected`
+    // }
     return (
       <View style={styles.container}>
         <ScrollView
+          ref='scrollView'
           automaticallyAdjustContentInsets={false}
           style={styles.scrollView}
         >
           <View style={styles.headerContainer}>
-            <Text style={styles.headerText}>Product Details</Text>
+            <Text style={styles.headerText}>Purveyor Details</Text>
           </View>
           <View style={styles.fieldRowContainer}>
             <View style={styles.formLabelContainer}>
@@ -294,7 +252,7 @@ class ProductForm extends React.Component {
               key='name'
               ref='name'
               label='Name'
-              placeholder='Avocado, Ripe (48 ct)'
+              placeholder='Happy Valley Meats'
               value={this.state.selectedName}
               onChange={(e) => {
                 this.setState({
@@ -303,9 +261,10 @@ class ProductForm extends React.Component {
                   this.checkValidForm();
                 });
               }}
+              onFocus={this.inputFocused.bind(this, 'name')}
             />
           </View>
-          <View style={styles.separator}></View>
+          {/*<View style={styles.separator}></View>
           <View style={styles.fieldRowContainer}>
             <View style={styles.formLabelContainer}>
               <Text style={styles.formLabelText}>Purveyors</Text>
@@ -368,12 +327,17 @@ class ProductForm extends React.Component {
                   this.checkValidForm();
                 });
               }}
+              onFocus={this.inputFocused.bind(this, 'unit')}
             />
-          </View>
-          <Text>{' '}</Text>
+          </View>*/}
+
+          {/*<Text>{' '}</Text>
           <TouchableHighlight
             underlayColor='transparent'
-            onPress={() => {this.setState({showAdvanced: !this.state.showAdvanced})}}
+            onPress={() => {
+              this.setState({showAdvanced: !this.state.showAdvanced})
+              LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+            }}
           >
             <View style={styles.headerContainer}>
               <Text style={styles.headerText}>Additional Info </Text>
@@ -399,6 +363,7 @@ class ProductForm extends React.Component {
                         this.checkValidForm();
                       });
                     }}
+                    onFocus={this.inputFocused.bind(this, 'notes')}
                   />
                 </View>
                 <View style={styles.separator}></View>
@@ -419,7 +384,8 @@ class ProductForm extends React.Component {
                         this.checkValidForm();
                       });
                     }}
-                  />  
+                    onFocus={this.inputFocused.bind(this, 'sku')}
+                  />
                 </View>
                 <View style={styles.separator}></View>
                 <View style={styles.fieldRowContainer}>
@@ -440,6 +406,7 @@ class ProductForm extends React.Component {
                         this.checkValidForm();
                       });
                     }}
+                    onFocus={this.inputFocused.bind(this, 'price')}
                   />
                 </View>
                 <View style={styles.separator}></View>
@@ -459,6 +426,7 @@ class ProductForm extends React.Component {
                         this.checkValidForm();
                       });
                     }}
+                    onFocus={this.inputFocused.bind(this, 'par')}
                   />
                 </View>
                 <View style={styles.separator}></View>
@@ -478,14 +446,15 @@ class ProductForm extends React.Component {
                         this.checkValidForm();
                       });
                     }}
+                    onFocus={this.inputFocused.bind(this, 'packSize')}
                   />
                 </View>
               </View>
-            ) 
+            )
             : <View/>
-          }
+          }*/}
         </ScrollView>
-        <PickerModal
+        {/*<PickerModal
           modalVisible={this.state.modalVisible}
           headerText={`Select ${this.state.fieldPicker}`}
           leftButtonText={leftButtonText}
@@ -514,7 +483,7 @@ class ProductForm extends React.Component {
               this.checkValidForm();
             })
           }}
-        />
+        />*/}
       </View>
     );
   }
@@ -524,10 +493,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.lighterGrey,
-    padding: 10,
   },
   scrollView: {
     flex: 1,
+    padding: 10,
   },
   headerContainer: {
     flexDirection: 'row',
@@ -558,34 +527,11 @@ const styles = StyleSheet.create({
   formLabelText: {
     fontWeight: 'bold',
   },
-  inputContainer: {
-    backgroundColor: 'white',
-    flex: 3.5,
-  },
-  inputField: {
-    fontFamily: 'OpenSans',
-    fontSize: 14,
-    height: 45,
-    marginLeft: 10,
-  },
   separator: {
     flex: 1,
     borderBottomWidth: 1,
     borderColor: Colors.separatorColor,
   },
-  inputSelectContainer: {
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row',
-  },
-  selectField: {
-    flex: 1,
-    fontFamily: 'OpenSans',
-    fontSize: 14,
-    marginLeft: 10,
-    paddingTop: 13,
-    paddingBottom: 13,
-  },
 });
 
-module.exports = ProductForm;
+module.exports = PurveyorForm;

@@ -42,18 +42,23 @@ export default class AddForm extends React.Component {
 
   render() {
 
-    let input = (
-      <TextInput
-        ref='messageInput'
-        style={styles.input}
-        value={this.state.message.text}
-        placeholderTextColor={'#aaa'}
-        placeholder={this.props.placeholder}
-        onChangeText={::this.handleChangeMessage}
-        multiline={this.props.multiline}
-        onSubmitEditing={this.props.multiline ? null : ::this.handleSubmit}
-      />
-    )
+    let inputProps = {
+      ref: 'messageInput',
+      style: styles.input,
+      value: this.state.message.text,
+      placeholderTextColor: '#aaa',
+      placeholder: this.props.placeholder,
+      onChangeText: ::this.handleChangeMessage,
+      multiline: this.props.multiline,
+      onSubmitEditing: this.props.multiline ? null : ::this.handleSubmit,
+    }
+    if(this.props.hasOwnProperty('onBlur') === true){
+      inputProps.onBlur = this.props.onBlur
+    }
+    if(this.props.hasOwnProperty('onFocus') === true){
+      inputProps.onFocus = this.props.onFocus
+    }
+    let input = React.createElement(TextInput, inputProps)
     let submit = (
       <TouchableHighlight
         key='send'

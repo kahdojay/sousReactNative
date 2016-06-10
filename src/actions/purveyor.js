@@ -1,5 +1,6 @@
+import slug from 'slug'
 import { generateId } from '../utilities/utils'
-import MessageActions from './message'
+import { getIdx } from '../utilities/reducer'
 import {
   RESET_PURVEYORS,
   GET_PURVEYORS,
@@ -26,18 +27,41 @@ export default function PurveyorActions(allActions){
     }
   }
 
-  function addPurveyor(name) {
+  function addPurveyor(purveyorAttributes) {
     return (dispatch, getState) => {
-      const { session } = getState();
+      const { teams, session } = getState();
       const sessionTeamId = session.teamId
+      const teamIdx = getIdx(teams.data, sessionTeamId);
       const purveyorId = generateId()
+      let purveyorCode = slug(purveyorAttributes.name, {
+        replacement: '',
+      })
+      purveyorCode = purveyorCode.toUpperCase()
       var newPurveyorAttributes = {
         _id: purveyorId,
         teamId: sessionTeamId,
-        name: name,
+        purveyorCode: `${teams.data[teamIdx].teamCode}-${purveyorCode}`,
+        teamCode: teams.data[teamIdx].teamCode,
+        name: purveyorAttributes.name,
+        company: purveyorAttributes.name,
+        city: null,
+        state: null,
+        zipCode: null,
+        timeZone: teams.data[teamIdx].timeZone,
+        orderCutoffTime: '',
+        orderMinimum: '',
+        deliveryDays: '',
+        notes: '',
+        email: '',
+        orderEmails: '',
+        phone: '',
+        orderContact: '',
         description: '',
-        // products:    [],
-        deleted:  false
+        sendEmail: false,
+        sendFax: false,
+        fax: '',
+        uploadToFTP: false,
+        deleted: false,
       }
       dispatch({
         type: ADD_PURVEYOR,
@@ -50,67 +74,45 @@ export default function PurveyorActions(allActions){
     }
   }
 
-  function completePurveyorProduct(messageText) {
-    return (dispatch) => {
-      dispatch(messageActions.createMessage(messageText))
-      return dispatch({
-        type: ORDER_PURVEYOR_PRODUCT
-      });
-    }
-  }
-
-  function addPurveyorProduct(purveyorId, productAttributes){
-    return (dispatch) => {
-      var newProductAttributes = {
-        productId: generateId(),
-        name: productAttributes.name,
-        description: "",
-        deleted: false,
-        ordered: false,
-        quantity: 1,
-        price: 0.0,
-        unit: productAttributes.unit || '0 oz'
-      }
-      dispatch(connectActions.ddpCall('addPurveyorProduct', [purveyorId, newProductAttributes]))
-      return dispatch({
-        type: UPDATE_PURVEYOR,
-        purveyorId: purveyorId,
-        product: newProductAttributes
-      })
-    }
-  }
-
-  function updatePurveyorProduct(purveyorId, productId, productAttributes){
-    return (dispatch) => {
-      dispatch(connectActions.ddpCall('updatePurveyorProduct', [purveyorId, productId, productAttributes]))
-      return dispatch({
-        type: UPDATE_PURVEYOR,
-        purveyorId: purveyorId,
-        productId: productId,
-        product: productAttributes
-      })
-    }
-  }
-
   function updatePurveyor(purveyorId, purveyorAttributes){
-    return (dispatch) => {
-      dispatch(connectActions.ddpCall('updatePurveyor', [purveyorId, purveyorAttributes]))
-      return dispatch({
-        type: UPDATE_PURVEYOR,
-        purveyorId: purveyorId,
-        purveyor: purveyorAttributes
-      })
+    return (dispatch, getState) => {
+      const { purveyors, session } = getState();
+      const sessionTeamId = session.teamId;
+      if(purveyors.teams.hasOwnProperty(sessionTeamId) === true){
+        if(purveyors.teams[sessionTeamId].hasOwnProperty(purveyorId) === true){
+          dispatch({
+            type: UPDATE_PURVEYOR,
+            purveyorId: purveyorId,
+            purveyor: Object.assign({}, purveyors.teams[sessionTeamId][purveyorId], purveyorAttributes),
+          })
+          dispatch(connectActions.ddpCall('updatePurveyor', [purveyorId, purveyorAttributes]))
+        } else {
+          // dispatch(errorActions.createError('update-purveyor', 'Unable to update purveyor'))
+        }
+      }
     }
   }
 
   function deletePurveyor(purveyorId) {
     return (dispatch, getState) => {
-      const {session} = getState()
-      dispatch(connectActions.ddpCall('deletePurveyor', [purveyorId, session.userId]))
-      return dispatch({
-        type: DELETE_PURVEYOR,
-        purveyorId: purveyorId
-      })
+      const { purveyors, session } = getState()
+      const sessionTeamId = session.teamId;
+      if(purveyors.teams.hasOwnProperty(sessionTeamId) === true){
+        if(purveyors.teams[sessionTeamId].hasOwnProperty(purveyorId) === true){
+          const deletePurveyorAttributes = Object.assign({}, purveyors.teams[sessionTeamId][purveyorId], {
+            deleted: true,
+            deletedBy: session.userId,
+            deletedAt: (new Date()).toISOString(),
+          })
+          dispatch({
+            type: DELETE_PURVEYOR,
+            purveyor: deletePurveyorAttributes,
+          })
+          dispatch(connectActions.ddpCall('deletePurveyor', [purveyorId, deletePurveyorAttributes]))
+        } else {
+          // dispatch(errorActions.createError('update-category', 'Unable to update category'))
+        }
+      }
     }
   }
 
@@ -145,13 +147,9 @@ export default function PurveyorActions(allActions){
     UPDATE_PURVEYOR,
     DELETE_PURVEYOR,
     addPurveyor,
-    addPurveyorProduct,
-    updatePurveyorProduct,
     updatePurveyor,
     deletePurveyor,
-    // getPurveyors,
     receivePurveyors,
     resetPurveyors,
-    completePurveyorProduct,
   }
 }

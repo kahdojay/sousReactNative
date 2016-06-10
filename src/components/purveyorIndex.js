@@ -21,19 +21,19 @@ class PurveyorIndex extends React.Component {
   render() {
     const { purveyors, products, session, connected } = this.props
 
-    if(connected === false){
-      return (
-        <View style={styles.container}>
-          <Text style={styles.inaccessible}>Order Guide inaccessible in offline mode</Text>
-        </View>
-      )
-    }
+    // if(connected === false){
+    //   return (
+    //     <View style={styles.container}>
+    //       <Text style={styles.inaccessible}>Order Guide inaccessible in offline mode</Text>
+    //     </View>
+    //   )
+    // }
 
     let purveyorsList = _.map(
       _.sortBy(purveyors, 'name'), (purveyor) => {
         if (purveyor.deleted === false) {
           return (
-            <View>
+            <View key={`container-${purveyor.id}`}>
               <PurveyorIndexRow
                 key={purveyor.id}
                 purveyor={purveyor}
@@ -104,7 +104,6 @@ const styles = StyleSheet.create({
 });
 
 PurveyorIndex.propTypes = {
-  onAddPurveyor: React.PropTypes.func,
   purveyors: React.PropTypes.object,
 };
 

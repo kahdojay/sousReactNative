@@ -29,17 +29,25 @@ class OrderContentsView extends React.Component {
       selectAll: this.checkAllReceived(this.props.products),
       showConfirm: false,
       confirmationMessage: null,
-      userId: null
+      userId: null,
+      toggleAll: false,
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      order: nextProps.order,
-      purveyor: nextProps.purveyor,
-      products: nextProps.products,
-      selectAll: this.checkAllReceived(nextProps.products),
-    })
+    // console.log(nextProps.actionType)
+    if(nextProps.actionType === 'RECEIVE_CART_ITEM'){
+      let updatedState = {
+        order: nextProps.order,
+        purveyor: nextProps.purveyor,
+        products: nextProps.products,
+        selectAll: this.state.selectAll,
+      }
+      if(this.state.toggleAll === false){
+        updatedState.selectAll = this.checkAllReceived(nextProps.products);
+      }
+      this.setState(updatedState)
+    }
   }
 
   componentWillMount(){
@@ -83,16 +91,20 @@ class OrderContentsView extends React.Component {
   }
 
   selectAllProducts() {
-    this.setState({
-      selectAll: !this.state.selectAll
-    })
-    _.each(this.state.products, (productPkg, idx) => {
+    const currentStateProducts = Object.assign([], this.state.products)
+    _.each(currentStateProducts, (productPkg, idx) => {
       const cartItem = productPkg.cartItem
       const productConfirmed = (cartItem.status === 'RECEIVED')
       const updateCartItem = Object.assign({}, cartItem, {
         status: this.state.selectAll ? 'ORDERED' : 'RECEIVED'
       })
       this.props.onConfirmOrderProduct(updateCartItem)
+      currentStateProducts[idx].cartItem.status = updateCartItem.status
+    })
+    this.setState({
+      selectAll: !this.state.selectAll,
+      toggleAll: true,
+      products: currentStateProducts,
     })
   }
 
@@ -130,14 +142,17 @@ class OrderContentsView extends React.Component {
   }
 
   render() {
-    let { products, order, purveyor, } = this.props    
+    let { actionType } = this.props
+    let { products, order, purveyor } = this.state
     let productsList = []
 
     if(this.state.loaded === true){
       let missingProducts = []
-      _.each(products, (productPkg, idx) => {
+      const displayProducts = Object.assign([], products)
+      _.each(displayProducts, (productPkg, idx) => {
         const product = productPkg.product
         const cartItem = productPkg.cartItem
+        // console.log(cartItem.status)
         const productConfirm = (cartItem.status === 'RECEIVED')
         let productKey = `missing-id-${idx}`
         if(cartItem.hasOwnProperty('id') === true){
@@ -149,6 +164,7 @@ class OrderContentsView extends React.Component {
         } else {
           productsList.push(
             <OrderListItem
+              actionType={actionType}
               key={productKey}
               teamBetaAccess={{}}
               orderConfirm={order.confirm}
@@ -159,7 +175,12 @@ class OrderContentsView extends React.Component {
               }}
               productConfirm={productConfirm}
               onHandleProductConfirm={(updateCartItem) => {
+                displayProducts[idx].cartItem = updateCartItem
                 this.props.onConfirmOrderProduct(updateCartItem)
+                this.setState({
+                  toggleAll: false,
+                  products: displayProducts,
+                })
               }}
             />
           )
@@ -240,9 +261,9 @@ class OrderContentsView extends React.Component {
       <View style={styles.orderContentsContainer}>
           <View style={styles.sectionSubHeader}>
             <Text># Rcvd</Text>
-            { order.confirm.order === false ? 
+            { order.confirm.order === false ?
               <TouchableHighlight
-                onPress={::this.selectAllProducts}                      
+                onPress={::this.selectAllProducts}
                 underlayColor='transparent'
               >
                 <Text style={styles.buttonSelectAll}>{this.state.selectAll ? 'Unselect All' : 'Select All'}</Text>
@@ -304,7 +325,6 @@ const styles = StyleSheet.create({
   buttonConfirmContainer: {
     flex: 2,
     justifyContent: 'center',
-    borderRadius: Sizes.rowBorderRadius,
     backgroundColor: Colors.gold,
     alignSelf: 'stretch',
   },

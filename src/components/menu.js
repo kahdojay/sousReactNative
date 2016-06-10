@@ -13,7 +13,7 @@ const {
   Image,
   Text,
   TouchableHighlight,
-  ProgressViewIOS
+  ProgressViewIOS,
 } = React;
 
 const window = Dimensions.get('window');
@@ -21,7 +21,7 @@ const window = Dimensions.get('window');
 /*
  * Modal for side bar Modal for side bar
  */
-module.exports = class Menu extends React.Component {
+class Menu extends React.Component {
   render() {
     const {team, session} = this.props
     const version = pkgInfo.version;
@@ -58,9 +58,8 @@ module.exports = class Menu extends React.Component {
             </View>
           </TouchableHighlight>
         </View>
-        <View style={styles.separator} />
         <View style={styles.menuBody}>
-          <ScrollView>
+          <ScrollView style={styles.menuMainBody}>
             <TouchableHighlight
               key='order-guide'
               onPress={this.props.onNavToPurveyor}
@@ -130,8 +129,21 @@ module.exports = class Menu extends React.Component {
               </View>
             </TouchableHighlight>
           </ScrollView>
+          { session.superUser === true ?
+          <TouchableHighlight
+              onPress={this.props.onNavToAdmin}
+              style={styles.menuItemButton}
+              underlayColor='#3e444f'
+            >
+              <View style={styles.menuTextContainer}>
+                <Icon name='material|account-circle' size={20} color='white' style={styles.menuIcon}/>
+                <Text style={styles.menuItemText}>
+                  Admin
+                </Text>
+              </View>
+            </TouchableHighlight>
+          : null }
         </View>
-        <View style={styles.separator} />
         <View style={styles.teamNameContainer}>
           <Text style={styles.sous}>Sous</Text>
           <Text style={styles.buildInfo}>{version}({build})</Text>
@@ -141,6 +153,13 @@ module.exports = class Menu extends React.Component {
   }
 }
 
+let avatarContainerFlex = 1
+let menuMainContainerFlex = 15
+if(window.height < 568){
+  avatarContainerFlex = 2
+  menuMainContainerFlex = 10
+}
+
 const styles = StyleSheet.create({
   menu: {
     marginTop: 20,
@@ -148,13 +167,15 @@ const styles = StyleSheet.create({
     height: window.height,
   },
   avatarContainer: {
-    flex: 1,
+    flex: avatarContainerFlex,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#3e444f',
     paddingTop: 10,
-    paddingBottom: 20,
+    paddingBottom: 10,
+    borderBottomWidth: 2,
+    borderColor: '#eee',
   },
   avatar: {
     width: 50,
@@ -162,6 +183,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
   },
   name: {
+    paddingTop: 10,
     flex: 1,
     fontSize: 18,
     fontFamily: 'OpenSans',
@@ -181,15 +203,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between'
   },
-  separator: {
-    height: 1,
-    borderColor: '#eee',
-    borderWidth: 1,
-  },
   menuBody: {
     flex: 5,
     width: window.width * (2/3),
     backgroundColor: '#5f697a',
+  },
+  menuMainBody: {
+    flex: menuMainContainerFlex,
   },
   menuItemButton: {
     flex: 1,
@@ -237,6 +257,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#3e444f',
     justifyContent: 'center',
     paddingBottom: 10,
+    borderTopWidth: 2,
+    borderColor: '#eee',
   },
   sous: {
     color: 'white',
@@ -249,3 +271,5 @@ const styles = StyleSheet.create({
     color: '#aaaaaa',
   }
 });
+
+export default Menu;

@@ -1,5 +1,4 @@
 import { generateId } from '../utilities/utils'
-import MessageActions from './message'
 import {
   RESET_PRODUCTS,
   GET_PRODUCTS,
@@ -16,6 +15,7 @@ export default function ProductActions(allActions){
   const {
     connectActions,
     categoryActions,
+    cartItemActions,
   } = allActions
 
   function resetProducts(teamId = null){
@@ -64,7 +64,7 @@ export default function ProductActions(allActions){
 
   function updateProduct(productId, productAttributes){
     return (dispatch, getState) => {
-      const { session, teams } = getState();
+      const { cartItems, session, teams } = getState();
       const { currentTeam } = teams;
 
       if(productAttributes.previousCategoryId !== productAttributes.categoryId){
@@ -82,7 +82,23 @@ export default function ProductActions(allActions){
         product: productAttributes
       })
 
-      return dispatch(connectActions.ddpCall('updateProduct', [productId, productAttributes, session.userId]))
+      dispatch(connectActions.ddpCall('updateProduct', [productId, productAttributes, session.userId]))
+
+      if(cartItems.teams.hasOwnProperty(session.teamId) === true){
+        const cartPurveyorIds = Object.keys(cartItems.teams[session.teamId].cart)
+        if(cartPurveyorIds.length > 0){
+          const allowOptimisticUpdates = true
+          productAttributes.purveyors.forEach(function(purveyorId) {
+            if(cartPurveyorIds.indexOf(purveyorId) !== -1 && cartItems.teams[session.teamId].cart[purveyorId].hasOwnProperty(productId) === true){
+              const cartItemId = cartItems.teams[session.teamId].cart[purveyorId][productId]
+              const updatedCartItem = Object.assign({}, cartItems.items[cartItemId], {
+                productName: productAttributes.name
+              })
+              dispatch(cartItemActions.updateCartItem(updatedCartItem, allowOptimisticUpdates))
+            }
+          })
+        }
+      }
     }
   }
 

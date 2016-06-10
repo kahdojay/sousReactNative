@@ -7,6 +7,7 @@ const Colors = {
   darkGrey: '#333333',
   // darkGrey: '#444',
   disabled: '#ccc',
+  disabledBlue: '#3333aa',
   error: '#f55',
   footerActiveHighlight: '#2700eb',
   footerButtonIconColor: '#c7c6c7',

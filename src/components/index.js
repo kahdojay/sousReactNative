@@ -1,5 +1,8 @@
+import AdminView from './AdminView';
 import CartRightButton from './CartRightButton';
 import CartView from './cartView';
+import CategoryForm from './form/categoryForm';
+import CategoryFormRightCheckbox from './categoryFormRightCheckbox';
 import CategoryIndex from './categoryIndex';
 import CategoryView from './categoryView';
 import ErrorModal from '../components/errorModal';
@@ -25,10 +28,12 @@ import OrderInvoices from './orderInvoices';
 import OrderInvoiceUpload from './orderInvoiceUpload';
 import OrderRightButton from './orderRightButton'
 import OrderView from './orderView';
-import ProductForm from './productForm';
+import ProductForm from './form/productForm';
 import ProductFormRightCheckbox from './productFormRightCheckbox';
 import ProductView from './productView';
 import ProfileView from './profileView';
+import PurveyorForm from './form/purveyorForm';
+import PurveyorFormRightCheckbox from './purveyorFormRightCheckbox';
 import PurveyorIndex from './purveyorIndex';
 import PurveyorView from './purveyorView';
 import Signup from './signup';
@@ -42,8 +47,11 @@ import UserInfo from './userInfo';
 import UserTeam from './userTeam';
 
 export default {
+  AdminView,
   CartRightButton,
   CartView,
+  CategoryForm,
+  CategoryFormRightCheckbox,
   CategoryIndex,
   CategoryView,
   ErrorModal,
@@ -73,6 +81,8 @@ export default {
   ProductFormRightCheckbox,
   ProductView,
   ProfileView,
+  PurveyorForm,
+  PurveyorFormRightCheckbox,
   PurveyorIndex,
   PurveyorView,
   Signup,

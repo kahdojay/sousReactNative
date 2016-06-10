@@ -17,7 +17,6 @@ const {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableHighlight,
   View,
 } = React;
@@ -41,17 +40,37 @@ class OrderView extends React.Component {
       confirmationMessage: null,
       showOrderContents: false,
       showPurveyorContact: false,
+      hideOrderHeader: false,
+      stateUpdated: false,
     }
+    this.commentTimeoutId = null
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if(this.state.stateUpdated === true || nextState.stateUpdated === true){
+      return true
+    }
+    return false
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      orderId: nextProps.orderId,
-      orderFetching: nextProps.orderFetching,
-      order: nextProps.order,
-      purveyor: nextProps.purveyor,
-      products: nextProps.products,
-    })
+    if(['RECEIVE_ORDERS', 'UPDATE_ORDER'].indexOf(nextProps.actionType) !== -1){
+      console.log(nextProps.actionType)
+      this.setState({
+        orderId: nextProps.orderId,
+        orderFetching: nextProps.orderFetching,
+        order: nextProps.order,
+        purveyor: nextProps.purveyor,
+        products: nextProps.products,
+        stateUpdated: true,
+      }, () => {
+        this.checkForOrderDetails()
+        this.setState({
+          stateUpdated: false,
+        })
+      })
+
+    }
   }
 
   componentWillMount(){
@@ -64,11 +83,30 @@ class OrderView extends React.Component {
       purveyor: this.props.purveyor,
       teamsUsers: this.props.teamsUsers,
       loaded: true,
+      stateUpdated: true,
     }, () => {
       if(this.checkMissingData() === true){
         this.props.onGetOrderDetails(this.state.orderId)
       }
+      this.setState({
+        stateUpdated: false,
+      })
     })
+  }
+
+  componentDidMount() {
+    this.checkForOrderDetails()
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.commentTimeoutId)
+  }
+
+  checkForOrderDetails() {
+    clearTimeout(this.commentTimeoutId)
+    this.commentTimeoutId = setTimeout(() =>{
+      this.props.onGetOrderDetails(this.state.orderId)
+    }, 500)
   }
 
   checkMissingData() {
@@ -98,7 +136,7 @@ class OrderView extends React.Component {
         const orderDate = moment(order.orderedAt).tz(timeZone);
         const to = purveyor.orderEmails.split(',')
         const cc = ['orders@sousapp.com']
-        const subject = `Order Comment from ${team.name} • 's Order on ${orderDate.format('dddd, MMMM D')}`
+        const subject = `Order Comment from ${team.name} (Ref: ${order.orderRef || order.createdAt})`
         let body = `Order Ref: ${order.orderRef || order.createdAt}`
         // orderProducts.forEach(function(o) {
         //   body += `\n ${o.cartItem.productName} x ${o.cartItem.amount * o.cartItem.quantity} ${o.cartItem.unit}`
@@ -129,16 +167,34 @@ class OrderView extends React.Component {
     orderComments.unshift({
       userId: this.props.userId,
       author: this.props.userName,
-      text: msg,
+      imageUrl: this.props.userImgUrl,
+      text: msg.text,
       createdAt: new Date().toISOString()
     })
     this.setState({
       order: Object.assign({}, this.state.order, {
         comments: orderComments,
-      })
+      }),
+      stateUpdated: true,
     }, () => {
       this.props.onUpdateOrder(this.state.order)
+      this.setState({
+        stateUpdated: false,
+      })
     })
+  }
+
+  // Scroll a component into view. Just pass the component ref string.
+  inputFocused(refName) {
+    // console.log(this.refs)
+    setTimeout(() => {
+      let scrollResponder = this.refs.scrollView.getScrollResponder();
+      scrollResponder.scrollResponderScrollNativeHandleToKeyboard(
+        React.findNodeHandle(this.refs[refName]),
+        100, //additionalOffset
+        true
+      );
+    }, 20);
   }
 
   render() {
@@ -148,7 +204,6 @@ class OrderView extends React.Component {
       products,
       teamsUsers,
     } = this.state;
-
     if(this.checkMissingData() === true){
       return (
         <View style={styles.container}>
@@ -178,7 +233,7 @@ class OrderView extends React.Component {
     let numberOfInvoices = order.invoices ? order.invoices.length : 0
     let invoiceButtonText = 'Upload Invoice / Photo'
     switch (numberOfInvoices) {
-      case 0: 
+      case 0:
         invoiceButtonText = 'Upload Invoice / Photo'
         break
       case 1:
@@ -207,7 +262,7 @@ class OrderView extends React.Component {
           <OrderComment
             key={idx}
             message={comment}
-            imgUrl={this.props.userImgUrl}
+            imgUrl={comment.imageUrl}
           />
         )
       })
@@ -216,24 +271,28 @@ class OrderView extends React.Component {
       <View style={styles.container}>
         { this.state.loaded === true ?
           <View style={styles.container}>
-            <View style={styles.confirmedContainer}>
-              <View style={styles.confirmationDetails}>
-                <Text style={styles.purveyorName}>{this.props.purveyor.name}</Text>
-                <Text style={[styles.confirmedText]}>
-                  <Text style={{fontStyle: 'italic'}}>Ord.</Text> {order.orderedAt !== null ? moment(order.orderedAt).format('ddd, MMM D, h:mma') : ''} {orderUser ? `- ${orderUser.firstName}` : ''}</Text>
-                {order.confirm.order === true ? (
-                    <View>
-                      <Text style={[styles.confirmedText]}><Text style={{fontStyle: 'italic'}}>Rec.</Text> {order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('ddd, MMM D, h:mma') : ''} {confirmUser ? `- ${confirmUser.firstName}` : ''}</Text>
-                    </View>
-                  ) : <View/>
-                }
-                
+            { this.state.hideOrderHeader === false ?
+              <View style={styles.confirmedContainer}>
+                <View style={styles.confirmationDetails}>
+                  <Text style={styles.purveyorName}>{this.props.purveyor.name}</Text>
+                  <Text style={[styles.confirmedText]}>
+                    <Text style={{fontStyle: 'italic'}}>Ord.</Text> {order.orderedAt !== null ? moment(order.orderedAt).format('ddd, MMM D, h:mma') : ''} {orderUser ? `- ${orderUser.firstName}` : ''}</Text>
+                  {order.confirm.order === true ? (
+                      <View>
+                        <Text style={[styles.confirmedText]}><Text style={{fontStyle: 'italic'}}>Rec.</Text> {order.confirm.confirmedAt !== null ? moment(order.confirm.confirmedAt).format('ddd, MMM D, h:mma') : ''} {confirmUser ? `- ${confirmUser.firstName}` : ''}</Text>
+                      </View>
+                    ) : <View/>
+                  }
+
+                </View>
               </View>
-            </View>
+            : null }
             <View style={styles.scrollViewContainer}>
               <ScrollView
+                ref='scrollView'
                 automaticallyAdjustContentInsets={false}
                 keyboardShouldPersistTaps={false}
+                style={styles.scrollView}
               >
                 <View style={styles.optionsContainer}>
                   <TouchableHighlight
@@ -272,6 +331,11 @@ class OrderView extends React.Component {
                     onPress={() => {
                       this.setState({
                         showPurveyorContact: !this.state.showPurveyorContact,
+                        stateUpdated: true,
+                      }, () => {
+                        this.setState({
+                          stateUpdated: false,
+                        })
                       })
                     }}
                     underlayColor='transparent'
@@ -285,7 +349,7 @@ class OrderView extends React.Component {
                       </View>
                     </View>
                   </TouchableHighlight>
-                  { this.state.showPurveyorContact ? 
+                  { this.state.showPurveyorContact ?
                     <View style={styles.purveyorContactContainer}>
                       <Text style={styles.purveyorRepName}>{this.props.purveyor.orderContact || ''}</Text>
                       <View style={styles.iconContactContainer}>
@@ -321,9 +385,31 @@ class OrderView extends React.Component {
                 <View style={styles.commentsContainer}>
                   <View style={styles.inputContainer}>
                     <AddCommentForm
+                      ref='comment'
                       placeholder='Comment on this order..'
                       onSubmit={::this.handleCommentSubmit}
                       multiline={false}
+                      onFocus={() => {
+                        this.setState({
+                          hideOrderHeader: true,
+                          stateUpdated: true,
+                        }, () => {
+                          this.setState({
+                            stateUpdated: false,
+                          })
+                        })
+                        this.inputFocused('comment')
+                      }}
+                      onBlur={() => {
+                        this.setState({
+                          hideOrderHeader: false,
+                          stateUpdated: true,
+                        }, () => {
+                          this.setState({
+                            stateUpdated: false,
+                          })
+                        })
+                      }}
                     />
                   </View>
                   {orderComments}
@@ -361,12 +447,10 @@ const styles = StyleSheet.create({
   },
   scrollViewContainer: {
     flex: 1,
-    padding: 5,
   },
   scrollView: {
     flex: 1,
-    backgroundColor: Colors.mainBackgroundColor,
-    paddingTop: 5,
+    padding: 5,
   },
   optionsContainer: {
     marginTop: 10,

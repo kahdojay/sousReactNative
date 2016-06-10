@@ -21,6 +21,7 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import semver from 'semver';
 
 const {
+  LayoutAnimation,
   Navigator,
   NetInfo,
   PropTypes,
@@ -77,11 +78,21 @@ class App extends React.Component {
       purveyor: null,
       showGenericModal: false,
       sceneState: {
+        CategoryForm: {
+          submitReady: false,
+          categoryId: null,
+          categoryAttributes: {},
+        },
         ProductForm: {
           cartItem: null,
           submitReady: false,
           productId: null,
           productAttributes: {},
+        },
+        PurveyorForm: {
+          submitReady: false,
+          purveyorId: null,
+          purveyorAttributes: {},
         },
         OrderIndex: {
           showConfirmedOrders: false,
@@ -90,10 +101,12 @@ class App extends React.Component {
           invoiceImages: [],
         }
       },
+      showCreateOptions: false,
       touchToClose: false,
       lastResourceInfoRetrieval: (new Date(constructorNow - ((60*60*1000) + 100) )).toISOString(),
       lastResourceInfoFetching: false,
       networkConnected: true,
+      navigateNext: null,
     }
     this.reconnectTimeout = null
     this.initialRoute = 'Signup'
@@ -286,14 +299,20 @@ class App extends React.Component {
       } else {
         componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval = this.state.lastResourceInfoRetrieval
       }
+      // console.log(nextProps.actionType, this.state.lastResourceInfoFetching)
       if(
-        moment().diff(componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval) > (60*1000)
+        moment().diff(componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval) > (5*60*1000)
         && this.state.lastResourceInfoFetching === false
       ){
         componentWillReceivePropsStateUpdate.lastResourceInfoFetching = true
         // console.log('Dispatching ')
         dispatch(actions.getTeamResourceInfo(currentTeamInfo.team.id))
-      } else {
+      } else if(
+        moment().diff(componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval) > (15*60*1000)
+        && this.state.lastResourceInfoFetching === true
+      ){
+        componentWillReceivePropsStateUpdate.lastResourceInfoFetching = false
+      } else if(nextProps.actionType === 'RECEIVE_TEAM_RESOURCE_INFO') {
         // console.log(moment().diff(componentWillReceivePropsStateUpdate.lastResourceInfoRetrieval), (60*1000))
         componentWillReceivePropsStateUpdate.lastResourceInfoFetching = false
       }
@@ -472,6 +491,16 @@ class App extends React.Component {
         }
       }
 
+      if(rbodRouteName === 'CartView' && this.props.actionType === 'ORDER_SENT' && this.state.navigateNext !== null){
+        this.setState({
+          navigateNext: null,
+        }, () => {
+          this.refs.appNavigator.replacePreviousAndPop({
+            name: 'Feed',
+          });
+        })
+      }
+
       // ...
     }
   }
@@ -507,21 +536,46 @@ class App extends React.Component {
     sceneState.ProductForm.cartItem = null;
     sceneState.ProductForm.productId = null;
     sceneState.ProductForm.productAttributes = {};
-    const routeName = route.name;
     this.setState({
       sceneState: sceneState,
-      category: category,
       product: null,
     }, () => {
       nav.push({
         name: 'ProductForm',
-        newRoute: routeName,
+        newRoute: route.name,
+      })
+    })
+  }
+
+  onCreateCategory(route, nav) {
+    const sceneState = Object.assign({}, this.state.sceneState);
+    sceneState.CategoryForm.submitReady = false;
+    this.setState({
+      sceneState: sceneState,
+      // category: null,
+    }, () => {
+      nav.push({
+        name: 'CategoryForm',
+        newRoute: route.name,
+      })
+    })
+  }
+
+  onCreatePurveyor(route, nav) {
+    const sceneState = Object.assign({}, this.state.sceneState);
+    sceneState.PurveyorForm.submitReady = false;
+    this.setState({
+      sceneState: sceneState,
+      // purveyor: null,
+    }, () => {
+      nav.push({
+        name: 'PurveyorForm',
+        newRoute: route.name,
       })
     })
   }
 
   onProductEdit(route, nav, product) {
-    // console.log(route, nav, product)
     let productCategory = null
     Object.keys(this.state.currentTeamInfo.categories).forEach((categoryId) => {
       const category = this.state.currentTeamInfo.categories[categoryId]
@@ -581,7 +635,7 @@ class App extends React.Component {
   }
 
   getOrderItems(orderId) {
-    if(this.state.currentTeamInfo.cartItems['orders'].hasOwnProperty(orderId) === true){
+    if(orderId && this.state.currentTeamInfo.cartItems['orders'].hasOwnProperty(orderId) === true){
       const orderItemsIds = Object.keys(this.state.currentTeamInfo.cartItems['orders'][orderId])
       let orderProducts = []
       _.each(orderItemsIds, (cartItemId) => {
@@ -1059,10 +1113,7 @@ class App extends React.Component {
                 })
               })
             },
-            onAddPurveyor: (name) => {
-              dispatch(actions.addPurveyor(name))
-            },
-            onCreateProduct: this.onCreateProduct.bind(this, route, nav, null),
+            // onCreateProduct: this.onCreateProduct.bind(this, route, nav, null),
           },
         }
       case 'PurveyorView':
@@ -1103,16 +1154,17 @@ class App extends React.Component {
             onProductEdit: this.onProductEdit.bind(this, route, nav),
             onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
+                const allowOptimisticUpdates = true
                 switch(cartAction){
                   case actions.CART.DELETE:
-                    dispatch(actions.deleteCartItem(cartAttributes))
+                    dispatch(actions.deleteCartItem(cartAttributes, allowOptimisticUpdates))
                     break;
                   case actions.CART.UPDATE:
-                    dispatch(actions.updateCartItem(cartAttributes))
+                    dispatch(actions.updateCartItem(cartAttributes, allowOptimisticUpdates))
                     break;
                   case actions.CART.ADD:
                   default:
-                    dispatch(actions.addCartItem(cartAttributes))
+                    dispatch(actions.addCartItem(cartAttributes, allowOptimisticUpdates))
                     break;
                 }
               }, 25)()
@@ -1188,7 +1240,7 @@ class App extends React.Component {
                 })
               })
             },
-            onCreateProduct: this.onCreateProduct.bind(this, route, nav, null),
+            // onCreateProduct: this.onCreateProduct.bind(this, route, nav, null),
           },
         }
       case 'CategoryView':
@@ -1212,16 +1264,17 @@ class App extends React.Component {
             onProductEdit: this.onProductEdit.bind(this, route, nav),
             onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
+                const allowOptimisticUpdates = true
                 switch(cartAction){
                   case actions.CART.DELETE:
-                    dispatch(actions.deleteCartItem(cartAttributes))
+                    dispatch(actions.deleteCartItem(cartAttributes, allowOptimisticUpdates))
                     break;
                   case actions.CART.UPDATE:
-                    dispatch(actions.updateCartItem(cartAttributes))
+                    dispatch(actions.updateCartItem(cartAttributes, allowOptimisticUpdates))
                     break;
                   case actions.CART.ADD:
                   default:
-                    dispatch(actions.addCartItem(cartAttributes))
+                    dispatch(actions.addCartItem(cartAttributes, allowOptimisticUpdates))
                     break;
                 }
               }, 25)()
@@ -1285,6 +1338,7 @@ class App extends React.Component {
         return {
           component: Components.OrderView,
           props: {
+            actionType: this.props.actionType,
             team: this.state.currentTeamInfo.team,
             userId: session.userId,
             userImgUrl: session.imageUrl,
@@ -1339,23 +1393,25 @@ class App extends React.Component {
         return {
           component: Components.OrderContentsView,
           props: {
+            actionType: this.props.actionType,
             order: this.state.order,
             purveyor: this.state.purveyor,
             products: orderProducts,
             userId: session.userId,
             userName: session.firstName,
             onProductEdit: this.onProductEdit.bind(this, route, nav),
-            onConfirmOrderProduct: (updateCartItem) => {
+            onConfirmOrderProduct: (cartItemToUpdate) => {
               _.debounce(() => {
+                let allowOptimisticUpdatesOrderContentsView = true
                 dispatch(actions.updateCartItem({
-                  id: updateCartItem.id,
-                  teamId: updateCartItem.teamId,
-                  purveyorId: updateCartItem.purveyorId,
+                  id: cartItemToUpdate.id,
+                  teamId: cartItemToUpdate.teamId,
+                  purveyorId: cartItemToUpdate.purveyorId,
                   orderId: this.state.order.id,
-                  productId: updateCartItem.productId,
-                  status: updateCartItem.status,
-                  quantityReceived: updateCartItem.quantityReceived || updateCartItem.quantity,
-                }))
+                  productId: cartItemToUpdate.productId,
+                  status: cartItemToUpdate.status,
+                  quantityReceived: cartItemToUpdate.quantityReceived || cartItemToUpdate.quantity,
+                }, allowOptimisticUpdatesOrderContentsView))
               }, 25)()
             },
             onGetOrderDetails: (orderId) => {
@@ -1492,6 +1548,53 @@ class App extends React.Component {
             },
           },
         }
+      case 'PurveyorForm':
+        return {
+          component: Components.PurveyorForm,
+          props: {
+            purveyor: this.state.purveyor,
+            team: this.state.currentTeamInfo.team,
+            // purveyors: this.state.currentTeamInfo.purveyors,
+            onProcessPurveyor: (purveyorAttributes) => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              const existingPurveyorAttributes = Object.assign({}, sceneState.PurveyorForm.purveyorAttributes, purveyorAttributes);
+              sceneState.PurveyorForm.submitReady = true;
+              sceneState.PurveyorForm.purveyorAttributes = existingPurveyorAttributes;
+              this.setState({
+                sceneState: sceneState
+              })
+            },
+            onPurveyorNotReady: () => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.PurveyorForm.submitReady = false;
+              this.setState({
+                sceneState: sceneState
+              })
+            },
+          },
+        }
+      case 'CategoryForm':
+        return {
+          component: Components.CategoryForm,
+          props: {
+            onProcessCategory: (categoryAttributes) => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              const existingCategoryAttributes = Object.assign({}, sceneState.CategoryForm.categoryAttributes);
+              sceneState.CategoryForm.submitReady = true;
+              sceneState.CategoryForm.categoryAttributes = Object.assign({}, existingCategoryAttributes, categoryAttributes);
+              this.setState({
+                sceneState: sceneState
+              })
+            },
+            onCategoryNotReady: () => {
+              const sceneState = Object.assign({}, this.state.sceneState);
+              sceneState.CategoryForm.submitReady = false;
+              this.setState({
+                sceneState: sceneState
+              })
+            }
+          },
+        }
       case 'UserInfo':
         return {
           component: Components.UserInfo,
@@ -1538,6 +1641,7 @@ class App extends React.Component {
           component: Components.InviteView,
           props: {
             contacts: contacts.data,
+            currentTeamInfo: this.state.currentTeamInfo,
             isFetching: contacts.isFetching,
             denied: contacts.contactsPermissionDenied,
             getContacts: () => {
@@ -1581,6 +1685,7 @@ class App extends React.Component {
         return {
           component: Components.CartView,
           props: {
+            actionType: this.props.actionType,
             // team: this.state.currentTeamInfo.team,
             offlineQueueCount: Object.keys(offline.queue).length,
             teamBetaAccess: this.state.currentTeamInfo.betaAccess,
@@ -1590,13 +1695,14 @@ class App extends React.Component {
             products: this.state.currentTeamInfo.products,
             onUpdateProductInCart: (cartAction, cartAttributes) => {
               _.debounce(() => {
+                const allowOptimisticUpdates = true
                 switch(cartAction){
                   case actions.CART.DELETE:
-                    dispatch(actions.deleteCartItem(cartAttributes))
+                    dispatch(actions.deleteCartItem(cartAttributes, allowOptimisticUpdates))
                     break;
                   case actions.CART.UPDATE:
                   default:
-                    dispatch(actions.updateCartItem(cartAttributes))
+                    dispatch(actions.updateCartItem(cartAttributes, allowOptimisticUpdates))
                     break;
                 }
               }, 25)()
@@ -1606,15 +1712,15 @@ class App extends React.Component {
               NetInfo.isConnected.fetch().then((isConnected) => {
                 if(isConnected === true){
                   _.debounce(() => {
-                    dispatch(actions.sendCart(cartInfo));
+                    dispatch(actions.verifyCart(cartInfo));
                   }, 25)()
                   if(navigateToFeed === true){
-                    nav.replacePreviousAndPop({
-                      name: 'Feed',
-                    });
+                    this.setState({
+                      navigateNext: 'Feed'
+                    })
                   }
                 } else {
-                  dispatch(actions.createError('network-connectivity', 'Please check that your device is connected to the internet and try again'))
+                  dispatch(actions.createError('network-connectivity', 'Internet connection error, please check your signal and resubmit.'))
                 }
               })
 
@@ -1643,6 +1749,15 @@ class App extends React.Component {
                 const body = null
                 Communications.email(to, cc, null, subject, body)
               }
+            },
+          },
+        }
+      case 'AdminView':
+        return {
+          component: Components.AdminView,
+          props: {
+            onTest: () => {
+              console.log('test')
             },
           },
         }
@@ -1746,6 +1861,18 @@ class App extends React.Component {
                 disabled={(this.state.currentTeamInfo.team === null)}
               />
             ),
+            customNext: (
+              <Components.FeedViewRightButton
+                onShowCreateOptions={() => {
+                  this.setState({
+                    showCreateOptions: true,
+                    category: null,
+                    purveyor: null,
+                  })
+                  // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+                }}
+              />
+            )
           })
           break;
         case 'PurveyorIndex':
@@ -1766,9 +1893,15 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
+                onShowCreateOptions={() => {
+                  this.setState({
+                    showCreateOptions: true,
+                  })
+                  // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+                }}
                 cartItems={this.state.currentTeamInfo.cart}
               />
+              // onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
             )
           })
           break;
@@ -1809,9 +1942,15 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
+                onShowCreateOptions={() => {
+                  this.setState({
+                    showCreateOptions: true,
+                  })
+                  // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+                }}
                 cartItems={this.state.currentTeamInfo.cart}
               />
+              // onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
             )
           })
           break;
@@ -1835,9 +1974,15 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
+                onShowCreateOptions={() => {
+                  this.setState({
+                    showCreateOptions: true,
+                  })
+                  // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+                }}
                 cartItems={this.state.currentTeamInfo.cart}
               />
+              // onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
             )
           })
           break;
@@ -1862,9 +2007,15 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onCreateProduct={this.onCreateProduct.bind(this, route, nav, this.state.category)}
+                onShowCreateOptions={() => {
+                  this.setState({
+                    showCreateOptions: true,
+                  })
+                  // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+                }}
                 cartItems={this.state.currentTeamInfo.cart}
               />
+              // onCreateProduct={this.onCreateProduct.bind(this, route, nav, this.state.category)}
             )
           })
           break;
@@ -2061,14 +2212,14 @@ class App extends React.Component {
             route: route,
             customPrev: (
               <Components.NavBackButton
-                iconFont={'material|close'}
                 pop={true}
+                iconText={'Cancel'}
               />
             ),
-            // title: (this.state.product === null) ? 'Add New Product' : 'Edit Product',
+            // title: (this.state.product === null) ? 'New Ingredient' : 'Edit Product',
             customTitle: (
               <TextComponents.NavBarTitle
-                content={(this.state.product === null) ? 'Add New Product' : 'Edit Product'}
+                content={(this.state.product === null) ? 'New Ingredient' : 'Edit Product'}
               />
             ),
             customNext: (
@@ -2085,9 +2236,85 @@ class App extends React.Component {
                     }
                     if(this.state.sceneState.ProductForm.cartItem){
                       const cartItemPurveyorId = this.state.sceneState.ProductForm.cartItem.purveyorId
+                      const allowOptimisticUpdates = true
                       if(productAttributes.purveyors.indexOf(cartItemPurveyorId) === -1){
-                        dispatch(actions.deleteCartItem(this.state.sceneState.ProductForm.cartItem))
+                        dispatch(actions.deleteCartItem(this.state.sceneState.ProductForm.cartItem, allowOptimisticUpdates))
                       }
+                    }
+                    nav.replacePreviousAndPop({
+                      name: route.newRoute,
+                    });
+                  }, 5)()
+                }}
+              />
+            ),
+          })
+          break;
+        case 'PurveyorForm':
+          navBar = React.cloneElement(this.navBar, {
+            ref: 'navBar',
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                pop={true}
+                iconText={'Cancel'}
+              />
+            ),
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'New Purveyor'}
+                // content={(this.state.purveyor === null) ? 'New Purveyor' : 'Edit Purveyor'}
+              />
+            ),
+            customNext: (
+              <Components.PurveyorFormRightCheckbox
+                submitReady={this.state.sceneState.PurveyorForm.submitReady}
+                onProcessPurveyor={() => {
+                  _.debounce(() => {
+                    const {purveyorId, purveyorAttributes} = this.state.sceneState.PurveyorForm
+                    if(purveyorId === null){
+                      dispatch(actions.addPurveyor(purveyorAttributes))
+                      dispatch(actions.getTeamResourceInfo(this.state.currentTeamInfo.team.id))
+                    } else {
+                      dispatch(actions.updatePurveyor(purveyorId, purveyorAttributes))
+                    }
+                    nav.replacePreviousAndPop({
+                      name: route.newRoute,
+                    });
+                  }, 5)()
+                }}
+              />
+            ),
+          })
+          break;
+        case 'CategoryForm':
+          navBar = React.cloneElement(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                iconFont={'material|close'}
+                pop={true}
+                iconText={'Cancel'}
+              />
+            ),
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'New Category'}
+              />
+            ),
+            customNext: (
+              <Components.CategoryFormRightCheckbox
+                submitReady={this.state.sceneState.CategoryForm.submitReady}
+                onProcessCategory={() => {
+                  _.debounce(() => {
+                    const {categoryId, categoryAttributes} = this.state.sceneState.CategoryForm
+                    if(categoryId === null){
+                      dispatch(actions.addCategory(categoryAttributes))
+                      dispatch(actions.getTeamResourceInfo(this.state.currentTeamInfo.team.id))
+                    } else {
+                      dispatch(actions.updateCategory(categoryId, categoryAttributes))
                     }
                     nav.replacePreviousAndPop({
                       name: route.newRoute,
@@ -2126,6 +2353,22 @@ class App extends React.Component {
             ),
           })
           break;
+        case 'AdminView':
+          navBar = React.cloneElement(this.navBar, {
+            navigator: nav,
+            route: route,
+            customPrev: (
+              <Components.NavBackButton
+                pop={true}
+              />
+            ),
+            customTitle: (
+              <TextComponents.NavBarTitle
+                content={'Admin'}
+              />
+            ),
+          })
+          break;
         case 'session/onboarding':
         case 'UserInfo':
         case 'UserTeam':
@@ -2150,7 +2393,18 @@ class App extends React.Component {
   }
 
   renderScene(route, nav) {
-    const { dispatch, session, teams, messages, purveyors, products, categories, errors, connect } = this.props;
+    const {
+      dispatch,
+      session,
+      teams,
+      messages,
+      purveyors,
+      products,
+      categories,
+      errors,
+      connect,
+      offline,
+    } = this.props;
 
     route = this.getRoute(route, nav);
 
@@ -2246,32 +2500,54 @@ class App extends React.Component {
           onNavToTeamIndex={() => {
             nav.push({ name: 'TeamIndex', })
           }}
+          onNavToAdmin={() => {
+            nav.push({ name: 'AdminView', })
+          }}
         />
       );
     }
 
     let connectionStatus = null
-    if(connect.status === actions.CONNECT.OFFLINE){
+    if(connect.status === actions.CONNECT.OFFLINE || Object.keys(offline.queue).length > 0){
       let reconnectText = `reconnecting in ${Math.floor(this.state.connectionStats.reconnect/1000)}s`
       // if(this.state.connectionStats.attempt === 0 || this.state.connectionStats.reconnect === 0){
       //   reconnectText = 'connecting...'
       // }
+      let messageText = null
+      let genericModalMessage = null
+      let showIcon = true
+      if(connect.status === actions.CONNECT.OFFLINE) {
+        genericModalMessage = (
+          <TextComponents.LearnMoreMessage />
+        )
+        messageText = (
+          <Text style={styles.offlineText}>Connection offline, {reconnectText}</Text>
+        )
+      } else if(Object.keys(offline.queue).length > 0){
+        genericModalMessage = null
+        messageText = (
+          <Text style={[styles.offlineText, {lineHeight: 19}]}>Syncing offline data</Text>
+        )
+        showIcon = false
+      }
       connectionStatus = (
         <TouchableHighlight
           onPress={() => {
-            this.setState({
-              genericModalMessage: (
-                <TextComponents.LearnMoreMessage />
-              ),
-              showGenericModal: true,
-            })
+            if(genericModalMessage !== null){
+              this.setState({
+                genericModalMessage: genericModalMessage,
+                showGenericModal: true,
+              })
+            }
           }}
           underlayColor='transparent'
         >
           <View style={styles.offlineContainer}>
             <View style={styles.offlineInnerContainer}>
-              <Icon name='material|info' size={20} color={'white'} style={styles.offlineIcon} />
-              <Text style={styles.offlineText}>Connection offline, {reconnectText}</Text>
+              { showIcon === true ?
+                <Icon name='material|info' size={20} color={'white'} style={styles.offlineIcon} />
+              : null }
+              <Text style={styles.offlineText}>{messageText}</Text>
             </View>
           </View>
         </TouchableHighlight>
@@ -2288,6 +2564,91 @@ class App extends React.Component {
       )
     }
 
+    // let createOptions = this.state.showCreateOptions === true ? (
+    //   <View>
+    //     <View style={styles.createOptionsHeader}>
+    //       <Text style={styles.createOptionsHeaderText}>Create New:</Text>
+    //     </View>
+    //     <TouchableHighlight
+    //       onPress={() => {
+    //         this.onCreateProduct(route, nav, null)
+    //         this.setState({showCreateOptions: false})
+    //       }}
+    //       underlayColor='transparent'
+    //       style={styles.createOptionButton}
+    //     >
+    //         <Text style={styles.createOptionText}>Ingredient</Text>
+    //     </TouchableHighlight>
+    //     <TouchableHighlight
+    //       onPress={() => {
+    //         console.log('nav to purveyorCreate')
+    //         this.setState({showCreateOptions: false})
+    //       }}
+    //       underlayColor='transparent'
+    //       style={styles.createOptionButton}
+    //     >
+    //         <Text style={styles.createOptionText}>Purveyor</Text>
+    //     </TouchableHighlight>
+    //     <TouchableHighlight
+    //       onPress={() => {
+    //         console.log('show create category modal')
+    //         this.setState({showCreateOptions: false})
+    //       }}
+    //       underlayColor='transparent'
+    //       style={styles.createOptionButton}
+    //     >
+    //         <Text style={styles.createOptionText}>Category</Text>
+    //     </TouchableHighlight>
+    //   </View>
+    // ) : <View/>
+    let createOptions = (
+      <ModalComponents.GenericModal
+        modalVisible={this.state.showCreateOptions}
+        onHideModal={genericModalDismiss}
+        leftButton={{
+          text: 'Cancel',
+          onPress: () => {
+            this.setState({showCreateOptions: false})
+          }
+        }}
+      >
+        <View>
+          <View style={styles.createOptionsHeader}>
+            <Text style={styles.createOptionsHeaderText}>Create New:</Text>
+          </View>
+          <TouchableHighlight
+            onPress={() => {
+              this.onCreateProduct(route, nav, null)
+              this.setState({showCreateOptions: false})
+            }}
+            underlayColor='transparent'
+            style={styles.createOptionButton}
+          >
+              <Text style={styles.createOptionText}>Ingredient</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            onPress={() => {
+              this.onCreatePurveyor(route, nav, null)
+              this.setState({showCreateOptions: false})
+            }}
+            underlayColor='transparent'
+            style={styles.createOptionButton}
+          >
+              <Text style={styles.createOptionText}>Purveyor</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            onPress={() => {
+              this.onCreateCategory(route, nav)
+              this.setState({showCreateOptions: false})
+            }}
+            underlayColor='transparent'
+            style={styles.createOptionButton}
+          >
+              <Text style={styles.createOptionText}>Category</Text>
+          </TouchableHighlight>
+        </View>
+      </ModalComponents.GenericModal>
+    )
     return (
       <CustomSideView
         ref='customSideView'
@@ -2297,6 +2658,7 @@ class App extends React.Component {
       >
         <View style={styles.container} >
           {navBar}
+          {createOptions}
           {errorModal}
           {genericModal}
           {connectionStatus}
@@ -2350,6 +2712,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.navbarColor,
     borderBottomWidth: 2,
     borderBottomColor: '#ccc',
+  },
+  createOptionsHeader: {
+    backgroundColor: Colors.blue,
+  },
+  createOptionsHeaderText: {
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  createOptionButton: {
+    // backgroundColor: Colors.blue,
+  },
+  createOptionText: {
+    fontWeight: 'bold',
+    color: Colors.lightBlue,
   },
   offlineContainer: {
     width: window.width,

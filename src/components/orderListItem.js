@@ -27,17 +27,36 @@ class OrderListItem extends React.Component {
       loaded: false,
       editQuantity: false,
       quantityReceived: null,
+      stateUpdated: false,
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if(this.state.stateUpdated === true || nextState.stateUpdated === true){
+      return true
+    }
+    return false
+  }
+
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      orderConfirm: nextProps.orderConfirm,
-      product: nextProps.product,
-      cartItem: nextProps.cartItem,
-      productConfirm: nextProps.productConfirm,
-      quantityReceived: nextProps.cartItem.quantityReceived || nextProps.cartItem.quantity,
-    })
+    if(
+      nextProps.actionType === 'RECEIVE_CART_ITEM'
+      || this.state.productConfirm !== nextProps.productConfirm
+    ){
+      // console.log(nextProps.actionType)
+      this.setState({
+        orderConfirm: nextProps.orderConfirm,
+        product: nextProps.product,
+        cartItem: nextProps.cartItem,
+        productConfirm: nextProps.productConfirm,
+        quantityReceived: nextProps.cartItem.quantityReceived || nextProps.cartItem.quantity,
+        stateUpdated: true,
+      }, () => {
+        this.setState({
+          stateUpdated: false,
+        })
+      })
+    }
   }
 
   componentWillMount(){
@@ -48,6 +67,11 @@ class OrderListItem extends React.Component {
       productConfirm: this.props.productConfirm,
       loaded: true,
       quantityReceived: this.props.cartItem.quantityReceived || this.props.cartItem.quantity,
+      stateUpdated: true,
+    }, () => {
+      this.setState({
+        stateUpdated: false,
+      })
     })
   }
 
@@ -102,6 +126,11 @@ class OrderListItem extends React.Component {
           onHideModal={() => {
             this.setState({
               editQuantity: false,
+              stateUpdated: true,
+            }, () => {
+              this.setState({
+                stateUpdated: false,
+              })
             })
           }}
           onSubmitValue={(value) => {
@@ -110,11 +139,16 @@ class OrderListItem extends React.Component {
               this.setState({
                 quantityReceived: selectedValue,
                 editQuantity: false,
+                stateUpdated: true,
               },() => {
                 const updateCartItem = Object.assign({}, cartItem, {
                   quantityReceived: this.state.quantityReceived
                 })
                 this.props.onHandleProductConfirm(updateCartItem)
+                this.setState({
+                  stateUpdated: false,
+                  cartItem: updateCartItem,
+                })
               })
             }
           }}
@@ -126,7 +160,7 @@ class OrderListItem extends React.Component {
       //   teamBetaAccess.hasOwnProperty('showProductPrices') === true
       //   && teamBetaAccess.showProductPrices === true
       // ){
-      //   showProductPrices = true        
+      //   showProductPrices = true
       // }
 
       productRow = (
@@ -137,12 +171,17 @@ class OrderListItem extends React.Component {
               onPress={() => {
                 this.setState({
                   editQuantity: true,
+                  stateUpdated: true,
+                }, () => {
+                  this.setState({
+                    stateUpdated: false,
+                  })
                 })
               }}
               style={{flex: 1.25}}
             >
               <View style={styles.quantityContainer}>
-                {this.props.orderConfirm.order === false ? 
+                {this.props.orderConfirm.order === false ?
                   <View style={styles.caretContainer}>
                     <Icon name='material|caret-up' size={13} color='black' style={styles.iconCaret} />
                     <Icon name='material|caret-down' size={13} color='black' style={styles.iconCaret} />
@@ -155,14 +194,19 @@ class OrderListItem extends React.Component {
               underlayColor='transparent'
               onPress={() => {
                 if(orderConfirm.order === false){
-                  this.setState({
-                    productConfirm: !productConfirm
-                  },() => {
-                    const updateCartItem = Object.assign({}, cartItem, {
-                      status: this.state.productConfirm === true ? 'RECEIVED' : 'ORDERED'
-                    })
-                    this.props.onHandleProductConfirm(updateCartItem)
+                  const updateCartItem = Object.assign({}, cartItem, {
+                    status: this.state.productConfirm === true ? 'ORDERED' : 'RECEIVED'
                   })
+                  this.setState({
+                    productConfirm: !this.state.productConfirm,
+                    cartItem: updateCartItem,
+                    stateUpdated: true,
+                  }, () => {
+                    this.setState({
+                      stateUpdated: false,
+                    })
+                  })
+                  this.props.onHandleProductConfirm(updateCartItem)
                 }
               }}
               style={{flex: 8}}

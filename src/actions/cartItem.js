@@ -1,6 +1,7 @@
 import { generateId } from '../utilities/utils';
 import {
   CART,
+  CONNECT,
   ORDER_SENT,
   RESET_CART_ITEMS,
   RECEIVE_CART_ITEM,
@@ -15,6 +16,7 @@ export default function CartItemActions(allActions) {
     connectActions,
     errorActions,
   } = allActions
+  let verifyCartAttempt = 0
 
   function noCartItemsReceived() {
     return {
@@ -31,7 +33,7 @@ export default function CartItemActions(allActions) {
     }
   }
 
-  function addCartItem(cartItemAttributes) {
+  function addCartItem(cartItemAttributes, allowOptimisticUpdates = false) {
     return (dispatch, getState) => {
       const {session} = getState()
       const cartItemId = generateId()
@@ -49,13 +51,15 @@ export default function CartItemActions(allActions) {
         cartItemAttributes.purveyorId
         && cartItemAttributes.productId
       ){
-        // dispatch({
-        //   type: ADD_CART_ITEM,
-        //   cartItemId: cartItemId,
-        //   cartItem: Object.assign({}, cartItemAttributes, {
-        //     id: cartItemId,
-        //   }),
-        // })
+        if(allowOptimisticUpdates === true){
+          dispatch({
+            type: ADD_CART_ITEM,
+            cartItemId: cartItemId,
+            cartItem: Object.assign({}, cartItemAttributes, {
+              id: cartItemId,
+            }),
+          })
+        }
         dispatch(connectActions.ddpCall('addCartItem', [session.userId, sessionTeamId, Object.assign({}, cartItemAttributes)]))
       } else {
         dispatch(errorActions.createError('add-cart-item', 'Please check product details and try again', Object.assign({}, cartItemAttributes)))
@@ -63,25 +67,32 @@ export default function CartItemActions(allActions) {
     }
   }
 
-  function updateCartItem(cartItem) {
+  function updateCartItem(cartItem, allowOptimisticUpdates = false) {
     return (dispatch, getState) => {
       const {session} = getState()
       const sessionTeamId = session.teamId
+      if(allowOptimisticUpdates === true){
+        dispatch(receiveCartItems(cartItem))
+      }
       dispatch(connectActions.ddpCall('updateCartItem', [session.userId, sessionTeamId, cartItem.id, cartItem]))
-      // return dispatch(receiveCartItems(cartItem))
     }
   }
 
-  function deleteCartItem(cartItem) {
+  function deleteCartItem(cartItem, allowOptimisticUpdates = false) {
     return (dispatch, getState) => {
       const {session} = getState()
       const sessionTeamId = session.teamId
+      if(allowOptimisticUpdates === true){
+        dispatch({
+          type: DELETE_CART_ITEM,
+          teamId: sessionTeamId,
+          cartItem: Object.assign({}, cartItem, {
+            status: 'DELETED'
+          }),
+          cartItemId: cartItem.id,
+        })
+      }
       dispatch(connectActions.ddpCall('deleteCartItem', [session.userId, sessionTeamId, cartItem.id]))
-      // return dispatch({
-      //   type: DELETE_CART_ITEM,
-      //   teamId: sessionTeamId,
-      //   cartItem: cartItem,
-      // })
     }
   }
 
@@ -138,21 +149,78 @@ export default function CartItemActions(allActions) {
     }
   }
 
-  function sendCart(cartInfo) {
+  function verifyCart(cartInfo) {
     return (dispatch, getState) => {
-      const {session} = getState()
+      const {connect, session} = getState()
+      if(connect.status === CONNECT.OFFLINE){
+        return dispatch(errorActions.createError('verify-cart-items', 'Internet connection error, please check your signal and resubmit.'))
+      }
       const sessionTeamId = session.teamId
-      let orderPkg = {}
-      cartInfo.purveyorIds.forEach((purveyorId) => {
-        let deliveryDate = null
-        if(cartInfo.purveyorDeliveryDates.hasOwnProperty(purveyorId) === true){
-          deliveryDate = cartInfo.purveyorDeliveryDates[purveyorId]
+      let orderPkg = cartInfo
+      if(cartInfo.hasOwnProperty('purveyorIds') === true){
+        verifyCartAttempt = 0
+        orderPkg = {}
+        cartInfo.purveyorIds.forEach((purveyorId) => {
+          let deliveryDate = null
+          if(cartInfo.purveyorDeliveryDates.hasOwnProperty(purveyorId) === true){
+            deliveryDate = cartInfo.purveyorDeliveryDates[purveyorId]
+          }
+          orderPkg[purveyorId] = {
+            orderId: generateId(),
+            cartItemIds: cartInfo.cartItemIds[purveyorId],
+            deliveryDate: deliveryDate,
+          }
+        })
+      }
+
+      const verifyCartItemsCb = (err, results) => {
+        // console.log('Verification results: ', results)
+        if(results.verified === true){
+          dispatch(sendCart(orderPkg))
+        } else {
+          verifyCartAttempt = verifyCartAttempt + 1
+          dispatch(syncCart(orderPkg, results.unverifiedCartItems))
         }
-        orderPkg[purveyorId] = {
-          orderId: generateId(),
-          deliveryDate: deliveryDate,
-        }
+      }
+      dispatch(connectActions.ddpCall('verifyCartItems', [session.userId, sessionTeamId, orderPkg], verifyCartItemsCb))
+    }
+  }
+
+  function syncCart(orderPkg, unverifiedCartItems) {
+    return (dispatch, getState) => {
+      const {connect, session, cartItems} = getState()
+      if(connect.status === CONNECT.OFFLINE){
+        return dispatch(errorActions.createError('sync-cart-items', 'Internet connection error, please check your signal and resubmit.'))
+      }
+      const sessionTeamId = session.teamId
+      const syncPurveyorIds = Object.keys(unverifiedCartItems)
+      syncPurveyorIds.forEach(function(purveyorId) {
+        const syncMissingCartItems = unverifiedCartItems[purveyorId]
+        syncMissingCartItems.forEach(function(cartItem){
+          const addCartItem = Object.assign({}, cartItems.items[cartItem.id])
+          addCartItem._id = cartItems.items[cartItem.id].id
+          delete addCartItem.id
+          dispatch(connectActions.ddpCall('addCartItem', [session.userId, sessionTeamId, addCartItem]))
+        })
       })
+      // console.log('Processing attempt: ', verifyCartAttempt)
+      if(verifyCartAttempt < 5){
+        setTimeout(() => {
+          dispatch(verifyCart(orderPkg))
+        }, 1000)
+      } else {
+        dispatch(errorActions.createError('sync-cart-items', 'Internet connection error, please check your signal and resubmit.'))
+      }
+    }
+  }
+
+  function sendCart(orderPkg) {
+    return (dispatch, getState) => {
+      const {connect, session, cartItems} = getState()
+      if(connect.status === CONNECT.OFFLINE){
+        return dispatch(errorActions.createError('send-cart-items', 'Internet connection error, please check your signal and resubmit.'))
+      }
+      const sessionTeamId = session.teamId
       dispatch(connectActions.ddpCall('sendCartItems', [session.userId, sessionTeamId, orderPkg]))
       return dispatch({
         type: ORDER_SENT,
@@ -179,6 +247,7 @@ export default function CartItemActions(allActions) {
     receiveCartItems,
     resetCartItems,
     sendCart,
+    verifyCart,
     updateCartItem,
   }
 }
