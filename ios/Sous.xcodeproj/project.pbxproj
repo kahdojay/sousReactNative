@@ -914,7 +914,7 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.sousapp.sousRN;
 				PRODUCT_NAME = Sous;
-				PROVISIONING_PROFILE = "f7a9d916-a899-44de-9f5a-7cd329249254";
+				PROVISIONING_PROFILE = "4f9dbf6d-7b5d-4f35-909d-569c4ec41fd9";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
