@@ -51,7 +51,9 @@ class CartRightButton extends React.Component {
       <View style={styles.iconContainer}>
         <TouchableHighlight
           underlayColor='transparent'
-          onPress={this.props.onShowCreateOptions} >
+          // onPress={this.props.onShowCreateOptions}
+          onPress={this.props.onCreateProduct}
+        >
           <Icon name='material|plus' size={30} color={Colors.navIcon} style={[styles.add, styles.navIcon]}/>
         </TouchableHighlight>
         <TouchableHighlight

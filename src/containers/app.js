@@ -1861,18 +1861,18 @@ class App extends React.Component {
                 disabled={(this.state.currentTeamInfo.team === null)}
               />
             ),
-            customNext: (
-              <Components.FeedViewRightButton
-                onShowCreateOptions={() => {
-                  this.setState({
-                    showCreateOptions: true,
-                    category: null,
-                    purveyor: null,
-                  })
+            // customNext: (
+              // <Components.FeedViewRightButton
+              //   onShowCreateOptions={() => {
+              //     this.setState({
+              //       showCreateOptions: true,
+              //       category: null,
+              //       purveyor: null,
+              //     })
                   // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
-                }}
-              />
-            )
+              //   }}
+              // />
+            // )
           })
           break;
         case 'PurveyorIndex':
@@ -1893,15 +1893,15 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onShowCreateOptions={() => {
-                  this.setState({
-                    showCreateOptions: true,
-                  })
-                  // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
-                }}
+                // onShowCreateOptions={() => {
+                //   this.setState({
+                //     showCreateOptions: true,
+                //   })
+                //   // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
+                // }}
                 cartItems={this.state.currentTeamInfo.cart}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
               />
-              // onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
             )
           })
           break;
@@ -1942,15 +1942,15 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onShowCreateOptions={() => {
-                  this.setState({
-                    showCreateOptions: true,
-                  })
+                // onShowCreateOptions={() => {
+                //   this.setState({
+                //     showCreateOptions: true,
+                //   })
                   // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
-                }}
+                // }}
                 cartItems={this.state.currentTeamInfo.cart}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
               />
-              // onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
             )
           })
           break;
@@ -1974,15 +1974,15 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onShowCreateOptions={() => {
-                  this.setState({
-                    showCreateOptions: true,
-                  })
+                // onShowCreateOptions={() => {
+                //   this.setState({
+                //     showCreateOptions: true,
+                //   })
                   // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
-                }}
+                // }}
                 cartItems={this.state.currentTeamInfo.cart}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
               />
-              // onCreateProduct={this.onCreateProduct.bind(this, route, nav, null)}
             )
           })
           break;
@@ -2007,15 +2007,15 @@ class App extends React.Component {
                 onNavToCart={() => {
                   nav.push({ name: 'CartView', });
                 }}
-                onShowCreateOptions={() => {
-                  this.setState({
-                    showCreateOptions: true,
-                  })
+                // onShowCreateOptions={() => {
+                //   this.setState({
+                //     showCreateOptions: true,
+                //   })
                   // LayoutAnimation.configureNext(LayoutAnimation.Presets.spring)
-                }}
+                // }}
                 cartItems={this.state.currentTeamInfo.cart}
+                onCreateProduct={this.onCreateProduct.bind(this, route, nav, this.state.category)}
               />
-              // onCreateProduct={this.onCreateProduct.bind(this, route, nav, this.state.category)}
             )
           })
           break;
