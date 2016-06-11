@@ -129,7 +129,7 @@ class Menu extends React.Component {
               </View>
             </TouchableHighlight>
           </ScrollView>
-          { session.superUser === true ?
+          {/* session.superUser === true ?
           <TouchableHighlight
               onPress={this.props.onNavToAdmin}
               style={styles.menuItemButton}
@@ -142,7 +142,7 @@ class Menu extends React.Component {
                 </Text>
               </View>
             </TouchableHighlight>
-          : null }
+          : null */}
         </View>
         <View style={styles.teamNameContainer}>
           <Text style={styles.sous}>Sous</Text>
