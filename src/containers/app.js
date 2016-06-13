@@ -1839,7 +1839,7 @@ class App extends React.Component {
             // title: 'Switch Teams',
             customTitle: (
               <TextComponents.NavBarTitle
-                content={'Switch Teams'}
+                content={'All Teams'}
               />
             ),
           })
