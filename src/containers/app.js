@@ -1607,6 +1607,7 @@ class App extends React.Component {
                   const teamName = `${data.firstName}'s Team`
                   const demoTeam = true
                   dispatch(actions.addTeam(teamName, demoTeam));
+                  dispatch(actions.addToNewUserEmailDrip(data))
                 }
               }, 25)()
             },

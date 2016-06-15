@@ -28,6 +28,13 @@ export default function SessionActions(allActions){
     resetAppState: true,
   };
 
+  function addToNewUserEmailDrip(userInfo) {
+    return (dispatch, getState) => {
+      console.log('adding to MailChimp:', userInfo)
+      dispatch(connectActions.ddpCall('addToNewUserEmailDrip', [userInfo]))
+    }
+  }
+
   function resetSessionVersion() {
     return {
       type: RESET_SESSION_VERSION
@@ -177,5 +184,6 @@ export default function SessionActions(allActions){
     'registerSession': registerSession,
     'receiveSession': receiveSession,
     'inviteContacts': inviteContacts,
+    'addToNewUserEmailDrip': addToNewUserEmailDrip,
   }
 }

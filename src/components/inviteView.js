@@ -251,20 +251,21 @@ class InviteView extends React.Component {
       </TouchableHighlight>
     )
 
-    if((this.state.currentTeamInfo.team.users.length < this.state.currentTeamInfo.team.allowedUserCount) !== true) {
-      return (
-        <WebView
-          automaticallyAdjustContentInsets={false}
-          style={styles.webView}
-          url={this.state.url}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-          decelerationRate="normal"
-          startInLoadingState={true}
-          scalesPageToFit={true}
-        />
-      )
-    }else if (this.props.denied) {
+    // if((this.state.currentTeamInfo.team.users.length < this.state.currentTeamInfo.team.allowedUserCount) !== true) {
+    //   return (
+    //     <WebView
+    //       automaticallyAdjustContentInsets={false}
+    //       style={styles.webView}
+    //       url={this.state.url}
+    //       javaScriptEnabled={true}
+    //       domStorageEnabled={true}
+    //       decelerationRate="normal"
+    //       startInLoadingState={true}
+    //       scalesPageToFit={true}
+    //     />
+    //   )
+    // }else if (this.props.denied) {
+    if (this.props.denied) {
       return (
         <View style={styles.modalContainer}>
           <View style={styles.modalInnerContainer}>
@@ -274,7 +275,6 @@ class InviteView extends React.Component {
         </View>
       );
     } else {
-
       let viewContent = (
         <View style={styles.noFoundTextContainer}>
           <Text style={[styles.noFoundText, {color: Colors.darkGrey}]}>Please search for a contact using their name,</Text>
@@ -307,7 +307,6 @@ class InviteView extends React.Component {
           }
         }
       }
-
 
       return (
         <View style={styles.container}>
