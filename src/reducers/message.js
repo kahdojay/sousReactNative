@@ -82,6 +82,8 @@ function messages(state = initialState.messages, action) {
       lastUpdated: (new Date()).toISOString()
     });
 
+  case UPDATE_MESSAGE:
+
   // delete message
   case DELETE_MESSAGE:
     const newDeletedTeamsMessageState = Object.assign({}, state.teams);

@@ -1365,6 +1365,11 @@ class App extends React.Component {
                 dispatch(actions.updateOrder(order.id, order))
               }, 25)()
             },
+            onUpdateOrderMessage: (order) => {
+              _.debounce(() => {
+                dispatch(actions.updateOrderMessage(order))
+              }, 25)()
+            },
             onNavToInvoices: (orderId) => {
               const order = this.state.currentTeamInfo.orders[orderId]
               const purveyor = this.state.currentTeamInfo.purveyors[order.purveyorId]

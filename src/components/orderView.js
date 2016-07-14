@@ -178,6 +178,7 @@ class OrderView extends React.Component {
       stateUpdated: true,
     }, () => {
       this.props.onUpdateOrder(this.state.order)
+      this.props.onUpdateOrderMessage(this.state.order)
       this.setState({
         stateUpdated: false,
       })

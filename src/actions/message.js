@@ -66,6 +66,16 @@ export default function MessageActions(allActions){
     }
   }
 
+  function updateOrderMessage(orderAttributes) {
+    return (dispatch, getState) => {
+      dispatch(connectActions.ddpCall('updateMessage', [orderAttributes]))
+      return dispatch({
+        type: UPDATE_MESSAGE,
+        order: orderAttributes
+      })
+    }
+  }
+
   function deleteMessage(teamId, messageId) {
     return {
       type: DELETE_MESSAGE,

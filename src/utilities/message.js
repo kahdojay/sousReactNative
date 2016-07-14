@@ -33,6 +33,11 @@ function formatMessage(msg, messageLength = null) {
           <Text style={{fontSize: 11}}>
             {'\n'}
             <Text style={{color: Colors.lightBlue}}>View Order Details</Text>
+            {'\n'}
+            { msg.order && msg.order.commentCount > 1 ?
+              <Text style={{color: Colors.gold}}>{msg.order.commentCount} comments</Text> :
+              null
+            }
           </Text>
         ) : <Text style={{fontSize: 11}}>{'\n'}</Text>}
       </Text>
